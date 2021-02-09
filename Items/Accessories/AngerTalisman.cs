@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class AngerTalisman : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Minus 10 defense" +
+            Tooltip.SetDefault("-10 defense" +
                                 "\n30% increased damage");
         }
 

@@ -19,6 +19,8 @@ namespace tsorcRevamp {
         public int townWarpWorld;
         public bool townWarpSet;
 
+        public bool SilverSerpentRing = true;
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -45,7 +47,7 @@ namespace tsorcRevamp {
         }
 
         public override void ResetEffects() {
-            //GreatMagicMirror = false;
+            SilverSerpentRing = false;
         }
 
     }
