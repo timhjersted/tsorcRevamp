@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 
 using Terraria;
 using Terraria.ID;
@@ -7,13 +7,13 @@ using Terraria.ModLoader;
 //using tsorcRevamp.Dusts;
 
 namespace tsorcRevamp.Projectiles {
-    class AncientLance : ModProjectile {
+    class AncientHolyLance : ModProjectile {
 
         public override void SetDefaults() {
 			projectile.width = 45;
 			projectile.height = 45;
 			projectile.aiStyle = 19;
-			projectile.penetrate = 3;
+			projectile.penetrate = 5;
 			projectile.timeLeft = 3600;
 			projectile.friendly = true; //can hit enemies
 			projectile.hostile = false; //can hit player / friendly NPCs
@@ -21,9 +21,9 @@ namespace tsorcRevamp.Projectiles {
 			projectile.melee = true;
 			projectile.tileCollide = false;
 			projectile.hide = true;
-			projectile.usesLocalNPCImmunity = true;
-			projectile.localNPCHitCooldown = 5;
-			projectile.scale = 1.1f;
+			//projectile.usesLocalNPCImmunity = true;
+			//projectile.localNPCHitCooldown = 5;
+			projectile.scale = 1.3f;
 			
 		}
 		public float moveFactor { //controls spear speed
@@ -67,11 +67,7 @@ namespace tsorcRevamp.Projectiles {
 
 
         }
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
-			crit = true;
-        }
-
+        
     }
     
 }
