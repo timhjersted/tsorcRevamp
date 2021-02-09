@@ -10,6 +10,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
+            item.width = 28;
+            item.height = 28;
             item.lifeRegen = 3;
             item.accessory = true;
             item.value = 5000;

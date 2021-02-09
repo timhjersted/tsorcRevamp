@@ -10,6 +10,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
+            item.width = 22;
+            item.height = 22;
             item.accessory = true;
             item.value = 7000;
             item.rare = ItemRarityID.Orange;

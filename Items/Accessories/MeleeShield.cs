@@ -37,6 +37,8 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void SetDefaults() {
             base.SetDefaults();
+            item.width = 30;
+            item.height = 30;
             item.defense = 20;
             item.value = 3000000;
         }

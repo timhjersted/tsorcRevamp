@@ -10,6 +10,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
+            item.width = 30;
+            item.height = 30;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useAnimation = 15;
             item.useTime = 15;
