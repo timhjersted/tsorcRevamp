@@ -1,0 +1,3 @@
+displayName = The Story of Red Cloud Revamped
+author = Zeodexic
+version = 0.1
