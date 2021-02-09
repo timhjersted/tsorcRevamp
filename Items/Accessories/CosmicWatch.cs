@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.useStyle = ItemUseStyleID.SwingThrow;
+            item.useStyle = ItemUseStyleID.HoldingOut;
             item.useAnimation = 15;
             item.useTime = 15;
             item.accessory = true;
