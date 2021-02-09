@@ -13,6 +13,8 @@ namespace tsorcRevamp.Items {
                                 "\nThis plant will save your life."); 
         }
         public override void SetDefaults() {
+            item.width = 16;
+            item.height = 25;
             item.healLife = 20;
             item.consumable = true;
             item.maxStack = 360;

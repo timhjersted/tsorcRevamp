@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void GrabRange(Player player, ref int grabRange) { //TODO: adjustable grab range for soul ring accessory
-            grabRange *= 4;
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
     }
 
