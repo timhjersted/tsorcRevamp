@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
         public override void NPCLoot(NPC npc) {
             
-            if (npc.lifeMax >= 5 || npc.value >= 10f) { //stop zero-value dark souls from dropping
+            if (npc.lifeMax >= 5 && npc.value >= 10f) { //stop zero-value souls from dropping
                 int enemyValue;
                 if (Main.expertMode) {
                     enemyValue = (int)npc.value / 25;
