@@ -9,11 +9,9 @@ namespace tsorcRevamp.Items.Accessories {
         //i dont feel like writing the same thing 4 times. does it make the code less readable? yeah. i dont give a shit
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("For melee warriors only" + 
-                "\nGrants immunity to knockback");
+                                "\nGrants immunity to knockback");
         }
         public override void SetDefaults() {
-            item.width = 30;
-            item.height = 30;
             item.accessory = true;
             item.rare = ItemRarityID.Orange;
         }
@@ -103,7 +101,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
     }
 
-    public class Beholder2 : MeleeShield {
+    public class BeholderShield2 : MeleeShield {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Beholder Shield II");
             base.SetStaticDefaults();
@@ -135,6 +133,42 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 15000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+
+        }
+    }
+
+    public class EnchantedBeholderShield2 : MeleeShield {
+        public override void SetStaticDefaults() {
+            DisplayName.SetDefault("Enchanted Beholder Shield II");
+            Tooltip.SetDefault("A legendary shield for melee warriors only" +
+                "\nGrants immunity to knockback and nearly all debuffs, plus 80 defense" +
+                "\nReduces Ranged and Magic Damage by 300%. +70% mana cost" + 
+                "\n-25% move speed, 10% melee damage.");
+        }
+
+        public override void SetDefaults() {
+            base.SetDefaults();
+            item.defense = 80;
+            item.value = 3000000;
+        }
+
+        public override void UpdateEquip(Player player) {
+            base.UpdateEquip(player);
+            player.moveSpeed -= 0.25f;
+            player.meleeDamage += 0.1f;
+            player.magicDamage -= 3f;
+            player.rangedDamage -= 3f;
+        }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("BeholderShield2"), 1);
+            //recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 70000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

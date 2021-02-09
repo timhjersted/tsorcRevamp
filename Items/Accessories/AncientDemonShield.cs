@@ -6,12 +6,10 @@ namespace tsorcRevamp.Items.Accessories {
     public class AncientDemonShield : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Powerful, but slows movement by 25%" +
-                "\nGreat Shield that grants immunity to knockback and gives thorns effect");
+                                "\nGreat Shield that grants immunity to knockback and gives thorns effect");
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 32;
             item.defense = 10;
             item.accessory = true;
             item.value = 10000;

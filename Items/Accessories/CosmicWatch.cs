@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Accessories {
     public class CosmicWatch : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Use this item to push time foward" +
-            "\nto the beginning of night or to the beginning of day");
+                                "\nto the beginning of night or to the beginning of day");
         }
 
         public override void SetDefaults() {

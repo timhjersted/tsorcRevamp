@@ -6,14 +6,12 @@ namespace tsorcRevamp.Items.Accessories {
     public class IronShield : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Greater defense at the cost of mobility" +
-                "\nMovement Speed -40%. Unequip to regain maximum jumping abilities." +
-                "\nVery useful when low on life and survival is essential." +
-                "\nCan be upgraded with 2000 Dark Souls (increased movement speed, thorns buff).");
+                                "\nMovement Speed -40%. Unequip to regain maximum jumping abilities." +
+                                "\nVery useful when low on life and survival is essential." +
+                                "\nCan be upgraded with 2000 Dark Souls (increased movement speed, thorns buff).");
         }
 
         public override void SetDefaults() {
-            item.width = 20;
-            item.height = 20;
             item.accessory = true;
             item.defense = 5;
             item.rare = ItemRarityID.Red;

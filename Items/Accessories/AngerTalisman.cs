@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Accessories {
     public class AngerTalisman : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Minus 10 defense" +
-            "\n30% increased damage");
+                                "\n30% increased damage");
         }
 
         public override void SetDefaults() {
