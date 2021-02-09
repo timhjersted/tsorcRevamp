@@ -42,14 +42,14 @@ namespace tsorcRevamp.Projectiles {
 
 			if (!pOwner.frozen) {
 				if (moveFactor == 0f) { //when initially thrown
-					moveFactor = 2f; //move forward
+					moveFactor = 3.4f; //move forward
 					projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2) { //after x animation frames, return
-					moveFactor -= 1.8f;
+					moveFactor -= 3.2f;
                 }
 				else { //extend spear
-					moveFactor += 2f;
+					moveFactor += 3.4f;
                 }
 
             }
