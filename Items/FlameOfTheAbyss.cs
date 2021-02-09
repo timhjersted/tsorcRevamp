@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items {
-    class FlameOfTheAbyss : ModItem {
+    public class FlameOfTheAbyss : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Flame of the Abyss");
             Tooltip.SetDefault("Dropped from a fallen soul that has traveled through the abyss.");
