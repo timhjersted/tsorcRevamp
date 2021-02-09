@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Weapons {
             Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nDoubles attack damage when falling. \nAlso has random chance to cast a healing spell on each strike.");
         }
 
+
         public override void SetDefaults() {
             item.damage = 500;
             item.knockBack = 10f;
@@ -39,14 +40,12 @@ namespace tsorcRevamp.Items.Weapons {
             item.shoot = ModContent.ProjectileType<Projectiles.CelestialLance>();
 
         }
-        
-        public override void HoldItem(Player player) {
-            if (player.velocity.Y > 0){
-                player.meleeDamage *= 20;
-            };
-            //player.HealEffect((int)player.meleeDamage, true);
-        }
 
+        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
+            if (player.velocity.Y > 0) {
+                mult = 20;
+            }
+        }
         /*
         public virtual void MeleeEffects(Player player) {
                 if (player.velocity.Y > 0){
