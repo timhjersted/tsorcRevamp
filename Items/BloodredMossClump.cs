@@ -30,14 +30,11 @@ namespace tsorcRevamp.Items {
             int buffIndex = 0;
 
             foreach (int buffType in player.buffType) {
+                
+                if ((buffType == BuffID.Bleeding) || (buffType == BuffID.Poisoned)) {
+                    player.DelBuff(buffIndex);
+                }
                 buffIndex++;
-                if (buffType == BuffID.Bleeding) {
-                    player.buffTime[buffIndex] = 0;
-                }
-
-                if (buffType == BuffID.Poisoned) {
-                    player.buffTime[buffIndex] = 0;
-                }
             }
             return true;
         }
