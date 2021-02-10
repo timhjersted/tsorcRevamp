@@ -37,6 +37,8 @@ The current plan has us finish the transfer of the mod to TModLoader. Once that'
 
 Contributors are always welcome and greatly appreciated! We are always in need of extra programmers and sprite artists, and if you're an experienced Terraria builder, we may need your help too! If you'd like to help, the best way to get in touch is directly through Github via pull requests or in our Discord server.
 
+Special thanks to Linklight2 for their large porting effort, and to Maxisi for their contributions to (and providing us with) Linklight2's most recent build.
+
 
 ## Contact
 
