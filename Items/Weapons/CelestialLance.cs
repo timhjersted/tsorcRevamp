@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons {
         }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            if (player.velocity.Y > 0) {
+            if (((player.gravDir == 1f) && (player.velocity.Y > 0)) || ((player.gravDir == -1f) && (player.velocity.Y < 0))) {
                 mult = 2;
             }
 
