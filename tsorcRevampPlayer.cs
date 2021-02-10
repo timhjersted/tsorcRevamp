@@ -20,6 +20,7 @@ namespace tsorcRevamp {
         public bool townWarpSet;
 
         public bool SilverSerpentRing = true;
+        public bool DragonStone = true;
         public int SoulReaper = 0;
 
         public override TagCompound Save() {
@@ -49,7 +50,14 @@ namespace tsorcRevamp {
 
         public override void ResetEffects() {
             SilverSerpentRing = false;
+            DragonStone = false;
             SoulReaper = 0;
+        }
+
+        public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
+            if(DragonStone) {
+                //todo make the player take no damage from flying enemies
+            }
         }
 
     }

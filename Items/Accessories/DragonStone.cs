@@ -5,11 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class DragonStone : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Tooltip1" +
-                                "\nTooltip2" +
-                                "\nTooltip3" +
-                                "\nTooltip4" +
-                                "\nTooltip5");
+            Tooltip.SetDefault("Provides immunity to most flying creatures and darkness." +
+                                "\nPluis immunity to knockback and fire blocks.");
         }
 
         public override void SetDefaults() {
@@ -17,28 +14,24 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 26;
             item.accessory = true;
             item.value = 375000;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Orange;
         }
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Bone, 69);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1337);
+            recipe.AddIngredient(ItemID.SoulofFlight, 70);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
         public override void UpdateEquip(Player player) {
-            player.meleeDamage -= 2f;
-            player.meleeCrit = -50;
-            if (player.statLife <= 80) {
-                player.statDefense += 85;
-            }
-            else {
-                player.statDefense += 30;
-            }
+            player.buffImmune[BuffID.Darkness] = true;
+            player.immune = true;
+            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragonStone = true;
         }
+
 
     }
 }
