@@ -43,22 +43,17 @@ namespace tsorcRevamp.Items.Weapons {
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
             if (player.velocity.Y > 0) {
-                mult = 20;
+                mult = 2;
             }
+
         }
-        /*
-        public virtual void MeleeEffects(Player player) {
-                if (player.velocity.Y > 0){
-                player.meleeDamage *= 20;
-            };
-        }*/
 
         public override void AddRecipes() {
             //incomplete recipe
             ModRecipe recipe = new ModRecipe(mod);
-            //recipe.AddIngredient(mod.GetItem("Longinus"), 1);
-            //recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 20);
-            //recipe.AddIngredient(mod.GetItem("CursedSouls"), 100);
+            recipe.AddIngredient(mod.GetItem("Longinus"), 1);
+            recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 20);
+            recipe.AddIngredient(mod.GetItem("CursedSoul"), 100);
             recipe.AddIngredient(ItemID.FallenStar, 20);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 240000);
             recipe.SetResult(this, 1);

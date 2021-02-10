@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons {
     public class AncientHolyLance : ModItem {
 
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Ancient Blood Lance");
+            DisplayName.SetDefault("Ancient Holy Lance");
             Tooltip.SetDefault("Bright Holy Spear.");
         }
 

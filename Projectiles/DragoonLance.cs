@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles {
 			projectile.width = 45;
 			projectile.height = 45;
 			projectile.aiStyle = 19;
-			projectile.penetrate = 1;
+			projectile.penetrate = 2;
 			projectile.timeLeft = 3600;
 			projectile.friendly = true; //can hit enemies
 			projectile.hostile = false; //can hit player / friendly NPCs
@@ -42,14 +42,14 @@ namespace tsorcRevamp.Projectiles {
 
 			if (!pOwner.frozen) {
 				if (moveFactor == 0f) { //when initially thrown
-					moveFactor = 10f; //move forward
+					moveFactor = 3.1f; //move forward
 					projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2) { //after x animation frames, return
-					moveFactor -= 1.8f;
+					moveFactor -= 2.85f;
                 }
 				else { //extend spear
-					moveFactor += 2f;
+					moveFactor += 3.1f;
                 }
 
             }

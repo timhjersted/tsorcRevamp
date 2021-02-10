@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class CelestialLance : ModProjectile {
 
+        bool hasHealed = false;
+
         public override void SetDefaults() {
 			projectile.width = 45;
 			projectile.height = 45;
@@ -31,6 +33,21 @@ namespace tsorcRevamp.Projectiles {
 			set => projectile.ai[0] = value;
         }
 
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
+            Player pOwner = Main.player[projectile.owner];
+            
+            if (Main.rand.Next(2) == 0) {
+                if (!hasHealed)
+                {
+                    pOwner.statLife += 30;
+                    pOwner.HealEffect(30, true);
+                    hasHealed = true;
+                }
+
+            }
+
+        }
+
         public override void AI() {
 			Player pOwner = Main.player[projectile.owner];
 			Vector2 ownercenter = pOwner.RotatedRelativePoint(pOwner.MountedCenter, true);
@@ -42,14 +59,14 @@ namespace tsorcRevamp.Projectiles {
 
 			if (!pOwner.frozen) {
 				if (moveFactor == 0f) { //when initially thrown
-					moveFactor = 2f; //move forward
+					moveFactor = 3.4f; //move forward
 					projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2) { //after x animation frames, return
-					moveFactor -= 1.8f;
+					moveFactor -= 3.1f;
                 }
 				else { //extend spear
-					moveFactor += 2f;
+					moveFactor += 3.4f;
                 }
 
             }
@@ -64,7 +81,6 @@ namespace tsorcRevamp.Projectiles {
 			if (projectile.spriteDirection == -1) {
 				projectile.rotation -= MathHelper.ToRadians(90f);
             }
-
 
         }
         

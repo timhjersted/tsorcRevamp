@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons {
             item.knockBack = 15f;
 
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 10;
+            item.useAnimation = 11;
             item.useTime = 1;
             item.shootSpeed = 8;
             
@@ -42,8 +42,8 @@ namespace tsorcRevamp.Items.Weapons {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DragoonLance"), 1);
-            //recipe.AddIngredient(mod.GetItem("FlameoftheAbyss"), 10);
-            //recipe.AddIngredient(mod.GetItem("SoulofArtorias"), 1);
+            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 10);
+            recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 1);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 170000);
             recipe.SetResult(this, 1);

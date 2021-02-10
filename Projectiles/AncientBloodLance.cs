@@ -42,14 +42,14 @@ namespace tsorcRevamp.Projectiles {
 
 			if (!pOwner.frozen) {
 				if (moveFactor == 0f) { //when initially thrown
-					moveFactor = 2f; //move forward
+					moveFactor = 2.59f; //move forward (2.4% of projectile scaled sprite size)
 					projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2) { //after x animation frames, return
-					moveFactor -= 1.8f;
+					moveFactor -= 2.37f; //2.2% of projctile scaled sprite size
                 }
 				else { //extend spear
-					moveFactor += 2f;
+					moveFactor += 2.59f; //(2.4% of projectile scaled sprite size)
                 }
 
             }
