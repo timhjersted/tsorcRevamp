@@ -20,6 +20,7 @@ namespace tsorcRevamp {
         public bool townWarpSet;
 
         public bool SilverSerpentRing = true;
+        public int SoulReaper = 0;
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -48,6 +49,7 @@ namespace tsorcRevamp {
 
         public override void ResetEffects() {
             SilverSerpentRing = false;
+            SoulReaper = 0;
         }
 
     }
