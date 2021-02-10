@@ -22,6 +22,7 @@ namespace tsorcRevamp {
         public bool SilverSerpentRing = true;
         public bool DragonStone = true;
         public int SoulReaper = 0;
+        public bool DragoonBoots = true;
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -52,6 +53,7 @@ namespace tsorcRevamp {
             SilverSerpentRing = false;
             DragonStone = false;
             SoulReaper = 0;
+            DragoonBoots = false;
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
@@ -60,5 +62,8 @@ namespace tsorcRevamp {
             }
         }
 
+        public override void PreUpdate() {
+            //todo dragoon boots
+        }
     }
 }
