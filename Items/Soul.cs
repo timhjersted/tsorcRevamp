@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items {
             return true;
         }
 
-        public override void GrabRange(Player player, ref int grabRange) { //TODO: adjustable grab range for soul ring accessory
+        public override void GrabRange(Player player, ref int grabRange) {
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
     }
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items {
 
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();
-            Tooltip.SetDefault("Soul of a fallen creature" + 
+            Tooltip.SetDefault("Soul of a fallen creature." + 
                 "\nCan be used at Demon Altars to forge new weapons, items, and armors.");
         }
 
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Items {
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();
             DisplayName.SetDefault("Soul of Attraidies");
-            Tooltip.SetDefault("The essence of Attraidies' power burns within this soul" +
+            Tooltip.SetDefault("The essence of Attraidies' power burns within this soul." +
                 "\nYou question whether you should even hold such a thing in your possession.");
         }
 
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Items {
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();
             DisplayName.SetDefault("Soul of Artorias");
-            Tooltip.SetDefault("The essence of Artorias of the Abyss");
+            Tooltip.SetDefault("The essence of Artorias of the Abyss.");
         }
 
         public override void PostUpdate() {
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Items {
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();
             DisplayName.SetDefault("Soul of Blight");
-            Tooltip.SetDefault("The essence of destruction");
+            Tooltip.SetDefault("The essence of destruction.");
         }
 
         public override void PostUpdate() {
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items {
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();
             DisplayName.SetDefault("Soul of the Ghost Wyvern");
-            Tooltip.SetDefault("The essence of the Ghost Wyvern");
+            Tooltip.SetDefault("The essence of the Ghost Wyvern.");
         }
 
         public override void PostUpdate() {

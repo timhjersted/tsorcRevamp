@@ -3,8 +3,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using tsorcRevamp.Items;
-using static tsorcRevamp.tsorcRevampPlayer;
-
 
 namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
