@@ -16,8 +16,8 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void SetDefaults() {
-            projectile.width = 34;
-            projectile.height = 34;
+            projectile.width = 30;
+            projectile.height = 30;
             projectile.friendly = true;
             projectile.penetrate = -1;
             projectile.melee = true;
