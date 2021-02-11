@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles {
 
     public class HeavenBall : ModProjectile {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Chain";
+        private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Heaven Ball");

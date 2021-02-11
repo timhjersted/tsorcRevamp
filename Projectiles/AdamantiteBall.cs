@@ -9,7 +9,7 @@ using Terraria.Graphics.Shaders;
 namespace tsorcRevamp.Projectiles {
     public class AdamantiteBall : ModProjectile {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Chain";
+        private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Adamantite Ball");

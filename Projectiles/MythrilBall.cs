@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles {
 
     public class MythrilBall : ModProjectile {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/Chain";
+        private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("ProjectileName");
