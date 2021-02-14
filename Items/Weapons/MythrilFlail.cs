@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons {
     public class MythrilFlail : ModItem {
 
         public override void SetStaticDefaults() {
-            base.SetDefaults();
+            base.SetStaticDefaults();
         }
 
         public override void SetDefaults() {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons {
             item.channel = true;
             item.useAnimation = 44;
             item.useTime = 44;
-            item.damage = 49;
+            item.damage = 45;
             item.knockBack = 8;
             item.UseSound = SoundID.Item1;
             item.rare = ItemRarityID.LightRed;
