@@ -23,6 +23,7 @@ namespace tsorcRevamp {
         public bool DragonStone = true;
         public int SoulReaper = 0;
         public bool DragoonBoots = true;
+        public bool DuskCrownRing = false;
 
         public override TagCompound Save() {
             return new TagCompound {
