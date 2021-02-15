@@ -36,18 +36,18 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.AddBuff("Firesoul", 60, false);   
+            player.AddBuff(ModContent.BuffType<Firesoul>()", 60, false);   
 			player.spawnMax = true;
 			player.statManaMax2 += 100;
 			player.buffImmune[BuffID.OnFire] = true;
 			player.buffImmune[BuffID.BrokenArmor] = true;
 			player.buffImmune[BuffID.Bleeding] = true;
 			player.buffImmune[BuffID.Poisoned] = true;
-			
+
 			if(Main.bloodMoon) { // Apparently this is the flag used in the Abyss?
 				player.statDefense += 7;
 			}
         }
 
     }
-}
+} 

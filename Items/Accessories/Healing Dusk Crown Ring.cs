@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
 			player.magicDamage *= 2;
 			player.magicCrit += 50;
 			player.spawnMax = true;
-			tsorcRevampPlayer.DuskCrownRing = true;
+			player.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing = true;
 			
         }
 		

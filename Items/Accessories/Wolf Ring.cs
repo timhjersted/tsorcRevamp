@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories {
 
 
         public override void UpdateEquip(Player player) {
-            player.AddBuff("Firesoul", 60, false);   
+            player.AddBuff(ModContent.BuffType<Firesoul>()", 60, false);   
 			player.spawnMax = true;
 			player.buffImmune[BuffID.OnFire] = true;
 			player.buffImmune[BuffID.BrokenArmor] = true;

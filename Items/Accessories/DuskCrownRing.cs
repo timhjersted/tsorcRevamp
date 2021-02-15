@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories {
 			player.manaCost -= 0.5f;
 			player.magicDamage *= 2;
 			player.magicCrit += 50;
-			tsorcRevampPlayer.DuskCrownRing = true;
+			player.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing = true;
 			
         }
 		

@@ -30,9 +30,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void UpdateEquip(Player player) {
-			player.AddBuff("Firesoul", 60, false);   
+			player.AddBuff(ModContent.BuffType<Firesoul>()", 60, false);    
 			player.statDefense += 6;
-			player.thorns = true;
+			player.thorns = 1f;
         }
  
     }
