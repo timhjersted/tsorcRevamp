@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void UpdateEquip(Player player) {
-			player.AddBuff("Protect", 60, false);
+			player.AddBuff(ModContent.BuffType<Buffs.Protect>(), 60, false);
         }
  
     }
