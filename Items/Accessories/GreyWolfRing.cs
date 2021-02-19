@@ -25,10 +25,10 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("WolfRing") 1);
+            recipe.AddIngredient(mod.GetItem("WolfRing"), 1);
 			recipe.AddIngredient(mod.GetItem("BandOfSupremeCosmicPower"), 1);
 			recipe.AddIngredient(mod.GetItem("PoisonbloodRing"), 1);
-			recipe.AddIngredient(mod.GetItem("Humanity"), 20);
+			//recipe.AddIngredient(mod.GetItem("Humanity"), 20);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.AddBuff(ModContent.BuffType<Firesoul>()", 60, false);   
+            player.AddBuff(BuffID.WeaponImbueFire, 60, false);   
 			player.spawnMax = true;
 			player.statManaMax2 += 100;
 			player.buffImmune[BuffID.OnFire] = true;

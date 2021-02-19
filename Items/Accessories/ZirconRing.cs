@@ -21,8 +21,8 @@ namespace tsorcRevamp.Items.Accessories {
 		 public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SilverBar, 1);
-            recipe.AddIngredient(ItemID.SoulOfNight, 12);
-            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
+            recipe.AddIngredient(ItemID.SoulofNight, 12);
+            //recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
 			recipe.AddIngredient(mod.GetItem("DarkSoul"), 9000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void UpdateEquip(Player player) {
-			player.AddBuff(ModContent.BuffType<Firesoul>()", 60, false);    
+			player.AddBuff(BuffID.WeaponImbueFire, 60, false);    
 			player.statDefense += 6;
 			player.thorns = 1f;
         }

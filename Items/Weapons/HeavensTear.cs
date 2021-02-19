@@ -54,8 +54,7 @@ namespace tsorcRevamp.Items.Weapons
             recipe.AddRecipe();
         }
 
-        public override void OnHitNPC( Terraria.Player P, NPC npc, int damage, float KB, bool crit )
-        {
+        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit) {
             //damage = (int) ((Main.rand.Next(26)) * (P.meleeDamage));
             if (npc.FullName == "Tim") damage *= 2;
             else if (npc.FullName == "Dark Caster") damage *= 2;

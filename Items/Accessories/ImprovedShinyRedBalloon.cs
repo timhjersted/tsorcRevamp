@@ -26,8 +26,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void UpdateEquip(Player player) {
-			player.jumpHeight += 5;
-			player.jumpSpeed += 1f;
+            player.jumpSpeedBoost += 1f;
+            player.jumpBoost = true;
         }
  
     }

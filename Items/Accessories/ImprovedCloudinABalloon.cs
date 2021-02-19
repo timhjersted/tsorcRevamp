@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories {
  
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.CloudInABottle, 1);
+            recipe.AddIngredient(ItemID.CloudinaBottle, 1);
             recipe.AddIngredient(mod.GetItem("ImprovedShinyRedBalloon"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 500);
             recipe.AddTile(TileID.DemonAltar);
@@ -28,9 +28,10 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void UpdateEquip(Player player) {
-			player.jumpHeight += 5;
-			player.jumpSpeed += 1f;
-			player.doubleJump = true;
+            player.jumpSpeedBoost += 1f;
+            player.jumpBoost = true;
+            player.jumpAgainCloud = true;
+
         }
  
     }

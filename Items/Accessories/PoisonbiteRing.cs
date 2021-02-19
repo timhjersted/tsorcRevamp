@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Accessories {
  
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("SilverRing") 1);
-			recipe.AddIngredient(mod.GetItem("BloodredMossClump") 20);
+            recipe.AddIngredient(mod.GetItem("SilverRing"), 1);
+			recipe.AddIngredient(mod.GetItem("BloodredMossClump"), 20);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

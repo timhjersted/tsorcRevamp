@@ -7,8 +7,6 @@ using tsorcRevamp.Items;
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
 
-        //public bool GreatMagicMirror;
-
         public int warpX;
         public int warpY;
         public int warpWorld;
@@ -24,6 +22,8 @@ namespace tsorcRevamp {
         public int SoulReaper = 0;
         public bool DragoonBoots = true;
         public bool DuskCrownRing = false;
+
+        public bool Firesoul;
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -65,6 +65,12 @@ namespace tsorcRevamp {
 
         public override void PreUpdate() {
             //todo dragoon boots
+        }
+
+        public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit) {
+            if (Firesoul) {
+                target.AddBuff((BuffID.OnFire), 30, true);
+            }
         }
     }
 }

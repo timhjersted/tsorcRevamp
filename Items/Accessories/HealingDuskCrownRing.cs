@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories {
             Tooltip.SetDefault("This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth." +
                                 "\nThe ringstone doubles magic damage, reduces mana use by 50% and boosts magic crit by 50%" +
                                 "\nbut at the cost of one-half Max HP. Your previous max HP is restored" +
-                                "\nwhen the ring is removed." + 
-        }						"\nHealing enchantment provides +9 Life Regen and gifts the reborn with full health.");
+                                "\nwhen the ring is removed. Healing enchantment provides +9 Life Regen and gifts the reborn with full health.");
+        }
 
         public override void SetDefaults() {
             item.width = 24;
@@ -22,8 +22,8 @@ namespace tsorcRevamp.Items.Accessories {
 		
 		public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DuskCrownRing") 1);
-			recipe.AddIngredient(mod.GetItem("Humanity"), 5);
+            recipe.AddIngredient(mod.GetItem("DuskCrownRing"), 1);
+			//recipe.AddIngredient(mod.GetItem("Humanity"), 5);
 			recipe.AddIngredient(mod.GetItem("BlueTitanite"), 7);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 28000);
             recipe.AddTile(TileID.DemonAltar);
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Accessories {
 			
         }
 		
-		public override bool CanEquip(Player player, int slot)	{
+		public override bool CanEquipAccessory(Player player, int slot)	{
 			return !(Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing);
 		}
     }

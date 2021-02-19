@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories {
 			
         }
 		
-		public override bool CanEquip(Player player, int slot)	{
+		public override bool CanEquipAccessory(Player player, int slot)	{
 			return !(Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing);
 		}
     }
