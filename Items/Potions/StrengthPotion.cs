@@ -1,10 +1,12 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
+namespace tsorcRevamp.Items.Potions {
     public class StrengthPotion : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Increases all stats.");
+            Tooltip.SetDefault("Increases damage by 15%, critical strike chance " +
+                             "\nby 2%, defense by 15, and swing speed by 15%.");
+
         }
 
         public override void SetDefaults() {
@@ -19,8 +21,8 @@ namespace tsorcRevamp.Items {
             item.consumable = true;
             item.rare = ItemRarityID.Blue;
             item.value = 1000;
-            item.buffType = ModContent.BuffType<Buffs.Strength>(); //Specify an existing buff to be applied when used.
-            item.buffTime = 5400; //The amount of time the buff declared in item.buffType will last in ticks. 5400 / 60 is 90, so this buff will last 90 seconds.
+            item.buffType = ModContent.BuffType<Buffs.Strength>();
+            item.buffTime = 36000;
         }
     }
 }

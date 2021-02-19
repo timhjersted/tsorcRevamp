@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Buffs {
     class Strength : ModBuff {
         public override void SetDefaults() {
-            DisplayName.SetDefault("Protect");
-            Description.SetDefault("Defense is increased by 30!");
+            DisplayName.SetDefault("Strength");
+            Description.SetDefault("Increases damage, critical strike chance, defense, and swing speed.");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
