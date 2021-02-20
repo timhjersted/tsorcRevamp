@@ -7,7 +7,13 @@ using tsorcRevamp.Items;
 namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
 
-
+        public override void SetDefaults(NPC npc)
+        {
+            if (npc.type == NPCID.TheHungryII)
+            {
+                npc.knockBackResist = 0f;
+            }
+        }
 
         public override void NPCLoot(NPC npc) {
             
