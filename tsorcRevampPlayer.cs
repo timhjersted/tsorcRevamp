@@ -23,7 +23,6 @@ namespace tsorcRevamp {
         public bool DragoonBoots = true;
         public bool DuskCrownRing = false;
 
-        public bool Firesoul;
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -55,6 +54,8 @@ namespace tsorcRevamp {
             DragonStone = false;
             SoulReaper = 0;
             DragoonBoots = false;
+            player.eocDash = 0;
+            player.armorEffectDrawShadowEOCShield = false;
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
@@ -67,10 +68,5 @@ namespace tsorcRevamp {
             //todo dragoon boots
         }
 
-        public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit) {
-            if (Firesoul) {
-                target.AddBuff((BuffID.OnFire), 30, true);
-            }
-        }
     }
 }
