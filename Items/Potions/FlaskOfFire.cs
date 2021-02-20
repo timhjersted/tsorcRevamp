@@ -16,8 +16,7 @@ namespace tsorcRevamp.Items.Potions {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Deathweed, 1);
-            recipe.AddIngredient(ItemID.Diamond, 1);
-            recipe.AddIngredient(ItemID.SoulofNight, 1);
+            recipe.AddIngredient(ItemID.Fireblossom, 4);
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(ItemID.FlaskofFire, 1);
             recipe.AddRecipe();
