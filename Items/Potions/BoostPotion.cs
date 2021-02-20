@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Potions {
             item.consumable = true;
             item.rare = ItemRarityID.Blue;
             item.value = 5000;
-            item.buffType = ModContent.BuffType<Buffs.Battlefront>();
+            item.buffType = ModContent.BuffType<Buffs.Boost>();
             item.buffTime = 14400;
         }
         public override void AddRecipes() {
