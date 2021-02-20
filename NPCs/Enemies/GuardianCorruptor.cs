@@ -20,6 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.aiStyle = -1;
             npc.npcSlots = 30;
             npc.value = 18750;
+            npc.knockBackResist = 0.5f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.noGravity = true;
@@ -34,7 +35,25 @@ namespace tsorcRevamp.NPCs.Enemies {
             target.AddBuff(BuffID.Weak, 7200, true);
             target.AddBuff(BuffID.BrokenArmor, 180, true);
         }
+
+        public override void FindFrame(int frameHeight) {
+            npc.frameCounter++;
+            if (npc.frameCounter < 10) {
+                npc.frame.Y = 0;
+            }
+            else if (npc.frameCounter < 20) {
+                npc.frame.Y = frameHeight;
+            }
+            else if (npc.frameCounter < 30) {
+                npc.frame.Y = frameHeight * 2;
+            }
+            else {
+                npc.frameCounter = 0;
+            }
+        }
         public override void AI() {
+
+
 
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead) {
                 npc.TargetClosest();
@@ -165,7 +184,6 @@ namespace tsorcRevamp.NPCs.Enemies {
                             Vector2 shotDirection = new Vector2((distX * distAbs) / 1.5f, (distY * distAbs) / 1.5f);
                             int guardianSpit = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height / 2) + npc.velocity.Y), ModContent.NPCType<ViciousSpit>());
                             Main.npc[guardianSpit].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(12 - (12 * i)));
-
                         }
                     }
                     npc.localAI[0] = 0f;
