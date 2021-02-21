@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class Celestriad : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("All spells cost 0 mana to cast");
+            Tooltip.SetDefault("All spells cost 1 mana to cast");
         }
 
         public override void SetDefaults() {
@@ -29,7 +29,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.manaCost *= 0.001f;
+            if (player.inventory[player.selectedItem].magic) {
+                player.inventory[player.selectedItem].mana = 1;
+            }
         }
 
     }

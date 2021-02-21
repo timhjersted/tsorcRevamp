@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Weapons
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "HeavensTear", 1);
-            //recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "Humanity", 15);
+            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "Humanity", 15);
             recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "RedTitanite", 20);
             recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 230000);
 

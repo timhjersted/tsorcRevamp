@@ -102,6 +102,19 @@ namespace tsorcRevamp.Items {
 
     }
 
+    public class SoulOfChaos : Soul {
+        public override void SetStaticDefaults() {
+            base.SetStaticDefaults();
+            DisplayName.SetDefault("Soul of Chaos");
+            Tooltip.SetDefault("The essence of chaos.");
+        }
+
+        public override void PostUpdate() {
+            Lighting.AddLight(item.Center, 0.70f, 0.20f, 0.13f);
+        }
+
+    }
+
     public class BequeathedSoul : Soul {
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();

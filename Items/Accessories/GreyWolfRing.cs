@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(mod.GetItem("WolfRing"), 1);
 			recipe.AddIngredient(mod.GetItem("BandOfSupremeCosmicPower"), 1);
 			recipe.AddIngredient(mod.GetItem("PoisonbloodRing"), 1);
-			//recipe.AddIngredient(mod.GetItem("Humanity"), 20);
+			recipe.AddIngredient(mod.GetItem("Humanity"), 20);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

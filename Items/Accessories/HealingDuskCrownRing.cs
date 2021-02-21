@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories {
 		public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DuskCrownRing"), 1);
-			//recipe.AddIngredient(mod.GetItem("Humanity"), 5);
+			recipe.AddIngredient(mod.GetItem("Humanity"), 5);
 			recipe.AddIngredient(mod.GetItem("BlueTitanite"), 7);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 28000);
             recipe.AddTile(TileID.DemonAltar);
