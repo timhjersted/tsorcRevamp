@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.Bone, 35);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 1000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

@@ -43,11 +43,11 @@ namespace tsorcRevamp.Items.Weapons
         {
             ModRecipe recipe = new ModRecipe(mod);
 
-            //recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "EnchantedMorningStar", 1);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "GuardianSoul", 1);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "CursedSoul", 60);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "FlameOfTheAbyss", 17);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 120000);
+            //recipe.AddIngredient(mod.GetItem("EnchantedMorningStar", 1);
+            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(mod.GetItem("CursedSoul"), 60);
+            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 17);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

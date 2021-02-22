@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,9 +32,9 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             if (player.inventory[player.selectedItem].magic) {
-                player.inventory[player.selectedItem].mana = 1;
+                player.manaCost = 1f / player.inventory[player.selectedItem].mana;
             }
+            
         }
-
     }
 }

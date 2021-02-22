@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.BladeofGrass, 1);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 3000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

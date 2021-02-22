@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons
         {
             ModRecipe recipe = new ModRecipe(mod);
 
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "AdamantiteScythe", 1);
+            recipe.AddIngredient(mod.GetItem("AdamantiteScythe"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 15000);
 
             recipe.AddTile(TileID.DemonAltar);

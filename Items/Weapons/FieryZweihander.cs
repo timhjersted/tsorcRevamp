@@ -38,14 +38,15 @@ namespace tsorcRevamp.Items.Weapons
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.HellstoneBar, 31);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 1400);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1400);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override void OnHitNPC( Terraria.Player player, NPC npc, int damage, float knockBack, bool crit )
+        public override void OnHitNPC( Player player, NPC npc, int damage, float knockBack, bool crit )
         {
             if (Main.rand.Next(2) == 0)
             {
@@ -53,7 +54,7 @@ namespace tsorcRevamp.Items.Weapons
             }
         }
 
-        public override void MeleeEffects( Terraria.Player player, Rectangle rectangle )
+        public override void MeleeEffects( Player player, Rectangle rectangle )
         {
             Color color = new Color();
             //This is the same general effect done with the Fiery Greatsword

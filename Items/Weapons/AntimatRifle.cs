@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Weapons
             recipe.AddRecipe();
         }
 
-        public override void UseStyle( Terraria.Player player )
+        public override void UseStyle( Player player )
         {
             float backX = 24f; // move the weapon back
             float downY = 0f; // and down
@@ -70,7 +70,7 @@ namespace tsorcRevamp.Items.Weapons
             player.itemLocation.X = player.itemLocation.X - (backX * cosRot * player.direction) - (downY * sinRot * player.gravDir);
             player.itemLocation.Y = player.itemLocation.Y - (backX * sinRot * player.direction) + (downY * cosRot * player.gravDir);
         }
-        public override bool Shoot( Terraria.Player P, ref Vector2 Pos, ref float speedX, ref float speedY, ref int type, ref int DMG, ref float KB )
+        public override bool Shoot( Player P, ref Vector2 Pos, ref float speedX, ref float speedY, ref int type, ref int DMG, ref float KB )
         {//as usual, ty Yoraiz0r
             if (type == AmmoID.Bullet) { type = mod.ProjectileType("AntiMaterialRound"); }
 

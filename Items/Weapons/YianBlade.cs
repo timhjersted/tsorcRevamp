@@ -40,14 +40,14 @@ namespace tsorcRevamp.Items.Weapons
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.GoldBroadsword, 1);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 3000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override void ModifyHitNPC( Terraria.Player P, NPC target, ref int damage, ref float knockBack, ref bool crit )
+        public override void ModifyHitNPC( Player P, NPC target, ref int damage, ref float knockBack, ref bool crit )
         {
             if (Main.rand.Next(15) == 0)
             {
@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons
             }
         }
 
-        public override void MeleeEffects( Terraria.Player player, Rectangle rectangle )
+        public override void MeleeEffects( Player player, Rectangle rectangle )
         {
             Color color = new Color();
             int dust = Dust.NewDust(new Vector2((float)rectangle.X, (float)rectangle.Y), rectangle.Width, rectangle.Height, 15, (player.velocity.X * 0.2f) + (player.direction * 2), player.velocity.Y * 0.2f, 100, color, 1f);

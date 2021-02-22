@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons
         {
             ModRecipe recipe = new ModRecipe(mod);
 
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "HallowedFalchion", 1);
+            recipe.AddIngredient(mod.GetItem("HallowedFalchion"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
 
             recipe.AddTile(TileID.DemonAltar);
