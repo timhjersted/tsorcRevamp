@@ -1,37 +1,37 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
     [AutoloadEquip(EquipType.Body)]
-    public class ArcherOfLumeliaShirt : ModItem
+    public class AnkorWatChestplate : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Archer of Lemelia Shirt");
-            Tooltip.SetDefault("Gifted with lethal archery abilities\n25% chance not to consume ammo.\nSet Bonus: +23% Ranged Crit, +15% Ranged Damage, Archery Skill (arrow speed & dmg +20%)");
+            Tooltip.SetDefault("+30% Magic Critical chance.\nSet bonus: +160 max mana, Rapid Mana Regen");
         }
 
         public override void SetDefaults()
         {
             item.width = 18;
             item.height = 18;
-            item.defense = 20;
-            item.value = 5000;
-            item.rare = ItemRarityID.Orange;
+            item.defense = 14;
+            item.value = 100000;
+            item.rare = ItemRarityID.Pink;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.ammoCost75 = true;
+            player.magicCrit += 30;
         }
 
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.AdamantiteBreastplate, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(ItemID.HallowedPlateMail, 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

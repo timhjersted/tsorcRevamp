@@ -4,13 +4,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Armors
 {
-    [AutoloadEquip(EquipType.Body)]
-    public class ArcherOfLumeliaShirt : ModItem
+    [AutoloadEquip(EquipType.Legs)]
+    public class GreavesOfArtorias : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Archer of Lemelia Shirt");
-            Tooltip.SetDefault("Gifted with lethal archery abilities\n25% chance not to consume ammo.\nSet Bonus: +23% Ranged Crit, +15% Ranged Damage, Archery Skill (arrow speed & dmg +20%)");
+            DisplayName.SetDefault("Greaves of Artorias");
+            Tooltip.SetDefault("Enchanted armor of Artorias.\n+100 Max Mana");
         }
 
         public override void SetDefaults()
@@ -18,23 +18,25 @@ namespace tsorcRevamp.Items.Armors
             item.width = 18;
             item.height = 18;
             item.defense = 20;
-            item.value = 5000;
-            item.rare = ItemRarityID.Orange;
+            item.value = 35500;
+            item.rare = ItemRarityID.Purple;
         }
 
         public override void UpdateEquip(Player player)
         {
-            player.ammoCost75 = true;
+            player.statManaMax2 += 100;
         }
 
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.AdamantiteBreastplate, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 2);
+            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
     }
 }
+
