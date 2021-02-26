@@ -9,8 +9,10 @@ namespace tsorcRevamp.Items.Weapons {
 		}
 
 		public override void SetDefaults() {
-			item.damage = 20;
 			item.ranged = true;
+			item.shoot = ProjectileID.PurificationPowder;
+
+			item.damage = 20;
 			item.width = 50;
 			item.height = 18;
 			item.useTime = 16;
@@ -22,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons {
 			item.rare = ItemRarityID.Pink;
 			item.UseSound = SoundID.Item5;
 			item.autoReuse = true;
-			item.shoot = 10; //do not remove
+			
 			item.shootSpeed = 12f;
 			item.useAmmo = AmmoID.Arrow;
 		}
