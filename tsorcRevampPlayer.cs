@@ -22,6 +22,7 @@ namespace tsorcRevamp {
         public int SoulReaper = 0;
         public bool DragoonBoots = true;
         public bool DuskCrownRing = false;
+        public bool UndeadTalisman = false;
 
 
         public override TagCompound Save() {
@@ -56,11 +57,20 @@ namespace tsorcRevamp {
             DragoonBoots = false;
             player.eocDash = 0;
             player.armorEffectDrawShadowEOCShield = false;
+            UndeadTalisman = false;
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
+            int NT = npc.type;
             if(DragonStone) {
                 //todo make the player take no damage from flying enemies
+            }
+            if (UndeadTalisman) {
+                if (NT == 3 || NT == 21 || NT == 31 || NT == 32 || NT == 33 || NT == 34 || NT == 44 || NT == 45 || NT == 52 || NT == 53 || NT == 77 || NT == 78 || NT == 79 || NT == 80 || NT == 82 || NT == 109 || NT == 110 || NT == 132 || NT == 140/* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/) {
+                    damage -= 15;
+
+                    if (damage < 0) damage = 0;
+                }
             }
         }
 

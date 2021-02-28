@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.Accessories {
                 if (player.controlLeft) {
                     if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
 
-                    if (player.velocity.X < -3 && player.velocity.X > -60 * player.moveSpeed) {
+                    if (player.velocity.X < -3 && player.velocity.X > -6 * player.moveSpeed) {
                         if (player.velocity.Y != 0) player.velocity.X -= 0.1f;
                         else player.velocity.X -= 0.2f;
                         player.velocity.X -= 0.02f + ((player.moveSpeed - 1f) / 10);
@@ -82,7 +82,7 @@ namespace tsorcRevamp.Items.Accessories {
 
                 if (player.controlRight) {
                     if (player.velocity.X < 3) player.velocity.X += (float)(player.moveSpeed - 1f) / 10;
-                    if (player.velocity.X > 3 && player.velocity.X < 60 * player.moveSpeed) {
+                    if (player.velocity.X > 3 && player.velocity.X < 6 * player.moveSpeed) {
                         if (player.velocity.Y != 0) player.velocity.X += 0.1f;
                         else player.velocity.X += 0.2f;
                         player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);

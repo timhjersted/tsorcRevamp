@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Accessories {
  
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            //recipe.AddIngredient(mod.GetItem("FrozenStarlight"), 1);
+            recipe.AddIngredient(ItemID.JellyfishNecklace, 1);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddIngredient(ItemID.CrossNecklace, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
