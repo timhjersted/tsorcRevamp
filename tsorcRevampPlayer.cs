@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -17,13 +18,15 @@ namespace tsorcRevamp {
         public int townWarpWorld;
         public bool townWarpSet;
 
-        public bool SilverSerpentRing = true;
-        public bool DragonStone = true;
+        public bool SilverSerpentRing = false;
+        public bool DragonStone = false;
         public int SoulReaper = 0;
-        public bool DragoonBoots = true;
+        
         public bool DuskCrownRing = false;
         public bool UndeadTalisman = false;
 
+        public bool DragoonBoots = false;
+        public bool DragoonBootsEnable = false;
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -58,11 +61,13 @@ namespace tsorcRevamp {
             player.eocDash = 0;
             player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
+            DuskCrownRing = false;
+            DragoonBoots = false;
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
             int NT = npc.type;
-            if(DragonStone) {
+            if (DragonStone) {
                 //todo make the player take no damage from flying enemies
             }
             if (UndeadTalisman) {
@@ -74,8 +79,17 @@ namespace tsorcRevamp {
             }
         }
 
+        public override void ProcessTriggers(TriggersSet triggersSet) {
+            if (tsorcRevamp.toggleDragoonBoots.JustPressed) {
+                DragoonBootsEnable = !DragoonBootsEnable;
+            }
+        }
         public override void PreUpdate() {
-            //todo dragoon boots
+            if (DragoonBoots) {
+                if (DragoonBootsEnable) {
+                    Player.jumpSpeed += 10f;
+                }
+            }
         }
 
     }

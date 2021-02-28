@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
-    public class EyeoftheGods : ModItem {
+    public class EyeOfTheGods : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Eye of the Gods");
             Tooltip.SetDefault("Lights up your cursor when equipped");
