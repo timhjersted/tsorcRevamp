@@ -31,9 +31,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
-            int j2 = (int)(player.position.Y + 2f) / 16;
-            Lighting.AddLight(i2, j2, 0.25f, 0.25f, 1.5f);
+            int playerX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
+            int playerY = (int)(player.position.Y + 2f) / 16;
+            Lighting.AddLight(playerX, playerY, 0.25f, 0.25f, 1.5f);
         }
     }
 }
