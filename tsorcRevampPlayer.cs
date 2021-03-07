@@ -28,6 +28,8 @@ namespace tsorcRevamp {
         public bool DragoonBoots = false;
         public bool DragoonBootsEnable = false;
 
+        public bool GemBox = false;
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -63,6 +65,7 @@ namespace tsorcRevamp {
             UndeadTalisman = false;
             DuskCrownRing = false;
             DragoonBoots = false;
+            GemBox = false;
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
