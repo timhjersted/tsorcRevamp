@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class BarrierRing : ModItem {
         public override void SetStaticDefaults() { 
-            Tooltip.SetDefault("Casts barrier when the wear is critically wounded." + 
-                                "\nBarrier increases defense by 20.");
+            Tooltip.SetDefault("Casts Barrier when the wearer is critically wounded" + 
+                                "\nBarrier increases defense by 20");
         }
 
         public override void SetDefaults() {
@@ -29,8 +29,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            if (player.statLife <= (player.statLifeMax * 0.25f)) {
-                player.statDefense += 20;
+            if (player.statLife <= (player.statLifeMax * 0.25f)) 
+            {
+                player.AddBuff(ModContent.BuffType<Buffs.Barrier>(), 1, false);
             }
         }
 

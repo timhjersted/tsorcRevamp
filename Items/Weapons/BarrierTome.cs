@@ -6,9 +6,9 @@ namespace tsorcRevamp.Items.Weapons {
     public class BarrierTome : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Barrier Tome");
-            Tooltip.SetDefault("A lost tome for artisans.\n" +
-                                "Casts Barrier on the wearer, which adds 20 defense for 20 seconds.\n" +
-                                "Does not stack with other Barrier spells.");
+            Tooltip.SetDefault("A lost tome for artisans\n" +
+                                "Casts Barrier on the user, which adds 20 defense for 20 seconds\n" +
+                                "Does not stack with other Barrier spells");
 
         }
 
@@ -23,8 +23,8 @@ namespace tsorcRevamp.Items.Weapons {
             item.mana = 150;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
-            item.useAnimation = 10;
+            item.useTime = 20;
+            item.useAnimation = 20;
             item.value = 42000;
 
         }
@@ -41,7 +41,8 @@ namespace tsorcRevamp.Items.Weapons {
         }
 
         public override bool UseItem(Player player) {
-            player.AddBuff(ModContent.BuffType<Buffs.Protect>(), 60, false);
+            player.AddBuff(ModContent.BuffType<Buffs.Barrier>(), 1200, false);
+            //Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
             return true;
         }
 

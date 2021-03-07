@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
+using System.Reflection;
 
 namespace tsorcRevamp.Items {
 
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Items {
             item.height = refItem.height;
             item.maxStack = 999999;
             item.value = 1;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Lime;
         }
 
         public override bool GrabStyle(Player player) { //make pulling souls through walls more consistent
@@ -153,4 +154,5 @@ namespace tsorcRevamp.Items {
             Lighting.AddLight(item.Center, 0.85f, 0f, 0f);
         }
     }
+
 }
