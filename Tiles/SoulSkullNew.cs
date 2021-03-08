@@ -17,11 +17,11 @@ namespace tsorcRevamp.Tiles
 		{
 			Main.tileFrameImportant[Type] = true;
 
-			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
-			TileObjectData.addTile(Type);
-			TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16 };
-			ModTranslation name = CreateMapEntryName();
-			name.SetDefault("Soul Skull");
+			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);			//rather than make the click hitbox 1 tile tall
+			TileObjectData.addTile(Type);										//just avoid the issue by making the entire tile
+			TileObjectData.newTile.CoordinateHeights = new[] { 9, 9, 9 };		//only 1 tile tall. im a genius.
+			ModTranslation name = CreateMapEntryName();							//yes this does mean that everywhere the y position (j)
+			name.SetDefault("Soul Skull");										//is called, you have to call (j - 1) instead. oh well
 			AddMapEntry(new Color(120, 250, 0), name);
 			dustType = 30;
 			disableSmartCursor = true;
@@ -73,7 +73,7 @@ namespace tsorcRevamp.Tiles
 							// We can support different dust for different styles here
 							if (dustChoice != -1)
 							{
-								int dust = Dust.NewDust(new Vector2(i * 16 + 16, j * 16 + 6), 4, 4, dustChoice, 0f, 0f, 100, default(Color), 1f);
+								int dust = Dust.NewDust(new Vector2(i * 16 + 16, (j - 1) * 16 + 6), 4, 4, dustChoice, 0f, 0f, 100, default(Color), 1f);
 								//if (Main.rand.Next(3) != 0)
 								{
 									Main.dust[dust].noGravity = true;
@@ -100,7 +100,7 @@ namespace tsorcRevamp.Tiles
 							// We can support different dust for different styles here
 							if (dustChoice != -1)
 							{
-								int dust = Dust.NewDust(new Vector2(i * 16 + 7, j * 16 + 19), 4, 4, dustChoice, 0f, 0f, 100, default(Color), .7f); //left eye
+								int dust = Dust.NewDust(new Vector2(i * 16 + 7, (j - 1) * 16 + 19), 4, 4, dustChoice, 0f, 0f, 100, default(Color), .7f); //left eye
 								Main.dust[dust].noGravity = true;
 								Main.dust[dust].velocity *= 0.1f;
 								Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 0.1f;
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Tiles
 							// We can support different dust for different styles here
 							if (dustChoice != -1)
 							{
-								int dust = Dust.NewDust(new Vector2(i * 16 + 12, j * 16 + 19), 4, 4, dustChoice, 0f, 0f, 100, default(Color), .7f); //right eye
+								int dust = Dust.NewDust(new Vector2(i * 16 + 12, (j - 1) * 16 + 19), 4, 4, dustChoice, 0f, 0f, 100, default(Color), .7f); //right eye
 								Main.dust[dust].noGravity = true;
 								Main.dust[dust].velocity *= 0.1f;
 								Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 0.1f;
@@ -158,7 +158,7 @@ namespace tsorcRevamp.Tiles
 					zero = Vector2.Zero;
 				}
 				int height = tile.frameY == 36 ? 18 : 16;
-				Main.spriteBatch.Draw(mod.GetTexture("Tiles/SoulSkull_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX, tile.frameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+				Main.spriteBatch.Draw(mod.GetTexture("Tiles/SoulSkull_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, (j - 1) * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX, tile.frameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 			}
 
 			/*SpriteEffects effects = SpriteEffects.None;

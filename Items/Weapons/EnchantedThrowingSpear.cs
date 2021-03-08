@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons
             ModRecipe recipe = new ModRecipe(mod);
             //recipe.AddIngredient(mod.GetItem("ThrowingSpear"), 1);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            //recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
+            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);

@@ -54,7 +54,6 @@ namespace tsorcRevamp.Items.Weapons
 
         public override void AddRecipes()
         {
-            //incomplete recipe
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.Gungnir, 1);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 3);

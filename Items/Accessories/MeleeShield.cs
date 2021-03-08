@@ -168,7 +168,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("BeholderShield2"), 1);
-            //recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 70000);
             recipe.AddTile(TileID.DemonAltar);

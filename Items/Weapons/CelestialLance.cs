@@ -49,7 +49,6 @@ namespace tsorcRevamp.Items.Weapons {
         }
 
         public override void AddRecipes() {
-            //incomplete recipe
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("Longinus"), 1);
             recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 20);
