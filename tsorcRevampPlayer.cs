@@ -32,6 +32,8 @@ namespace tsorcRevamp {
 
         public int CurseLevel = 1;
 
+        public bool MeleeArmorVamp10 = false;
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -68,6 +70,19 @@ namespace tsorcRevamp {
             DuskCrownRing = false;
             DragoonBoots = false;
             GemBox = false;
+
+        }
+
+        public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
+        {
+            if(MeleeArmorVamp10)
+            {
+                if(Main.rand.Next(2) == 0)
+                {
+                    player.HealEffect(damage / 10);
+                    player.statLife += (damage / 10);
+                }
+            }
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {

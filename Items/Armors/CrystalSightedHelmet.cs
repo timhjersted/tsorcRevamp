@@ -44,6 +44,9 @@ namespace tsorcRevamp.Items.Armors
                 player.magicDamage -= 0.3f;
                 player.meleeCrit += 5;
             }
+
+            player.eocDash = 20;
+            player.armorEffectDrawShadowEOCShield = true;
         }
 
         public override void UpdateArmorSet(Player player)
