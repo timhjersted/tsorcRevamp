@@ -177,5 +177,11 @@ namespace tsorcRevamp.NPCs.Bosses { //CURRENTLY NON-FUNCTIONAL, I AM AWARE
             }
             return true;
         }
+        public override void NPCLoot() {
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfEarth>());
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfEarth>());
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.WaterShoes>());
+            Item.NewItem(npc.getRect(), ItemID.Drax);
+        }
     }
 }

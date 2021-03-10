@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 }
                 npc.localAI[0] += 1f;
                 if (npc.localAI[0] == 180f) {
-                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) {
+                    if (Collision.CanHitLine(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) {
                         int shotCount = 3;
                         Vector2 shotOrigin = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
                         float distX = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) - shotOrigin.X;

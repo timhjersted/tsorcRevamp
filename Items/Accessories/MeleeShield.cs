@@ -12,6 +12,8 @@ namespace tsorcRevamp.Items.Accessories {
                                 "\nGrants immunity to knockback");
         }
         public override void SetDefaults() {
+            item.width = 30;
+            item.height = 30;
             item.accessory = true;
             item.rare = ItemRarityID.Orange;
         }
@@ -37,8 +39,6 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void SetDefaults() {
             base.SetDefaults();
-            item.width = 30;
-            item.height = 30;
             item.defense = 20;
             item.value = 3000000;
         }
