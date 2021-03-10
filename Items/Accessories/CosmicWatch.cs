@@ -38,6 +38,9 @@ namespace tsorcRevamp.Items.Accessories {
                 }
                 else Main.NewText("You shift time forward and a new night begins...", 175, 75, 255);
             }
+            if (Main.netMode == NetmodeID.Server) {
+                NetMessage.SendData(MessageID.WorldData);
+            }
             return true;
         }
         public override void UpdateEquip(Player player) {
