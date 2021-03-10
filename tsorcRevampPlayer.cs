@@ -30,6 +30,8 @@ namespace tsorcRevamp {
 
         public bool GemBox = false;
 
+        public int CurseLevel = 1;
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
