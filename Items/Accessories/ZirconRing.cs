@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class ZirconRing : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Grants Firesoul Buff when worn, which provides" +
+            Tooltip.SetDefault("Grants Weapon Imbue: Fire buff when worn, which provides" +
 								"\n10% increased melee damage and all swords inflict fire damage." + 
 								"\nPlus Thorns Effect and +6 Defense.");
         }

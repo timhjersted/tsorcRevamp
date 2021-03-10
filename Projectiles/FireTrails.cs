@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles {
                     float rotation = MathHelper.ToRadians(AI_Split_Angle);
                     for (int i = 0; i < AI_Projectile_Split_Rate; i++) {
                         Vector2 shiftSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (AI_Projectile_Split_Rate - 1))); //evenly divide the projectiles among the spread angle
-                        Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<TestSplit>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                        Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<FireTrails>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
                     }
                 }
                 projectile.Kill(); //not necessary (we check if ai_timer is *exactly* 12) but to stay true to the rage's original ai, we kill it
