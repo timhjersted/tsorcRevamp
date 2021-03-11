@@ -33,6 +33,7 @@ namespace tsorcRevamp {
         public int CurseLevel = 1;
 
         public bool MeleeArmorVamp10 = false;
+        public bool NUVamp = false;
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -77,10 +78,18 @@ namespace tsorcRevamp {
         {
             if(MeleeArmorVamp10)
             {
-                if(Main.rand.Next(2) == 0)
+                if(Main.rand.Next(10) == 0)
                 {
                     player.HealEffect(damage / 10);
                     player.statLife += (damage / 10);
+                }
+            }
+            if(NUVamp)
+            {
+                if(Main.rand.Next(5) == 0)
+                {
+                    player.HealEffect(damage / 4);
+                    player.statLife += (damage / 4);
                 }
             }
         }
