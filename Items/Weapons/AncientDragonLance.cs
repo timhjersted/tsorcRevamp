@@ -1,17 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using tsorcRevamp.Projectiles;
-
 namespace tsorcRevamp.Items.Weapons {
-    public class AncientLance : ModItem {
+    public class AncientDragonLance : ModItem {
 
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Ancient Dragon Lance");
             Tooltip.SetDefault("Said to pierce any armor, even through walls" +
                 "\nCan hit multiple times");
         }
@@ -36,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons {
             item.rare = ItemRarityID.Green;
             item.maxStack = 1;
             item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.AncientLance>();
+            item.shoot = ModContent.ProjectileType<Projectiles.AncientDragonLance>();
 
         }
 

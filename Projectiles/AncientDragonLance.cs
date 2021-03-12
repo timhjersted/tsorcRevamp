@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 //using tsorcRevamp.Dusts;
 
 namespace tsorcRevamp.Projectiles {
-    class AncientLance : ModProjectile {
+    class AncientDragonLance : ModProjectile {
 
         public override void SetDefaults() {
 			projectile.width = 45;
