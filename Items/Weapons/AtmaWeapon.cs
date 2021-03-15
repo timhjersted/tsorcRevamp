@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
                                 "The true form of your father's sword revealed.\n" +
-                                "Does 105 damage when at full health, and 80 damage at 200 health, scaling with current HP.");
+                                "Does 105 damage when at full health, and 80 damage at half health, scaling with current HP.");
 
         }
 
@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons {
 
             item.stack = 1;
             item.rare = ItemRarityID.Pink;
-            item.damage = 105;
+            item.damage = 138; //"this looks arbitrary!" correct. i manually figured out which values for hp and base damage would get close to the original damage
             item.height = 58;
             item.knockBack = (float)9;
             item.maxStack = 1;
@@ -33,14 +33,18 @@ namespace tsorcRevamp.Items.Weapons {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.Excalibur, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(ModLoader.GetMod("DarkSouls"), "DarkSoul", 60000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            mult = (float)player.statLife / (float)player.statLifeMax2;
+            mult = (float)player.statLife / ((float)player.statLife + 125);
+            //these dont work. the damage added with `flat` and `add` arent modified by player.meleeDamage. don't use these.
+            //flat = (int)((float)player.statLife/8 + 55;
+            //add = (int)((float)player.statLife/8 + 55;
+
         }
     }
 }

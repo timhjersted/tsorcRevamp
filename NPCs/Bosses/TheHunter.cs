@@ -4,8 +4,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Bosses { //CURRENTLY NON-FUNCTIONAL, I AM AWARE
-    class TheHunter : ModNPC { //TODO FIX THE PROJECTILES
+namespace tsorcRevamp.NPCs.Bosses {
+    class TheHunter : ModNPC {
         public override void SetStaticDefaults() {
             Main.npcFrameCount[npc.type] = 7;
         }

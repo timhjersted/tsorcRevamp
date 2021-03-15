@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -114,12 +115,10 @@ namespace tsorcRevamp {
             }
         }
         public override void PreUpdate() {
-            if (DragoonBoots) {
-                if (DragoonBootsEnable) {
+            if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
                     Player.jumpSpeed += 10f;
-                }
+
             }
         }
-
     }
 }
