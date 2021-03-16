@@ -17,6 +17,7 @@ namespace tsorcRevamp.Tiles
 
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
 			TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 18 };
+			animationFrameHeight = 56;
 			TileObjectData.addTile(Type);
 			ModTranslation name = CreateMapEntryName();
 			name.SetDefault("Bonfire");
@@ -29,6 +30,7 @@ namespace tsorcRevamp.Tiles
 			Main.tileNoAttach[Type] = true;
 			Main.tileWaterDeath[Type] = false;
 			Main.tileLavaDeath[Type] = false;
+
 		}
 
 		private readonly int animationFrameWidth = 54;
@@ -77,17 +79,18 @@ namespace tsorcRevamp.Tiles
 				zero = Vector2.Zero;
 			}
 			int width = tile.frameX % animationFrameWidth == 54 ? 18 : 16;
+			int height = tile.frameY % animationFrameHeight == 36 ? 18 : 16; //This seems to say that of the 3 Y tiles, the bottom one is 18px tall, the other two 16px. 
 			int animate = 0;
-			if (tile.frameX >= 0)
+			if (tile.frameX >= 0) //change to 54 once right-click to light is implemented
 			{
 				animate = Main.tileFrame[Type] * animationFrameWidth;
 			}
-			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, 16), Lighting.GetColor(i, j), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, height), Lighting.GetColor(i, j), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
 			Main.spriteBatch.Draw(mod.GetTexture("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, 16), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 			return false;
 		}
-
 	}
+
 	public class BonfireItem : ModItem
 	{
 		public override void SetStaticDefaults()
