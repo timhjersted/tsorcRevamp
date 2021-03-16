@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons {
             item.value = 110000;
             item.width = 36;
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             //todo add mod NPCs to this list
             if (target.type == NPCID.Shark
                 || target.type == NPCID.Goldfish

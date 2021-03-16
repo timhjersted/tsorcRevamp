@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Weapons {
                                 "\nreturn them if the wielder's throw misses the one for whom it was intended.");
         }
         public override void SetDefaults() {
+            item.rare = ItemRarityID.Pink;
             item.width = 20;
             item.height = 20;
             item.useStyle = ItemUseStyleID.SwingThrow;

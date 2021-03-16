@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons {
             item.value = 21000;
             item.melee = true;
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             if (target.type == NPCID.EaterofSouls
                 || target.type == NPCID.BigEater
                 || target.type == NPCID.LittleEater
