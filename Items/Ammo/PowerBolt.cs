@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Ammo {
             item.maxStack = 250;
             item.shootSpeed = 3.5f;
             item.value = 1000;
+            item.shoot = ModContent.ProjectileType<Projectiles.Bolt>();
         }
     }
 }

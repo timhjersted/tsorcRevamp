@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons
 
         public override void SetDefaults()
         {
-            item.damage = 19;
+            item.damage = 38;
             item.width = 28;
             item.height = 14;
             item.knockBack = 4;
@@ -32,10 +32,8 @@ namespace tsorcRevamp.Items.Weapons
             item.value = 9000;
             item.noMelee = true;
         }
-
-        /*public override void ModifyHitNPC(Player myPlayer, NPC npc, ref int damage, ref float knockback, ref bool crit)
-        {
-            damage = (int)((Main.rand.Next(39)) * (myPlayer.meleeDamage));
-        }*/
+        public override void HoldItem(Player player) {
+            player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
+        }
     }
 }

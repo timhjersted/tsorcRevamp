@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
+            item.width = 24;
             item.height = 28;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.channel = true;
@@ -29,6 +29,10 @@ namespace tsorcRevamp.Items.Weapons {
             item.value = 12000;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.OldMorningStar>();
+        }
+
+        public override void HoldItem(Player player) {
+            player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }
 }

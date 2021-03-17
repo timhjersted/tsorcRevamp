@@ -7,17 +7,19 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles {
 
-    public class OldMorningStar : ModProjectile {
+    public class SilverBall : ModProjectile {
 
         private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
         public override void SetDefaults() {
-            projectile.width = 17;
-            projectile.height = 17;
+            projectile.width = 34;
+            projectile.height = 34;
+            projectile.scale = 0.8f;
             projectile.friendly = true;
             projectile.penetrate = -1;
             projectile.melee = true;
         }
+
         public override void AI() {
 
             var player = Main.player[projectile.owner];

@@ -36,6 +36,8 @@ namespace tsorcRevamp {
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
 
+        public bool OldWeapon = true;
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -72,7 +74,7 @@ namespace tsorcRevamp {
             DuskCrownRing = false;
             DragoonBoots = false;
             GemBox = false;
-
+            OldWeapon = false;
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
@@ -95,13 +97,45 @@ namespace tsorcRevamp {
             }
         }
 
+        public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit) {
+            if (OldWeapon) {
+                float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
+                damage = (int)(damage * damageMult);
+            }
+        }
+        public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
+            if (OldWeapon) {
+                float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
+                damage = (int)(damage * damageMult);
+            }
+        }
+
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
             int NT = npc.type;
             if (DragonStone) {
                 //todo make the player take no damage from flying enemies
             }
             if (UndeadTalisman) {
-                if (NT == 3 || NT == 21 || NT == 31 || NT == 32 || NT == 33 || NT == 34 || NT == 44 || NT == 45 || NT == 52 || NT == 53 || NT == 77 || NT == 78 || NT == 79 || NT == 80 || NT == 82 || NT == 109 || NT == 110 || NT == 132 || NT == 140/* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/) {
+                if (NPCID.Sets.Skeletons.Contains(npc.type)
+                    || npc.type == NPCID.Zombie
+                    || npc.type == NPCID.BaldZombie
+                    || npc.type == NPCID.AngryBones
+                    || npc.type == NPCID.DarkCaster
+                    || npc.type == NPCID.CursedSkull
+                    || npc.type == NPCID.UndeadMiner
+                    || npc.type == NPCID.Tim
+                    || npc.type == NPCID.DoctorBones
+                    || npc.type == NPCID.ArmoredSkeleton
+                    || npc.type == NPCID.Mummy
+                    || npc.type == NPCID.DarkMummy
+                    || npc.type == NPCID.LightMummy
+                    || npc.type == NPCID.Wraith
+                    || npc.type == NPCID.SkeletonArcher
+                    || npc.type == NPCID.PossessedArmor
+                    || npc.type == NPCID.TheGroom
+                    || npc.type == NPCID.SkeletronHand
+                    || npc.type == NPCID.SkeletronHead
+                    /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/) {
                     damage -= 15;
 
                     if (damage < 0) damage = 0;
