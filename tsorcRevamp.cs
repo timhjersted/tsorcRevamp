@@ -193,7 +193,7 @@ namespace tsorcRevamp {
                 }
                 return true; //allow using items if they do not create tiles
             }
-			return base.CanUseItem(item, player); //use default value
+            return base.CanUseItem(item, player); //use default value
         }
     }
 
@@ -394,17 +394,49 @@ namespace tsorcRevamp {
                     return true;
                 }
                 else if (unbreakable.Contains(type)) {//always disallow Unbreakable	
-					return false;
-                } 
+                    return false;
+                }
                 else if (right && left) {//if a tile has no neighboring tiles horizontally, allow breaking
-					return true;
-                } 
+                    return true;
+                }
                 else if (below && above) {//if a tile has no neighboring tiles vertically, allow breaking
-					return true;
-                } 
+                    return true;
+                }
                 else return false; //disallow breaking tiles otherwise
             }
             return base.CanKillTile(x, y, type, ref blockDamaged); //use default value
+        }
+
+        public override bool CanExplode(int x, int y, int type) {
+            bool right = !Main.tile[x + 1, y].active();
+            bool left = !Main.tile[x - 1, y].active();
+            bool below = !Main.tile[x, y - 1].active();
+            bool above = !Main.tile[x, y + 1].active();
+            bool CanDestroy = false;
+            {
+                if (Main.tileDungeon[Main.tile[x, y].type]
+                    || type == TileID.Silver
+                    || type == TileID.Cobalt
+                    || type == TileID.Mythril
+                    || type == TileID.Adamantite
+					|| (unbreakable.Contains(type))
+				) {
+                    CanDestroy = false;
+                }
+                if (!Main.hardMode && type == TileID.Hellstone) {
+                    CanDestroy = false;
+                }
+				if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
+					CanDestroy = true;
+                }
+
+				//check cankilltiles stuff
+				if ((right && left) || (above && below) || allowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
+					CanDestroy = true;
+                }
+                return CanDestroy;
+            }
+
         }
     }
 }
