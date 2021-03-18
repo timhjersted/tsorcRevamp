@@ -22,36 +22,36 @@ namespace tsorcRevamp {
 
     }
 
-	[Label("Config")]
-	[BackgroundColor(30, 60, 40, 220)]
+    [Label("Config")]
+    [BackgroundColor(30, 60, 40, 220)]
     public class tsorcRevampConfig : ModConfig {
         public override ConfigScope Mode => ConfigScope.ServerSide;
         [Label("Adventure Mode")]
-		[BackgroundColor(60, 140, 80, 192)]
+        [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Adventure mode prevents breaking and placing most blocks.\nLeave this enabled if you're playing with the custom map!")]
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
-		[Label("Souls Drop on Death")]
-		[BackgroundColor(60, 140, 80, 192)]
-		[Tooltip("Drop all your Dark Souls when you die.\nIf \"Delete Dropped Souls on Death\" is enabled, \nyour Souls will drop after old Souls are deleted.\nDefaults to On")]
-		[DefaultValue(true)]
-		public bool SoulsDropOnDeath { get; set; }
+        [Label("Souls Drop on Death")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Drop all your Dark Souls when you die.\nIf \"Delete Dropped Souls on Death\" is enabled, \nyour Souls will drop after old Souls are deleted.\nDefaults to On")]
+        [DefaultValue(true)]
+        public bool SoulsDropOnDeath { get; set; }
 
-		[Label("Delete Dropped Souls on Death")]
-		[BackgroundColor(60, 140, 80, 192)]
-		[Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDefaults to On")]
-		[DefaultValue(true)]
-		public bool DeleteDroppedSoulsOnDeath { get; set; }
-	}
+        [Label("Delete Dropped Souls on Death")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDefaults to On")]
+        [DefaultValue(true)]
+        public bool DeleteDroppedSoulsOnDeath { get; set; }
+    }
 
     public class TilePlaceCode : GlobalItem {
 
         public static int[] allowed = { //these can always be placed
+			//if you can think of a more graceful way to do this, please share
 			4,  //torch
 			10, //Closed Door
 			11, //Open Door  
 			13, //bottles
-			14, //table
 			15, //chairs
 			16, //anvil
 			17, //furnance
@@ -193,14 +193,13 @@ namespace tsorcRevamp {
                 }
                 return true; //allow using items if they do not create tiles
             }
-			return true; //always allow if not in adventure mode
+			return base.CanUseItem(item, player); //use default value
         }
     }
 
     public class TileKillCode : GlobalTile {
         public List<int> allowed = new List<int>() { //These can always be destroyed
-			// http://tconfig.wikia.com/wiki/List_of_Tiles
-    
+		//if you can think of a more graceful way to do this, please share
 			19, //Wood Platform 
 			67, //Amethyst 
 					//25, ebonstone
@@ -222,7 +221,7 @@ namespace tsorcRevamp {
 			17, //furnance
 			18, //workbench
 			20, //sapling
-				//21, //chests
+			21, //chests
 			23, //corruption grass
 			24, //small corruption plants
 			27, //sunflower
@@ -297,7 +296,76 @@ namespace tsorcRevamp {
 			133, //adamantite forge
 			134, //mythril anvil
 			138, //boulder
-			141 //explosives
+			141, //explosives
+			172, //sinks
+			173, //platinum candelabra
+			174, //platinum candle
+			207, //water fountain
+			218, //meat grinder
+			228, //dye vat
+			240, //trophies
+			242, //big paintings
+			245, //tall paintings
+			246, //wide paintings
+			270, //firefly in a bottle
+			271, //lightning bug in a bottle
+			275, //bunny cage
+			276, //squirrel cage
+			277, //mallard cage
+			278, //duck cage
+			279, //bird cage
+			280, //blue jay cage
+			281, //cardinal cage
+			282, //fish bowl
+			283, //heavy work bench
+			285, //snail cage
+			286, //glowing snail cage
+			287, //ammo box
+			288, //monarch jar
+			289, //purple emperor jar
+			290, //red admiral jar
+			291, //ulysses jar
+			292, //sulphur jar
+			293, //tree nymph jar
+			294, //zebra swallowtail jar
+			295, //julia jar
+			296, //scorpion cage
+			297, //black scorpion cage
+			298, //frog cage
+			299, //mouse cage
+			300, //bone welder
+			301, //flesh cloning vat
+			302, //glass kiln
+			307, //steampunk boiler
+			309, //penguin cage
+			310, //worm cage
+			316, //blue jellyfish jar
+			317, //green jellyfish jar
+			318, //pink jellyfish jar
+			319, //ship in a bottle
+			310, //seaweed planter
+			324, //seashell variants
+			337, //number and letter statues
+			339, //grasshopper cage
+			354, //bewitching table
+			355, //alchemy table
+			358, //gold bird cage
+			359, //gold bunny cage
+			360, //gold butterfly jar
+			361, //gold frog cage
+			362, //gold grasshopper cage
+			363, //gold mouse cage
+			364, //gold worm cage
+			372, //peace candle
+			377, //sharpening station
+			378, //target dummy
+			390, //lava lamp
+			391, //enchanted nightcrawler cage
+			392, //buggy cage
+			393, //grubby cage
+			394, //sluggy cage
+			413, //red squirrel cage
+			414, //gold squirrel cage
 		};
         public List<int> unbreakable = new List<int>()
         {
@@ -308,23 +376,35 @@ namespace tsorcRevamp {
 			137 //dart trap
 		};
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
-			if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-				if (x < 10 || x > Main.maxTilesX - 10) return true; //sanity
-				if (y < 10 || y > Main.maxTilesY - 10) return true; //sanity
-				if (Main.tile[x, y] == null) return true; //sanity 
-				if (allowed.Contains(type)) return true; //always allow Allowed
-				if (unbreakable.Contains(type)) return false; //always disallow Unbreakable
-				bool right = Main.tile[x + 1, y] == null || Main.tile[x + 1, y].inActive();
-				bool left = Main.tile[x - 1, y] == null || Main.tile[x - 1, y].inActive();
-				bool below = Main.tile[x, y - 1] == null || Main.tile[x, y - 1].inActive();
-				bool above = Main.tile[x, y + 1] == null || Main.tile[x, y + 1].inActive();
-				if (right && left) return true; //if a tile has no neighboring tiles horizontally, allow breaking
-				if (below && above) return true; //if a tile has no neighboring tiles vertically, allow breaking
-				return false; //disallow breaking tiles otherwise
-			}
-			return true; //always allow breaking tiles if not in adventure mode
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                bool right = !Main.tile[x + 1, y].active();
+                bool left = !Main.tile[x - 1, y].active();
+                bool below = !Main.tile[x, y - 1].active();
+                bool above = !Main.tile[x, y + 1].active();
+                if (x < 10 || x > Main.maxTilesX - 10) {//sanity
+                    return true;
+                }
+                else if (y < 10 || y > Main.maxTilesY - 10) {//sanity
+                    return true;
+                }
+                else if (Main.tile[x, y] == null) {//sanity
+                    return true;
+                }
+                else if (allowed.Contains(type)) {//always allow Allowed
+                    return true;
+                }
+                else if (unbreakable.Contains(type)) {//always disallow Unbreakable	
+					return false;
+                } 
+                else if (right && left) {//if a tile has no neighboring tiles horizontally, allow breaking
+					return true;
+                } 
+                else if (below && above) {//if a tile has no neighboring tiles vertically, allow breaking
+					return true;
+                } 
+                else return false; //disallow breaking tiles otherwise
+            }
+            return base.CanKillTile(x, y, type, ref blockDamaged); //use default value
         }
     }
-
-
 }
