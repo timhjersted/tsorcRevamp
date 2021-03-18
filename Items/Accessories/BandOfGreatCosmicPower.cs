@@ -6,7 +6,8 @@ namespace tsorcRevamp.Items.Accessories {
     public class BandOfGreatCosmicPower : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Band of Great Cosmic Power");
-            Tooltip.SetDefault("+3 life regen and increases max mana by 60");
+            Tooltip.SetDefault("+3 life regen and increases max mana by 60" +
+                                "\nCan be upgraded with 35,000 Dark Souls");
         }
 
         public override void SetDefaults() {
@@ -21,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("BandOfCosmicPower"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

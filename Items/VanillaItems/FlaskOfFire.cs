@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
+namespace tsorcRevamp.Items.VanillaItems {
     class FlaskOfFire : GlobalItem {
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
