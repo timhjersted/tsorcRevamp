@@ -182,7 +182,7 @@ namespace tsorcRevamp {
 
     };
         public override bool CanUseItem(Item item, Player player) {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 if (item.createTile > -1) {
                     foreach (int id in allowed) {
                         if (item.createTile == id) {
@@ -308,7 +308,7 @@ namespace tsorcRevamp {
 			137 //dart trap
 		};
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
-			if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+			if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
 				if (x < 10 || x > Main.maxTilesX - 10) return true; //sanity
 				if (y < 10 || y > Main.maxTilesY - 10) return true; //sanity
 				if (Main.tile[x, y] == null) return true; //sanity 
