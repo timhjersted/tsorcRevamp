@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.MeteorSuit, 1);
+            recipe.AddIngredient(ItemID.MeteorHelmet, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);

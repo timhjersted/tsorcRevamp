@@ -22,7 +22,7 @@ namespace tsorcRevamp {
         public bool SilverSerpentRing = false;
         public bool DragonStone = false;
         public int SoulReaper = 0;
-        
+
         public bool DuskCrownRing = false;
         public bool UndeadTalisman = false;
 
@@ -77,20 +77,37 @@ namespace tsorcRevamp {
             OldWeapon = false;
         }
 
-        public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
-        {
-            if(MeleeArmorVamp10)
-            {
-                if(Main.rand.Next(10) == 0)
-                {
+        public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath){
+                for (int i = 0; i < 400; i++) {
+                    if (Main.item[i].type == ModContent.ItemType<DarkSoul>()) {
+                        Main.item[i].active = false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath) {
+                foreach (Item item in player.inventory) {
+                    if (item.type == ModContent.ItemType<DarkSoul>() && Main.netMode != NetmodeID.MultiplayerClient) {
+                        Item.NewItem(player.Center, item.type, item.stack);
+                        item.stack = 0;
+                    }
+                }
+            }
+        }
+
+        public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit) {
+            if (MeleeArmorVamp10) {
+                if (Main.rand.Next(10) == 0) {
                     player.HealEffect(damage / 10);
                     player.statLife += (damage / 10);
                 }
             }
-            if(NUVamp)
-            {
-                if(Main.rand.Next(5) == 0)
-                {
+            if (NUVamp) {
+                if (Main.rand.Next(5) == 0) {
                     player.HealEffect(damage / 4);
                     player.statLife += (damage / 4);
                 }
@@ -150,7 +167,7 @@ namespace tsorcRevamp {
         }
         public override void PreUpdate() {
             if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
-                    Player.jumpSpeed += 10f;
+                Player.jumpSpeed += 10f;
 
             }
         }

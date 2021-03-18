@@ -8,11 +8,7 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class WitchkingHelmet : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Tooltip.SetDefault("10% Less Mana Usage.\nEmergency shield kicks in +15 Defense when health is less than 61");
-            DisplayName.SetDefault("RTQ2 Helmet");
-        }
+
         public override void SetDefaults()
         {
             item.width = 18;
@@ -46,17 +42,6 @@ namespace tsorcRevamp.Items.Armors
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
-        }
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.MeteorSuit, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
         }
     }
 }
