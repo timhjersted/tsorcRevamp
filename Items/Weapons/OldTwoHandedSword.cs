@@ -4,32 +4,33 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons
 {
-    class OldAxe : ModItem
+    class OldTwoHandedSword : ModItem
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Does random damage from 0 to 14" +
+            Tooltip.SetDefault("Does random damage from 0 to 30" +
                                 "\nMaximum damage is increased by damage modifiers.");
         }
 
         public override void SetDefaults()
         {
-            item.damage = 14;
-            item.width = 36;
-            item.height = 30;
-            item.knockBack = 6;
+            item.damage = 30;
+            item.width = 50;
+            item.height = 50;
+            item.knockBack = 5;
             item.maxStack = 1;
             item.melee = true;
-            item.scale = 1;
-            item.useAnimation = 16;
+            item.scale = 1.25f;
+            item.useAnimation = 28;
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 21;
-            item.value = 9000;
+            item.value = 15000;
         }
 
-        public override void HoldItem(Player player) {
+        public override void HoldItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }

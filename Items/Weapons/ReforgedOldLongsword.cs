@@ -4,33 +4,34 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons
 {
-    class OldBroadsword : ModItem
+    class ReforgedOldLongsword : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Tooltip.SetDefault("Does random damage from 0 to 26" +
-                                "\nMaximum damage is increased by damage modifiers.");
-        }
+
 
         public override void SetDefaults()
         {
-            item.damage = 26;
+            item.damage = 12;
             item.width = 44;
             item.height = 44;
             item.knockBack = 4;
             item.maxStack = 1;
             item.melee = true;
-            item.scale = .8f;
-            item.useAnimation = 17;
+            item.scale = 1f;
+            item.useAnimation = 19;
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 21;
-            item.value = 13000;
+            item.value = 7000;
         }
-
-        public override void HoldItem(Player player) {
-            player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("OldLongsword"));
+            //recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
+            recipe.AddTile(TileID.Anvils);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
     }
 }
