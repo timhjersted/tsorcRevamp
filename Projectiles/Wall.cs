@@ -1,16 +1,15 @@
-﻿
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class Barrier : ModProjectile
+    class Wall : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barrier");
+            DisplayName.SetDefault("Wall");
         }
         public override void SetDefaults()
         {
@@ -22,7 +21,7 @@ namespace tsorcRevamp.Projectiles
             projectile.scale = 1;
             projectile.tileCollide = false;
             projectile.timeLeft = 2;
-            projectile.alpha = 160;
+            projectile.alpha = 180;
         }
         public override void AI()
         {
@@ -34,10 +33,9 @@ namespace tsorcRevamp.Projectiles
                 projectile.Kill();
                 return;
             }
-
-            if (Main.rand.Next(3) == 0)
+            if (Main.rand.Next(4) == 0)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 156, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), .6f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 45, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 120, default(Color), .9f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -46,8 +44,6 @@ namespace tsorcRevamp.Projectiles
             projOwner.heldProj = projectile.whoAmI; //this makes it appear in front of the player
             projectile.velocity.X = player.velocity.X;
             projectile.velocity.Y = player.velocity.Y;
-            //projectile.position.X = player.position.X - (float)(player.width / 2);
-            //projectile.position.Y = player.position.Y - (float)(player.height / 2);
         }
         public override bool CanDamage()
         {

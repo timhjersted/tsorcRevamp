@@ -6,7 +6,8 @@ namespace tsorcRevamp.Items.Accessories {
     public class BarrierRing : ModItem {
         public override void SetStaticDefaults() { 
             Tooltip.SetDefault("Casts Barrier when the wearer is critically wounded" + 
-                                "\nBarrier increases defense by 20");
+                                "\nBarrier increases defense by 20" +
+                                "\nDoes not stack with Fog, Wall or Shield spells");
         }
 
         public override void SetDefaults() {
@@ -29,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            if (player.statLife <= (player.statLifeMax * 0.25f)) 
+            if ((player.statLife <= (player.statLifeMax * 0.25f)) && !(player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>())))
             {
                 player.AddBuff(ModContent.BuffType<Buffs.Barrier>(), 1, false);
             }

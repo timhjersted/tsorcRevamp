@@ -4,17 +4,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons
 {
-    class OldAxe : ModItem
+    class ReforgedOldAxe : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Tooltip.SetDefault("Does random damage from 0 to 14" +
-                                "\nMaximum damage is increased by damage modifiers.");
-        }
-
         public override void SetDefaults()
         {
-            item.damage = 14;
+            item.damage = 11;
             item.width = 36;
             item.height = 30;
             item.knockBack = 6;
@@ -28,9 +22,14 @@ namespace tsorcRevamp.Items.Weapons
             item.useTime = 21;
             item.value = 9000;
         }
-
-        public override void HoldItem(Player player) {
-            player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("OldAxe"));
+            //recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
+            recipe.AddTile(TileID.Anvils);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
     }
 }
