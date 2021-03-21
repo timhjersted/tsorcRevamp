@@ -1,16 +1,14 @@
-﻿
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class Barrier : ModProjectile
+    class Fog : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Barrier");
+            DisplayName.SetDefault("Fog");
         }
         public override void SetDefaults()
         {
@@ -35,19 +33,24 @@ namespace tsorcRevamp.Projectiles
                 return;
             }
 
-            if (Main.rand.Next(3) == 0)
+            for (int d = 0; d < 5; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 156, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), .6f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 160, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
-
+            {
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 160, default(Color), .7f);
+                Main.dust[dust].noGravity = true;
+            }
+            {
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .5f);
+                Main.dust[dust].noGravity = true;
+            }
 
             Player projOwner = Main.player[projectile.owner];
             projOwner.heldProj = projectile.whoAmI; //this makes it appear in front of the player
             projectile.velocity.X = player.velocity.X;
             projectile.velocity.Y = player.velocity.Y;
-            //projectile.position.X = player.position.X - (float)(player.width / 2);
-            //projectile.position.Y = player.position.Y - (float)(player.height / 2);
         }
         public override bool CanDamage()
         {
