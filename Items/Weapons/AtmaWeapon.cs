@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons {
 
             item.stack = 1;
             item.rare = ItemRarityID.Pink;
-            item.damage = 138; //"this looks arbitrary!" correct. i manually figured out which values for hp and base damage would get close to the original damage
+            item.damage = 105;
             item.height = 58;
             item.knockBack = (float)9;
             item.maxStack = 1;
@@ -40,11 +40,7 @@ namespace tsorcRevamp.Items.Weapons {
         }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            mult = (float)player.statLife / ((float)player.statLife + 125);
-            //these dont work. the damage added with `flat` and `add` arent modified by player.meleeDamage. don't use these.
-            //flat = (int)((float)player.statLife/8 + 55;
-            //add = (int)((float)player.statLife/8 + 55;
-
+            mult = ((float)player.statLife / (player.statLife) * 50) + 55;
         }
     }
 }
