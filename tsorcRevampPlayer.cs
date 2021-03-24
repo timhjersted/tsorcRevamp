@@ -36,8 +36,10 @@ namespace tsorcRevamp {
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
 
-        public bool OldWeapon = true;
+        public bool OldWeapon = false;
 
+        public bool Miakoda = false;
+        public bool RTQ2 = false;
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -75,6 +77,8 @@ namespace tsorcRevamp {
             DragoonBoots = false;
             GemBox = false;
             OldWeapon = false;
+            Miakoda = false;
+            RTQ2 = false;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
