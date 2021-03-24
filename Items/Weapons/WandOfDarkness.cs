@@ -9,12 +9,13 @@ namespace tsorcRevamp.Items.Weapons {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wand of Darkness");
+            Item.staff[item.type] = true;
         }
         public override void SetDefaults() {
             item.autoReuse = true;
             item.width = 12;
             item.height = 17;
-            item.useStyle = ItemUseStyleID.SwingThrow;
+            item.useStyle = ItemUseStyleID.HoldingOut;
             item.useAnimation = 25;
             item.useTime = 25;
             item.damage = 11;

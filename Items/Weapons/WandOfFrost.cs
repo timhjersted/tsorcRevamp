@@ -31,5 +31,14 @@ namespace tsorcRevamp.Items.Weapons {
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
             target.AddBuff(BuffID.Frostburn, 360);
         }
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod); ;
+            recipe.AddIngredient(mod.GetItem("WoodenWand"), 1);
+            recipe.AddIngredient(ItemID.CrystalShard, 100);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+        }
     }
 }
