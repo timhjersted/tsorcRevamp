@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons {
+namespace tsorcRevamp.Items.Weapons.Melee {
 
     public class AdamantitePoleWarAxe : ModItem {
 
