@@ -35,5 +35,14 @@ namespace tsorcRevamp.Items.Weapons {
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
             mult = (-0.01f * player.statDefense) + 1;
         }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("Galaxia"), 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+        }
     }
 }

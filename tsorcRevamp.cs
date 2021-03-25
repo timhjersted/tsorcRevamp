@@ -1,7 +1,9 @@
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
@@ -11,7 +13,61 @@ namespace tsorcRevamp {
 
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
+
+            On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
         }
+
+        private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
+                bool flag = true;
+                bool flag2 = false;
+                Vector2 vector = Vector2.Zero;
+                int num = 0;
+                int num2 = 0;
+                for (int i = 0; i < 200; i++) {
+                    if (Main.npc[i].active && Main.npc[i].type == NPCID.SkeletronHead) {
+                        flag = false;
+                        break;
+                    }
+                }
+                for (int j = 0; j < 200; j++) {
+                    if (Main.npc[j].active) {
+                        if (Main.npc[j].type == NPCID.OldMan) {
+                            flag2 = true;
+                            Main.npc[j].ai[3] = 1f;
+                            vector = Main.npc[j].position;
+                            num = Main.npc[j].width;
+                            num2 = Main.npc[j].height;
+                            if (Main.netMode == NetmodeID.Server) {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, j, 0f, 0f, 0f, 0, 0, 0);
+                            }
+                        }
+                        else if (Main.npc[j].type == NPCID.Clothier) {
+                            flag2 = true;
+                            vector = Main.npc[j].position;
+                            num = Main.npc[j].width;
+                            num2 = Main.npc[j].height;
+                        }
+                    }
+                }
+                if (flag && flag2) {
+                    int num3 = NPC.NewNPC((int)vector.X + num / 2, (int)vector.Y + num2 / 2, 35, 0, 0f, 0f, 0f, 0f, 255);
+                    Main.npc[num3].netUpdate = true;
+                    string npcnameValue = Lang.GetNPCNameValue(35);
+                    if (Main.netMode == NetmodeID.SinglePlayer) {
+                        Main.NewText("Gravelord Nito has awoken!", 175, 75, 255);
+                        return;
+                    }
+					else if (Main.netMode == NetmodeID.Server) {
+						NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Gravelord Nito has awoken!"), new Color(175, 75, 255));
+					}
+				}
+            }
+            else {
+                orig();
+            }
+        }
+
         public override void Unload() {
             toggleDragoonBoots = null;
         }
@@ -42,6 +98,12 @@ namespace tsorcRevamp {
         [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDefaults to On")]
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
+
+        [Label("Rename Skeletron")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Renames Skeletron to Gravelord Nito.\nOnly turn this off if you are experiencing \ncrashes or other strange behavior when \nyou attempt to summon Skeletron.\nDefaults to On")]
+        [DefaultValue(true)]
+        public bool RenameSkeletron { get; set; }
     }
 
     public class TilePlaceCode : GlobalItem {
@@ -419,20 +481,20 @@ namespace tsorcRevamp {
                     || type == TileID.Cobalt
                     || type == TileID.Mythril
                     || type == TileID.Adamantite
-					|| (unbreakable.Contains(type))
-				) {
+                    || (unbreakable.Contains(type))
+                ) {
                     CanDestroy = false;
                 }
                 if (!Main.hardMode && type == TileID.Hellstone) {
                     CanDestroy = false;
                 }
-				if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
-					CanDestroy = true;
+                if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
+                    CanDestroy = true;
                 }
 
-				//check cankilltiles stuff
-				if ((right && left) || (above && below) || allowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
-					CanDestroy = true;
+                //check cankilltiles stuff
+                if ((right && left) || (above && below) || allowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
+                    CanDestroy = true;
                 }
                 return CanDestroy;
             }

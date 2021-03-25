@@ -7,7 +7,7 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles {
 
-    public class MythrilBall : ModProjectile {
+    public class MoonfuryBall : ModProjectile {
 
         private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 

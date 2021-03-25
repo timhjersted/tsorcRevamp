@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons {
             //todo add ingredients
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("ForgottenIceBowScroll"), 1);
-            //recipe.AddIngredient(mod.GetItem("Ice4Tome"), 1);
+            recipe.AddIngredient(mod.GetItem("Ice4Tome"), 1);
             recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 1);
             recipe.AddIngredient(mod.GetItem("Humanity"), 30);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 200000);
