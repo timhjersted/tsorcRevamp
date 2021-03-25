@@ -1,7 +1,7 @@
 ﻿using Terraria.ModLoader;
 using Terraria.ID;
 
-namespace tsorcRevamp.Items.Weapons {
+namespace tsorcRevamp.Items.Weapons.Magic {
     class ManaBomb : ModItem {
 
         public override void SetStaticDefaults() {
