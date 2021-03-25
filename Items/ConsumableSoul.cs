@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items
             // Each frame, make some dust
             if (Main.rand.NextFloat() < .3f)
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default(Color), .75f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
 
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Items
 
                 for (int d = 0; d < 10; d++)
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 80, default(Color), .75f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 80, default, .75f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace tsorcRevamp.Items
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 80, default(Color), .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 80, default, .8f);
             }
 
             // This sets up the itemTime correctly.
@@ -112,7 +112,7 @@ namespace tsorcRevamp.Items
 
                 for (int d = 0; d < 30; d++)
                 {
-                     Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 50, default(Color), .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                     Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -131,12 +131,12 @@ namespace tsorcRevamp.Items
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default(Color), .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f);
             }
 
             if (Main.rand.NextFloat() < .3f)
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default(Color), .75f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
             // This sets up the itemTime correctly.
@@ -153,17 +153,17 @@ namespace tsorcRevamp.Items
 
                 for (int d = 0; d < 60; d++)
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default(Color), .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 15; d++) // Left
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -4f, 50, default(Color), .65f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -4f, 50, default, .65f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 15; d++) // Right
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -4f, 50, default(Color), .65f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -4f, 50, default, .65f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -186,12 +186,12 @@ namespace tsorcRevamp.Items
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default(Color), .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f);
             }
 
             if (Main.rand.NextFloat() < .5f)
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default(Color), .75f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
             // This sets up the itemTime correctly.
@@ -209,17 +209,17 @@ namespace tsorcRevamp.Items
 
                 for (int d = 0; d < 90; d++) // Upwards
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 30, default(Color), .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 30, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 30; d++) // Left
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -4f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -4f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 30; d++) // Right
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -4f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -4f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -268,12 +268,12 @@ namespace tsorcRevamp.Items
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default(Color), .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f);
             }
 
             if (Main.rand.NextFloat() < .75f)
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default(Color), .75f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
             // This sets up the itemTime correctly.
@@ -291,27 +291,27 @@ namespace tsorcRevamp.Items
 
                 for (int d = 0; d < 100; d++) // Upwards
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 30, default(Color), .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 30, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 40; d++) // Left
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -3f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -3f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 40; d++) // Right
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -3f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -3f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 40; d++) // Left
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -6f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -6f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 40; d++) // Right
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -6f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -6f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -360,12 +360,12 @@ namespace tsorcRevamp.Items
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default(Color), .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f);
             }
 
             if (Main.rand.NextFloat() < 1f)
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default(Color), .75f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .75f);
             }
 
             // This sets up the itemTime correctly.
@@ -383,22 +383,22 @@ namespace tsorcRevamp.Items
 
                 for (int d = 0; d < 100; d++) // Upwards
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 30, default(Color), .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 30, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 70; d++) // Left
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -3f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, -6f, -3f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 70; d++) // Right
                 {
-                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -3f, 30, default(Color), .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, 6f, -3f, 30, default, .7f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
 
                 for (int d = 0; d < 1000; d++) // Left
                 {
-                    int dust = Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-3f, -10f), 30, default(Color), Main.rand.NextFloat(.5f, .8f));
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 55, 89, Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-3f, -10f), 30, default, Main.rand.NextFloat(.5f, .8f));
                 }
             }
         }

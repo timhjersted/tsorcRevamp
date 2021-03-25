@@ -53,7 +53,6 @@ namespace tsorcRevamp {
                 if (flag && flag2) {
                     int num3 = NPC.NewNPC((int)vector.X + num / 2, (int)vector.Y + num2 / 2, 35, 0, 0f, 0f, 0f, 0f, 255);
                     Main.npc[num3].netUpdate = true;
-                    string npcnameValue = Lang.GetNPCNameValue(35);
                     if (Main.netMode == NetmodeID.SinglePlayer) {
                         Main.NewText("Gravelord Nito has awoken!", 175, 75, 255);
                         return;

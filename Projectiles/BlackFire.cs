@@ -109,17 +109,17 @@ namespace tsorcRevamp.Projectiles {
 			}
 
 			// Render fire particles [every frame]
-			int particle = Dust.NewDust(projectile.position, projectile.width, projectile.height, 54, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
+			int particle = Dust.NewDust(projectile.position, projectile.width, projectile.height, 54, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 160, default, 3f);
 			Main.dust[particle].noGravity = true;
 			Main.dust[particle].velocity *= 1.4f;
-			int lol = Dust.NewDust(projectile.position, projectile.width, projectile.height, 58, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
+			int lol = Dust.NewDust(projectile.position, projectile.width, projectile.height, 58, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 160, default, 3f);
 			Main.dust[lol].noGravity = true;
 			Main.dust[lol].velocity *= 1.4f;
 
 
 			// Render smoke particles [every other frame]
 			if (projectile.timeLeft % 2 == 0) {
-				int particle2 = Dust.NewDust(projectile.position, projectile.width, projectile.height, 1, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f - 1f, 180, default(Color), 1f + (float)Main.rand.Next(2));
+				int particle2 = Dust.NewDust(projectile.position, projectile.width, projectile.height, 1, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f - 1f, 180, default, 1f + (float)Main.rand.Next(2));
 				Main.dust[particle2].noGravity = true;
 				Main.dust[particle2].noLight = true;
 				Main.dust[particle2].fadeIn = 3f;
@@ -179,8 +179,8 @@ namespace tsorcRevamp.Projectiles {
 				float velY = 2f - ((float)Main.rand.Next(20)) / 5f;
 				velX *= 4f;
 				velY *= 4f;
-				Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width / 2), projectile.position.Y - (float)(projectile.height / 2)), projectile.width, projectile.height, 54, velX, velY, 160, default(Color), 1.5f);
-				Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width / 2), projectile.position.Y - (float)(projectile.height / 2)), projectile.width, projectile.height, 58, velX, velY, 160, default(Color), 1.5f);
+				Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width / 2), projectile.position.Y - (float)(projectile.height / 2)), projectile.width, projectile.height, 54, velX, velY, 160, default, 1.5f);
+				Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width / 2), projectile.position.Y - (float)(projectile.height / 2)), projectile.width, projectile.height, 58, velX, velY, 160, default, 1.5f);
 			}
 
 			// terminate projectile
