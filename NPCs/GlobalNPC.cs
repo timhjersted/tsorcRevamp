@@ -7,6 +7,8 @@ using tsorcRevamp.Items;
 namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
 
+        public override bool InstancePerEntity => true;
+        public bool DarkInferno = false;
         public override void SetDefaults(NPC npc)
         {
             if (npc.type == NPCID.TheHungryII)
@@ -54,6 +56,23 @@ namespace tsorcRevamp.NPCs {
                 if ((enemyValue >= 50) && (enemyValue <= 5000) && (Main.rand.NextFloat() < .015f)) // 1.5% chance of all enemies between enemyValue 50 and 5000 dropping ProudKnightSoul aka 1/75
                 {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
+                }
+            }
+        }
+
+        public override void UpdateLifeRegen(NPC npc, ref int damage) {
+           if (DarkInferno) {
+                if (npc.lifeRegen > 0) {
+                    npc.lifeRegen = 0;
+                }
+                npc.lifeRegen -= 17;
+                var N = npc;
+                for (int j = 0; j < 6; j++) {
+                    int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 54, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust].noGravity = true;
+
+                    int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust2].noGravity = true;
                 }
             }
         }

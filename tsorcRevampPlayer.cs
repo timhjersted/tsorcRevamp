@@ -32,6 +32,7 @@ namespace tsorcRevamp {
         public bool GemBox = false;
 
         public int CurseLevel = 1;
+        public bool DarkInferno = false;
 
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
@@ -79,6 +80,7 @@ namespace tsorcRevamp {
             OldWeapon = false;
             Miakoda = false;
             RTQ2 = false;
+            DarkInferno = false;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
@@ -164,6 +166,27 @@ namespace tsorcRevamp {
             }
         }
 
+        public override void UpdateBadLifeRegen() {
+            if (DarkInferno) {
+                if (player.lifeRegen > 0) {
+                    player.lifeRegen = 0;
+                }
+                player.lifeRegenTime = 0;
+                player.lifeRegen = -11;
+                for (int j = 0; j < 4; j++) {
+                    int dust = Dust.NewDust(player.position, player.width / 2, player.height / 2, 54, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust].noGravity = true;
+
+                    int dust2 = Dust.NewDust(player.position, player.width / 2, player.height / 2, 58, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust2].noGravity = true;
+                }
+            }
+        }
+
+        public override void UpdateDead() {
+            DarkInferno = false;
+
+        }
         public override void ProcessTriggers(TriggersSet triggersSet) {
             if (tsorcRevamp.toggleDragoonBoots.JustPressed) {
                 DragoonBootsEnable = !DragoonBootsEnable;

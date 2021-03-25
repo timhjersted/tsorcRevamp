@@ -31,8 +31,7 @@ namespace tsorcRevamp.Items.Weapons
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("OldCrossbow"));
-            //recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
