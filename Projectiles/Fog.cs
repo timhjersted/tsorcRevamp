@@ -35,15 +35,15 @@ namespace tsorcRevamp.Projectiles
 
             for (int d = 0; d < 5; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 160, default(Color), 1f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 120, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 160, default(Color), .7f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 120, default(Color), .7f);
                 Main.dust[dust].noGravity = true;
             }
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .5f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 36, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 120, default(Color), .5f);
                 Main.dust[dust].noGravity = true;
             }
 

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles
             projectile.scale = 1;
             projectile.tileCollide = false;
             projectile.timeLeft = 2;
-            projectile.alpha = 180;
+            projectile.alpha = 160;
         }
         public override void AI()
         {
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles
             }
             if (Main.rand.Next(4) == 0)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 45, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 120, default(Color), .9f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 180, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
 

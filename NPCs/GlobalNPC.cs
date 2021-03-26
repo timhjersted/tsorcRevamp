@@ -15,6 +15,15 @@ namespace tsorcRevamp.NPCs {
             {
                 npc.knockBackResist = 0f;
             }
+
+            if (npc.type == NPCID.EyeofCthulhu && Main.player[Main.myPlayer].ZoneJungle)
+            {
+                if (Main.expertMode)
+                {
+                    npc.lifeMax = 3077; // Which is actually 4k hp in expert mode
+                }
+                npc.scale = 1.1f;
+            }
         }
 
         public override void NPCLoot(NPC npc) {
