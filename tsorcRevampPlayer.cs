@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
@@ -41,6 +42,9 @@ namespace tsorcRevamp {
 
         public bool Miakoda = false;
         public bool RTQ2 = false;
+
+        public bool BoneRevenge = false;
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -81,6 +85,7 @@ namespace tsorcRevamp {
             Miakoda = false;
             RTQ2 = false;
             DarkInferno = false;
+            BoneRevenge = false;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
@@ -164,6 +169,24 @@ namespace tsorcRevamp {
                     if (damage < 0) damage = 0;
                 }
             }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            {
+                if (!Main.hardMode)
+                {
+                    for (int b = 0; b < 8; b++)
+                    {
+                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                    }
+                }
+                else
+                {
+                    for (int b = 0; b < 12; b++)
+                    {
+                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                    }
+                }
+            }
         }
 
         public override void UpdateBadLifeRegen() {
@@ -182,7 +205,6 @@ namespace tsorcRevamp {
                 }
             }
         }
-
         public override void UpdateDead() {
             DarkInferno = false;
 
