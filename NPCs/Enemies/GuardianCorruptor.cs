@@ -28,7 +28,12 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            return SpawnCondition.Corruption.Chance * 0.5f;
+            float chance = 0;
+            if (Main.hardMode) //I've set it to HM for now, I'm guessing its SHM -C
+            {
+                chance = SpawnCondition.Corruption.Chance * 0.5f;
+            }
+            return chance;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {

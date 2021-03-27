@@ -200,27 +200,47 @@ namespace tsorcRevamp.Tiles
 				}
 			}
 		}
+		int sansannoyed;
 		public override bool NewRightClick(int i, int j)
 		{
 			Tile tile = Main.tile[i, j];
 			if (tile.frameX >= 72)
 			{
+				sansannoyed++;
 				Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Sans").WithVolume(1f).WithPitchVariance(-.01f)); //custom sounds have to go in Sounds/Item otherwise it makes a mess
-				if (Main.rand.Next(3) == 0)
+				if (sansannoyed < 12)
 				{
-					Main.NewText("...What do you want?", 120, 190, 240);
-				}
-				else if (Main.rand.Next(2) == 0)
-				{
-					Main.NewText("Heh, heh, heh, heh...", 120, 190, 240);
-					for (int b = 0; b < 12; b++)
+					if (Main.rand.Next(3) == 0)
 					{
-						Projectile.NewProjectile(new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 15, 2f);
+						Main.NewText("...What do you want?", 120, 190, 240);
+					}
+					else if (Main.rand.Next(2) == 0)
+					{
+						Main.NewText("Heh, heh, heh, heh...", 120, 190, 240);
+						for (int b = 0; b < 12; b++)
+						{
+							Projectile.NewProjectile(new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 15, 2f);
+						}
+					}
+					else
+					{
+						Main.NewText("Leave me alone - before I use my 'special attack' on you", 120, 190, 240);
 					}
 				}
-				else
+
+				if (sansannoyed == 12) //after clicking 12 times, gives accessory
 				{
-					Main.NewText("Leave me alone - before I use my 'special attack' on you", 120, 190, 240);
+					Main.NewText("Fine. Here. Take it and leave.", 255, 90, 90);
+					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("RingOfTheBlueEye"), 1); 
+				}
+
+				if (sansannoyed > 12)
+				{
+					Main.NewText("I said get out of here!", 255, 40, 40);
+					for (int b = 0; b < 25; b++)
+					{
+						Projectile.NewProjectile(new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 25, 2f);
+					}
 				}
 			}
 			if (tile.frameX / 36 == 0)

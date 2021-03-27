@@ -205,7 +205,7 @@ namespace tsorcRevamp.Items
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.75f).WithPitchVariance(.3f), player.position); // Plays sound.
                 player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.
-                Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("Soulsplosion"), 200, 15);
+                Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("Soulsplosion"), 250, 15, 0);
 
                 for (int d = 0; d < 90; d++) // Upwards
                 {
@@ -287,7 +287,7 @@ namespace tsorcRevamp.Items
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
                 player.QuickSpawnItem(mod.ItemType("DarkSoul"), 5000); // Gives player souls.
-                Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("Soulsplosion"), 200, 15);
+                Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("Soulsplosion"), 600, 15, 0);
 
                 for (int d = 0; d < 100; d++) // Upwards
                 {
@@ -379,7 +379,7 @@ namespace tsorcRevamp.Items
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
                 player.QuickSpawnItem(mod.ItemType("DarkSoul"), 10000); // Gives player souls.
-                Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("SoulsplosionLarge"), 1000, 15);
+                Projectile.NewProjectile(player.Top, player.velocity, mod.ProjectileType("SoulsplosionLarge"), 2000, 15, 0);
 
                 for (int d = 0; d < 100; d++) // Upwards
                 {
