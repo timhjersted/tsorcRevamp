@@ -72,9 +72,9 @@ namespace tsorcRevamp.NPCs.Bosses {
 						int type = ModContent.ProjectileType<Projectiles.FireTrails>();
 						Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
 						float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-						Projectile.NewProjectile(vector8.X + 300, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-						Projectile.NewProjectile(vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.4) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -1), type, damage, 0f, Main.myPlayer);
-						Projectile.NewProjectile(vector8.X - 300, vector8.Y - 100, (float)((Math.Cos(rotation - 0.4) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, damage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(vector8.X + 300, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, damage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, damage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(vector8.X - 300, vector8.Y - 100, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, damage, 0f, Main.myPlayer);
 						npc.ai[1] = -90;
 					}
 				}
