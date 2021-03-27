@@ -1,6 +1,4 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
 {
@@ -20,7 +18,6 @@ namespace tsorcRevamp.Items
             item.maxStack = 1;
             item.width = 20;
             item.height = 20;
-
         }
     }
 }
