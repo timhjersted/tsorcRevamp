@@ -31,9 +31,11 @@ namespace tsorcRevamp {
         public bool DragoonBootsEnable = false;
 
         public bool GemBox = false;
+        public bool ConditionOverload = true;
 
         public int CurseLevel = 1;
         public bool DarkInferno = false;
+        public bool CrimsonDrain = false;
 
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
@@ -86,10 +88,11 @@ namespace tsorcRevamp {
             RTQ2 = false;
             DarkInferno = false;
             BoneRevenge = false;
+            CrimsonDrain = false;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath){
+            if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath) {
                 for (int i = 0; i < 400; i++) {
                     if (Main.item[i].type == ModContent.ItemType<DarkSoul>()) {
                         Main.item[i].active = false;
@@ -123,8 +126,8 @@ namespace tsorcRevamp {
                     player.statLife += (damage / 4);
                 }
             }
-        }
 
+        }
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit) {
             if (OldWeapon) {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
@@ -170,19 +173,14 @@ namespace tsorcRevamp {
                 }
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
-            {
-                if (!Main.hardMode)
-                {
-                    for (int b = 0; b < 8; b++)
-                    {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge) {
+                if (!Main.hardMode) {
+                    for (int b = 0; b < 8; b++) {
                         Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
-                else
-                {
-                    for (int b = 0; b < 12; b++)
-                    {
+                else {
+                    for (int b = 0; b < 12; b++) {
                         Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }

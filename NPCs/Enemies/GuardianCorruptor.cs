@@ -24,7 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.noGravity = true;
-
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.GuardianCorruptorBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {

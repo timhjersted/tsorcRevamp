@@ -1,7 +1,7 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs {
@@ -9,32 +9,71 @@ namespace tsorcRevamp.NPCs {
 
         public override bool InstancePerEntity => true;
         public bool DarkInferno = false;
-        public override void SetDefaults(NPC npc)
-        {
-            if (npc.type == NPCID.TheHungryII)
-            {
+        public bool CrimsonBurn = false;
+
+        public override void ResetEffects(NPC npc) {
+            DarkInferno = false;
+            CrimsonBurn = false;
+        }
+        public override void SetDefaults(NPC npc) {
+            if (npc.type == NPCID.TheHungryII) {
                 npc.knockBackResist = 0f;
             }
 
-            if (npc.type == NPCID.EyeofCthulhu && Main.player[Main.myPlayer].ZoneJungle)
-            {
-                if (Main.expertMode)
-                {
+            if (npc.type == NPCID.EyeofCthulhu && Main.player[Main.myPlayer].ZoneJungle) {
+                if (Main.expertMode) {
                     npc.lifeMax = 3077; // Which is actually 4k hp in expert mode
                 }
                 npc.scale = 1.1f;
             }
         }
 
+        public override void AI(NPC npc) {
+            if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.CrimsonDrain>()) && !npc.friendly && npc.lifeMax > 5) {
+                Player player = Main.LocalPlayer;
+                float distanceX = player.Center.X - npc.Center.X;
+                float distanceY = player.Center.Y - npc.Center.Y;
+                float distAbs = (float)Math.Sqrt(distanceX * distanceX + distanceY + distanceY);
+                if (distAbs < 200f) {
+                    npc.AddBuff(mod.BuffType("CrimsonBurn"), 3);
+                }
+            }
+        }
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
+            if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload) {
+                int buffIndex = 0;
+                foreach (int buffType in npc.buffType) {
+
+                    if (Main.debuff[buffType]) {
+                        damage = (int)(damage * 1.3f);
+                    }
+                    buffIndex++;
+                }
+            }
+        }
+
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload) {
+                int buffIndex = 0;
+                foreach (int buffType in npc.buffType) {
+
+                    if (Main.debuff[buffType]) {
+                        damage = (int)(damage * 1.3f);
+                    }
+                    buffIndex++;
+                }
+            }
+        }
         public override void NPCLoot(NPC npc) {
-            
+
             if (npc.lifeMax > 5 && npc.value >= 10f) { //stop zero-value souls from dropping
 
                 float enemyValue;
 
                 if (Main.expertMode) { //npc.value is the amount of coins they drop
                     enemyValue = (int)npc.value / 25; //all enemies drop more money in expert mode, so the divisor is larger to compensate
-                } 
+                }
                 else {
                     enemyValue = (int)npc.value / 10;
                 }
@@ -70,11 +109,16 @@ namespace tsorcRevamp.NPCs {
         }
 
         public override void UpdateLifeRegen(NPC npc, ref int damage) {
-           if (DarkInferno) {
+            if (DarkInferno) {
+
                 if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 17;
+                npc.lifeRegen -= 16;
+                if (damage < 2) {
+                    damage = 2;
+                }
+
                 var N = npc;
                 for (int j = 0; j < 6; j++) {
                     int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 54, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
@@ -83,6 +127,17 @@ namespace tsorcRevamp.NPCs {
                     int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
                 }
+            }
+
+            if (CrimsonBurn) {
+                if (npc.lifeRegen > 0) {
+                    npc.lifeRegen = 0;
+                }
+                npc.lifeRegen -= 16;
+                if (damage < 2) {
+                    damage = 2;
+                }
+
             }
         }
     }
