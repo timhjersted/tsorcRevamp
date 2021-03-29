@@ -62,6 +62,7 @@ namespace tsorcRevamp.Items.Accessories
                         dust.noGravity = true;
                         dust.fadeIn = 1f;
                         dust.velocity += player.velocity;
+                        dust.noLight = true; //this is being ignored oh well
 
                         if (Main.rand.Next(2) == 0)
                         {
@@ -85,6 +86,7 @@ namespace tsorcRevamp.Items.Accessories
                         dust.noGravity = true;
                         dust.fadeIn = 1f;
                         dust.velocity += player.velocity;
+                        dust.noLight = true;
 
                         if (Main.rand.Next(2) == 0)
                         {
@@ -150,6 +152,7 @@ namespace tsorcRevamp.Items.Accessories
                     dust.noGravity = true;
                     dust.fadeIn = 1f;
                     dust.velocity += player.velocity;
+                    dust.noLight = true;
 
                     if (Main.rand.Next(2) == 0)
                     {
@@ -173,6 +176,7 @@ namespace tsorcRevamp.Items.Accessories
                     dust.noGravity = true;
                     dust.fadeIn = 1f;
                     dust.velocity += player.velocity;
+                    dust.noLight = true;
 
                     if (Main.rand.Next(2) == 0)
                     {

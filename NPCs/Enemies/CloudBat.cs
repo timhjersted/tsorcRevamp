@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
             animationType = NPCID.GiantBat;
             aiType = NPCID.CaveBat;
             npc.lifeMax = 70;
-            npc.damage = 90;
+            npc.damage = 80;
             npc.scale = 1f;
             npc.knockBackResist = .55f;
             npc.value = 350;
@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 54, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 70, default(Color), .8f);
+                    Dust.NewDust(npc.position, npc.width, npc.height, 16, Main.rand.Next(-2, 2), Main.rand.Next(-2, 2), 70, default(Color), .8f);
                 }
             }
         }

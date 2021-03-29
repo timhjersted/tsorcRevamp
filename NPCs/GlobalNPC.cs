@@ -105,6 +105,12 @@ namespace tsorcRevamp.NPCs {
                 {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
                 }
+                //End consumable souls drops
+            }
+
+            if (npc.type == NPCID.GreenSlime) // No longer soulless, green snotties. Nvm, not working, idk why. Zeo?
+            {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
             }
         }
 
