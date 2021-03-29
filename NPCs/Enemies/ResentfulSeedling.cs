@@ -15,8 +15,8 @@ namespace tsorcRevamp.NPCs.Enemies
     
         public override void SetDefaults()
         {
-            npc.CloneDefaults(NPCID.AngryBones);
-            aiType = NPCID.AngryBones;
+            npc.CloneDefaults(NPCID.CorruptBunny);
+            aiType = NPCID.CorruptBunny;
             npc.width = 10;
             npc.height = 16;
             npc.HitSound = SoundID.NPCHit33;
