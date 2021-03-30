@@ -3,17 +3,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items
-{
-    class BloodySkull : ModItem
-    {
+namespace tsorcRevamp.Items.BossItems {
+    class BloodySkull : ModItem {
 
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("A powerful weapon which destroys all enemies when used.");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             item.width = 18;
             item.height = 18;
             item.consumable = false;
@@ -25,21 +21,18 @@ namespace tsorcRevamp.Items
             item.scale = 1f;
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
-        public override bool UseItem(Player player)
-        {
+        public override bool UseItem(Player player) {
             //if (!NPC.AnyNPCs(mod.NPCType("Death")))
             if (!NPC.AnyNPCs(NPCID.CorruptBunny)) //placeholder, use above instead
             {
                 NPC.SpawnOnPlayer(Main.myPlayer, NPCID.CorruptBunny); //placeholder
                 return true;
             }
-            else
-            {
+            else {
                 return false;
             }
         }
-        public override void AddRecipes()
-        {
+        public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SoulofNight, 7);
             recipe.AddIngredient(ItemID.Bone, 10);

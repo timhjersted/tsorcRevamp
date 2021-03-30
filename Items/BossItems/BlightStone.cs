@@ -3,19 +3,15 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items
-{
-    class BlightStone : ModItem
-    {
+namespace tsorcRevamp.Items.BossItems {
+    class BlightStone : ModItem {
 
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Summons The Blight, one of six guardians of The Abyss." +
                                 "\nYou must fight this battle on the surface." +
                                 "\nThe Blight cannot be fought with the Covenant of Artorias ring equipped.");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             item.width = 30;
             item.height = 30;
             item.consumable = false;
@@ -27,8 +23,7 @@ namespace tsorcRevamp.Items
             item.scale = 1f;
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
-        public override bool UseItem(Player player)
-        {
+        public override bool UseItem(Player player) {
             //if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(mod.NPCType("Blight")))
             if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(NPCID.CorruptBunny)) //placeholder, use above instead
             {
@@ -36,13 +31,11 @@ namespace tsorcRevamp.Items
                 Main.NewText("\"You will be destroyed\"", 255, 50, 50);
                 return true;
             }
-            else
-            {
+            else {
                 return false;
             }
         }
-        public override void AddRecipes()
-        {
+        public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.StoneBlock, 1);
             recipe.AddIngredient(mod.GetItem("Humanity"), 15);

@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items
+namespace tsorcRevamp.Items.BossItems
 {
     class AttraidiesRelic : ModItem
     {

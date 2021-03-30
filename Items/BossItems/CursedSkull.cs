@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
+namespace tsorcRevamp.Items.BossItems {
     class CursedSkull : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Summons Gravelord Nito, the First of the Dead." +
@@ -20,8 +20,14 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool UseItem(Player player) {
-            Main.NewText("Gravelord Nito has awoken! ", 175, 75, 255);
-            NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - (1070), (int)Main.player[Main.myPlayer].position.Y - 150, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 1);
+            if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
+                Main.NewText("Gravelord Nito has awoken! ", 175, 75, 255);
+                NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - 1070, (int)Main.player[Main.myPlayer].position.Y - 150, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 1);
+            }
+            else {
+                Main.NewText("Skeletron has awoken!", 175, 75, 255);
+                NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - 1070, (int)Main.player[Main.myPlayer].position.Y - 150, NPCID.SkeletronHead, 1);
+            }
             return true;
         }
     }
