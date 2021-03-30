@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items {
 
         public override bool UseItem(Player player) {
             Main.NewText("Gravelord Nito has awoken! ", 175, 75, 255);
-            NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - (1070), (int)Main.player[Main.myPlayer].position.Y - 150, NPCID.SkeletronHead, 1);
+            NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - (1070), (int)Main.player[Main.myPlayer].position.Y - 150, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 1);
             return true;
         }
     }

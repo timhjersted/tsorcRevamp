@@ -36,5 +36,5 @@ namespace tsorcRevamp.Items.Weapons {
 			recipe.SetResult(this);
 			recipe.AddRecipe();
 		}
-	}
+    }
 }

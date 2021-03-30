@@ -166,6 +166,7 @@ namespace tsorcRevamp {
                     || npc.type == NPCID.TheGroom
                     || npc.type == NPCID.SkeletronHand
                     || npc.type == NPCID.SkeletronHead
+                    || npc.type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()
                     /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/) {
                     damage -= 15;
 

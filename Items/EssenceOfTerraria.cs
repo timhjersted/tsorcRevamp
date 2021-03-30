@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items {
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.EaterofWorldsHead);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.BrainofCthulhu);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.QueenBee);
-            NPC.SpawnOnPlayer(player.whoAmI, NPCID.SkeletronHead);
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.GravelordNito>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.Retinazer);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.Spazmatism);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.TheDestroyer);

@@ -46,6 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                     || target.type == NPCID.TheGroom
                     || target.type == NPCID.SkeletronHand
                     || target.type == NPCID.SkeletronHead
+                    || target.type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()
                 //|| target.type == ModContent.NPCType<LichKingSerpent>()
                 //|| target.type == ModContent.NPCType<DemonSpirit>()
                 //|| target.type == ModContent.NPCType<CrazedDemonSpirit>()

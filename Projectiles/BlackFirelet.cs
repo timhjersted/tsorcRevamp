@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
 		public override void AI() {
-			if (projectile.type == 96 && projectile.localAI[0] == 0f) {
+            if (projectile.type == 96 && projectile.localAI[0] == 0f) {
 				projectile.localAI[0] = 1f;
 				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 20);
 			}

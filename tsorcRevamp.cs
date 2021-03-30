@@ -10,13 +10,12 @@ using Terraria.ModLoader.Config;
 namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
         public static ModHotKey toggleDragoonBoots;
-
-        public override void Load() {
+		public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
             On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
-        }
-
+		}
+		
         private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
             if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
                 bool flag = true;
@@ -25,7 +24,7 @@ namespace tsorcRevamp {
                 int num = 0;
                 int num2 = 0;
                 for (int i = 0; i < 200; i++) {
-                    if (Main.npc[i].active && Main.npc[i].type == NPCID.SkeletronHead) {
+                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()) {
                         flag = false;
                         break;
                     }
@@ -51,7 +50,7 @@ namespace tsorcRevamp {
                     }
                 }
                 if (flag && flag2) {
-                    int num3 = NPC.NewNPC((int)vector.X + num / 2, (int)vector.Y + num2 / 2, 35, 0, 0f, 0f, 0f, 0f, 255);
+                    int num3 = NPC.NewNPC((int)vector.X + num / 2, (int)vector.Y + num2 / 2, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 0, 0f, 0f, 0f, 0f, 255);
                     Main.npc[num3].netUpdate = true;
                     if (Main.netMode == NetmodeID.SinglePlayer) {
                         Main.NewText("Gravelord Nito has awoken!", 175, 75, 255);
