@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class Bolt4Ball : ModProjectile {
 
+        public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
         public override void SetDefaults() {
             projectile.width = 16;
             projectile.height = 16;

@@ -6,6 +6,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class Freezethrower : ModProjectile {
 
+        public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
+
         public override void SetDefaults() {
             projectile.width = 24;
             projectile.height = 24;

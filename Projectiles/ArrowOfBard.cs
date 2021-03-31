@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     public class ArrowOfBard : ModProjectile {
+
+        public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Arrow of Bard");
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;

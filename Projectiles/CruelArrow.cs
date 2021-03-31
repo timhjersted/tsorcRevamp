@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     public class CruelArrow : ModProjectile {
+
+        public override string Texture => "tsorcRevamp/Items/Ammo/CruelArrow";
         public override void SetDefaults() {
             projectile.aiStyle = 1;
             projectile.friendly = true;

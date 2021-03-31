@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class ThrowingSpear : ModProjectile {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/ThrowingSpear";
         public override void SetDefaults() {
             projectile.friendly = true;
             projectile.height = 14;

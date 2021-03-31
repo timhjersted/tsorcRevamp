@@ -98,6 +98,7 @@ namespace tsorcRevamp.Items {
                         player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
                         player.velocity.X = 0f;
                         player.velocity.Y = 0f;
+                        player.fallStart = (int)player.Center.Y;
 
                         for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (destination)
                             Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);

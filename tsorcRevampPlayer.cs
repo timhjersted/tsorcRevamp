@@ -37,6 +37,12 @@ namespace tsorcRevamp {
         public bool DarkInferno = false;
         public bool CrimsonDrain = false;
 
+        public bool Shockwave = false;
+        public bool Falling;
+        public int StopFalling;
+        public float FallDist;
+        public float fallStartY;
+
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
 
@@ -89,8 +95,55 @@ namespace tsorcRevamp {
             DarkInferno = false;
             BoneRevenge = false;
             CrimsonDrain = false;
+            Shockwave = false;
         }
 
+        public override void PostUpdateEquips() {
+            if (Shockwave) {
+                if (player.controlDown && player.velocity.Y != 0f) {
+                    player.gravity += 5f;
+                    player.maxFallSpeed *= 1.25f;
+                    if (!Falling) {
+                        fallStartY = player.position.Y;
+                    }
+                    if (player.velocity.Y > 12f) {
+                        Falling = true;
+                        StopFalling = 0;
+                        player.noKnockback = true;
+                    }
+                }
+                if (player.velocity.Y == 0f && Falling && player.controlDown) {
+                    for (int i = 0; i < 30; i++) {
+                        int dustIndex2 = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 31, 0f, 0f, 100);
+                        Main.dust[dustIndex2].scale = 0.1f + Main.rand.Next(5) * 0.1f;
+                        Main.dust[dustIndex2].fadeIn = 1.5f + Main.rand.Next(5) * 0.1f;
+                        Main.dust[dustIndex2].noGravity = true;
+                    }
+                    for (int i = -8; i < 9; i++) {
+                        Vector2 shotDirection = new Vector2(0f, -16f);
+                        FallDist = (int)((player.position.Y - fallStartY) / 16);
+                        
+                        int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
+                        Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (11.25f * i))); //lerp wasnt working, so do manual interpolation
+                    }
+
+                    Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
+                    Falling = false;
+                }
+                if (player.velocity.Y <= 2f) {
+                    StopFalling++;
+                }
+                else {
+                    StopFalling = 0;
+                }
+                if (StopFalling > 1) {
+                    Falling = false;
+                }
+            }
+            if (!Shockwave) {
+                Falling = false;
+            }
+        }
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
             if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath) {
                 for (int i = 0; i < 400; i++) {
@@ -206,7 +259,7 @@ namespace tsorcRevamp {
         }
         public override void UpdateDead() {
             DarkInferno = false;
-
+            Falling = false;
         }
         public override void ProcessTriggers(TriggersSet triggersSet) {
             if (tsorcRevamp.toggleDragoonBoots.JustPressed) {

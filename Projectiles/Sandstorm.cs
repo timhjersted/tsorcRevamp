@@ -7,6 +7,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class Sandstorm : ModProjectile {
 
+        public override string Texture => "tsorcRevamp/Projectiles/Sand";
+
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Sandstorm");
         }

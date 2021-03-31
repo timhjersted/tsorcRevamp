@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     public class Bolt : ModProjectile {
+
+        public override string Texture => "tsorcRevamp/Items/Ammo/Bolt";
         public override void SetDefaults() {
 
             projectile.aiStyle = 1;

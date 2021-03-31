@@ -26,13 +26,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            //todo add ingredient
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DivineSpark"), 1);
             recipe.AddIngredient(mod.GetItem("CursedSoul"), 200);
             recipe.AddIngredient(mod.GetItem("Humanity"), 100);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 600000);
-            //recipe.AddIngredient(mod.GetItem("Epilogue"), 1);
+            recipe.AddIngredient(mod.GetItem("Epilogue"), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

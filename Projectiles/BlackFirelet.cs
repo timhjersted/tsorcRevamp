@@ -22,52 +22,33 @@ namespace tsorcRevamp.Projectiles {
             projectile.knockBack = 4;
         }
 
-		public override void AI() {
-            if (projectile.type == 96 && projectile.localAI[0] == 0f) {
-				projectile.localAI[0] = 1f;
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 20);
-			}
-			if (projectile.type == 27) {
-				int num40 = Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 29, projectile.velocity.X, projectile.velocity.Y, 100, default, 3f);
-				Main.dust[num40].noGravity = true;
-				if (Main.rand.Next(10) == 0) {
-				    Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 29, projectile.velocity.X, projectile.velocity.Y, 100, default, 1.4f);
-				}
-			}
-			else {
-				if (projectile.type == 95 || projectile.type == 96) {
-					int num41 = Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 75, projectile.velocity.X, projectile.velocity.Y, 100, default, 3f * projectile.scale);
-					Main.dust[num41].noGravity = true;
-				}
-				else {
-					for (int i = 0; i < 2; i++) {
-						int num43 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 54, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 2f);
-						Main.dust[num43].noGravity = true;
-						Dust dust1 = Main.dust[num43];
-                        dust1.velocity.X *= 0.3f;
-                        dust1.velocity.Y *= 0.3f;
-						int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 58, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 2f);
-						Main.dust[dust].noGravity = true;
-						Dust dust2 = Main.dust[dust];
-                        dust2.velocity.X *= 0.3f;
-                        dust2.velocity.Y *= 0.3f;
-					}
-				}
-			}
-			if (projectile.type != 27 && projectile.type != 96) {
-				projectile.ai[1] += 1f;
-			}
-			if (projectile.ai[1] >= 20f) {
-				projectile.velocity.Y = projectile.velocity.Y + 0.2f;
-			}
-			projectile.rotation += 0.3f * (float)projectile.direction;
-			if (projectile.velocity.Y > 16f) {
-				projectile.velocity.Y = 16f;
-				return;
-			}
-		}
+        public override void AI() {
 
-		public override bool OnTileCollide(Vector2 CollideVel) {
+            for (int i = 0; i < 2; i++) {
+                int num43 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 54, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 2f);
+                Main.dust[num43].noGravity = true;
+                Dust dust1 = Main.dust[num43];
+                dust1.velocity.X *= 0.3f;
+                dust1.velocity.Y *= 0.3f;
+                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 58, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 2f);
+                Main.dust[dust].noGravity = true;
+                Dust dust2 = Main.dust[dust];
+                dust2.velocity.X *= 0.3f;
+                dust2.velocity.Y *= 0.3f;
+            }
+            projectile.ai[1] += 1f;
+
+            if (projectile.ai[1] >= 20f) {
+                projectile.velocity.Y = projectile.velocity.Y + 0.2f;
+            }
+            projectile.rotation += 0.3f * (float)projectile.direction;
+            if (projectile.velocity.Y > 16f) {
+                projectile.velocity.Y = 16f;
+                return;
+            }
+        }
+
+        public override bool OnTileCollide(Vector2 CollideVel) {
             Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             projectile.ai[0] += 1f;
             if (projectile.ai[0] >= 3f) {

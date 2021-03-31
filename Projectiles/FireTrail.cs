@@ -6,6 +6,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class FireTrail : ModProjectile {
+
+        public override string Texture => "tsorcRevamp/Projectiles/FireBall";
         public override void SetDefaults() {
             projectile.width = 15;
             projectile.height = 15;

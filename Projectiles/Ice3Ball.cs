@@ -7,6 +7,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class Ice3Ball : ModProjectile {
 
+        public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
+
         public override void SetDefaults() {
             projectile.friendly = true;
             projectile.height = 16;

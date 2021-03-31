@@ -38,6 +38,11 @@ namespace tsorcRevamp.NPCs {
                     npc.AddBuff(mod.BuffType("CrimsonBurn"), 3);
                 }
             }
+
+            if ((npc.friendly) && (npc.lifeMax == 250)) { //town NPCs are immortal
+                npc.dontTakeDamage = true;
+                npc.dontTakeDamageFromHostiles = true;
+            }
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
@@ -65,6 +70,14 @@ namespace tsorcRevamp.NPCs {
                 }
             }
         }
+
+        public override bool PreNPCLoot(NPC npc) {
+            if (npc.type == NPCID.ChaosElemental) {
+                NPCLoader.blockLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
+            }
+            return base.PreNPCLoot(npc);
+        }
+
         public override void NPCLoot(NPC npc) {
 
             if (npc.lifeMax > 5 && npc.value >= 10f) { //stop zero-value souls from dropping

@@ -9,6 +9,8 @@ namespace tsorcRevamp.Projectiles
 {
     public class BoneRevenge : ModProjectile
     {
+
+        public override string Texture => "tsorcRevamp/Projectiles/BoneHostile";
         public override void SetDefaults()
         {
             projectile.CloneDefaults(ProjectileID.Bone);
