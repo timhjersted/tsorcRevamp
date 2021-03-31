@@ -1,9 +1,9 @@
-﻿using Terraria;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
     class EphemeralThrowingAxe : ModItem {
+
         public override void SetDefaults() {
             item.damage = 22;
             item.height = 34;

@@ -45,9 +45,9 @@ namespace tsorcRevamp.Items.BossItems {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.ShadowScale, 6);
-            recipe.AddIngredient(ItemID.MeteoriteBar, 12);
+            recipe.AddIngredient(ItemID.SoulofFlight, 15);
+            recipe.AddIngredient(ItemID.Feather, 99);
+            recipe.AddIngredient(ItemID.ShadowScale, 99);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
