@@ -50,11 +50,12 @@ namespace tsorcRevamp.Items.Armors
             player.moveSpeed += 0.30f;
             player.manaCost -= 0.30f;
             player.lifeRegen += 2;
-            //player.wings = WINDEX;
-            //player.wings = 2;
             player.eocDash = 20;
             player.armorEffectDrawShadowEOCShield = true;
-            //UNFINISHED (needs Dragon Wings set bonus)
+            player.wings = 34; // looks like Jim's Wings
+            player.wingsLogic = 34;
+            player.wingTimeMax = 180;
+            
         }
 
         public override void AddRecipes()
