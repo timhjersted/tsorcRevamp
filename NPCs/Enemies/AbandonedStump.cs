@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	public class AbandonedStump : ModNPC
+	public class AbandonedStump : ModNPC // Renewable source of wood
 	{
 		public override void SetStaticDefaults()
 		{
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType])
 			{ 
-				  return 0.4f;
+				  return 0.3f;
 			}
 			return chance;
 		}
@@ -63,17 +63,22 @@ namespace tsorcRevamp.NPCs.Enemies
 		// Our AI here makes our NPC sit waiting for a player to enter range then spawns minions to attack.
 		public override void AI()
 		{
+			npc.GivenName = "???";
 			// The npc starts in the asleep state, waiting for a player to enter range
 			if (AI_State == State_Asleep)
 			{
 				// TargetClosest sets npc.target to the player.whoAmI of the closest player. the faceTarget parameter means that npc.direction will automatically be 1 or -1 if the targeted player is to the right or left. This is also automatically flipped if npc.confused
 				npc.TargetClosest(true);
-				// Now we check the make sure the target is still valid and within our specified notice range (500)
-				if (npc.HasValidTarget && Main.player[npc.target].Distance(npc.Center) < 500f)
+				// Now we check the make sure the target is still valid and within our specified notice range (350)
+				if (npc.HasValidTarget && Main.player[npc.target].Distance(npc.Center) < 350f)
 				{
 					// Since we have a target in range, we change to the Notice state. (and zero out the Timer for good measure)
 					AI_State = State_Notice;
 					AI_Timer = 0;
+				}
+				if ((npc.life < npc.lifeMax) && (Main.rand.Next(8) == 0)) 
+				{
+					Dust.NewDust(npc.position, npc.width, npc.height, 107, 0, 0, 0, default(Color), 1f); //regenerating hp
 				}
 			}
 			// In this state, a player has been targeted
@@ -104,15 +109,60 @@ namespace tsorcRevamp.NPCs.Enemies
 			// In this state, begin to spawn babies.
 			else if (AI_State == State_Angered)
 			{
+				npc.GivenName = "Abandoned Stump";
 				//int randomness = Main.rand.Next(3);
 				spawntimer++;
+				if (Main.rand.Next(40) == 0)
+				{
+					Dust.NewDust(npc.position - new Vector2(20, 0), npc.width / 3, npc.height / 2, 3, Main.rand.Next(-2, 0), Main.rand.Next(-2, 0), 0, default(Color), 1f); //left branch
+				}
+				if (Main.rand.Next(40) == 0)
+				{
+					Dust.NewDust(npc.position - new Vector2(-42, 0), npc.width / 3, npc.height / 2, 3, Main.rand.Next(0, 2), Main.rand.Next(-2, 0), 0, default(Color), 1f); //right branch
+				}
 
-				//AI_Timer++;
+				if (spawntimer >= 0 && spawntimer <= 40 && (NPC.CountNPCS(mod.NPCType("ResentfulSeedling")) < 3))
+				{
+					if (Main.rand.Next(8) == 0)
+					{
+						Dust.NewDust(npc.position - new Vector2(20, 0), npc.width / 3, npc.height / 2, 107, Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-1.1f, 1.1f), 0, default(Color), 1f); //left branch
+						Dust.NewDust(npc.position - new Vector2(-42, 0), npc.width / 3, npc.height / 2, 107, Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-1.1f, 1.1f), 0, default(Color), 1f); //right branch
+					}
+				}
+				if (spawntimer > 40 && spawntimer <= 60 && (NPC.CountNPCS(mod.NPCType("ResentfulSeedling")) < 3))
+				{
+					Dust.NewDust(npc.position - new Vector2(20, 0), npc.width / 3, npc.height / 2, 107, Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-1.5f, 1.5f), 0, default(Color), 1f); //left branch
+					Dust.NewDust(npc.position - new Vector2(-42, 0), npc.width / 3, npc.height / 2, 107, Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-1.5f, 1.5f), 0, default(Color), 1f); //right branch
+				}
 				if (spawntimer == 60 && (NPC.CountNPCS(mod.NPCType("ResentfulSeedling")) < 3)) //wont spawn babies if there are already 3
 				{
-					NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height / 2) + npc.velocity.Y), (mod.NPCType("ResentfulSeedling")));
+					if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(mod.NPCType("LivingShroom")) < 3))
+					{
+						if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(mod.NPCType("LivingShroomThief")) < 1))
+						{
+							NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height) + npc.velocity.Y), (mod.NPCType("LivingShroomThief")));
+						}
+						else
+						{
+							NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height) + npc.velocity.Y), (mod.NPCType("LivingShroom")));
+						}
+					}
+					else
+					{
+						NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height) + npc.velocity.Y), (mod.NPCType("ResentfulSeedling")));
+					}
+						//play sound, make dust
+						Main.PlaySound(SoundID.Item8);
+						for (int i = 0; i < 60; i++)
+						{
+							Dust dust = Main.dust[Dust.NewDust(npc.Center, 2, 2, 110, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 0, default(Color), 1f)]; //glowy nature dust
+							dust.noGravity = true;
+							dust.fadeIn = .1f;
+						}
+					
+
 				}
-				if (spawntimer == 180)
+				if (spawntimer == 210)
 				{
 					spawntimer = 0;
 				}
@@ -205,26 +255,31 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void UpdateLifeRegen(ref int damage)
 		{
-			npc.lifeRegen = 1;
+			npc.lifeRegen = 2;
+
+			if (AI_State == State_Asleep)
+			{
+				npc.lifeRegen = 20;
+			}
 		}
 
 		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
 		{
 			if ((item.type == ItemID.CopperAxe) || (item.type == ItemID.TinAxe) || (item.type == ItemID.IronAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.SilverAxe) || (item.type == ItemID.TungstenAxe) || (item.type == ItemID.GoldAxe) || (item.type == ItemID.PlatinumAxe)
 				/*continued*/|| (item.type == ItemID.WarAxeoftheNight) || (item.type == ItemID.BloodLustCluster) || (item.type == ItemID.MeteorHamaxe) || (item.type == ItemID.MoltenHamaxe) || (item.type == ItemID.CobaltWaraxe) || (item.type == ItemID.CobaltChainsaw) || (item.type == ItemID.PalladiumWaraxe) || (item.type == ItemID.PalladiumChainsaw)
-				/*half way ugh*/|| (item.type == ItemID.MythrilWaraxe) || (item.type == ItemID.MythrilChainsaw) || (item.type == ItemID.OrichalcumWaraxe) || (item.type == ItemID.OrichalcumChainsaw) || (item.type == ItemID.AdamantiteWaraxe) || (item.type == ItemID.AdamantiteChainsaw) || (item.type == ItemID.TitaniumWaraxe)
+				/*half way ugh*/|| (item.type == ItemID.MythrilWaraxe) || (item.type == ItemID.MythrilChainsaw) || item.type == ItemID.OrichalcumWaraxe || (item.type == ItemID.OrichalcumChainsaw) || (item.type == ItemID.AdamantiteWaraxe) || (item.type == ItemID.AdamantiteChainsaw) || (item.type == ItemID.TitaniumWaraxe)
 				/*regret*/|| (item.type == ItemID.TitaniumChainsaw) || (item.type == ItemID.PickaxeAxe) || (item.type == ItemID.SawtoothShark) || (item.type == ItemID.Drax) || (item.type == ItemID.ChlorophyteGreataxe) || (item.type == ItemID.ChlorophyteChainsaw) || (item.type == ItemID.ButchersChainsaw)
 				/*Do ittttttttt! Kill meeeee! Aghhh agh aghh!*/|| (item.type == ItemID.TheAxe) || (item.type == ItemID.Picksaw) || (item.type == ItemID.ShroomiteDiggingClaw) || (item.type == ItemID.SpectreHamaxe) || (item.type == ItemID.SolarFlareAxe) || (item.type == ItemID.NebulaAxe) || (item.type == ItemID.StardustAxe)
-				 || (item.type == ItemID.VortexAxe) || (item.type == mod.ItemType("AdamantitePoleWarAxe") || (item.type == mod.ItemType("AdamantiteWarAxe")) || (item.type == mod.ItemType("AncientFireAxe") || (item.type == mod.ItemType("CobaltPoleWarAxe") || (item.type == mod.ItemType("CobaltWarAxe")
-				/*top 10 biggest mistakes of my life*/|| (item.type == mod.ItemType("DunlendingAxe") || (item.type == mod.ItemType("EphemeralThrowingAxe") || (item.type == mod.ItemType("FieryPoleWarAxe") || (item.type == mod.ItemType("FieryWarAxe") || (item.type == mod.ItemType("HallowedGreatPoleAxe")
-				/*spent more time making this list than the NPC iteself*/|| (item.type == mod.ItemType("MythrilPoleWarAxe") || (item.type == mod.ItemType("MythrilWarAxe") || (item.type == mod.ItemType("OldAxe") || item.type == mod.ItemType("OldDoubleAxe") || item.type == mod.ItemType("OldHalberd")
-				|| (item.type == mod.ItemType("ReforgedOldAxe") || (item.type == mod.ItemType("ReforgedOldDoubleAxe") || (item.type == mod.ItemType("ReforgedOldHalberd"))))))))))))))))) //idk why is wants all these parenthesis, damn.
+				 || (item.type == ItemID.VortexAxe) || item.type == mod.ItemType("AdamantitePoleWarAxe") || item.type == mod.ItemType("AdamantiteWarAxe") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("CobaltPoleWarAxe") || item.type == mod.ItemType("CobaltWarAxe")
+				/*top 10 biggest mistakes of my life*/|| item.type == mod.ItemType("DunlendingAxe") || item.type == mod.ItemType("EphemeralThrowingAxe") || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("HallowedGreatPoleAxe")
+				/*spent more time making this list than the NPC iteself*/|| item.type == mod.ItemType("MythrilPoleWarAxe") || item.type == mod.ItemType("MythrilWarAxe") || item.type == mod.ItemType("OldAxe") || item.type == mod.ItemType("OldDoubleAxe") || item.type == mod.ItemType("OldHalberd")
+				|| item.type == mod.ItemType("ReforgedOldAxe") || item.type == mod.ItemType("ReforgedOldDoubleAxe") || (item.type == mod.ItemType("ReforgedOldHalberd")) || (item.type == mod.ItemType("ForgottenAxe")) || (item.type == mod.ItemType("ForgottenGreatAxe")))
 
 			{
 				damage *= 2; //I never want to see or hear the word "axe" again in my life
 				if (damage < 15)
 				{
-					damage = 15;
+					damage = 15; //damage before defence
 				}
 			}
 		}
@@ -246,7 +301,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			if (npc.life <= 0)
 			{
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 35; i++)
 				{
 					Dust.NewDust(npc.position, npc.width, npc.height, 7, 0, Main.rand.Next(-3, 0), 0, default(Color), 1f);
 				}
