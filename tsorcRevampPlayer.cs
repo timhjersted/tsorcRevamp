@@ -197,7 +197,43 @@ namespace tsorcRevamp {
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
             int NT = npc.type;
             if (DragonStone) {
-                //todo make the player take no damage from flying enemies
+                if (NT == 2 || NT == 6 || NT == 34 || NT == 42 || NT == 48 || NT == 49 || NT == 51 || NT == 60 || NT == 61 || NT == 62 || NT == 66 || NT == 75 || NT == 87 || NT == 88 || NT == 89 || NT == 90 || NT == 91 || NT == 92 || NT == 93 || NT == 94 || NT == 112 || NT == 122 || NT == 133 || NT == 137
+                    || NT == NPCID.Probe
+                    || NT == NPCID.IceBat
+                    || NT == NPCID.Lavabat
+                    || NT == NPCID.GiantFlyingFox
+                    || NT == NPCID.RedDevil
+                    || NT == NPCID.VampireBat
+                    || NT == NPCID.IceElemental
+                    || NT == NPCID.PigronCorruption
+                    || NT == NPCID.PigronHallow
+                    || NT == NPCID.PigronCrimson
+                    || NT == NPCID.Crimera
+                    || NT == NPCID.MossHornet
+                    || NT == NPCID.CrimsonAxe
+                    || NT == NPCID.FloatyGross
+                    || NT == NPCID.Moth
+                    || NT == NPCID.Bee
+                    || NT == NPCID.FlyingFish
+                    || NT == NPCID.FlyingSnake
+                    || NT == NPCID.AngryNimbus
+                    || NT == NPCID.Parrot
+                    || NT == NPCID.Reaper
+                    || NT == NPCID.IchorSticker
+                    || NT == NPCID.DungeonSpirit
+                    || NT == NPCID.Ghost
+                    || NT == NPCID.ElfCopter
+                    || NT == NPCID.Flocko
+                    || NT == NPCID.MartianDrone
+                    || NT == NPCID.MartianProbe
+                    || NT == NPCID.ShadowFlameApparition
+                    || NT == NPCID.MothronSpawn
+                    || NT == NPCID.GraniteFlyer
+                    || NT == NPCID.FlyingAntlion
+                    || NT == NPCID.DesertDjinn
+                    || NT == NPCID.SandElemental) {
+                    damage = 0;
+                }
             }
             if (UndeadTalisman) {
                 if (NPCID.Sets.Skeletons.Contains(npc.type)
