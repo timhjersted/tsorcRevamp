@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
 	class FlameStrike : ModProjectile {
 
+		public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
 		public override void SetDefaults() {
 			projectile.friendly = true;
 			projectile.height = 16;

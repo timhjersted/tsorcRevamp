@@ -27,5 +27,14 @@ namespace tsorcRevamp.Items {
         public override bool? CanHitNPC(Player player, NPC target) {
             return false;
         }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.CopperPickaxe, 1);
+            recipe.AddIngredient(ItemID.Diamond, 6);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+        }
     }
 }

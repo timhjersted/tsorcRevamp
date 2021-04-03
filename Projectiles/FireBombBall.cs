@@ -1,20 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles {
-    class Ice1Ball : ModProjectile {
+    class FireBombBall : ModProjectile {
 
+        public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
         public override void SetDefaults() {
+            projectile.aiStyle = 9;
             projectile.friendly = true;
             projectile.height = 16;
+            projectile.width = 16;
+            projectile.light = 0.8f;
             projectile.magic = true;
             projectile.penetrate = 1;
             projectile.tileCollide = true;
-            projectile.width = 16;
         }
+
         public override void AI() {
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
@@ -90,18 +94,20 @@ namespace tsorcRevamp.Projectiles {
                         projectile.velocity.Y = num62;
                         if (projectile.velocity.X == 0f && projectile.velocity.Y == 0f) {
                             projectile.Kill();
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
                         }
                     }
                 }
             }
-            if (projectile.type == 34) {
-                projectile.rotation += 0.3f * (float)projectile.direction;
-            }
-            else {
-                if (projectile.velocity.X != 0f || projectile.velocity.Y != 0f) {
-                    projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) - 2.355f;
-                }
-            }
+            projectile.rotation += 0.3f * (float)projectile.direction;
             if (projectile.velocity.Y > 16f) {
                 projectile.velocity.Y = 16f;
                 return;
@@ -116,7 +122,15 @@ namespace tsorcRevamp.Projectiles {
             {
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
                 for (int num40 = 0; num40 < 20; num40++) {
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), 0, 5, ModContent.ProjectileType<Ice1Icicle>(), (int)(projectile.damage), 3f, projectile.owner); ;
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<FireField>(), 20, 3f, projectile.owner);
                     Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
                     int arg_1394_1 = projectile.width;
                     int arg_1394_2 = projectile.height;
@@ -137,16 +151,16 @@ namespace tsorcRevamp.Projectiles {
                     float arg_1422_5 = 0f;
                     int arg_1422_6 = 100;
                     newColor = default(Color);
-                    Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
+                    num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
                 }
             }
             if (projectile.owner == Main.myPlayer) {
                 if (Main.netMode != NetmodeID.SinglePlayer) {
                     NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, projectile.identity, (float)projectile.owner, 0f, 0f, 0);
-
                 }
-                projectile.active = false;
             }
+            projectile.active = false;
         }
+
     }
 }
