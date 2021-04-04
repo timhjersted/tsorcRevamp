@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Potions
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Heals 150 HP and applies 30 seconds of Potion Sickness.\n"
-                + "Potion sickness is only 15 seconds with the Philosopher's Stone effect.\n"
+                + "Potion sickness is only 20 seconds with the Philosopher's Stone effect.\n"
                 + "Gives Well Fed buff for 15 minutes.");
         }
 
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Potions
                 player.statLife = player.statLifeMax2;
             }
             player.HealEffect(150, true);
-            player.AddBuff(BuffID.PotionSickness, player.pStone ? 900 : 1800);
+            player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 1800);
             player.AddBuff(BuffID.WellFed, 54000); //15 min
             return true;
         }

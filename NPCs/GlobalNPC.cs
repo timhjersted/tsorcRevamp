@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs {
                 foreach (int buffType in npc.buffType) {
 
                     if (Main.debuff[buffType]) {
-                        damage = (int)(damage * 1.3f);
+                        damage = (int)(damage * 1.2f);
                     }
                     buffIndex++;
                 }
