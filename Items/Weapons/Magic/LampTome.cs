@@ -4,6 +4,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
     class LampTome : ModItem {
+
+        public override void SetStaticDefaults() {
+            Tooltip.SetDefault("A lost tome known to cure blindness.");
+        }
         public override void SetDefaults() {
             item.height = 10;
             item.knockBack = 4;

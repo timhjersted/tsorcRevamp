@@ -18,6 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useAnimation = 8;
             item.useTime = 8;
             item.UseSound = SoundID.Item1;
+            item.useStyle = ItemUseStyleID.SwingThrow;
             item.value = 19500000;
             item.width = 18;
         }

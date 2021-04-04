@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.ranged = true;
             item.shoot = ProjectileID.PurificationPowder;
 
-            item.damage = 20;
+            item.damage = 50;
             item.width = 50;
             item.height = 18;
             item.useTime = 16;
