@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class LivingShroomPoison : ModNPC // Renewable souce of mushrooms
+    class LivingShroomPoison : ModNPC // Renewable souce of mushrooms //UNFINISHED - CURRENTLY DISABLED - SPAWN CHANCE 0
     {
         public override void SetStaticDefaults()
         {
@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroomPoison")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType])
 			{
-				return 0.1f;
+				return 0f; //CHANGE TO ENABLE
 			}
 			return chance;
 		}

@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles
             projectile.height = 8;
             projectile.width = 8;
             projectile.hostile = true;
+            projectile.friendly = false;
         }
 
         public override void Kill(int timeLeft)

@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.knockBackResist = 1;
 			npc.defense = 2;
 			npc.lifeMax = 16;
-			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f); 
+			if (!Main.dedServ) npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f); 
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/SadSqueak");
 			npc.value = 0;
 			npc.buffImmune[BuffID.Confused] = true;
@@ -33,9 +33,9 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType])
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None)
 			{
-				return 0.4f;
+				return 0.35f;
 			}
 			return chance;
 		}
@@ -85,6 +85,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				{
 					Dust.NewDust(npc.position, npc.width - 6, npc.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
 				}
+
 				// if hit, change to flee state
 			}
 			else if (AI_State == State_Jump)
@@ -95,17 +96,19 @@ namespace tsorcRevamp.NPCs.Friendly
 				{
 					npc.velocity = new Vector2(npc.direction * -2.2f, -3.6f);
 				}
-				if ((Main.rand.Next(5) == 0) && (AI_Timer == 2) && npc.collideX)
+				if ((Main.rand.Next(5) == 0) && (AI_Timer == 2) && npc.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
 				{
 					if (npc.direction == -1) //right-facing bump
 					{
 						npc.velocity += new Vector2(-1f, 0);
-						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						npc.netUpdate = true;
 					}
 					if (npc.direction == 1) //left-facing bump
 					{
 						npc.velocity += new Vector2(1f, 0);
-						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						npc.netUpdate = true;
 					}
 				}
 				else if (AI_Timer == 10)
@@ -113,6 +116,7 @@ namespace tsorcRevamp.NPCs.Friendly
 					AI_State = State_Fleeing;
 					AI_Timer = 0;
 				}
+				npc.netUpdate = true;
 			}
 			else if (AI_State == State_Fleeing) //everything is inverted due to npc running away from the player instead of towards. Sprite is also manually mirrored (the png, not codewise)
 			{
@@ -259,9 +263,8 @@ namespace tsorcRevamp.NPCs.Friendly
 		}
 		public override void NPCLoot()
 		{
-			Item.NewItem(npc.getRect(), ItemID.Mushroom, Main.rand.Next(1, 3));
+			Item.NewItem(npc.getRect(), ItemID.Mushroom);
 			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
-
 		}
 	}
 }

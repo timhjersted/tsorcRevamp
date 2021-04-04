@@ -32,9 +32,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType])
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None)
 			{ 
-				  return 0.3f;
+				  return 0.35f;
 			}
 			return chance;
 		}
@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (spawntimer == 60 && (NPC.CountNPCS(mod.NPCType("ResentfulSeedling")) < 3)) //wont spawn babies if there are already 3
 				{
-					if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(mod.NPCType("LivingShroom")) < 3))
+					if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(mod.NPCType("LivingShroom")) < 3) && Main.netMode != NetmodeID.MultiplayerClient)
 					{
 						if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(mod.NPCType("LivingShroomThief")) < 1))
 						{
@@ -146,6 +146,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						{
 							NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height) + npc.velocity.Y), (mod.NPCType("LivingShroom")));
 						}
+						npc.netUpdate = true;
 					}
 					else
 					{

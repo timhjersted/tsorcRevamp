@@ -27,6 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies {
 
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
+            Item.NewItem(npc.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions
         }
     }
 }

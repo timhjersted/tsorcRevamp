@@ -22,8 +22,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.knockBackResist = 1;
 			npc.defense = 6;
 			npc.lifeMax = 16;
-			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f);
-			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/SadSqueak").WithVolume(1f);
+			if (!Main.dedServ) npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f);
+			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/SadSqueak");
 			npc.value = 1000;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.noGravity = false;
@@ -33,9 +33,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroomThief")) < 1 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType])
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroomThief")) < 1 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None)
 			{
-				return 0.075f;
+				return 0.15f;
 			}
 			return chance;
 		}
@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if ((npc.life < npc.lifeMax) && (Main.rand.Next(8) == 0))
 				{
-					Dust.NewDust(npc.position, npc.width - 6, npc.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
+					Dust.NewDust(npc.position, npc.width - 6, npc.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp, which it will never actually do
 				}
 			}
 			else if (AI_State == State_Jump)
@@ -101,11 +101,11 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (npc.direction == -1) //right-facing bump
 					{
 						npc.velocity += new Vector2(-1f, 0);
-						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
 						if (coinsdropped < 10)
 						{
 							coinsdropped++;
-							if (Main.rand.Next(6) == 0)
+							if (Main.rand.Next(8) == 0)
 							{
 								Item.NewItem(npc.Bottom, ItemID.Diamond);
 							}
@@ -118,11 +118,11 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (npc.direction == 1) //left-facing bump
 					{
 						npc.velocity += new Vector2(1f, 0);
-						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
 						if (coinsdropped < 10)
 						{
 							coinsdropped++;
-							if (Main.rand.Next(6) == 0)
+							if (Main.rand.Next(8) == 0)
 							{
 								Item.NewItem(npc.Bottom, ItemID.Diamond);
 							}
@@ -132,6 +132,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							}
 						}
 					}
+					npc.netUpdate = true;
 				}
 				else if (AI_Timer == 10)
 				{
@@ -155,9 +156,9 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						npc.velocity += new Vector2(-.05f, 0); //breaking power after turn
 					}
-					if ((knifetimer > 80) && (Main.rand.Next(80) == 0)) //Having this timer allows at least 80 ticks between next knife thrown
+					if ((knifetimer > 80) && (Main.rand.Next(80) == 0) && Main.netMode != NetmodeID.MultiplayerClient) //Having this timer allows at least 80 ticks between next knife thrown
 					{
-						Projectile.NewProjectile(npc.Center, new Vector2(Main.rand.Next(3, 6), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 5);
+						Projectile.NewProjectile(npc.Center, new Vector2(Main.rand.Next(3, 6), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
 						knifetimer = 0;
 					}
 					else if (npc.velocity.X < -3.6f) //max vel
@@ -168,6 +169,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						npc.velocity += new Vector2(-.02f, 0); //running accel.
 					}
+					npc.netUpdate = true;
 				}
 				if (npc.direction == -1) //FACING RIGHT + vel to move right
 				{
@@ -175,9 +177,9 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						npc.velocity += new Vector2(.05f, 0); //breaking power
 					}
-					if ((knifetimer > 80) && (Main.rand.Next(80) == 0))
+					if ((knifetimer > 80) && (Main.rand.Next(80) == 0) && Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						Projectile.NewProjectile(npc.Center, new Vector2(Main.rand.Next(-6, -3), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 5);
+						Projectile.NewProjectile(npc.Center, new Vector2(Main.rand.Next(-6, -3), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
 						knifetimer = 0;
 					}
 					else if (npc.velocity.X > 3.6f) //max vel
@@ -188,6 +190,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						npc.velocity += new Vector2(.02f, 0); //running accel.
 					}
+					npc.netUpdate = true;
 				}
 				if (npc.collideX)
 				{
@@ -203,14 +206,15 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (npc.alpha > 254)
 					{
 						npc.life = 0;
-						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Escaped").WithVolume(0.7f), npc.Center);
+						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Escaped").WithVolume(0.7f), npc.Center);
+						npc.netUpdate = true;
 					}
 				}
 				if (coinsdropped < 5 && coindroptimer > 40 && Main.rand.Next(100) == 0)
 				{
 					coinsdropped++;
 					coindroptimer = 0;
-					if (Main.rand.Next(6) == 0)
+					if (Main.rand.Next(8) == 0)
 					{
 						Item.NewItem(npc.Bottom, ItemID.Diamond);
 					}
@@ -314,10 +318,10 @@ namespace tsorcRevamp.NPCs.Enemies
 					Dust.NewDust(npc.position, npc.width, npc.height, 147, 0, Main.rand.Next(-2, 0), 120, default(Color), .75f);
 				}
 			}
-			if (coinsdropped < 10)
+			if (coinsdropped < 12)
 			{
 				coinsdropped++;
-				if (Main.rand.Next(6) == 0)
+				if (Main.rand.Next(8) == 0)
 				{
 					Item.NewItem(npc.Bottom, ItemID.Diamond);
 				}
