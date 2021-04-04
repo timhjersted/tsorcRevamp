@@ -14,6 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.knockBack = 4;
             item.noMelee = true;
             item.ranged = true;
+            item.shoot = ProjectileID.PurificationPowder;
             item.useAmmo = mod.ItemType("Bolt");
             item.shootSpeed = 10;
             item.useAnimation = 45;

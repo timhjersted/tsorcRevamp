@@ -6,13 +6,11 @@ namespace tsorcRevamp.Items.Potions {
     class CookedChicken : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Heals 125 HP and can be used at any time. Amazing!");
+            Tooltip.SetDefault("Heals 125 HP and applies 30 seconds of Potion Sickness.\n" + "Potion sickness is only 15 seconds with the Philosopher's Stone effect.");
         }
 
         public override void SetDefaults() {
-            item.stack = 1;
             item.consumable = true;
-            item.healLife = 125;
             item.useAnimation = 17;
             item.UseSound= SoundID.Item2;
             item.useStyle = ItemUseStyleID.EatingUsing;
@@ -24,8 +22,22 @@ namespace tsorcRevamp.Items.Potions {
             item.width = 20;
         }
 
-        public override void GetHealLife(Player player, bool quickHeal, ref int healValue) {
-            healValue = 125;
+
+        public override bool CanUseItem(Player player) {
+            if (player.HasBuff(BuffID.PotionSickness)) {
+                return false;
+            }
+            return true;
+        }
+
+        public override bool UseItem(Player player) {
+            player.statLife += 125;
+            if (player.statLife > player.statLifeMax2) {
+                player.statLife = player.statLifeMax2;
+            }
+            player.HealEffect(125, true);
+            player.AddBuff(BuffID.PotionSickness, player.pStone ? 900 : 1800);
+            return true;
         }
 
         public override void AddRecipes() {

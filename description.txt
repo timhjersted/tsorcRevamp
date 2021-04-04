@@ -1,1 +1,3 @@
 The Story of Red Cloud's Dark Souls mod, transferred to TModLoader and filled with new features.
+
+This is a beta release meant for testing. It does not represent the final version of the mod.
