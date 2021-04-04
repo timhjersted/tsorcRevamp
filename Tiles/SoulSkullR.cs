@@ -168,7 +168,7 @@ namespace tsorcRevamp.Tiles
 			if (tile.frameX / 36 == 0)
 			{
 				Main.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
-				if (!Main.expertMode)
+				if (!Main.hardMode)
 				{
 					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("LostUndeadSoul"), 1);
 				}
