@@ -5,11 +5,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
-	public class LivingShroom : ModNPC
+	public class LivingGlowshroom : ModNPC
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Living Shroom");
+			DisplayName.SetDefault("Living Glowshroom");
 			Main.npcFrameCount[npc.type] = 8;
 		}
 
@@ -20,9 +20,9 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.aiStyle = -1; //Unique AI is -1
 			npc.damage = 0;
 			npc.knockBackResist = 1;
-			npc.defense = 2;
-			npc.lifeMax = 16;
-			if (!Main.dedServ) npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f); 
+			npc.defense = 4;
+			npc.lifeMax = 28;
+			if (!Main.dedServ) npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f);
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/SadSqueak");
 			npc.value = 0;
 			npc.buffImmune[BuffID.Confused] = true;
@@ -33,9 +33,9 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None)
+			if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].type == TileID.MushroomGrass)
 			{
-				return 0.35f;
+				return 0.75f;
 			}
 			return chance;
 		}
@@ -65,6 +65,11 @@ namespace tsorcRevamp.NPCs.Friendly
 		// Our AI here makes our NPC sit waiting for a player to enter range then spawns minions to attack.
 		public override void AI()
 		{
+			if ((npc.life < npc.lifeMax) && (Main.rand.Next(2) == 0) && Framing.GetTileSafely((int)npc.position.X / 16, (int)npc.position.Y / 16 + 2).type == TileID.MushroomGrass)
+			{
+				Dust.NewDust(npc.position, npc.width - 6, npc.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
+			}
+			Lighting.AddLight(npc.Center, .12f, .12f, .5f);
 			// The npc starts in the asleep state, waiting for a player to enter range
 			if (AI_State == State_Asleep)
 			{
@@ -96,7 +101,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				{
 					npc.velocity = new Vector2(npc.direction * -2.2f, -3.6f);
 				}
-				if ((Main.rand.Next(6) == 0) && (AI_Timer == 2) && npc.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
+				if ((Main.rand.Next(8) == 0) && (AI_Timer == 2) && npc.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
 				{
 					if (npc.direction == -1) //right-facing bump
 					{
@@ -123,33 +128,33 @@ namespace tsorcRevamp.NPCs.Friendly
 				npc.TargetClosest(true);
 				if (npc.direction == 1) //FACING LEFT - vel to move left
 				{
-					if (npc.velocity.X > -2.2f)
+					if (npc.velocity.X > -2.5f)
 					{
-						npc.velocity += new Vector2(-.04f, 0); //breaking power after turn
+						npc.velocity += new Vector2(-.05f, 0); //breaking power after turn
 					}
-					else if (npc.velocity.X < -2.6f) //max vel
+					else if (npc.velocity.X < -3.6f) //max vel
 					{
 						npc.velocity += new Vector2(.04f, 0); //slowdown after knockback
 					}
-					else if ((npc.velocity.X <= -2.2f) && (npc.velocity.X > -2.6f))
+					else if ((npc.velocity.X <= -2.5f) && (npc.velocity.X > -3.6f))
 					{
-						npc.velocity += new Vector2(-.01f, 0); //running accel.
+						npc.velocity += new Vector2(-.02f, 0); //running accel.
 					}
 				}
 
 				if (npc.direction == -1) //FACING RIGHT + vel to move right
 				{
-					if (npc.velocity.X < 2.2f)
+					if (npc.velocity.X < 2.5f)
 					{
-						npc.velocity += new Vector2(.04f, 0); //breaking power
+						npc.velocity += new Vector2(.05f, 0); //breaking power
 					}
-					else if (npc.velocity.X > 2.6f) //max vel
+					else if (npc.velocity.X > 3.6f) //max vel
 					{
 						npc.velocity += new Vector2(-.04f, 0); //slowdown after knockback
 					}
-					else if ((npc.velocity.X >= 2.2f) && (npc.velocity.X < 2.6f))
+					else if ((npc.velocity.X >= 2.5f) && (npc.velocity.X < 3.6f))
 					{
-						npc.velocity += new Vector2(.01f, 0); //running accel.
+						npc.velocity += new Vector2(.02f, 0); //running accel.
 					}
 				}
 				if (npc.collideX)
@@ -158,7 +163,7 @@ namespace tsorcRevamp.NPCs.Friendly
 					AI_State = State_Jump;
 					AI_Timer = 0;
 				}
-				if (!npc.HasValidTarget || Main.player[npc.target].Distance(npc.Center) > 350f)
+				if (!npc.HasValidTarget || Main.player[npc.target].Distance(npc.Center) > 330f)
 				{
 					// Out targeted player seems to have left our range, so we'll go back to sleep.
 					AI_State = State_Asleep;
@@ -191,7 +196,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			}
 			else if (AI_State == State_Jump)
 			{
-					npc.frame.Y = Frame_Fleeing_5 * frameHeight;
+				npc.frame.Y = Frame_Fleeing_5 * frameHeight;
 			}
 			else if (AI_State == State_Fleeing)
 			{
@@ -238,13 +243,18 @@ namespace tsorcRevamp.NPCs.Friendly
 			{
 				npc.lifeRegen = 2;
 			}
+			//if (Main.tile[(int)npc.position.X, (int)npc.position.Y].type == TileID.MushroomGrass)
+			if (Framing.GetTileSafely((int)npc.position.X / 16, (int)npc.position.Y / 16 + 2).type == TileID.MushroomGrass)
+			{
+				npc.lifeRegen = 15;
+			}
 		}
 
 		public override void HitEffect(int hitDirection, double damage)
 		{
 			for (int i = 0; i < 15; i++)
 			{
-				int dustType = 147;
+				int dustType = 41;
 				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
 				Dust dust = Main.dust[dustIndex];
 
@@ -257,14 +267,14 @@ namespace tsorcRevamp.NPCs.Friendly
 			{
 				for (int i = 0; i < 20; i++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 147, 0, Main.rand.Next(-2, 0), 120, default(Color), .75f);
+					Dust.NewDust(npc.position, npc.width, npc.height, 41, 0, Main.rand.Next(-2, 0), 120, default(Color), .75f);
 				}
 			}
 		}
 		public override void NPCLoot()
 		{
-			Item.NewItem(npc.getRect(), ItemID.Mushroom);
-			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
+			Item.NewItem(npc.getRect(), ItemID.GlowingMushroom);
+			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 3);
 		}
 	}
 }

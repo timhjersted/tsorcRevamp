@@ -238,8 +238,11 @@ namespace tsorcRevamp {
             if (UndeadTalisman) {
                 if (NPCID.Sets.Skeletons.Contains(npc.type)
                     || npc.type == NPCID.Zombie
+                    || npc.type == NPCID.Skeleton
                     || npc.type == NPCID.BaldZombie
                     || npc.type == NPCID.AngryBones
+                    || npc.type == NPCID.ArmoredViking
+                    || npc.type == NPCID.UndeadViking
                     || npc.type == NPCID.DarkCaster
                     || npc.type == NPCID.CursedSkull
                     || npc.type == NPCID.UndeadMiner

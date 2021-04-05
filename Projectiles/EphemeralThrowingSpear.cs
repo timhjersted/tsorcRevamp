@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class EphemeralThrowingSpear : ModProjectile {
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[projectile.type] = 2;
         }
         public override void SetDefaults() {
             projectile.width = 19;
@@ -23,9 +23,9 @@ namespace tsorcRevamp.Projectiles {
         }
         public override void AI() {
             projectile.ai[0] += 1f;
-            if (++projectile.frameCounter >= 3) {
+            if (++projectile.frameCounter >= 10) {
                 projectile.frameCounter = 0;
-                if (++projectile.frame >= 3) {
+                if (++projectile.frame >= 2) {
                     projectile.frame = 0;
                 }
             }

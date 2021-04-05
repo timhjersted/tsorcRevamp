@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					npc.velocity = new Vector2(npc.direction * -2.5f, -3.6f);
 				}
-				if ((Main.rand.Next(8) == 0) && (AI_Timer == 2) && npc.collideX)
+				if ((Main.rand.Next(10) == 0) && (AI_Timer == 2) && npc.collideX)
 				{
 					if (npc.direction == -1) //right-facing bump
 					{

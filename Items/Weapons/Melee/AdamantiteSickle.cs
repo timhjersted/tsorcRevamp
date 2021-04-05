@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.knockBack = 6;
             item.melee = true;
             item.useAnimation = 25;
-            item.scale = 1.2f;
+            item.scale = 1.1f;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 21;

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.knockBack = 5;
             item.maxStack = 1;
             item.melee = true;
-            item.scale = 1.25f;
+            item.scale = 1f;
             item.useAnimation = 28;
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
