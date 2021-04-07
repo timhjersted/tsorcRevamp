@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None)
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor))
 			{ 
 				  return 0.35f;
 			}
@@ -260,10 +260,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (AI_State == State_Asleep)
 			{
-				npc.lifeRegen = 20;
+				npc.lifeRegen = npc.lifeMax / 10;
 			}
 		}
-
+		public int wooddropped = 0;
 		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
 		{
 			if ((item.type == ItemID.CopperAxe) || (item.type == ItemID.TinAxe) || (item.type == ItemID.IronAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.SilverAxe) || (item.type == ItemID.TungstenAxe) || (item.type == ItemID.GoldAxe) || (item.type == ItemID.PlatinumAxe)
@@ -281,6 +281,11 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (damage < 15)
 				{
 					damage = 15; //damage before defence
+				}
+				if (Main.rand.Next(2) == 0 && wooddropped < 5)
+				{
+					Item.NewItem(npc.Bottom, ItemID.Wood);
+					wooddropped++;
 				}
 			}
 		}
@@ -310,7 +315,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void NPCLoot()
 		{
-			Item.NewItem(npc.getRect(), ItemID.Wood, Main.rand.Next(5, 9));
+			Item.NewItem(npc.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
 		}
 	}
 }

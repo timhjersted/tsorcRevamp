@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroomThief")) < 1 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None)
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroomThief")) < 1 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor))
 			{
 				return 0.15f;
 			}
