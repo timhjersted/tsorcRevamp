@@ -1,7 +1,19 @@
-The Story of Red Cloud's Dark Souls mod, transferred to TModLoader and filled with new features.
+The Story of Red Cloud's Dark Souls mod, transferred to TModLoader and filled with new features. Currently in beta! We have made a little custom map to give you a taste of the TSORC experience! If you would like to play the map you can find it in the #sources section of our Discord. See link below.
 
-This is a beta release meant for testing. It does not represent the final version of the mod.
+The Story of Red Cloud is a massive full game Zelda/Dark Souls inspired adventure built inside the world of Terraria. It will take players through 13 dungeons spread across an expansive and inter-connected world, encompassing an estimated 15 to 30+ hr experience that will offer enough to do and see to enjoy more than one playthrough.
 
+Once finished it will feature:
+13 uniquely themed dungeon areas spread between both normal and hard modes.
+29 bosses (7 vanilla plus 22 mod bosses).
+70+ new NPCS including 8 friendly NPCs.
+Custom Soundtrack.
+Over 400 new mod items, weapons, and armors compiled and remixed from a dozen of the best mods from the community.
+Many hours of secret post-game content.
+Dark Souls Game Mechanic.
+A unique story that's descriptive but not too heavy on text.
+A strong emphasis on visual immersion and a logical connection between areas similar to Dark Soul's world layout.
+Map created entirely from scratch using Tedit 3, down to individual tree placements and hill curves.
+
+This is a beta release meant for testing. It does not represent the final version of the mod. 
 This release includes (approximately) all of the items from the original mod, in as close to their original state as possible. There are also some NPCs and several new additions.
 
-Join our Discord to stay up to date with development https://discord.gg/tPkhZgJ
