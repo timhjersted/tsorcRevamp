@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class LionheartGunblade : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Fires crystal bullets.\n" + "\"Of gunblades, the finest model is the Lionheart.\"");
+            Tooltip.SetDefault("\"Of gunblades, the finest model is the Lionheart.\"");
         }
         public override void SetDefaults() {
             item.damage = 50;
@@ -15,9 +15,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.knockBack = 7;
             item.rare = ItemRarityID.Pink;
             item.scale = 1.1f;
-            item.shoot = ProjectileID.CrystalBullet;
+            item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 10;
-            item.useAmmo = 14;
+            item.useAmmo = AmmoID.Bullet;
             item.ranged = true;
             item.melee = true;
             item.useAnimation = 15;
