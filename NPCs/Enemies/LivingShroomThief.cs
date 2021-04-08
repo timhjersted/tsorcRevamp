@@ -94,9 +94,9 @@ namespace tsorcRevamp.NPCs.Enemies
 				AI_Timer++;
 				if (AI_Timer == 1)
 				{
-					npc.velocity = new Vector2(npc.direction * -2.5f, -3.6f);
+					npc.velocity = new Vector2(npc.direction * -2.7f, -3.6f);
 				}
-				if ((Main.rand.Next(10) == 0) && (AI_Timer == 2) && npc.collideX)
+				if ((Main.rand.Next(12) == 0) && (AI_Timer == 2) && npc.collideX)
 				{
 					if (npc.direction == -1) //right-facing bump
 					{
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						if (coinsdropped < 10)
 						{
 							coinsdropped++;
-							if (Main.rand.Next(8) == 0)
+							if (Main.rand.Next(10) == 0)
 							{
 								Item.NewItem(npc.Bottom, ItemID.Diamond);
 							}
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						if (coinsdropped < 10)
 						{
 							coinsdropped++;
-							if (Main.rand.Next(8) == 0)
+							if (Main.rand.Next(10) == 0)
 							{
 								Item.NewItem(npc.Bottom, ItemID.Diamond);
 							}
@@ -152,43 +152,43 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (npc.direction == 1) //FACING LEFT - vel to move left
 				{
 
-					if (npc.velocity.X > -2.5f)
+					if (npc.velocity.X > -2.7f)
 					{
-						npc.velocity += new Vector2(-.05f, 0); //breaking power after turn
+						npc.velocity += new Vector2(-.06f, 0); //breaking power after turn
 					}
-					if ((knifetimer > 80) && (Main.rand.Next(80) == 0) && Main.netMode != NetmodeID.MultiplayerClient) //Having this timer allows at least 80 ticks between next knife thrown
+					if ((knifetimer > 80) && (Main.rand.Next(70) == 0) && Main.netMode != NetmodeID.MultiplayerClient) //Having this timer allows at least 80 ticks between next knife thrown
 					{
 						Projectile.NewProjectile(npc.Center, new Vector2(Main.rand.Next(3, 6), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
 						knifetimer = 0;
 					}
-					else if (npc.velocity.X < -3.6f) //max vel
+					else if (npc.velocity.X < -4f) //max vel
 					{
 						npc.velocity += new Vector2(.04f, 0); //slowdown after knockback
 					}
-					else if ((npc.velocity.X <= -2.5f) && (npc.velocity.X > -3.6f))
+					else if ((npc.velocity.X <= -2.7f) && (npc.velocity.X > -4f))
 					{
-						npc.velocity += new Vector2(-.02f, 0); //running accel.
+						npc.velocity += new Vector2(-.03f, 0); //running accel.
 					}
 					npc.netUpdate = true;
 				}
 				if (npc.direction == -1) //FACING RIGHT + vel to move right
 				{
-					if (npc.velocity.X < 2.5f)
+					if (npc.velocity.X < 2.7f)
 					{
-						npc.velocity += new Vector2(.05f, 0); //breaking power
+						npc.velocity += new Vector2(.06f, 0); //breaking power
 					}
-					if ((knifetimer > 80) && (Main.rand.Next(80) == 0) && Main.netMode != NetmodeID.MultiplayerClient)
+					if ((knifetimer > 80) && (Main.rand.Next(70) == 0) && Main.netMode != NetmodeID.MultiplayerClient)
 					{
 						Projectile.NewProjectile(npc.Center, new Vector2(Main.rand.Next(-6, -3), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
 						knifetimer = 0;
 					}
-					else if (npc.velocity.X > 3.6f) //max vel
+					else if (npc.velocity.X > 4f) //max vel
 					{
 						npc.velocity += new Vector2(-.04f, 0); //slowdown after knockback
 					}
-					else if ((npc.velocity.X >= 2.5f) && (npc.velocity.X < 3.6f))
+					else if ((npc.velocity.X >= 2.7f) && (npc.velocity.X < 4f))
 					{
-						npc.velocity += new Vector2(.02f, 0); //running accel.
+						npc.velocity += new Vector2(.03f, 0); //running accel.
 					}
 					npc.netUpdate = true;
 				}
