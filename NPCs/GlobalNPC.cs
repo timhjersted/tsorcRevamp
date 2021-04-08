@@ -75,6 +75,7 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.ChaosElemental) {
                 NPCLoader.blockLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
             }
+            NPCLoader.blockLoot.Add(ItemID.SlimeHook);
             return base.PreNPCLoot(npc);
         }
 

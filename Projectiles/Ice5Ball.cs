@@ -14,6 +14,8 @@ namespace tsorcRevamp.Projectiles {
             projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.width = 16;
+            projectile.usesIDStaticNPCImmunity = true;
+            projectile.idStaticNPCHitCooldown = 8;
         }
 
         public override void AI() {

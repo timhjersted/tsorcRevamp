@@ -112,7 +112,7 @@ namespace tsorcRevamp.Projectiles {
             {
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
                 for (int num40 = 0; num40 < 20; num40++) {
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<PoisonField>(), 15, 1f, projectile.owner);
+                    Projectile.NewProjectile(projectile.position.X + projectile.width, projectile.position.Y + projectile.height, 0, 0, ModContent.ProjectileType<PoisonField>(), projectile.damage, 1f, projectile.owner);
                     Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
                     int arg_1394_1 = projectile.width;
                     int arg_1394_2 = projectile.height;

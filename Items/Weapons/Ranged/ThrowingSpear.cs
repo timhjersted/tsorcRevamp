@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class ThrowingSpear : ModItem {
         public override void SetDefaults() {
+            item.consumable = true;
             item.damage = 13;
             item.height = 62;
             item.knockBack = 3;

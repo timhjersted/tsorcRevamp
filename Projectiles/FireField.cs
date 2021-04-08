@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class FireField : ModProjectile {
 
-        public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
+        public override string Texture => "tsorcRevamp/Projectiles/GreatFireStrike";
 
         public override void SetStaticDefaults() {
             Main.projFrames[projectile.type] = 5;

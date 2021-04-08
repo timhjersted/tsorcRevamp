@@ -35,6 +35,8 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.MythrilDrill);
             RecipeRemover(ItemID.MythrilPickaxe);
             RecipeRemover(ItemID.BladeofGrass);
+            RecipeRemover(ItemID.RopeCoil);
+            RecipeRemover(ItemID.VineRopeCoil);
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 3);
         }
     }
