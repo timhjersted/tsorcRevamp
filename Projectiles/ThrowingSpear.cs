@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void AI() {
+            projectile.ai[0] += 1f;
             if (projectile.ai[0] >= 15f) {
                 projectile.ai[0] = 15f;
                 projectile.velocity.Y += 0.1f;
