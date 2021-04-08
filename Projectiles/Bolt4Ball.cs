@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles {
             }
         }
         public override void Kill(int timeLeft) {
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), 0, 0, ModContent.ProjectileType<Bolt4Bolt>(), (int)(this.projectile.damage), 8f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + projectile.width / 2, projectile.position.Y + projectile.height / 2, projectile.velocity.X, projectile.velocity.Y, ModContent.ProjectileType<Bolt4Bolt>(), projectile.damage, 8f, projectile.owner);
         }
     }
 
