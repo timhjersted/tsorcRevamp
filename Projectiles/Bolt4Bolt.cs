@@ -19,6 +19,11 @@ namespace tsorcRevamp.Projectiles {
             projectile.light = 0.8f;
         }
         public override void AI() {
+            if (projectile.ai[0] == 0) { 
+            projectile.velocity.X *= 0.01f;
+            projectile.velocity.Y *= 0.01f;
+                projectile.ai[0] = 1;
+            }
 
             projectile.frameCounter++;
             projectile.frame = (int)Math.Floor((double)projectile.frameCounter / 4);
