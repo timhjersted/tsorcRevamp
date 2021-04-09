@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -23,11 +21,17 @@ namespace tsorcRevamp.Projectiles
             projectile.timeLeft = 36000;
             projectile.alpha = 254; //start nearly invis
         }
+        public float AI_Projectile_Lifetime {
+            get => projectile.ai[0];
+            set => projectile.ai[0] = value;
+        }
         public override void AI()
         {
+            AI_Projectile_Lifetime += 1f;
+
             var player = Main.player[projectile.owner];
 
-            if (Main.player[projectile.owner].Distance(projectile.Center) < 300f && !player.dead/*projectile.timeLeft <= 35099*/) //kill when player returns.
+            if ((Main.player[projectile.owner].Distance(projectile.Center) < 300f) && !player.dead) //kill when player returns.
             {
                 projectile.alpha += 1;
                 if (projectile.alpha > 254)
@@ -36,23 +40,22 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if (projectile.timeLeft > 35500)
+            if (AI_Projectile_Lifetime < 100)
             {
                 projectile.alpha -= 4; //increase visibility
             }
             
             //movement
-            if (projectile.timeLeft >= 35940)
+            if (AI_Projectile_Lifetime <= 60)
             {
                 projectile.velocity.Y = -.9f; //float up for 1 second
             }
-            if (projectile.timeLeft < 35939)
-            {
-                projectile.velocity.Y = 0; //stop upwards velocity
+            else {
+                projectile.velocity.Y = 0f; //stop upwards velocity
             }
 
             //animation
-            projectile.ai[0] += 1f;
+            
             if (++projectile.frameCounter >= 5)
             {
                 projectile.frameCounter = 0;
