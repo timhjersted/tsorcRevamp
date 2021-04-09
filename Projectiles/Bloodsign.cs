@@ -25,6 +25,8 @@ namespace tsorcRevamp.Projectiles
             get => projectile.ai[0];
             set => projectile.ai[0] = value;
         }
+
+        public bool playerReturned = false;
         public override void AI()
         {
             AI_Projectile_Lifetime += 1f;
@@ -33,13 +35,15 @@ namespace tsorcRevamp.Projectiles
 
             if ((Main.player[projectile.owner].Distance(projectile.Center) < 300f) && !player.dead) //kill when player returns.
             {
+                playerReturned = true;
+            }
+
+            if (playerReturned) {
                 projectile.alpha += 1;
-                if (projectile.alpha > 254)
-                {
+                if (projectile.alpha > 254) {
                     projectile.Kill();
                 }
             }
-
             if (AI_Projectile_Lifetime < 100)
             {
                 projectile.alpha -= 4; //increase visibility
