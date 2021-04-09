@@ -1,3 +1,4 @@
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,23 +14,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetDefaults()
         {
-
-
-            
             item.autoReuse = true;
-            //item.prefixType=483;
             item.rare = ItemRarityID.LightRed;
             item.damage = 37;
             item.width = 46;
             item.height = 46;
-            item.knockBack = (float)6.85;
+            item.knockBack = 11f;
             item.maxStack = 1;
             item.melee = true;
-            item.scale = (float)1.3;
-            item.useAnimation = 32;
+            item.scale = 1;
+            item.useAnimation = 38;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
+            item.useTime = 38;
             item.value = 75900;
         }
 
@@ -45,6 +42,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddRecipe();
         }
 
-
+        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+        {
+            player.armorPenetration += 10;
+        }
     }
 }

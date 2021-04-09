@@ -53,6 +53,10 @@ namespace tsorcRevamp {
 
         public bool BoneRevenge = false;
 
+        public int souldroplooptimer = 0;
+        public int souldroptimer = 0;
+
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -96,6 +100,8 @@ namespace tsorcRevamp {
             BoneRevenge = false;
             CrimsonDrain = false;
             Shockwave = false;
+            souldroplooptimer = 0;
+            souldroptimer = 0;
         }
 
         public override void PostUpdateEquips() {
@@ -154,16 +160,26 @@ namespace tsorcRevamp {
             }
             return true;
         }
-
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
+            Projectile.NewProjectile(player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, player.whoAmI);
+        }
+        public override void UpdateDead() {
             if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath) {
-                foreach (Item item in player.inventory) {
-                    if (item.type == ModContent.ItemType<DarkSoul>() && Main.netMode != NetmodeID.MultiplayerClient) {
-                        Item.NewItem(player.Center, item.type, item.stack);
-                        item.stack = 0;
+                souldroptimer++;
+                if (souldroptimer == 15 && souldroplooptimer < 10) {
+                    foreach (Item item in player.inventory) {
+                        if (item.type == ModContent.ItemType<DarkSoul>() && Main.netMode != NetmodeID.MultiplayerClient) {
+                            Item.NewItem(player.Center, item.type, item.stack);
+                            Main.PlaySound(SoundID.NPCDeath52.WithVolume(Main.rand.NextFloat(.2f, .75f)).WithPitchVariance(.3f), player.position);
+                            souldroplooptimer++;
+                            souldroptimer = 0;
+                            item.stack = 0;
+                        }
                     }
                 }
             }
+            DarkInferno = false;
+            Falling = false;
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit) {
@@ -296,15 +312,13 @@ namespace tsorcRevamp {
                 }
             }
         }
-        public override void UpdateDead() {
-            DarkInferno = false;
-            Falling = false;
-        }
+
         public override void ProcessTriggers(TriggersSet triggersSet) {
             if (tsorcRevamp.toggleDragoonBoots.JustPressed) {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
         }
+
         public override void PreUpdate() {
             if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
                 Player.jumpSpeed += 10f;

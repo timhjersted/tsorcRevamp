@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles
 				}
 			}
 
-			int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * -.05f, projectile.velocity.Y * -.05f, 30, default(Color), .9f);
+			int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * -.0f, projectile.velocity.Y * -.0f, 30, default(Color), .9f);
 			Main.dust[dust].noGravity = true;
 
 

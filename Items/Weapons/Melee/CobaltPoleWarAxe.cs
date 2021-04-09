@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     {
 	public override void SetStaticDefaults()
 	{
-		DisplayName.SetDefault("Cobalt Pole War Axe");
+		DisplayName.SetDefault("Cobalt Halberd");
             Tooltip.SetDefault("");
 
 	}
@@ -17,15 +17,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
             
             item.autoReuse = true;
-            //item.prefixType=483;
             item.rare = ItemRarityID.LightRed;
             item.damage = 37;
-            item.width = 54;
-            item.height = 54;
+            item.width = 76;
+            item.height = 74;
             item.knockBack = (float)4.85;
             item.maxStack = 1;
             item.melee = true;
-            item.scale = (float)1.3;
+            item.scale = 1;
             item.useAnimation = 32;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
