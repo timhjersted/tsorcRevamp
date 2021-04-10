@@ -162,15 +162,15 @@ namespace tsorcRevamp {
         }
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
             Projectile.NewProjectile(player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, player.whoAmI);
+            Main.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
         }
         public override void UpdateDead() {
             if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath) {
                 souldroptimer++;
-                if (souldroptimer == 15 && souldroplooptimer < 10) {
+                if (souldroptimer == 5 && souldroplooptimer < 13) {
                     foreach (Item item in player.inventory) {
                         if (item.type == ModContent.ItemType<DarkSoul>() && Main.netMode != NetmodeID.MultiplayerClient) {
                             Item.NewItem(player.Center, item.type, item.stack);
-                            Main.PlaySound(SoundID.NPCDeath52.WithVolume(Main.rand.NextFloat(.2f, .75f)).WithPitchVariance(.3f), player.position);
                             souldroplooptimer++;
                             souldroptimer = 0;
                             item.stack = 0;
