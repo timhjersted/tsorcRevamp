@@ -19,6 +19,8 @@ namespace tsorcRevamp.NPCs.Friendly {
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 30;
             animationType = NPCID.PossessedArmor;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.ChickenBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             return SpawnCondition.TownGeneralCritter.Chance * 0.2f;

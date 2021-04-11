@@ -25,7 +25,9 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Dig");
 			npc.DeathSound = SoundID.NPCDeath33;
 			npc.value = 150;
-			npc.buffImmune[BuffID.Confused] = true; 
+			npc.buffImmune[BuffID.Confused] = true;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

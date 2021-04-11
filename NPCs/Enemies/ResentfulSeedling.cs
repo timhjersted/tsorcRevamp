@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.defense = 6;
             animationType = NPCID.CorruptBunny;
             npc.value = 0;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.ResentfulSeedlingBanner>();
         }
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {

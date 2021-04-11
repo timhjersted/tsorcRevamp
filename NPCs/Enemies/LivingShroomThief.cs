@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 1000;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.noGravity = false;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.LivingShroomThiefBanner>();
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

@@ -26,6 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.defense = 6;
             animationType = NPCID.CorruptBunny;
             npc.value = 0;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.LivingShroomPoisonBanner>();
         }
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{

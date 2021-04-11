@@ -115,7 +115,7 @@ namespace tsorcRevamp.NPCs {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1); // Most HM enemies fall into this category
                 }
 
-                if ((enemyValue >= 50) && (enemyValue <= 5000) && (Main.rand.NextFloat() < .015f)) // 1.5% chance of all enemies between enemyValue 50 and 5000 dropping ProudKnightSoul aka 1/75
+                if ((enemyValue >= 50) && (enemyValue <= 5000) && (Main.rand.NextFloat() < .015f) && Main.hardMode) // 1.5% chance of all enemies between enemyValue 50 and 5000 dropping ProudKnightSoul aka 1/75
                 {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
                 }

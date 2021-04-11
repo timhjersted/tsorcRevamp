@@ -63,6 +63,30 @@ namespace tsorcRevamp.Banners {
                 case 4:
                     item = "StoneGolemBanner";
                     break;
+                case 5:
+                    item = "AbandonedStumpBanner";
+                    break;
+                case 6:
+                    item = "ResentfulSeedlingBanner";
+                    break;
+                case 7:
+                    item = "LivingShroomBanner";
+                    break;
+                case 8:
+                    item = "LivingShroomThiefBanner";
+                    break;
+                case 9:
+                    item = "LivingShroomPoisonBanner";
+                    break;
+                case 10:
+                    item = "LivingGlowshroomBanner";
+                    break;
+                case 11:
+                    item = "UndeadCasterBanner";
+                    break;
+                case 12:
+                    item = "ChickenBanner";
+                    break;
                 default:
                     return;
             }
@@ -89,6 +113,30 @@ namespace tsorcRevamp.Banners {
                         break;
                     case 4:
                         type = "StoneGolem";
+                        break;
+                    case 5:
+                        type = "AbandonedStump";
+                        break;
+                    case 6:
+                        type = "ResentfulSeedling";
+                        break;
+                    case 7:
+                        type = "LivingShroom";
+                        break;
+                    case 8:
+                        type = "LivingShroomThief";
+                        break;
+                    case 9:
+                        type = "LivingShroomPoison";
+                        break;
+                    case 10:
+                        type = "LivingGlowshroom";
+                        break;
+                    case 11:
+                        type = "UndeadCaster";
+                        break;
+                    case 12:
+                        type = "Chicken";
                         break;
                     default:
                         return;
@@ -160,5 +208,116 @@ namespace tsorcRevamp.Banners {
         }
     }
 
- 
+    public class AbandonedStumpBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Abandoned Stump");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class ResentfulSeedlingBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Resentful Seedling");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class LivingShroomBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Fleeing Fungi");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class LivingShroomThiefBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Fungi Felon");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class LivingShroomPoisonBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Poisonous Living Shroom");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class LivingGlowshroomBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Living Glowshroom");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class UndeadCasterBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Undead Caster");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class ChickenBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Chicken"); //you're gonna need it
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
 }
