@@ -28,6 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies
             bannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
             npc.height = 44;
             npc.width = 28;
+            npc.HitSound = SoundID.NPCHit2;
+            npc.DeathSound = SoundID.NPCDeath2;
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

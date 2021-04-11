@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items.BossItems
+namespace tsorcRevamp.Items
 {
     class AttraidiesRelic : ModItem
     {
@@ -29,9 +29,16 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override bool UseItem(Player player)
         {
-            Main.NewText("Attraidies Illusion has awakened!", 175, 75, 255);
-            NPC.SpawnOnPlayer(Main.myPlayer, NPCID.CorruptBunny); //placeholder
-            return true;
+            if (!NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion")))
+            {
+                Main.NewText("Attraidies Illusion has awakened!", 175, 75, 255);
+                NPC.SpawnOnPlayer(Main.myPlayer, mod.NPCType("AttraidiesIllusion"));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

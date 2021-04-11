@@ -87,6 +87,9 @@ namespace tsorcRevamp.Banners {
                 case 12:
                     item = "ChickenBanner";
                     break;
+                case 13:
+                    item = "AttraidiesIllusionBanner";
+                    break;
                 default:
                     return;
             }
@@ -137,6 +140,9 @@ namespace tsorcRevamp.Banners {
                         break;
                     case 12:
                         type = "Chicken";
+                        break;
+                    case 13:
+                        type = "AttraidiesIllusion";
                         break;
                     default:
                         return;
@@ -313,6 +319,20 @@ namespace tsorcRevamp.Banners {
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Nearby players get a bonus against: Chicken"); //you're gonna need it
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class AttraidiesIllusionBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Attraidies Illusion");
         }
         public override void SetDefaults()
         {
