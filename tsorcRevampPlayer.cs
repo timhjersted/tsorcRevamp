@@ -170,12 +170,10 @@ namespace tsorcRevamp {
             }
 
             if (CrimsonDrain) {
-                foreach (NPC npc in Main.npc) {
-                    float distanceX = player.Center.X - npc.Center.X;
-                    float distanceY = player.Center.Y - npc.Center.Y;
-                    float distAbs = (float)Math.Sqrt(distanceX * distanceX + distanceY + distanceY);
-                    if (distAbs < 200f) {
-                        npc.AddBuff(mod.BuffType("CrimsonBurn"), 3);
+                for (int l = 0; l < 200; l++) {
+                    NPC nPC = Main.npc[l];
+                    if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
+                        nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
                     }
                 }
             }
@@ -381,7 +379,12 @@ namespace tsorcRevamp {
                 player.rangedCrit += 5;
             }
             if (player.buffImmune[ModContent.BuffType<CrimsonDrain>()] && PermanentBuffToggles[48]) {
-                CrimsonDrain = true;
+                for (int l = 0; l < 200; l++) {
+                    NPC nPC = Main.npc[l];
+                    if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
+                            nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 3);
+                    }
+                }
             }
             if (player.buffImmune[ModContent.BuffType<DemonDrug>()] && PermanentBuffToggles[49]) {
                 player.allDamage += 0.2f;
