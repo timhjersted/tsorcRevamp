@@ -29,15 +29,6 @@ namespace tsorcRevamp.NPCs {
         }
 
         public override void AI(NPC npc) {
-            if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.CrimsonDrain>()) && !npc.friendly && npc.lifeMax > 5) {
-                Player player = Main.LocalPlayer;
-                float distanceX = player.Center.X - npc.Center.X;
-                float distanceY = player.Center.Y - npc.Center.Y;
-                float distAbs = (float)Math.Sqrt(distanceX * distanceX + distanceY + distanceY);
-                if (distAbs < 200f) {
-                    npc.AddBuff(mod.BuffType("CrimsonBurn"), 3);
-                }
-            }
 
             if ((npc.friendly) && (npc.lifeMax == 250)) { //town NPCs are immortal
                 npc.dontTakeDamage = true;

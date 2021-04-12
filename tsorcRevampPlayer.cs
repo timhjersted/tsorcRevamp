@@ -12,6 +12,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Buffs;
+using System;
 
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
@@ -63,7 +64,7 @@ namespace tsorcRevamp {
         public int souldroptimer = 0;
 
         public bool[] PermanentBuffToggles = new bool[52]; //todo dont forget to increment this if you add buffs to the dictionary
-        
+
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -111,8 +112,7 @@ namespace tsorcRevamp {
             souldroptimer = 0;
         }
 
-
-        public override void PostUpdateEquips() {
+        public override void UpdateEquips(ref bool wallSpeedBuff, ref bool tileSpeedBuff, ref bool tileRangeBuff) {
             foreach (Item item in player.inventory) {
                 foreach (var BuffCheck in tsorcRevamp.PermanentBuffs) {
                     if (item.type == BuffCheck.Key) {
@@ -121,6 +121,9 @@ namespace tsorcRevamp {
                 }
             }
             PermanentPotions();
+        }
+
+        public override void PostUpdateEquips() {
             if (Shockwave) {
                 if (player.controlDown && player.velocity.Y != 0f) {
                     player.gravity += 5f;
@@ -165,141 +168,148 @@ namespace tsorcRevamp {
             if (!Shockwave) {
                 Falling = false;
             }
+
+            if (CrimsonDrain) {
+                foreach (NPC npc in Main.npc) {
+                    float distanceX = player.Center.X - npc.Center.X;
+                    float distanceY = player.Center.Y - npc.Center.Y;
+                    float distAbs = (float)Math.Sqrt(distanceX * distanceX + distanceY + distanceY);
+                    if (distAbs < 200f) {
+                        npc.AddBuff(mod.BuffType("CrimsonBurn"), 3);
+                    }
+                }
+            }
         }
-        public void PermanentPotions() { //manually recreate the effects of buff potions, since we're immune to the buffs
-            //this is really hacky and i dont care.
+        public void PermanentPotions() {
             if (player.buffImmune[BuffID.ObsidianSkin] && PermanentBuffToggles[0]) {
                 player.lavaImmune = true;
                 player.fireWalk = true;
                 player.buffImmune[BuffID.OnFire] = true;
             }
-            if (player.buffImmune[BuffID.Regeneration]) {
+            if (player.buffImmune[BuffID.Regeneration] && PermanentBuffToggles[1]) {
                 player.lifeRegen += 4;
             }
-            if (player.buffImmune[BuffID.Swiftness]) {
+            if (player.buffImmune[BuffID.Swiftness] && PermanentBuffToggles[2]) {
                 player.moveSpeed += 0.25f;
             }
-            if (player.buffImmune[BuffID.Gills]) {
+            if (player.buffImmune[BuffID.Gills] && PermanentBuffToggles[3]) {
                 player.gills = true;
             }
-            if (player.buffImmune[BuffID.Ironskin]) {
+            if (player.buffImmune[BuffID.Ironskin] && PermanentBuffToggles[4]) {
                 player.statDefense += 8;
             }
-            if (player.buffImmune[BuffID.ManaRegeneration]) {
+            if (player.buffImmune[BuffID.ManaRegeneration] && PermanentBuffToggles[5]) {
                 player.manaRegenBuff = true;
             }
-            if (player.buffImmune[BuffID.MagicPower]) {
+            if (player.buffImmune[BuffID.MagicPower] && PermanentBuffToggles[6]) {
                 player.magicDamage += 0.2f;
             }
-            if (player.buffImmune[BuffID.Featherfall]) {
+            if (player.buffImmune[BuffID.Featherfall] && PermanentBuffToggles[7]) {
                 player.slowFall = true;
             }
-            if (player.buffImmune[BuffID.Spelunker]) {
+            if (player.buffImmune[BuffID.Spelunker] && PermanentBuffToggles[8]) {
                 player.findTreasure = true;
             }
-            if (player.buffImmune[BuffID.Invisibility]) {
+            if (player.buffImmune[BuffID.Invisibility] && PermanentBuffToggles[9]) {
                 player.invis = true;
             }
-            if (player.buffImmune[BuffID.Shine]) {
+            if (player.buffImmune[BuffID.Shine] && PermanentBuffToggles[10]) {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
             }
-            if (player.buffImmune[BuffID.NightOwl]) {
+            if (player.buffImmune[BuffID.NightOwl] && PermanentBuffToggles[11]) {
                 player.nightVision = true;
             }
-            if (player.buffImmune[BuffID.Battle]) {
+            if (player.buffImmune[BuffID.Battle] && PermanentBuffToggles[12]) {
                 player.enemySpawns = true;
             }
-            if (player.buffImmune[BuffID.Thorns]) {
+            if (player.buffImmune[BuffID.Thorns] && PermanentBuffToggles[13]) {
                 player.thorns += 1f;
             }
-            if (player.buffImmune[BuffID.WaterWalking]) {
+            if (player.buffImmune[BuffID.WaterWalking] && PermanentBuffToggles[14]) {
                 player.waterWalk = true;
             }
-            if (player.buffImmune[BuffID.Archery]) {
+            if (player.buffImmune[BuffID.Archery] && PermanentBuffToggles[15]) {
                 player.archery = true;
             }
-            if (player.buffImmune[BuffID.Hunter]) {
+            if (player.buffImmune[BuffID.Hunter] && PermanentBuffToggles[16]) {
                 player.detectCreature = true;
             }
-            if (player.buffImmune[BuffID.Gravitation]) {
+            if (player.buffImmune[BuffID.Gravitation] && PermanentBuffToggles[17]) {
                 player.gravControl = true;
             }
-            if (player.buffImmune[BuffID.Tipsy]) {
+            if (player.buffImmune[BuffID.Tipsy] && PermanentBuffToggles[18]) {
                 player.statDefense -= 4;
                 player.meleeDamage += 0.1f;
                 player.meleeCrit += 2;
                 player.meleeSpeed += 0.1f;
             }
-            if (player.buffImmune[BuffID.WeaponImbueVenom]) {
+            if (player.buffImmune[BuffID.WeaponImbueVenom] && PermanentBuffToggles[19]) {
                 player.meleeEnchant = 1;
             }
-            if (player.buffImmune[BuffID.WeaponImbueCursedFlames]) {
+            if (player.buffImmune[BuffID.WeaponImbueCursedFlames] && PermanentBuffToggles[20]) {
                 player.meleeEnchant = 2;
             }
-            if (player.buffImmune[BuffID.WeaponImbueFire]) {
+            if (player.buffImmune[BuffID.WeaponImbueFire] && PermanentBuffToggles[21]) {
                 player.meleeEnchant = 3;
             }
-            if (player.buffImmune[BuffID.WeaponImbueGold]) {
+            if (player.buffImmune[BuffID.WeaponImbueGold] && PermanentBuffToggles[22]) {
                 player.meleeEnchant = 4;
             }
-            if (player.buffImmune[BuffID.WeaponImbueIchor]) {
+            if (player.buffImmune[BuffID.WeaponImbueIchor] && PermanentBuffToggles[23]) {
                 player.meleeEnchant = 5;
             }
-            if (player.buffImmune[BuffID.WeaponImbueNanites]) {
+            if (player.buffImmune[BuffID.WeaponImbueNanites] && PermanentBuffToggles[24]) {
                 player.meleeEnchant = 6;
             }
-            if (player.buffImmune[BuffID.WeaponImbueConfetti]) {
+            if (player.buffImmune[BuffID.WeaponImbueConfetti] && PermanentBuffToggles[25]) {
                 player.meleeEnchant = 7;
             }
-            if (player.buffImmune[BuffID.WeaponImbuePoison]) {
+            if (player.buffImmune[BuffID.WeaponImbuePoison] && PermanentBuffToggles[26]) {
                 player.meleeEnchant = 8;
             }
-            if (player.buffImmune[BuffID.Gravitation]) {
-                player.gravControl = true;
-            }
-            if (player.buffImmune[BuffID.Mining]) {
+            if (player.buffImmune[BuffID.Mining] && PermanentBuffToggles[27]) {
                 player.pickSpeed -= 0.25f;
             }
-            if (player.buffImmune[BuffID.Heartreach]) {
+            if (player.buffImmune[BuffID.Heartreach] && PermanentBuffToggles[28]) {
                 player.lifeMagnet = true;
             }
-            if (player.buffImmune[BuffID.Calm]) {
+            if (player.buffImmune[BuffID.Calm] && PermanentBuffToggles[29]) {
                 player.calmed = true;
             }
-            if (player.buffImmune[BuffID.Builder]) {
+            if (player.buffImmune[BuffID.Builder] && PermanentBuffToggles[30]) {
                 player.tileSpeed += 0.25f;
                 player.wallSpeed += 0.25f;
                 player.blockRange++;
             }
-            if (player.buffImmune[BuffID.Titan]) {
+            if (player.buffImmune[BuffID.Titan] && PermanentBuffToggles[31]) {
                 player.kbBuff = true;
             }
-            if (player.buffImmune[BuffID.Flipper]) {
+            if (player.buffImmune[BuffID.Flipper] && PermanentBuffToggles[32]) {
                 player.gravControl = true;
             }
-            if (player.buffImmune[BuffID.Summoning]) {
+            if (player.buffImmune[BuffID.Summoning] && PermanentBuffToggles[33]) {
                 player.maxMinions++;
             }
-            if (player.buffImmune[BuffID.Dangersense]) {
+            if (player.buffImmune[BuffID.Dangersense] && PermanentBuffToggles[34]) {
                 player.dangerSense = true;
             }
-            if (player.buffImmune[BuffID.AmmoReservation]) {
+            if (player.buffImmune[BuffID.AmmoReservation] && PermanentBuffToggles[35]) {
                 player.ammoPotion = true;
             }
-            if (player.buffImmune[BuffID.Lifeforce]) {
+            if (player.buffImmune[BuffID.Lifeforce] && PermanentBuffToggles[36]) {
                 player.lifeForce = true;
-                player.statLifeMax2 += (int)(player.statLifeMax * 1.2f);
+                player.statLifeMax2 += player.statLifeMax / 5 / 20 * 20;
             }
-            if (player.buffImmune[BuffID.Endurance]) {
+            if (player.buffImmune[BuffID.Endurance] && PermanentBuffToggles[37]) {
                 player.endurance += 0.1f;
             }
-            if (player.buffImmune[BuffID.Rage]) {
+            if (player.buffImmune[BuffID.Rage] && PermanentBuffToggles[38]) {
                 player.magicCrit += 10;
                 player.meleeCrit += 10;
                 player.rangedCrit += 10;
                 player.thrownCrit += 10;
             }
-            if (player.buffImmune[BuffID.Inferno]) {
+            if (player.buffImmune[BuffID.Inferno] && PermanentBuffToggles[39]) {
                 player.inferno = true;
                 Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.65f, 0.4f, 0.1f);
                 int num = 24;
@@ -337,20 +347,56 @@ namespace tsorcRevamp {
                     }
                 }
             }
-            if (player.buffImmune[BuffID.Wrath]) {
+            if (player.buffImmune[BuffID.Wrath] && PermanentBuffToggles[40]) {
                 player.allDamage += 0.1f;
             }
-            if (player.buffImmune[BuffID.Fishing]) {
+            if (player.buffImmune[BuffID.Fishing] && PermanentBuffToggles[41]) {
                 player.fishingSkill += 15;
             }
-            if (player.buffImmune[BuffID.Sonar]) {
+            if (player.buffImmune[BuffID.Sonar] && PermanentBuffToggles[42]) {
                 player.sonarPotion = true;
             }
-            if (player.buffImmune[BuffID.Crate]) {
+            if (player.buffImmune[BuffID.Crate] && PermanentBuffToggles[43]) {
                 player.cratePotion = true;
             }
-            if (player.buffImmune[BuffID.Warmth]) {
+            if (player.buffImmune[BuffID.Warmth] && PermanentBuffToggles[44]) {
                 player.resistCold = true;
+            }
+            if (player.buffImmune[ModContent.BuffType<ArmorDrug>()] && PermanentBuffToggles[45]) {
+                player.statDefense += 13;
+            }
+            if (player.buffImmune[ModContent.BuffType<Battlefront>()] && PermanentBuffToggles[46]) {
+                player.statDefense += 8;
+                player.allDamage += 0.2f;
+                player.magicCrit += 5;
+                player.meleeCrit += 5;
+                player.rangedCrit += 5;
+                player.meleeSpeed += 0.2f;
+                player.pickSpeed += 0.2f;
+                player.thorns += 1f;
+            }
+            if (player.buffImmune[ModContent.BuffType<Boost>()] && PermanentBuffToggles[47]) {
+                player.magicCrit += 5;
+                player.meleeCrit += 5;
+                player.rangedCrit += 5;
+            }
+            if (player.buffImmune[ModContent.BuffType<CrimsonDrain>()] && PermanentBuffToggles[48]) {
+                CrimsonDrain = true;
+            }
+            if (player.buffImmune[ModContent.BuffType<DemonDrug>()] && PermanentBuffToggles[49]) {
+                player.allDamage += 0.2f;
+            }
+            if (player.buffImmune[ModContent.BuffType<Shockwave>()] && PermanentBuffToggles[50]) {
+                Shockwave = true;
+            }
+            if (player.buffImmune[ModContent.BuffType<Strength>()] && PermanentBuffToggles[51]) {
+                player.statDefense += 15;
+                player.allDamage += 0.15f;
+                player.meleeSpeed += 0.15f;
+                player.pickSpeed += 0.15f;
+                player.magicCrit += 2;
+                player.meleeCrit += 2;
+                player.rangedCrit += 2;
             }
         }
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
