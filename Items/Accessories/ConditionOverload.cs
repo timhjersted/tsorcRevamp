@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class ConditionOverload : ModItem {
 
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Enemies take exponentially increasing" +
                                 "\nbonus damage for every debuff affecting them." + 

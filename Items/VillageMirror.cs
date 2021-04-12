@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items {
                                 "\nReduces defense to 0 and slows movement while equipped and setting your warp point.");
         }
 
-        public override void UseStyle(Player player) {
+        public override bool UseItem(Player player) {
             if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet) {
                 Main.NewText("You haven't set a location!", 255, 240, 20);
             }
@@ -110,6 +110,7 @@ namespace tsorcRevamp.Items {
                     Main.NewText("Your warp location is broken! Please file a bug report!", 255, 240, 20);
                 }
             }
+            return true;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {

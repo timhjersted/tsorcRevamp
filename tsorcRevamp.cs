@@ -6,16 +6,20 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Potions.PermanentPotions;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
         public static ModHotKey toggleDragoonBoots;
-		public override void Load() {
+        public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
             On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
-		}
-		
+        }
+
         private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
             if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
                 bool flag = true;
@@ -56,18 +60,77 @@ namespace tsorcRevamp {
                         Main.NewText("Gravelord Nito has awoken!", 175, 75, 255);
                         return;
                     }
-					else if (Main.netMode == NetmodeID.Server) {
-						NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Gravelord Nito has awoken!"), new Color(175, 75, 255));
-					}
-				}
+                    else if (Main.netMode == NetmodeID.Server) {
+                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Gravelord Nito has awoken!"), new Color(175, 75, 255));
+                    }
+                }
             }
             else {
                 orig();
             }
         }
 
+        public static Dictionary<int, int> PermanentBuffs = new Dictionary<int, int>();
+        public override void PostSetupContent() {
+            PermanentBuffs.Add(ModContent.ItemType<PermanentObsidianSkin>(), BuffID.ObsidianSkin); //0
+            PermanentBuffs.Add(ItemID.RegenerationPotion, BuffID.Regeneration); //1
+            PermanentBuffs.Add(ItemID.SwiftnessPotion, BuffID.Swiftness); //2
+            PermanentBuffs.Add(ItemID.GillsPotion, BuffID.Gills); //3
+            PermanentBuffs.Add(ItemID.IronskinPotion, BuffID.Ironskin); //4
+            PermanentBuffs.Add(ItemID.ManaRegenerationPotion, BuffID.ManaRegeneration); //5
+            PermanentBuffs.Add(ItemID.MagicPowerPotion, BuffID.MagicPower); //6
+            PermanentBuffs.Add(ItemID.FeatherfallPotion, BuffID.Featherfall); //7
+            PermanentBuffs.Add(ItemID.SpelunkerPotion, BuffID.Spelunker); //8
+            PermanentBuffs.Add(ItemID.InvisibilityPotion, BuffID.Invisibility); //9
+            PermanentBuffs.Add(ItemID.ShinePotion, BuffID.Shine); //10
+            PermanentBuffs.Add(ItemID.NightOwlPotion, BuffID.NightOwl); //11
+            PermanentBuffs.Add(ItemID.BattlePotion, BuffID.Battle); //12
+            PermanentBuffs.Add(ItemID.ThornsPotion, BuffID.Thorns); //13
+            PermanentBuffs.Add(ItemID.WaterWalkingPotion, BuffID.WaterWalking); //14
+            PermanentBuffs.Add(ItemID.ArcheryPotion, BuffID.Archery); //15
+            PermanentBuffs.Add(ItemID.HunterPotion, BuffID.Hunter); //16
+            PermanentBuffs.Add(ItemID.GravitationPotion, BuffID.Gravitation); //17
+            PermanentBuffs.Add(ItemID.Ale, BuffID.Tipsy); //18
+            PermanentBuffs.Add(ItemID.FlaskofVenom, BuffID.WeaponImbueVenom); //19
+            PermanentBuffs.Add(ItemID.FlaskofCursedFlames, BuffID.WeaponImbueCursedFlames); //20
+            PermanentBuffs.Add(ItemID.FlaskofFire, BuffID.WeaponImbueFire); //21
+            PermanentBuffs.Add(ItemID.FlaskofGold, BuffID.WeaponImbueGold); //22
+            PermanentBuffs.Add(ItemID.FlaskofIchor, BuffID.WeaponImbueIchor); //23
+            PermanentBuffs.Add(ItemID.FlaskofNanites, BuffID.WeaponImbueNanites); //24
+            PermanentBuffs.Add(ItemID.FlaskofParty, BuffID.WeaponImbueConfetti); //25
+            PermanentBuffs.Add(ItemID.FlaskofPoison, BuffID.WeaponImbuePoison); //26
+            PermanentBuffs.Add(ItemID.MiningPotion, BuffID.Mining); //27
+            PermanentBuffs.Add(ItemID.HeartreachPotion, BuffID.Heartreach); //28
+            PermanentBuffs.Add(ItemID.CalmingPotion, BuffID.Calm); //29
+            PermanentBuffs.Add(ItemID.BuilderPotion, BuffID.Builder); //30
+            PermanentBuffs.Add(ItemID.TitanPotion, BuffID.Titan); //31
+            PermanentBuffs.Add(ItemID.FlipperPotion, BuffID.Flipper); //32
+            PermanentBuffs.Add(ItemID.SummoningPotion, BuffID.Summoning); //33
+            PermanentBuffs.Add(ItemID.TrapsightPotion, BuffID.Dangersense); //34. also why is the item called trapsight and the buff is called dangersense. damn you Red
+            PermanentBuffs.Add(ItemID.AmmoReservationPotion, BuffID.AmmoReservation); //35
+            PermanentBuffs.Add(ItemID.LifeforcePotion, BuffID.Lifeforce); //36
+            PermanentBuffs.Add(ItemID.EndurancePotion, BuffID.Endurance); //37
+            PermanentBuffs.Add(ItemID.RagePotion, BuffID.Rage); //38
+            PermanentBuffs.Add(ItemID.InfernoPotion, BuffID.Inferno); //39
+            PermanentBuffs.Add(ItemID.WrathPotion, BuffID.Wrath); //40
+            PermanentBuffs.Add(ItemID.FishingPotion, BuffID.Fishing); //41
+            PermanentBuffs.Add(ItemID.SonarPotion, BuffID.Sonar); //42
+            PermanentBuffs.Add(ItemID.CratePotion, BuffID.Crate); //43
+            PermanentBuffs.Add(ItemID.WarmthPotion, BuffID.Warmth); //44
+            PermanentBuffs.Add(ModContent.ItemType<ArmorDrugPotion>(), ModContent.BuffType<ArmorDrug>()); //45
+            PermanentBuffs.Add(ModContent.ItemType<BattlefrontPotion>(), ModContent.BuffType<Battlefront>()); //46
+            PermanentBuffs.Add(ModContent.ItemType<BoostPotion>(), ModContent.BuffType<Boost>()); //47
+            PermanentBuffs.Add(ModContent.ItemType<CrimsonPotion>(), ModContent.BuffType<CrimsonDrain>()); //48
+            PermanentBuffs.Add(ModContent.ItemType<DemonDrugPotion>(), ModContent.BuffType<DemonDrug>()); //49
+            PermanentBuffs.Add(ModContent.ItemType<ShockwavePotion>(), ModContent.BuffType<Shockwave>()); //50
+            PermanentBuffs.Add(ModContent.ItemType<StrengthPotion>(), ModContent.BuffType<Strength>()); //51
+        }
+
+
+
         public override void Unload() {
             toggleDragoonBoots = null;
+            PermanentBuffs = null;
         }
 
         public override void AddRecipes() {
@@ -102,6 +165,14 @@ namespace tsorcRevamp {
         [Tooltip("Renames Skeletron to Gravelord Nito.\nOnly turn this off if you are experiencing \ncrashes or other strange behavior when \nyou attempt to summon Skeletron.\nDefaults to On")]
         [DefaultValue(true)]
         public bool RenameSkeletron { get; set; }
+
+        [Label("Legacy Mode")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Legacy mode disables new additions from the Revamp team.\nTurn this on if you want to play the original \nStory of Red Cloud experience as it was in tConfig. \nSome changes and improvements will not be disabled. \nRequires a reload. \nDefaults to Off")]
+        [DefaultValue(false)]
+        [ReloadRequired]
+        //todo items must be manually tagged as legacy. make sure we got them all
+        public bool LegacyMode { get; set; }
     }
 
     public class TilePlaceCode : GlobalItem {
@@ -243,6 +314,9 @@ namespace tsorcRevamp {
     };
         public override bool CanUseItem(Item item, Player player) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                if (item.createWall > 0) {
+                    return false; //prevent placing walls
+                }
                 if (item.createTile > -1) {
                     foreach (int id in allowed) {
                         if (item.createTile == id) {
@@ -260,9 +334,7 @@ namespace tsorcRevamp {
     public class TileKillCode : GlobalTile {
         public List<int> allowed = new List<int>() { //These can always be destroyed
 		//if you can think of a more graceful way to do this, please share
-			19, //Wood Platform 
 			67, //Amethyst 
-					//25, ebonstone
 			12, //Heart crystal
 			2, //grass
 			3, //small plants
@@ -305,7 +377,6 @@ namespace tsorcRevamp {
 			60, //jungle grass
 			61, //small jungle plants
 			62, //jungle vines
-			66, //Topaz 
 			69, //thorns
 			72, //mushroom stalks
 			71, //small mushrooms
@@ -429,6 +500,8 @@ namespace tsorcRevamp {
 		};
         public List<int> unbreakable = new List<int>()
         {
+            19, //Wood Platform 
+			55, //sign
             132, //lever
 			130, //active stone block
 			135, //pressure plates
@@ -497,6 +570,13 @@ namespace tsorcRevamp {
                 return CanDestroy;
             }
 
+        }
+    }
+    public class WallKillCode : GlobalWall {
+        public override void KillWall(int i, int j, int type, ref bool fail) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                fail = true;
+            }
         }
     }
 }

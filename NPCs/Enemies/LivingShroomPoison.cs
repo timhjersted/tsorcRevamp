@@ -7,6 +7,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class LivingShroomPoison : ModNPC // Renewable souce of mushrooms //UNFINISHED - CURRENTLY DISABLED - SPAWN CHANCE 0
     {
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Poisonous Living Shroom");

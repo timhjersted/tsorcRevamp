@@ -56,28 +56,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            #region check if standing on a solid tile
-            // warning: this section contains a return statement
-            bool standing_on_solid_tile = false;
-            if (npc.velocity.Y == 0f) // no jump/fall
-            {
-                int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-                int x_left_edge = (int)npc.position.X / 16;
-                int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                        return;
-
-                    if (Main.tile[l, y_below_feet].active && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
-                    }
-                } // END traverse blocks under feet
-            } // END no jump/fall
-            #endregion
-
 
             npc.netUpdate = false;
             npc.ai[0]++; // Timer Scythe
@@ -184,13 +162,13 @@ namespace tsorcRevamp.NPCs.Enemies
                         int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
                         for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                         { // (tp_x_target,m) is block under its feet I think
-                            if ((m < target_y_blockpos - 13 || m > target_y_blockpos + 13 || tp_x_target < target_x_blockpos - 13 || tp_x_target > target_x_blockpos + 13) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].active)
+                            if ((m < target_y_blockpos - 13 || m > target_y_blockpos + 13 || tp_x_target < target_x_blockpos - 13 || tp_x_target > target_x_blockpos + 13) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].active())
                             { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                                 bool safe_to_stand = true;
                                 bool dark_caster = false; // not a fighter type AI...
                                 if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
                                     safe_to_stand = false;
-                                else if (Main.tile[tp_x_target, m - 1].lava) // feet submerged in lava
+                                else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
                                     safe_to_stand = false;
 
                                 if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))

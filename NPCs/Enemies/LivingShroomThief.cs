@@ -7,6 +7,7 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class LivingShroomThief : ModNPC
 	{
+		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Living Shroom Thief");

@@ -1,11 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Potions.PermanentPotions;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
@@ -56,7 +62,8 @@ namespace tsorcRevamp {
         public int souldroplooptimer = 0;
         public int souldroptimer = 0;
 
-
+        public bool[] PermanentBuffToggles = new bool[52]; //todo dont forget to increment this if you add buffs to the dictionary
+        
         public override TagCompound Save() {
             return new TagCompound {
             {"warpX", warpX},
@@ -104,7 +111,16 @@ namespace tsorcRevamp {
             souldroptimer = 0;
         }
 
+
         public override void PostUpdateEquips() {
+            foreach (Item item in player.inventory) {
+                foreach (var BuffCheck in tsorcRevamp.PermanentBuffs) {
+                    if (item.type == BuffCheck.Key) {
+                        player.buffImmune[BuffCheck.Value] = true; //cant consume a buff slot if youre immune to the buff :joy:
+                    }
+                }
+            }
+            PermanentPotions();
             if (Shockwave) {
                 if (player.controlDown && player.velocity.Y != 0f) {
                     player.gravity += 5f;
@@ -128,7 +144,7 @@ namespace tsorcRevamp {
                     for (int i = -8; i < 9; i++) {
                         Vector2 shotDirection = new Vector2(0f, -16f);
                         FallDist = (int)((player.position.Y - fallStartY) / 16);
-                        
+
                         int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
                         Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (11.25f * i))); //lerp wasnt working, so do manual interpolation
                     }
@@ -148,6 +164,193 @@ namespace tsorcRevamp {
             }
             if (!Shockwave) {
                 Falling = false;
+            }
+        }
+        public void PermanentPotions() { //manually recreate the effects of buff potions, since we're immune to the buffs
+            //this is really hacky and i dont care.
+            if (player.buffImmune[BuffID.ObsidianSkin] && PermanentBuffToggles[0]) {
+                player.lavaImmune = true;
+                player.fireWalk = true;
+                player.buffImmune[BuffID.OnFire] = true;
+            }
+            if (player.buffImmune[BuffID.Regeneration]) {
+                player.lifeRegen += 4;
+            }
+            if (player.buffImmune[BuffID.Swiftness]) {
+                player.moveSpeed += 0.25f;
+            }
+            if (player.buffImmune[BuffID.Gills]) {
+                player.gills = true;
+            }
+            if (player.buffImmune[BuffID.Ironskin]) {
+                player.statDefense += 8;
+            }
+            if (player.buffImmune[BuffID.ManaRegeneration]) {
+                player.manaRegenBuff = true;
+            }
+            if (player.buffImmune[BuffID.MagicPower]) {
+                player.magicDamage += 0.2f;
+            }
+            if (player.buffImmune[BuffID.Featherfall]) {
+                player.slowFall = true;
+            }
+            if (player.buffImmune[BuffID.Spelunker]) {
+                player.findTreasure = true;
+            }
+            if (player.buffImmune[BuffID.Invisibility]) {
+                player.invis = true;
+            }
+            if (player.buffImmune[BuffID.Shine]) {
+                Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
+            }
+            if (player.buffImmune[BuffID.NightOwl]) {
+                player.nightVision = true;
+            }
+            if (player.buffImmune[BuffID.Battle]) {
+                player.enemySpawns = true;
+            }
+            if (player.buffImmune[BuffID.Thorns]) {
+                player.thorns += 1f;
+            }
+            if (player.buffImmune[BuffID.WaterWalking]) {
+                player.waterWalk = true;
+            }
+            if (player.buffImmune[BuffID.Archery]) {
+                player.archery = true;
+            }
+            if (player.buffImmune[BuffID.Hunter]) {
+                player.detectCreature = true;
+            }
+            if (player.buffImmune[BuffID.Gravitation]) {
+                player.gravControl = true;
+            }
+            if (player.buffImmune[BuffID.Tipsy]) {
+                player.statDefense -= 4;
+                player.meleeDamage += 0.1f;
+                player.meleeCrit += 2;
+                player.meleeSpeed += 0.1f;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueVenom]) {
+                player.meleeEnchant = 1;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueCursedFlames]) {
+                player.meleeEnchant = 2;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueFire]) {
+                player.meleeEnchant = 3;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueGold]) {
+                player.meleeEnchant = 4;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueIchor]) {
+                player.meleeEnchant = 5;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueNanites]) {
+                player.meleeEnchant = 6;
+            }
+            if (player.buffImmune[BuffID.WeaponImbueConfetti]) {
+                player.meleeEnchant = 7;
+            }
+            if (player.buffImmune[BuffID.WeaponImbuePoison]) {
+                player.meleeEnchant = 8;
+            }
+            if (player.buffImmune[BuffID.Gravitation]) {
+                player.gravControl = true;
+            }
+            if (player.buffImmune[BuffID.Mining]) {
+                player.pickSpeed -= 0.25f;
+            }
+            if (player.buffImmune[BuffID.Heartreach]) {
+                player.lifeMagnet = true;
+            }
+            if (player.buffImmune[BuffID.Calm]) {
+                player.calmed = true;
+            }
+            if (player.buffImmune[BuffID.Builder]) {
+                player.tileSpeed += 0.25f;
+                player.wallSpeed += 0.25f;
+                player.blockRange++;
+            }
+            if (player.buffImmune[BuffID.Titan]) {
+                player.kbBuff = true;
+            }
+            if (player.buffImmune[BuffID.Flipper]) {
+                player.gravControl = true;
+            }
+            if (player.buffImmune[BuffID.Summoning]) {
+                player.maxMinions++;
+            }
+            if (player.buffImmune[BuffID.Dangersense]) {
+                player.dangerSense = true;
+            }
+            if (player.buffImmune[BuffID.AmmoReservation]) {
+                player.ammoPotion = true;
+            }
+            if (player.buffImmune[BuffID.Lifeforce]) {
+                player.lifeForce = true;
+                player.statLifeMax2 += (int)(player.statLifeMax * 1.2f);
+            }
+            if (player.buffImmune[BuffID.Endurance]) {
+                player.endurance += 0.1f;
+            }
+            if (player.buffImmune[BuffID.Rage]) {
+                player.magicCrit += 10;
+                player.meleeCrit += 10;
+                player.rangedCrit += 10;
+                player.thrownCrit += 10;
+            }
+            if (player.buffImmune[BuffID.Inferno]) {
+                player.inferno = true;
+                Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.65f, 0.4f, 0.1f);
+                int num = 24;
+                float num12 = 200f;
+                bool flag = player.infernoCounter % 60 == 0;
+                int damage = 10;
+                if (player.whoAmI == Main.myPlayer) {
+                    for (int l = 0; l < 200; l++) {
+                        NPC nPC = Main.npc[l];
+                        if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[num] && Vector2.Distance(player.Center, nPC.Center) <= num12) {
+                            if (nPC.FindBuffIndex(num) == -1) {
+                                nPC.AddBuff(num, 120);
+                            }
+                            if (flag) {
+                                player.ApplyDamageToNPC(nPC, damage, 0f, 0, crit: false);
+                            }
+                        }
+                    }
+                    if (Main.netMode != NetmodeID.SinglePlayer && player.hostile) {
+                        for (int m = 0; m < 255; m++) {
+                            Player player = Main.player[m];
+                            if (player != base.player && player.active && !player.dead && player.hostile && !player.buffImmune[24] && (player.team != base.player.team || player.team == 0) && Vector2.DistanceSquared(base.player.Center, player.Center) <= num) {
+                                if (player.FindBuffIndex(num) == -1) {
+                                    player.AddBuff(num, 120);
+                                }
+                                if (flag) {
+                                    player.Hurt(PlayerDeathReason.LegacyEmpty(), damage, 0, pvp: true);
+                                    if (Main.netMode != NetmodeID.SinglePlayer) {
+                                        PlayerDeathReason reason = PlayerDeathReason.ByPlayer(player.whoAmI);
+                                        NetMessage.SendPlayerHurt(m, reason, damage, 0, critical: false, pvp: true, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (player.buffImmune[BuffID.Wrath]) {
+                player.allDamage += 0.1f;
+            }
+            if (player.buffImmune[BuffID.Fishing]) {
+                player.fishingSkill += 15;
+            }
+            if (player.buffImmune[BuffID.Sonar]) {
+                player.sonarPotion = true;
+            }
+            if (player.buffImmune[BuffID.Crate]) {
+                player.cratePotion = true;
+            }
+            if (player.buffImmune[BuffID.Warmth]) {
+                player.resistCold = true;
             }
         }
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {

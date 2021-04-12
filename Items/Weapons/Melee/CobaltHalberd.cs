@@ -3,9 +3,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
+
     public class CobaltHalberd : ModItem
     {
-	public override void SetStaticDefaults()
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+        public override void SetStaticDefaults()
 	{
 		DisplayName.SetDefault("Cobalt Halberd");
         Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +

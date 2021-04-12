@@ -7,6 +7,7 @@ namespace tsorcRevamp.NPCs.Friendly
 {
 	public class LivingShroom : ModNPC
 	{
+		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Living Shroom");
