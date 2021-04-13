@@ -145,14 +145,14 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 
 
-				if (spawntimer >= 0 && spawntimer <= 40 && (NPC.CountNPCS(NPCID.JungleBat) < 6))
+				if (spawntimer >= 0 && spawntimer <= 40 && (NPC.CountNPCS(NPCID.JungleBat) < 6 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 6))
 				{
 					if (Main.rand.Next(8) == 0)
 					{
 						Dust.NewDust(new Vector2((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height - 118) + npc.velocity.Y)), 2, 2, 18, Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-1.1f, 1.1f), 0, default(Color), 1f);
 					}
 				}
-				if (spawntimer > 40 && spawntimer <= 60 && (NPC.CountNPCS(NPCID.JungleBat) < 6))
+				if (spawntimer > 40 && spawntimer <= 60 && (NPC.CountNPCS(NPCID.JungleBat) < 6 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 6))
 				{
 					Dust.NewDust(npc.position, npc.width / 2, npc.height / 4, 18, Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-1.5f, 1.5f), 0, default(Color), 1f);
 				}
@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						dust.fadeIn = .1f;
 					}
 				}
-				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 6) && npc.Center.Y / 16 >= Main.rockLayer) //wont spawn babies if there are already 5
+				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 4 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 4) && npc.Center.Y / 16 >= Main.rockLayer) //wont spawn babies if there are already 5
 				{
 					if (Main.rand.Next(2) == 0)
 					{
