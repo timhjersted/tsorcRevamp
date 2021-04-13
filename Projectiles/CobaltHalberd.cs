@@ -43,16 +43,16 @@ namespace tsorcRevamp.Projectiles
 			{
 				if (moveFactor == 0f)
 				{ //when initially thrown
-					moveFactor = 2.6f; //move forward
+					moveFactor = 3f; //move forward
 					projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
 				{ //after x animation frames, return
-					moveFactor -= 2.26f;
+					moveFactor -= 2.76f;
 				}
 				else
 				{ //extend spear
-					moveFactor += 2.6f;
+					moveFactor += 3f;
 				}
 
 			}
