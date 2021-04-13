@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System;
+using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -88,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int damage = 23;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<Projectiles.TheOracle>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<TheOracle>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
                         Main.projectile[num54].aiStyle = 4;
@@ -221,7 +222,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedX *= num51;
                         speedY *= num51;
                         int damage = 47;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<Projectiles.ScrewAttack>();//44;//0x37; //14;
+                        int type = ModContent.ProjectileType<ScrewAttack>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 600;
                         Main.projectile[num54].aiStyle = 4;

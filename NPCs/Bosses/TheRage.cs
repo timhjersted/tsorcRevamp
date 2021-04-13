@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Bosses { 
 	class TheRage : ModNPC {
@@ -69,7 +70,7 @@ namespace tsorcRevamp.NPCs.Bosses {
 					if (npc.ai[1] >= 0 && npc.ai[2] > 120 && npc.ai[2] < 600) {
 						float num48 = 13f;//25 was 40
 						int damage = 24;
-						int type = ModContent.ProjectileType<Projectiles.FireTrails>();
+						int type = ModContent.ProjectileType<FireTrails>();
 						Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
 						float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
 						Projectile.NewProjectile(vector8.X + 300, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, damage, 0f, Main.myPlayer);
