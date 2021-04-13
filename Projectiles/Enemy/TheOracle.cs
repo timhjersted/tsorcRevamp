@@ -11,7 +11,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override void SetDefaults()
 		{
 			projectile.damage = 166;
-			projectile.aiStyle = ProjectileID.CrystalStorm;
 			projectile.friendly = false;
 			projectile.hostile = true;
 			projectile.tileCollide = false;

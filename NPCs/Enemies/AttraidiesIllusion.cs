@@ -92,7 +92,6 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<TheOracle>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
-                        Main.projectile[num54].aiStyle = 1;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
                         npc.ai[0] = 0;
                         npc.ai[2]++;
