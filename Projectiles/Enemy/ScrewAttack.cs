@@ -65,6 +65,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 				projectile.frame = 0;
 			}
 		}
+		public override bool PreKill(int timeLeft)
+		{
+			projectile.type = ProjectileID.ShadowOrb;
+			return true;
+		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
 			target.AddBuff(BuffID.Battle, 600);

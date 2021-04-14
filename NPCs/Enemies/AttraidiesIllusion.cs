@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             animationType = NPCID.GoblinSorcerer;
             npc.npcSlots = 50;
-            npc.lifeMax = 800;
+            npc.lifeMax = 600; //was 800. maybe 3/4 hp is a good balance? 1600hp would be insane in expert
             npc.damage = 26;
             npc.scale = 1f;
             npc.knockBackResist = 0.3f;
@@ -88,9 +88,9 @@ namespace tsorcRevamp.NPCs.Enemies
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 23;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<TheOracle>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        int damage = 20;
+                        int type = ModContent.ProjectileType<TheOracle>();
+                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f);
                         Main.projectile[num54].timeLeft = 150;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
                         npc.ai[0] = 0;
@@ -220,11 +220,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 47;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<ScrewAttack>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        int damage = 30;
+                        int type = ModContent.ProjectileType<ScrewAttack>();
+                        int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f);
                         Main.projectile[num54].timeLeft = 600;
-                        Main.projectile[num54].aiStyle = 4;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
                         npc.ai[3] = 0; ;
                     }

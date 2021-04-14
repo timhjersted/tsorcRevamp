@@ -31,7 +31,6 @@ namespace tsorcRevamp.Items
         {
             if (!NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion")))
             {
-                Main.NewText("Attraidies Illusion has awakened!", 175, 75, 255);
                 NPC.SpawnOnPlayer(Main.myPlayer, mod.NPCType("AttraidiesIllusion"));
                 return true;
             }

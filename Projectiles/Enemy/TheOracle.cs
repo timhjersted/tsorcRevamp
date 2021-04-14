@@ -10,7 +10,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void SetDefaults()
 		{
-			projectile.damage = 166;
 			projectile.friendly = false;
 			projectile.hostile = true;
 			projectile.tileCollide = false;
@@ -38,6 +37,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y, projectile.width, projectile.height);
 			Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player[Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
+		}
+		public override bool PreKill(int timeLeft)
+		{
+			projectile.type = ProjectileID.Grenade;
+			return true;
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{

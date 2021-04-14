@@ -35,12 +35,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (spawnInfo.player.ZoneJungle && NPC.CountNPCS(mod.NPCType("JungleSentree")) < 2
 				&& TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType]
-				&& Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None
+				&& (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.MudUnsafe)
 				&& Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY].type == TileID.JungleGrass && !Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY].leftSlope() //all this is to prevent the npc spawning in really odd looking places
 				&& Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY].type == TileID.JungleGrass && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY].rightSlope()//make sure block to left and right are jungle grass
 				&& Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY - 1].type != TileID.JungleGrass && Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY - 1].type != TileID.Mud && !Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY - 1].halfBrick() && !Main.tile[spawnInfo.spawnTileX - 1, spawnInfo.spawnTileY - 1].rightSlope() //make sure blocks to left/right and above are empty
-				&& Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.JungleGrass && Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.Mud && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].halfBrick() && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].rightSlope())
-			
+				&& Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.JungleGrass && Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.Mud && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].halfBrick() && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].leftSlope()
+				&& Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 8].type != TileID.JungleGrass && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 8].type != TileID.Mud) //check the cieling is high enough
+
 			{
 					return 0.6f; // It's high because the chance of the conditions being right is pretty low
 			}
@@ -156,7 +157,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					Dust.NewDust(npc.position, npc.width / 2, npc.height / 4, 18, Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-1.5f, 1.5f), 0, default(Color), 1f);
 				}
-				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 6) && npc.Center.Y / 16 < Main.rockLayer) //wont spawn babies if there are already 5
+				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 6) && npc.Center.Y / 16 < Main.rockLayer) //wont spawn babies if there are already 6
 				{
 					int npcIndex = -1;
 
@@ -176,7 +177,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						dust.fadeIn = .1f;
 					}
 				}
-				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 4 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 4) && npc.Center.Y / 16 >= Main.rockLayer) //wont spawn babies if there are already 5
+				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 4 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 4) && npc.Center.Y / 16 >= Main.rockLayer) //wont spawn babies if there are already 6
 				{
 					if (Main.rand.Next(2) == 0)
 					{
