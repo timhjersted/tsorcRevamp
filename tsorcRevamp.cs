@@ -70,67 +70,8 @@ namespace tsorcRevamp {
             }
         }
 
-        public static Dictionary<int, int> PermanentBuffs = new Dictionary<int, int>();
-        public override void PostSetupContent() {
-            PermanentBuffs.Add(ModContent.ItemType<PermanentObsidianSkinPotion>(), BuffID.ObsidianSkin); //0
-            PermanentBuffs.Add(ModContent.ItemType<PermanentRegenerationPotion>(), BuffID.Regeneration); //1
-            PermanentBuffs.Add(ModContent.ItemType<PermanentSwiftnessPotion>(), BuffID.Swiftness); //2
-            PermanentBuffs.Add(ModContent.ItemType<PermanentGillsPotion>(), BuffID.Gills); //3
-            PermanentBuffs.Add(ModContent.ItemType<PermanentIronskinPotion>(), BuffID.Ironskin); //4
-            PermanentBuffs.Add(ModContent.ItemType<PermanentManaRegenerationPotion>(), BuffID.ManaRegeneration); //5
-            PermanentBuffs.Add(ModContent.ItemType<PermanentMagicPowerPotion>(), BuffID.MagicPower); //6
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFeatherfallPotion>(), BuffID.Featherfall); //7
-            PermanentBuffs.Add(ModContent.ItemType<PermanentSpelunkerPotion>(), BuffID.Spelunker); //8
-            PermanentBuffs.Add(ModContent.ItemType<PermanentInvisibilityPotion>(), BuffID.Invisibility); //9
-            PermanentBuffs.Add(ModContent.ItemType<PermanentShinePotion>(), BuffID.Shine); //10
-            PermanentBuffs.Add(ModContent.ItemType<PermanentNightOwlPotion>(), BuffID.NightOwl); //11
-            PermanentBuffs.Add(ModContent.ItemType<PermanentBattlePotion>(), BuffID.Battle); //12
-            PermanentBuffs.Add(ModContent.ItemType<PermanentThornsPotion>(), BuffID.Thorns); //13
-            PermanentBuffs.Add(ModContent.ItemType<PermanentWaterWalkingPotion>(), BuffID.WaterWalking); //14
-            PermanentBuffs.Add(ModContent.ItemType<PermanentArcheryPotion>(), BuffID.Archery); //15
-            PermanentBuffs.Add(ModContent.ItemType<PermanentHunterPotion>(), BuffID.Hunter); //16
-            PermanentBuffs.Add(ModContent.ItemType<PermanentGravitationPotion>(), BuffID.Gravitation); //17
-            PermanentBuffs.Add(ModContent.ItemType<PermanentAle>(), BuffID.Tipsy); //18
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfVenom>(), BuffID.WeaponImbueVenom); //19
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfCursedFlames>(), BuffID.WeaponImbueCursedFlames); //20
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfFire>(), BuffID.WeaponImbueFire); //21
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfGold>(), BuffID.WeaponImbueGold); //22
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfIchor>(), BuffID.WeaponImbueIchor); //23
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfNanites>(), BuffID.WeaponImbueNanites); //24
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfParty>(), BuffID.WeaponImbueConfetti); //25
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlaskOfPoison>(), BuffID.WeaponImbuePoison); //26
-            PermanentBuffs.Add(ModContent.ItemType<PermanentMiningPotion>(), BuffID.Mining); //27
-            PermanentBuffs.Add(ModContent.ItemType<PermanentHeartreachPotion>(), BuffID.Heartreach); //28
-            PermanentBuffs.Add(ModContent.ItemType<PermanentCalmingPotion>(), BuffID.Calm); //29
-            PermanentBuffs.Add(ModContent.ItemType<PermanentBuilderPotion>(), BuffID.Builder); //30
-            PermanentBuffs.Add(ModContent.ItemType<PermanentTitanPotion>(), BuffID.Titan); //31
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFlipperPotion>(), BuffID.Flipper); //32
-            PermanentBuffs.Add(ModContent.ItemType<PermanentSummoningPotion>(), BuffID.Summoning); //33
-            PermanentBuffs.Add(ModContent.ItemType<PermanentDangersensePotion>(), BuffID.Dangersense); //34. also why is the item called trapsight and the buff is called dangersense. damn you Red
-            PermanentBuffs.Add(ModContent.ItemType<PermanentAmmoReservationPotion>(), BuffID.AmmoReservation); //35
-            PermanentBuffs.Add(ModContent.ItemType<PermanentLifeforcePotion>(), BuffID.Lifeforce); //36
-            PermanentBuffs.Add(ModContent.ItemType<PermanentEndurancePotion>(), BuffID.Endurance); //37
-            PermanentBuffs.Add(ModContent.ItemType<PermanentRagePotion>(), BuffID.Rage); //38
-            PermanentBuffs.Add(ModContent.ItemType<PermanentInfernoPotion>(), BuffID.Inferno); //39
-            PermanentBuffs.Add(ModContent.ItemType<PermanentWrathPotion>(), BuffID.Wrath); //40
-            PermanentBuffs.Add(ModContent.ItemType<PermanentFishingPotion>(), BuffID.Fishing); //41
-            PermanentBuffs.Add(ModContent.ItemType<PermanentSonarPotion>(), BuffID.Sonar); //42
-            PermanentBuffs.Add(ModContent.ItemType<PermanentCratePotion>(), BuffID.Crate); //43
-            PermanentBuffs.Add(ModContent.ItemType<PermanentWarmthPotion>(), BuffID.Warmth); //44
-            PermanentBuffs.Add(ModContent.ItemType<PermanentArmorDrugPotion>(), ModContent.BuffType<ArmorDrug>()); //45
-            PermanentBuffs.Add(ModContent.ItemType<PermanentBattlefrontPotion>(), ModContent.BuffType<Battlefront>()); //46
-            PermanentBuffs.Add(ModContent.ItemType<PermanentBoostPotion>(), ModContent.BuffType<Boost>()); //47
-            PermanentBuffs.Add(ModContent.ItemType<PermanentCrimsonPotion>(), ModContent.BuffType<CrimsonDrain>()); //48
-            PermanentBuffs.Add(ModContent.ItemType<PermanentDemonDrugPotion>(), ModContent.BuffType<DemonDrug>()); //49
-            PermanentBuffs.Add(ModContent.ItemType<PermanentShockwavePotion>(), ModContent.BuffType<Shockwave>()); //50
-            PermanentBuffs.Add(ModContent.ItemType<PermanentStrengthPotion>(), ModContent.BuffType<Strength>()); //51
-        }
-
-
-
         public override void Unload() {
             toggleDragoonBoots = null;
-            PermanentBuffs = null;
         }
 
         public override void AddRecipes() {

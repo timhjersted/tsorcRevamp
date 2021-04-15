@@ -36,7 +36,13 @@ namespace tsorcRevamp.NPCs.Bosses {
         }
 
         public override bool CheckDead() {
-            NPC.downedBoss3 = true;
+            if (Main.netMode == NetmodeID.SinglePlayer) {
+                NPC.downedBoss3 = true;
+            }
+            else if (Main.netMode == NetmodeID.Server) {
+                NPC.downedBoss3 = true;
+                NetMessage.SendData(MessageID.WorldData);
+            }
             return true;
         }
 

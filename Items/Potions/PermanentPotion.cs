@@ -5,23 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions.PermanentPotions {
-    //in tsorcRevamp.cs, there is a dictionary named PermanentBuffs that contains a list of entries associating permanent potions with their respective buffs.
-    //tsorcRevampPlayer.cs contains the rest of the code
-    //PostUpdateEquip makes the player immune to the buff if they have the associated permanent potion in their inventory
-    //there is a boolean array array named PermamentBuffToggles that stores which buffs the player has enabled, which is toggled by using the permanent potion
-    //PostUpdateEquip then calls the PermaPotion method, which mimics the effect of each buff manually and gives them to the player
-    //it checks to see if the player is immune to the associated buff and if the buff is enabled (checks PermanentBuffToggles)
-    //if both of those evaluate to true, then the player is permanently given the effect of the buff
-    //"why make the player immune to the buff?" so they can't benefit from the buff's effect twice.
-    //it also provides an easy way to check that the player has the permanent potion, and ensures you will never use a buff slot for that effect.
-
-    //to add more permanent potions:
-    //1: increase the size of the PermanentBuffToggles array by one
-    //2: add a new permanent potion item. make it toggle the array slot you added in step 1. remember that the indices start at zero.
-    //i.e. if the array says "PermanentBuffToggles = new bool[120]", then to address the 120th item you, would use PermanentBuffToggles[119].
-    //3: add an entry to the PermanentBuffs dictionary. associate it with the item from step 2, and whichever buff you want it to mimic.
-    //4: add the buff's effect to PermaPotion. check that the PermanentBuffToggles array slot is true, and that the player is immune to the buff, then grant the effect.
-
+        //memory management is scary
     public abstract class PermanentPotion : ModItem {
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults() {
