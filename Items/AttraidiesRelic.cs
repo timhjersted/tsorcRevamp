@@ -24,6 +24,7 @@ namespace tsorcRevamp.Items
             item.rare = ItemRarityID.Blue;
             item.useTime = 45;
             item.useAnimation = 45;
+            item.UseSound = mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh");
             item.scale = .7f;
             item.useStyle = ItemUseStyleID.HoldingUp;
         }

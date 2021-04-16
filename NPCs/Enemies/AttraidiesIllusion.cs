@@ -19,14 +19,12 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             animationType = NPCID.GoblinSorcerer;
             npc.npcSlots = 50;
-            npc.lifeMax = 600; //was 800. maybe 3/4 hp is a good balance? 1600hp would be insane in expert
+            npc.lifeMax = 530;
             npc.damage = 26;
             npc.scale = 1f;
             npc.knockBackResist = 0.3f;
             npc.value = 5000;
             npc.defense = 22;
-            banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
             npc.height = 44;
             npc.width = 28;
             npc.HitSound = SoundID.NPCHit48;
@@ -55,6 +53,10 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
+
+        #region AI
+
+        int illusiontimer = 0;
         public override void AI()
         {
 
@@ -65,13 +67,61 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (npc.life > 300)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X, npc.velocity.Y, 210, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X, npc.velocity.Y, 120, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
             else if (npc.life <= 300)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 140, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 180, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
+            }
+
+            if (npc.life < npc.lifeMax * .66f  && npc.life > npc.lifeMax * .33f)
+            {
+                illusiontimer++;
+                if (illusiontimer > 40 && illusiontimer < 100)
+                {
+                    npc.alpha += 1;
+                }
+                if (illusiontimer == 100)
+                {
+                    npc.alpha = 50;
+                    illusiontimer = 0;
+                }
+            }
+
+
+            if (npc.life <= npc.lifeMax * .33f)
+            {
+                illusiontimer++;
+                if (illusiontimer == 0)
+                {
+                    npc.alpha = 200;
+                }
+                if (illusiontimer < 30)
+                {
+                    npc.alpha -= 4;
+                }
+                if (illusiontimer >= 51 && illusiontimer <= 61)
+                {
+                    npc.alpha = 150;
+                }
+                if (illusiontimer >= 62 && illusiontimer <= 66)
+                {
+                    npc.alpha = 40;
+                }
+                if (illusiontimer >= 67 && illusiontimer <= 75)
+                {
+                    npc.alpha = 200;
+                }
+                if (illusiontimer >= 76 && illusiontimer <= 110)
+                {
+                    npc.alpha = 150;
+                }
+                if (illusiontimer == 111)
+                {
+                    illusiontimer = 0;
+                }
             }
 
             if (Main.netMode != NetmodeID.Server)
@@ -88,15 +138,16 @@ namespace tsorcRevamp.NPCs.Enemies
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 20;
+                        int damage = 12;
                         int type = ModContent.ProjectileType<TheOracle>();
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f);
+                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
                         npc.ai[0] = 0;
                         npc.ai[2]++;
                     }
                 }
+                if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh2").WithVolume(1.1f), npc.Center);
             }
 
             if (npc.ai[1] >= 35)
@@ -220,18 +271,14 @@ namespace tsorcRevamp.NPCs.Enemies
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 30;
+                        int damage = 20;
                         int type = ModContent.ProjectileType<ScrewAttack>();
-                        int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f);
-                        Main.projectile[num54].timeLeft = 600;
+                        int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        Main.projectile[num54].timeLeft = 540;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
                         npc.ai[3] = 0; ;
                     }
                 }
-
-
-
-
 
                 if (Main.rand.Next(15) == 0) //1 in 20 chance boss will summon an NPC
                 {
@@ -243,11 +290,6 @@ namespace tsorcRevamp.NPCs.Enemies
                     npc.active = true;
 
                 }
-
-
-
-
-
             }
 
             npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
@@ -256,7 +298,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (npc.ai[1] == 0) npc.ai[1] = 1;
                 else npc.ai[1] = 0;
             }
+
         }
+
+        #endregion
+
+
         public override void FindFrame(int frameHeight)
         {
 
@@ -303,12 +350,12 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (npc.life <= 0)
             {
-                Main.NewText("The Attraidies Illusion has been defeated...", 150, 150, 150);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 1"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 2"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 2"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
+                for (int j = 0; j < 50; j++)
+                {
+                    int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 16, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 200, Color.Salmon, 2.5f);
+                    Main.dust[dust].noGravity = true;
+                }
+                Main.NewText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
             }
         }
 

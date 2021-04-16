@@ -21,10 +21,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.width = 34;
 			projectile.timeLeft = 1500;
 			projectile.scale = 2f;
-			projectile.light = 1;
 		}
 		public override void AI()
 		{
+			Lighting.AddLight(projectile.Center, .5f, .2f, .7f);
 			projectile.rotation += 0.5f;
 
 			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X)
@@ -67,7 +67,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override bool PreKill(int timeLeft)
 		{
-			projectile.type = ProjectileID.ShadowOrb;
+			projectile.type = ProjectileID.DemonScythe;
 			return true;
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)

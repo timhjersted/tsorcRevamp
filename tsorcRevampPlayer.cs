@@ -403,7 +403,7 @@ namespace tsorcRevamp {
                         player.noKnockback = true;
                     }
                 }
-                if (player.velocity.Y == 0f && Falling && player.controlDown) {
+                if (player.velocity.Y == 0f && Falling && player.controlDown && !player.wet) {
                     for (int i = 0; i < 30; i++) {
                         int dustIndex2 = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 31, 0f, 0f, 100);
                         Main.dust[dustIndex2].scale = 0.1f + Main.rand.Next(5) * 0.1f;
@@ -577,6 +577,9 @@ namespace tsorcRevamp {
                 }
             }
 
+        }
+
+        public override void OnHitByNPC(NPC npc, int damage, bool crit) {
             if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge) {
                 if (!Main.hardMode) {
                     for (int b = 0; b < 8; b++) {
@@ -590,6 +593,22 @@ namespace tsorcRevamp {
                 }
             }
         }
+
+        public override void OnHitByProjectile(Projectile projectile, int damage, bool crit) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge) {
+                if (!Main.hardMode) {
+                    for (int b = 0; b < 8; b++) {
+                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                    }
+                }
+                else {
+                    for (int b = 0; b < 12; b++) {
+                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                    }
+                }
+            }
+        }
+
 
         public override void UpdateBadLifeRegen() {
             if (DarkInferno) {

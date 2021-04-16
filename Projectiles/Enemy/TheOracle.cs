@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void AI()
 		{
-			projectile.rotation += 1f;
+			projectile.rotation += .5f;
 			if (Main.rand.Next(4) == 0)
 			{
 				int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);

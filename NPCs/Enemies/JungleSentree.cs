@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.lifeMax = 250;
 			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Dig");
 			npc.DeathSound = SoundID.NPCDeath33;
-			npc.value = 250;
+			npc.value = 350;
 			npc.buffImmune[BuffID.Confused] = true;
 		}
 
@@ -179,7 +179,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (spawntimer == 60 && (NPC.CountNPCS(NPCID.JungleBat) < 4 || NPC.CountNPCS(NPCID.LittleHornetLeafy) < 4) && npc.Center.Y / 16 >= Main.rockLayer) //wont spawn babies if there are already 6
 				{
-					if (Main.rand.Next(2) == 0)
+					if (Main.rand.Next(3) == 0)
 					{
 						Main.PlaySound(SoundID.Item97, npc.Center);
 						int npcIndex = -1;
@@ -344,7 +344,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				 || (item.type == ItemID.VortexAxe) || item.type == mod.ItemType("AdamantitePoleWarAxe") || item.type == mod.ItemType("AdamantiteWarAxe") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("CobaltPoleWarAxe") || item.type == mod.ItemType("CobaltWarAxe")
 				/*top 10 biggest mistakes of my life*/|| item.type == mod.ItemType("DunlendingAxe") || item.type == mod.ItemType("EphemeralThrowingAxe") || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("HallowedGreatPoleAxe")
 				/*spent more time making this list than the NPC iteself*/|| item.type == mod.ItemType("MythrilPoleWarAxe") || item.type == mod.ItemType("MythrilWarAxe") || item.type == mod.ItemType("OldAxe") || item.type == mod.ItemType("OldDoubleAxe") || item.type == mod.ItemType("OldHalberd")
-				|| item.type == mod.ItemType("ReforgedOldAxe") || item.type == mod.ItemType("ReforgedOldDoubleAxe") || (item.type == mod.ItemType("ReforgedOldHalberd")) || (item.type == mod.ItemType("ForgottenAxe")) || (item.type == mod.ItemType("ForgottenGreatAxe")))
+				|| item.type == mod.ItemType("ReforgedOldAxe") || item.type == mod.ItemType("ReforgedOldDoubleAxe") || (item.type == mod.ItemType("ReforgedOldHalberd")) || item.type == mod.ItemType("ForgottenAxe") || item.type == mod.ItemType("ForgottenGreatAxe") || (item.type == mod.ItemType("CobaltHalberd") 
+				|| item.type == mod.ItemType("ForgottenPoisonAxe") || item.type == mod.ItemType("ForgottenRuneAxe") || item.type == mod.ItemType("GigantAxe")))
 			{
 				damage *= 2; //I never want to see or hear the word "axe" again in my life
 				if (damage < 15)
@@ -388,6 +389,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void NPCLoot()
 		{
 			Item.NewItem(npc.getRect(), ItemID.RichMahogany, Main.rand.Next(3, 5));
+			Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"), Main.rand.Next(1, 3));
 		}
 	}
 }

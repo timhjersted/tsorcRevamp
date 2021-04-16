@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items {
     class BloodredMossClump : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Heals 20 HP, with no potion sickness." +
+            Tooltip.SetDefault("Heals 20 HP, with only 5 seconds of potion sickness." +
                                 "\nRemoves bleeding and poisoned." +
                                 "\nA supply of these may be essential for exploring some areas." +
                                 "\nIf you find yourself losing life quickly, check your buffs to see if you've been poisoned." +
@@ -15,7 +15,6 @@ namespace tsorcRevamp.Items {
         public override void SetDefaults() {
             item.width = 16;
             item.height = 25;
-            item.healLife = 20;
             item.consumable = true;
             item.maxStack = 360;
             item.useStyle = ItemUseStyleID.HoldingOut;
@@ -24,6 +23,14 @@ namespace tsorcRevamp.Items {
             item.UseSound = SoundID.Item21;
             item.value = 2000;
             item.rare = ItemRarityID.Orange;
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (player.HasBuff(BuffID.PotionSickness))
+            {
+                return false;
+            }
+            return true;
         }
 
         public override bool UseItem(Player player) {
@@ -36,6 +43,14 @@ namespace tsorcRevamp.Items {
                 }
                 buffIndex++;
             }
+
+            player.statLife += 20;
+            if (player.statLife > player.statLifeMax2)
+            {
+                player.statLife = player.statLifeMax2;
+            }
+            player.HealEffect(20, true);
+            player.AddBuff(BuffID.PotionSickness, 300);
             return true;
         }
     }
