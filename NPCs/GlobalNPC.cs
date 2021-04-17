@@ -358,7 +358,7 @@ namespace tsorcRevamp.NPCs {
 
             #region Dark Souls & Consumable Souls Drops
 
-                if (npc.lifeMax > 5 && npc.value >= 10f)
+            if (npc.lifeMax > 5 && npc.value >= 10f)
             { //stop zero-value souls from dropping
 
                 float enemyValue;
@@ -372,35 +372,50 @@ namespace tsorcRevamp.NPCs {
                     enemyValue = (int)npc.value / 10;
                 }
 
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing && !Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
                 {
                     enemyValue *= 1.25f;
                 }
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon && !Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
+                {
+                    enemyValue *= 1.1f;
+                }
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
+                {
+                    enemyValue *= 1.35f;
+                }
+
                 Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (int)(enemyValue));
 
 
 
                 // Consumable Soul drops ahead - Current numbers give aprox. +20% souls
 
+                float chance = 0.01f;
+
                 if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) == false && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
                 {
+                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
+                    {
+                        chance = 0.015f;
+                    }
 
-                    if ((enemyValue >= 1) && (enemyValue <= 50) && (Main.rand.NextFloat() < .01f)) // 1% chance of all enemies between enemyValue 1 and 50 dropping FadingSoul aka 1/75
+                    if ((enemyValue >= 1) && (enemyValue <= 50) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 50 dropping FadingSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<FadingSoul>(), 1); // Zombies and eyes are 6 and 7 enemyValue, so will only drop FadingSoul
                     }
 
-                    if ((enemyValue >= 10) && (enemyValue <= 2000) && (Main.rand.NextFloat() < .01f)) // 1% chance of all enemies between enemyValue 10 and 2000 dropping LostUndeadSoul aka 1/75
+                    if ((enemyValue >= 10) && (enemyValue <= 2000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 10 and 2000 dropping LostUndeadSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<LostUndeadSoul>(), 1); // Most pre-HM enemies fall into this category
                     }
 
-                    if ((enemyValue >= 50) && (enemyValue <= 10000) && (Main.rand.NextFloat() < .01f)) // 1% chance of all enemies between enemyValue 50 and 10000 dropping NamelessSoldierSoul aka 1/75
+                    if ((enemyValue >= 50) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 50 and 10000 dropping NamelessSoldierSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1); // Most HM enemies fall into this category
                     }
 
-                    if ((enemyValue >= 100) && (enemyValue <= 10000) && (Main.rand.NextFloat() < .01f) && Main.hardMode) // 1% chance of all enemies between enemyValue 100 and 10000 dropping ProudKnightSoul aka 1/75
+                    if ((enemyValue >= 100) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance) && Main.hardMode) // 1% chance of all enemies between enemyValue 100 and 10000 dropping ProudKnightSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
                     }

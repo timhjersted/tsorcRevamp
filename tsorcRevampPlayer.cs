@@ -58,6 +58,7 @@ namespace tsorcRevamp {
         public bool RTQ2 = false;
 
         public bool BoneRevenge = false;
+        public bool SoulSiphon = false;
 
         public int souldroplooptimer = 0;
         public int souldroptimer = 0;
@@ -105,6 +106,7 @@ namespace tsorcRevamp {
             RTQ2 = false;
             DarkInferno = false;
             BoneRevenge = false;
+            SoulSiphon = false;
             CrimsonDrain = false;
             Shockwave = false;
             souldroplooptimer = 0;
@@ -115,6 +117,10 @@ namespace tsorcRevamp {
             if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
                 player.chest = -1;
             }
+
+
+            #region Permanent Potions
+
             foreach (Item item in player.inventory) {
                 if (item.type == ModContent.ItemType<PermanentObsidianSkinPotion>() && PermanentBuffToggles[0]) {
                     player.lavaImmune = true;
@@ -388,6 +394,9 @@ namespace tsorcRevamp {
                 }
             }
 
+            #endregion
+
+
             if (Shockwave) {
                 if (player.controlDown && player.velocity.Y != 0f) {
                     player.gravity += 5f;
@@ -447,6 +456,104 @@ namespace tsorcRevamp {
                     Main.dust[x].noGravity = true;
                 }
             }
+
+
+            #region Soul Siphon Dusts
+
+
+            if (SoulSiphon) {
+                Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
+                if (Main.rand.Next(2) == 0)
+                {
+                    //var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 6 == 0 ? Main.rand.Next(10, 80) : 80)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 89, player.velocity.X, player.velocity.Y, 120, default, 1f);
+                    //Main.dust[x].noGravity = true;
+
+                    int num5 = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
+                    Main.dust[num5].noGravity = true;
+                    Main.dust[num5].velocity *= 0.75f;
+                    Main.dust[num5].fadeIn = 1.5f;
+                    Vector2 vector = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vector.Normalize();
+                    vector *= (float)Main.rand.Next(50, 100) * 0.04f;
+                    Main.dust[num5].velocity = vector;
+                    vector.Normalize();
+                    vector *= Main.rand.Next(220, 900);
+                    Main.dust[num5].position = player.Center - vector;
+
+                    //Vector2.Normalize(start - end) * someSpeed //start and end are also Vector2 // Aparently another way to make things move toward each other
+
+                }
+
+                if (Main.rand.Next(4) == 0)
+                {
+                    /*var x = Dust.NewDust(centerOffset + (Vector2.One * (l % 6 == 0 ? Main.rand.Next(10, 80) : 80)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 89, player.velocity.X, player.velocity.Y, 120, default, 1f);
+                    Main.dust[x].noGravity = true;*/
+
+                    int x = Dust.NewDust(player.position, player.width, player.height, 89, player.velocity.X, player.velocity.Y, 120, default(Color), 1f);
+                    Main.dust[x].noGravity = true;
+                    Main.dust[x].velocity *= 0.75f;
+                    Main.dust[x].fadeIn = 1.3f;
+                    Vector2 vector = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vector.Normalize();
+                    vector *= (float)Main.rand.Next(50, 100) * 0.05f; //velocity towards player
+                    Main.dust[x].velocity = vector;
+                    vector.Normalize();
+                    vector *= 200f; //distance form player
+                    Main.dust[x].position = player.Center - vector;
+
+                    //Vector2.Normalize(start - end) * someSpeed //start and end are also Vector2 // Aparently another way to make things move toward each other
+
+                }
+
+                if (Main.rand.Next(2) == 0)
+                {
+                    int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
+                    Main.dust[z].noGravity = true;
+                    Main.dust[z].velocity *= 0.75f;
+                    Main.dust[z].fadeIn = 1.3f;
+                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vectorother.Normalize();
+                    vectorother *= (float)Main.rand.Next(50, 100) * 0.052f;
+                    Main.dust[z].velocity = vectorother;
+                    vectorother.Normalize();
+                    vectorother *= 150f;
+                    Main.dust[z].position = player.Center - vectorother;
+                }
+
+                for (int k = 0; k < 1; k++)
+                {
+                    int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
+                    Main.dust[z].noGravity = true;
+                    Main.dust[z].velocity *= 0.75f;
+                    Main.dust[z].fadeIn = 1.3f;
+                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vectorother.Normalize();
+                    vectorother *= (float)Main.rand.Next(50, 100) * 0.055f;
+                    Main.dust[z].velocity = vectorother;
+                    vectorother.Normalize();
+                    vectorother *= 90f;
+                    Main.dust[z].position = player.Center - vectorother;
+                }
+
+                for (int k = 0; k < 1; k++)
+                {
+                    int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
+                    Main.dust[z].noGravity = true;
+                    Main.dust[z].velocity *= 2.75f;
+                    Main.dust[z].fadeIn = 1.3f;
+                    Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                    vectorother.Normalize();
+                    vectorother *= (float)Main.rand.Next(50, 100) * 0.055f;
+                    Main.dust[z].velocity = vectorother;
+                    vectorother.Normalize();
+                    vectorother *= 45f;
+                    Main.dust[z].position = player.Center - vectorother;
+                }
+            }
+
+            #endregion
+
+
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
@@ -612,7 +719,6 @@ namespace tsorcRevamp {
                 }
             }
         }
-
 
         public override void UpdateBadLifeRegen() {
             if (DarkInferno) {
