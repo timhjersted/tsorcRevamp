@@ -365,12 +365,7 @@ namespace tsorcRevamp {
                     player.buffImmune[ModContent.BuffType<Boost>()] = true;
                 }
                 if (item.type == ModContent.ItemType<PermanentCrimsonPotion>() && PermanentBuffToggles[48]) {
-                    for (int l = 0; l < 200; l++) {
-                        NPC nPC = Main.npc[l];
-                        if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
-                            nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 3);
-                        }
-                    }
+                    CrimsonDrain = true;
                     player.buffImmune[ModContent.BuffType<CrimsonDrain>()] = true;
                 }
                 if (item.type == ModContent.ItemType<PermanentDemonDrugPotion>() && PermanentBuffToggles[49]) {
@@ -444,6 +439,12 @@ namespace tsorcRevamp {
                     if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
                         nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
                     }
+                }
+
+                Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
+                for (int j = 1; j < 80; j++) {
+                    var x = Dust.NewDust(centerOffset + (Vector2.One * 125f).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
+                    Main.dust[x].noGravity = true;
                 }
             }
         }
