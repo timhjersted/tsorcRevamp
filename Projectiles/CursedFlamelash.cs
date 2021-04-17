@@ -25,12 +25,6 @@ namespace tsorcRevamp.Projectiles {
                 projectile.soundDelay = 10;
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
             }
-            int num47 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 15, 0f, 0f, 100, default(Color), 2f);
-            Main.dust[num47].velocity *= 0.3f;
-            Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
-            Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
-            Main.dust[num47].noGravity = true;
-
 
             if (Main.myPlayer == projectile.owner && projectile.ai[0] == 0f) {
                 if (Main.player[projectile.owner].channel) {

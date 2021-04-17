@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items {
 
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Can be cooked at a cooking pot to make 1 Cooked Chicken" +
-                                "\nCooked chicken heals 125 HP and has no potion cooldown. Wow! Tasty!");
+                                "\nCooked chicken heals 100 HP and has 30 seconds of potion cooldown. Wow! Tasty!");
         }
 
         public override void SetDefaults() {

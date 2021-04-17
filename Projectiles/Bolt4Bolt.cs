@@ -19,9 +19,9 @@ namespace tsorcRevamp.Projectiles {
             projectile.light = 0.8f;
         }
         public override void AI() {
-            if (projectile.ai[0] == 0) { 
-            projectile.velocity.X *= 0.01f;
-            projectile.velocity.Y *= 0.01f;
+            if (projectile.ai[0] == 0) {
+                projectile.velocity.X *= 0.001f;
+                projectile.velocity.Y *= 0.001f;
                 projectile.ai[0] = 1;
             }
 

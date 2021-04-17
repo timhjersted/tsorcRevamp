@@ -87,8 +87,8 @@ namespace tsorcRevamp.Items.Accessories {
             base.UpdateEquip(player);
             player.moveSpeed -= 0.1f;
             player.meleeDamage += 0.06f;
-            player.magicDamage -= 0.85f;
-            player.rangedDamage -= 0.85f;
+            player.magicDamage -= 1.5f;
+            player.rangedDamage -= 1.5f;
         }
 
         public override void AddRecipes() {
@@ -125,8 +125,8 @@ namespace tsorcRevamp.Items.Accessories {
             base.UpdateEquip(player);
             player.moveSpeed -= 0.1f;
             player.meleeDamage += 0.06f;
-            player.magicDamage -= 0.85f;
-            player.rangedDamage -= 0.85f;
+            player.magicDamage -= 1.5f;
+            player.rangedDamage -= 1.5f;
         }
 
         public override void AddRecipes() {

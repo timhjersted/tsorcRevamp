@@ -47,5 +47,8 @@ namespace tsorcRevamp.Projectiles {
                 target.AddBuff(BuffID.OnFire, 420); //blaze it 
             }
         }
+        public override void Kill(int timeLeft) {
+            Main.PlaySound(SoundID.Dig, (int)projectile.position.X, (int)projectile.position.Y, 9);
+        }
     }
 }

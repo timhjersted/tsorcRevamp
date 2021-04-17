@@ -12,7 +12,6 @@ namespace tsorcRevamp.Projectiles {
             projectile.width = 150;
             projectile.height = 150;
             projectile.friendly = true;
-            projectile.scale = 2;
             projectile.magic = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;

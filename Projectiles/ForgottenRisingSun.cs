@@ -29,6 +29,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity) {
+            Main.PlaySound(SoundID.Dig, (int)projectile.position.X, (int)projectile.position.Y, 9);
             if (projectile.velocity.X != oldVelocity.X) {
                 projectile.velocity.X = 0f - oldVelocity.X;
             }
