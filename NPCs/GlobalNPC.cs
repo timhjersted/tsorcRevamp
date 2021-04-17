@@ -321,6 +321,10 @@ namespace tsorcRevamp.NPCs {
 
         public override void NPCLoot(NPC npc) {
 
+            #region Bosses drop souls once
+
+            #endregion
+
             #region Loot Changes
 
             if (npc.type == NPCID.BigStinger) {
