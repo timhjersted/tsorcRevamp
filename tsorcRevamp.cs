@@ -7,9 +7,8 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions;
-using tsorcRevamp.Items.Potions.PermanentPotions;
-using tsorcRevamp.Buffs;
+using Terraria.UI;
+
 
 namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
@@ -18,7 +17,10 @@ namespace tsorcRevamp {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
             On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
+
+            On.Terraria.UI.ChestUI.DepositAll += DepositAllPatch;
         }
+
 
         private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
             if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
@@ -70,8 +72,165 @@ namespace tsorcRevamp {
             }
         }
 
+        private void DepositAllPatch(On.Terraria.UI.ChestUI.orig_DepositAll orig) { //block dark souls from being deposit all-ed into chests.
+
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                Player player = Main.player[Main.myPlayer];
+                if (player.chest > -1) {
+                    ChestUI.MoveCoins(player.inventory, Main.chest[player.chest].item);
+                }
+                else if (player.chest == -3) {
+                    ChestUI.MoveCoins(player.inventory, player.bank2.item);
+                }
+                else if (player.chest == -4) {
+                    ChestUI.MoveCoins(player.inventory, player.bank3.item);
+                }
+                else {
+                    ChestUI.MoveCoins(player.inventory, player.bank.item);
+                }
+                for (int num = 49; num >= 10; num--) {
+                    if (player.inventory[num].stack > 0 && player.inventory[num].type > ItemID.None && !player.inventory[num].favorited && player.inventory[num].type != ModContent.ItemType<DarkSoul>()) {
+                        if (player.inventory[num].maxStack > 1) {
+                            for (int i = 0; i < 40; i++) {
+                                if (player.chest > -1) {
+                                    Chest chest = Main.chest[player.chest];
+                                    if (chest.item[i].stack >= chest.item[i].maxStack || !player.inventory[num].IsTheSameAs(chest.item[i])) {
+                                        continue;
+                                    }
+                                    int num2 = player.inventory[num].stack;
+                                    if (player.inventory[num].stack + chest.item[i].stack > chest.item[i].maxStack) {
+                                        num2 = chest.item[i].maxStack - chest.item[i].stack;
+                                    }
+                                    player.inventory[num].stack -= num2;
+                                    chest.item[i].stack += num2;
+                                    Main.PlaySound(SoundID.Grab);
+                                    if (player.inventory[num].stack <= 0) {
+                                        player.inventory[num].SetDefaults();
+                                        if (Main.netMode == NetmodeID.MultiplayerClient) {
+                                            NetMessage.SendData(MessageID.SyncChestItem, -1, -1, null, player.chest, i);
+                                        }
+                                        break;
+                                    }
+                                    if (chest.item[i].type == ItemID.None) {
+                                        chest.item[i] = player.inventory[num].Clone();
+                                        player.inventory[num].SetDefaults();
+                                    }
+                                    if (Main.netMode == NetmodeID.MultiplayerClient) {
+                                        NetMessage.SendData(MessageID.SyncChestItem, -1, -1, null, player.chest, i);
+                                    }
+                                }
+                                else if (player.chest == -3) {
+                                    if (player.bank2.item[i].stack < player.bank2.item[i].maxStack && player.inventory[num].IsTheSameAs(player.bank2.item[i])) {
+                                        int num3 = player.inventory[num].stack;
+                                        if (player.inventory[num].stack + player.bank2.item[i].stack > player.bank2.item[i].maxStack) {
+                                            num3 = player.bank2.item[i].maxStack - player.bank2.item[i].stack;
+                                        }
+                                        player.inventory[num].stack -= num3;
+                                        player.bank2.item[i].stack += num3;
+                                        Main.PlaySound(SoundID.Grab);
+                                        if (player.inventory[num].stack <= 0) {
+                                            player.inventory[num].SetDefaults();
+                                            break;
+                                        }
+                                        if (player.bank2.item[i].type == ItemID.None) {
+                                            player.bank2.item[i] = player.inventory[num].Clone();
+                                            player.inventory[num].SetDefaults();
+                                        }
+                                    }
+                                }
+                                else if (player.chest == -4) {
+                                    if (player.bank3.item[i].stack < player.bank3.item[i].maxStack && player.inventory[num].IsTheSameAs(player.bank3.item[i])) {
+                                        int num4 = player.inventory[num].stack;
+                                        if (player.inventory[num].stack + player.bank3.item[i].stack > player.bank3.item[i].maxStack) {
+                                            num4 = player.bank3.item[i].maxStack - player.bank3.item[i].stack;
+                                        }
+                                        player.inventory[num].stack -= num4;
+                                        player.bank3.item[i].stack += num4;
+                                        Main.PlaySound(SoundID.Grab);
+                                        if (player.inventory[num].stack <= 0) {
+                                            player.inventory[num].SetDefaults();
+                                            break;
+                                        }
+                                        if (player.bank3.item[i].type == ItemID.None) {
+                                            player.bank3.item[i] = player.inventory[num].Clone();
+                                            player.inventory[num].SetDefaults();
+                                        }
+                                    }
+                                }
+                                else if (player.bank.item[i].stack < player.bank.item[i].maxStack && player.inventory[num].IsTheSameAs(player.bank.item[i])) {
+                                    int num5 = player.inventory[num].stack;
+                                    if (player.inventory[num].stack + player.bank.item[i].stack > player.bank.item[i].maxStack) {
+                                        num5 = player.bank.item[i].maxStack - player.bank.item[i].stack;
+                                    }
+                                    player.inventory[num].stack -= num5;
+                                    player.bank.item[i].stack += num5;
+                                    Main.PlaySound(SoundID.Grab);
+                                    if (player.inventory[num].stack <= 0) {
+                                        player.inventory[num].SetDefaults();
+                                        break;
+                                    }
+                                    if (player.bank.item[i].type == ItemID.None) {
+                                        player.bank.item[i] = player.inventory[num].Clone();
+                                        player.inventory[num].SetDefaults();
+                                    }
+                                }
+                            }
+                        }
+                        if (player.inventory[num].stack > 0) {
+                            if (player.chest > -1) {
+                                for (int j = 0; j < 40; j++) {
+                                    if (Main.chest[player.chest].item[j].stack == 0) {
+                                        Main.PlaySound(SoundID.Grab);
+                                        Main.chest[player.chest].item[j] = player.inventory[num].Clone();
+                                        player.inventory[num].SetDefaults();
+                                        if (Main.netMode == NetmodeID.MultiplayerClient) {
+                                            NetMessage.SendData(MessageID.SyncChestItem, -1, -1, null, player.chest, j);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (player.chest == -3) {
+                                for (int k = 0; k < 40; k++) {
+                                    if (player.bank2.item[k].stack == 0) {
+                                        Main.PlaySound(SoundID.Grab);
+                                        player.bank2.item[k] = player.inventory[num].Clone();
+                                        player.inventory[num].SetDefaults();
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (player.chest == -4) {
+                                for (int l = 0; l < 40; l++) {
+                                    if (player.bank3.item[l].stack == 0) {
+                                        Main.PlaySound(SoundID.Grab);
+                                        player.bank3.item[l] = player.inventory[num].Clone();
+                                        player.inventory[num].SetDefaults();
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                for (int m = 0; m < 40; m++) {
+                                    if (player.bank.item[m].stack == 0) {
+                                        Main.PlaySound(SoundID.Grab);
+                                        player.bank.item[m] = player.inventory[num].Clone();
+                                        player.inventory[num].SetDefaults();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } 
+            }
+            else {
+                orig();
+            }
+        }
         public override void Unload() {
             toggleDragoonBoots = null;
+            
         }
 
         public override void AddRecipes() {

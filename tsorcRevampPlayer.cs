@@ -112,6 +112,9 @@ namespace tsorcRevamp {
         }
 
         public override void PostUpdateEquips() {
+            if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
+                player.chest = -1;
+            }
             foreach (Item item in player.inventory) {
                 if (item.type == ModContent.ItemType<PermanentObsidianSkinPotion>() && PermanentBuffToggles[0]) {
                     player.lavaImmune = true;
