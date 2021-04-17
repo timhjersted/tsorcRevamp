@@ -24,7 +24,6 @@ namespace tsorcRevamp.Projectiles {
                 projectile.velocity.Y *= 0.001f;
                 projectile.ai[0] = 1;
             }
-            Main.NewText("velocity is" + projectile.velocity.X + ", " + projectile.velocity.Y);
             projectile.frameCounter++;
             projectile.frame = (int)Math.Floor((double)projectile.frameCounter / 4);
 
