@@ -7,6 +7,11 @@ using tsorcRevamp.Items;
 namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
 
+
+        float enemyValue;
+        float multiplier = 1f;
+        int DarkSoulQuantity;
+
         public override bool InstancePerEntity => true;
         public bool DarkInferno = false;
         public bool CrimsonBurn = false;
@@ -302,12 +307,6 @@ namespace tsorcRevamp.NPCs {
                 npc.scale = 1.05f;
             }
 
-            if (npc.type == NPCID.JungleSlime)
-            {
-                npc.scale = 1.1f;
-                npc.value = 100;
-            }
-
             if (npc.type == NPCID.KingSlime)
             {
                 npc.damage = 33;
@@ -317,7 +316,9 @@ namespace tsorcRevamp.NPCs {
 
 
         }
+
         #endregion
+
 
         public override void NPCLoot(NPC npc) {
 
@@ -354,38 +355,66 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-                #endregion
+            if (npc.netID == NPCID.GreenSlime || !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
+            }
+
+            if (npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow || !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                if (Main.rand.Next(10) == 0) {
+                    Item.NewItem(npc.getRect(), mod.ItemType("SymbolOfAvarice"));
+                }
+            }
+
+
+            #endregion
 
             #region Dark Souls & Consumable Souls Drops
+
 
             if (npc.lifeMax > 5 && npc.value >= 10f)
             { //stop zero-value souls from dropping
 
-                float enemyValue;
-
-                if (Main.expertMode)
-                { //npc.value is the amount of coins they drop
-                    enemyValue = (int)npc.value / 25; //all enemies drop more money in expert mode, so the divisor is larger to compensate
-                }
-                else
+                if (npc.netID != NPCID.JungleSlime)
                 {
-                    enemyValue = (int)npc.value / 10;
-                }
-
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing && !Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
-                {
-                    enemyValue *= 1.25f;
-                }
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon && !Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
-                {
-                    enemyValue *= 1.1f;
-                }
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
-                {
-                    enemyValue *= 1.35f;
+                    if (Main.expertMode)
+                    { //npc.value is the amount of coins they drop
+                        enemyValue = (int)npc.value / 25; //all enemies drop more money in expert mode, so the divisor is larger to compensate
+                    }
+                    else
+                    {
+                        enemyValue = (int)npc.value / 10;
+                    }
                 }
 
-                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (int)(enemyValue));
+                if (npc.netID == NPCID.JungleSlime) //jungle slimes drop 10 souls
+                {
+                    if (Main.expertMode)
+                    {
+                        enemyValue = (int)npc.value / 125;
+                    }
+                    else
+                    {
+                        enemyValue = (int)npc.value / 50;
+                    }
+                }
+
+
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
+                {
+                    multiplier += 0.25f;
+                }
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
+                {
+                    multiplier += 0.15f;
+                }
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SOADrain)
+                {
+                    multiplier += 0.4f;
+                }
+
+                DarkSoulQuantity = (int)(multiplier * enemyValue);
+
+                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
 
 
 
@@ -400,7 +429,7 @@ namespace tsorcRevamp.NPCs {
                         chance = 0.015f;
                     }
 
-                    if ((enemyValue >= 1) && (enemyValue <= 50) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 50 dropping FadingSoul aka 1/75
+                    if ((enemyValue >= 1) && (enemyValue <= 200) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 200 dropping FadingSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<FadingSoul>(), 1); // Zombies and eyes are 6 and 7 enemyValue, so will only drop FadingSoul
                     }
@@ -415,7 +444,7 @@ namespace tsorcRevamp.NPCs {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1); // Most HM enemies fall into this category
                     }
 
-                    if ((enemyValue >= 100) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance) && Main.hardMode) // 1% chance of all enemies between enemyValue 100 and 10000 dropping ProudKnightSoul aka 1/75
+                    if ((enemyValue >= 150) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance) && Main.hardMode) // 1% chance of all enemies between enemyValue 150 and 10000 dropping ProudKnightSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
                     }
@@ -472,6 +501,8 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.ChaosElemental) {
                 NPCLoader.blockLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
             }
+            if (npc.netID == NPCID.JungleSlime)
+
             NPCLoader.blockLoot.Add(ItemID.SlimeHook);
             return base.PreNPCLoot(npc);
         }

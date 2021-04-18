@@ -62,6 +62,7 @@ namespace tsorcRevamp {
 
         public int souldroplooptimer = 0;
         public int souldroptimer = 0;
+        public bool SOADrain = false;
 
         public bool[] PermanentBuffToggles = new bool[52]; //todo dont forget to increment this if you add buffs to the dictionary
 
@@ -111,6 +112,7 @@ namespace tsorcRevamp {
             Shockwave = false;
             souldroplooptimer = 0;
             souldroptimer = 0;
+            SOADrain = false;
         }
 
         public override void PostUpdateEquips() {
@@ -733,6 +735,19 @@ namespace tsorcRevamp {
 
                     int dust2 = Dust.NewDust(player.position, player.width / 2, player.height / 2, 58, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
+                }
+            }
+
+            if (SOADrain) {
+                if (player.lifeRegen > 0) {
+                    player.lifeRegen = 0;
+                }
+                player.lifeRegenTime = 0;
+                player.lifeRegen = -15;
+                if (Main.rand.Next(3) == 0) {
+                    int dust = Dust.NewDust(player.position, player.width, player.height, 235, player.velocity.X, player.velocity.Y, 140, default, 0.8f);
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].fadeIn = 1f;
                 }
             }
         }
