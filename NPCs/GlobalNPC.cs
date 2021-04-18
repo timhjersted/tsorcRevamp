@@ -427,7 +427,15 @@ namespace tsorcRevamp.NPCs {
         }
 
         public override void AI(NPC npc) {
+            #region block certain NPCs from spawning
+            if (npc.type == NPCID.BigRainZombie
+                || npc.type == NPCID.SmallRainZombie
+                || npc.type == NPCID.Clown
+                || npc.type == NPCID.UmbrellaSlime) {
 
+                npc.active = false;
+            }
+            #endregion
             if ((npc.friendly) && (npc.lifeMax == 250)) { //town NPCs are immortal
                 npc.dontTakeDamage = true;
                 npc.dontTakeDamageFromHostiles = true;
