@@ -20,5 +20,16 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.width = 22;
             item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingAxe>();
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("ThrowingAxe"));
+            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 40);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 8000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
+        }
     }
 }

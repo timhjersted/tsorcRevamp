@@ -1045,7 +1045,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentCratePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2356";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Sonar buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the 'Crate chance increased' buff. \nUse to toggle effect.");
         }
 
         
