@@ -359,7 +359,7 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
             }
 
-            if (npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow || !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow) && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 if (Main.rand.Next(10) == 0) {
                     Item.NewItem(npc.getRect(), mod.ItemType("SymbolOfAvarice"));
                 }

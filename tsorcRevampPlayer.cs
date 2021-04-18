@@ -64,7 +64,7 @@ namespace tsorcRevamp {
         public int souldroptimer = 0;
         public bool SOADrain = false;
 
-        public bool[] PermanentBuffToggles = new bool[52]; //todo dont forget to increment this if you add buffs to the dictionary
+        public bool[] PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -394,6 +394,11 @@ namespace tsorcRevamp {
                     player.rangedCrit += 2;
                     player.buffImmune[ModContent.BuffType<Strength>()] = true;
                 }
+                if (item.type == ModContent.ItemType<PermanentSoulSiphonPotion>() && PermanentBuffToggles[52])
+                {
+                    SoulSiphon = true;
+                    player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
+                }
             }
 
             #endregion
@@ -464,12 +469,9 @@ namespace tsorcRevamp {
 
 
             if (SoulSiphon) {
-                Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
-                if (Main.rand.Next(2) == 0)
-                {
-                    //var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 6 == 0 ? Main.rand.Next(10, 80) : 80)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 89, player.velocity.X, player.velocity.Y, 120, default, 1f);
-                    //Main.dust[x].noGravity = true;
 
+                if (Main.rand.Next(2) == 0) //outermost "ring"
+                {
                     int num5 = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[num5].noGravity = true;
                     Main.dust[num5].velocity *= 0.75f;
@@ -481,16 +483,10 @@ namespace tsorcRevamp {
                     vector.Normalize();
                     vector *= Main.rand.Next(220, 900);
                     Main.dust[num5].position = player.Center - vector;
-
-                    //Vector2.Normalize(start - end) * someSpeed //start and end are also Vector2 // Aparently another way to make things move toward each other
-
                 }
 
                 if (Main.rand.Next(4) == 0)
                 {
-                    /*var x = Dust.NewDust(centerOffset + (Vector2.One * (l % 6 == 0 ? Main.rand.Next(10, 80) : 80)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 89, player.velocity.X, player.velocity.Y, 120, default, 1f);
-                    Main.dust[x].noGravity = true;*/
-
                     int x = Dust.NewDust(player.position, player.width, player.height, 89, player.velocity.X, player.velocity.Y, 120, default(Color), 1f);
                     Main.dust[x].noGravity = true;
                     Main.dust[x].velocity *= 0.75f;
@@ -500,7 +496,7 @@ namespace tsorcRevamp {
                     vector *= (float)Main.rand.Next(50, 100) * 0.05f; //velocity towards player
                     Main.dust[x].velocity = vector;
                     vector.Normalize();
-                    vector *= 200f; //distance form player
+                    vector *= 200f; //spawn distance from player
                     Main.dust[x].position = player.Center - vector;
 
                     //Vector2.Normalize(start - end) * someSpeed //start and end are also Vector2 // Aparently another way to make things move toward each other
@@ -537,7 +533,7 @@ namespace tsorcRevamp {
                     Main.dust[z].position = player.Center - vectorother;
                 }
 
-                for (int k = 0; k < 1; k++)
+                for (int k = 0; k < 1; k++) //innermost "ring"
                 {
                     int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[z].noGravity = true;

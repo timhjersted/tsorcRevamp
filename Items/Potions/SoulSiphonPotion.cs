@@ -9,12 +9,11 @@ namespace tsorcRevamp.Items.Potions
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Enemies drop +15% more Dark souls\n"
+            Tooltip.SetDefault("Enemies drop 15% more Dark souls\n"
                                 + "Consumable souls' drop chance is increased by 50%\n"
                                 + "Soul pickup range greatly increased");
 
             ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
-
         }
 
         public override void SetDefaults()

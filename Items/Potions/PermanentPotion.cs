@@ -1257,4 +1257,32 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
     }
+
+    public class PermanentSoulSiphonPotion : PermanentPotion {
+        public override string Texture => "tsorcRevamp/Items/Potions/SoulSiphonPotion";
+        public override void SetStaticDefaults() {
+            Tooltip.SetDefault("Permanently grants the Soul Siphon buff." +
+                "\nUse to toggle effect.");
+
+            ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
+
+        }
+
+
+        public override bool UseItem(Player player) {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.PermanentBuffToggles[52] = !modPlayer.PermanentBuffToggles[52]; //toggle
+            return true;
+        }
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
+            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[52]) {
+                Texture2D texture = Main.itemTexture[item.type];
+                for (int i = 0; i < 4; i++) {
+                    Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
+                    spriteBatch.Draw(texture, position + offsetPositon, null, Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0f);
+                }
+            }
+            return true;
+        }
+    }
 }
