@@ -8,7 +8,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Items;
 using Terraria.UI;
-
+using tsorcRevamp.Items.Potions;
+using tsorcRevamp.Items.Potions.PermanentPotions;
 
 namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
@@ -232,9 +233,117 @@ namespace tsorcRevamp {
             toggleDragoonBoots = null;
             
         }
-
+        #region permanent potion recipes
+        public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
+            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(ResultPotion, 1);
+            recipe.AddRecipe();
+        }
+        public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion) {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 50000);
+            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(ResultPotion, 1);
+            recipe.AddRecipe();
+        }
+        public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion) {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(ResultPotion, 1);
+            recipe.AddRecipe();
+        }
+        public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion) {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(ResultPotion, 1);
+            recipe.AddRecipe();
+        }
+        #endregion
         public override void AddRecipes() {
             RecipeHelper.EditRecipes();
+            #region add s tier potion recipes
+            PermaPotionRecipeS(this, ModContent.ItemType<ArmorDrugPotion>(), ModContent.ItemType<PermanentArmorDrugPotion>());
+            PermaPotionRecipeS(this, ModContent.ItemType<BattlefrontPotion>(), ModContent.ItemType<PermanentBattlefrontPotion>());
+            PermaPotionRecipeS(this, ModContent.ItemType<DemonDrugPotion>(), ModContent.ItemType<PermanentDemonDrugPotion>());
+            PermaPotionRecipeS(this, ModContent.ItemType<StrengthPotion>(), ModContent.ItemType<PermanentStrengthPotion>());
+            PermaPotionRecipeS(this, ModContent.ItemType<SoulSiphonPotion>(), ModContent.ItemType<PermanentSoulSiphonPotion>());
+            PermaPotionRecipeS(this, ItemID.EndurancePotion, ModContent.ItemType<PermanentEndurancePotion>());
+            PermaPotionRecipeS(this, ItemID.LifeforcePotion, ModContent.ItemType<PermanentLifeforcePotion>());
+            PermaPotionRecipeS(this, ItemID.ManaRegenerationPotion, ModContent.ItemType<PermanentManaRegenerationPotion>());
+            #endregion
+            #region add a tier recipes
+            PermaPotionRecipeA(this, ItemID.Ale, ModContent.ItemType<PermanentAle>());
+            PermaPotionRecipeA(this, ItemID.CalmingPotion, ModContent.ItemType<PermanentCalmingPotion>());
+            PermaPotionRecipeA(this, ItemID.ArcheryPotion, ModContent.ItemType<PermanentArcheryPotion>());
+            PermaPotionRecipeA(this, ItemID.BattlePotion, ModContent.ItemType<PermanentBattlefrontPotion>());
+            PermaPotionRecipeA(this, ModContent.ItemType<CrimsonPotion>(), ModContent.ItemType<PermanentCrimsonPotion>());
+            PermaPotionRecipeA(this, ItemID.FlaskofCursedFlames, ModContent.ItemType<PermanentFlaskOfCursedFlames>());
+            PermaPotionRecipeA(this, ItemID.FlaskofIchor, ModContent.ItemType<PermanentFlaskOfIchor>());
+            PermaPotionRecipeA(this, ItemID.FlaskofVenom, ModContent.ItemType<PermanentFlaskOfVenom>());
+            PermaPotionRecipeA(this, ItemID.MagicPowerPotion, ModContent.ItemType<PermanentMagicPowerPotion>());
+            PermaPotionRecipeA(this, ItemID.RagePotion, ModContent.ItemType<PermanentRagePotion>());
+            PermaPotionRecipeA(this, ItemID.WrathPotion, ModContent.ItemType<PermanentWrathPotion>());
+            PermaPotionRecipeA(this, ItemID.SpelunkerPotion, ModContent.ItemType<PermanentSpelunkerPotion>());
+            PermaPotionRecipeA(this, ItemID.SwiftnessPotion, ModContent.ItemType<PermanentSwiftnessPotion>());
+            PermaPotionRecipeA(this, ItemID.SummoningPotion, ModContent.ItemType<PermanentSummoningPotion>());
+            #endregion
+            #region add b tier recipes
+            PermaPotionRecipeB(this, ModContent.ItemType<BoostPotion>(), ModContent.ItemType<PermanentBoostPotion>());
+            PermaPotionRecipeB(this, ItemID.AmmoReservationPotion, ModContent.ItemType<PermanentAmmoReservationPotion>());
+            PermaPotionRecipeB(this, ItemID.CratePotion, ModContent.ItemType<PermanentCratePotion>());
+            PermaPotionRecipeB(this, ItemID.FishingPotion, ModContent.ItemType<PermanentFishingPotion>());
+            PermaPotionRecipeB(this, ItemID.SonarPotion, ModContent.ItemType<PermanentSonarPotion>());
+            PermaPotionRecipeB(this, ItemID.FlaskofFire, ModContent.ItemType<PermanentFlaskOfFire>());
+            PermaPotionRecipeB(this, ItemID.FlaskofGold, ModContent.ItemType<PermanentFlaskOfGold>());
+            PermaPotionRecipeB(this, ItemID.FlaskofNanites, ModContent.ItemType<PermanentFlaskOfNanites>());
+            PermaPotionRecipeB(this, ItemID.GillsPotion, ModContent.ItemType<PermanentGillsPotion>());
+            PermaPotionRecipeB(this, ItemID.HeartreachPotion, ModContent.ItemType<PermanentHeartreachPotion>());
+            PermaPotionRecipeB(this, ItemID.IronskinPotion, ModContent.ItemType<PermanentIronskinPotion>());
+            PermaPotionRecipeB(this, ItemID.MiningPotion, ModContent.ItemType<PermanentMiningPotion>());
+            PermaPotionRecipeB(this, ItemID.RegenerationPotion, ModContent.ItemType<PermanentRegenerationPotion>());
+            PermaPotionRecipeB(this, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
+            PermaPotionRecipeB(this, ItemID.TitanPotion, ModContent.ItemType<PermanentTitanPotion>());
+            PermaPotionRecipeB(this, ItemID.InfernoPotion, ModContent.ItemType<PermanentInfernoPotion>());
+            #endregion
+            #region add c tier recipes
+            PermaPotionRecipeB(this, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
+            PermaPotionRecipeB(this, ItemID.BuilderPotion, ModContent.ItemType<PermanentBuilderPotion>());
+            PermaPotionRecipeB(this, ItemID.ShinePotion, ModContent.ItemType<PermanentShinePotion>());
+            PermaPotionRecipeB(this, ItemID.TrapsightPotion, ModContent.ItemType<PermanentDangersensePotion>());
+            PermaPotionRecipeB(this, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
+            PermaPotionRecipeB(this, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
+            PermaPotionRecipeB(this, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
+            PermaPotionRecipeB(this, ItemID.FlipperPotion, ModContent.ItemType<PermanentFlipperPotion>());
+            PermaPotionRecipeB(this, ItemID.HunterPotion, ModContent.ItemType<PermanentHunterPotion>());
+            PermaPotionRecipeB(this, ItemID.InvisibilityPotion, ModContent.ItemType<PermanentInvisibilityPotion>());
+            PermaPotionRecipeB(this, ItemID.NightOwlPotion, ModContent.ItemType<PermanentNightOwlPotion>());
+            PermaPotionRecipeB(this, ItemID.ThornsPotion, ModContent.ItemType<PermanentThornsPotion>());
+            PermaPotionRecipeB(this, ItemID.WarmthPotion, ModContent.ItemType<PermanentWarmthPotion>());
+            PermaPotionRecipeB(this, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
+            #endregion
+            #region special perma recipes
+            ModRecipe recipe = new ModRecipe(this);
+            recipe.AddIngredient(ItemID.GravitationPotion, 20);
+            recipe.AddIngredient(GetItem("DarkSoul"), 50000);
+            recipe.AddIngredient(ItemID.SoulofFlight, 1);
+            recipe.SetResult(ModContent.ItemType<PermanentGravitationPotion>());
+            recipe.AddRecipe();
+
+            recipe = new ModRecipe(this);
+            recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
+            recipe.AddIngredient(GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(ItemID.SoulofLight, 1);
+            recipe.SetResult(ModContent.ItemType<PermanentObsidianSkinPotion>());
+            recipe.AddRecipe();
+            #endregion
         }
 
     }
