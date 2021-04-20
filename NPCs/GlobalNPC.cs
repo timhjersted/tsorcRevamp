@@ -355,7 +355,7 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (npc.netID == NPCID.GreenSlime || !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (npc.netID == NPCID.GreenSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
             }
 
