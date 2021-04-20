@@ -458,8 +458,8 @@ namespace tsorcRevamp {
                 }
 
                 Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
-                for (int j = 1; j < 75; j++) {
-                    var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 6 == 0 ? Main.rand.Next(10, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
+                for (int j = 1; j < 50; j++) {
+                    var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
                     Main.dust[x].noGravity = true;
                 }
             }
@@ -470,7 +470,7 @@ namespace tsorcRevamp {
 
             if (SoulSiphon) {
 
-                if (Main.rand.Next(2) == 0) //outermost "ring"
+                if (Main.rand.Next(3) == 0) //outermost "ring"
                 {
                     int num5 = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[num5].noGravity = true;
@@ -485,7 +485,7 @@ namespace tsorcRevamp {
                     Main.dust[num5].position = player.Center - vector;
                 }
 
-                if (Main.rand.Next(4) == 0)
+                if (Main.rand.Next(6) == 0)
                 {
                     int x = Dust.NewDust(player.position, player.width, player.height, 89, player.velocity.X, player.velocity.Y, 120, default(Color), 1f);
                     Main.dust[x].noGravity = true;
@@ -503,7 +503,7 @@ namespace tsorcRevamp {
 
                 }
 
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.Next(3) == 0)
                 {
                     int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[z].noGravity = true;
@@ -518,8 +518,7 @@ namespace tsorcRevamp {
                     Main.dust[z].position = player.Center - vectorother;
                 }
 
-                for (int k = 0; k < 1; k++)
-                {
+                if (Main.rand.Next(2) == 0) {
                     int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[z].noGravity = true;
                     Main.dust[z].velocity *= 0.75f;
@@ -533,7 +532,7 @@ namespace tsorcRevamp {
                     Main.dust[z].position = player.Center - vectorother;
                 }
 
-                for (int k = 0; k < 1; k++) //innermost "ring"
+                if (Main.rand.Next(2) == 0) //innermost "ring"
                 {
                     int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[z].noGravity = true;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,11 +20,18 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             item.UseSound = SoundID.Item21;
             item.rare = ItemRarityID.Orange;
         }
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            int ttindex = tooltips.FindLastIndex(t => t.mod != null);
+            if (ttindex != -1) {
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", "Does not consume a buff slot."));
+                tooltips.Insert(ttindex + 2, new TooltipLine(mod, "", "Use to toggle effect."));
+            }
+        }
     }
     public class PermanentObsidianSkinPotion: PermanentPotion {
         public override string Texture => "Terraria/Item_288";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Obsidian Skin buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Obsidian Skin buff.");
         }
 
         
@@ -47,7 +55,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentRegenerationPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_289";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Regeneration buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Regeneration buff.");
         }
 
         
@@ -71,7 +79,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentSwiftnessPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_290";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Swiftness buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Swiftness buff.");
         }
 
         
@@ -94,7 +102,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentGillsPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_291";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Gills buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Gills buff.");
         }
 
         
@@ -117,7 +125,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentIronskinPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_292";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Ironskin buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Ironskin buff.");
         }
 
         
@@ -140,7 +148,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentManaRegenerationPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_293";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Mana Regeneration buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Mana Regeneration buff.");
         }
 
         
@@ -163,7 +171,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentMagicPowerPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_294";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Magic Power buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Magic Power buff.");
         }
 
         
@@ -186,7 +194,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentFeatherfallPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_295";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Featherfall buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Featherfall buff.");
         }
 
         
@@ -209,7 +217,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentSpelunkerPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_296";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Spelunker buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Spelunker buff.");
         }
 
         
@@ -232,7 +240,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentInvisibilityPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_297";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Invisibility buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Invisibility buff.");
         }
 
         
@@ -255,7 +263,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentShinePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_298";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Shine buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Shine buff.");
         }
 
         
@@ -278,7 +286,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentNightOwlPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_299";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Night Owl buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Night Owl buff.");
         }
 
         
@@ -301,7 +309,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentBattlePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_300";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Battle buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Battle buff.");
         }
 
         
@@ -324,7 +332,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentThornsPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_301";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Thorns buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Thorns buff.");
         }
 
         
@@ -348,7 +356,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentWaterWalkingPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_302";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Water Walking buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Water Walking buff.");
         }
 
         
@@ -372,7 +380,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentArcheryPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_303";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Archery buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Archery buff.");
         }
 
         
@@ -395,7 +403,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentHunterPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_304";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Hunter buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Hunter buff.");
         }
 
         
@@ -418,7 +426,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentGravitationPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_305";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Gravitation buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Gravitation buff.");
         }
 
         
@@ -441,7 +449,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentAle : PermanentPotion {
         public override string Texture => "Terraria/Item_353";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Ale buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Ale buff.");
         }
 
         
@@ -466,7 +474,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1340";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Venom");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Venom buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Venom buff. \nNot compatible with other flasks.");
         }
 
         
@@ -490,7 +498,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1353";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Cursed Flames");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Cursed Flames buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Cursed Flames buff. \nNot compatible with other flasks.");
         }
 
         
@@ -515,7 +523,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1354";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Fire");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Fire buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Fire buff. \nNot compatible with other flasks.");
         }
 
         
@@ -540,7 +548,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1355";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Gold");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Gold buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Gold buff. \nNot compatible with other flasks.");
         }
 
         
@@ -565,7 +573,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1356";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Ichor");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Ichor buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Ichor buff. \nNot compatible with other flasks.");
         }
 
         
@@ -590,7 +598,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1357";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Nanites");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Nanites buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Nanites buff. \nNot compatible with other flasks.");
         }
 
         
@@ -615,7 +623,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1358";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Party");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Confetti buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Confetti buff. \nNot compatible with other flasks.");
         }
 
         
@@ -640,7 +648,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1359";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Poison");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Poison buff. \nNot compatible with other flasks. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Poison buff. \nNot compatible with other flasks.");
         }
 
         
@@ -664,7 +672,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentMiningPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2322";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Mining buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Mining buff.");
         }
 
         
@@ -688,7 +696,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentHeartreachPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2323";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Heartreach buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Heartreach buff.");
         }
 
         
@@ -712,7 +720,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentCalmingPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2324";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Calm buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Calm buff.");
         }
 
         
@@ -735,7 +743,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentBuilderPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2325";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Builder buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Builder buff.");
         }
 
         
@@ -758,7 +766,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentTitanPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2326";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Titan buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Titan buff.");
         }
 
         
@@ -782,7 +790,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentFlipperPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2327";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Flipper buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Flipper buff.");
         }
 
         
@@ -806,7 +814,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentSummoningPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2328";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Summoning buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Summoning buff.");
         }
 
         
@@ -829,7 +837,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentDangersensePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2329";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Dangersense buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Dangersense buff.");
         }
 
         
@@ -853,7 +861,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentAmmoReservationPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2344";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Ammo Reservation buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Ammo Reservation buff.");
         }
 
         
@@ -877,7 +885,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentLifeforcePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2345";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Lifeforce buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Lifeforce buff.");
         }
 
         
@@ -901,7 +909,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentEndurancePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2346";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Endurance buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Endurance buff.");
         }
 
         
@@ -925,7 +933,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentRagePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2347";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Rage buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Rage buff.");
         }
 
         
@@ -949,7 +957,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentInfernoPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2348";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Inferno buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Inferno buff.");
         }
 
         
@@ -973,7 +981,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentWrathPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2349";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Wrath buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Wrath buff.");
         }
 
         
@@ -997,7 +1005,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentFishingPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2354";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Fishing buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Fishing buff.");
         }
 
         
@@ -1021,7 +1029,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentSonarPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2355";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Sonar buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Sonar buff.");
         }
 
         
@@ -1045,7 +1053,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentCratePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2356";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the 'Crate chance increased' buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the 'Crate chance increased' buff.");
         }
 
         
@@ -1069,7 +1077,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentWarmthPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2359";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Warmth buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Warmth buff.");
         }
 
         
@@ -1093,7 +1101,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentArmorDrugPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/ArmorDrugPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Armor Drug buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Armor Drug buff.");
         }
 
         
@@ -1117,7 +1125,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentBattlefrontPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/BattlefrontPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Battlefront buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Battlefront buff.");
         }
 
         
@@ -1141,7 +1149,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentBoostPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/BoostPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Boost buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Boost buff.");
         }
 
         
@@ -1165,7 +1173,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentCrimsonPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/CrimsonPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Crimson Drain buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Crimson Drain buff.");
         }
 
         
@@ -1189,7 +1197,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentDemonDrugPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/DemonDrugPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Demon Drug buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Demon Drug buff.");
         }
 
         
@@ -1213,7 +1221,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentShockwavePotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/ShockwavePotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Shockwave buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Shockwave buff.");
         }
 
         
@@ -1237,7 +1245,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentStrengthPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/StrengthPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Strength buff. \nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Strength buff.");
         }
 
         
@@ -1261,8 +1269,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
     public class PermanentSoulSiphonPotion : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/SoulSiphonPotion";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the Soul Siphon buff." +
-                "\nUse to toggle effect.");
+            Tooltip.SetDefault("Permanently grants the Soul Siphon buff.");
 
             ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
 
