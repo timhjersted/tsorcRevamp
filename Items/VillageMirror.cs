@@ -57,15 +57,19 @@ namespace tsorcRevamp.Items {
                                 "\nWarp point saves on quit." +
                                 "\nReduces defense to 0 and slows movement while equipped and setting your warp point.");
         }
-
-        public override bool UseItem(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet) {
+        public override bool CanUseItem(Player player) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet) {
                 Main.NewText("You haven't set a location!", 255, 240, 20);
+                return false;
             }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID) {
+            else if (player.GetModPlayer<tsorcRevampPlayer>().warpWorld != Main.worldID) {
                 Main.NewText("This mirror is set in a different world!", 255, 240, 20);
+                return false;
             }
-            else {
+            return base.CanUseItem(player);
+        }
+        public override void UseStyle(Player player) {
+
                 if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY)) {
                     if (Main.rand.NextBool()) { //ambient dust during use
 
@@ -109,8 +113,7 @@ namespace tsorcRevamp.Items {
                 else {
                     Main.NewText("Your warp location is broken! Please file a bug report!", 255, 240, 20);
                 }
-            }
-            return true;
+
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
