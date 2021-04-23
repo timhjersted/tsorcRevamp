@@ -25,6 +25,15 @@ namespace tsorcRevamp.NPCs.Enemies {
             animationType = NPCID.PossessedArmor;
         }
 
+        public override void HitEffect(int hitDirection, double damage) {
+            if (npc.life <= 0) {
+                Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dunlending Gore 1"), 1f);
+                Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dunlending Gore 2"), 1f);
+                Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dunlending Gore 3"), 1f);
+                Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dunlending Gore 2"), 1f);
+                Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dunlending Gore 3"), 1f);
+            }
+        }
         public override void AI()  //  warrior ai
 {
             #region set up NPC's attributes & behaviors
@@ -224,24 +233,21 @@ namespace tsorcRevamp.NPCs.Enemies {
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             var playerY = spawnInfo.playerFloorY;
-            bool oSurface = (playerY >= (Main.maxTilesY * 0.1f) && playerY < (Main.maxTilesY * 0.2f));
+            var player = spawnInfo.player;
             bool oUnderSurface = (playerY >= (Main.maxTilesY * 0.2f) && playerY < (Main.maxTilesY * 0.3f));
             bool oUnderground = (playerY >= (Main.maxTilesY * 0.3f) && playerY < (Main.maxTilesY * 0.4f));
             bool oCavern = (playerY >= (Main.maxTilesY * 0.4f) && playerY < (Main.maxTilesY * 0.6f));
-            bool oMagmaCavern = (spawnInfo.playerFloorY >= (Main.maxTilesY * 0.6f) && spawnInfo.playerFloorY < (Main.maxTilesY * 0.8f));
-            bool oUnderworld = (playerY >= (Main.maxTilesY * 0.8f));
-            if (spawnInfo.playerInTown || spawnInfo.playerSafe || Main.hardMode || spawnInfo.player.ZoneDungeon || oMagmaCavern || oUnderworld || spawnInfo.player.ZoneSkyHeight || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor) {
-                return 0f;
-            }
-            if (oSurface) {
-                if (Main.dayTime) return 0.067f;
-                else return 0.125f;
+
+            float chance = 0;
+            if (player.ZoneOverworldHeight) {
+                if (Main.dayTime) chance = 0.067f;
+                else chance = 0.125f;
             }
             if (oUnderSurface || oUnderground || oCavern) {
-                if (Main.dayTime) return 0.067f;
-                else return 0.1f;
+                if (Main.dayTime) chance = 0.067f;
+                else chance = 0.1f;
             }
-            else return 0f;
+            return chance;
         }
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ItemID.Torch, 1);

@@ -37,11 +37,11 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneOverworldHeight)
             {
-                chance = .25f;
+                chance = .04f;
             }
             if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneDirtLayerHeight)
             {
-                chance = .30f;
+                chance = .033f;
             }
             if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneRockLayerHeight)
             {

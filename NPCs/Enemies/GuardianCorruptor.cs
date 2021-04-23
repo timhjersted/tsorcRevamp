@@ -30,13 +30,29 @@ namespace tsorcRevamp.NPCs.Enemies {
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             float chance = 0;
+            var player = spawnInfo.player;
+            var playerY = spawnInfo.playerFloorY;
             if (Main.hardMode) //I've set it to HM for now, I'm guessing its SHM -C
             {
-                chance = SpawnCondition.Corruption.Chance * 0.5f;
+                if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.05f;
+                else if (player.ZoneCorrupt && player.ZoneRockLayerHeight && !Main.dayTime) chance = 0.067f;
+                else if (player.ZoneCorrupt) chance = 0.033f;
             }
+
             return chance;
         }
 
+        public override void HitEffect(int hitDirection, double damage) {
+            if (npc.life <= 0) {
+                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Guardian Corruptor Gore 1"), 0.9f);
+                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Guardian Corruptor Gore 2"), 0.9f);
+                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Guardian Corruptor Gore 3"), 0.9f);
+                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Guardian Corruptor Gore 4"), 0.9f);
+                for (int i = 0; i < 10; i++) {
+                    Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+                }
+            }
+        }
         public override void OnHitPlayer(Player target, int damage, bool crit) {
             target.AddBuff(BuffID.Weak, 7200, true);
             target.AddBuff(BuffID.BrokenArmor, 180, true);
@@ -185,7 +201,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         float distY = Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2) - shotOrigin.Y;
                         float distAbs = (float)Math.Sqrt(distX * distX + distY * distY);
                         distAbs = 7f / distAbs;
-                        
+
                         for (int i = 0; i < shotCount; i++) {
                             Vector2 shotDirection = new Vector2((distX * distAbs) / 1.5f, (distY * distAbs) / 1.5f);
                             int guardianSpit = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height / 2) + npc.velocity.Y), ModContent.NPCType<ViciousSpit>());
