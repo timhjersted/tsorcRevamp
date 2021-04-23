@@ -712,6 +712,7 @@ namespace tsorcRevamp {
 			55, //sign
             132, //lever
 			130, //active stone block
+            131, //inactive stone block
 			135, //pressure plates
 			136, //switch
 			137 //dart trap
@@ -755,6 +756,14 @@ namespace tsorcRevamp {
             bool above = !Main.tile[x, y + 1].active();
             bool CanDestroy = false;
             {
+                if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
+                    CanDestroy = true;
+                }
+
+                //check cankilltiles stuff
+                if ((right && left) || (above && below) || allowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
+                    CanDestroy = true;
+                }
                 if (Main.tileDungeon[Main.tile[x, y].type]
                     || type == TileID.Silver
                     || type == TileID.Cobalt
@@ -767,14 +776,6 @@ namespace tsorcRevamp {
                 if (!Main.hardMode && type == TileID.Hellstone) {
                     CanDestroy = false;
                 }
-                if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
-                    CanDestroy = true;
-                }
-
-                //check cankilltiles stuff
-                if ((right && left) || (above && below) || allowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
-                    CanDestroy = true;
-                }
                 return CanDestroy;
             }
 
@@ -785,6 +786,12 @@ namespace tsorcRevamp {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 fail = true;
             }
+        }
+        public override bool CanExplode(int i, int j, int type) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                return false;
+            }
+            return base.CanExplode(i, j, type);
         }
     }
 }

@@ -218,7 +218,6 @@ namespace tsorcRevamp.NPCs {
                 npc.damage = 24; // I get the feeling he's going to be pretty damn tough in Expert mode
                 npc.value = 250;
                 npc.defense = 5;
-                npc.knockBackResist = 0.2f;
 
                 if ( Main.player[Main.myPlayer].ZoneJungle) {
                     if (Main.expertMode) {
@@ -364,14 +363,19 @@ namespace tsorcRevamp.NPCs {
                     Item.NewItem(npc.getRect(), mod.ItemType("SymbolOfAvarice"));
                 }
             }
-
+            if (npc.type == NPCID.EyeofCthulhu && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ItemID.HerosHat);
+                Item.NewItem(npc.getRect(), ItemID.HerosShirt);
+                Item.NewItem(npc.getRect(), ItemID.HerosPants);
+                Item.NewItem(npc.getRect(), ItemID.HermesBoots);
+            }
 
             #endregion
 
             #region Dark Souls & Consumable Souls Drops
 
 
-            if (npc.lifeMax > 5 && npc.value >= 10f)
+            if ((npc.lifeMax > 5 && npc.value >= 10f) || (npc.boss && !Main.expertMode))
             { //stop zero-value souls from dropping
 
                 if (npc.netID != NPCID.JungleSlime)

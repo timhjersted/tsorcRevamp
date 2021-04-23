@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Armors
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldLeatherArmor"), 1);
+            recipe.AddIngredient(mod.GetItem("OldLeatherGreaves"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 500);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
