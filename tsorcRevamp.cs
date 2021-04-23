@@ -10,12 +10,18 @@ using tsorcRevamp.Items;
 using Terraria.UI;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
+using Terraria.GameContent.UI;
 
 namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
+
         public static ModHotKey toggleDragoonBoots;
+        public static int DarkSoulCustomCurrencyId;
+
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
+
+            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<DarkSoul>(), 99999L));
 
             On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
 
@@ -238,6 +244,7 @@ namespace tsorcRevamp {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
             recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(mod.GetItem("EternalCrystal"), 5);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
             recipe.AddRecipe();
@@ -246,6 +253,7 @@ namespace tsorcRevamp {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 50000);
             recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(mod.GetItem("EternalCrystal"), 3);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
             recipe.AddRecipe();
@@ -254,6 +262,7 @@ namespace tsorcRevamp {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 25000);
             recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(mod.GetItem("EternalCrystal"), 2);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
             recipe.AddRecipe();
@@ -262,6 +271,7 @@ namespace tsorcRevamp {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
             recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(mod.GetItem("EternalCrystal"));
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
             recipe.AddRecipe();
@@ -331,16 +341,18 @@ namespace tsorcRevamp {
             #endregion
             #region special perma recipes
             ModRecipe recipe = new ModRecipe(this);
-            recipe.AddIngredient(ItemID.GravitationPotion, 20);
             recipe.AddIngredient(GetItem("DarkSoul"), 50000);
+            recipe.AddIngredient(ItemID.GravitationPotion, 20);
             recipe.AddIngredient(ItemID.SoulofFlight, 1);
+            recipe.AddIngredient(GetItem("EternalCrystal"), 3);
             recipe.SetResult(ModContent.ItemType<PermanentGravitationPotion>());
             recipe.AddRecipe();
 
             recipe = new ModRecipe(this);
-            recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
             recipe.AddIngredient(GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
+            recipe.AddIngredient(GetItem("EternalCrystal"), 2);
             recipe.SetResult(ModContent.ItemType<PermanentObsidianSkinPotion>());
             recipe.AddRecipe();
             #endregion

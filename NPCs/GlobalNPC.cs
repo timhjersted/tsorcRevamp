@@ -216,8 +216,6 @@ namespace tsorcRevamp.NPCs {
 
             if (npc.type == NPCID.EyeofCthulhu) {
                 npc.damage = 24; // I get the feeling he's going to be pretty damn tough in Expert mode
-                npc.value = 250;
-                npc.defense = 5;
 
                 if ( Main.player[Main.myPlayer].ZoneJungle) {
                     if (Main.expertMode) {
@@ -548,6 +546,12 @@ namespace tsorcRevamp.NPCs {
             if (type == NPCID.Merchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
+            }
+            if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode && Main.rand.Next(2) == 0) {
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
+                    shop.item[nextSlot].shopCustomPrice = 5000;
+                    shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                    nextSlot++;
             }
         }
     }

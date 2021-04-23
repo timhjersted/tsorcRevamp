@@ -16,13 +16,14 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.damage = 15;
             npc.lifeMax = 85;
             npc.defense = 6;
+            npc.value = 100;
             animationType = NPCID.GraniteGolem;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            return SpawnCondition.Cavern.Chance * 0.4f;
+            return SpawnCondition.Cavern.Chance * 0.2f;
         }
 
         public override void NPCLoot() {
