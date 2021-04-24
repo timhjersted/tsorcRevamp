@@ -55,5 +55,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 damage *= 5;
             }
         }
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.LightsBane);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+        }
     }
 }

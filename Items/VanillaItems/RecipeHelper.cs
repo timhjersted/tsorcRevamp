@@ -51,8 +51,14 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
-            RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 3);
+            RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.AmethystHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.TopazHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.SapphireHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.EmeraldHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.RubyHook, ItemID.SoulofNight, 6);
+            RecipeIngredientAdder(ItemID.DiamondHook, ItemID.SoulofNight, 6);
             ExactRecipeRemover2Ingredients(ItemID.Hellstone, 3, ItemID.BottledWater, 1, TileID.ImbuingStation, ItemID.FlaskofFire);
         }
     }

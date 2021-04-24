@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override void SetDefaults() {
             npc.npcSlots = 1;
             npc.knockBackResist = 0.4f;
-            npc.aiStyle = 3;
+            npc.aiStyle = -1;
             npc.damage = 20;
             npc.defDamage = 2;
             npc.height = 40;
@@ -34,118 +34,50 @@ namespace tsorcRevamp.NPCs.Enemies {
                 Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dunlending Gore 3"), 1f);
             }
         }
-        public override void AI()  //  warrior ai
-{
-            #region set up NPC's attributes & behaviors
-            // set parameters
 
-            int boredom_time = 1; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
-            int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
+        public override void AI() {
+            int sound_type = 0;
+            int sound_frequency = 1000;
 
-            int sound_type = 0; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
-            int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
+            float acceleration = 0.05f;
+            float top_speed = 1.5f;
+            float braking_power = 0.2f;
 
-            float acceleration = .05f;  //  how fast it can speed up
-            float top_speed = 1.5f;  //  max walking speed, also affects jump length
-            float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
-            double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
-
-            bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
-
-
-            // Omnirs creature sorts
-            bool tooBig = false; // force bigger creatures to jump
-            bool lavaJumping = false; // Enemies jump on lava.
-
-            // calculated parameters
-            bool moonwalking = false;  //  not jump/fall and moving backwards to facing
-            if (npc.velocity.Y == 0f && ((npc.velocity.X > 0f && npc.direction < 0) || (npc.velocity.X < 0f && npc.direction > 0)))
-                moonwalking = true;
-            #endregion
-            //-------------------------------------------------------------------
-            #region Too Big and Lava Jumping
-            if (tooBig) {
-                if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0)) {
-                    npc.velocity.Y -= 8f;
-                    npc.velocity.X -= 2f;
-                }
-                else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0)) {
-                    npc.velocity.Y -= 8f;
-                    npc.velocity.X += 2f;
-                }
-            }
-            if (lavaJumping) {
-                if (npc.lavaWet) {
-                    npc.velocity.Y -= 2;
-                }
-            }
-            #endregion
-            //-------------------------------------------------------------------
-            #region adjust boredom level
-            if (npc.ai[2] <= 0f)  //  loop to set ai[3] (boredom)
-            {
-                if (npc.position.X == npc.oldPosition.X || npc.ai[3] >= (float)boredom_time || moonwalking)  //  stopped or bored or moonwalking
-                    npc.ai[3] += 1f; // increase boredom
-                else if ((double)Math.Abs(npc.velocity.X) > bored_speed && npc.ai[3] > 0f)  //  moving fast and not bored
-                    npc.ai[3] -= 1f; // decrease boredom
-
-                if (npc.justHit || npc.ai[3] > boredom_cooldown)
-                    npc.ai[3] = 0f; // boredom wears off if enough time passes, or if hit
-
-                if (npc.ai[3] == (float)boredom_time)
-                    npc.netUpdate = true; // netupdate when state changes to bored
-            }
-            #endregion
-            //-------------------------------------------------------------------
             #region play creature sounds, target/face player, respond to boredom
-            if (npc.ai[3] < (float)boredom_time) {   // not bored
-                if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-                    Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
-                npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+            if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
+                Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
+            npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
 
-            }
-            else if (npc.ai[2] <= 0f) //  bored
-            {
-
-                if (npc.velocity.X == 0f) {
-                    if (npc.velocity.Y == 0f) { // not moving
-                        if (npc.ai[0] == 0f)
-                            npc.ai[0] = 1f; // facing change delay
-                        else { // change movement and facing direction, reset delay
-                            npc.direction *= -1;
-                            npc.spriteDirection = npc.direction;
-                            npc.ai[0] = 0f;
-                        }
+            if (npc.velocity.X == 0f) {
+                if (npc.velocity.Y == 0f) { // not moving
+                    if (npc.ai[0] == 0f)
+                        npc.ai[0] = 1f; // facing change delay
+                    else { // change movement and facing direction, reset delay
+                        npc.direction *= -1;
+                        npc.spriteDirection = npc.direction;
+                        npc.ai[0] = 0f;
                     }
                 }
-                else // moving in x direction,
-                    npc.ai[0] = 0f; // reset facing change delay
+            }
+            else // moving in x direction,
+                npc.ai[0] = 0f; // reset facing change delay
 
-                if (npc.direction == 0) // what does it mean if direction is 0?
-                    npc.direction = 1; // flee right if direction not set? or is initial direction?
-            } // END bored (& not aiming)
+            if (npc.direction == 0) // what does it mean if direction is 0?
+                npc.direction = 1; // flee right if direction not set? or is initial direction?
+
             #endregion
-            //-------------------------------------------------------------------
 
             #region melee movement
-            if ((npc.ai[2] <= 0f && !npc.confused))  //  meelee attack/movement. archers only use while not aiming
-            {
-                if (Math.Abs(npc.velocity.X) > top_speed)  //  running/flying faster than top speed
-                {
-                    if (npc.velocity.Y == 0f)  //  and not jump/fall
-                        npc.velocity *= (1f - braking_power);  //  decelerate
-                }
-                else if ((npc.velocity.X < top_speed && npc.direction == 1) || (npc.velocity.X > -top_speed && npc.direction == -1)) {  //  running slower than top speed (forward), can be jump/fall		
+            if (Math.Abs(npc.velocity.X) > top_speed && npc.velocity.Y == 0f) {
+                npc.velocity *= (1f - braking_power);
+            }
+            else {
+                npc.velocity.X += npc.direction * acceleration;
+            }
 
-                    npc.velocity.X = npc.velocity.X + (float)npc.direction * acceleration;  //  accellerate fwd; can happen midair
-                    if ((float)npc.direction * npc.velocity.X > top_speed)
-                        npc.velocity.X = (float)npc.direction * top_speed;  //  but cap at top speed
-                }  //  END running slower than top speed (forward), can be jump/fall
-            } // END non archer or not aiming*/
             #endregion
-            //-------------------------------------------------------------------
+
             #region check if standing on a solid tile
-            // warning: this section contains a return statement
             bool standing_on_solid_tile = false;
             if (npc.velocity.Y == 0f) // no jump/fall
             {
@@ -165,40 +97,42 @@ namespace tsorcRevamp.NPCs.Enemies {
                 } // END traverse blocks under feet
             } // END no jump/fall
             #endregion
-            //-------------------------------------------------------------------
-            #region new Tile()s, door opening/breaking
+            
+            #region new Tile()s, jumping
             if (standing_on_solid_tile)  //  if standing on solid tile
             {
                 int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
                 int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
-
-                if (Main.tile[x_in_front, y_above_feet] == null)
+                if (Main.tile[x_in_front, y_above_feet] == null) {
                     Main.tile[x_in_front, y_above_feet] = new Tile();
+                }
 
-                if (Main.tile[x_in_front, y_above_feet - 1] == null)
+                if (Main.tile[x_in_front, y_above_feet - 1] == null) {
                     Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                }
 
-                if (Main.tile[x_in_front, y_above_feet - 2] == null)
+                if (Main.tile[x_in_front, y_above_feet - 2] == null) {
                     Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                }
 
-                if (Main.tile[x_in_front, y_above_feet - 3] == null)
+                if (Main.tile[x_in_front, y_above_feet - 3] == null) {
                     Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                }
 
-                if (Main.tile[x_in_front, y_above_feet + 1] == null)
+                if (Main.tile[x_in_front, y_above_feet + 1] == null) {
                     Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                }
                 //  create? 2 other tiles farther in front
-                if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null)
+                if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null) {
                     Main.tile[x_in_front + npc.direction, y_above_feet - 1] = new Tile();
+                }
 
-                if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null)
+                if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null) {
                     Main.tile[x_in_front + npc.direction, y_above_feet + 1] = new Tile();
+                }
 
-
-                #endregion
-                //-------------------------------------------------------------------
-                #region jumping, reset door knock & damage counters
                 else // standing on solid tile but not in front of a passable door
-                {
+   {
                     if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1)) {  //  moving forward
                         if (Main.tile[x_in_front, y_above_feet - 2].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].type]) { // 3 blocks above ground level(head height) blocked
                             if (Main.tile[x_in_front, y_above_feet - 3].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].type]) { // 4 blocks above ground level(over head) blocked
@@ -218,17 +152,16 @@ namespace tsorcRevamp.NPCs.Enemies {
                             npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
                             npc.netUpdate = true;
                         }
-                        else if (npc.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type])) { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
+                        else if (npc.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type])) { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
                             npc.velocity.Y = -8f; // jump with power 8
                             npc.velocity.X = npc.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
                             npc.netUpdate = true;
                         }
-
                     } // END moving forward, still: standing on solid tile but not in front of a passable door
                 }
             }
+
             #endregion
-            //-------------------------------------------------------------------
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {

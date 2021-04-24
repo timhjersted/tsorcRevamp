@@ -11,13 +11,15 @@ using Terraria.UI;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using Terraria.GameContent.UI;
+using System.Collections;
 
 namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
 
         public static ModHotKey toggleDragoonBoots;
         public static int DarkSoulCustomCurrencyId;
-
+        public static BitArray KillAllowed = new BitArray(471);
+        public static BitArray PlaceAllowed = new BitArray(471);
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
@@ -26,8 +28,309 @@ namespace tsorcRevamp {
             On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
 
             On.Terraria.UI.ChestUI.DepositAll += DepositAllPatch;
+            PopulateArrays();
         }
 
+        private void PopulateArrays() {
+            #region KillAllowed bit array 
+            KillAllowed[2] = true; //grass
+            KillAllowed[3] = true; //small plants
+            KillAllowed[4] = true; // torch
+            KillAllowed[5] = true; //tree trunk
+            KillAllowed[6] = true; //iron
+            KillAllowed[7] = true; //copper
+            KillAllowed[9] = true; //silver
+            KillAllowed[10] = true; //closed door
+            KillAllowed[11] = true; //open door
+            KillAllowed[12] = true; //Heart crystal
+            KillAllowed[13] = true; //bottles and jugs
+            KillAllowed[14] = true; //table
+            KillAllowed[15] = true; //chairs
+            KillAllowed[16] = true; //anvil
+            KillAllowed[17] = true; //furnance
+            KillAllowed[18] = true; //workbench
+            KillAllowed[20] = true; //sapling
+            KillAllowed[21] = true; //chests
+            KillAllowed[23] = true; //corruption grass
+            KillAllowed[24] = true; //small corruption plants
+            KillAllowed[27] = true; //sunflower
+            KillAllowed[28] = true; //pot
+            KillAllowed[29] = true; //piggy bank
+            KillAllowed[31] = true; //shadow orb
+            KillAllowed[32] = true; //corruption barbs
+            KillAllowed[33] = true; //candle
+            KillAllowed[34] = true; //bronze chandellier
+            KillAllowed[35] = true; //silver c
+            KillAllowed[36] = true; //gold c
+            KillAllowed[37] = true; //meteorite
+            KillAllowed[42] = true; //chain lantern
+            KillAllowed[49] = true; //water candle
+            KillAllowed[50] = true; //books
+            KillAllowed[51] = true; //cobweb
+            KillAllowed[52] = true; //vines
+            KillAllowed[53] = true; //sand
+            KillAllowed[55] = true; //Sign 
+            KillAllowed[56] = true; //obsidian
+            KillAllowed[60] = true; //jungle grass
+            KillAllowed[61] = true; //small jungle plants
+            KillAllowed[62] = true; //jungle vines
+            KillAllowed[67] = true; //Amethyst 
+            KillAllowed[69] = true; //thorns
+            KillAllowed[72] = true; //mushroom stalks
+            KillAllowed[71] = true; //small mushrooms
+            KillAllowed[73] = true; //plants
+            KillAllowed[74] = true; //plants
+            KillAllowed[78] = true; //clay pot
+            KillAllowed[79] = true; //bed
+            KillAllowed[80] = true; //cactus
+            KillAllowed[81] = true; //corals
+            KillAllowed[82] = true; //new herbs
+            KillAllowed[83] = true; //grown herbs
+            KillAllowed[84] = true; //bloomed herbs
+            KillAllowed[85] = true; //tombstone
+            KillAllowed[86] = true; //loom
+            KillAllowed[87] = true; //piano
+            KillAllowed[88] = true; //drawer
+            KillAllowed[89] = true; //bench
+            KillAllowed[90] = true; //bathtub
+            KillAllowed[91] = true; //banner
+            KillAllowed[92] = true; //lamp post
+            KillAllowed[93] = true; //tiki torch
+            KillAllowed[94] = true; //keg
+            KillAllowed[95] = true; //chinese lantern
+            KillAllowed[96] = true; //cooking pot
+            KillAllowed[97] = true; //safe
+            KillAllowed[98] = true; //skull candle
+            KillAllowed[99] = true; //trash can
+            KillAllowed[100] = true; //candlabra
+            KillAllowed[101] = true; //bookcase
+            KillAllowed[102] = true; //throne
+            KillAllowed[103] = true; //bowl
+            KillAllowed[104] = true; //grandfather clock
+            KillAllowed[105] = true; //statue
+            KillAllowed[106] = true; //sawmill
+            KillAllowed[107] = true; //cobalt
+            KillAllowed[108] = true; //mythril
+            KillAllowed[109] = true; //Hallowed Grass
+            KillAllowed[110] = true; //Hallowed PlantsKillAllowed[ 
+            KillAllowed[111] = true; //adamantite
+            KillAllowed[112] = true; //ebonsand
+            KillAllowed[114] = true; //tinkerer's workbench
+            KillAllowed[115] = true; //Hallowed Vines 
+            KillAllowed[116] = true; //pearlsand
+            KillAllowed[125] = true; //crystal ball
+            KillAllowed[126] = true; //discoball
+            KillAllowed[128] = true; //mannequin
+            KillAllowed[129] = true; //crystal shard
+            KillAllowed[133] = true; //adamantite forge
+            KillAllowed[134] = true; //mythril anvil
+            KillAllowed[138] = true; //boulder
+            KillAllowed[141] = true; //explosives
+            KillAllowed[172] = true; //sinks
+            KillAllowed[173] = true; //platinum candelabra
+            KillAllowed[174] = true; //platinum candle
+            KillAllowed[187] = true; //background foliage / sword shrine
+            KillAllowed[207] = true; //water fountain
+            KillAllowed[218] = true; //meat grinder
+            KillAllowed[228] = true; //dye vat
+            KillAllowed[240] = true; //trophies
+            KillAllowed[242] = true; //big paintings
+            KillAllowed[245] = true; //tall paintings
+            KillAllowed[246] = true; //wide paintings
+            KillAllowed[270] = true; //firefly in a bottle
+            KillAllowed[271] = true; //lightning bug in a bottle
+            KillAllowed[275] = true; //bunny cage
+            KillAllowed[276] = true; //squirrel cage
+            KillAllowed[277] = true; //mallard cage
+            KillAllowed[278] = true; //duck cage
+            KillAllowed[279] = true; //bird cage
+            KillAllowed[280] = true; //blue jay cage
+            KillAllowed[281] = true; //cardinal cage
+            KillAllowed[282] = true; //fish bowl
+            KillAllowed[283] = true; //heavy work bench
+            KillAllowed[285] = true; //snail cage
+            KillAllowed[286] = true; //glowing snail cage
+            KillAllowed[287] = true; //ammo box
+            KillAllowed[288] = true; //monarch jar
+            KillAllowed[289] = true; //purple emperor jar
+            KillAllowed[290] = true; //red admiral jar
+            KillAllowed[291] = true; //ulysses jar
+            KillAllowed[292] = true; //sulphur jar
+            KillAllowed[293] = true; //tree nymph jar
+            KillAllowed[294] = true; //zebra swallowtail jar
+            KillAllowed[295] = true; //julia jar
+            KillAllowed[296] = true; //scorpion cage
+            KillAllowed[297] = true; //black scorpion cage
+            KillAllowed[298] = true; //frog cage
+            KillAllowed[299] = true; //mouse cage
+            KillAllowed[300] = true; //bone welder
+            KillAllowed[301] = true; //flesh cloning vat
+            KillAllowed[302] = true; //glass kiln
+            KillAllowed[307] = true; //steampunk boiler
+            KillAllowed[309] = true; //penguin cage
+            KillAllowed[310] = true; //worm cage
+            KillAllowed[316] = true; //blue jellyfish jar
+            KillAllowed[317] = true; //green jellyfish jar
+            KillAllowed[318] = true; //pink jellyfish jar
+            KillAllowed[319] = true; //ship in a bottle
+            KillAllowed[310] = true; //seaweed planter
+            KillAllowed[324] = true; //seashell variants
+            KillAllowed[337] = true; //number and letter statues
+            KillAllowed[339] = true; //grasshopper cage
+            KillAllowed[354] = true; //bewitching table
+            KillAllowed[355] = true; //alchemy table
+            KillAllowed[358] = true; //gold bird cage
+            KillAllowed[359] = true; //gold bunny cage
+            KillAllowed[360] = true; //gold butterfly jar
+            KillAllowed[361] = true; //gold frog cage
+            KillAllowed[362] = true; //gold grasshopper cage
+            KillAllowed[363] = true; //gold mouse cage
+            KillAllowed[364] = true; //gold worm cage
+            KillAllowed[372] = true; //peace candle
+            KillAllowed[377] = true; //sharpening station
+            KillAllowed[378] = true; //target dummy
+            KillAllowed[390] = true; //lava lamp
+            KillAllowed[391] = true; //enchanted nightcrawler cage
+            KillAllowed[392] = true; //buggy cage
+            KillAllowed[393] = true; //grubby cage
+            KillAllowed[394] = true; //sluggy cage
+            KillAllowed[413] = true; //red squirrel cage
+            KillAllowed[414] = true; //gold squirrel cage
+
+            #endregion
+            //--------
+            #region PlaceAllowed bit array
+            PlaceAllowed[4] = true;  //torch
+            PlaceAllowed[10] = true; //Closed Door
+            PlaceAllowed[11] = true; //Open Door  
+            PlaceAllowed[13] = true; //bottles
+            PlaceAllowed[15] = true; //chairs
+            PlaceAllowed[16] = true; //anvil
+            PlaceAllowed[17] = true; //furnace
+            PlaceAllowed[18] = true; //workbench
+            PlaceAllowed[20] = true; //sapling
+            PlaceAllowed[21] = true; //chests
+            PlaceAllowed[27] = true; //sunflower
+            PlaceAllowed[28] = true; //pot
+            PlaceAllowed[29] = true; //piggy bank
+            PlaceAllowed[33] = true; //candle
+            PlaceAllowed[34] = true; //bronze chandellier
+            PlaceAllowed[35] = true; //silver chandellier
+            PlaceAllowed[36] = true; //gold chandellier
+            PlaceAllowed[42] = true; //chain lantern
+            PlaceAllowed[49] = true; //water candle
+            PlaceAllowed[50] = true; //books
+            PlaceAllowed[55] = true; //Sign 
+            PlaceAllowed[73] = true; //plants
+            PlaceAllowed[74] = true; //plants
+            PlaceAllowed[78] = true; //clay pot
+            PlaceAllowed[79] = true; //bed
+            PlaceAllowed[81] = true; //corals
+            PlaceAllowed[82] = true; //new herbs
+            PlaceAllowed[83] = true; //grown herbs
+            PlaceAllowed[84] = true; //bloomed herbs
+            PlaceAllowed[85] = true; //tombstone
+            PlaceAllowed[86] = true; //loom
+            PlaceAllowed[87] = true; //piano
+            PlaceAllowed[88] = true; //drawer
+            PlaceAllowed[89] = true; //bench
+            PlaceAllowed[90] = true; //bathtub
+            PlaceAllowed[91] = true; //banner
+            PlaceAllowed[92] = true; //lamp post
+            PlaceAllowed[93] = true; //tiki torch
+            PlaceAllowed[94] = true; //keg
+            PlaceAllowed[95] = true; //chinese lantern
+            PlaceAllowed[96] = true; //cooking pot
+            PlaceAllowed[97] = true; //safe
+            PlaceAllowed[98] = true; //skull candle
+            PlaceAllowed[99] = true; //trash can
+            PlaceAllowed[100] = true; //candlabra
+            PlaceAllowed[101] = true; //bookcase
+            PlaceAllowed[102] = true; //throne
+            PlaceAllowed[103] = true; //bowl
+            PlaceAllowed[104] = true; //grandfather clock
+            PlaceAllowed[105] = true; //statue
+            PlaceAllowed[106] = true; //sawmill
+            PlaceAllowed[114] = true; //tinkerer's workbench
+            PlaceAllowed[125] = true; //crystal ball
+            PlaceAllowed[126] = true; //discoball
+            PlaceAllowed[128] = true; //mannequin
+            PlaceAllowed[129] = true; //crystal shard
+            PlaceAllowed[132] = true; //lever
+            PlaceAllowed[133] = true; //adamantite forge
+            PlaceAllowed[134] = true; //mythril anvil
+            PlaceAllowed[149] = true; //festive lights
+            PlaceAllowed[172] = true; //sinks
+            PlaceAllowed[173] = true; //platinum candelabra
+            PlaceAllowed[174] = true; //platinum candle
+            PlaceAllowed[207] = true; //water fountain
+            PlaceAllowed[218] = true; //meat grinder
+            PlaceAllowed[228] = true; //dye vat
+            PlaceAllowed[240] = true; //trophies
+            PlaceAllowed[242] = true; //big paintings
+            PlaceAllowed[245] = true; //tall paintings
+            PlaceAllowed[246] = true; //wide paintings
+            PlaceAllowed[270] = true; //firefly in a bottle
+            PlaceAllowed[271] = true; //lightning bug in a bottle
+            PlaceAllowed[275] = true; //bunny cage
+            PlaceAllowed[276] = true; //squirrel cage
+            PlaceAllowed[277] = true; //mallard cage
+            PlaceAllowed[278] = true; //duck cage
+            PlaceAllowed[279] = true; //bird cage
+            PlaceAllowed[280] = true; //blue jay cage
+            PlaceAllowed[281] = true; //cardinal cage
+            PlaceAllowed[282] = true; //fish bowl
+            PlaceAllowed[283] = true; //heavy work bench
+            PlaceAllowed[285] = true; //snail cage
+            PlaceAllowed[286] = true; //glowing snail cage
+            PlaceAllowed[287] = true; //ammo box
+            PlaceAllowed[288] = true; //monarch jar
+            PlaceAllowed[289] = true; //purple emperor jar
+            PlaceAllowed[290] = true; //red admiral jar
+            PlaceAllowed[291] = true; //ulysses jar
+            PlaceAllowed[292] = true; //sulphur jar
+            PlaceAllowed[293] = true; //tree nymph jar
+            PlaceAllowed[294] = true; //zebra swallowtail jar
+            PlaceAllowed[295] = true; //julia jar
+            PlaceAllowed[296] = true; //scorpion cage
+            PlaceAllowed[297] = true; //black scorpion cage
+            PlaceAllowed[298] = true; //frog cage
+            PlaceAllowed[299] = true; //mouse cage
+            PlaceAllowed[300] = true; //bone welder
+            PlaceAllowed[301] = true; //flesh cloning vat
+            PlaceAllowed[302] = true; //glass kiln
+            PlaceAllowed[307] = true; //steampunk boiler
+            PlaceAllowed[309] = true; //penguin cage
+            PlaceAllowed[310] = true; //worm cage
+            PlaceAllowed[316] = true; //blue jellyfish jar
+            PlaceAllowed[317] = true; //green jellyfish jar
+            PlaceAllowed[318] = true; //pink jellyfish jar
+            PlaceAllowed[319] = true; //ship in a bottle
+            PlaceAllowed[310] = true; //seaweed planter
+            PlaceAllowed[324] = true; //seashell variants
+            PlaceAllowed[337] = true; //number and letter statues
+            PlaceAllowed[339] = true; //grasshopper cage
+            PlaceAllowed[354] = true; //bewitching table
+            PlaceAllowed[355] = true; //alchemy table
+            PlaceAllowed[358] = true; //gold bird cage
+            PlaceAllowed[359] = true; //gold bunny cage
+            PlaceAllowed[360] = true; //gold butterfly jar
+            PlaceAllowed[361] = true; //gold frog cage
+            PlaceAllowed[362] = true; //gold grasshopper cage
+            PlaceAllowed[363] = true; //gold mouse cage
+            PlaceAllowed[364] = true; //gold worm cage
+            PlaceAllowed[372] = true; //peace candle
+            PlaceAllowed[377] = true; //sharpening station
+            PlaceAllowed[378] = true; //target dummy
+            PlaceAllowed[390] = true; //lava lamp
+            PlaceAllowed[391] = true; //enchanted nightcrawler cage
+            PlaceAllowed[392] = true; //buggy cage
+            PlaceAllowed[393] = true; //grubby cage
+            PlaceAllowed[394] = true; //sluggy cage
+            PlaceAllowed[413] = true; //red squirrel cage
+            PlaceAllowed[414] = true; //gold squirrel cage
+            #endregion
+        }
 
         private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
             if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
@@ -229,7 +532,7 @@ namespace tsorcRevamp {
                             }
                         }
                     }
-                } 
+                }
             }
             else {
                 orig();
@@ -237,7 +540,9 @@ namespace tsorcRevamp {
         }
         public override void Unload() {
             toggleDragoonBoots = null;
-            
+            KillAllowed = null;
+            PlaceAllowed = null;
+
         }
         #region permanent potion recipes
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
@@ -385,6 +690,7 @@ namespace tsorcRevamp {
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Renames Skeletron to Gravelord Nito.\nOnly turn this off if you are experiencing \ncrashes or other strange behavior when \nyou attempt to summon Skeletron.\nDefaults to On")]
         [DefaultValue(true)]
+        [ReloadRequired]
         public bool RenameSkeletron { get; set; }
 
         [Label("Legacy Mode")]
@@ -398,152 +704,16 @@ namespace tsorcRevamp {
 
     public class TilePlaceCode : GlobalItem {
 
-        public static int[] allowed = { //these can always be placed
-			//if you can think of a more graceful way to do this, please share
-			4,  //torch
-			10, //Closed Door
-			11, //Open Door  
-			13, //bottles
-			15, //chairs
-			16, //anvil
-			17, //furnance
-			18, //workbench
-			20, //sapling
-			21, //chests
-			27, //sunflower
-			28, //pot
-			29, //piggy bank
-			33, //candle
-			34, //bronze chandellier
-			35, //silver chandellier
-			36, //gold chandellier
-			42, //chain lantern
-			49, //water candle
-			50, //books
-			55, //Sign 
-			73, //plants
-			74, //plants
-			78, //clay pot
-			79, //bed
-			81, //corals
-			82, //new herbs
-			83, //grown herbs
-			84, //bloomed herbs
-			85, //tombstone
-			86, //loom
-			87, //piano
-			88, //drawer
-			89, //bench
-			90, //bathtub
-			91, //banner
-			92, //lamp post
-			93, //tiki torch
-			94, //keg
-			95, //chinese lantern
-			96, //cooking pot
-			97, //safe
-			98, //skull candle
-			99, //trash can
-			100, //candlabra
-			101, //bookcase
-			102, //throne
-			103, //bowl
-			104, //grandfather clock
-			105, //statue
-			106, //sawmill
-			114, //tinkerer's workbench
-			125, //crystal ball
-			126, //discoball
-			128, //mannequin
-			129, //crystal shard
-			132, //lever
-			133, //adamantite forge
-			134, //mythril anvil
-			149, //festive lights
-			172, //sinks
-			173, //platinum candelabra
-			174, //platinum candle
-			207, //water fountain
-			218, //meat grinder
-			228, //dye vat
-			240, //trophies
-			242, //big paintings
-			245, //tall paintings
-			246, //wide paintings
-			270, //firefly in a bottle
-			271, //lightning bug in a bottle
-			275, //bunny cage
-			276, //squirrel cage
-			277, //mallard cage
-			278, //duck cage
-			279, //bird cage
-			280, //blue jay cage
-			281, //cardinal cage
-			282, //fish bowl
-			283, //heavy work bench
-			285, //snail cage
-			286, //glowing snail cage
-			287, //ammo box
-			288, //monarch jar
-			289, //purple emperor jar
-			290, //red admiral jar
-			291, //ulysses jar
-			292, //sulphur jar
-			293, //tree nymph jar
-			294, //zebra swallowtail jar
-			295, //julia jar
-			296, //scorpion cage
-			297, //black scorpion cage
-			298, //frog cage
-			299, //mouse cage
-			300, //bone welder
-			301, //flesh cloning vat
-			302, //glass kiln
-			307, //steampunk boiler
-			309, //penguin cage
-			310, //worm cage
-			316, //blue jellyfish jar
-			317, //green jellyfish jar
-			318, //pink jellyfish jar
-			319, //ship in a bottle
-			310, //seaweed planter
-			324, //seashell variants
-			337, //number and letter statues
-			339, //grasshopper cage
-			354, //bewitching table
-			355, //alchemy table
-			358, //gold bird cage
-			359, //gold bunny cage
-			360, //gold butterfly jar
-			361, //gold frog cage
-			362, //gold grasshopper cage
-			363, //gold mouse cage
-			364, //gold worm cage
-			372, //peace candle
-			377, //sharpening station
-			378, //target dummy
-			390, //lava lamp
-			391, //enchanted nightcrawler cage
-			392, //buggy cage
-			393, //grubby cage
-			394, //sluggy cage
-			413, //red squirrel cage
-			414, //gold squirrel cage
-
-
-    };
         public override bool CanUseItem(Item item, Player player) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 if (item.createWall > 0) {
                     return false; //prevent placing walls
                 }
                 if (item.createTile > -1) {
-                    foreach (int id in allowed) {
-                        if (item.createTile == id) {
-                            return true; //allow placing of tiles in the Allowed array
-                        }
+                    if (tsorcRevamp.PlaceAllowed[item.createTile]) {
+                        return true; //allow placing tiles in PlaceAllowed
                     }
-                    return false; //disallow using item if it places other tiles
+                    else return false; //disallow using item if it places other tiles
                 }
                 return true; //allow using items if they do not create tiles
             }
@@ -552,172 +722,6 @@ namespace tsorcRevamp {
     }
 
     public class TileKillCode : GlobalTile {
-        public List<int> allowed = new List<int>() { //These can always be destroyed
-		//if you can think of a more graceful way to do this, please share
-			67, //Amethyst 
-			12, //Heart crystal
-			2, //grass
-			3, //small plants
-			4, // torch
-			5, //tree trunk
-			6, //iron
-			7, //copper
-			9, //silver
-			10, //closed door
-			11, //open door
-			12, //bottles
-			13, //bottles and jugs
-			14, //table
-			15, //chairs
-			16, //anvil
-			17, //furnance
-			18, //workbench
-			20, //sapling
-			21, //chests
-			23, //corruption grass
-			24, //small corruption plants
-			27, //sunflower
-			28, //pot
-			29, //piggy bank
-			31, //shadow orb
-			32, //corruption barbs
-			33, //candle
-			34, //bronze chandellier
-			35, //silver c
-			36, //gold c
-			37, //meteorite
-			42, //chain lantern
-			49, //water candle
-			50, //books
-			51, //cobweb
-			52, //vines
-			53, //sand
-			55, //Sign 
-			56, //obsidian
-			60, //jungle grass
-			61, //small jungle plants
-			62, //jungle vines
-			69, //thorns
-			72, //mushroom stalks
-			71, //small mushrooms
-			73, //plants
-			74, //plants
-			78, //clay pot
-			79, //bed
-			80, //cactus
-			81, //corals
-			82, //new herbs
-			83, //grown herbs
-			84, //bloomed herbs
-			85, //tombstone
-			86, //loom
-			87, //piano
-			88, //drawer
-			89, //bench
-			90, //bathtub
-			91, //banner
-			92, //lamp post
-			93, //tiki torch
-			94, //keg
-			95, //chinese lantern
-			96, //cooking pot
-			97, //safe
-			98, //skull candle
-			99, //trash can
-			100, //candlabra
-			101, //bookcase
-			102, //throne
-			103, //bowl
-			104, //grandfather clock
-			105, //statue
-			106, //sawmill
-			107, //cobalt
-			108, //mythril
-			109, //Hallowed Grass
-			110, //Hallowed Plants	 
-			111, //adamantite
-			112, //ebonsand
-			114, //tinkerer's workbench
-			115, //Hallowed Vines 
-			116, //pearlsand
-			125, //crystal ball
-			126, //discoball
-			128, //mannequin
-			129, //crystal shard
-			133, //adamantite forge
-			134, //mythril anvil
-			138, //boulder
-			141, //explosives
-			172, //sinks
-			173, //platinum candelabra
-			174, //platinum candle
-			207, //water fountain
-			218, //meat grinder
-			228, //dye vat
-			240, //trophies
-			242, //big paintings
-			245, //tall paintings
-			246, //wide paintings
-			270, //firefly in a bottle
-			271, //lightning bug in a bottle
-			275, //bunny cage
-			276, //squirrel cage
-			277, //mallard cage
-			278, //duck cage
-			279, //bird cage
-			280, //blue jay cage
-			281, //cardinal cage
-			282, //fish bowl
-			283, //heavy work bench
-			285, //snail cage
-			286, //glowing snail cage
-			287, //ammo box
-			288, //monarch jar
-			289, //purple emperor jar
-			290, //red admiral jar
-			291, //ulysses jar
-			292, //sulphur jar
-			293, //tree nymph jar
-			294, //zebra swallowtail jar
-			295, //julia jar
-			296, //scorpion cage
-			297, //black scorpion cage
-			298, //frog cage
-			299, //mouse cage
-			300, //bone welder
-			301, //flesh cloning vat
-			302, //glass kiln
-			307, //steampunk boiler
-			309, //penguin cage
-			310, //worm cage
-			316, //blue jellyfish jar
-			317, //green jellyfish jar
-			318, //pink jellyfish jar
-			319, //ship in a bottle
-			310, //seaweed planter
-			324, //seashell variants
-			337, //number and letter statues
-			339, //grasshopper cage
-			354, //bewitching table
-			355, //alchemy table
-			358, //gold bird cage
-			359, //gold bunny cage
-			360, //gold butterfly jar
-			361, //gold frog cage
-			362, //gold grasshopper cage
-			363, //gold mouse cage
-			364, //gold worm cage
-			372, //peace candle
-			377, //sharpening station
-			378, //target dummy
-			390, //lava lamp
-			391, //enchanted nightcrawler cage
-			392, //buggy cage
-			393, //grubby cage
-			394, //sluggy cage
-			413, //red squirrel cage
-			414, //gold squirrel cage
-		};
         public List<int> unbreakable = new List<int>()
         {
             19, //Wood Platform 
@@ -729,22 +733,26 @@ namespace tsorcRevamp {
 			136, //switch
 			137 //dart trap
 		};
+
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
+
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+
                 bool right = !Main.tile[x + 1, y].active();
                 bool left = !Main.tile[x - 1, y].active();
                 bool below = !Main.tile[x, y - 1].active();
                 bool above = !Main.tile[x, y + 1].active();
                 if (x < 10 || x > Main.maxTilesX - 10) {//sanity
-                    return true;
+                    return false;
                 }
-                else if (y < 10 || y > Main.maxTilesY - 10) {//sanity
-                    return true;
+                else if (y < 10 || y > Main.maxTilesY - 10) {//sanity 
+                    return false;
                 }
                 else if (Main.tile[x, y] == null) {//sanity
-                    return true;
+                    return false;
                 }
-                else if (allowed.Contains(type)) {//always allow Allowed
+                else if (tsorcRevamp.KillAllowed[type]) {//always allow KillAllowed
                     return true;
                 }
                 else if (unbreakable.Contains(type)) {//always disallow Unbreakable	
@@ -773,7 +781,7 @@ namespace tsorcRevamp {
                 }
 
                 //check cankilltiles stuff
-                if ((right && left) || (above && below) || allowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
+                if ((right && left) || (above && below) || tsorcRevamp.KillAllowed[type] || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
                     CanDestroy = true;
                 }
                 if (Main.tileDungeon[Main.tile[x, y].type]
