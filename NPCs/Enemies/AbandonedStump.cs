@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				&& Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.Grass && Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.Dirt && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].halfBrick() && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].leftSlope()
 				&& !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope())
 			{ 
-				  return 0.95f;
+				  return 1.3f;
 			}
 			return chance;
 		}

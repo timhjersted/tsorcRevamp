@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			Main.npcFrameCount[npc.type] = 29;
 		}
 
-		public override void SetDefaults() //TO DO, hit/kill effects, escape sound, other spawn conditions. Make banner. Fix slope jump?
+		public override void SetDefaults()
 		{
 			npc.width = 28;
 			npc.height = 20;
@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.damage = 0;
 			npc.knockBackResist = 0.6f;
 			npc.defense = 9999;
-			npc.lifeMax = Main.rand.Next(7, 15);
+			npc.lifeMax = Main.rand.Next(13, 21);
 			npc.HitSound = SoundID.NPCHit42;
 			npc.DeathSound = SoundID.NPCDeath32;
 			npc.value = 0;
@@ -34,23 +34,27 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.buffImmune[BuffID.Frostburn] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.ShadowFlame] = true;
-			//banner = npc.type;
-			//bannerItem = ModContent.ItemType<Banners.LivingShroomBanner>(); // TO DO
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.CosmicCrystalLizardBanner>();
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			float chance = 0;
 
-			if (spawnInfo.player.ZoneRockLayerHeight && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope())
+			if (NPC.CountNPCS(mod.NPCType("CosmicCrystalLizard")) < 1 && (spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneDirtLayerHeight) && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope() && !spawnInfo.player.ZoneJungle)
 			{
-				return 0.06f;
+				return 0.03f;
 			}
-			else if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].type == TileID.GraniteBlock && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope())
+			if (NPC.CountNPCS(mod.NPCType("CosmicCrystalLizard")) < 1 && (spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneDirtLayerHeight) && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope() && spawnInfo.player.ZoneJungle)
 			{
-				return 0.5f;
+				return 0.02f;
 			}
-				return chance;
+			if (NPC.CountNPCS(mod.NPCType("CosmicCrystalLizard")) < 1 && spawnInfo.player.ZoneOverworldHeight && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope() && (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.DirtUnsafe || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.MudUnsafe || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.Planked))
+			{
+				return 0.03f;
+			}
+			return chance;
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -98,13 +102,24 @@ namespace tsorcRevamp.NPCs.Enemies
 		public int spawntimer = 0;
 		public int peaceouttimer = 0;
 		public int idleframe = 1;
+		public int immuneframe = 0;
 
 		public override void AI()
 		{
+
 			npc.netUpdate = false;
+			immuneframe++;
+
+			if (immuneframe > 1)
+			{
+				npc.immortal = false;
+				npc.defense = 9999;
+			}
 
 			if (AI_State == State_Idle)
 			{
+				if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/CosmicSparkle"), npc.Center);
+				
 				npc.TargetClosest(true);
 				AI_Timer++;
 
@@ -188,6 +203,10 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.noGravity = true;
 				npc.velocity = new Vector2(0, 0);
 
+				if (AI_Timer == 37)
+				{
+					Main.PlaySound(SoundID.Item82, npc.Center);
+				}
 				if (AI_Timer == 128)
 				{
 					npc.life = 0;
@@ -929,55 +948,89 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void HitEffect(int hitDirection, double damage)
 		{
-			for (int i = 0; i < 15; i++)
+			for (int i = 0; i < 5; i++)
 			{
-				int dustType = 147;
+				int dustType = 191;
 				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
 				Dust dust = Main.dust[dustIndex];
 
 				dust.scale *= .70f + Main.rand.Next(-30, 31) * 0.01f;
 				dust.velocity.Y = Main.rand.Next(-2, 0);
 				dust.noGravity = false;
-				dust.alpha = 120;
+				dust.alpha = 0;
 			}
 			if (npc.life <= 0)
 			{
 				for (int i = 0; i < 20; i++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 147, 0, Main.rand.Next(-2, 0), 120, default(Color), .75f);
+					Dust.NewDust(npc.position, npc.width, npc.height, 191, 0, Main.rand.Next(-2, 0), 0, default(Color), .75f);
 				}
+			}
+		}
+		public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+		{
+			if (Main.rand.Next(2) == 0 && immuneframe >= 1 && !crit)
+			{
+				npc.immortal = true;
+				immuneframe = 0;
+			}
+			else 
+			{
+				damage = 1;
+			}
+			if (crit && immuneframe >= 1)
+			{
+				damage = 2;
+				npc.defense = 0;
+				immuneframe = 0;
+			}
+		}
+		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+		{
+			if (crit && immuneframe >= 1)
+			{
+				damage = 2;
+				npc.defense = 0;
+				immuneframe = 0;
 			}
 		}
 		public override void NPCLoot()
 		{
-			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 1000);
+			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 400);
 			Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal")); //always drops 1
-			
-			if (npc.lifeMax == 14) //the higher the npc.lifeMax, the higher the chance of getting a second crystal
+
+
+			if (Main.rand.NextFloat() >= 0.66f) // 33% chance
+			{
+				Item.NewItem(npc.getRect(), mod.ItemType("SoulSiphonPotion"));
+			}
+
+
+			if (npc.lifeMax == 20) //the higher the npc.lifeMax, the higher the chance of getting a second crystal
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 13 && Main.rand.NextFloat() >= 0.15f)
+			else if (npc.lifeMax == 19 && Main.rand.NextFloat() >= 0.15f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 12 && Main.rand.NextFloat() >= 0.3f)
+			else if (npc.lifeMax == 18 && Main.rand.NextFloat() >= 0.3f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 11 && Main.rand.NextFloat() >= 0.45f)
+			else if (npc.lifeMax == 17 && Main.rand.NextFloat() >= 0.45f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 10 && Main.rand.NextFloat() >= 0.6f)
+			else if (npc.lifeMax == 16 && Main.rand.NextFloat() >= 0.6f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 9 && Main.rand.NextFloat() >= 0.75f)
+			else if (npc.lifeMax == 15 && Main.rand.NextFloat() >= 0.75f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 8 && Main.rand.NextFloat() >= 0.9f)
+			else if (npc.lifeMax == 14 && Main.rand.NextFloat() >= 0.9f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}

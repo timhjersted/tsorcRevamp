@@ -90,6 +90,9 @@ namespace tsorcRevamp.Banners {
                 case 13:
                     item = "AttraidiesIllusionBanner";
                     break;
+                case 14:
+                    item = "CosmicCrystalLizardBanner";
+                    break;
                 default:
                     return;
             }
@@ -143,6 +146,9 @@ namespace tsorcRevamp.Banners {
                         break;
                     case 13:
                         type = "AttraidiesIllusion";
+                        break;
+                    case 14:
+                        type = "CosmicCrystalLizard";
                         break;
                     default:
                         return;
@@ -333,6 +339,20 @@ namespace tsorcRevamp.Banners {
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Nearby players get a bonus against: Attraidies Illusion");
+        }
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            item.placeStyle = 0; //change when texture added
+        }
+    }
+    public class CosmicCrystalLizardBanner : EnemyBanner
+    {
+
+        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Nearby players get a bonus against: Cosmic Crystal Lizard");
         }
         public override void SetDefaults()
         {
