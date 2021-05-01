@@ -248,9 +248,6 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.EyeofCthulhu): {
                         npc.damage = 24; // I get the feeling he's going to be pretty damn tough in Expert mode
-                        npc.value = 250;
-                        npc.defense = 5;
-                        npc.knockBackResist = 0.2f;
 
                         if (Main.player[Main.myPlayer].ZoneJungle) {
                             if (Main.expertMode) {
