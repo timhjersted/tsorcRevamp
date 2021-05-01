@@ -86,11 +86,11 @@ namespace tsorcRevamp.Tiles
 				animate = Main.tileFrame[Type] * animationFrameWidth;
 			}
 			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, height), Lighting.GetColor(i, j), 0f, default, 1f, SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(mod.GetTexture("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, 16), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(mod.GetTexture("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			Dust.NewDust(zero, 4, 4, 6, 0, 0, 100, default, 1f);
 			return false;
 		}
 	}
-
 	public class BonfireItem : ModItem
 	{
 		public override void SetStaticDefaults()
