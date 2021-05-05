@@ -51,6 +51,7 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
+            RecipeRemover(ItemID.WebRopeCoil);
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.AmethystHook, ItemID.SoulofNight, 6);

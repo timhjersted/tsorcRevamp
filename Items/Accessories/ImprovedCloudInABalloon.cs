@@ -30,8 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             player.jumpSpeedBoost += 1f;
             player.jumpBoost = true;
-            player.jumpAgainCloud = true;
-
+            player.doubleJumpCloud = true;
         }
  
     }

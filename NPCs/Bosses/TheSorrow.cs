@@ -196,8 +196,7 @@ namespace tsorcRevamp.NPCs.Bosses {
         }
 
         public override void NPCLoot() {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfWater>());
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfWater>());
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
             Item.NewItem(npc.getRect(), ItemID.AdamantiteDrill);
         }
     }

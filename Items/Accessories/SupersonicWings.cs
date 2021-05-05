@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
             ascentWhenFalling = 0.85f;
             ascentWhenRising = 0.15f;
             maxCanAscendMultiplier = 1f;
-            maxAscentMultiplier = 1.5f;
+            maxAscentMultiplier = 1.25f;
             constantAscend = 0.135f;
 
         }
@@ -51,11 +51,9 @@ namespace tsorcRevamp.Items.Accessories {
             player.fireWalk = true;
             player.noKnockback = true;
             player.canRocket = true;
-            player.rocketTime = 180;
-            player.rocketBoots = 2;
             player.moveSpeed += 0.2f;
             player.jumpSpeedBoost = 1.3f;
-            player.wingTimeMax = 180;
+            player.wingTimeMax = 12000;
 
             bool restricted = false;
             for (int i = 2; i <= 6; i++) {

@@ -35,20 +35,5 @@ namespace tsorcRevamp.Items.BossItems {
             }
             return true;
         }
-
-        public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.LightShard, 99);
-            recipe.AddIngredient(ItemID.DarkShard, 99);
-            recipe.AddIngredient(mod.GetItem("CrestOfSky"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfFire"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfWater"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfEarth"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfCorruption"), 1);
-            recipe.AddIngredient(mod.GetItem("CrestOfSteel"), 1);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
-        }
     }
 }

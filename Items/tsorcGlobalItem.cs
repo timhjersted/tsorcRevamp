@@ -58,12 +58,17 @@ namespace tsorcRevamp.Items {
                 }
                 if (arg == ItemID.DestroyerBossBag) {
                     BossBagSouls(NPCID.TheDestroyer, player);
+                    player.QuickSpawnItem(ModContent.ItemType<RTQ2>());
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfCorruption>(), 2);
                 }
                 if (arg == ItemID.TwinsBossBag) {
                     BossBagSouls(NPCID.Retinazer, player);
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfSky>(), 2);
                 }
                 if (arg == ItemID.SkeletronPrimeBossBag) {
                     BossBagSouls(NPCID.SkeletronPrime, player);
+                    player.QuickSpawnItem(ItemID.AngelWings);
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfSteel>(), 2);
                 }
                 if (arg == ItemID.PlanteraBossBag) {
                     BossBagSouls(NPCID.Plantera, player);

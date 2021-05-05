@@ -23,10 +23,11 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
+            bool zoneJ = (player.position.X < 250 * 16 || player.position.X > (Main.maxTilesX - 250) * 16);
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) {
                 return false;
             }
-            else if (!player.ZoneBeach) {
+            else if (!zoneJ) {
                 Main.NewText("You can only use this in the Ocean.");
             }
             else {

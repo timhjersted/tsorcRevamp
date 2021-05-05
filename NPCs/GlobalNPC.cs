@@ -364,7 +364,7 @@ namespace tsorcRevamp.NPCs {
         public override void NPCLoot(NPC npc) {
 
             #region Bosses drop souls once
-
+            //todo
             #endregion
 
             #region Loot Changes
@@ -379,11 +379,11 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ItemID.ShadowScale, 4);
             }
 
-            if (npc.type == NPCID.Hornet || npc.type == NPCID.HornetFatty || npc.type == NPCID.HornetHoney || npc.type == NPCID.HornetLeafy || npc.type == NPCID.HornetSpikey ||
-                npc.type == NPCID.HornetStingy || npc.type == NPCID.BigHornetFatty || npc.type == NPCID.BigHornetHoney || npc.type == NPCID.BigHornetLeafy || npc.type == NPCID.BigHornetSpikey ||
-                npc.type == NPCID.BigHornetStingy || npc.type == NPCID.BigMossHornet || npc.type == NPCID.GiantMossHornet || npc.type == NPCID.LittleHornetFatty || npc.type == NPCID.LittleHornetHoney ||
-                npc.type == NPCID.BigStinger || npc.type == NPCID.LittleHornetSpikey || npc.type == NPCID.LittleHornetStingy || npc.type == NPCID.LittleMossHornet ||
-                npc.type == NPCID.MossHornet || npc.type == NPCID.TinyMossHornet) {
+            if ((npc.type >= NPCID.BigHornetStingy && npc.type <= NPCID.LittleHornetFatty) ||
+                                (npc.type >= NPCID.GiantMossHornet && npc.type <= NPCID.LittleStinger) ||
+                                npc.type == NPCID.Hornet ||
+                                npc.type == NPCID.MossHornet ||
+                                (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
                 if (Main.rand.NextFloat() >= .33f) { // 66% chance
                     Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
                 }
@@ -394,6 +394,18 @@ namespace tsorcRevamp.NPCs {
                 if (!Main.expertMode) {
                     Item.NewItem(npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
                 }
+            }
+
+            if (npc.type == NPCID.TheDestroyer && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
+            }
+            if (npc.type == NPCID.SkeletronHead && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
+                Item.NewItem(npc.getRect(), ItemID.AngelWings, 2);
+            }
+            if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
             }
 
             if (npc.netID == NPCID.GreenSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {

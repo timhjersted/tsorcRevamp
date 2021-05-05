@@ -173,8 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses {
 			return true;
 		}
 		public override void NPCLoot() {
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfFire>());
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfFire>());
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfFire>(), 2);
 			Item.NewItem(npc.getRect(), ItemID.CobaltDrill);
 		}
 	}

@@ -15,7 +15,17 @@ using System;
 
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
-
+        /*
+        public override void OnEnterWorld(Player player) {
+            for (int x = 1; x <  Main.maxTilesX - 1; x++) {
+                for (int y = 1; y < Main.maxTilesY - 1; y++) {
+                    if (Framing.GetTileSafely(x, y).type == TileID.IceMachine) {
+                        Framing.GetTileSafely(x, y).type = (ushort)ModContent.TileType<Tiles.Bonfire>();
+                    }
+                }
+            }
+            base.OnEnterWorld(player);
+        }*/
         public int warpX;
         public int warpY;
         public int warpWorld;
@@ -120,6 +130,9 @@ namespace tsorcRevamp {
                 player.chest = -1;
             }
 
+            if (player.ZoneHoly) {
+                player.gravControl = true;
+            }
 
             #region Permanent Potions
 
