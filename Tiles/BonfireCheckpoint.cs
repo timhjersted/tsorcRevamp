@@ -64,11 +64,6 @@ namespace tsorcRevamp.Tiles
 			{
 				player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 10);
 			}
-
-			if (!player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
-			{
-				BonfireUIState.Visible = false;
-			}
 		}
 
 		public override void AnimateTile(ref int frame, ref int frameCounter)
@@ -333,7 +328,7 @@ namespace tsorcRevamp.Tiles
 			}
 			int height = tile.frameY % animationFrameHeight == 54 ? 18 : 16;
 			int animate = 0;
-			if (tile.frameY >= 74) //change to 74 once rick click to light is implemented
+			if (tile.frameY >= 74)
 			{
 				animate = Main.tileFrame[Type] * animationFrameHeight;
 			}

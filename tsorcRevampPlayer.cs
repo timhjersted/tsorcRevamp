@@ -12,6 +12,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Buffs;
 using System;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
@@ -773,6 +774,11 @@ namespace tsorcRevamp {
             if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
                 Player.jumpSpeed += 10f;
 
+            }
+
+            if (!player.HasBuff(ModContent.BuffType<Bonfire>())) //this ensures that BonfireUIState is only visible when within Bonfire range
+            {
+                BonfireUIState.Visible = false;
             }
         }
     }
