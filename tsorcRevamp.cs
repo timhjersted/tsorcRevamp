@@ -35,6 +35,8 @@ namespace tsorcRevamp {
 
             On.Terraria.UI.ChestUI.DepositAll += DepositAllPatch;
 
+            On.Terraria.Player.Spawn += SpawnPatch;
+
             BonfireUIState = new BonfireUIState();
             BonfireUIState.Activate();
             _bonfireUIState = new UserInterface();
@@ -42,6 +44,8 @@ namespace tsorcRevamp {
 
             PopulateArrays();
         }
+
+
 
         public override void UpdateUI(GameTime gameTime) {
             if (BonfireUIState.Visible) {
@@ -585,6 +589,108 @@ namespace tsorcRevamp {
                 orig();
             }
         }
+
+        private void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                Main.InitLifeBytes();
+                Player player = Main.LocalPlayer;
+                if (player.whoAmI == Main.myPlayer) {
+                    if (Main.mapTime < 5) {
+                        Main.mapTime = 5;
+                    }
+                    Main.quickBG = 10;
+                    player.FindSpawn();
+                    Main.maxQ = true;
+                }
+                if (Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer) {
+                    NetMessage.SendData(MessageID.SpawnPlayer, -1, -1, null, Main.myPlayer);
+                    Main.gameMenu = false;
+                }
+                player.headPosition = Vector2.Zero;
+                player.bodyPosition = Vector2.Zero;
+                player.legPosition = Vector2.Zero;
+                player.headRotation = 0f;
+                player.bodyRotation = 0f;
+                player.legRotation = 0f;
+                player.lavaTime = player.lavaMax;
+                if (player.statLife <= 0) {
+                    int num = player.statLifeMax2 / 2;
+                    player.statLife = 100;
+                    if (num > player.statLife) {
+                        player.statLife = num;
+                    }
+                    player.breath = player.breathMax;
+                    if (player.spawnMax) {
+                        player.statLife = player.statLifeMax2;
+                        player.statMana = player.statManaMax2;
+                    }
+                }
+                player.immune = true;
+                if (player.dead) {
+                    PlayerHooks.OnRespawn(player);
+                }
+                player.dead = false;
+                player.immuneTime = 0;
+                player.active = true;
+                if (player.SpawnX >= 0 && player.SpawnY >= 0) {
+                    player.position.X = player.SpawnX * 16 + 8 - player.width / 2;
+                    player.position.Y = player.SpawnY * 16 - player.height;
+                }
+                else {
+                    player.position.X = Main.spawnTileX * 16 + 8 - player.width / 2;
+                    player.position.Y = Main.spawnTileY * 16 - player.height;
+                    for (int i = Main.spawnTileX - 1; i < Main.spawnTileX + 2; i++) {
+                        for (int j = Main.spawnTileY - 3; j < Main.spawnTileY; j++) {
+                            if (Main.tile[i, j] != null) {
+                                if (Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type]) {
+                                    WorldGen.KillTile(i, j);
+                                }
+                                if (Main.tile[i, j].liquid > 0) {
+                                    Main.tile[i, j].lava(lava: false);
+                                    Main.tile[i, j].liquid = 0;
+                                    WorldGen.SquareTileFrame(i, j);
+                                }
+                            }
+                        }
+                    }
+                }
+                player.wet = false;
+                player.wetCount = 0;
+                player.lavaWet = false;
+                player.fallStart = (int)(player.position.Y / 16f);
+                player.fallStart2 = player.fallStart;
+                player.velocity.X = 0f;
+                player.velocity.Y = 0f;
+                for (int k = 0; k < 3; k++) {
+                    player.UpdateSocialShadow();
+                }
+                player.oldPosition = player.position + player.BlehOldPositionFixer;
+                player.talkNPC = -1;
+                if (player.whoAmI == Main.myPlayer) {
+                    Main.npcChatCornerItem = 0;
+                }
+                if (player.pvpDeath) {
+                    player.pvpDeath = false;
+                    player.immuneTime = 300;
+                    player.statLife = player.statLifeMax;
+                }
+                else {
+                    player.immuneTime = 60;
+                }
+                if (player.whoAmI == Main.myPlayer) {
+                    Main.BlackFadeIn = 255;
+                    Main.renderNow = true;
+                    if (Main.netMode == NetmodeID.MultiplayerClient) {
+                        Netplay.newRecent();
+                    }
+                    Main.screenPosition.X = player.position.X + player.width / 2 - Main.screenWidth / 2;
+                    Main.screenPosition.Y = player.position.Y + player.height / 2 - Main.screenHeight / 2;
+                }
+                else {
+                    orig(self);
+                }
+            }
+        }
         public override void Unload() {
             toggleDragoonBoots = null;
             KillAllowed = null;
@@ -769,7 +875,7 @@ namespace tsorcRevamp {
     }
 
     public class TileKillCode : GlobalTile {
-        
+
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
 
 

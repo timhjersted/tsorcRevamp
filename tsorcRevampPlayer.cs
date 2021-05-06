@@ -74,6 +74,9 @@ namespace tsorcRevamp {
         public int souldroptimer = 0;
         public bool SOADrain = false;
 
+        public bool chests;
+        public int safe = -1;
+
         public bool[] PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
 
         public override TagCompound Save() {
