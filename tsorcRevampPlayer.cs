@@ -134,7 +134,10 @@ namespace tsorcRevamp {
                 player.chest = -1;
             }
 
-            if (player.ZoneHoly) {
+            int PTilePosX = (int)player.position.X / 16;
+            bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
+
+            if ((player.ZoneRockLayerHeight && player.ZoneHoly) && !Ocean && !(player.ZoneRockLayerHeight && player.ZoneDungeon) || player.ZoneMeteor) {
                 player.gravControl = true;
             }
 
