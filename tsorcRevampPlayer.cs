@@ -720,6 +720,10 @@ namespace tsorcRevamp {
                     }
                 }
             }
+            if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0) {
+                player.AddBuff(BuffID.Bleeding, 1800);
+                player.AddBuff(BuffID.OnFire, 600);
+            }
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, bool crit) {
@@ -734,6 +738,11 @@ namespace tsorcRevamp {
                         Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
+            }
+            if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
+            {
+                player.AddBuff(BuffID.BrokenArmor, 180);
+                player.AddBuff(BuffID.OnFire, 180);
             }
         }
 

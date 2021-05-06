@@ -55,6 +55,7 @@ namespace tsorcRevamp.Items {
                 }
                 if (arg == ItemID.SkeletronBossBag) {
                     BossBagSouls(NPCID.SkeletronHead, player);
+                    player.QuickSpawnItem(ModContent.ItemType<Miakoda>());
                 }
                 if (arg == ItemID.DestroyerBossBag) {
                     BossBagSouls(NPCID.TheDestroyer, player);
