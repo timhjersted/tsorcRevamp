@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Weapons.Ranged;
 
 namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
@@ -19,12 +20,15 @@ namespace tsorcRevamp.NPCs {
         public bool CrimsonBurn = false;
         public bool toxiccatdrain = false;
         public bool resettoxiccatblobs = false;
+        public bool ElectrocutedEffect = false;
+
 
         public override void ResetEffects(NPC npc) {
             DarkInferno = false;
             CrimsonBurn = false;
             toxiccatdrain = false;
             resettoxiccatblobs = false;
+            ElectrocutedEffect = false;
         }
 
 
@@ -470,7 +474,6 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.ServantofCthulhu): {
-                        npc.defense = 40;
                         npc.damage = 13;
                         npc.value = 10;
                         break;
@@ -1067,6 +1070,18 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
+            if (ElectrocutedEffect)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                npc.lifeRegen -= 22;
+                if (damage < 2)
+                {
+                    damage = 2;
+                }
+            }
         }
 
         public override void SetupShop(int type, Chest shop, ref int nextSlot) {
@@ -1076,6 +1091,13 @@ namespace tsorcRevamp.NPCs {
             }
             if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode && Main.rand.Next(2) == 0) {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
+                shop.item[nextSlot].shopCustomPrice = 5000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
+            if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
                 shop.item[nextSlot].shopCustomPrice = 5000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
@@ -1093,6 +1115,14 @@ namespace tsorcRevamp.NPCs {
 
         }
 
+        public override void DrawEffects(NPC npc, ref Color drawColor)
+        {
+            if (ElectrocutedEffect)
+            {
+                int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
+                Main.dust[dust].noGravity = true;
+            }
+        }
 
     }
 }
