@@ -86,13 +86,17 @@ namespace tsorcRevamp.UI {
                     anyBanks = true;
                     projectile.active = false;
                     player.chest = -1;
-                    break;
                 }
+                /*if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI) {
+                    //kill safes when spawning a piggy bank
+                    projectile.active = false;
+                    player.chest = -1;
+                }*/
 
             }
             if (!anyBanks) { //only spawn a safe if there is no existing safe
-                Main.playerInventory = true; //force open inventory
-                Projectile.NewProjectile(player.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
+                //Main.playerInventory = true; //force open inventory
+                Projectile.NewProjectile(new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }
@@ -100,7 +104,7 @@ namespace tsorcRevamp.UI {
             bool anySafes = false;
             Player player = Main.player[Main.myPlayer];
             Main.PlaySound(SoundID.MenuOpen, player.Center);
-            
+
             foreach (Projectile projectile in Main.projectile) {
                 if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI) {
                     anySafes = true;
@@ -108,11 +112,14 @@ namespace tsorcRevamp.UI {
                     player.chest = -1;
                     break;
                 }
-                
+                /*if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>() && projectile.owner == player.whoAmI) {
+                    projectile.active = false;
+                    player.chest = -1;
+                }*/
             }
             if (!anySafes) {
-                Main.playerInventory = true;
-                Projectile.NewProjectile(player.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
+                //Main.playerInventory = true;
+                Projectile.NewProjectile(new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }
