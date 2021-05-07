@@ -904,7 +904,6 @@ namespace tsorcRevamp.NPCs {
                 if (!(DarkSoulQuantity == 0)) {
                     #region Bosses drop souls once
                     if (npc.boss) {
-                        Main.NewText("boss slain");
                         if (tsorcRevampWorld.Slain.ContainsKey(npc.type)) {
                             DarkSoulQuantity = 0;
                             return;
