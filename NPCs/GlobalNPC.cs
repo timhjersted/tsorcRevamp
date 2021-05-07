@@ -591,11 +591,13 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.Tim): {
+                        npc.GivenName = "Tim Hjersted";
                         npc.value= 15000;
                         npc.damage = 100;
                         npc.lifeMax = 500;
                         npc.defense = 18;
                         npc.scale = 1.2f;
+                        npc.knockBackResist = 0.2f;
                         break;
                     }
 
@@ -714,6 +716,21 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.Zombie): {
+                        break;
+                    }
+
+                case int n when ((n >= NPCID.BigFemaleZombie && n <= NPCID.SmallFemaleZombie) ||
+                                (n >= NPCID.BigTwiggyZombie && n <= NPCID.SmallZombie) ||
+                                (n >= NPCID.ZombieDoctor && n <= NPCID.ZombiePixie) ||
+                                (n >= NPCID.ZombieXmas && n <= NPCID.ZombieSweater) ||
+                                (n >= NPCID.ArmedZombie && n <= NPCID.ArmedZombieCenx) ||
+                                n == NPCID.Zombie ||
+                                n == NPCID.BaldZombie ||
+                                n == NPCID.ZombieEskimo ||
+                                n == NPCID.FemaleZombie ||
+                                (n >= NPCID.PincushionZombie && n <= NPCID.TwiggyZombie)):
+
+                    {
                         npc.value = 80;
                         break;
                     }
@@ -806,7 +823,15 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), mod.ItemType("CoralSword"));
             }
 
-            if ((npc.type == NPCID.SkeletonArcher || npc.type == NPCID.Skeleton) && Main.rand.Next(25) == 0)
+            if (Main.rand.Next(25) == 0 && (npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
+                                (npc.type >= NPCID.HeadacheSkeleton && npc.type <= NPCID.PantlessSkeleton) ||
+                                (npc.type >= NPCID.SkeletonTopHat && npc.type <= NPCID.SkeletonAlien) ||
+                                (npc.type >= NPCID.BoneThrowingSkeleton && npc.type <= NPCID.BoneThrowingSkeleton4) ||
+                                npc.type == NPCID.HeavySkeleton ||
+                                npc.type == NPCID.Skeleton ||
+                                npc.type == NPCID.ArmoredSkeleton ||
+                                npc.type == NPCID.SkeletonArcher)
+
             {
                 Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
             }
@@ -821,11 +846,19 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ItemID.Heart, 7);
             }
 
-            if (npc.type == NPCID.Zombie && Main.rand.Next(20) == 0)
+            if ((Main.rand.Next(25) == 0 && (npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
+                                (npc.type >= NPCID.BigTwiggyZombie && npc.type <= NPCID.SmallZombie) ||
+                                (npc.type >= NPCID.ZombieDoctor && npc.type <= NPCID.ZombiePixie) ||
+                                (npc.type >= NPCID.ZombieXmas && npc.type <= NPCID.ZombieSweater) ||
+                                (npc.type >= NPCID.ArmedZombie && npc.type <= NPCID.ArmedZombieCenx) ||
+                                npc.type == NPCID.Zombie ||
+                                npc.type == NPCID.BaldZombie ||
+                                npc.type == NPCID.ZombieEskimo ||
+                                npc.type == NPCID.FemaleZombie ||
+                                (npc.type >= NPCID.PincushionZombie && npc.type <= NPCID.TwiggyZombie)))
             {
                 Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
             }
-
 
             #endregion
 
@@ -884,7 +917,7 @@ namespace tsorcRevamp.NPCs {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<FadingSoul>(), 1); // Zombies and eyes are 6 and 7 enemyValue, so will only drop FadingSoul
                     }
 
-                    if ((enemyValue >= 10) && (enemyValue <= 2000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 10 and 2000 dropping LostUndeadSoul aka 1/75
+                    if ((enemyValue >= 15) && (enemyValue <= 2000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 10 and 2000 dropping LostUndeadSoul aka 1/75
                     {
                         Item.NewItem(npc.getRect(), ModContent.ItemType<LostUndeadSoul>(), 1); // Most pre-HM enemies fall into this category
                     }
