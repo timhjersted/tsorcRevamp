@@ -1006,31 +1006,27 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 
 
-			if (npc.lifeMax == 20) //the higher the npc.lifeMax, the higher the chance of getting a second crystal
+			if (npc.lifeMax == 20 || npc.lifeMax == 19) //the higher the npc.lifeMax, the higher the chance of getting a second crystal
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 19 && Main.rand.NextFloat() >= 0.15f)
+			else if (npc.lifeMax == 18 && Main.rand.NextFloat() >= 0.15f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 18 && Main.rand.NextFloat() >= 0.3f)
+			else if (npc.lifeMax == 17 && Main.rand.NextFloat() >= 0.3f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 17 && Main.rand.NextFloat() >= 0.45f)
+			else if (npc.lifeMax == 16 && Main.rand.NextFloat() >= 0.45f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 16 && Main.rand.NextFloat() >= 0.6f)
+			else if (npc.lifeMax == 15 && Main.rand.NextFloat() >= 0.6f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}
-			else if (npc.lifeMax == 15 && Main.rand.NextFloat() >= 0.75f)
-			{
-				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
-			}
-			else if (npc.lifeMax == 14 && Main.rand.NextFloat() >= 0.9f)
+			else if (npc.lifeMax == 14 && Main.rand.NextFloat() >= 0.75f)
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal"));
 			}

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.useTime = 36;
             item.damage = 34;
             item.knockBack = 5.5f;
-            item.mana = 10;
+            item.mana = 8;
             item.UseSound = SoundID.Item8;
             item.shootSpeed = 7.5f;
             item.noMelee = true;

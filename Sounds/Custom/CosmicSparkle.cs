@@ -14,7 +14,7 @@ namespace tsorcRevamp.Sounds.Custom
 		public override SoundEffectInstance PlaySound(ref SoundEffectInstance soundInstance, float volume, float pan, SoundType type)
 		{
 			//An optional variable to make controlling the volume easier
-			float volumeFactor = 0.9f;
+			float volumeFactor = 0.7f;
 
 			if (soundInstance is null)
 			{

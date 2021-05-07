@@ -31,7 +31,7 @@ namespace tsorcRevamp.Tiles
 			Main.tileNoAttach[Type] = true;
 			Main.tileWaterDeath[Type] = false;
 			Main.tileLavaDeath[Type] = false;
-
+			adjTiles = new int[] { TileID.Campfire };
 		}
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
