@@ -17,10 +17,14 @@ namespace tsorcRevamp.NPCs {
         public override bool InstancePerEntity => true;
         public bool DarkInferno = false;
         public bool CrimsonBurn = false;
+        public bool toxiccatdrain = false;
+        public bool resettoxiccatblobs = false;
 
         public override void ResetEffects(NPC npc) {
             DarkInferno = false;
             CrimsonBurn = false;
+            toxiccatdrain = false;
+            resettoxiccatblobs = false;
         }
 
 
@@ -1040,6 +1044,29 @@ namespace tsorcRevamp.NPCs {
                 }
 
             }
+
+            if (toxiccatdrain)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                int toxiccatshotCount = 0;
+                for (int i = 0; i < 1000; i++)
+                {
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.toxiccatshot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    {
+                        toxiccatshotCount++;
+                    }
+                }
+                npc.lifeRegen -= toxiccatshotCount * 1 * 1; //Use 1st N for damage, second N can be used to make it tick faster.
+                if (damage < toxiccatshotCount * 1)
+                {
+                    damage = toxiccatshotCount * 1;
+                }
+            }
+
         }
 
         public override void SetupShop(int type, Chest shop, ref int nextSlot) {
@@ -1054,5 +1081,18 @@ namespace tsorcRevamp.NPCs {
                 nextSlot++;
             }
         }
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().toxiccatdrain && (projectile.type == mod.ProjectileType("toxiccatdetonator") || projectile.type == mod.ProjectileType("toxiccatexplosion")))
+            {
+                Main.PlaySound(SoundID.Item74.WithPitchVariance(.3f), projectile.position);
+                Projectile.NewProjectile(npc.Center, npc.velocity, mod.ProjectileType("toxiccatexplosion"), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().resettoxiccatblobs = true;
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().toxiccatdrain = false;
+            }
+
+        }
+
+
     }
 }
