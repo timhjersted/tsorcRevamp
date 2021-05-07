@@ -16,26 +16,43 @@ using System;
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
 
+        
         public static bool DownedSorrow;
         public static bool DownedHunter;
         public static bool DownedRage;
+        public static Dictionary<int, int> Slain;
 
-        public override TagCompound Save() {
-            var downed = new List<string>();
-            if (DownedSorrow) {
-                downed.Add("Sorrow");
-            }
-            if (DownedHunter) {
-                downed.Add("Hunter");
-            }
-            if (DownedSorrow) {
-                downed.Add("Rage");
-            }
-
-            return new TagCompound {
-                {"downed", downed }
-            };
+        public override void Initialize() {
+            Slain = new Dictionary<int, int>();
         }
 
+
+		public override TagCompound Save() {
+			TagCompound tagCompound = new TagCompound
+			{
+
+			};
+			SaveSlain(tagCompound);
+			return tagCompound;
+		}
+
+		private void SaveSlain(TagCompound tag) {
+            tag.Add("type", Slain.Keys.ToList());
+            tag.Add("value", Slain.Values.ToList());
+        }
+
+        public override void Load(TagCompound tag) {
+            LoadSlain(tag);
+        }
+
+        private void LoadSlain(TagCompound tag) {
+            if (tag.ContainsKey("type")) {
+                List<int> list = tag.Get<List<int>>("type");
+                List<int> list2 = tag.Get<List<int>>("value");
+                for (int i = 0; i < list.Count; i++) {
+                    Slain.Add(list[i], list2[i]);
+                }
+            }
+        }
     }
 }

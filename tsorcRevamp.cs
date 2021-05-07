@@ -695,7 +695,8 @@ namespace tsorcRevamp {
             toggleDragoonBoots = null;
             KillAllowed = null;
             PlaceAllowed = null;
-
+            Unbreakable = null;
+            tsorcRevampWorld.Slain = null;
         }
         #region permanent potion recipes
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {

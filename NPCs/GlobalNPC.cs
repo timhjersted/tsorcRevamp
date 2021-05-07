@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 
@@ -899,8 +901,27 @@ namespace tsorcRevamp.NPCs {
 
                 DarkSoulQuantity = (int)(multiplier * enemyValue);
 
-                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
-
+                if (!(DarkSoulQuantity == 0)) {
+                    #region Bosses drop souls once
+                    if (npc.boss) {
+                        Main.NewText("boss slain");
+                        if (tsorcRevampWorld.Slain.ContainsKey(npc.type)) {
+                            DarkSoulQuantity = 0;
+                            return;
+                        }
+                        else {
+                            if (Main.netMode == NetmodeID.SinglePlayer) {
+                                Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
+                            }
+                            else if (Main.netMode == NetmodeID.Server) {
+                                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
+                            }
+                            tsorcRevampWorld.Slain.Add(npc.type, 0);
+                        }
+                    }
+                    #endregion
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
+                }
 
 
                 // Consumable Soul drops ahead - Current numbers give aprox. +20% souls
