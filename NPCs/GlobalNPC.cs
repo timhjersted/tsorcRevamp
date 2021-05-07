@@ -744,10 +744,6 @@ namespace tsorcRevamp.NPCs {
 
         public override void NPCLoot(NPC npc) {
 
-            #region Bosses drop souls once
-            //todo
-            #endregion
-
             #region Loot Changes
 
             if (npc.type == NPCID.BigStinger) {
@@ -867,7 +863,7 @@ namespace tsorcRevamp.NPCs {
             #region Dark Souls & Consumable Souls Drops
 
 
-            if ((npc.lifeMax > 5 && npc.value >= 10f) || (npc.boss && !Main.expertMode)) { //stop zero-value souls from dropping
+            if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss) { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
 
                 if (npc.netID != NPCID.JungleSlime) {
                     if (Main.expertMode) { //npc.value is the amount of coins they drop
@@ -901,24 +897,27 @@ namespace tsorcRevamp.NPCs {
 
                 DarkSoulQuantity = (int)(multiplier * enemyValue);
 
-                if (!(DarkSoulQuantity == 0)) {
-                    #region Bosses drop souls once
-                    if (npc.boss) {
-                        if (tsorcRevampWorld.Slain.ContainsKey(npc.type)) {
-                            DarkSoulQuantity = 0;
-                            return;
+                #region Bosses drop souls once
+                if (npc.boss) {
+                    if (tsorcRevampWorld.Slain.ContainsKey(npc.type)) {
+                        DarkSoulQuantity = 0;
+                        return;
+                    }
+                    else {
+                        if (Main.netMode == NetmodeID.SinglePlayer) {
+                            Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
                         }
-                        else {
-                            if (Main.netMode == NetmodeID.SinglePlayer) {
-                                Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
-                            }
-                            else if (Main.netMode == NetmodeID.Server) {
-                                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
-                            }
-                            tsorcRevampWorld.Slain.Add(npc.type, 0);
+                        else if (Main.netMode == NetmodeID.Server) {
+                            NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
+                        }
+                        tsorcRevampWorld.Slain.Add(npc.type, 0);
+                        if (Main.expertMode) {
+                            DarkSoulQuantity = 0;
                         }
                     }
-                    #endregion
+                }
+                #endregion
+                if (DarkSoulQuantity > 0) {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
                 }
 

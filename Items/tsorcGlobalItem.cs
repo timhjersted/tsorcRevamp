@@ -11,13 +11,13 @@ namespace tsorcRevamp.Items {
             float multiplier = 1f;
             int DarkSoulQuantity;
 
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
                 multiplier += 0.25f;
             }
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
                 multiplier += 0.15f;
             }
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
                 multiplier += 0.4f;
             }
 
@@ -26,13 +26,16 @@ namespace tsorcRevamp.Items {
             player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
         }
         public override void OpenVanillaBag(string context, Player player, int arg) {
-
+            var Slain = tsorcRevampWorld.Slain;
             if (context == "bossBag") {
                 if (arg == ItemID.KingSlimeBossBag) {
                     player.QuickSpawnItem(ItemID.GoldCoin, 10);
                     player.QuickSpawnItem(ItemID.Katana);
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.KingSlime)) {
-                        BossBagSouls(NPCID.KingSlime, player);
+                    if (Slain.ContainsKey(NPCID.KingSlime)) {
+                        if (Slain[NPCID.KingSlime] == 0) {
+                            BossBagSouls(NPCID.KingSlime, player);
+                            Slain[NPCID.KingSlime] = 1;
+                        }
                     }
                 }
 
@@ -41,74 +44,113 @@ namespace tsorcRevamp.Items {
                     player.QuickSpawnItem(ItemID.HerosHat);
                     player.QuickSpawnItem(ItemID.HerosPants);
                     player.QuickSpawnItem(ItemID.HerosShirt);
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu)) {
-                        BossBagSouls(NPCID.EyeofCthulhu, player);
+                    if (Slain.ContainsKey(NPCID.EyeofCthulhu)) {
+                        if (Slain[NPCID.EyeofCthulhu] == 0) {
+                            BossBagSouls(NPCID.EyeofCthulhu, player);
+                            Slain[NPCID.EyeofCthulhu] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.EaterOfWorldsBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead)) {//not a mistake. eow segments drop 8 silver (comparable to a voodoo demon) so just copy the eoc soul drop amount
-                        BossBagSouls(NPCID.EaterofWorldsHead, player);
+                    if (Slain.ContainsKey(NPCID.EaterofWorldsHead)) {
+                        if (Slain[NPCID.EaterofWorldsHead] == 0) {
+                            BossBagSouls(NPCID.EyeofCthulhu, player);
+                            Slain[NPCID.EaterofWorldsHead] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.BrainOfCthulhuBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.BrainofCthulhu)) {
-                        BossBagSouls(NPCID.BrainofCthulhu, player);
+                    if (Slain.ContainsKey(NPCID.BrainofCthulhu)) {
+                        if (Slain[NPCID.BrainofCthulhu] == 0) {
+                            BossBagSouls(NPCID.BrainofCthulhu, player);
+                            Slain[NPCID.BrainofCthulhu] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.QueenBeeBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.QueenBee)) {
-                        BossBagSouls(NPCID.QueenBee, player);
+                    if (Slain.ContainsKey(NPCID.QueenBee)) {
+                        if (Slain[NPCID.QueenBee] == 0) {
+                            BossBagSouls(NPCID.QueenBee, player);
+                            Slain[NPCID.QueenBee] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.WallOfFleshBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.WallofFlesh)) {
-                        BossBagSouls(NPCID.WallofFlesh, player);
+                    if (Slain.ContainsKey(NPCID.WallofFlesh)) {
+                        if (Slain[NPCID.WallofFlesh] == 0) {
+                            BossBagSouls(NPCID.WallofFlesh, player);
+                            Slain[NPCID.WallofFlesh] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.SkeletronBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead)) {
-                        BossBagSouls(NPCID.SkeletronHead, player);
+                    if (Slain.ContainsKey(NPCID.SkeletronHead)) {
+                        if (Slain[NPCID.SkeletronHead] == 0) {
+                            BossBagSouls(NPCID.SkeletronHead, player);
+                            Slain[NPCID.SkeletronHead] = 1;
+                        }
                     }
                     player.QuickSpawnItem(ModContent.ItemType<Miakoda>());
                 }
                 if (arg == ItemID.DestroyerBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.TheDestroyer)) {
-                        BossBagSouls(NPCID.TheDestroyer, player);
+                    if (Slain.ContainsKey(NPCID.TheDestroyer)) {
+                        if (Slain[NPCID.TheDestroyer] == 0) {
+                            BossBagSouls(NPCID.TheDestroyer, player);
+                            Slain[NPCID.TheDestroyer] = 1;
+                        }
                     }
                     player.QuickSpawnItem(ModContent.ItemType<RTQ2>());
                     player.QuickSpawnItem(ModContent.ItemType<CrestOfCorruption>(), 2);
                 }
                 if (arg == ItemID.TwinsBossBag) {
-                    if ((!tsorcRevampWorld.Slain.ContainsKey(NPCID.Retinazer)) || (!tsorcRevampWorld.Slain.ContainsKey(NPCID.Spazmatism))) { //idk which it will use
-                        BossBagSouls(NPCID.Retinazer, player);
+                    if ((Slain.ContainsKey(NPCID.Retinazer)) || (Slain.ContainsKey(NPCID.Spazmatism))) { //idk which it will use
+                        if (Slain[NPCID.Retinazer] == 0) {
+                            BossBagSouls(NPCID.Retinazer, player);
+                            Slain[NPCID.Retinazer] = 1;
+                        }
                     }
                     player.QuickSpawnItem(ModContent.ItemType<CrestOfSky>(), 2);
                 }
                 if (arg == ItemID.SkeletronPrimeBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronPrime)) {
-                        BossBagSouls(NPCID.SkeletronPrime, player);
+                    if (Slain.ContainsKey(NPCID.SkeletronPrime)) {
+                        if (Slain[NPCID.SkeletronPrime] == 0) {
+                            BossBagSouls(NPCID.SkeletronPrime, player);
+                            Slain[NPCID.SkeletronPrime] = 1;
+                        }
                     }
                     player.QuickSpawnItem(ItemID.AngelWings);
                     player.QuickSpawnItem(ModContent.ItemType<CrestOfSteel>(), 2);
                 }
                 if (arg == ItemID.PlanteraBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.Plantera)) {
-                        BossBagSouls(NPCID.Plantera, player);
+                    if (Slain.ContainsKey(NPCID.Plantera)) {
+                        if (Slain[NPCID.Plantera] == 0) {
+                            BossBagSouls(NPCID.Plantera, player);
+                            Slain[NPCID.Plantera] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.GolemBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.Golem)) {
-                        BossBagSouls(NPCID.Golem, player);
+                    if (Slain.ContainsKey(NPCID.Golem)) {
+                        if (Slain[NPCID.Golem] == 0) {
+                            BossBagSouls(NPCID.Golem, player);
+                            Slain[NPCID.Golem] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.FishronBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.DukeFishron)) {
-                        BossBagSouls(NPCID.DukeFishron, player);
+                    if (Slain.ContainsKey(NPCID.DukeFishron)) {
+                        if (Slain[NPCID.DukeFishron] == 0) {
+                            BossBagSouls(NPCID.DukeFishron, player);
+                            Slain[NPCID.DukeFishron] = 1;
+                        }
                     }
                 }
                 if (arg == ItemID.MoonLordBossBag) {
-                    if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.MoonLordCore)) {
-                        BossBagSouls(NPCID.MoonLordCore, player);
+                    if (Slain.ContainsKey(NPCID.MoonLordCore)) {
+                        if (Slain[NPCID.MoonLordCore] == 0) {
+                            BossBagSouls(NPCID.MoonLordCore, player);
+                            Slain[NPCID.MoonLordCore] = 1;
+                        }
                     }
                 }
             }
