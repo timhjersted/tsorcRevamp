@@ -823,14 +823,14 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), mod.ItemType("CoralSword"));
             }
 
-            if (Main.rand.Next(25) == 0 && (npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
+            if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
                                 (npc.type >= NPCID.HeadacheSkeleton && npc.type <= NPCID.PantlessSkeleton) ||
                                 (npc.type >= NPCID.SkeletonTopHat && npc.type <= NPCID.SkeletonAlien) ||
                                 (npc.type >= NPCID.BoneThrowingSkeleton && npc.type <= NPCID.BoneThrowingSkeleton4) ||
                                 npc.type == NPCID.HeavySkeleton ||
                                 npc.type == NPCID.Skeleton ||
                                 npc.type == NPCID.ArmoredSkeleton ||
-                                npc.type == NPCID.SkeletonArcher)
+                                npc.type == NPCID.SkeletonArcher))
 
             {
                 Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
@@ -846,7 +846,7 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ItemID.Heart, 7);
             }
 
-            if ((Main.rand.Next(25) == 0 && (npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
+            if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
                                 (npc.type >= NPCID.BigTwiggyZombie && npc.type <= NPCID.SmallZombie) ||
                                 (npc.type >= NPCID.ZombieDoctor && npc.type <= NPCID.ZombiePixie) ||
                                 (npc.type >= NPCID.ZombieXmas && npc.type <= NPCID.ZombieSweater) ||
