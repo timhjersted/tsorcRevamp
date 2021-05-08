@@ -52,13 +52,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             {
                 item.useTime = 32;
                 item.useAnimation = 32;
-                item.shoot = mod.ProjectileType("ToxicCatDetonator");
+                item.shoot = ModContent.ProjectileType<Projectiles.ToxicCatDetonator>();
             }
             else
             {
                 item.useTime = 18;
                 item.useAnimation = 18;
-                item.shoot = mod.ProjectileType("ToxicCatShot");
+                item.shoot = ModContent.ProjectileType<Projectiles.ToxicCatShot>();
             }
             return base.CanUseItem(player);
         }

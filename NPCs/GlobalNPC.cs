@@ -1110,7 +1110,7 @@ namespace tsorcRevamp.NPCs {
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
         {
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == mod.ProjectileType("ToxicCatDetonator") || projectile.type == mod.ProjectileType("ToxicCatExplosion")))
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
                 Main.PlaySound(SoundID.Item74.WithPitchVariance(.3f), projectile.position);
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
@@ -1119,7 +1119,7 @@ namespace tsorcRevamp.NPCs {
                     Projectile p = Main.projectile[i];
                     if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
                         p.active = false;
-                        Projectile.NewProjectile(p.Center, npc.velocity, mod.ProjectileType("ToxicCatExplosion"), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
+                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
 
                     }
                 }
