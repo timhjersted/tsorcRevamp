@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Pets {
 				}
 				Main.mouseRightRelease = false;
 				if (p.chest == chestType) {
-					Main.PlaySound(SoundID.Item59);
+					Main.PlaySound(p.chest == -2 ? SoundID.Item59 : new Terraria.Audio.LegacySoundStyle(SoundID.CoinPickup, 0));
 					p.chest = -1;
 					Recipe.FindRecipes();
 					return;
@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Pets {
 				p.talkNPC = -1;
 				Main.npcShop = 0;
 				Main.playerInventory = true;
-				Main.PlaySound(p.chest == -2? SoundID.Item59 : SoundID.Item58);
+				Main.PlaySound(p.chest == -2? SoundID.Item59 : new Terraria.Audio.LegacySoundStyle(SoundID.CoinPickup, 0));
 				Recipe.FindRecipes();
 			}
 		}
@@ -101,7 +101,6 @@ namespace tsorcRevamp.Projectiles.Pets {
 		}
 	}
 	public class SafeProjectile : ModProjectile {
-		public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
 		public override void SetStaticDefaults() => DisplayName.SetDefault("");
 
         public override void SetDefaults() {
@@ -123,7 +122,6 @@ namespace tsorcRevamp.Projectiles.Pets {
 		}
 	}
 	public class PiggyBankProjectile : ModProjectile {
-        public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
 		public override void SetStaticDefaults() => DisplayName.SetDefault("");
 
 		public override void SetDefaults() {

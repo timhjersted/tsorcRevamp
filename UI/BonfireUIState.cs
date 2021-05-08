@@ -86,6 +86,7 @@ namespace tsorcRevamp.UI {
                     anyBanks = true;
                     projectile.active = false;
                     player.chest = -1;
+                    break;
                 }
                 /*if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI) {
                     //kill safes when spawning a piggy bank
