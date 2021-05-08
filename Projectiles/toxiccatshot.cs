@@ -90,13 +90,6 @@ namespace tsorcRevamp.Projectiles
 			bool hitEffect = projectile.localAI[0] % 30f == 0f;
 			int projTargetIndex = (int)TargetWhoAmI;
 
-			if (Main.npc[projTargetIndex].GetGlobalNPC<tsorcRevampGlobalNPC>().resettoxiccatblobs)
-			{
-				{
-					projectile.Kill();
-				}
-			}
-
 			if (projectile.localAI[0] >= 60 * aiFactor || projTargetIndex < 0 || projTargetIndex >= 200)
 			{ // If the index is past its limits, kill it
 				projectile.Kill();

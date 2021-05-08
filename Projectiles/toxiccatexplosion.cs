@@ -1,6 +1,6 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
-using ChromasMod.Items.Ranged;
+using tsorcRevamp.Items.Weapons.Ranged;
 using Microsoft.Xna.Framework;
 using Terraria;
 using System;
@@ -20,9 +20,11 @@ namespace tsorcRevamp.Projectiles
             projectile.ranged = true;
             projectile.tileCollide = false;
             projectile.timeLeft = 2;
-            projectile.penetrate = -1;
+            projectile.penetrate = -1; //this can be removed to only damage the host
             drawOffsetX = -2;
             drawOriginOffsetY = -2;
+            projectile.usesLocalNPCImmunity = true; //any amount of explosions can damage a target simultaneously
+            projectile.localNPCHitCooldown = -1; //but a single explosion can never damage the same enemy more than once
         }
 
         public override void AI()

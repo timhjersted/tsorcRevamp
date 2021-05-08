@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ChromasMod.Items.Ranged
+namespace tsorcRevamp.Items.Weapons.Ranged
 {
     public class toxiccat : ModItem
     {
@@ -31,7 +31,7 @@ namespace ChromasMod.Items.Ranged
             item.scale = 0.8f;
             item.rare = ItemRarityID.Green;
             item.shoot = mod.ProjectileType("toxiccatshot");
-            item.shootSpeed = 5f;
+            item.shootSpeed = 15f;
         }
 
         public override Vector2? HoldoutOffset()

@@ -1108,9 +1108,16 @@ namespace tsorcRevamp.NPCs {
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().toxiccatdrain && (projectile.type == mod.ProjectileType("toxiccatdetonator") || projectile.type == mod.ProjectileType("toxiccatexplosion")))
             {
                 Main.PlaySound(SoundID.Item74.WithPitchVariance(.3f), projectile.position);
-                Projectile.NewProjectile(npc.Center, npc.velocity, mod.ProjectileType("toxiccatexplosion"), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().resettoxiccatblobs = true;
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().toxiccatdrain = false;
+                for (int i = 0; i < 1000; i++) {
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.toxiccatshot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
+                        p.active = false;
+                        Projectile.NewProjectile(p.Center, npc.velocity, mod.ProjectileType("toxiccatexplosion"), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
+
+                    }
+                }
             }
 
         }
