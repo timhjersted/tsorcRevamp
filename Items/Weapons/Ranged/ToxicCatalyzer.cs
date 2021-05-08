@@ -5,8 +5,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
-    public class toxiccat : ModItem
+    public class ToxicCatalyzer : ModItem
     {
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Toxic Catalyzer");
@@ -30,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.value = 150000;
             item.scale = 0.8f;
             item.rare = ItemRarityID.Green;
-            item.shoot = mod.ProjectileType("toxiccatshot");
+            item.shoot = mod.ProjectileType("ToxicCatShot");
             item.shootSpeed = 5f;
         }
 
@@ -50,13 +52,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             {
                 item.useTime = 32;
                 item.useAnimation = 32;
-                item.shoot = mod.ProjectileType("toxiccatdetonator");
+                item.shoot = mod.ProjectileType("ToxicCatDetonator");
             }
             else
             {
                 item.useTime = 18;
                 item.useAnimation = 18;
-                item.shoot = mod.ProjectileType("toxiccatshot");
+                item.shoot = mod.ProjectileType("ToxicCatShot");
             }
             return base.CanUseItem(player);
         }
@@ -65,7 +67,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/pulsarshot").WithVolume(.6f).WithPitchVariance(.3f));
+                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f));
             }
 
             {

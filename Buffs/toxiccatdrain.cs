@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
 {
-	public class toxiccatdrain : ModBuff
+	public class ToxicCatDrain : ModBuff
 	{
 		public override bool Autoload(ref string name, ref string texture)
 		{
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Buffs
 
 		public override void Update(NPC npc, ref int buffIndex)
 		{
-			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().toxiccatdrain = true;
+			npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain = true;
 		}
 	}
 }

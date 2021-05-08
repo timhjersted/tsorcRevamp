@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class toxiccatdetonator : ModProjectile
+    class ToxicCatDetonator : ModProjectile
     {
         public override void SetStaticDefaults()
         {

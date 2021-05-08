@@ -7,7 +7,7 @@ using System;
 
 namespace tsorcRevamp.Projectiles
 {
-    class toxiccatexplosion : ModProjectile
+    class ToxicCatExplosion : ModProjectile
     {
         public override void SetDefaults()
         {

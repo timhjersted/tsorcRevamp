@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles
 {
-	class toxiccatshot : ModProjectile
+	class ToxicCatShot : ModProjectile
     {
 		public override void SetStaticDefaults()
 		{
@@ -16,19 +16,15 @@ namespace tsorcRevamp.Projectiles
 		public override void SetDefaults()
         {
 
-            // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.
             projectile.width = 10;
             projectile.height = 10;
             projectile.friendly = true;
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-			//projectile.timeLeft = 78;
 			projectile.timeLeft = 74;
 			projectile.penetrate = 3;
-			//projectile.hide = true;
 
-			//These 2 help the projectile hitbox be centered on the projectile sprite.
 			drawOffsetX = -2;
             drawOriginOffsetY = -2;
         }
@@ -211,7 +207,7 @@ namespace tsorcRevamp.Projectiles
 				(target.Center - projectile.Center) *
 				0.75f; // Change velocity based on delta center of targets (difference between entity centers)
 			projectile.netUpdate = true; // netUpdate this javelin
-			target.AddBuff(ModContent.BuffType<Buffs.toxiccatdrain>(), 900); // Adds the ExampleJavelin debuff for a very small DoT
+			target.AddBuff(ModContent.BuffType<Buffs.ToxicCatDrain>(), 900); // Adds the ExampleJavelin debuff for a very small DoT
 
 			projectile.damage = 0; // Makes sure the sticking javelins do not deal damage anymore
 
@@ -236,7 +232,7 @@ namespace tsorcRevamp.Projectiles
 					&& currentProjectile.active // Make sure the projectile is active
 					&& currentProjectile.owner == Main.myPlayer // Make sure the projectile's owner is the client's player
 					&& currentProjectile.type == projectile.type // Make sure the projectile is of the same type as this javelin
-					&& currentProjectile.modProjectile is toxiccatshot javelinProjectile // Use a pattern match cast so we can access the projectile like an ExampleJavelinProjectile
+					&& currentProjectile.modProjectile is ToxicCatShot javelinProjectile // Use a pattern match cast so we can access the projectile like an ExampleJavelinProjectile
 					&& javelinProjectile.IsStickingToTarget // the previous pattern match allows us to use our properties
 					&& javelinProjectile.TargetWhoAmI == target.whoAmI)
 				{

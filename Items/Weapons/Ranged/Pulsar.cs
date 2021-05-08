@@ -7,11 +7,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 {
     public class Pulsar : ModItem
     {
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pulsar");
             Tooltip.SetDefault("Keep your enemies close, but not too close!"
-                                + "\nCan electrocute enemies");
+                                + "\nElectrocutes enemies"
+                                +"\nPowerful, but hard to master");
+
         }
 
         public override void SetDefaults()
