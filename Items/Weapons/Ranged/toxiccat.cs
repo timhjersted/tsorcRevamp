@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.scale = 0.8f;
             item.rare = ItemRarityID.Green;
             item.shoot = mod.ProjectileType("toxiccatshot");
-            item.shootSpeed = 15f;
+            item.shootSpeed = 5f;
         }
 
         public override Vector2? HoldoutOffset()
