@@ -135,9 +135,9 @@ namespace tsorcRevamp {
             }
 
             int PTilePosX = (int)player.position.X / 16;
-            bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
+            bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 2000);
 
-            if ((player.ZoneRockLayerHeight && player.ZoneHoly) && !Ocean && !(player.ZoneRockLayerHeight && player.ZoneDungeon) || player.ZoneMeteor) {
+            if ((player.ZoneRockLayerHeight && player.ZoneHoly && !Ocean && !(player.ZoneRockLayerHeight && player.ZoneDungeon) && !player.ZoneOverworldHeight || player.ZoneMeteor) && !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 player.gravControl = true;
             }
 
