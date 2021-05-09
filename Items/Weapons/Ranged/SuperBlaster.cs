@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(null, "Blaster");
             recipe.AddIngredient(ItemID.HellstoneBar, 8);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 7500);
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

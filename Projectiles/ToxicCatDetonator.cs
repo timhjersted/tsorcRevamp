@@ -70,7 +70,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.localAI[0] += 1f;
             }
 
-            Lighting.AddLight(projectile.position, 0.2496f, 0.4584f, 0.130f);
+            Lighting.AddLight(projectile.position, 0.325f, 0.59f, 0.17f);
 
             if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
             {

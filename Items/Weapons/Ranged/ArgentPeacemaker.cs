@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.HallowedBar, 10);
             recipe.AddIngredient(ItemID.PixieDust, 35);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
-            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

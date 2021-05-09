@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.Revolver);
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
