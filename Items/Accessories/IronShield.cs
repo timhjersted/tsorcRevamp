@@ -1,12 +1,12 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
     public class IronShield : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Reduces damage taken by 6%" +
-                                "\nGreater defense at the cost of mobility" +
+            Tooltip.SetDefault("Greater defense at the cost of mobility" +
                                 "\nMovement Speed -40%. Unequip to regain maximum jumping abilities." +
                                 "\nVery useful when low on life and survival is essential." +
                                 "\nCan be upgraded with 3000 Dark Souls (increased movement speed, thorns buff).");
@@ -23,7 +23,16 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.moveSpeed -= 0.4f;
-            player.endurance += 0.06f;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                player.endurance += 0.06f;
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                tooltips.Insert(4, new TooltipLine(mod, "", "Reduces damage taken by 6%"));
+            }
+
         }
 
         public override void AddRecipes() {

@@ -9,8 +9,7 @@ namespace tsorcRevamp.Items.Accessories {
     public class SpikedIronShield : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Reduces damage taken by 6%" +
-                                "\n'Everyone will stay away from you'" +
+            Tooltip.SetDefault("Everyone will stay away from you'" +
                                 "\n-30% Movement Speed, Thorns Buff" +
                                 "\nCan be upgraded with a Cobalt Shield and 3000 Dark Souls");
         }
@@ -25,9 +24,18 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.endurance += 0.06f;
             player.moveSpeed -= 0.3f;
             player.thorns = 1f;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                player.endurance += 0.06f;
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                tooltips.Insert(4, new TooltipLine(mod, "", "Reduces damage taken by 6%"));
+            }
+
         }
 
         public override void AddRecipes() {

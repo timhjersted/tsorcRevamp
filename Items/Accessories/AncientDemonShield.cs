@@ -1,12 +1,12 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
     public class AncientDemonShield : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Reduces damage taken by 6%" +
-                                "\nPowerful, but slows movement by 25%" +
+            Tooltip.SetDefault("Powerful, but slows movement by 25%" +
                                 "\nGreat Shield that grants immunity to knockback and gives thorns effect");
         }
 
@@ -21,9 +21,18 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.noKnockback = true;
-            player.endurance += 0.06f;
             player.moveSpeed -= 0.25f;
             player.thorns = 1f;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                player.endurance += 0.06f;
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                tooltips.Insert(4, new TooltipLine(mod, "", "Reduces damage taken by 6%"));
+            }
+
         }
 
         public override void AddRecipes() {
