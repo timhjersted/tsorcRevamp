@@ -38,9 +38,9 @@ namespace tsorcRevamp {
             On.Terraria.Player.Spawn += SpawnPatch;
 
             BonfireUIState = new BonfireUIState();
-            BonfireUIState.Activate();
+            if (!Main.dedServ) BonfireUIState.Activate();
             _bonfireUIState = new UserInterface();
-            _bonfireUIState.SetState(BonfireUIState);
+            if (!Main.dedServ) _bonfireUIState.SetState(BonfireUIState);
 
             KillAllowed = new BitArray(471);
             PlaceAllowed = new BitArray(471);

@@ -592,7 +592,7 @@ namespace tsorcRevamp {
                 souldroptimer++;
                 if (souldroptimer == 5 && souldroplooptimer < 13) {
                     foreach (Item item in player.inventory) {
-                        if (item.type == ModContent.ItemType<DarkSoul>() && Main.netMode != NetmodeID.MultiplayerClient) {
+                        if (item.type == ModContent.ItemType<DarkSoul>() /*&& Main.netMode != NetmodeID.MultiplayerClient*/) { //could this be dropping double though? Test with Zeo
                             Item.NewItem(player.Center, item.type, item.stack);
                             souldroplooptimer++;
                             souldroptimer = 0;
