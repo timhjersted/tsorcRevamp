@@ -594,55 +594,53 @@ namespace tsorcRevamp {
         }
 
         private void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self) {
-            //if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-            if (false) { // todo investigate screen flashing
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 Main.InitLifeBytes();
-                Player player = Main.LocalPlayer;
-                if (player.whoAmI == Main.myPlayer) {
+                if (self.whoAmI == Main.myPlayer) {
                     if (Main.mapTime < 5) {
                         Main.mapTime = 5;
                     }
                     Main.quickBG = 10;
-                    player.FindSpawn();
+                    self.FindSpawn();
                     Main.maxQ = true;
                 }
-                if (Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer) {
+                if (Main.netMode == NetmodeID.MultiplayerClient && self.whoAmI == Main.myPlayer) {
                     NetMessage.SendData(MessageID.SpawnPlayer, -1, -1, null, Main.myPlayer);
                     Main.gameMenu = false;
                 }
-                player.headPosition = Vector2.Zero;
-                player.bodyPosition = Vector2.Zero;
-                player.legPosition = Vector2.Zero;
-                player.headRotation = 0f;
-                player.bodyRotation = 0f;
-                player.legRotation = 0f;
-                player.lavaTime = player.lavaMax;
-                if (player.statLife <= 0) {
-                    int num = player.statLifeMax2 / 2;
-                    player.statLife = 100;
-                    if (num > player.statLife) {
-                        player.statLife = num;
+                self.headPosition = Vector2.Zero;
+                self.bodyPosition = Vector2.Zero;
+                self.legPosition = Vector2.Zero;
+                self.headRotation = 0f;
+                self.bodyRotation = 0f;
+                self.legRotation = 0f;
+                self.lavaTime = self.lavaMax;
+                if (self.statLife <= 0) {
+                    int num = self.statLifeMax2 / 2;
+                    self.statLife = 100;
+                    if (num > self.statLife) {
+                        self.statLife = num;
                     }
-                    player.breath = player.breathMax;
-                    if (player.spawnMax) {
-                        player.statLife = player.statLifeMax2;
-                        player.statMana = player.statManaMax2;
+                    self.breath = self.breathMax;
+                    if (self.spawnMax) {
+                        self.statLife = self.statLifeMax2;
+                        self.statMana = self.statManaMax2;
                     }
                 }
-                player.immune = true;
-                if (player.dead) {
-                    PlayerHooks.OnRespawn(player);
+                self.immune = true;
+                if (self.dead) {
+                    PlayerHooks.OnRespawn(self);
                 }
-                player.dead = false;
-                player.immuneTime = 0;
-                player.active = true;
-                if (player.SpawnX >= 0 && player.SpawnY >= 0) {
-                    player.position.X = player.SpawnX * 16 + 8 - player.width / 2;
-                    player.position.Y = player.SpawnY * 16 - player.height;
+                self.dead = false;
+                self.immuneTime = 0;
+                self.active = true;
+                if (self.SpawnX >= 0 && self.SpawnY >= 0) {
+                    self.position.X = self.SpawnX * 16 + 8 - self.width / 2;
+                    self.position.Y = self.SpawnY * 16 - self.height;
                 }
                 else {
-                    player.position.X = Main.spawnTileX * 16 + 8 - player.width / 2;
-                    player.position.Y = Main.spawnTileY * 16 - player.height;
+                    self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
+                    self.position.Y = Main.spawnTileY * 16 - self.height;
                     for (int i = Main.spawnTileX - 1; i < Main.spawnTileX + 2; i++) {
                         for (int j = Main.spawnTileY - 3; j < Main.spawnTileY; j++) {
                             if (Main.tile[i, j] != null) {
@@ -658,37 +656,37 @@ namespace tsorcRevamp {
                         }
                     }
                 }
-                player.wet = false;
-                player.wetCount = 0;
-                player.lavaWet = false;
-                player.fallStart = (int)(player.position.Y / 16f);
-                player.fallStart2 = player.fallStart;
-                player.velocity.X = 0f;
-                player.velocity.Y = 0f;
+                self.wet = false;
+                self.wetCount = 0;
+                self.lavaWet = false;
+                self.fallStart = (int)(self.position.Y / 16f);
+                self.fallStart2 = self.fallStart;
+                self.velocity.X = 0f;
+                self.velocity.Y = 0f;
                 for (int k = 0; k < 3; k++) {
-                    player.UpdateSocialShadow();
+                    self.UpdateSocialShadow();
                 }
-                player.oldPosition = player.position + player.BlehOldPositionFixer;
-                player.talkNPC = -1;
-                if (player.whoAmI == Main.myPlayer) {
+                self.oldPosition = self.position + self.BlehOldPositionFixer;
+                self.talkNPC = -1;
+                if (self.whoAmI == Main.myPlayer) {
                     Main.npcChatCornerItem = 0;
                 }
-                if (player.pvpDeath) {
-                    player.pvpDeath = false;
-                    player.immuneTime = 300;
-                    player.statLife = player.statLifeMax;
+                if (self.pvpDeath) {
+                    self.pvpDeath = false;
+                    self.immuneTime = 300;
+                    self.statLife = self.statLifeMax;
                 }
                 else {
-                    player.immuneTime = 60;
+                    self.immuneTime = 60;
                 }
-                if (player.whoAmI == Main.myPlayer) {
+                if (self.whoAmI == Main.myPlayer) {
                     Main.BlackFadeIn = 255;
                     Main.renderNow = true;
                     if (Main.netMode == NetmodeID.MultiplayerClient) {
                         Netplay.newRecent();
                     }
-                    Main.screenPosition.X = player.position.X + player.width / 2 - Main.screenWidth / 2;
-                    Main.screenPosition.Y = player.position.Y + player.height / 2 - Main.screenHeight / 2;
+                    Main.screenPosition.X = self.position.X + self.width / 2 - Main.screenWidth / 2;
+                    Main.screenPosition.Y = self.position.Y + self.height / 2 - Main.screenHeight / 2;
                 }
             }
             else {

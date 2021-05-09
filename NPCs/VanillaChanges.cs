@@ -731,5 +731,23 @@ namespace tsorcRevamp.NPCs {
                 npc.dontTakeDamageFromHostiles = true;
             }
         }
+
+        public override bool CheckDead(NPC npc) {
+            if (npc.type == NPCID.LavaSlime) {
+                try {
+                    int npcTileX = (int)(npc.Center.X / 16f);
+                    int npcTileY = (int)(npc.Center.Y / 16f);
+                    if (!WorldGen.SolidTile(npcTileX, npcTileY)) {
+                        Main.tile[npcTileX, npcTileY].liquid = 0;
+                        Main.tile[npcTileX, npcTileY].lava(lava: false);
+                        Main.tile[npcTileX, npcTileY].honey(honey: false);
+                        WorldGen.SquareTileFrame(npcTileX, npcTileY);
+                    }
+                }
+                catch { //do nothing
+                }
+            }
+            return base.CheckDead(npc);
+        }
     }
 }
