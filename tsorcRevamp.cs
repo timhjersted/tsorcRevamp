@@ -19,9 +19,9 @@ namespace tsorcRevamp {
 
         public static ModHotKey toggleDragoonBoots;
         public static int DarkSoulCustomCurrencyId;
-        public static BitArray KillAllowed = new BitArray(471);
-        public static BitArray PlaceAllowed = new BitArray(471);
-        public static BitArray Unbreakable = new BitArray(471);
+        public static BitArray KillAllowed;
+        public static BitArray PlaceAllowed;
+        public static BitArray Unbreakable;
 
         internal BonfireUIState BonfireUIState;
         private UserInterface _bonfireUIState;
@@ -42,6 +42,9 @@ namespace tsorcRevamp {
             _bonfireUIState = new UserInterface();
             _bonfireUIState.SetState(BonfireUIState);
 
+            KillAllowed = new BitArray(471);
+            PlaceAllowed = new BitArray(471);
+            Unbreakable = new BitArray(471);
             PopulateArrays();
         }
 
