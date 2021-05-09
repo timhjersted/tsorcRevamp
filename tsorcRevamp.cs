@@ -594,7 +594,8 @@ namespace tsorcRevamp {
         }
 
         private void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self) {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            //if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (false) { // todo investigate screen flashing
                 Main.InitLifeBytes();
                 Player player = Main.LocalPlayer;
                 if (player.whoAmI == Main.myPlayer) {
