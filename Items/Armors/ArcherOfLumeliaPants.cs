@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Arhcer of Lumelia Pants");
+            DisplayName.SetDefault("Archer of Lumelia Pants");
             Tooltip.SetDefault("Gifted with bows, repeaters, and other long range weapons\n+13% movement speed");
         }
 

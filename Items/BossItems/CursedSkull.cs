@@ -30,5 +30,15 @@ namespace tsorcRevamp.Items.BossItems {
             }
             return true;
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.Bone, 30);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
+        }
     }
 }

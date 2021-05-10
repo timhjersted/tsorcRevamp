@@ -169,7 +169,7 @@ namespace tsorcRevamp {
             bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
             bool underground = (player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
 
-            if (((underground && player.ZoneHoly && !Ocean && !player.ZoneDungeon) || player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (((underground && player.ZoneHoly && !Ocean && !player.ZoneDungeon /*&& !player.ZoneOverworldHeight*/) || player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
 
                 player.gravControl = true;
             }

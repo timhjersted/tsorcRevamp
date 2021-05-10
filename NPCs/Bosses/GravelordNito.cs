@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.aiStyle = 11;
             npc.damage = 50;
             npc.defense = 12;
-            npc.lifeMax = 5200;
+            npc.lifeMax = 4400;
             npc.HitSound = SoundID.NPCHit2;
             npc.DeathSound = SoundID.NPCDeath2;
             npc.noGravity = true;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Bosses {
             int num613 = 0;
             if (Main.expertMode) {
                 for (int num624 = 0; num624 < 200; num624++) {
-                    if (Main.npc[num624].active && Main.npc[num624].type == npc.type + 1) {
+                    if (Main.npc[num624].active && Main.npc[num624].type == NPCID.SkeletronHand) {
                         num613++;
                     }
                 }
