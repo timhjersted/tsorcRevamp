@@ -78,7 +78,17 @@ namespace tsorcRevamp {
         public bool chests;
         public int safe = -1;
 
-        public bool[] PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
+        public bool[] PermanentBuffToggles; 
+        public static Dictionary<int, float> DamageDir;
+
+        public override void Initialize() {
+            PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
+            DamageDir = new Dictionary<int, float> {
+                { 48, 4 }, //spike
+                { 76, 4 }, //hellstone
+                { 232, 4 } //wooden spike, in case tim decides to use them
+            };
+        }
 
         public override TagCompound Save() {
             return new TagCompound {
@@ -414,8 +424,7 @@ namespace tsorcRevamp {
                     player.rangedCrit += 2;
                     player.buffImmune[ModContent.BuffType<Strength>()] = true;
                 }
-                if (item.type == ModContent.ItemType<PermanentSoulSiphonPotion>() && PermanentBuffToggles[52])
-                {
+                if (item.type == ModContent.ItemType<PermanentSoulSiphonPotion>() && PermanentBuffToggles[52]) {
                     SoulSiphon = true;
                     player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
                 }
@@ -505,8 +514,7 @@ namespace tsorcRevamp {
                     Main.dust[num5].position = player.Center - vector;
                 }
 
-                if (Main.rand.Next(6) == 0)
-                {
+                if (Main.rand.Next(6) == 0) {
                     int x = Dust.NewDust(player.position, player.width, player.height, 89, player.velocity.X, player.velocity.Y, 120, default(Color), 1f);
                     Main.dust[x].noGravity = true;
                     Main.dust[x].velocity *= 0.75f;
@@ -523,8 +531,7 @@ namespace tsorcRevamp {
 
                 }
 
-                if (Main.rand.Next(3) == 0)
-                {
+                if (Main.rand.Next(3) == 0) {
                     int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
                     Main.dust[z].noGravity = true;
                     Main.dust[z].velocity *= 0.75f;
@@ -569,8 +576,60 @@ namespace tsorcRevamp {
             }
 
             #endregion
+            #region consistent hellstone and spike damage
+            float REDUCE = CheckReduceDefense(player.position, player.width, player.height, player.fireWalk); // <--- added firewalk parameter
+            if (REDUCE != 0) {
+                REDUCE = 1f - REDUCE;
+                player.statDefense = (int)(player.statDefense * REDUCE);
+            }
+            #endregion
+        }
 
+        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)  {
 
+            int playerTileXLeft = (int)(Position.X / 16f) - 1;
+            int playerTileXRight = (int)((Position.X + Width) / 16f) + 2;
+            int playerTileYBottom = (int)(Position.Y / 16f) - 1;
+            int playerTileYTop = (int)((Position.Y + Height) / 16f) + 2;
+
+            #region sanity
+            if (playerTileXLeft < 0) {
+                playerTileXLeft = 0;
+            }
+            if (playerTileXRight > Main.maxTilesX) {
+                playerTileXRight = Main.maxTilesX;
+            }
+            if (playerTileYBottom < 0) {
+                playerTileYBottom = 0;
+            }
+            if (playerTileYTop > Main.maxTilesY) {
+                playerTileYTop = Main.maxTilesY;
+            }
+            #endregion
+
+            for (int i = playerTileXLeft; i < playerTileXRight; i++) {
+                for (int j = playerTileYBottom; j < playerTileYTop; j++) {
+                    if (Main.tile[i, j] != null && Main.tile[i, j].active()) {
+                        Vector2 TilePos;
+                        TilePos.X = i * 16;
+                        TilePos.Y = j * 16;
+
+                        int type = Main.tile[i, j].type;
+
+                        if (DamageDir.ContainsKey(type) && !(fireWalk && type == 76)) {
+                            float a = DamageDir[type];
+                            float z = 0.5f;
+                            if (Position.X + Width > TilePos.X - z &&
+                                Position.X < TilePos.X + 16f + z &&
+                                Position.Y + Height > TilePos.Y - z &&
+                                Position.Y < TilePos.Y + 16f + z) {
+                                return a;
+                            }
+                        }
+                    }
+                }
+            }
+            return 0;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
@@ -739,8 +798,7 @@ namespace tsorcRevamp {
                     }
                 }
             }
-            if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
-            {
+            if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0) {
                 player.AddBuff(BuffID.BrokenArmor, 180);
                 player.AddBuff(BuffID.OnFire, 180);
             }
