@@ -51,6 +51,7 @@ namespace tsorcRevamp {
         public bool ConditionOverload = true;
 
         public int CurseLevel = 1;
+        public int PowerfulCurseLevel = 1;
         public bool DarkInferno = false;
         public bool CrimsonDrain = false;
 
@@ -78,7 +79,9 @@ namespace tsorcRevamp {
         public bool chests;
         public int safe = -1;
 
-        public bool[] PermanentBuffToggles; 
+        public int FracturingArmor = 1;
+
+        public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
 
         public override void Initialize() {
@@ -137,7 +140,25 @@ namespace tsorcRevamp {
             souldroplooptimer = 0;
             souldroptimer = 0;
             SOADrain = false;
+            FracturingArmor = 1;
         }
+
+        public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
+            if (!Main.gameMenu) {
+                if (player.HasBuff(ModContent.BuffType<Chilled>())) {
+                    r *= 0.3804f;
+                    g *= 0.6902f;
+                    b *= 254 / 255; 
+                }
+                if (Shockwave) {
+                    r *= 0.7372f;
+                    g *= 0.5176f;
+                    b *= 0.3686f;
+                }
+            }
+        }
+
+
 
         public override void PostUpdateEquips() {
             if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
@@ -145,12 +166,13 @@ namespace tsorcRevamp {
             }
 
             int PTilePosX = (int)player.position.X / 16;
-            bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 2000);
+            bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
+            bool underground = (player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
 
-            if ((player.ZoneRockLayerHeight && player.ZoneHoly && !Ocean && !(player.ZoneRockLayerHeight && player.ZoneDungeon) && !player.ZoneOverworldHeight || player.ZoneMeteor) && !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (((underground && player.ZoneHoly && !Ocean && !player.ZoneDungeon) || player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+
                 player.gravControl = true;
             }
-
             #region Permanent Potions
 
             foreach (Item item in player.inventory) {
@@ -433,45 +455,101 @@ namespace tsorcRevamp {
             #endregion
 
 
-            if (Shockwave) {
-                if (player.controlDown && player.velocity.Y != 0f) {
-                    player.gravity += 5f;
-                    player.maxFallSpeed *= 1.25f;
-                    if (!Falling) {
-                        fallStartY = player.position.Y;
+            if (Shockwave) { 
+                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                    if (player.controlDown && player.velocity.Y != 0f) {
+                        player.gravity += 5f;
+                        player.maxFallSpeed *= 1.25f;
+                        if (!Falling) {
+                            fallStartY = player.position.Y;
+                        }
+                        if (player.velocity.Y > 12f) {
+                            Falling = true;
+                            StopFalling = 0;
+                            player.noKnockback = true;
+                        }
                     }
-                    if (player.velocity.Y > 12f) {
-                        Falling = true;
+                    if (player.velocity.Y == 0f && Falling && player.controlDown && !player.wet) {
+                        for (int i = 0; i < 30; i++) {
+                            int dustIndex2 = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 31, 0f, 0f, 100);
+                            Main.dust[dustIndex2].scale = 0.1f + Main.rand.Next(5) * 0.1f;
+                            Main.dust[dustIndex2].fadeIn = 1.5f + Main.rand.Next(5) * 0.1f;
+                            Main.dust[dustIndex2].noGravity = true;
+                        }
+                        for (int i = -8; i < 9; i++) {
+                            Vector2 shotDirection = new Vector2(0f, -16f);
+                            FallDist = (int)((player.position.Y - fallStartY) / 16);
+
+                            int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
+                            Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (11.25f * i))); //lerp wasnt working, so do manual interpolation
+                        }
+
+                        Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
+                        Falling = false;
+                    }
+                    if (player.velocity.Y <= 2f) {
+                        StopFalling++;
+                    }
+                    else {
                         StopFalling = 0;
-                        player.noKnockback = true;
                     }
+                    if (StopFalling > 1) {
+                        Falling = false;
+                    } 
                 }
-                if (player.velocity.Y == 0f && Falling && player.controlDown && !player.wet) {
-                    for (int i = 0; i < 30; i++) {
-                        int dustIndex2 = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 31, 0f, 0f, 100);
-                        Main.dust[dustIndex2].scale = 0.1f + Main.rand.Next(5) * 0.1f;
-                        Main.dust[dustIndex2].fadeIn = 1.5f + Main.rand.Next(5) * 0.1f;
-                        Main.dust[dustIndex2].noGravity = true;
+                else { //old shockwave
+                    int fallStart_old = 0;
+                    var P = Main.LocalPlayer;
+                    if (Main.rand.Next(50) == 0) {
+                        int D = Dust.NewDust(P.position, P.width, P.height, 9, (P.velocity.X * 0.2f) + (P.direction * 3), P.velocity.Y * 1.2f, 60, new Color(), 1f);
+                        Main.dust[D].noGravity = true;
+                        Main.dust[D].velocity.X *= 1.2f;
+                        Main.dust[D].velocity.X *= 1.2f;
                     }
-                    for (int i = -8; i < 9; i++) {
-                        Vector2 shotDirection = new Vector2(0f, -16f);
-                        FallDist = (int)((player.position.Y - fallStartY) / 16);
+                    if (Main.rand.Next(50) == 0) {
+                        int D2 = Dust.NewDust(P.position, P.width, P.height, 9, (P.velocity.X * 0.2f) + (P.direction * 3), P.velocity.Y * 1.2f, 60, new Color(), 1f);
+                        Main.dust[D2].noGravity = true;
+                        Main.dust[D2].velocity.X *= -1.2f;
+                        Main.dust[D2].velocity.X *= 1.2f;
+                    }
+                    if (Main.rand.Next(50) == 0) {
+                        int D3 = Dust.NewDust(P.position, P.width, P.height, 9, (P.velocity.X * 0.2f) + (P.direction * 3), P.velocity.Y * 1.2f, 60, new Color(), 1f);
+                        Main.dust[D3].noGravity = true;
+                        Main.dust[D3].velocity.X *= 1.2f;
+                        Main.dust[D3].velocity.X *= -1.2f;
+                    }
+                    if (Main.rand.Next(50) == 0) {
+                        int D4 = Dust.NewDust(P.position, P.width, P.height, 9, (P.velocity.X * 0.2f) + (P.direction * 3), P.velocity.Y * 1.2f, 60, new Color(), 1f);
+                        Main.dust[D4].noGravity = true;
+                        Main.dust[D4].velocity.X *= -1.2f;
+                        Main.dust[D4].velocity.X *= -1.2f;
+                    }
+                    int sw = (int)(Main.screenWidth);
+                    int sh = (int)(Main.screenHeight);
+                    int sx = (int)(Main.screenPosition.X);
+                    int sy = (int)(Main.screenPosition.Y);
 
-                        int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
-                        Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (11.25f * i))); //lerp wasnt working, so do manual interpolation
-                    }
+                    if (fallStart_old == -1) fallStart_old = P.fallStart;
+                    int fall_dist = 0;
+                    if (P.velocity.Y == 0f) // detect landing from a fall
+                        fall_dist = (int)((float)((int)(P.position.Y / 16f) - fallStart_old) * P.gravDir);
+                    Vector2 p_pos = P.position + new Vector2(P.width, P.height) / 2f;
 
-                    Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
-                    Falling = false;
-                }
-                if (player.velocity.Y <= 2f) {
-                    StopFalling++;
-                }
-                else {
-                    StopFalling = 0;
-                }
-                if (StopFalling > 1) {
-                    Falling = false;
+                    if (fall_dist > 3) // just fell
+                    {
+                        for (int k = 0; k < Main.npc.Length; k++) { // iterate through NPCs
+                            NPC N = Main.npc[k];
+                            if (!N.active || N.dontTakeDamage || N.friendly || N.life < 1) continue;
+                            Vector2 n_pos = new Vector2(N.position.X + (float)N.width * 0.5f, N.position.Y + (float)N.height * 0.5f); // NPC location
+                            int HitDir = -1;
+                            if (n_pos.X > p_pos.X) HitDir = 1;
+                            if ((N.position.X >= sx) && (N.position.X <= sx + sw) && (N.position.Y >= sy) && (N.position.Y <= sy + sh)) { // on screen
+                                N.StrikeNPC(2 * fall_dist, 5f, HitDir);
+                                if (Main.netMode != NetmodeID.SinglePlayer) NetMessage.SendData(MessageID.StrikeNPC, -1, -1, null, k, 2 * fall_dist, 10f, HitDir, 0); // for multiplayer support
+                            } // END on screen
+                        } // END iterate through NPCs
+                    } // END just fell
+                    fallStart_old = P.fallStart;
                 }
             }
             if (!Shockwave) {
@@ -479,17 +557,42 @@ namespace tsorcRevamp {
             }
 
             if (CrimsonDrain) {
-                for (int l = 0; l < 200; l++) {
-                    NPC nPC = Main.npc[l];
-                    if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
-                        nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
+                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                    for (int l = 0; l < 200; l++) {
+                        NPC nPC = Main.npc[l];
+                        if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
+                            nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
+                        }
                     }
-                }
 
-                Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
-                for (int j = 1; j < 50; j++) {
-                    var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
-                    Main.dust[x].noGravity = true;
+                    Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
+                    for (int j = 1; j < 50; j++) {
+                        var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
+                        Main.dust[x].noGravity = true;
+                    } 
+                }
+                else { //old crimson pot
+                    int count = 0;
+                    var P = Main.LocalPlayer;
+                    int x = (int)P.position.X;
+                    int y = (int)P.position.Y;
+                    for (int k = 0; k < Main.npc.Length; k++) {
+                        NPC N = Main.npc[k];
+                        if (N.townNPC) continue;
+                        if (!N.active || N.dontTakeDamage || N.friendly || N.life < 1) continue;
+                        if (N.position.X >= x - 320 && N.position.X <= x + 320 && N.position.Y >= y - 320 && N.position.Y <= y + 320) {
+                            count++;
+                            if (count % 50 == 0) {
+                                foreach (NPC N2 in Main.npc) {
+                                    if (N2.position.X >= x - 320 && N2.position.X <= x + 320 && N2.position.Y >= y - 320 && N2.position.Y <= y + 320) {
+                                        if (!N2.active || N2.dontTakeDamage || N2.townNPC || N2.life < 1 || N2.boss || N2.realLife >= 0) continue;
+                                        N2.StrikeNPC(1, 0f, 1);
+                                    }
+                                }
+                                count = 0;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -585,7 +688,7 @@ namespace tsorcRevamp {
             #endregion
         }
 
-        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)  {
+        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk) {
 
             int playerTileXLeft = (int)(Position.X / 16f) - 1;
             int playerTileXRight = (int)((Position.X + Width) / 16f) + 2;
@@ -662,6 +765,7 @@ namespace tsorcRevamp {
             }
             DarkInferno = false;
             Falling = false;
+            FracturingArmor = 1;
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit) {

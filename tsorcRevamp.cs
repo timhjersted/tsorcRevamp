@@ -786,20 +786,20 @@ namespace tsorcRevamp {
                 PermaPotionRecipeB(this, ItemID.InfernoPotion, ModContent.ItemType<PermanentInfernoPotion>());
                 #endregion
                 #region add c tier recipes
-                PermaPotionRecipeB(this, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
-                PermaPotionRecipeB(this, ItemID.BuilderPotion, ModContent.ItemType<PermanentBuilderPotion>());
-                PermaPotionRecipeB(this, ItemID.ShinePotion, ModContent.ItemType<PermanentShinePotion>());
-                PermaPotionRecipeB(this, ItemID.TrapsightPotion, ModContent.ItemType<PermanentDangersensePotion>());
-                PermaPotionRecipeB(this, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
-                PermaPotionRecipeB(this, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
-                PermaPotionRecipeB(this, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
-                PermaPotionRecipeB(this, ItemID.FlipperPotion, ModContent.ItemType<PermanentFlipperPotion>());
-                PermaPotionRecipeB(this, ItemID.HunterPotion, ModContent.ItemType<PermanentHunterPotion>());
-                PermaPotionRecipeB(this, ItemID.InvisibilityPotion, ModContent.ItemType<PermanentInvisibilityPotion>());
-                PermaPotionRecipeB(this, ItemID.NightOwlPotion, ModContent.ItemType<PermanentNightOwlPotion>());
-                PermaPotionRecipeB(this, ItemID.ThornsPotion, ModContent.ItemType<PermanentThornsPotion>());
-                PermaPotionRecipeB(this, ItemID.WarmthPotion, ModContent.ItemType<PermanentWarmthPotion>());
-                PermaPotionRecipeB(this, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
+                PermaPotionRecipeC(this, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
+                PermaPotionRecipeC(this, ItemID.BuilderPotion, ModContent.ItemType<PermanentBuilderPotion>());
+                PermaPotionRecipeC(this, ItemID.ShinePotion, ModContent.ItemType<PermanentShinePotion>());
+                PermaPotionRecipeC(this, ItemID.TrapsightPotion, ModContent.ItemType<PermanentDangersensePotion>());
+                PermaPotionRecipeC(this, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
+                PermaPotionRecipeC(this, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
+                PermaPotionRecipeC(this, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
+                PermaPotionRecipeC(this, ItemID.FlipperPotion, ModContent.ItemType<PermanentFlipperPotion>());
+                PermaPotionRecipeC(this, ItemID.HunterPotion, ModContent.ItemType<PermanentHunterPotion>());
+                PermaPotionRecipeC(this, ItemID.InvisibilityPotion, ModContent.ItemType<PermanentInvisibilityPotion>());
+                PermaPotionRecipeC(this, ItemID.NightOwlPotion, ModContent.ItemType<PermanentNightOwlPotion>());
+                PermaPotionRecipeC(this, ItemID.ThornsPotion, ModContent.ItemType<PermanentThornsPotion>());
+                PermaPotionRecipeC(this, ItemID.WarmthPotion, ModContent.ItemType<PermanentWarmthPotion>());
+                PermaPotionRecipeC(this, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
                 #endregion
                 #region special perma recipes
                 ModRecipe recipe = new ModRecipe(this);
@@ -858,6 +858,7 @@ namespace tsorcRevamp {
         [DefaultValue(false)]
         [ReloadRequired]
         //todo items must be manually tagged as legacy. make sure we got them all
+        //todo before release, set this to constant and comment out the legacy mode block
         public bool LegacyMode { get; set; }
     }
 
