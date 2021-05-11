@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,12 +24,27 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.UseSound = SoundID.Item11;
             item.rare = ItemRarityID.LightRed;
             item.shoot = ProjectileID.PurificationPowder;
-            item.shootSpeed = 14;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.shootSpeed = 10;
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.shootSpeed = 14;
             item.noMelee = true;
             item.value = 9000000;
             item.ranged = true;
             item.autoReuse = true;
             item.useAmmo = AmmoID.Bullet;
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                tooltips.Insert(4, new TooltipLine(mod, "", "Turns Musket balls into High velocity bullets"));
+            }
+
+        }
+
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-6, 2);
         }
 
         public override void AddRecipes() {
@@ -47,12 +63,37 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             int ShotAmt = 4;
             int spread = 24;
             float spreadMult = 0.05f;
-            for (int i = 0; i < ShotAmt; i++) {
-                float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
-                Main.PlaySound(SoundID.Item, -1, -1, 11);
+
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 15f;
+                if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
+                {
+                    position -= muzzleOffset;
+                }
+                if (type == ProjectileID.Bullet)
+                {
+                    type = ProjectileID.BulletHighVelocity;
+                }
+                for (int i = 0; i < ShotAmt; i++)
+                {
+                    float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
+                    float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
+                    Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
+                    Main.PlaySound(SoundID.Item, -1, -1, 11);
+                }
             }
+            else
+            {
+                for (int i = 0; i < ShotAmt; i++)
+                {
+                    float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
+                    float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
+                    Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
+                    Main.PlaySound(SoundID.Item, -1, -1, 11);
+                }
+            }
+
             return false;
         }
 

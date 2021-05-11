@@ -333,7 +333,7 @@ namespace tsorcRevamp.NPCs {
                         toxiccatshotCount++;
                     }
                 }
-                npc.lifeRegen -= toxiccatshotCount * 1 * 1; //Use 1st N for damage, second N can be used to make it tick faster.
+                npc.lifeRegen -= toxiccatshotCount * 1 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
                 if (damage < toxiccatshotCount * 1)
                 {
                     damage = toxiccatshotCount * 1;
@@ -384,12 +384,20 @@ namespace tsorcRevamp.NPCs {
             {
                 Main.PlaySound(SoundID.Item74.WithPitchVariance(.3f), projectile.position);
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
-                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain = false;
                 for (int i = 0; i < 1000; i++) {
                     Projectile p = Main.projectile[i];
                     if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
                         p.active = false;
                         Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
+
+                        //npc.DelBuff(ModContent.BuffType<Buffs.ToxicCatDrain>()); //nope
+
+                        /*if (npc.HasBuff(ModContent.BuffType<Buffs.ToxicCatDrain>())) //nope
+                        {
+                            npc.buffTime = 0;
+                        }*/
+
+                        //nope
 
                     }
                 }
@@ -403,6 +411,20 @@ namespace tsorcRevamp.NPCs {
             {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                 Main.dust[dust].noGravity = true;
+            }
+            if (ToxicCatDrain)
+            {
+                drawColor = Color.LimeGreen;
+                Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
+
+                if (Main.rand.Next(10) == 0)
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
+                    Main.dust[dust].velocity *= 0f;
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity += npc.velocity;
+                    Main.dust[dust].fadeIn = 1f;
+                }
             }
         }
 
