@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses {
+    /*
     class Skeletron : GlobalNPC {
         public override bool PreAI(NPC npc) { //todo
             if ((npc.type == NPCID.SkeletronHand) && ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
@@ -13,8 +14,10 @@ namespace tsorcRevamp.NPCs.Bosses {
             return true;
         }
     }
+    */
     public class GravelordNito : ModNPC {
 
+        public override bool Autoload(ref string name) => false;
         public override void SetDefaults() {
             npc.width = 80;
             npc.height = 102;

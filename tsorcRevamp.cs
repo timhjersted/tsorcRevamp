@@ -31,7 +31,7 @@ namespace tsorcRevamp {
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<DarkSoul>(), 99999L));
 
-            On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
+            //On.Terraria.NPC.SpawnSkeletron += SkeletronPatch;
 
             On.Terraria.UI.ChestUI.DepositAll += DepositAllPatch;
 
@@ -47,8 +47,57 @@ namespace tsorcRevamp {
             Unbreakable = new BitArray(471);
             PopulateArrays();
         }
-
-
+        /*
+        private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
+                bool flag = true;
+                bool flag2 = false;
+                Vector2 vector = Vector2.Zero;
+                int num = 0;
+                int num2 = 0;
+                for (int i = 0; i < 200; i++) {
+                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()) {
+                        flag = false;
+                        break;
+                    }
+                }
+                for (int j = 0; j < 200; j++) {
+                    if (Main.npc[j].active) {
+                        if (Main.npc[j].type == NPCID.OldMan) {
+                            flag2 = true;
+                            Main.npc[j].ai[3] = 1f;
+                            vector = Main.npc[j].position;
+                            num = Main.npc[j].width;
+                            num2 = Main.npc[j].height;
+                            if (Main.netMode == NetmodeID.Server) {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, j, 0f, 0f, 0f, 0, 0, 0);
+                            }
+                        }
+                        else if (Main.npc[j].type == NPCID.Clothier) {
+                            flag2 = true;
+                            vector = Main.npc[j].position;
+                            num = Main.npc[j].width;
+                            num2 = Main.npc[j].height;
+                        }
+                    }
+                }
+                if (flag && flag2) {
+                    int num3 = NPC.NewNPC((int)vector.X + num / 2, (int)vector.Y + num2 / 2, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 0, 0f, 0f, 0f, 0f, 255);
+                    Main.npc[num3].netUpdate = true;
+                    if (Main.netMode == NetmodeID.SinglePlayer) {
+                        Main.NewText("Gravelord Nito has awoken!", 175, 75, 255);
+                        return;
+                    }
+                    else if (Main.netMode == NetmodeID.Server) {
+                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Gravelord Nito has awoken!"), new Color(175, 75, 255));
+                    }
+                }
+            }
+            else {
+                orig();
+            }
+        }
+        */
 
         public override void UpdateUI(GameTime gameTime) {
             if (BonfireUIState.Visible) {
@@ -386,55 +435,7 @@ namespace tsorcRevamp {
             #endregion
         }
 
-        private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
-                bool flag = true;
-                bool flag2 = false;
-                Vector2 vector = Vector2.Zero;
-                int num = 0;
-                int num2 = 0;
-                for (int i = 0; i < 200; i++) {
-                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()) {
-                        flag = false;
-                        break;
-                    }
-                }
-                for (int j = 0; j < 200; j++) {
-                    if (Main.npc[j].active) {
-                        if (Main.npc[j].type == NPCID.OldMan) {
-                            flag2 = true;
-                            Main.npc[j].ai[3] = 1f;
-                            vector = Main.npc[j].position;
-                            num = Main.npc[j].width;
-                            num2 = Main.npc[j].height;
-                            if (Main.netMode == NetmodeID.Server) {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, j, 0f, 0f, 0f, 0, 0, 0);
-                            }
-                        }
-                        else if (Main.npc[j].type == NPCID.Clothier) {
-                            flag2 = true;
-                            vector = Main.npc[j].position;
-                            num = Main.npc[j].width;
-                            num2 = Main.npc[j].height;
-                        }
-                    }
-                }
-                if (flag && flag2) {
-                    int num3 = NPC.NewNPC((int)vector.X + num / 2, (int)vector.Y + num2 / 2, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 0, 0f, 0f, 0f, 0f, 255);
-                    Main.npc[num3].netUpdate = true;
-                    if (Main.netMode == NetmodeID.SinglePlayer) {
-                        Main.NewText("Gravelord Nito has awoken!", 175, 75, 255);
-                        return;
-                    }
-                    else if (Main.netMode == NetmodeID.Server) {
-                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Gravelord Nito has awoken!"), new Color(175, 75, 255));
-                    }
-                }
-            }
-            else {
-                orig();
-            }
-        }
+        
 
         private void DepositAllPatch(On.Terraria.UI.ChestUI.orig_DepositAll orig) { //block dark souls from being deposit all-ed into chests.
 
@@ -844,13 +845,14 @@ namespace tsorcRevamp {
         [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDefaults to On")]
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
-
+        /*
         [Label("Rename Skeletron")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Renames Skeletron to Gravelord Nito.\nOnly turn this off if you are experiencing \ncrashes or other strange behavior when \nyou attempt to summon Skeletron.\nDefaults to On")]
         [DefaultValue(true)]
         [ReloadRequired]
         public bool RenameSkeletron { get; set; }
+        */
 
         [Label("Legacy Mode")]
         [BackgroundColor(60, 140, 80, 192)]
