@@ -58,11 +58,11 @@ namespace tsorcRevamp.Items {
                                 "\nReduces defense to 0 and slows movement while equipped and setting your warp point.");
         }
         public override bool CanUseItem(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet) {
                 Main.NewText("You haven't set a location!", 255, 240, 20);
                 return false;
             }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().warpWorld != Main.worldID) {
+            else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID) {
                 Main.NewText("This mirror is set in a different world!", 255, 240, 20);
                 return false;
             }
