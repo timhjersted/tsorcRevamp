@@ -5,11 +5,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons {
 	public class DebugTome : ModItem {
 		public override void SetStaticDefaults() {
-			Tooltip.SetDefault("Tome used for testing projectiles. You should not have this.");
+			Tooltip.SetDefault("You should not have this.");
 		}
 
 		public override void SetDefaults() {
-			item.damage = 1;
+			item.damage = 999999;
 			item.knockBack = 4;
 			item.crit = 4;
 			item.width = 30;
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons {
 			item.value = 10000;
 			item.useStyle = ItemUseStyleID.HoldingOut;
 			item.rare = ItemRarityID.Green;
-			item.shootSpeed = 8f;
+			item.shootSpeed = 24f;
 			item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
 		}
 

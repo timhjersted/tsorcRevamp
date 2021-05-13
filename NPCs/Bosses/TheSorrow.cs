@@ -28,6 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.noTileCollide = true;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
+            bossBag = ModContent.ItemType<Items.BossBags.TheSorrowBag>();
 
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Poisoned] = true;
@@ -196,8 +197,13 @@ namespace tsorcRevamp.NPCs.Bosses {
         }
 
         public override void NPCLoot() {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
-            Item.NewItem(npc.getRect(), ItemID.AdamantiteDrill);
+            if (Main.expertMode) {
+                npc.DropBossBags();
+            }
+            else {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
+                Item.NewItem(npc.getRect(), ItemID.AdamantiteDrill); 
+            }
         }
     }
 }
