@@ -54,12 +54,14 @@ namespace tsorcRevamp {
         public int PowerfulCurseLevel = 1;
         public bool DarkInferno = false;
         public bool CrimsonDrain = false;
+        public int count = 0;
 
         public bool Shockwave = false;
         public bool Falling;
         public int StopFalling;
         public float FallDist;
         public float fallStartY;
+        public int fallStart_old = -1;
 
         public bool MeleeArmorVamp10 = false;
         public bool NUVamp = false;
@@ -80,6 +82,8 @@ namespace tsorcRevamp {
         public int safe = -1;
 
         public int FracturingArmor = 1;
+
+        public int dragonMorphDamage = 45;
 
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
@@ -476,15 +480,17 @@ namespace tsorcRevamp {
                             Main.dust[dustIndex2].fadeIn = 1.5f + Main.rand.Next(5) * 0.1f;
                             Main.dust[dustIndex2].noGravity = true;
                         }
-                        for (int i = -8; i < 9; i++) {
-                            Vector2 shotDirection = new Vector2(0f, -16f);
-                            FallDist = (int)((player.position.Y - fallStartY) / 16);
-
-                            int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
-                            Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (11.25f * i))); //lerp wasnt working, so do manual interpolation
+                        FallDist = (int)((player.position.Y - fallStartY) / 16);
+                        if (FallDist > 5) {
+                            Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
+                            for (int i = -9; i < 10; i++) { //19 projectiles
+                                Vector2 shotDirection = new Vector2(0f, -16f);
+                                int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
+                                Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))); // (180 / (projectilecount - 1))
+                            } 
                         }
 
-                        Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
+                        
                         Falling = false;
                     }
                     if (player.velocity.Y <= 2f) {
@@ -497,9 +503,8 @@ namespace tsorcRevamp {
                         Falling = false;
                     } 
                 }
-                else { //old shockwave
-                    int fallStart_old = 0;
-                    var P = Main.LocalPlayer;
+                else {
+                    var P = player;
                     if (Main.rand.Next(50) == 0) {
                         int D = Dust.NewDust(P.position, P.width, P.height, 9, (P.velocity.X * 0.2f) + (P.direction * 3), P.velocity.Y * 1.2f, 60, new Color(), 1f);
                         Main.dust[D].noGravity = true;
@@ -528,10 +533,14 @@ namespace tsorcRevamp {
                     int sh = (int)(Main.screenHeight);
                     int sx = (int)(Main.screenPosition.X);
                     int sy = (int)(Main.screenPosition.Y);
-
+                    //bool wings = false;
+                    //if (ModPlayer.HasItemInArmor(492) || ModPlayer.HasItemInArmor(493) || ModPlayer.HasItemInExtraSlots(492) || ModPlayer.HasItemInExtraSlots(493))
+                    //{
+                    //	wings = true;
+                    //}
                     if (fallStart_old == -1) fallStart_old = P.fallStart;
                     int fall_dist = 0;
-                    if (P.velocity.Y == 0f) // detect landing from a fall
+                    if (P.velocity.Y == 0f) // && !wings) // detect landing from a fall
                         fall_dist = (int)((float)((int)(P.position.Y / 16f) - fallStart_old) * P.gravDir);
                     Vector2 p_pos = P.position + new Vector2(P.width, P.height) / 2f;
 
@@ -546,6 +555,7 @@ namespace tsorcRevamp {
                             if ((N.position.X >= sx) && (N.position.X <= sx + sw) && (N.position.Y >= sy) && (N.position.Y <= sy + sh)) { // on screen
                                 N.StrikeNPC(2 * fall_dist, 5f, HitDir);
                                 if (Main.netMode != NetmodeID.SinglePlayer) NetMessage.SendData(MessageID.StrikeNPC, -1, -1, null, k, 2 * fall_dist, 10f, HitDir, 0); // for multiplayer support
+                                                                                                                              // optionally add debuff here
                             } // END on screen
                         } // END iterate through NPCs
                     } // END just fell
@@ -572,8 +582,7 @@ namespace tsorcRevamp {
                     } 
                 }
                 else { //old crimson pot
-                    int count = 0;
-                    var P = Main.LocalPlayer;
+                    var P = player;
                     int x = (int)P.position.X;
                     int y = (int)P.position.Y;
                     for (int k = 0; k < Main.npc.Length; k++) {

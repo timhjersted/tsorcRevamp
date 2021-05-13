@@ -1,13 +1,9 @@
-﻿using Terraria.ID;
+﻿using System.Collections.Generic;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions {
     public class ShockwavePotion : ModItem {
-        public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Hold DOWN to create a damaging shockwave when you land.");
-
-        }
-
         public override void SetDefaults() {
             item.width = 24;
             item.height = 30;
@@ -23,6 +19,17 @@ namespace tsorcRevamp.Items.Potions {
             item.buffType = ModContent.BuffType<Buffs.Shockwave>();
             item.buffTime = 12600;
         }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                tooltips.Insert(3, new TooltipLine(mod, "", "Hold DOWN to create a damaging shockwave when you land."));
+            }
+            else {
+                tooltips.Insert(3, new TooltipLine(mod, "", "Enemies take damage when you land."));
+            }
+
+        }
+
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.BottledWater, 1);

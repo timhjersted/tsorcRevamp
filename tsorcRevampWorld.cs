@@ -22,6 +22,7 @@ namespace tsorcRevamp {
         public static bool DownedRage;
         public static Dictionary<int, int> Slain;
 
+        public static bool DownedOkiku;
         public override void Initialize() {
             Slain = new Dictionary<int, int>();
         }

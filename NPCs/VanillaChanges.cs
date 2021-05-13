@@ -720,6 +720,7 @@ namespace tsorcRevamp.NPCs {
 
         public override void AI(NPC npc) {
             if (npc.type == NPCID.BigRainZombie
+                || npc.type == NPCID.ZombieRaincoat
                 || npc.type == NPCID.SmallRainZombie
                 || npc.type == NPCID.Clown
                 || npc.type == NPCID.UmbrellaSlime) {
