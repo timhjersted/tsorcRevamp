@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.rand.Next(2) == 0)
                 {
-                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 240);
+                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 360);
                 }
                 projectile.timeLeft = 2;
             }
@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.rand.Next(2) == 0)
                 {
-                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 180);
+                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 240);
                 }
 
                 projectile.timeLeft = 0;
@@ -79,10 +79,8 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBump").WithVolume(.6f).WithPitchVariance(.3f));
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBump").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
-                //Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/pulsarbump").WithVolume(.9f).WithPitchVariance(.2f));
-
             }
             else //(projectile.owner == Main.myPlayer && projectile.timeLeft <= 51)
             {
@@ -92,8 +90,8 @@ namespace tsorcRevamp.Projectiles
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 75;
-                projectile.height = 75;
+                projectile.width = 85;
+                projectile.height = 85;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
                 projectile.damage = (int)(originalDamage * 1.36f);
@@ -102,7 +100,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.timeLeft = 0;
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f));
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
                 for (int i = 0; i < 120; i++)
                 {
@@ -133,12 +131,9 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             Lighting.AddLight(projectile.position, 0.0452f, 0.21f, 0.073f);
-            //projectile.rotation += projectile.velocity.X * 0.03f;
 
-            //Change these two variables to affect the rotation of your projectile
             float rotationsPerSecond = 1.4f;
             bool rotateClockwise = true;
-            //The rotation is set here
             projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 6f);
 
             if (!spawned)
@@ -193,7 +188,7 @@ namespace tsorcRevamp.Projectiles
                 gwpulsardusttimer = 0;
             }
 
-            if (++projectile.frameCounter >= 10) //ticks spent on each frame
+            if (++projectile.frameCounter >= 10)
             {
                 projectile.frameCounter = 0;
                 if (projectile.timeLeft >= 62)
@@ -229,7 +224,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarGrow").WithVolume(.6f).WithPitchVariance(.3f));
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarGrow").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
             }
 
@@ -239,7 +234,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f));
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
                 for (int i = 0; i < 120; i++)
                 {
@@ -263,13 +258,11 @@ namespace tsorcRevamp.Projectiles
             if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 2)
             {
                 projectile.tileCollide = false;
-                // Set to transparent. This projectile technically lives as  transparent for about 2 frames
                 projectile.alpha = 255;
-                // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 75;
-                projectile.height = 75;
+                projectile.width = 85;
+                projectile.height = 85;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
                 projectile.damage = (int)(originalDamage * 1.36f);
@@ -279,13 +272,11 @@ namespace tsorcRevamp.Projectiles
             if (projectile.wet)
             {
                 projectile.tileCollide = false;
-                // Set to transparent. This projectile technically lives as  transparent for about 2 frames
                 projectile.alpha = 255;
-                // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 75;
-                projectile.height = 75;
+                projectile.width = 85;
+                projectile.height = 85;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
                 projectile.damage = (int)(originalDamage * 1.5f);
@@ -293,7 +284,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.ranged = true;
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f));
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
                 for (int i = 0; i < 120; i++)
                 {

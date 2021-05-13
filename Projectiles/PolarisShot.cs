@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Projectiles
 {
-    class PulsarShot : ModProjectile
+    class PolarisShot : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -23,24 +23,22 @@ namespace tsorcRevamp.Projectiles
             projectile.tileCollide = true;
             projectile.timeLeft = 90;
             projectile.penetrate = -1;
-
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-           if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 50)
-           {
-                if (Main.rand.Next(4) == 0)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 70)
+            {
+                if (Main.rand.Next(2) == 0)
                 {
-                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 180);
+                    target.AddBuff(mod.BuffType("PolarisElectrocutedBuff"), 360);
                 }
                 projectile.timeLeft = 2;
-           }
+            }
 
-           else
-           {
+            else
+            {
                 projectile.tileCollide = true;
-                // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
                 projectile.width = 10;
@@ -48,16 +46,16 @@ namespace tsorcRevamp.Projectiles
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
                 projectile.damage = (int)(originalDamage * 1f);
-                projectile.knockBack = 2f;
+                projectile.knockBack = 3f;
                 projectile.ranged = true;
 
-                if (Main.rand.Next(4) == 0)
+                if (Main.rand.Next(2) == 0)
                 {
-                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 120);
+                    target.AddBuff(mod.BuffType("PolarisElectrocutedBuff"), 240);
                 }
 
                 projectile.timeLeft = 0;
-           }
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -70,7 +68,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 52)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 72)
             {
                 projectile.timeLeft = 0;
 
@@ -78,43 +76,36 @@ namespace tsorcRevamp.Projectiles
                 {
                     Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBump").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
+
             }
-            else //(projectile.owner == Main.myPlayer && projectile.timeLeft <= 51)
+            else
             {
                 projectile.tileCollide = false;
-                // Set to transparent. This projectile technically lives as  transparent for about 2 frames
                 projectile.alpha = 255;
-                // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 60;
-                projectile.height = 60;
+                projectile.width = 134;
+                projectile.height = 134;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = (int)(originalDamage * 1.5f);
-                projectile.knockBack = 6f;
+                projectile.damage = (int)(originalDamage * 1.36f);
+                projectile.knockBack = 10f;
                 projectile.ranged = true;
                 projectile.timeLeft = 0;
-
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
-                for (int i = 0; i < 60; i++)
-                {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), .6f);
-                    Main.dust[dust].noGravity = true;
-                }
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), 1f);
                     Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity *= Main.rand.NextFloat(2f, 3.5f);
+                    Main.dust[dust].velocity *= Main.rand.NextFloat(3f, 4.5f);
                     Main.dust[dust].scale = 0.2f + (float)Main.rand.Next(5) * 0.1f;
                 }
 
@@ -122,21 +113,17 @@ namespace tsorcRevamp.Projectiles
             return false;
         }
 
-        public int pulsardusttimer;
+        public int polarisdusttimer;
         public int originalDamage = 0;
         public bool spawned = false;
 
         public override void AI()
         {
             Lighting.AddLight(projectile.position, 0.0452f, 0.21f, 0.073f);
-            //projectile.rotation += 0.12f;
 
-            //Change these two variables to affect the rotation of your projectile
-            float rotationsPerSecond = 1.2f;
+            float rotationsPerSecond = 1.6f;
             bool rotateClockwise = true;
-            //The rotation is set here
             projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 6f);
-
 
             if (!spawned)
             {
@@ -145,40 +132,47 @@ namespace tsorcRevamp.Projectiles
             }
 
             //DUST SPAWNING
-
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.Next(3) == 0)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0.5f, projectile.velocity.Y * 0.5f, 100, default(Color), .4f);
                 Main.dust[dust].noGravity = true;
             }
-            pulsardusttimer++;
-            if (pulsardusttimer >= 15 && pulsardusttimer <= 16)
+            polarisdusttimer++;
+            if (polarisdusttimer == 15)
             {
-                for (int a = 0; a < 4; a++)
+                for (int a = 0; a < 15; a++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width - 9, projectile.height - 9, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
             }
-            if (pulsardusttimer >= 34 && pulsardusttimer <= 35)
+            if (polarisdusttimer == 30)
             {
-                for (int a = 0; a < 4; a++)
+                for (int a = 0; a < 15; a++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width - 9, projectile.height - 9, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
             }
-            if (pulsardusttimer >= 53 && pulsardusttimer <= 54)
+            if (polarisdusttimer == 45)
             {
-                for (int a = 0; a < 4; a++)
+                for (int a = 0; a < 15; a++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width - 9, projectile.height - 9, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
             }
-            if (pulsardusttimer >= 72 && pulsardusttimer <= 73)
+            if (polarisdusttimer == 60)
             {
-                for (int a = 0; a < 4; a++)
+                for (int a = 0; a < 15; a++)
+                {
+                    int dust = Dust.NewDust(projectile.position, projectile.width - 9, projectile.height - 9, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .4f);
+                    Main.dust[dust].noGravity = true;
+                }
+            }
+            if (polarisdusttimer == 75)
+            {
+                for (int a = 0; a < 15; a++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width - 9, projectile.height - 9, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
@@ -186,22 +180,22 @@ namespace tsorcRevamp.Projectiles
             }
 
             //ANIMATION
-            if (pulsardusttimer > 90)
+            if (polarisdusttimer > 90)
             {
-                pulsardusttimer = 0;
+                polarisdusttimer = 0;
             }
 
-            if (++projectile.frameCounter >= 10) //ticks spent on each frame
+            if (++projectile.frameCounter >= 10)
             {
                 projectile.frameCounter = 0;
-                if (projectile.timeLeft >= 52)
+                if (projectile.timeLeft >= 72)
                 {
                     if (++projectile.frame == 4)
                     {
                         projectile.frame = 0;
                     }
                 }
-                if (projectile.timeLeft <= 51)
+                if (projectile.timeLeft <= 71)
                 {
                     projectile.frameCounter = 5;
                     if (++projectile.frame >= 8)
@@ -213,17 +207,17 @@ namespace tsorcRevamp.Projectiles
 
             Vector2 oldSize = projectile.Size;
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 50)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 70)
             {
                 projectile.tileCollide = true;
                 projectile.width = 22;
                 projectile.height = 22;
-                projectile.damage = (int)(originalDamage * 1.5f);
-                projectile.knockBack = 6f;
+                projectile.damage = (int)(originalDamage * 1.36f);
+                projectile.knockBack = 10f;
                 projectile.ranged = true;
             }
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 51)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 71)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
@@ -239,21 +233,21 @@ namespace tsorcRevamp.Projectiles
                 {
                     Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 200; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
-                for (int i = 0; i < 60; i++)
+                for (int i = 0; i < 150; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), .6f);
                     Main.dust[dust].noGravity = true;
                 }
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 250; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), 1f);
                     Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity *= Main.rand.NextFloat(2f, 3.5f);
+                    Main.dust[dust].velocity *= Main.rand.NextFloat(3f, 4.5f);
                     Main.dust[dust].scale = 0.2f + (float)Main.rand.Next(5) * 0.1f;
                 }
             }
@@ -261,56 +255,52 @@ namespace tsorcRevamp.Projectiles
             if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 2)
             {
                 projectile.tileCollide = false;
-                // Set to transparent. This projectile technically lives as  transparent for about 2 frames
                 projectile.alpha = 255;
-                // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 60;
-                projectile.height = 60;
+                projectile.width = 134;
+                projectile.height = 134;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = (int)(originalDamage * 1.5f);
-                projectile.knockBack = 6f;
+                projectile.damage = (int)(originalDamage * 1.36f);
+                projectile.knockBack = 10f;
                 projectile.ranged = true;
             }
             if (projectile.wet)
             {
                 projectile.tileCollide = false;
-                // Set to transparent. This projectile technically lives as  transparent for about 2 frames
                 projectile.alpha = 255;
-                // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 80;
-                projectile.height = 80;
+                projectile.width = 134;
+                projectile.height = 134;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = (int)(originalDamage * 1.6f);
-                projectile.knockBack = 6f;
+                projectile.damage = (int)(originalDamage * 1.5f);
+                projectile.knockBack = 10f;
                 projectile.ranged = true;
-
                 if (Main.netMode != NetmodeID.Server)
                 {
                     Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarBoom").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
                 }
-
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 70; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
-                for (int i = 0; i < 60; i++)
+                for (int i = 0; i < 50; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), .6f);
                     Main.dust[dust].noGravity = true;
                 }
-                for (int i = 0; i < 110; i++)
+                for (int i = 0; i < 70; i++)
                 {
                     int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), 1f);
                     Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity *= Main.rand.NextFloat(2f, 3.5f);
+                    Main.dust[dust].velocity *= Main.rand.NextFloat(2.5f, 4f);
                     Main.dust[dust].scale = 0.2f + (float)Main.rand.Next(5) * 0.1f;
+
+
                     projectile.timeLeft = 0;
                 }
             }
@@ -318,7 +308,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 100; i++)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 226, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 70, default(Color), .6f);
                 Main.dust[dust].noGravity = true;

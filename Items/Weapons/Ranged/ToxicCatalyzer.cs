@@ -13,13 +13,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             DisplayName.SetDefault("Toxic Catalyzer");
             Tooltip.SetDefault("Left-click shots tag and poison enemies"
-                                + "\nRight-click shots detonate sticky tags"
-                                +"\nMore tags = more damage and bigger explosion");
+                                + "\nRight-click shots detonate sticky tags");
         }
 
         public override void SetDefaults()
         {
-            item.damage = 12;
+            item.damage = 16;
             item.ranged = true;
             item.crit = 0;
             item.width = 38;
@@ -50,8 +49,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (player.altFunctionUse == 2)
             {
-                item.useTime = 32;
-                item.useAnimation = 32;
+                item.useTime = 26;
+                item.useAnimation = 26;
                 item.shoot = ModContent.ProjectileType<Projectiles.ToxicCatDetonator>();
             }
             else
@@ -67,7 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f));
+                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f), player.Center);
             }
 
             {

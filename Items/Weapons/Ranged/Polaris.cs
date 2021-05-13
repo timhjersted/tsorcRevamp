@@ -5,43 +5,40 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
-    public class Pulsar : ModItem
+    public class Polaris : ModItem
     {
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pulsar");
-            Tooltip.SetDefault("Keep your enemies close, but not too close!"
-                                + "\nEnlarged projectile does x1.5 damage"
-                                + "\nElectrocutes enemies"
-                                + "\nPowerful, but hard to master");
-
+            DisplayName.SetDefault("Polaris");
+            Tooltip.SetDefault("Batteries included");
         }
 
         public override void SetDefaults()
         {
-            item.damage = 34;
+            item.damage = 175;
             item.ranged = true;
             item.crit = 0;
-            item.width = 38;
+            item.width = 56;
             item.height = 28;
-            item.useTime = 26;
-            item.useAnimation = 26;
+            item.useTime = 24;
+            item.useAnimation = 24;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
-            item.knockBack = 2f;
-            item.value = 150000;
+            item.knockBack = 5f;
+            item.value = 800000;
             item.scale = 0.8f;
-            item.rare = ItemRarityID.Green;
-            item.shoot = mod.ProjectileType("PulsarShot");
-            item.shootSpeed = 4f;
+            item.rare = ItemRarityID.Pink;
+            item.autoReuse = true;
+            item.shoot = mod.ProjectileType("PolarisShot");
+            item.shootSpeed = 7f;
         }
 
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-5, 4);
+            return new Vector2(-8, 4);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
@@ -65,7 +62,24 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
                 }
             }
+
             return true;
+
+        }
+
+        public override void AddRecipes()
+        {
+
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(null, "GWPulsar");
+            recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
+            recipe.AddIngredient(ItemID.ShroomiteBar, 10);
+            recipe.AddIngredient(ItemID.ElectrosphereLauncher);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 125000);
+            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
+
         }
     }
 }

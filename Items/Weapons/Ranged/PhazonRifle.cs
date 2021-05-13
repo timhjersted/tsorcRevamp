@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class PhazonRifle : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Three round burst" +
-                                "\nBeware; Phazon is EXTREMELY toxic.");
+            Tooltip.SetDefault("Three round burst"); 
+                                //"\nBeware; Phazon is EXTREMELY toxic."); It's not though is it m8 
         }
         public override void SetDefaults() {
             item.width = 50;
@@ -37,9 +37,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
-                tooltips.Insert(4, new TooltipLine(mod, "", "Only the first shot consumes ammo"));
+                tooltips.Insert(7, new TooltipLine(mod, "", "Only the first shot consumes ammo"));
             }
-
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                tooltips.Insert(7, new TooltipLine(mod, "", "Beware; Phazon is EXTREMELY toxic."));
+            }
         }
 
         public override bool ConsumeAmmo(Player player)

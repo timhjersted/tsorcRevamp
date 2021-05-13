@@ -12,8 +12,8 @@ namespace tsorcRevamp.Projectiles
         {
 
             // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.
-            projectile.width = 40;
-            projectile.height = 40;
+            projectile.width = 60;
+            projectile.height = 60;
             projectile.friendly = true;
             projectile.aiStyle = 0;
             projectile.ranged = true;
@@ -36,15 +36,15 @@ namespace tsorcRevamp.Projectiles
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 30;
-                projectile.height = 30;
+                projectile.width = 60;
+                projectile.height = 60;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = 30; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
-                projectile.knockBack = 5f;
+                //projectile.damage = 30; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
+                projectile.knockBack = 6f;
                 //projectile.thrown = true;
 
-                for (int i = 0; i < 40; i++)
+                for (int i = 0; i < 25; i++)
                 {
                     int dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 75, 0f, 0f, 100, default(Color), 2f);
                     Main.dust[dustIndex].noGravity = true;

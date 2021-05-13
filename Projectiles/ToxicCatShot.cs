@@ -75,7 +75,7 @@ namespace tsorcRevamp.Projectiles
 			// These 2 could probably be moved to the ModifyNPCHit hook, but in vanilla they are present in the AI
 			projectile.ignoreWater = true; // Make sure the projectile ignores water
 			projectile.tileCollide = false; // Make sure the projectile doesn't collide with tiles anymore
-			const int aiFactor = 15; // Change this factor to change the 'lifetime' of this sticking javelin
+			const int aiFactor = 8; // Change this factor to change the 'lifetime' of this sticking javelin //These are seconds. Keep debuff duration to same duration as is set here.
 			projectile.localAI[0] += 1f;
 
 			projectile.timeLeft = 100; //this number doesnt actually matter, just stops it dying after the original timeLeft 
@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f));
+            Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), projectile.Center);
             for (int d = 0; d < 20; d++)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
@@ -139,7 +139,7 @@ namespace tsorcRevamp.Projectiles
 		}
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f));
+            Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), projectile.Center);
             for (int d = 0; d < 20; d++)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
@@ -154,7 +154,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f));
+            Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f), projectile.Center);
             for (int d = 0; d < 20; d++)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1.2f, projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
@@ -207,7 +207,7 @@ namespace tsorcRevamp.Projectiles
 				(target.Center - projectile.Center) *
 				0.75f; // Change velocity based on delta center of targets (difference between entity centers)
 			projectile.netUpdate = true; // netUpdate this javelin
-			target.AddBuff(ModContent.BuffType<Buffs.ToxicCatDrain>(), 900); // Adds the ExampleJavelin debuff for a very small DoT
+			target.AddBuff(ModContent.BuffType<Buffs.ToxicCatDrain>(), 480); // Adds the ExampleJavelin debuff for a very small DoT
 
 			projectile.damage = 0; // Makes sure the sticking javelins do not deal damage anymore
 

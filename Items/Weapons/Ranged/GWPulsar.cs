@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useAnimation = 25;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
-            item.knockBack = 2.5f;
+            item.knockBack = 3.5f;
             item.value = 400000;
             item.scale = 0.8f;
             item.rare = ItemRarityID.Orange;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "Pulsar");
+            recipe.AddIngredient(mod.GetItem("Pulsar"));
             recipe.AddIngredient(ItemID.HallowedBar, 8);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f));
+                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f), player.Center);
             }
 
             if (player.wet)

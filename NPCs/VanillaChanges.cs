@@ -857,6 +857,17 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
             }
 
+            if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief) {
+
+                if (Main.rand.Next(200) == 0) { // 0.5%
+                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"));
+                }
+
+                if (Main.rand.Next(200) == 0) { // 0.5% 
+                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"));
+                }
+            }
+
             #endregion
             #region Pillar ModWorld bools
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedVortex = true;

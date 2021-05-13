@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -50,5 +51,19 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             return new Vector2(-2, 0);
         }
+
+        /*public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+            if (player.direction == 1)
+            {
+                Projectile.NewProjectile(player.Center, new Vector2(-1, -2), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+            }
+            if (player.direction == -1)
+            {
+                Projectile.NewProjectile(player.Center, new Vector2(1, -2), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+            }
+
+            return true;
+        }*/
     }
 }

@@ -21,6 +21,7 @@ namespace tsorcRevamp.NPCs {
         public bool ToxicCatDrain = false;
         public bool ResetToxicCatBlobs = false;
         public bool ElectrocutedEffect = false;
+        public bool PolarisElectrocutedEffect = false;
 
 
         public override void ResetEffects(NPC npc) {
@@ -29,16 +30,19 @@ namespace tsorcRevamp.NPCs {
             ToxicCatDrain = false;
             ResetToxicCatBlobs = false;
             ElectrocutedEffect = false;
+            PolarisElectrocutedEffect = false;
+
         }
 
         //vanilla npc changes moved to separate file
 
         public override void NPCLoot(NPC npc) {
 
+
             #region Dark Souls & Consumable Souls Drops
 
 
-            if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss) { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
+                if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss) { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
 
                 if (npc.netID != NPCID.JungleSlime) {
                     if (Main.expertMode) { //npc.value is the amount of coins they drop
@@ -217,10 +221,21 @@ namespace tsorcRevamp.NPCs {
                         toxiccatshotCount++;
                     }
                 }
-                npc.lifeRegen -= toxiccatshotCount * 1 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
-                if (damage < toxiccatshotCount * 1)
+                if (toxiccatshotCount >= 4) //this is to make it worth the players time stickying more than 3 times
                 {
-                    damage = toxiccatshotCount * 1;
+                    npc.lifeRegen -= toxiccatshotCount * 2 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
+                    if (damage < toxiccatshotCount * 1)
+                    {
+                        damage = toxiccatshotCount * 1;
+                    }
+                }
+                else
+                {
+                    npc.lifeRegen -= toxiccatshotCount * 1 * 3; 
+                    if (damage < toxiccatshotCount * 1)
+                    {
+                        damage = toxiccatshotCount * 1;
+                    }
                 }
             }
 
@@ -234,6 +249,19 @@ namespace tsorcRevamp.NPCs {
                 if (damage < 2)
                 {
                     damage = 2;
+                }
+            }
+
+            if (PolarisElectrocutedEffect)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                npc.lifeRegen -= 100;
+                if (damage < 10)
+                {
+                    damage = 10;
                 }
             }
         }
@@ -272,16 +300,14 @@ namespace tsorcRevamp.NPCs {
                     Projectile p = Main.projectile[i];
                     if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
                         p.active = false;
-                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), projectile.damage, projectile.knockBack, projectile.owner, 0, 1);
+                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 2.5), projectile.knockBack, projectile.owner, 0, 1);
 
-                        //npc.DelBuff(ModContent.BuffType<Buffs.ToxicCatDrain>()); //nope
+                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
-                        /*if (npc.HasBuff(ModContent.BuffType<Buffs.ToxicCatDrain>())) //nope
+                        if (buffindex != -1)
                         {
-                            npc.buffTime = 0;
-                        }*/
-
-                        //nope
+                            npc.DelBuff(buffindex);
+                        }
 
                     }
                 }
@@ -296,6 +322,22 @@ namespace tsorcRevamp.NPCs {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                 Main.dust[dust].noGravity = true;
             }
+
+            if (PolarisElectrocutedEffect)
+            {
+                for (int i = 0; i < 2; i++)
+
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
+                    Main.dust[dust].noGravity = true;
+                }
+                if (Main.rand.Next(2) == 0)
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
+                    Main.dust[dust].noGravity = false;
+                }
+            }
+
             if (ToxicCatDrain)
             {
                 drawColor = Color.LimeGreen;

@@ -53,7 +53,6 @@ namespace tsorcRevamp.Projectiles
             {
                 toxiccatdetotimer = 0;
             }
-
             if (++projectile.frameCounter >= 10) //ticks spent on each frame
             {
                 projectile.frameCounter = 0;
