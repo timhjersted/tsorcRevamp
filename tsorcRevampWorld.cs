@@ -16,10 +16,10 @@ using System;
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
 
-        
-        public static bool DownedSorrow;
-        public static bool DownedHunter;
-        public static bool DownedRage;
+        public static bool DownedVortex;
+        public static bool DownedNebula;
+        public static bool DownedStardust;
+        public static bool DownedSolar;
         public static Dictionary<int, int> Slain;
 
         public static bool DownedOkiku;
@@ -31,8 +31,11 @@ namespace tsorcRevamp {
 		public override TagCompound Save() {
 			TagCompound tagCompound = new TagCompound
 			{
-
-			};
+                {"DownedVortex", DownedVortex},
+                {"DownedNebula", DownedNebula},
+                {"DownedStardust", DownedStardust},
+                {"DownedSolar", DownedSolar},
+            };
 			SaveSlain(tagCompound);
 			return tagCompound;
 		}
@@ -44,6 +47,10 @@ namespace tsorcRevamp {
 
         public override void Load(TagCompound tag) {
             LoadSlain(tag);
+            tag.GetBool("DownedVortex");
+            tag.GetBool("DownedNebula");
+            tag.GetBool("DownedStardust");
+            tag.GetBool("DownedSolar");
         }
 
         private void LoadSlain(TagCompound tag) {

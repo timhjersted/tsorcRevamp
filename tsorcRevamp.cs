@@ -38,6 +38,8 @@ namespace tsorcRevamp {
 
             On.Terraria.Player.Spawn += SpawnPatch;
 
+            On.Terraria.WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
+
             BonfireUIState = new BonfireUIState();
             if (!Main.dedServ) BonfireUIState.Activate();
             _bonfireUIState = new UserInterface();
@@ -48,6 +50,7 @@ namespace tsorcRevamp {
             Unbreakable = new BitArray(471);
             PopulateArrays();
         }
+
         /*
         private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
             if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
@@ -695,6 +698,15 @@ namespace tsorcRevamp {
                 orig(self);
             }
         }
+
+        private void StopLunarApocalypse(On.Terraria.WorldGen.orig_TriggerLunarApocalypse orig) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                // DO NOTHING LOL
+            }
+            else {
+                orig();
+            }
+        }
         public override void Unload() {
             toggleDragoonBoots = null;
             KillAllowed = null;
@@ -829,12 +841,14 @@ namespace tsorcRevamp {
     [Label("Config")]
     [BackgroundColor(30, 60, 40, 220)]
     public class tsorcRevampConfig : ModConfig {
+        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
         public override ConfigScope Mode => ConfigScope.ServerSide;
         [Label("Adventure Mode")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Adventure mode prevents breaking and placing most blocks.\nLeave this enabled if you're playing with the custom map!")]
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
+
         [Label("Souls Drop on Death")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Drop all your Dark Souls when you die.\nIf \"Delete Dropped Souls on Death\" is enabled, \nyour Souls will drop after old Souls are deleted.\nDefaults to On")]
@@ -977,7 +991,7 @@ namespace tsorcRevamp {
                 int style = Main.tile[i, j].frameX / 36;
                 switch(style) {
                     case 0:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerVortex)) {
+                        if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !tsorcRevampWorld.DownedVortex) {
                             int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                             NPC.TowerActiveVortex = true;
@@ -987,7 +1001,7 @@ namespace tsorcRevamp {
                         break;
 
                     case 1:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerNebula)) {
+                        if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !tsorcRevampWorld.DownedNebula) {
                             int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                             NPC.TowerActiveNebula = true;
@@ -997,7 +1011,7 @@ namespace tsorcRevamp {
                         break;
 
                     case 2:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerStardust)) {
+                        if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !tsorcRevampWorld.DownedStardust) {
                             int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                             NPC.TowerActiveStardust = true;
@@ -1007,7 +1021,7 @@ namespace tsorcRevamp {
                         break;
 
                     case 3:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerSolar)) {
+                        if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !tsorcRevampWorld.DownedSolar) {
                             int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                             NPC.TowerActiveSolar = true;

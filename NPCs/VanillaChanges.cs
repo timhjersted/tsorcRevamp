@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs {
     class VanillaChanges : GlobalNPC {
@@ -749,6 +750,120 @@ namespace tsorcRevamp.NPCs {
                 }
             }
             return base.CheckDead(npc);
+        }
+        public override void NPCLoot(NPC npc) {
+            #region Loot Changes
+
+            if (npc.type == NPCID.BigStinger) {
+                Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
+            }
+
+            if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 10);
+                Item.NewItem(npc.getRect(), ItemID.DemoniteOre, 4);
+                Item.NewItem(npc.getRect(), ItemID.ShadowScale, 4);
+            }
+
+            if ((npc.type >= NPCID.BigHornetStingy && npc.type <= NPCID.LittleHornetFatty) ||
+                                (npc.type >= NPCID.GiantMossHornet && npc.type <= NPCID.LittleStinger) ||
+                                npc.type == NPCID.Hornet || npc.type == NPCID.ManEater ||
+                                npc.type == NPCID.MossHornet ||
+                                (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
+                if (Main.rand.NextFloat() >= .33f) { // 66% chance
+                    Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
+                }
+            }
+
+            if (npc.type == NPCID.KingSlime) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 500);
+                if (!Main.expertMode) {
+                    Item.NewItem(npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
+                }
+            }
+
+            if (npc.type == NPCID.TheDestroyer && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
+            }
+            if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>(), 2);
+            }
+            if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
+                Item.NewItem(npc.getRect(), ItemID.AngelWings, 2);
+            }
+            if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
+            }
+
+            if (npc.netID == NPCID.GreenSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
+            }
+
+            if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow) && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                if (Main.rand.Next(10) == 0) {
+                    Item.NewItem(npc.getRect(), mod.ItemType("SymbolOfAvarice"));
+                }
+            }
+
+            if (npc.type == NPCID.EyeofCthulhu && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ItemID.HerosHat);
+                Item.NewItem(npc.getRect(), ItemID.HerosShirt);
+                Item.NewItem(npc.getRect(), ItemID.HerosPants);
+                Item.NewItem(npc.getRect(), ItemID.HermesBoots);
+            }
+
+            if (npc.type == NPCID.PossessedArmor && Main.rand.Next(50) == 0 && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), mod.ItemType("WallTome"));
+            }
+
+            if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.Next(25) == 0 && Main.expertMode) {
+                Item.NewItem(npc.getRect(), mod.ItemType("WallTome"));
+            }
+
+            if (npc.type == NPCID.Shark && Main.rand.Next(20) == 0) {
+                Item.NewItem(npc.getRect(), mod.ItemType("CoralSword"));
+            }
+
+            if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
+                                (npc.type >= NPCID.HeadacheSkeleton && npc.type <= NPCID.PantlessSkeleton) ||
+                                (npc.type >= NPCID.SkeletonTopHat && npc.type <= NPCID.SkeletonAlien) ||
+                                (npc.type >= NPCID.BoneThrowingSkeleton && npc.type <= NPCID.BoneThrowingSkeleton4) ||
+                                npc.type == NPCID.HeavySkeleton ||
+                                npc.type == NPCID.Skeleton ||
+                                npc.type == NPCID.ArmoredSkeleton ||
+                                npc.type == NPCID.SkeletonArcher)) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+            }
+
+            if (npc.type == NPCID.Vulture && Main.rand.Next(10) == 0) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+            }
+
+            if (npc.type == NPCID.Wraith) {
+                Item.NewItem(npc.getRect(), ItemID.Heart, 7);
+            }
+
+            if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
+                                (npc.type >= NPCID.BigTwiggyZombie && npc.type <= NPCID.SmallZombie) ||
+                                (npc.type >= NPCID.ZombieDoctor && npc.type <= NPCID.ZombiePixie) ||
+                                (npc.type >= NPCID.ZombieXmas && npc.type <= NPCID.ZombieSweater) ||
+                                (npc.type >= NPCID.ArmedZombie && npc.type <= NPCID.ArmedZombieCenx) ||
+                                npc.type == NPCID.Zombie ||
+                                npc.type == NPCID.BaldZombie ||
+                                npc.type == NPCID.ZombieEskimo ||
+                                npc.type == NPCID.FemaleZombie ||
+                                (npc.type >= NPCID.PincushionZombie && npc.type <= NPCID.TwiggyZombie))) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+            }
+
+            #endregion
+            #region Pillar ModWorld bools
+            if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedVortex = true;
+            if (npc.type == NPCID.LunarTowerNebula) tsorcRevampWorld.DownedNebula = true;
+            if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedStardust = true;
+            if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedSolar = true;
+            #endregion
         }
     }
 }
