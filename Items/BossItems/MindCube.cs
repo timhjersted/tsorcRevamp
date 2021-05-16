@@ -1,6 +1,10 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
+using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+
 
 namespace tsorcRevamp.Items.BossItems {
     class MindCube : ModItem {
@@ -24,14 +28,16 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny); //todo remove placeholder
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.DarkShogunMask>());
-            //Main.NewText("You are a fool, Red. You think you can defeat me?...", 175, 75, 255);;
+            NPC.NewNPC((int)player.position.X, (int)player.position.Y - 64, ModContent.NPCType<DarkShogunMask>());
+            Main.NewText("You are a fool, Red. You think you can defeat me?...", 175, 75, 255);;
             return true;
         }
         public override bool CanUseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny)) {
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.DarkShogunMask>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<DarkShogunMask>())
+                || NPC.AnyNPCs(ModContent.NPCType<DarkDragonMask>())
+                || NPC.AnyNPCs(ModContent.NPCType<Okiku>())
+                || NPC.AnyNPCs(ModContent.NPCType<BrokenOkiku>())
+                ) {
                 return false;
             }
             return true;

@@ -103,10 +103,26 @@ namespace tsorcRevamp.Items {
                     player.QuickSpawnItem(ModContent.ItemType<CrestOfCorruption>(), 2);
                 }
                 if (arg == ItemID.TwinsBossBag) {
-                    if ((Slain.ContainsKey(NPCID.Retinazer)) || (Slain.ContainsKey(NPCID.Spazmatism))) { //idk which it will use
+                    /* 
+                    * picture the following:
+                    * Twins are killed. Spazmatism is added to Slain, and the player opens a bag and receives souls
+                    * then, Twins are killed again. Retinazer is added to slain this time, and the player opens a bag and gets souls again
+                    * to prevent this, we need to make sure we haven't opened a bag from Spazmatism when we open a bag in Retinazer's context
+                    */
+                    if (Slain.ContainsKey(NPCID.Retinazer)) {
                         if (Slain[NPCID.Retinazer] == 0) {
-                            BossBagSouls(NPCID.Retinazer, player);
-                            Slain[NPCID.Retinazer] = 1;
+                            bool SpazmatismDowned = Slain.TryGetValue(NPCID.Spazmatism, out int value);
+                            //if SpazmatismDowned evaluates to true, int value is set to the value pair of Spazmatism's key, which stores if a bag has been opened
+                            if (!SpazmatismDowned || value == 0) { //if Spazmatism is not in Slain, or no twins bag has been opened in Spazmatism's context
+                                BossBagSouls(NPCID.Retinazer, player); 
+                                Slain[NPCID.Retinazer] = 1;
+                            }
+                        }
+                    }
+                    else if (Slain.ContainsKey(NPCID.Spazmatism)) { //dont need to check if Retinazer is downed, since this is only run if Retinazer is not in Slain
+                        if (Slain[NPCID.Spazmatism] == 0) {
+                            BossBagSouls(NPCID.Spazmatism, player);
+                            Slain[NPCID.Spazmatism] = 1;
                         }
                     }
                     player.QuickSpawnItem(ModContent.ItemType<CrestOfSky>(), 2);

@@ -439,7 +439,7 @@ namespace tsorcRevamp {
             #endregion
         }
 
-        
+
 
         private void DepositAllPatch(On.Terraria.UI.ChestUI.orig_DepositAll orig) { //block dark souls from being deposit all-ed into chests.
 
@@ -936,12 +936,12 @@ namespace tsorcRevamp {
         }
 
         public override bool CanExplode(int x, int y, int type) {
-            bool right = !Main.tile[x + 1, y].active();
-            bool left = !Main.tile[x - 1, y].active();
-            bool below = !Main.tile[x, y - 1].active();
-            bool above = !Main.tile[x, y + 1].active();
-            bool CanDestroy = false;
-            {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                bool right = !Main.tile[x + 1, y].active();
+                bool left = !Main.tile[x - 1, y].active();
+                bool below = !Main.tile[x, y - 1].active();
+                bool above = !Main.tile[x, y + 1].active();
+                bool CanDestroy = false;
                 if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
                     CanDestroy = true;
                 }
@@ -964,7 +964,15 @@ namespace tsorcRevamp {
                 }
                 return CanDestroy;
             }
+            else return base.CanExplode(x, y, type);
 
+        }
+
+        public override bool Slope(int i, int j, int type) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                return false;
+            }
+            else return base.Slope(i, j, type);
         }
     }
 
