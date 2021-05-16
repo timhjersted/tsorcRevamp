@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Armors {
     [AutoloadEquip(EquipType.Head)]
     public class DragoonHelmet2 : ModItem {
         public override void SetStaticDefaults() {
+            DisplayName.SetDefault("Dragoon Helmet II");
             Tooltip.SetDefault("Harmonized with Sky and Fire\n+200 Mana\nPotion use has a 15 second shorter cooldown.");
         }
 

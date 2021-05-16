@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Armors {
     [AutoloadEquip(EquipType.Body)]
     public class DragoonArmor2 : ModItem {
         public override void SetStaticDefaults() {
+            DisplayName.SetDefault("Dragoon Armor II");
             Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor.\n" +
                 "You are a master of all forces, the protector of Earth, the Hero of the age.\n" +
                 "The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.\n" +

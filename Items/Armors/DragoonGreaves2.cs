@@ -6,6 +6,7 @@ namespace tsorcRevamp.Items.Armors {
     [AutoloadEquip(EquipType.Legs)]
     public class DragoonGreaves2 : ModItem {
         public override void SetStaticDefaults() {
+            DisplayName.SetDefault("Dragoon Greaves II");
             Tooltip.SetDefault("Harmonized with Earth and Water\nWhen returning from death, you respawn with full health.\nJump boost and double jump skills.");
         }
 
