@@ -12,7 +12,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blackhawk");
-            Tooltip.SetDefault("Deals etra damage to hallowed creatures");
+            Tooltip.SetDefault("Deals etra damage to hallowed creatures"
+                                + "\nDoesn't require ammo");
         }
 
         public override void SetDefaults()
@@ -46,24 +47,48 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddRecipe();
         }
 
-        // Help, my gun isn't being held at the handle! Adjust these 2 numbers until it looks right.
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-2, 0);
+            return new Vector2(-6, 0);
         }
 
-        /*public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        int ammoleft = 6;
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if (player.direction == 1)
+            ammoleft--;
+            if (ammoleft > 0)
             {
-                Projectile.NewProjectile(player.Center, new Vector2(-1, -2), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                return true;
             }
-            if (player.direction == -1)
+            else
             {
-                Projectile.NewProjectile(player.Center, new Vector2(1, -2), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
-            }
+                for (int i = 0; i < 5; i++)
+                {
+                    if (Main.rand.Next(2) == 0)
+                    {
+                        if (player.direction == 1)
+                        {
+                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                        }
+                        if (player.direction == -1)
+                        {
+                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                        }
+                    }
+                }
 
-            return true;
-        }*/
+                if (player.direction == 1)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                }
+                if (player.direction == -1)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                }
+
+                ammoleft = 6;
+                return true;
+            }
+        }
     }
 }

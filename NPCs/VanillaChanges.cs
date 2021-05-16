@@ -524,27 +524,18 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.TheDestroyer): {
-                        npc.lifeMax = 120000;
                         npc.value = 200000;
-                        npc.damage = 180;
                         npc.scale = 1.25f;
-                        npc.defense = 50;
                         break;
                     }
 
                 case (NPCID.TheDestroyerBody): {
-                        npc.lifeMax = 100000;
-                        npc.damage = 55;
                         npc.scale = 1.25f;
-                        npc.defense = 55;
                         break;
                     }
 
                 case (NPCID.TheDestroyerTail): {
-                        npc.lifeMax = 100000;
-                        npc.damage = 75;
                         npc.scale = 1.25f;
-                        npc.defense = 35;
                         break;
                     }
 

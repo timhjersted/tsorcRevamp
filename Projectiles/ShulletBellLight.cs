@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Projectiles
 {
-    public class ShulletBellDark : ModProjectile
+    public class ShulletBellLight : ModProjectile
     {
         public override void SetDefaults()
         {

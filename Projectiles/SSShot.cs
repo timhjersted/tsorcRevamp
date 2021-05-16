@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -33,25 +34,50 @@ namespace tsorcRevamp.Projectiles
                     Main.dust[dust].velocity *= Main.rand.NextFloat(1f, 6f);
                 }
             }
-            if (Main.rand.Next(10) == 0)
+            if (Main.rand.Next(6) == 0)
             {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 245, projectile.velocity.X * -0.2f, projectile.velocity.Y * -0.2f, 70, default(Color), .3f);
+                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 245, projectile.velocity.X * -0.2f, projectile.velocity.Y * -0.2f, 70, default(Color), .5f);
                     Main.dust[dust].noGravity = true;
             }
             {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X * -0.2f, projectile.velocity.Y * -0.2f, 70, default(Color), .4f);
+                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X * -0.2f, projectile.velocity.Y * -0.2f, 70, default(Color), .6f);
                     Main.dust[dust].noGravity = true;
             }
-            
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
-            {
-                projectile.alpha += 28;
 
-                if (projectile.alpha > 225)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 3)
+            {
+                for (int d = 0; d < 10; d++)
                 {
-                    projectile.alpha = 225;
+                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X * 0.5f, projectile.velocity.Y * 0.5f, 30, default(Color), 0.5f);
+                    Main.dust[dust].noGravity = true;
                 }
             }
+        }
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = Main.projectileTexture[projectile.type];
+
+            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame, 14, 38), Color.White, projectile.rotation, new Vector2(7, 0), projectile.scale, SpriteEffects.None, 0);
+
+            return false;
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            for (int d = 0; d < 15; d++)
+            {
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X, projectile.velocity.Y, 30, default(Color), 0.5f);
+                Main.dust[dust].noGravity = true;
+            }
+        }
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            for (int d = 0; d < 15; d++)
+            {
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 91, projectile.velocity.X, projectile.velocity.Y, 30, default(Color), 0.5f);
+                Main.dust[dust].noGravity = true;
+            }
+
+            return true;
         }
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {

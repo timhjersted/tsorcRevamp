@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true; //so the item's animation doesn't do damage
             item.knockBack = 4;
-            item.value = 400000;
+            item.value = 300000;
             item.scale = 0.9f;
             item.rare = ItemRarityID.Pink;
             item.crit = 5;
@@ -49,8 +50,46 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(-2, -2);
+            return new Vector2(-6, -2);
         }
 
+        int ammoleft = 6;
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+            ammoleft--;
+            if (ammoleft > 0)
+            {
+                return true;
+            }
+            else
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (Main.rand.Next(2) == 0)
+                    {
+                        if (player.direction == 1)
+                        {
+                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                        }
+                        if (player.direction == -1)
+                        {
+                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                        }
+                    }
+                }
+
+                if (player.direction == 1)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                }
+                if (player.direction == -1)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellLight>(), 0, 0, Main.myPlayer);
+                }
+
+                ammoleft = 6;
+                return true;
+            }
+        }
     }
 }
