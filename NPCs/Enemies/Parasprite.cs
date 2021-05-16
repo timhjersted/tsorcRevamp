@@ -26,6 +26,21 @@ namespace tsorcRevamp.NPCs.Enemies {
         int timer;
         bool init;
 
+
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+            bool underground = (spawnInfo.player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
+            bool sky = (spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104);
+            float chance = 0;
+
+            if (spawnInfo.player.ZoneHoly && underground) {
+                chance = 0.1f;
+            }
+            if (Main.hardMode && sky) {
+                chance = 0.2f;
+            }
+            return chance;
+        }
+
         public override void AI() { // some stuff has been shuffled around, since there's only 1 parasprite enemy instead of 4 (lol)
             npc.velocity.Y += Main.rand.Next(-10, 10) / 8;
             npc.velocity.X += Main.rand.Next(-10, 10) / 20;
