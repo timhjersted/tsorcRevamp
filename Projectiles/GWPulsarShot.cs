@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.height = 85;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = (int)(originalDamage * 1.36f);
+                projectile.damage = (int)(originalDamage * 1.5f);
                 projectile.knockBack = 6.5f;
                 projectile.ranged = true;
                 projectile.timeLeft = 0;
@@ -215,7 +215,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.tileCollide = true;
                 projectile.width = 22;
                 projectile.height = 22;
-                projectile.damage = (int)(originalDamage * 1.36f);
+                projectile.damage = (int)(originalDamage * 1.5f);
                 projectile.knockBack = 6.5f;
                 projectile.ranged = true;
             }
@@ -265,7 +265,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.height = 85;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = (int)(originalDamage * 1.36f);
+                projectile.damage = (int)(originalDamage * 1.5f);
                 projectile.knockBack = 6.5f;
                 projectile.ranged = true;
             }

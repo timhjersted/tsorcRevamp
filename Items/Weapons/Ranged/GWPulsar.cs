@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            item.damage = 85;
+            item.damage = 69;
             item.ranged = true;
             item.crit = 0;
             item.width = 40;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 3.5f;
-            item.value = 400000;
+            item.value = 350000;
             item.scale = 0.8f;
             item.rare = ItemRarityID.Orange;
             item.shoot = mod.ProjectileType("GWPulsarShot");
