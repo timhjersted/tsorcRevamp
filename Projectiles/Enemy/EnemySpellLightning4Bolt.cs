@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellLightning4Bolt : ModProjectile {
 
         public override void SetStaticDefaults() {

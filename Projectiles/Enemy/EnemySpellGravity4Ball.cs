@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellGravity4Ball : ModProjectile {
         public override void SetDefaults() {
             projectile.width = 24;

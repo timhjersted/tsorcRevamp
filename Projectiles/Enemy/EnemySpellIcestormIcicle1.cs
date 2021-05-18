@@ -2,11 +2,11 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class EnemySpellIcestormIcicle3 : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy {
+    class EnemySpellIcestormIcicle1 : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 22;
-            projectile.height = 22;
+            projectile.width = 16;
+            projectile.height = 52;
             projectile.hostile = true;
             projectile.penetrate = 16;
             projectile.tileCollide = false;

@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellGravity4Strike : ModProjectile {
         public override void SetStaticDefaults() {
             Main.projFrames[projectile.type] = 7;

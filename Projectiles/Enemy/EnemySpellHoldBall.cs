@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellHoldBall : ModProjectile {
 
         public override void SetDefaults() {

@@ -1,18 +1,19 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles {
-    class EnemySpellEffectBuff : ModProjectile {
+
+namespace tsorcRevamp.Projectiles.Enemy {
+    class EnemySpellGreatEnergyStrike : ModProjectile {
+
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 5;
+            Main.projFrames[projectile.type] = 12;
         }
         public override void SetDefaults() {
-            projectile.height = 44;
+            projectile.width = 44;
+            projectile.height = 40;
+            projectile.aiStyle = -1;
             projectile.hostile = true;
             projectile.penetrate = 50;
-            projectile.scale = 1.2f;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
         }
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Projectiles {
                 projectile.frame++;
                 projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5) {
+            if (projectile.frame >= 12) {
                 projectile.Kill();
                 return;
             }
