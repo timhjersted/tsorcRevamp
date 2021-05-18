@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class VirulentCatDetonator : ModProjectile
+    class BiohazardDetonator : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -16,16 +16,17 @@ namespace tsorcRevamp.Projectiles
         {
 
             // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.
-            projectile.width = 18;
-            projectile.height = 12;
+            projectile.width = 22;
+            projectile.height = 22;
             projectile.friendly = true;
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 52;
-            projectile.penetrate = 2;
+            projectile.timeLeft = 40;
+            projectile.penetrate = 3;
             projectile.usesLocalNPCImmunity = true;
             projectile.localNPCHitCooldown = -1;
+            projectile.scale = 0.8f;
 
             //These 2 help the projectile hitbox be centered on the projectile sprite.
             drawOffsetX = 0;
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Projectiles
         {
             Texture2D texture = Main.projectileTexture[projectile.type];
 
-            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, 0, 18, 12), Color.White, projectile.rotation, new Vector2(9, 6), projectile.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, 0, 32, 32), Color.White, projectile.rotation, new Vector2(16, 16), projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }
@@ -50,7 +51,10 @@ namespace tsorcRevamp.Projectiles
             }
 
             Lighting.AddLight(projectile.position, 0.455f, 0.826f, 0.238f);
-            projectile.rotation = projectile.velocity.ToRotation(); // projectile faces sprite right
+
+            float rotationsPerSecond = 1.6f;
+            bool rotateClockwise = true;
+            projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 6f);
 
             if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
             {
@@ -61,7 +65,7 @@ namespace tsorcRevamp.Projectiles
                     projectile.alpha = 225;
                 }
             }
-            for (int d = 0; d < 2; d++)
+            for (int d = 0; d < 4; d++)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
@@ -97,7 +101,7 @@ namespace tsorcRevamp.Projectiles
         public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f));
-            for (int d = 0; d < 20; d++)
+            for (int d = 0; d < 30; d++)
             {
                 int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1.2f, projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
                 Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;

@@ -22,6 +22,8 @@ namespace tsorcRevamp.NPCs {
         public bool ResetToxicCatBlobs = false;
         public bool ViruCatDrain = false;
         public bool ResetViruCatBlobs = false;
+        public bool BiohazardDrain = false;
+        public bool ResetBiohazardBlobs = false;
         public bool ElectrocutedEffect = false;
         public bool PolarisElectrocutedEffect = false;
 
@@ -33,6 +35,8 @@ namespace tsorcRevamp.NPCs {
             ResetToxicCatBlobs = false;
             ViruCatDrain = false;
             ResetViruCatBlobs = false;
+            BiohazardDrain = false;
+            ResetBiohazardBlobs = false;
             ElectrocutedEffect = false;
             PolarisElectrocutedEffect = false;
 
@@ -280,6 +284,41 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
+            if (BiohazardDrain)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+
+                int BiohazardShotCount = 0;
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    {
+                        BiohazardShotCount++;
+                    }
+                }
+                if (BiohazardShotCount >= 4) //this is to make it worth the players time stickying more than 3 times
+                {
+                    npc.lifeRegen -= BiohazardShotCount * 8 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
+                    if (damage < BiohazardShotCount * 1)
+                    {
+                        damage = BiohazardShotCount * 1;
+                    }
+                }
+                else
+                {
+                    npc.lifeRegen -= BiohazardShotCount * 4 * 3;
+                    if (damage < BiohazardShotCount * 1)
+                    {
+                        damage = BiohazardShotCount * 1;
+                    }
+                }
+            }
+
             if (ElectrocutedEffect)
             {
                 if (npc.lifeRegen > 0)
@@ -335,7 +374,6 @@ namespace tsorcRevamp.NPCs {
         {
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
             {
-                Main.PlaySound(SoundID.Item74.WithPitchVariance(.3f), projectile.position);
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;
 
@@ -352,6 +390,9 @@ namespace tsorcRevamp.NPCs {
                                 tags++;
                             }
                         }
+                        float volume = (tags * 0.3f) + 0.7f;
+                        float pitch = tags * 0.08f;
+                        Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
 
                         p.timeLeft = 2;
 
@@ -370,7 +411,6 @@ namespace tsorcRevamp.NPCs {
 
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatExplosion>()))
             {
-                Main.PlaySound(SoundID.Item74.WithPitchVariance(.3f), projectile.position);
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
                 int tags;
 
@@ -388,13 +428,53 @@ namespace tsorcRevamp.NPCs {
                                 tags++;
                             }
                         }
+                        float volume = (tags * 0.3f) + 0.7f;
+                        float pitch = tags * 0.08f;
+                        Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
 
-                        //Main.NewText(tags);
+                        //Main.NewText(pitch);
                         p.timeLeft = 2;
 
                         Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
+
+                        if (buffindex != -1)
+                        {
+                            npc.DelBuff(buffindex);
+                        }
+                    }
+                }
+            }
+
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.BiohazardExplosion>()))
+            {
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
+                int tags;
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    tags = 0;
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
+                            Projectile ñ = Main.projectile[q];
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
+                                tags++;
+                            }
+                        }
+                        float volume = (tags * 0.3f) + 0.7f;
+                        float pitch = tags * 0.08f;
+                        Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+
+                        p.timeLeft = 2;
+
+                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+
+                        int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 
                         if (buffindex != -1)
                         {
@@ -451,6 +531,21 @@ namespace tsorcRevamp.NPCs {
                 if (Main.rand.Next(6) == 0)
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
+                    Main.dust[dust].velocity *= 0f;
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity += npc.velocity;
+                    Main.dust[dust].fadeIn = 1f;
+                }
+            }
+
+            if (BiohazardDrain)
+            {
+                drawColor = Color.LimeGreen;
+                Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
+
+                if (Main.rand.Next(2) == 0)
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, -2f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity += npc.velocity;

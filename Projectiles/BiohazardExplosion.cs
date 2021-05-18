@@ -6,13 +6,13 @@ using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Projectiles
 {
-    class VirulentCatExplosion : ModProjectile
+    class BiohazardExplosion : ModProjectile
     {
         public override void SetDefaults()
         {
             // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.
-            projectile.width = 30;
-            projectile.height = 30;
+            projectile.width = 40;
+            projectile.height = 40;
             projectile.friendly = true;
             projectile.aiStyle = 0;
             projectile.ranged = true;
@@ -33,15 +33,15 @@ namespace tsorcRevamp.Projectiles
 
             projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
             projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-            projectile.width = ((int)tags * 17) + 30;
-            projectile.height = ((int)tags * 17) + 30;
+            projectile.width = ((int)tags * 17) + 70;
+            projectile.height = ((int)tags * 17) + 70;
             projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
             projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-            projectile.damage += (int)tags * 5;
-            projectile.knockBack = (tags * 1.2f) + 4.5f;
+            projectile.damage += (int)tags * 8;
+            projectile.knockBack = (tags * 1.5f) + 4.5f;
 
 
-            float loops = (tags * 2) + 10;
+            float loops = (tags * 2) + 15;
 
             if (tags < 4)
             {
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            if (tags >= 8 && tags <= 10)
+            if (tags >= 8 && tags <= 12)
             {
                 for (int i = 0; i < loops; i++)
                 {

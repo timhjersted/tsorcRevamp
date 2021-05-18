@@ -27,9 +27,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 5f;
-            item.value = 800000;
+            item.value = 1000000;
             item.scale = 0.8f;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Lime;
             item.autoReuse = true;
             item.shoot = mod.ProjectileType("PolarisShot");
             item.shootSpeed = 7f;

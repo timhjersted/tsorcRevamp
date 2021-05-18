@@ -5,34 +5,35 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
-    public class VirulentCatalyzer : ModItem
+    public class Biohazard : ModItem
     {
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Virulent Catalyzer");
-            Tooltip.SetDefault("An enhanced projectile propulsion core allows detonating shots to pierce once"
-                                + "\nExtremely toxic - handle with care");
+            DisplayName.SetDefault("Biohazard");
+            Tooltip.SetDefault("The addition of the propulsion field allows detonating shots to pierce twice"
+                                + "\nWarning - perfectly capable of destroying entire ecosystems");
         }
 
         public override void SetDefaults()
         {
-            item.damage = 26;
+            item.damage = 60;
             item.ranged = true;
             item.crit = 0;
-            item.width = 40;
+            item.width = 52;
             item.height = 28;
-            item.useTime = 17;
-            item.useAnimation = 17;
+            item.useTime = 14;
+            item.useAnimation = 14;
+            item.autoReuse = true;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 3f;
-            item.value = 350000;
+            item.value = 1000000;
             item.scale = 0.8f;
-            item.rare = ItemRarityID.Orange;
-            item.shoot = mod.ProjectileType("VirulentCatShot");
-            item.shootSpeed = 7f;
+            item.rare = ItemRarityID.Pink;
+            item.shoot = mod.ProjectileType("BiohazardShot");
+            item.shootSpeed = 10f;
         }
 
         public override Vector2? HoldoutOffset()
@@ -51,17 +52,17 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (player.altFunctionUse == 2)
             {
-                item.useTime = 24;
-                item.useAnimation = 24;
-                item.shootSpeed = 10f;
-                item.shoot = ModContent.ProjectileType<Projectiles.VirulentCatDetonator>();
+                item.useTime = 22;
+                item.useAnimation = 22;
+                item.shootSpeed = 18.5f;
+                item.shoot = ModContent.ProjectileType<Projectiles.BiohazardDetonator>();
             }
             else
             {
-                item.useTime = 17;
-                item.useAnimation = 17;
-                item.shootSpeed = 7f;
-                item.shoot = ModContent.ProjectileType<Projectiles.VirulentCatShot>();
+                item.useTime = 14;
+                item.useAnimation = 14;
+                item.shootSpeed = 12.4f;
+                item.shoot = ModContent.ProjectileType<Projectiles.BiohazardShot>();
             }
 
             return base.CanUseItem(player);
@@ -88,10 +89,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ToxicCatalyzer"));
-            recipe.AddIngredient(ItemID.SpiderFang, 20);
-            recipe.AddIngredient(ItemID.HallowedBar, 8);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(mod.GetItem("VirulentCatalyzer"));
+            recipe.AddIngredient(ItemID.ShroomiteBar, 10);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
