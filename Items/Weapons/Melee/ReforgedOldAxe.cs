@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldAxe : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldAxe";
         public override void SetDefaults() {
             item.damage = 11;
             item.width = 36;

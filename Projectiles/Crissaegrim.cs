@@ -5,7 +5,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class Crissaegrim : ModProjectile {
-        public override void SetDefaults() {
+		public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Crissaegrim";
+		public override void SetDefaults() {
             projectile.width = 28;
 			projectile.height = 28;
 			projectile.aiStyle = 3;

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items {
     class ForgottenThunderBowScroll : ModItem {
-
+        public override string Texture => "tsorcRevamp/Items/ForgottenIceBowScroll";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Used to craft the Forgotten Thunder Bow, using 240,000 Dark Souls and 1 Soul of Artorias.");
         }

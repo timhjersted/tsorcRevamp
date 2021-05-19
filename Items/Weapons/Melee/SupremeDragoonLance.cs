@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
     public class SupremeDragoonLance : ModItem {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/DragoonLance";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Supreme Dragoon Lance");
             Tooltip.SetDefault("An all-powerful spear forged from the fang of the Dragoon Serpent.");

@@ -8,6 +8,7 @@ namespace tsorcRevamp.Projectiles
 {
     class VirulentCatExplosion : ModProjectile
     {
+        public override string Texture => "tsorcRevamp/Projectiles/ToxicCatExplosion";
         public override void SetDefaults()
         {
             // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.

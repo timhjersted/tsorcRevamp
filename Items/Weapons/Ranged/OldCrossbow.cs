@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class OldCrossbow : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Crossbow";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Does random damage from 0 to 38" +
                                 "\nMaximum damage is increased by damage modifiers.");

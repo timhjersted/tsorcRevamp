@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class ReforgedOldCrossbow : ModItem {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Crossbow";
         public override void SetDefaults() {
             item.damage = 19;
             item.width = 28;

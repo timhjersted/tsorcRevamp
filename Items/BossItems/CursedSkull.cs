@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.BossItems {
     class CursedSkull : ModItem {
+        public override string Texture => "tsorcRevamp/Items/BossItems/BloodySkull";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Summons Gravelord Nito, the First of the Dead." +
                                 "\nYou must use this at the demon altar in the ancient temple ruins" +

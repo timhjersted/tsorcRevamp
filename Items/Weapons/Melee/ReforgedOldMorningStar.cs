@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
 
     public class ReforgedOldMorningStar : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldMorningStar";
         public override void SetDefaults() {
             item.width = 24;
             item.height = 28;

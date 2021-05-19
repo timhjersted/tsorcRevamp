@@ -6,7 +6,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class HeavensTear2 : ModItem
     {
-	public override void SetStaticDefaults()
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/HeavensTear";
+        public override void SetStaticDefaults()
 	{
 		DisplayName.SetDefault("Heaven's Tear II");
             Tooltip.SetDefault("'Heaven splits with each swing'\n" +

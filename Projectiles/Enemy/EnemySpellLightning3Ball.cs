@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellLightning3Ball : ModProjectile {
-
-        public override void SetDefaults() {
+		public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
+		public override void SetDefaults() {
             projectile.aiStyle = 4;
             projectile.hostile = true;
             projectile.height = 16;

@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class ForgottenRisingSun : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ForgottenRisingSun";
         public override void SetDefaults() {
             projectile.width = 25;
             projectile.height = 25;

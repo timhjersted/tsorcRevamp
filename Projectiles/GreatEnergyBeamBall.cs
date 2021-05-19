@@ -6,8 +6,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class GreatEnergyBeamBall : ModProjectile {
-
-        public override void SetDefaults() {
+		public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
+		public override void SetDefaults() {
 			projectile.friendly = true;
 			projectile.height = 16;
 			projectile.light = 1;

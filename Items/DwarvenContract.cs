@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items {
     class DwarvenContract : ModItem {
-
+        public override string Texture => "tsorcRevamp/Items/ForgottenIceBowScroll";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("A contract for a dwarf guard.\n" + "Will summon a dwarf to guard a piece of property.");
         }

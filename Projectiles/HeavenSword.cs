@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Projectiles {
     class HeavenSword : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/HeavenSword";
         public override void SetDefaults() { 
             projectile.width = 28;
             projectile.height = 28;

@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellGreatEnergyBall : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
         public override void SetDefaults() {
             projectile.aiStyle = 4;
             projectile.width = 16;

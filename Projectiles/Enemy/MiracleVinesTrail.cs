@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class MiracleVinesTrail : ModProjectile {
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/MiracleVines";
         public override void SetDefaults() {
             projectile.width = 15;
             projectile.height = 15;

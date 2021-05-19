@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldBroadsword : ModItem
     {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldBroadsword";
         public override void SetDefaults()
         {
             item.damage = 14;

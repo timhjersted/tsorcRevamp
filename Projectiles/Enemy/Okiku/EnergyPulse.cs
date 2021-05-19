@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.Okiku {
     public class EnergyPulse : ModProjectile {
+        public override string Texture => "tsorcRevamp/Projectiles/Enemy/ScrewAttack";
         public override void SetStaticDefaults() {
             Main.projFrames[projectile.type] = 4;
             base.SetStaticDefaults();

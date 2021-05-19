@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldSabre : ModItem
     {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldSabre";
         public override void SetDefaults()
         {
             item.damage = 10;

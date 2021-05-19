@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class ReforgedOldLongbow : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/OldLongbow";
         public override void SetDefaults() {
 
             item.damage = 16;

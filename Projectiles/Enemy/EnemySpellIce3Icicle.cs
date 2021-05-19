@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellIce3Icicle : ModProjectile {
+        public override string Texture => "tsorcRevamp/Projectiles/Ice3Icicle";
         public override void SetDefaults() {
             projectile.width = 32;
             projectile.height = 88;

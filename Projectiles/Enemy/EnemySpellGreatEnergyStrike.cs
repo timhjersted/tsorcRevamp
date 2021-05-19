@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellGreatEnergyStrike : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Projectiles/EnergyField";
         public override void SetStaticDefaults() {
             Main.projFrames[projectile.type] = 12;
         }

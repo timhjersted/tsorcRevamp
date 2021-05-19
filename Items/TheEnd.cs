@@ -3,6 +3,7 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Items {
     class TheEnd : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("As the remains of the Mindflayer King lay before you, you look up and out to the horizon." +
                                "\nYou can feel the darkness starting to subside, but your heart is not at peace." +

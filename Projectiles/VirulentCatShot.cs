@@ -8,6 +8,7 @@ namespace tsorcRevamp.Projectiles
 {
 	class VirulentCatShot : ModProjectile
 	{
+		public override string Texture => "tsorcRevamp/Projectiles/ToxicCatShot";
 		public override void SetStaticDefaults()
 		{
 			Main.projFrames[projectile.type] = 2;

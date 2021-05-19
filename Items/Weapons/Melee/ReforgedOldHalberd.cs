@@ -6,6 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     class ReforgedOldHalberd : ModItem
     {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldHalberd";
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Does random damage from 0 to 35" +

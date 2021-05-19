@@ -5,7 +5,7 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles {
     class RoyalThrowingSpear : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/RoyalThrowingSpear";
         public override void SetDefaults() {
             projectile.aiStyle = 1;
             projectile.friendly = true;

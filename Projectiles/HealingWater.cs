@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class HealingWater : ModProjectile {
+        public override string Texture => "tsorcRevamp/Projectiles/MusicalNote";
         public override void SetDefaults() {
             projectile.aiStyle = 0;
             projectile.friendly = true;

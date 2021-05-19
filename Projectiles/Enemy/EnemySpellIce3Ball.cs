@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellIce3Ball : ModProjectile {
+		public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
         public override void SetDefaults() {
             projectile.aiStyle = 4;
             projectile.hostile = true;

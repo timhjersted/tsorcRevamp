@@ -2,6 +2,7 @@
 
 namespace tsorcRevamp.Projectiles {
     class MassiveCrystalShards : ModProjectile {
+        public override string Texture => "tsorcRevamp/Projectiles/Ice4Icicle";
         public override void SetDefaults() {
             projectile.width = 42;
             projectile.height = 84;

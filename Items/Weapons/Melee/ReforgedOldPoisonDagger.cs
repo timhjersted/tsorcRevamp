@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldPoisonDagger : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldPoisonDagger";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Has a 50% chance to poison the enemy");
         }

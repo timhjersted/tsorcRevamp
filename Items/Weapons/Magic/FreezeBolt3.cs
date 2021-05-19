@@ -3,6 +3,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
     class FreezeBolt3 : ModItem {
+
+        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/FreezeBolt2";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Freeze Bolt III");
             Tooltip.SetDefault("Casts a super fast-moving bolt of ice");

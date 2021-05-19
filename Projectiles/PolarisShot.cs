@@ -9,6 +9,7 @@ namespace tsorcRevamp.Projectiles
 {
     class PolarisShot : ModProjectile
     {
+        public override string Texture => "tsorcRevamp/Projectiles/PulsarShot";
         public override void SetStaticDefaults()
         {
             Main.projFrames[projectile.type] = 8;

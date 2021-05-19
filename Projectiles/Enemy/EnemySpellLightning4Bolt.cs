@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellLightning4Bolt : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Projectiles/Bolt4Bolt";
         public override void SetStaticDefaults() {
             Main.projFrames[projectile.type] = 16;
         }

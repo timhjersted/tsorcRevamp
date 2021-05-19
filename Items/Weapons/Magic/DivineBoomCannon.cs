@@ -3,7 +3,7 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
     class DivineBoomCannon : ModItem {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DivineSpark";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Obliterates everything upon contact.");
         }

@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
     public class GreyWolfRing : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Accessories/WolfRing";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire, bleeding and broken-armor debuffs." + 

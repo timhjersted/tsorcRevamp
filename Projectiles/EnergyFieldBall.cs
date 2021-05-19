@@ -6,7 +6,7 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles {
     public class EnergyFieldBall : ModProjectile {
-
+        public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
         public override void SetDefaults() {
             projectile.friendly = true;
             projectile.height = 16;

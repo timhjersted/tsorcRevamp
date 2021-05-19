@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Armors {
     [AutoloadEquip(EquipType.Body)]
     public class DragoonArmor2 : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Dragoon Armor II");
             Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor.\n" +

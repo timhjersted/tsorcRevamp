@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldRapier : ModItem
     {
-
+        public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldRapier";
         public override void SetDefaults()
         {
             item.damage = 11;

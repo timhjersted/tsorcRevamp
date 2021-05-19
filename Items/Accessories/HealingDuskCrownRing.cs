@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
     public class HealingDuskCrownRing : ModItem {
+        public override string Texture => "tsorcRevamp/Items/Accessories/DuskCrownRing";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth." +
                                 "\nThe ringstone doubles magic damage, reduces mana use by 50% and boosts magic crit by 50%" +
