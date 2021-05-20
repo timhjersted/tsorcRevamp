@@ -152,6 +152,7 @@ namespace tsorcRevamp.Items {
                             Slain[NPCID.Golem] = 1;
                         }
                     }
+                    player.QuickSpawnItem(ItemID.Picksaw);
                 }
                 if (arg == ItemID.FishronBossBag) {
                     if (Slain.ContainsKey(NPCID.DukeFishron)) {

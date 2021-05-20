@@ -59,11 +59,13 @@ namespace tsorcRevamp.Items.Accessories {
             player.moveSpeed += 0.6f;
             player.jumpSpeedBoost = 3.2f;
             player.wingTimeMax = 1200;
-            
+
 
             bool restricted = false;
-            for (int i = 2; i <= 6; i++) {
-                if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots) {
+            for (int i = 3; i <= 8; i++) {
+                if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
+                    || player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
+                    || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots) {
                     restricted = true;
                 }
             }

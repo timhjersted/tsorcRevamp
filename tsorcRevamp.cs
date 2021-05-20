@@ -38,7 +38,9 @@ namespace tsorcRevamp {
 
             On.Terraria.Player.Spawn += SpawnPatch;
 
-            On.Terraria.WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
+            //On.Terraria.WorldGen.TriggerLunarApocalypse += StopLunarApocalypse;
+
+            On.Terraria.WorldGen.UpdateLunarApocalypse += StopMoonLord;
 
             BonfireUIState = new BonfireUIState();
             if (!Main.dedServ) BonfireUIState.Activate();
@@ -50,6 +52,68 @@ namespace tsorcRevamp {
             Unbreakable = new BitArray(471);
             PopulateArrays();
         }
+
+        private void StopMoonLord(On.Terraria.WorldGen.orig_UpdateLunarApocalypse orig) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+
+                if (!NPC.LunarApocalypseIsUp) {
+                    return;
+                }
+                //bool flag = false; this bool was used to check for moon lord's core
+                bool flag2 = false;
+                bool flag3 = false;
+                bool flag4 = false;
+                bool flag5 = false;
+                for (int i = 0; i < 200; i++) {
+                    if (Main.npc[i].active) {
+                        switch (Main.npc[i].type) {
+                            /*
+                            case 398:
+                                flag = true;
+                                break;
+                            */
+                            case 517:
+                                flag2 = true;
+                                break;
+                            case 422:
+                                flag3 = true;
+                                break;
+                            case 507:
+                                flag4 = true;
+                                break;
+                            case 493:
+                                flag5 = true;
+                                break;
+                        }
+                    }
+                }
+                if (!flag2) {
+                    NPC.TowerActiveSolar = false;
+                }
+                if (!flag3) {
+                    NPC.TowerActiveVortex = false;
+                }
+                if (!flag4) {
+                    NPC.TowerActiveNebula = false;
+                }
+                if (!flag5) {
+                    NPC.TowerActiveStardust = false;
+                }
+                if (!NPC.TowerActiveSolar && !NPC.TowerActiveVortex && !NPC.TowerActiveNebula && !NPC.TowerActiveStardust/* && !flag*/) { 
+                    //WorldGen.StartImpendingDoom();
+                    //recreate the effects of StartImpendingDoom, minus the part about spawning moon lord
+                    NPC.LunarApocalypseIsUp = false;
+                    if (Main.netMode != NetmodeID.MultiplayerClient) {
+                        WorldGen.GetRidOfCultists();
+                    }
+                }
+
+            }
+            else {
+                orig();
+            }
+        }
+
 
         /*
         private void SkeletronPatch(On.Terraria.NPC.orig_SpawnSkeletron orig) {
@@ -698,15 +762,17 @@ namespace tsorcRevamp {
                 orig(self);
             }
         }
-
+        /*
         private void StopLunarApocalypse(On.Terraria.WorldGen.orig_TriggerLunarApocalypse orig) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            //if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (false) {
                 // DO NOTHING LOL
             }
             else {
                 orig();
             }
         }
+        */
         public override void Unload() {
             toggleDragoonBoots = null;
             KillAllowed = null;
@@ -845,7 +911,7 @@ namespace tsorcRevamp {
         public override ConfigScope Mode => ConfigScope.ServerSide;
         [Label("Adventure Mode")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Adventure mode prevents breaking and placing most blocks.\nLeave this enabled if you're playing with the custom map!")]
+        [Tooltip("Adventure mode prevents breaking and placing most blocks. \nIt also enables some features intended for the custom map. \nLeave this enabled if you're playing with the custom map!")]
         [DefaultValue(true)]
         public bool AdventureMode { get; set; }
 
@@ -991,53 +1057,55 @@ namespace tsorcRevamp {
     }
     public class MiscGlobalTile : GlobalTile {
         public override void NearbyEffects(int i, int j, int type, bool closer) {
-            Player player = Main.LocalPlayer;
-            var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
-            var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                Player player = Main.LocalPlayer;
+                var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
+                var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
-            if (Main.tile[i, j].type == TileID.LunarMonolith && distance <= 800f  && !player.dead && Main.tile[i, j].frameY > 54) { //frameY > 54 means enabled
-                int style = Main.tile[i, j].frameX / 36;
-                switch(style) {
-                    case 0:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !tsorcRevampWorld.DownedVortex) {
-                            int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                            NPC.TowerActiveVortex = true;
-                            NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
-                        }
-                        break;
+                if (Main.tile[i, j].type == TileID.LunarMonolith && distance <= 800f && !player.dead && Main.tile[i, j].frameY > 54) { //frameY > 54 means enabled
+                    int style = Main.tile[i, j].frameX / 36;
+                    switch (style) {
+                        case 0:
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !tsorcRevampWorld.DownedVortex) {
+                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                NPC.TowerActiveVortex = true;
+                                NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            }
+                            break;
 
-                    case 1:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !tsorcRevampWorld.DownedNebula) {
-                            int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                            NPC.TowerActiveNebula = true;
-                            NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
-                        }
-                        break;
+                        case 1:
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !tsorcRevampWorld.DownedNebula) {
+                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                NPC.TowerActiveNebula = true;
+                                NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            }
+                            break;
 
-                    case 2:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !tsorcRevampWorld.DownedStardust) {
-                            int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                            NPC.TowerActiveStardust = true;
-                            NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
-                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
-                        }
-                        break;
+                        case 2:
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !tsorcRevampWorld.DownedStardust) {
+                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                NPC.TowerActiveStardust = true;
+                                NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            }
+                            break;
 
-                    case 3:
-                        if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !tsorcRevampWorld.DownedSolar) {
-                            int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                            NPC.TowerActiveSolar = true;
-                            NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                            NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
-                        }
-                        break;
-                }
+                        case 3:
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !tsorcRevampWorld.DownedSolar) {
+                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                NPC.TowerActiveSolar = true;
+                                NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            }
+                            break;
+                    }
+                } 
             }
 
             base.NearbyEffects(i, j, type, closer);

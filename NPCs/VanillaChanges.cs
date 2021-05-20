@@ -858,7 +858,9 @@ namespace tsorcRevamp.NPCs {
                     Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"));
                 }
             }
-
+            if (npc.type == NPCID.Golem) {
+                Item.NewItem(npc.getRect(), ItemID.Picksaw);
+            }
             #endregion
             #region Pillar ModWorld bools
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedVortex = true;
