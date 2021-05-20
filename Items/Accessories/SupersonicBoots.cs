@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Accessories {
 
             bool restricted = false;
             for (int i = 3; i <= 8; i++) {
-                if (player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
+                if (player.mount.Active || player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
 					|| player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
 					|| player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots) {
                     restricted = true;
