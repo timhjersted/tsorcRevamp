@@ -85,6 +85,11 @@ namespace tsorcRevamp {
 
         public int dragonMorphDamage = 45;
 
+        public bool MiakodaFull;
+        public int MiakodaFullTimer;
+        public bool MiakodaFullHeal1;
+        public bool MiakodaFullHeal2;
+
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
 
@@ -145,6 +150,8 @@ namespace tsorcRevamp {
             souldroptimer = 0;
             SOADrain = false;
             FracturingArmor = 1;
+            MiakodaFull = false;
+            MiakodaFullHeal1 = false;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
@@ -790,8 +797,142 @@ namespace tsorcRevamp {
                     player.statLife += (damage / 4);
                 }
             }
+            if (MiakodaFull)
+            {
+                if (MiakodaFullTimer > 600)
+                {
+                    if (crit)
+                    {
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
+                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199))
+                        {
+                            player.HealEffect(4, false);
+                            player.statLife += 4;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+                        }
 
+                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299))
+                        {
+                            player.HealEffect(6, false);
+                            player.statLife += 6;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+                        }
+
+                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399))
+                        {
+                            player.HealEffect(8, false);
+                            player.statLife += 8;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+                        }
+
+                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499))
+                        {
+                            player.HealEffect(10, false);
+                            player.statLife += 10;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+                        }
+
+                        if (player.statLifeMax2 > 499)
+                        {
+                            player.HealEffect(12, false);
+                            player.statLife += 12;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+                        }
+
+                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
+
+                        MiakodaFullTimer = 0;
+                    }
+                }
+            }
         }
+        public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
+        {
+            if (MiakodaFull)
+            {
+                if (MiakodaFullTimer > 600)
+                {
+                    if (crit)
+                    {
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
+                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199))
+                        {
+                            player.HealEffect(4, false);
+                            player.statLife += 4;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+                        }
+
+                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299))
+                        {
+                            player.HealEffect(6, false);
+                            player.statLife += 6;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+
+                        }
+
+                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399))
+                        {
+                            player.HealEffect(8, false);
+                            player.statLife += 8;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+
+                        }
+
+                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499))
+                        {
+                            player.HealEffect(10, false);
+                            player.statLife += 10;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+
+                        }
+
+                        if (player.statLifeMax2 > 499)
+                        {
+                            player.HealEffect(12, false);
+                            player.statLife += 12;
+                            if (player.statLife > player.statLifeMax2)
+                            {
+                                player.statLife = player.statLifeMax2;
+                            }
+
+                        }
+                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
+
+                        MiakodaFullTimer = 0;
+                    }
+                }
+            }
+        }
+
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit) {
             if (OldWeapon) {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
@@ -954,6 +1095,9 @@ namespace tsorcRevamp {
         }
 
         public override void PreUpdate() {
+
+            MiakodaFullTimer++;
+
             if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
                 Player.jumpSpeed += 10f;
 
@@ -962,6 +1106,16 @@ namespace tsorcRevamp {
             if (!player.HasBuff(ModContent.BuffType<Bonfire>())) //this ensures that BonfireUIState is only visible when within Bonfire range
             {
                 BonfireUIState.Visible = false;
+            }
+
+            if (MiakodaFullHeal1) //dust loop on player the instant they get healed
+            {
+                for (int d = 0; d < 100; d++)
+                {
+                    int dust = Dust.NewDust(player.position, player.width, player.height, 107, 0f, 0f, 30, default(Color), .75f);
+                    Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 3.5f);
+                    Main.dust[dust].noGravity = true;
+                }
             }
         }
     }

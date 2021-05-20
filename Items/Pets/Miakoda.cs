@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items {
+namespace tsorcRevamp.Items.Pets {
     class Miakoda : ModItem {
 
         public override void SetStaticDefaults() {

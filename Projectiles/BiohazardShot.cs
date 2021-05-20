@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles
 		{
 			Texture2D texture = Main.projectileTexture[projectile.type];
 
-			spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame * 16, 10, 16), Color.White, projectile.rotation, new Vector2(7, 8), projectile.scale, SpriteEffects.None, 0);
+			spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame * 18, 10, 18), Color.White, projectile.rotation, new Vector2(5, 9), projectile.scale, SpriteEffects.None, 0);
 
 			return false;
 		}

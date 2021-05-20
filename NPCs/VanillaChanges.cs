@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
+using tsorcRevamp.Items.Pets;
 
 namespace tsorcRevamp.NPCs {
     class VanillaChanges : GlobalNPC {
@@ -776,7 +777,7 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
             }
-            if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
+            if (npc.type == NPCID.SkeletronHead && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>(), 2);
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
