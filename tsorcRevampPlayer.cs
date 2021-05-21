@@ -85,10 +85,23 @@ namespace tsorcRevamp {
 
         public int dragonMorphDamage = 45;
 
-        public bool MiakodaFull;
-        public int MiakodaFullTimer;
+        public int MiakodaEffectsTimer;
+
+        public bool MiakodaFull; //Miakoda - Full Moon Form
         public bool MiakodaFullHeal1;
         public bool MiakodaFullHeal2;
+
+        public bool MiakodaCrescent; //Miakoda - Crescent Moon Form
+        public bool MiakodaCrescentBoost;
+        public int MiakodaCrescentBoostTimer;
+        public bool MiakodaCrescentDust1;
+        public bool MiakodaCrescentDust2;
+
+        public bool MiakodaNew; //Miakoda - New Moon Form
+        public bool MiakodaNewBoost;
+        public int MiakodaNewBoostTimer;
+        public bool MiakodaNewDust1;
+        public bool MiakodaNewDust2;
 
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
@@ -152,6 +165,10 @@ namespace tsorcRevamp {
             FracturingArmor = 1;
             MiakodaFull = false;
             MiakodaFullHeal1 = false;
+            MiakodaCrescent = false;
+            MiakodaCrescentDust1 = false;
+            MiakodaNew = false;
+            MiakodaNewDust1 = false;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
@@ -797,137 +814,167 @@ namespace tsorcRevamp {
                     player.statLife += (damage / 4);
                 }
             }
-            if (MiakodaFull)
-            {
-                if (MiakodaFullTimer > 600)
-                {
-                    if (crit)
-                    {
+            if (MiakodaFull) { //Miakoda Full Moon
+                if (MiakodaEffectsTimer > 720) {
+                    if (crit) {
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
-                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199))
-                        {
+                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199)) {
                             player.HealEffect(4, false);
                             player.statLife += 4;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
 
-                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299))
-                        {
+                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299)) {
                             player.HealEffect(6, false);
                             player.statLife += 6;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
 
-                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399))
-                        {
+                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399)) {
                             player.HealEffect(8, false);
                             player.statLife += 8;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
 
-                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499))
-                        {
+                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499)) {
                             player.HealEffect(10, false);
                             player.statLife += 10;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
 
-                        if (player.statLifeMax2 > 499)
-                        {
+                        if (player.statLifeMax2 > 499) {
                             player.HealEffect(12, false);
                             player.statLife += 12;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
 
                         Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
 
-                        MiakodaFullTimer = 0;
+                        MiakodaEffectsTimer = 0;
+                    }
+                }
+            }
+
+            if (MiakodaCrescent) { //Miakoda Crescent Moon
+                if (MiakodaEffectsTimer > 720) {
+                    if (crit) {
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
+
+                        if (Main.rand.Next(3) == 0) {
+                            player.AddBuff(BuffID.OnFire, 180); //MAKE BUFF
+                        }
+
+                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
+
+                        MiakodaEffectsTimer = 0;
+                    }
+                }
+            }
+
+            if (MiakodaNew) { //Miakoda New Moon
+                if (MiakodaEffectsTimer > 720) {
+                    if (crit) {
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
+
+                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), player.Center);
+
+                        MiakodaEffectsTimer = 0;
                     }
                 }
             }
         }
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if (MiakodaFull)
-            {
-                if (MiakodaFullTimer > 600)
-                {
-                    if (crit)
-                    {
+            if (MiakodaFull) { //Miakoda Full Moon
+                if (MiakodaEffectsTimer > 720) {
+                    if (crit) {
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
-                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199))
-                        {
+                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199)) {
                             player.HealEffect(4, false);
                             player.statLife += 4;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
 
-                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299))
-                        {
+                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299)) {
                             player.HealEffect(6, false);
                             player.statLife += 6;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
-
                         }
 
-                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399))
-                        {
+                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399)) {
                             player.HealEffect(8, false);
                             player.statLife += 8;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
-
                         }
 
-                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499))
-                        {
+                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499)) {
                             player.HealEffect(10, false);
                             player.statLife += 10;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
-
                         }
 
-                        if (player.statLifeMax2 > 499)
-                        {
+                        if (player.statLifeMax2 > 499) {
                             player.HealEffect(12, false);
                             player.statLife += 12;
-                            if (player.statLife > player.statLifeMax2)
-                            {
+                            if (player.statLife > player.statLifeMax2) {
                                 player.statLife = player.statLifeMax2;
                             }
-
                         }
                         Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
 
-                        MiakodaFullTimer = 0;
+                        MiakodaEffectsTimer = 0;
+                    }
+                }
+            }
+
+            if (MiakodaCrescent) { //Miakoda Crescent Moon
+                if (MiakodaEffectsTimer > 720) {
+                    if (crit) {
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
+
+                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
+
+                        MiakodaEffectsTimer = 0;
+                    }
+                }
+            }
+
+            if (MiakodaNew) { //Miakoda New Moon
+                if (MiakodaEffectsTimer > 720) {
+                    if (crit) {
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
+                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
+
+                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), player.Center);
+
+                        MiakodaEffectsTimer = 0;
                     }
                 }
             }
@@ -1096,26 +1143,73 @@ namespace tsorcRevamp {
 
         public override void PreUpdate() {
 
-            MiakodaFullTimer++;
+            MiakodaEffectsTimer++;
 
             if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
                 Player.jumpSpeed += 10f;
 
             }
 
-            if (!player.HasBuff(ModContent.BuffType<Bonfire>())) //this ensures that BonfireUIState is only visible when within Bonfire range
-            {
+            if (!player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
                 BonfireUIState.Visible = false;
             }
 
-            if (MiakodaFullHeal1) //dust loop on player the instant they get healed
-            {
-                for (int d = 0; d < 100; d++)
-                {
+            if (MiakodaFullHeal1) { //dust loop on player the instant they get healed
+                for (int d = 0; d < 100; d++) {
                     int dust = Dust.NewDust(player.position, player.width, player.height, 107, 0f, 0f, 30, default(Color), .75f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 3.5f);
                     Main.dust[dust].noGravity = true;
                 }
+            }
+
+            if (MiakodaCrescentDust1) { //dust loop on player the instant they get imbue
+                for (int d = 0; d < 100; d++) {
+                    int dust = Dust.NewDust(player.position, player.width, player.height, 164, 0f, 0f, 30, default(Color), 1.2f);
+                    Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 5f);
+                    Main.dust[dust].noGravity = false;
+                }
+            }
+            if (MiakodaCrescentBoost) {
+                MiakodaCrescentBoostTimer++;
+            }
+            if (MiakodaCrescentBoostTimer > 150) {
+                player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = false;
+                MiakodaCrescentBoostTimer = 0;
+            }
+
+            if (MiakodaNewDust1) { //dust loop on player the instant they get boost
+                for (int d = 0; d < 100; d++) {
+                    int dust = Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0f, 50, default(Color), 1.2f);
+                    Main.dust[dust].velocity *= Main.rand.NextFloat(2f, 7.5f);
+                    Main.dust[dust].noGravity = true;
+                }
+            }
+            if (MiakodaNewBoost) {
+                MiakodaNewBoostTimer++;
+                player.armorEffectDrawShadow = true;
+
+            }
+            if (MiakodaNewBoostTimer > 150) {
+                player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
+                MiakodaNewBoostTimer = 0;
+            }
+        }
+
+        public override void PostUpdateBuffs() {
+            if (MiakodaCrescentBoost) {
+                player.allDamageMult += 0.07f;
+            }
+
+            if (MiakodaNewBoost) {
+                player.moveSpeed += 0.9f;
+                player.endurance = .5f;
+                player.noKnockback = true;
+            }
+        }
+
+        public override void FrameEffects() {
+            if (MiakodaNewBoost) {
+                player.armorEffectDrawShadow = true;
             }
         }
     }

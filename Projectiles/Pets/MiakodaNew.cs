@@ -5,11 +5,12 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles.Pets
 {
-    class MiakodaFull : ModProjectile
+    class MiakodaNew : ModProjectile
     {
+
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Full Moon Miakoda");
+            DisplayName.SetDefault("New Moon Miakoda");
             Main.projFrames[projectile.type] = 8;
             Main.projPet[projectile.type] = true;
         }
@@ -22,7 +23,6 @@ namespace tsorcRevamp.Projectiles.Pets
             projectile.friendly = true;
             projectile.tileCollide = false;
             aiType = ProjectileID.BabyHornet;
-            projectile.scale = 1f;
             projectile.scale = 0.85f;
             drawOffsetX = -8;
         }
@@ -43,20 +43,21 @@ namespace tsorcRevamp.Projectiles.Pets
             Vector2 vectorToIdlePosition = idlePosition - projectile.Center;
             float distanceToIdlePosition = vectorToIdlePosition.Length();
 
-            if (player.dead)
-            {
-                modPlayer.MiakodaFull = false;
-            }
-            if (modPlayer.MiakodaFull)
-            {
-                projectile.timeLeft = 2;
-            }
 
             if (Main.myPlayer == player.whoAmI && distanceToIdlePosition > 1500f)
-            { 
+            {
                 projectile.position = idlePosition;
                 projectile.velocity *= 0.1f;
                 projectile.netUpdate = true;
+            }
+
+            if (player.dead)
+            {
+                modPlayer.MiakodaNew = false;
+            }
+            if (modPlayer.MiakodaNew)
+            {
+                projectile.timeLeft = 2;
             }
 
             if (modPlayer.MiakodaEffectsTimer > 720)
@@ -85,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Pets
                 Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f).WithPitchVariance(.2f), projectile.Center);
             }
 
-            if (modPlayer.MiakodaFullHeal2) //splash effect and sound once player gets crit+heal.
+            if (modPlayer.MiakodaNewDust2) //splash effect and sound once player gets crit+heal.
             {
                 if (!ModContent.GetInstance<tsorcRevampConfig>().MuteMiakoda)
                 {
@@ -109,11 +110,11 @@ namespace tsorcRevamp.Projectiles.Pets
                         Main.dust[dust].noGravity = true;
                     }
                 }
+            }
 
-                if (modPlayer.MiakodaEffectsTimer < 720)
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = false;
-                }
+            if (modPlayer.MiakodaEffectsTimer < 720)
+            {
+                player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = false;
             }
         }
     }

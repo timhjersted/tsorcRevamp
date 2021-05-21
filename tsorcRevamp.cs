@@ -943,6 +943,13 @@ namespace tsorcRevamp {
         //todo items must be manually tagged as legacy. make sure we got them all
         //todo before release, set this to constant and comment out the legacy mode block
         public bool LegacyMode { get; set; }
+
+        [Label("Mute Miakoda")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Miakoda giving you Navi flashbacks?\nTurn this on if you want to mute Revamp mode Miakoda.\nDefaults to Off")]
+        [DefaultValue(false)]
+
+        public bool MuteMiakoda { get; set; }
     }
 
     public class TilePlaceCode : GlobalItem {

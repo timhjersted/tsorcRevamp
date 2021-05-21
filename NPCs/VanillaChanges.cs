@@ -776,13 +776,19 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.TheDestroyer && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
             }
             if (npc.type == NPCID.SkeletronHead && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>(), 2);
+                if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>()); //dropping 2 together causes them to be difficult to separate
+                if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>());
+                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
+                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
+
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
-                Item.NewItem(npc.getRect(), ItemID.AngelWings, 2);
+                Item.NewItem(npc.getRect(), ItemID.AngelWings);
+                Item.NewItem(npc.getRect(), ItemID.AngelWings);
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);

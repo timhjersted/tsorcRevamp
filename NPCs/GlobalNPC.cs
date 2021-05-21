@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs {
         public bool ResetBiohazardBlobs = false;
         public bool ElectrocutedEffect = false;
         public bool PolarisElectrocutedEffect = false;
+        public bool CrescentMoonlight = false;
 
 
         public override void ResetEffects(NPC npc) {
@@ -39,7 +40,7 @@ namespace tsorcRevamp.NPCs {
             ResetBiohazardBlobs = false;
             ElectrocutedEffect = false;
             PolarisElectrocutedEffect = false;
-
+            CrescentMoonlight = false;
         }
 
         //vanilla npc changes moved to separate file
@@ -152,7 +153,7 @@ namespace tsorcRevamp.NPCs {
                 foreach (int buffType in npc.buffType) {
 
                     if (Main.debuff[buffType]) {
-                        damage = (int)(damage * 1.3f);
+                        damage = (int)(damage * 1.3f); // Is it meant to be stronger with projectiles? -C
                     }
                     buffIndex++;
                 }
@@ -214,134 +215,125 @@ namespace tsorcRevamp.NPCs {
 
             }
 
-            if (ToxicCatDrain)
-            {
-                if (npc.lifeRegen > 0)
-                {
+            if (ToxicCatDrain) {
+                if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
 
                 int ToxicCatShotCount = 0;
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
-                    {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
                         ToxicCatShotCount++;
                     }
                 }
-                if (ToxicCatShotCount >= 4) //this is to make it worth the players time stickying more than 3 times
-                {
+                if (ToxicCatShotCount >= 4) { //this is to make it worth the players time stickying more than 3 times
                     npc.lifeRegen -= ToxicCatShotCount * 2 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < ToxicCatShotCount * 1)
-                    {
+                    if (damage < ToxicCatShotCount * 1) {
                         damage = ToxicCatShotCount * 1;
                     }
                 }
-                else
-                {
+                else {
                     npc.lifeRegen -= ToxicCatShotCount * 1 * 3; 
-                    if (damage < ToxicCatShotCount * 1)
-                    {
+                    if (damage < ToxicCatShotCount * 1) {
                         damage = ToxicCatShotCount * 1;
                     }
                 }
             }
 
-            if (ViruCatDrain)
-            {
-                if (npc.lifeRegen > 0)
-                {
+            if (ViruCatDrain) {
+                if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
 
                 int ViruCatShotCount = 0;
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
-                    {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
                         ViruCatShotCount++;
                     }
                 }
-                if (ViruCatShotCount >= 4) //this is to make it worth the players time stickying more than 3 times
-                {
+                if (ViruCatShotCount >= 4)  {
                     npc.lifeRegen -= ViruCatShotCount * 4 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < ViruCatShotCount * 1)
-                    {
+                    if (damage < ViruCatShotCount * 1) {
                         damage = ViruCatShotCount * 1;
                     }
                 }
-                else
-                {
+                else {
                     npc.lifeRegen -= ViruCatShotCount * 2 * 3;
-                    if (damage < ViruCatShotCount * 1)
-                    {
+                    if (damage < ViruCatShotCount * 1) {
                         damage = ViruCatShotCount * 1;
                     }
                 }
             }
 
-            if (BiohazardDrain)
-            {
-                if (npc.lifeRegen > 0)
-                {
+            if (BiohazardDrain) {
+                if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
 
                 int BiohazardShotCount = 0;
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
-                    {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
                         BiohazardShotCount++;
                     }
                 }
-                if (BiohazardShotCount >= 4) //this is to make it worth the players time stickying more than 3 times
-                {
+                if (BiohazardShotCount >= 4) {
                     npc.lifeRegen -= BiohazardShotCount * 8 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < BiohazardShotCount * 1)
-                    {
+                    if (damage < BiohazardShotCount * 1) {
                         damage = BiohazardShotCount * 1;
                     }
                 }
-                else
-                {
+                else {
                     npc.lifeRegen -= BiohazardShotCount * 4 * 3;
-                    if (damage < BiohazardShotCount * 1)
-                    {
+                    if (damage < BiohazardShotCount * 1) {
                         damage = BiohazardShotCount * 1;
                     }
                 }
             }
 
-            if (ElectrocutedEffect)
-            {
-                if (npc.lifeRegen > 0)
-                {
+            if (ElectrocutedEffect) {
+                if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 22;
-                if (damage < 2)
-                {
+                if (damage < 2) {
                     damage = 2;
                 }
             }
 
-            if (PolarisElectrocutedEffect)
-            {
-                if (npc.lifeRegen > 0)
-                {
+            if (PolarisElectrocutedEffect) {
+                if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 100;
-                if (damage < 10)
-                {
+                if (damage < 10) {
                     damage = 10;
+                }
+            }
+
+            if (CrescentMoonlight) {
+                if (!Main.hardMode) {
+                    if (npc.lifeRegen > 0) {
+                        npc.lifeRegen = 0;
+                    }
+                    npc.lifeRegen -= 14;
+                    if (damage < 2) {
+                        damage = 2;
+                    }
+                }
+                else { //double the DoT in HM
+                    if (npc.lifeRegen > 0) {
+                        npc.lifeRegen = 0;
+                    }
+                    npc.lifeRegen -= 28;
+                    if (damage < 2) {
+                        damage = 2;
+                    }
                 }
             }
         }
@@ -357,8 +349,7 @@ namespace tsorcRevamp.NPCs {
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
-            if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
+            if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
                 shop.item[nextSlot].shopCustomPrice = 5000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -370,23 +361,18 @@ namespace tsorcRevamp.NPCs {
                 nextSlot++;
             }
         }
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
-        {
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
-            {
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit) {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>())) {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     tags = 0;
                     Projectile p = Main.projectile[i];
                     if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI) {
-                        for (int q = 0; q < 1000; q++)
-                        {
+                        for (int q = 0; q < 1000; q++) {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
-                            {
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI) {
                                 tags++;
                             }
                         }
@@ -400,31 +386,24 @@ namespace tsorcRevamp.NPCs {
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
-                        if (buffindex != -1)
-                        {
+                        if (buffindex != -1) {
                             npc.DelBuff(buffindex);
                         }
-
                     }
                 }
             }
 
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatExplosion>()))
-            {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatExplosion>())) {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
                 int tags;
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
-                    {
-                        for (int q = 0; q < 1000; q++)
-                        {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI) {
+                        for (int q = 0; q < 1000; q++) {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
-                            {
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI) {
                                 tags++;
                             }
                         }
@@ -439,30 +418,24 @@ namespace tsorcRevamp.NPCs {
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
 
-                        if (buffindex != -1)
-                        {
+                        if (buffindex != -1) {
                             npc.DelBuff(buffindex);
                         }
                     }
                 }
             }
 
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.BiohazardExplosion>()))
-            {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.BiohazardExplosion>())) {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
                 int tags;
 
-                for (int i = 0; i < 1000; i++)
-                {
+                for (int i = 0; i < 1000; i++) {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
-                    {
-                        for (int q = 0; q < 1000; q++)
-                        {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI) {
+                        for (int q = 0; q < 1000; q++) {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
-                            {
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI) {
                                 tags++;
                             }
                         }
@@ -476,8 +449,7 @@ namespace tsorcRevamp.NPCs {
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 
-                        if (buffindex != -1)
-                        {
+                        if (buffindex != -1) {
                             npc.DelBuff(buffindex);
                         }
                     }
@@ -485,36 +457,28 @@ namespace tsorcRevamp.NPCs {
             }
         }
 
-        public override void DrawEffects(NPC npc, ref Color drawColor)
-        {
-            if (ElectrocutedEffect)
-            {
+        public override void DrawEffects(NPC npc, ref Color drawColor) {
+            if (ElectrocutedEffect) {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (PolarisElectrocutedEffect)
-            {
-                for (int i = 0; i < 2; i++)
-
-                {
+            if (PolarisElectrocutedEffect) {
+                for (int i = 0; i < 2; i++) {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (Main.rand.Next(2) == 0)
-                {
+                if (Main.rand.Next(2) == 0) {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = false;
                 }
             }
 
-            if (ToxicCatDrain)
-            {
+            if (ToxicCatDrain) {
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(10) == 0)
-                {
+                if (Main.rand.Next(10) == 0) {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
@@ -523,13 +487,11 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (ViruCatDrain)
-            {
+            if (ViruCatDrain) {
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(6) == 0)
-                {
+                if (Main.rand.Next(6) == 0) {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
@@ -538,19 +500,26 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (BiohazardDrain)
-            {
+            if (BiohazardDrain) {
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(2) == 0)
-                {
+                if (Main.rand.Next(2) == 0) {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, -2f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity += npc.velocity;
                     Main.dust[dust].fadeIn = 1f;
                 }
+            }
+
+            if (CrescentMoonlight) {
+                drawColor = Color.White;
+
+                int dust = Dust.NewDust(npc.position, npc.width, npc.height, 164, npc.velocity.X * 0f, 0f, 100, default(Color), 1f); ;
+                Main.dust[dust].velocity *= 0f;
+                Main.dust[dust].noGravity = false;
+                Main.dust[dust].velocity += npc.velocity;
             }
         }
     }
