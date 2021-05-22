@@ -873,10 +873,6 @@ namespace tsorcRevamp {
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        if (Main.rand.Next(3) == 0) {
-                            player.AddBuff(BuffID.OnFire, 180); //MAKE BUFF
-                        }
-
                         Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
 
                         MiakodaEffectsTimer = 0;

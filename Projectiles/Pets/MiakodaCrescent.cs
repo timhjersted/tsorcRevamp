@@ -40,6 +40,8 @@ namespace tsorcRevamp.Projectiles.Pets
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             float MiakodaVol = ModContent.GetInstance<tsorcRevampConfig>().MiakodaVolume / 100f;
+            Lighting.AddLight(projectile.position, .6f, .45f, .6f);
+
 
             Vector2 idlePosition = player.Center;
             Vector2 vectorToIdlePosition = idlePosition - projectile.Center;
@@ -66,19 +68,21 @@ namespace tsorcRevamp.Projectiles.Pets
 
             if (modPlayer.MiakodaEffectsTimer > 720)
             {
+                Lighting.AddLight(projectile.position, .8f, .65f, .8f);
+
+                if (Main.rand.Next(3) == 0)
                 {
-                    if (Main.rand.Next(3) == 0)
+                    if (projectile.direction == 1)
                     {
-                        if (projectile.direction == 1)
-                        {
-                            int dust = Dust.NewDust(new Vector2(projectile.position.X + 6, projectile.position.Y), projectile.width - 6, projectile.height - 6, 164, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                            Main.dust[dust].noGravity = true;
-                        }
-                        if (projectile.direction == -1)
-                        {
-                            int dust = Dust.NewDust(new Vector2(projectile.position.X - 6, projectile.position.Y), projectile.width - 6, projectile.height - 6, 164, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                            Main.dust[dust].noGravity = true;
-                        }
+                        int dust = Dust.NewDust(new Vector2(projectile.position.X + 6, projectile.position.Y), projectile.width - 6, projectile.height - 6, 234, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                        Main.dust[dust].noGravity = true;
+                        Main.dust[dust].noLight = true;
+                    }
+                    if (projectile.direction == -1)
+                    {
+                        int dust = Dust.NewDust(new Vector2(projectile.position.X - 6, projectile.position.Y), projectile.width - 6, projectile.height - 6, 234, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                        Main.dust[dust].noGravity = true;
+                        Main.dust[dust].noLight = true;
                     }
                 }
             }
@@ -112,7 +116,6 @@ namespace tsorcRevamp.Projectiles.Pets
                         int dust = Dust.NewDust(new Vector2(projectile.position.X + 4, projectile.position.Y + 2), projectile.width - 6, projectile.height - 6, 164, 0f, 0f, 30, default(Color), 1.2f);
                         Main.dust[dust].velocity *= Main.rand.NextFloat(1f, 4f);
                         Main.dust[dust].noGravity = true;
-
                     }
                 }
 

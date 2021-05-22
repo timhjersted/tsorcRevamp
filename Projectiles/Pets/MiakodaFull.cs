@@ -39,6 +39,7 @@ namespace tsorcRevamp.Projectiles.Pets
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             float MiakodaVol = ModContent.GetInstance<tsorcRevampConfig>().MiakodaVolume / 100f;
+            Lighting.AddLight(projectile.position, .6f, .6f, .4f);
 
             Vector2 idlePosition = player.Center;
             Vector2 vectorToIdlePosition = idlePosition - projectile.Center;
@@ -60,25 +61,20 @@ namespace tsorcRevamp.Projectiles.Pets
                 projectile.netUpdate = true;
             }
 
-            if (modPlayer.MiakodaEffectsTimer > 720)
+            if ((modPlayer.MiakodaEffectsTimer > 720) && (Main.rand.Next(3) == 0))
             {
+                if (projectile.direction == 1)
                 {
-                    if (Main.rand.Next(3) == 0)
-                    {
-                        if (projectile.direction == 1)
-                        {
-                            int dust = Dust.NewDust(new Vector2(projectile.position.X + 4, projectile.position.Y), projectile.width - 6, projectile.height - 6, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                            Main.dust[dust].noGravity = true;
-                        }
-                        if (projectile.direction == -1)
-                        {
-                            int dust = Dust.NewDust(new Vector2(projectile.position.X - 4, projectile.position.Y), projectile.width - 6, projectile.height - 6, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                            Main.dust[dust].noGravity = true;
-                        }
-                    }
+                    int dust = Dust.NewDust(new Vector2(projectile.position.X + 4, projectile.position.Y), projectile.width - 6, projectile.height - 6, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
+                }
+                if (projectile.direction == -1)
+                {
+                    int dust = Dust.NewDust(new Vector2(projectile.position.X - 4, projectile.position.Y), projectile.width - 6, projectile.height - 6, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
                 }
             }
-
+            
             if (modPlayer.MiakodaEffectsTimer == 720 && MiakodaVol != 0) //sound effect the moment the timer reaches 420, to signal pet ability ready.
             {
                 string[] ReadySoundChoices = new string[] { "Sounds/Custom/MiakodaChaaa", "Sounds/Custom/MiakodaChao", "Sounds/Custom/MiakodaDootdoot", "Sounds/Custom/MiakodaHi", "Sounds/Custom/MiakodaOuuee" };

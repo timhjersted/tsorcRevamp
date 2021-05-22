@@ -34,6 +34,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.buffImmune[BuffID.Frostburn] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.ShadowFlame] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.CrescentMoonlight>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.DarkInferno>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.CrimsonBurn>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.ElectrocutedBuff>()] = true;
+			npc.buffImmune[ModContent.BuffType<Buffs.PolarisElectrocutedBuff>()] = true;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.CosmicCrystalLizardBanner>();
 		}
