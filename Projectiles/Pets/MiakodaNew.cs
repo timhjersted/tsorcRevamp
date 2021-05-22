@@ -38,6 +38,7 @@ namespace tsorcRevamp.Projectiles.Pets
         {
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            float MiakodaVol = ModContent.GetInstance<tsorcRevampConfig>().MiakodaVolume / 100f;
 
             Vector2 idlePosition = player.Center;
             Vector2 vectorToIdlePosition = idlePosition - projectile.Center;
@@ -79,20 +80,21 @@ namespace tsorcRevamp.Projectiles.Pets
                 }
             }
 
-            if (modPlayer.MiakodaEffectsTimer == 720 && !ModContent.GetInstance<tsorcRevampConfig>().MuteMiakoda) //sound effect the moment the timer reaches 420, to signal pet ability ready.
+            if (modPlayer.MiakodaEffectsTimer == 720 && MiakodaVol != 0) //sound effect the moment the timer reaches 420, to signal pet ability ready.
             {
                 string[] ReadySoundChoices = new string[] { "Sounds/Custom/MiakodaChaaa", "Sounds/Custom/MiakodaChao", "Sounds/Custom/MiakodaDootdoot", "Sounds/Custom/MiakodaHi", "Sounds/Custom/MiakodaOuuee" };
                 string ReadySound = Main.rand.Next(ReadySoundChoices);
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f).WithPitchVariance(.2f), projectile.Center);
+                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f * MiakodaVol).WithPitchVariance(.2f), projectile.Center);
             }
 
             if (modPlayer.MiakodaNewDust2) //splash effect and sound once player gets crit+heal.
             {
-                if (!ModContent.GetInstance<tsorcRevampConfig>().MuteMiakoda)
+                
+                if (MiakodaVol != 0)
                 {
                     string[] AmgerySoundChoices = new string[] { "Sounds/Custom/MiakodaScream", "Sounds/Custom/MiakodaChaoExcl", "Sounds/Custom/MiakodaUwuu" };
                     string AmgerySound = Main.rand.Next(AmgerySoundChoices);
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, AmgerySound).WithVolume(.6f).WithPitchVariance(.2f), projectile.Center);
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, AmgerySound).WithVolume(.6f * MiakodaVol).WithPitchVariance(.2f), projectile.Center);
                 }
 
                 for (int d = 0; d < 90; d++)

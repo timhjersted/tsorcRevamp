@@ -45,11 +45,11 @@ namespace tsorcRevamp {
 
 
         [Header("Options")]
-        [Label("Mute Miakoda")]
+        [Label("Miakoda Volume")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Miakoda giving you Navi flashbacks?\nTurn this on if you want to mute Revamp mode Miakoda.\nDefaults to Off")]
-        [DefaultValue(false)]
+        [Tooltip("Revamp Miakoda giving you Navi flashbacks?\nThis slider controls Miakoda's volume.\nSet to 0 to disable Miakoda sounds.")]
+        [DefaultValue(100)]
 
-        public bool MuteMiakoda { get; set; }
+        public uint MiakodaVolume;
     }
 }
