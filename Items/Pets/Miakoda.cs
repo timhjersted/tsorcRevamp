@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Pets {
     class Miakoda : ModItem {
-
+        public override bool Autoload(ref string name) => ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Miakoda - an ancient being of light over 100 years old, " +
                                 "\nwho has vowed to help you find your wife and defeat Attraidies." +
