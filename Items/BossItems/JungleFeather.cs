@@ -23,9 +23,7 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.JungleWyvernHead>()));
-                {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>())) {
                 return false;
             }
             if (Main.dayTime) {
@@ -36,8 +34,7 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else {
                 Main.NewText("A rumbling thunder shakes the ground below you... ", 175, 75, 255);
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvernHead>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>());
             }
             return true;
         }
