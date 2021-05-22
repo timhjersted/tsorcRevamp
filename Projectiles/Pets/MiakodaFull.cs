@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Pets
         {
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            float MiakodaVol = ModContent.GetInstance<tsorcRevampConfig>().MiakodaVolume / 100;
+            float MiakodaVol = ModContent.GetInstance<tsorcRevampConfig>().MiakodaVolume / 100f;
 
             Vector2 idlePosition = player.Center;
             Vector2 vectorToIdlePosition = idlePosition - projectile.Center;
