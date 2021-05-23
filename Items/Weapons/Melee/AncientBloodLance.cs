@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ancient Blood Lance");
-            Tooltip.SetDefault("Drains the enemy of their life.");
+            Tooltip.SetDefault("Pierces multiple times on every hit.");
         }
 
         public override void SetDefaults() {

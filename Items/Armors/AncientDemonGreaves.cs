@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+25% movement, can walk on heated grounds.\n+5% magic damage");
+            Tooltip.SetDefault("+20% movement, can walk on heated grounds.");
         }
 
         public override void SetDefaults()
@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors
             item.width = 18;
             item.height = 18;
             item.defense = 9;
-            item.value = 3000000;
+            item.value = 40000;
             item.rare = ItemRarityID.Orange;
         }
 
@@ -25,7 +25,6 @@ namespace tsorcRevamp.Items.Armors
         {
             player.moveSpeed += 0.25f;
             player.fireWalk = true;
-            player.magicDamage += 0.05f;
         }
 
         public override void AddRecipes()

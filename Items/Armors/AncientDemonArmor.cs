@@ -10,15 +10,15 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forged by those who brave Annihilation.\n+10% magic damage\nSet bonus: +10% Magic Critical Chance, -15% Mana Usage");
+            Tooltip.SetDefault("Forged by those who brave Annihilation.\nMana Regen Skill activates when health falls below 160 \nSet bonus: +15% Magic Critical Chance, -15% Mana Usage, +15 Magic Damage");
         }
 
         public override void SetDefaults()
         {
             item.width = 18;
             item.height = 18;
-            item.defense = 12;
-            item.value = 2800000;
+            item.defense = 13;
+            item.value = 40000;
             item.rare = ItemRarityID.Orange;
         }
 
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Armors
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.MoltenBreastplate, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

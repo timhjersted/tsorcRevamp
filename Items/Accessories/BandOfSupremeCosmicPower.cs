@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("BandOfGreatCosmicPower"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 35000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 15000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Items.Armors
             item.width = 18;
             item.height = 12;
             item.defense = 2;
-            item.value = 2500000;
+            item.value = 40000;
             item.rare = ItemRarityID.Orange;
         }
 
@@ -33,8 +34,16 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.magicCrit += 10;
+            player.magicCrit += 15;
             player.manaCost -= 0.15f;
+            player.magicDamage += 0.15f;
+            if (player.statLife <= 140) {
+                player.manaRegenBuff = true;
+
+                int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
+                Main.dust[dust].noGravity = true;
+
+            }
         }
 
         public override void AddRecipes()

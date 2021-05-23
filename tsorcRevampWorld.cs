@@ -27,7 +27,6 @@ namespace tsorcRevamp {
             Slain = new Dictionary<int, int>();
         }
 
-
 		public override TagCompound Save() {
 			TagCompound tagCompound = new TagCompound
 			{
@@ -60,6 +59,24 @@ namespace tsorcRevamp {
                 for (int i = 0; i < list.Count; i++) {
                     Slain.Add(list[i], list2[i]);
                 }
+            }
+        }
+
+        public override void PostUpdate() {
+            bool charm = false;
+            foreach (Player p in Main.player) {
+                foreach (Item i in p.armor) {
+                    if (i.type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+                        charm = true;
+                        break;
+                    }
+                }
+            }
+            if (charm) {
+                Main.bloodMoon = true;
+                Main.moonPhase = 0;
+                Main.dayTime = false;
+                Main.time = 16240.0;
             }
         }
     }

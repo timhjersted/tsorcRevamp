@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Summons a mindflayer illusion from the legion army of Attraidies!" +
-                                "\nDrops 500 souls of utterly corrupt darkness." +
+                                "\nDrops 600 souls of utterly corrupt darkness, among other random things." +
                                 "\n\"You feel compelled to try this...\"");
         }
         public override void SetDefaults()
@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items
         {
             if (!NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion")))
             {
+                Main.NewText("Attraidies Illusion has awakened!", 175, 75, 255);
                 NPC.SpawnOnPlayer(Main.myPlayer, mod.NPCType("AttraidiesIllusion"));
                 return true;
             }

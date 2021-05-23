@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A lost prince's armor.\n+7% melee speed");
+            Tooltip.SetDefault("A lost prince's armor.");
         }
 
         public override void SetDefaults()
@@ -20,11 +20,6 @@ namespace tsorcRevamp.Items.Armors
             item.defense = 8;
             item.value = 1800000;
             item.rare = ItemRarityID.Green;
-        }
-
-        public override void UpdateEquip(Player player)
-        {
-            player.meleeSpeed += 0.07f;
         }
 
         public override void AddRecipes()

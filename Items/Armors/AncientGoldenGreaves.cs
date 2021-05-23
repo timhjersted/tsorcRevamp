@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors
             item.width = 18;
             item.height = 18;
             item.defense = 4;
-            item.value = 1500000;
+            item.value = 15000;
             item.rare = ItemRarityID.Green;
         }
 

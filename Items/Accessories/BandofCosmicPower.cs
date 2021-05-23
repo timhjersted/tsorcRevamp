@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Band of Cosmic Power");
             Tooltip.SetDefault("Increases life regeneration by 2 and increases max mana by 40" +
-                                "\nCan be upgraded with 20,000 Dark Souls");
+                                "\nCan be upgraded with 3,000 Dark Souls");
         }
 
         public override void SetDefaults() {
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.BandofRegeneration, 1);
             recipe.AddIngredient(ItemID.BandofStarpower, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
