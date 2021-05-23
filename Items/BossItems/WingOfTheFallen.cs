@@ -39,6 +39,7 @@ namespace tsorcRevamp.Items.BossItems {
                 Main.NewText("It was a mistake to come here, Red... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
                 //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage>());
+                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.MechaDragonHead>());
             }
             return true;
         }

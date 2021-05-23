@@ -19,10 +19,10 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.Green;
             item.scale = 1;
             item.channel = true;
-            item.shootSpeed = 9;
+            item.shootSpeed = 10;
             item.magic = true;
             item.noMelee = true;
-            item.mana = 40;
+            item.mana = 30;
             item.useAnimation = 10;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;

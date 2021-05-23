@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.shootSpeed = 10;
             item.noUseGraphic = true;
             item.noMelee = true;
-            item.value = 12000;
+            item.value = 10000;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.OldMorningStar>();
         }

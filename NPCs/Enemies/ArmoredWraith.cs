@@ -25,6 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.value = 500;
             npc.defense = 25;
             npc.alpha = 100;
+            npc.lavaImmune = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Poisoned] = true;

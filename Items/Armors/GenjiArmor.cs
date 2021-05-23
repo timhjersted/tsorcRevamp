@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Amor from the East, enchanted with magic forces\n-25% mana cost\nSet bonmus: +20% Magic Crit, +100 mana, +3 Mana Regen");
+            Tooltip.SetDefault("Amor from the East, enchanted with magic forces\n-25% mana cost\nSet bonus: +20% Magic Crit, +100 mana, +3 Mana Regen");
         }
 
         public override void SetDefaults()

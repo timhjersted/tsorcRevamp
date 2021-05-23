@@ -37,7 +37,8 @@ namespace tsorcRevamp.Items.BossItems {
             else {
                 Main.PlaySound(SoundID.Roar, -1, -1, 0);
                 NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Slogra>());
+                //NPC.NewNPC((int)Main.player[Main.myPlayer].position.X+50, (int)Main.player[Main.myPlayer].position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
+
             }
             return true;
         }

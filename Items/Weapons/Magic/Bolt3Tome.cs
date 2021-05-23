@@ -17,13 +17,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = 35;
             item.height = 10;
             item.width = 34;
-            item.knockBack = 0.1f;
+            item.knockBack = 0;
             item.autoReuse = true;
             item.rare = ItemRarityID.Green;
             item.shootSpeed = 6f;
             item.magic = true;
             item.noMelee = true;
-            item.mana = 70;
+            item.mana = 60;
             item.useAnimation = 25;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;

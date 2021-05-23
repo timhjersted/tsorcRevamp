@@ -16,12 +16,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 			base.npc.width = 32;
 			base.npc.height = 32;
 			base.npc.aiStyle = 6;
-			base.npc.damage = 30;
+			base.npc.damage = 80;
 			base.npc.defense = 20;
 			base.npc.boss = true;
 			base.npc.noGravity = true;
 			base.npc.noTileCollide = true;
-			base.npc.lifeMax = 4000;
+			base.npc.lifeMax = 8000;
 			base.npc.HitSound = SoundID.NPCHit1;
 			base.npc.DeathSound = SoundID.NPCDeath8;
 			base.npc.knockBackResist = 0f;
@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 				Vector2 vector8 = new Vector2(base.npc.position.X + (float)(base.npc.width / 2), base.npc.position.Y + (float)(base.npc.height / 2));
 				float rotation = (float)Math.Atan2(vector8.Y - (Main.player[base.npc.target].position.Y + (float)Main.player[base.npc.target].height * 0.5f), vector8.X - (Main.player[base.npc.target].position.X + (float)Main.player[base.npc.target].width * 0.5f));
 				rotation += (float)(Main.rand.Next(-50, 50) / 100);
-				Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), base.mod.GetProjectile("ObscureSaw").projectile.type, 45, 0f, Main.myPlayer);
+				Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), base.mod.GetProjectile("ObscureSaw").projectile.type, 55, 0f, Main.myPlayer);
 				this.Timer = -300 - Main.rand.Next(300);
 			}
 		}

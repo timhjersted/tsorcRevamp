@@ -900,6 +900,14 @@ namespace tsorcRevamp {
                 #endregion 
             }
             RecipeHelper.EditRecipes();
+
+            ModRecipe recipe1 = new ModRecipe(this);
+            recipe1.AddIngredient(ItemID.FallenStar);
+            recipe1.AddIngredient(ItemID.Gel, 2);
+            recipe1.AddIngredient(ItemID.Bottle, 10);
+            recipe1.AddTile(TileID.Bottles);
+            recipe1.SetResult(ItemID.LesserManaPotion, 10);
+            recipe1.AddRecipe();
         }
 
     }

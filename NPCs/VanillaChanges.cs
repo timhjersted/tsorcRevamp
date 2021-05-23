@@ -24,10 +24,12 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.ArmoredSkeleton): {
+                        npc.npcSlots = 2;
+                        npc.lifeMax = 740;
                         npc.damage = 43;
                         npc.knockBackResist = 0.2f;
                         npc.defense = 36;
-                        npc.value = 450;
+                        npc.value = 500;
                         break;
                     }
 
@@ -419,9 +421,9 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.Retinazer): {
-                        npc.defense = 38;
-                        npc.damage = 55;
-                        npc.lifeMax = 23000;
+                        npc.defense = 28;
+                        npc.damage = 80;
+                        npc.lifeMax = 25000;
                         npc.value = 120000;
                         break;
                     }
@@ -511,9 +513,9 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.Spazmatism): {
-                        npc.lifeMax = 28000;
+                        npc.lifeMax = 25000;
                         npc.value = 120000;
-                        npc.damage = 85;
+                        npc.damage = 80;
                         npc.defense = 35;
                         break;
                     }
@@ -576,7 +578,9 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.Unicorn): {
-                        npc.value = 500;
+                        npc.value = 600;
+                        npc.knockBackResist = 0.2f;
+                        npc.damage = 85;
                         break;
                     }
 
@@ -689,9 +693,17 @@ namespace tsorcRevamp.NPCs {
                         break;
                     }
 
-                case (NPCID.Zombie): {
+                case (NPCID.DarkMummy): {
+                        npc.knockBackResist = 0.2f;
                         break;
                     }
+
+                case (NPCID.LightMummy): {
+                        npc.knockBackResist = 0.35f;
+                        npc.damage = 85;
+                        break;
+                    }
+
 
                 case int n when ((n >= NPCID.BigFemaleZombie && n <= NPCID.SmallFemaleZombie) ||
                                 (n >= NPCID.BigTwiggyZombie && n <= NPCID.SmallZombie) ||
@@ -792,6 +804,7 @@ namespace tsorcRevamp.NPCs {
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 1000);
             }
 
             if (npc.netID == NPCID.GreenSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {

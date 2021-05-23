@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.boss = true;
             npc.noGravity = true;
             npc.noTileCollide = true;
-            npc.lifeMax = 10000;
+            npc.lifeMax = 16000;
             npc.npcSlots = 20f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;

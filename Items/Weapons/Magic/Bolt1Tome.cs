@@ -7,14 +7,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Bolt 1 Tome");
             Tooltip.SetDefault("A lost beginner's tome.\n" +
-                                "Can be upgraded with 9000 Dark Souls.");
+                                "Can be upgraded with 8000 Dark Souls.");
 
         }
 
         public override void SetDefaults() {
             item.damage = 9;
             item.height = 10;
-            item.knockBack = 0.1f;
+            item.knockBack = 0;
             item.autoReuse = true;
             item.maxStack = 1;
             item.rare = ItemRarityID.Green;

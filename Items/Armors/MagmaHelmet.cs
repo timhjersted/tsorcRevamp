@@ -10,14 +10,14 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+10% melee damage, +7% melee crit");
+            Tooltip.SetDefault("+17% melee damage");
         }
         public override void SetDefaults()
         {
             item.width = 18;
             item.height = 18;
             item.defense = 5;
-            item.value = 15000;
+            item.value = 40000;
             item.rare = ItemRarityID.Orange;
         }
 
@@ -28,14 +28,14 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeDamage += 0.1f;
-            player.meleeCrit += 7;
+            player.meleeDamage += 0.17f;
         }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.meleeCrit += 10;
-            player.meleeSpeed += 0.10f;
+            player.meleeCrit += 17;
+            player.meleeSpeed += 0.14f;
+            player.fireWalk = true;
             if (Main.rand.Next(3) == 0)
             {
                 Color color = new Color();

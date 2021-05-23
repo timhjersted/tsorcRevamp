@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.width = 28;
             item.height = 30;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 30;
+            item.useAnimation = 60;
             item.useTime = 60;
             item.damage = 1100;
             item.knockBack = 6;
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.LightRed;
             item.shootSpeed = 10;
             item.crit = 0;
-            item.mana = 600;
+            item.mana = 800;
             item.noMelee = true;
             item.value = 10000000;
             item.magic = true;

@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.height = 66;
             item.width = 16;
             item.ranged = true;
+            item.autoReuse = true;
             item.knockBack = 4f;
             item.maxStack = 1;
             item.noMelee = true;

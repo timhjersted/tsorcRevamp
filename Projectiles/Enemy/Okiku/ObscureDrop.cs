@@ -37,5 +37,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
             return true;
         }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit) {
+            if (Main.rand.Next(2) == 0) {
+                target.AddBuff(BuffID.Weak, 600);
+                target.AddBuff(BuffID.OnFire, 180);
+                target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 7200);
+            }
+
+            if (Main.rand.Next(8) == 0) {
+                target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1800);
+            }
+        }
     }
 }

@@ -17,13 +17,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.Orange;
             item.shootSpeed = 6;
             item.magic = true;
-            item.mana = 20;
+            item.autoReuse = true;
+            item.mana = 15;
             item.noMelee = true;
             item.useAnimation = 45;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 45;
-            item.value = 100000;
+            item.value = 10000;
             item.width = 20;
             item.shoot = ModContent.ProjectileType<Projectiles.PoisonFieldBall>();
         }

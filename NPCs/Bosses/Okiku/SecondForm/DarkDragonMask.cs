@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                     TimerRain++;
                     if (TimerRain >= 2) {
                         Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
-                        Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(-100, 100) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 49, 0f, 0);
+                        Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(-100, 100) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 64, 0f, 0);
                         TimerRain = 0;
                     }
                 }

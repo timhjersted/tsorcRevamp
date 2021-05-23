@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     public class Longinus : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Legendary spear fabled to hold sway over the world.\nDoubles attack damage when falling.\nAlso has random chance to cast a healing spell on each strike.");
+            Tooltip.SetDefault("Legendary spear fabled to hold sway over the world.\nIncreases attack damage by 50% when falling.");
         }
 
 
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0) {
-                mult = 2;
+                mult = 1.5f;
             }
 
         }

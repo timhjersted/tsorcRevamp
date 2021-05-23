@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.height = 28;
             item.knockBack = 4;
             item.rare = ItemRarityID.Orange;
+            item.autoReuse = true;
             item.shootSpeed = 6;
             item.magic = true;
             item.noMelee = true;
@@ -22,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useTime = 45;
             item.value = 200000;
             item.width = 20;
-            item.mana = 25;
+            item.mana = 20;
             item.shoot = ModContent.ProjectileType<Projectiles.EnergyFieldBall>();
         }
 

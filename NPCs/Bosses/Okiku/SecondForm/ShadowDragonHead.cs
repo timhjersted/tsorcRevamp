@@ -19,8 +19,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 			npc.width = 32;
 			npc.height = 32;
 			npc.aiStyle = -1;
-			npc.damage = 30;
-			npc.defense = 20;
+			npc.damage = 90;
+			npc.defense = 19;
 			npc.boss = true;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -266,5 +266,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 			npc.alpha = 255;
 			return true;
 		}
-	}
+
+        public override void NPCLoot() {
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 500);
+        }
+    }
 }

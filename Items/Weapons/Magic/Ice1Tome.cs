@@ -6,13 +6,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ice 1 Tome");
-            Tooltip.SetDefault("A lost beginner's tome");
+            Tooltip.SetDefault("A lost beginner's tome \nCan be upgraded.");
         }
         public override void SetDefaults() {
             item.damage = 10;
             item.height = 10;
             item.knockBack = 0f;
             item.channel = true;
+            item.autoReuse = true;
             item.rare = ItemRarityID.Green;
             item.shootSpeed = 9;
             item.magic = true;
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

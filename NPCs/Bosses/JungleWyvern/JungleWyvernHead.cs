@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 	[AutoloadBossHead]
@@ -29,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.boss = true;
-            npc.value = 70000;
+            npc.value = 90000;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
@@ -240,7 +241,16 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(2, 10));
 			Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(2, 10));
 			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 300);
+			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
+			Item.NewItem(npc.getRect(), ItemID.NecroHelmet);
+			Item.NewItem(npc.getRect(), ItemID.NecroBreastplate);
+			Item.NewItem(npc.getRect(), ItemID.NecroGreaves);
+			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())) { //if the boss has been killed
+				if (tsorcRevampWorld.Slain[ModContent.NPCType<JungleWyvernHead>()] == 0) { //and the key value is 0
+					Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 9000);
+					tsorcRevampWorld.Slain[ModContent.NPCType<JungleWyvernHead>()] = 1; //set the value to 1
+				}
+			}
 		}
     }
 }

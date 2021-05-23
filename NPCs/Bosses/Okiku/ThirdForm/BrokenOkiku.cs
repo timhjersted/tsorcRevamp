@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.defense = 30;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath6;
-            npc.lifeMax = 8000;
+            npc.lifeMax = 11000;
             npc.timeLeft = 22500;
             npc.friendly = false;
             npc.boss = true;
@@ -43,7 +43,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.lavaImmune = true;
             npc.value = 350000;
         }
-
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+        }
         public void Teleport(float X, float Y) {
             int dustDeath;
             for (int num36 = 0; num36 < 20; num36++) {
@@ -106,10 +108,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 if (genericTimer2 == 10) {
                     int num54 = 0;
                     if (left) {
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 52, 0f, 0);
+                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, 0);
                     }
                     else {
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 52, 0f, 0);
+                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, 0);
                     }
                     genericTimer2 = 0;
                 }
@@ -136,14 +138,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     if (subPhase == 0) // SUB PHASE 0
                     {
                         for (int num36 = 0; num36 < 9; num36++) {
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<EnergyPulse>(), 46, 0f, 0);
+                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<EnergyPulse>(), 66, 0f, 0);
                         }
                         genericTimer2 = 0;
                     }
                     if (subPhase == 1) // SUB PHASE 1
                     {
                         for (int num36 = 0; num36 < 6; num36++) {
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 10) * (1 + num36))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + num36))) * 6, ModContent.ProjectileType<EnergyPulse>(), 48, 0f, 0);
+                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 10) * (1 + num36))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + num36))) * 6, ModContent.ProjectileType<EnergyPulse>(), 58, 0f, 0);
                             Main.projectile[num54].ai[0] = npc.target;
                         }
                         genericTimer2 = -200;
@@ -168,7 +170,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 if (genericTimer2 >= 10) {
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<AntiMatterBlast>(), 55, 0f, 0);
+                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<AntiMatterBlast>(), 65, 0f, 0);
                     genericTimer2 = 0;
                 }
             }

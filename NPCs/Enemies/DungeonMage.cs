@@ -7,21 +7,21 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Enemies {
     class DungeonMage : ModNPC {
         public override void SetDefaults() {
-            npc.npcSlots = 5;
+            npc.npcSlots = 60;
             //npc.maxSpawns = 2; todo investigate
             npc.aiStyle = 0;
-            npc.damage = 35;
-            npc.defense = 12;
+            npc.damage = 40;
+            npc.defense = 10;
             npc.height = 44;
             npc.timeLeft = 22500;
-            npc.lifeMax = 250;
+            npc.lifeMax = 260;
             npc.scale = 1;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.noGravity = false;
             npc.noTileCollide = false;
             npc.lavaImmune = true;
-            npc.value = 1300;
+            npc.value = 1500;
             npc.width = 28;
             npc.knockBackResist = 0.3f;
             Main.npcFrameCount[npc.type] = 3;
@@ -227,11 +227,21 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
         }
 
+        public override void NPCLoot() {
+            Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
 
+            if (Main.rand.Next(2) == 0) {
+                Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
+            }
 
+            if (Main.rand.NextFloat() <= .07f) {
+                Item.NewItem(npc.getRect(), ItemID.SpellTome);
+            }
 
-
-
+            if (Main.rand.NextFloat() <= .3f) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+            }
+        }
 
 
         public override void HitEffect(int hitDirection, double damage) {

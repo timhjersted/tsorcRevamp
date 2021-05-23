@@ -13,8 +13,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 
         public override void SetDefaults() {
             npc.aiStyle = -1;
-            npc.lifeMax = 15000;
-            npc.damage = 32;
+            npc.lifeMax = 16000;
+            npc.damage = 34;
             npc.defense = 20;
             npc.knockBackResist = 0f;
             npc.width = 180;
@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses {
             if (npc.ai[3] == 0) {
                 npc.alpha = 0;
                 npc.dontTakeDamage = false;
-                npc.damage = 42;
+                npc.damage = 44;
                 if (npc.ai[2] < 600)
                 {
                     if (Main.player[npc.target].position.X < vector8.X) {
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Bosses {
 
                     {
                         float num48 = 13f;
-                        int damage = 37;
+                        int damage = 40;
                         int type = ModContent.ProjectileType<WaterTrail>();
                         Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));

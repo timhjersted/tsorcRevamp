@@ -22,5 +22,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.width = 22;
             item.shoot = ModContent.ProjectileType<Projectiles.ThrowingAxe>();
         }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.Wood, 10);
+            recipe.AddIngredient(ItemID.StoneBlock, 10);
+            recipe.AddTile(TileID.Anvils);
+            recipe.SetResult(this, 40);
+            recipe.AddRecipe();
+        }
     }
 }

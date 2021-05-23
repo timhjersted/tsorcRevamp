@@ -18,11 +18,11 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.maxStack = 1;
             item.damage = 20;
             item.knockBack = 1;
-            item.mana = 8;
+            item.mana = 7;
             item.UseSound = SoundID.Item20;
             item.shootSpeed = 12;
             item.noMelee = true;
-            item.value = 54000;
+            item.value = 14000;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.FireBall>();
         }

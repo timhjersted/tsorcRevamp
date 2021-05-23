@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.Stabbing;
             item.useTime = 15;
-            item.value = 200;
+            item.value = 4000;
         }
 
         public override void HoldItem(Player player)

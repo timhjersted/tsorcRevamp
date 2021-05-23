@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
             if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0) {
-                mult = 2;
+                mult = 1.5f;
             }
 
         }

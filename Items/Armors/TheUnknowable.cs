@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("25% chance to not consume ammo\nLonger breath, waterwalk, no knockback\nSet Bonus: Ranged Stats & Movement +30% + Archery Skill + No Fall DMG");
+            Tooltip.SetDefault("25% chance to not consume ammo\nInfinite breath, waterwalk, no knockback\nSet Bonus: Ranged Stats & Movement +30% + Archery Skill + No Fall DMG");
         }
         public override void SetDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.ammoCost75 = true;
-            player.breath = 10800;
+            player.breath = 999999;
             player.waterWalk = true;
             player.noKnockback = true;
         }

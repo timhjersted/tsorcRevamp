@@ -16,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.maxStack = 1;
             item.rare = ItemRarityID.Green;
             item.channel = true;
-            item.shootSpeed = 9;
+            item.autoReuse = true;
+            item.shootSpeed = 11;
             item.magic = true;
             item.noMelee = true;
             item.mana = 100;

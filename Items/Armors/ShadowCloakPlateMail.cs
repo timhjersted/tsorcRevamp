@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Shadow Cloak Skill activates +8 Life Regen when health falls below 80, otherwise grants +1 life regen\nSet bonus: +10% Melee Damage, +27% Melee Speed");
+            Tooltip.SetDefault("Shadow Cloak Skill activates +9 Life Regen when health falls below 80, otherwise grants +2 life regen\nSet bonus: +10% Melee Damage, +27% Melee Speed");
         }
 
         public override void SetDefaults()
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Armors
             item.width = 18;
             item.height = 18;
             item.defense = 9;
-            item.value = 2000000;
+            item.value = 15000;
             item.rare = ItemRarityID.Pink;
         }
 
@@ -26,13 +26,13 @@ namespace tsorcRevamp.Items.Armors
         {
             if (player.statLife <= 80)
             {
-                player.lifeRegen += 8;
+                player.lifeRegen += 9;
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.Violet, 2.0f);
                 Main.dust[dust].noGravity = true;
             }
             else
             {
-                player.lifeRegen += 1;
+                player.lifeRegen += 2;
             }
             if (Main.rand.Next(7) == 0)
             {

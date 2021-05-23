@@ -18,15 +18,14 @@ namespace tsorcRevamp.Items.Weapons.Melee
             item.width = 36;
             item.height = 36;
             item.knockBack = 5;
-            item.maxStack = 1;
             item.melee = true;
-            item.scale = 1.25f;
-            item.useAnimation = 22; // Slowed, why was this so fast??
+            item.autoReuse = true;
+            item.useAnimation = 21; // Slowed, why was this so fast??
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 21;
-            item.value = 8000;
+            item.value = 18000;
         }
 
         public override void HoldItem(Player player)

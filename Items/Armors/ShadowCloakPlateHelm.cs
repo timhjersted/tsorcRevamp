@@ -10,6 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Shadow Cloak Helm");
             Tooltip.SetDefault("6% increased melee critical strike");
         }
         public override void SetDefaults()
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Items.Armors
             item.width = 18;
             item.height = 18;
             item.defense = 7;
-            item.value = 2000000;
+            item.value = 15000;
             item.rare = ItemRarityID.Pink;
         }
 

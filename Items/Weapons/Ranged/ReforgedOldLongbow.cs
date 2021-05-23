@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.rare = ItemRarityID.White;
             item.scale = 0.9f;
             item.shoot = AmmoID.Arrow;
-            item.shootSpeed = 7.5f;
+            item.shootSpeed = 13f;
             item.useAmmo = AmmoID.Arrow;
             item.useAnimation = 25;
             item.useTime = 25;

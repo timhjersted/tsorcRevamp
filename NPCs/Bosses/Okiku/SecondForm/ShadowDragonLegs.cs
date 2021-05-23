@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             npc.width = 32;
             npc.height = 32;
             npc.aiStyle = 6;
-            npc.damage = 30;
+            npc.damage = 70;
             npc.defense = 20;
             npc.boss = true;
             npc.noGravity = true;

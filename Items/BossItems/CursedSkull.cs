@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.BossItems {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Bone, 30);
+            recipe.AddIngredient(ItemID.Bone, 10);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

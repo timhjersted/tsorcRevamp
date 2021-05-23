@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.damage = 26;
             npc.scale = 1f;
             npc.knockBackResist = 0.3f;
-            npc.value = 5000;
-            npc.defense = 22;
+            npc.value = 6000;
+            npc.defense = 10;
             npc.height = 44;
             npc.width = 28;
             npc.HitSound = SoundID.NPCHit48;
@@ -47,7 +47,17 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (spawnInfo.player.ZoneDungeon && !NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion")))
             {
-                chance = .01f;
+                if (!Main.hardMode) { chance = .02f; }
+                else chance = .011f;
+                
+            }
+
+            if (spawnInfo.player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion"))) {
+                chance = .033f;
+            }
+
+            if (spawnInfo.player.ZoneJungle && Main.hardMode) {
+                chance = .00625f;
             }
 
             return chance;
@@ -156,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 npc.velocity.Y *= 0.17f;
             }
 
-            if ((npc.ai[1] >= 200 && npc.life > 300) || (npc.ai[1] >= 120 && npc.life <= 300))
+            if ((npc.ai[1] >= 280 && npc.life > 300) || (npc.ai[1] >= 140 && npc.life <= 300))
             {
                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)
@@ -166,7 +176,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
                 npc.ai[2] = 0;
-                npc.ai[1] = 0;
+                //npc.ai[1] = 0;
                 if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 {
                     npc.TargetClosest(true);
@@ -195,7 +205,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
                     int x_blockpos = (int)npc.position.X / 16; // corner not center
                     int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                    int tp_radius = 35; // radius around target(upper left corner) in blocks to teleport into
+                    int tp_radius = 30; // radius around target(upper left corner) in blocks to teleport into
                     int tp_counter = 0;
                     bool flag7 = false;
                     if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 9000000f)
@@ -210,11 +220,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         tp_counter++;
 
                         int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                        int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                        int tp_y_target = Main.rand.Next((target_y_blockpos - tp_radius) - 62, (target_y_blockpos + tp_radius) - 24);  //  pick random tp point (centered on corner)
                         for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                         { // (tp_x_target,m) is block under its feet I think
-                            if ((m < target_y_blockpos - 13 || m > target_y_blockpos + 13 || tp_x_target < target_x_blockpos - 13 || tp_x_target > target_x_blockpos + 13) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].active())
-                            { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                            if ((m < target_y_blockpos - 15 || m > target_y_blockpos + 15 || tp_x_target < target_x_blockpos - 15 || tp_x_target > target_x_blockpos + 15) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].active()) { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                                 bool safe_to_stand = true;
                                 bool dark_caster = false; // not a fighter type AI...
                                 if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
@@ -259,10 +268,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (npc.ai[3] >= 60) //how often the crystal attack can happen in frames per second
             {
-                if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+                if (Main.rand.Next(4) == 0) //1 in 4 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 2f;
-                    Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 520 + (npc.height / 2));
+                    Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 620 + (npc.height / 2));
                     float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
                     float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
                     if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
@@ -280,7 +289,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (Main.rand.Next(15) == 0) //1 in 20 chance boss will summon an NPC
+                if (Main.rand.Next(45) == 0) //1 in 45 chance boss will summon an NPC
                 {
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;
@@ -371,17 +380,17 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Item.NewItem(npc.getRect(), ItemID.GoldenKey);
             }
-            if (Main.rand.NextFloat() <= .5f)
+            if (Main.rand.NextFloat() <= .9f)
             {
                 Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
             }
-            if (Main.rand.NextFloat() <= .1f)
+            if (Main.rand.NextFloat() <= .4f)
             {
                 Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
+                Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 2);
             }
             if (Main.rand.NextFloat() <= .01f)
             {
@@ -391,11 +400,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 Item.NewItem(npc.getRect(), ItemID.HunterPotion);
             }
-            if (Main.rand.NextFloat() <= .5f)
+            if (Main.rand.NextFloat() <= .6f)
             {
                 Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion);
             }
-            if (Main.rand.NextFloat() <= .1f)
+            if (Main.rand.NextFloat() <= .8f)
             {
                 Item.NewItem(npc.getRect(), ItemID.RegenerationPotion);
             }

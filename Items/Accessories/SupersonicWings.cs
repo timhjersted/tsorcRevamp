@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
             recipe.AddIngredient(mod.GetItem("SupersonicBoots"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

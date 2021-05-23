@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.defense = 15;
             npc.height = 44;
             npc.timeLeft = 22500;
-            npc.lifeMax = 10000;
+            npc.lifeMax = 7000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
             npc.noGravity = false;

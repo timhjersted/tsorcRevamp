@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.height = 30;
             item.knockBack = 6;
             item.melee = true;
+            item.autoReuse = true;
             item.useAnimation = 25;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
@@ -22,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.StoneBlock, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 600);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1200);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

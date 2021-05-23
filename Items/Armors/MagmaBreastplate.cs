@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("10% increased melee damage\nSet bonus: +10% Melee Crit, +10% Melee Speed");
+            Tooltip.SetDefault("10% increased melee damage\nSet bonus: +17% Melee Crit, +14% Melee Speed, Firewalk skill");
         }
 
         public override void SetDefaults()

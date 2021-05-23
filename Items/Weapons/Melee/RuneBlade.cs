@@ -6,21 +6,22 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class RuneBlade : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("A sword used to kill magic users." +
-                                "\nDoes up to 8x damage to some enemies.");
+                                "\nDoes up to 8x damage to mages");
         }
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
-            item.damage = 19;
+            item.damage = 20;
             item.height = 36;
             item.knockBack = 5;
             item.maxStack = 1;
             item.melee = true;
-            item.scale = .9f;
-            item.useAnimation = 23;
+            item.autoReuse = true;
+            item.scale = 1f;
+            item.useAnimation = 20;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = 140000;
+            item.useTime = 20;
+            item.value = 10000;
             item.width = 36;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {

@@ -11,14 +11,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.autoReuse = true;
             item.useTurn = true;
             item.rare = ItemRarityID.Pink;
-            item.damage = 9;
+            item.damage = 11;
             item.height = 12;
             item.knockBack = 5;
             item.melee = true;
             item.useAnimation = 8;
             item.useTime = 8;
             item.UseSound = SoundID.Item1;
-            item.value = 15000;
+            item.value = 5000;
             item.width = 14;
         }
     }
