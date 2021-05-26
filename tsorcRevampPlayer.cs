@@ -103,6 +103,8 @@ namespace tsorcRevamp {
         public bool MiakodaNewDust1;
         public bool MiakodaNewDust2;
 
+        internal bool gotPickaxe;
+
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
 
@@ -125,6 +127,7 @@ namespace tsorcRevamp {
             {"townWarpY", townWarpY},
             {"townWarpWorld", townWarpWorld},
             {"townWarpSet", townWarpSet},
+            {"gotPickaxe", gotPickaxe},
             };
 
         }
@@ -138,6 +141,7 @@ namespace tsorcRevamp {
             townWarpY = tag.GetInt("townWarpY");
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
+            gotPickaxe = tag.GetBool("gotPickaxe");
         }
 
         public override void ResetEffects() {
@@ -1206,6 +1210,13 @@ namespace tsorcRevamp {
         public override void FrameEffects() {
             if (MiakodaNewBoost) {
                 player.armorEffectDrawShadow = true;
+            }
+        }
+
+        public override void OnEnterWorld(Player player) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe) { //sandbox mode only, and only once
+                player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
+                gotPickaxe = true;
             }
         }
     }
