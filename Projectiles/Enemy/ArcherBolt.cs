@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("ArcherBolt"); //Used by DworcVenomsniper
+            DisplayName.SetDefault("Archer Bolt"); //Used by DworcVenomsniper
         }
         public override void SetDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         #region AI
-        public void Kill()
+        public override void Kill(int timeLeft)
         {
             int num98 = -1;
             if (!projectile.active)
