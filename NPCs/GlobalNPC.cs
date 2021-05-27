@@ -7,6 +7,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Ranged;
+using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs {
     class tsorcRevampGlobalNPC : GlobalNPC {
@@ -352,11 +353,19 @@ namespace tsorcRevamp.NPCs {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
             }
-            if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode && Main.rand.Next(2) == 0) {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
-                shop.item[nextSlot].shopCustomPrice = 5000;
+            if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
+                shop.item[nextSlot].shopCustomPrice = 25;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
+
+                if (Main.rand.Next(2) == 0)
+                {
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
+                    shop.item[nextSlot].shopCustomPrice = 5000;
+                    shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                    nextSlot++;
+                }
             }
             if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
