@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (!spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && spawnInfo.player.ZoneJungle) return 0.02f;
+			if (!spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && spawnInfo.player.ZoneJungle) return 0.002f;
 
 			if (Main.hardMode && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.033f;
 			if (Main.hardMode && !spawnInfo.player.ZoneMeteor && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.023f;
@@ -662,11 +662,11 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			if (npc.life <= 0)
 			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 3"), 1f);
+				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 1"), 1f);
+				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
+				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
+				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
+				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
 			}
 		}
 		#endregion
