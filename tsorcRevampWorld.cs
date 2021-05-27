@@ -88,8 +88,8 @@ namespace tsorcRevamp {
         public override void PostUpdate() {
             bool charm = false;
             foreach (Player p in Main.player) {
-                foreach (Item i in p.armor) {
-                    if (i.type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+                for (int i = 3; i <= 8; i++) {
+                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
                         charm = true;
                         break;
                     }
@@ -112,6 +112,6 @@ namespace tsorcRevamp {
                 }
             }
         }
-        
+
     }
 }
