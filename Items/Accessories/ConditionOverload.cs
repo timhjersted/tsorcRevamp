@@ -26,10 +26,13 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Fireblossom, 2);
-            recipe.AddIngredient(ItemID.CursedFlame, 2);
-            recipe.AddIngredient(ItemID.Stinger, 5);
-
+            recipe.AddIngredient(ItemID.HellstoneBar, 3);
+            recipe.AddIngredient(ItemID.CursedFlame, 3);
+            recipe.AddIngredient(ItemID.Stinger, 3);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
         }
     }
 }
