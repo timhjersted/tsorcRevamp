@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Insert(4, new TooltipLine(mod, "", "Reduces damage taken by 6%"));
+                tooltips.Insert(3, new TooltipLine(mod, "", "Reduces damage taken by 6%"));
             }
 
         }
