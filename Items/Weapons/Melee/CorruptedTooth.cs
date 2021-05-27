@@ -29,14 +29,28 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == NPCID.EaterofWorldsHead
                 || target.type == NPCID.EaterofWorldsBody
                 || target.type == NPCID.EaterofWorldsTail
-                || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>() //please dont use this weapon on a guardian corruptor...
                 ) {
                 damage *= 4;
             }
+            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>() && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                //please *DO* use this on a guardian corruptor! (but only in revamp mode)
+                crit = false;
+                damage = 100074;//reduced to 99999 after defense
+            } 
             if (Main.rand.Next(10) == 0) {
                 player.statLife += damage;
                 player.HealEffect(damage);
             }
+        }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.SilverBroadsword);
+            recipe.AddIngredient(ItemID.RottenChunk, 5);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
     }
 }

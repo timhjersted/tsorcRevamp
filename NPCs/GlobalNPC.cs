@@ -161,7 +161,8 @@ namespace tsorcRevamp.NPCs {
                 foreach (int buffType in npc.buffType) {
 
                     if (Main.debuff[buffType]) {
-                        damage = (int)(damage * 1.3f); // Is it meant to be stronger with projectiles? -C
+                        damage = (int)(damage * 1.2f); // Is it meant to be stronger with projectiles? -C
+                        //nope!
                     }
                     buffIndex++;
                 }

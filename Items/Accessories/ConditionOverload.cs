@@ -21,7 +21,15 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConditionOverload = true;
+            player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload = true;
+        }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.Fireblossom, 2);
+            recipe.AddIngredient(ItemID.CursedFlame, 2);
+            recipe.AddIngredient(ItemID.Stinger, 5);
+
         }
     }
 }
