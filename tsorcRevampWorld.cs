@@ -20,20 +20,37 @@ namespace tsorcRevamp {
         public static bool DownedNebula;
         public static bool DownedStardust;
         public static bool DownedSolar;
+        public static bool SuperHardMode;
+        public static bool TheEnd;
+
         public static Dictionary<int, int> Slain;
 
-        public static bool DownedOkiku;
         public override void Initialize() {
+            DownedVortex = false;
+            DownedNebula = false;
+            DownedStardust = false;
+            DownedSolar = false;
+            SuperHardMode = false;
+            TheEnd = false;
             Slain = new Dictionary<int, int>();
         }
 
 		public override TagCompound Save() {
-			TagCompound tagCompound = new TagCompound
+
+            List<string> downed = new List<string>();
+            if (DownedVortex) downed.Add("DownedVortex");
+            if (DownedNebula) downed.Add("DownedNebula");
+            if (DownedStardust) downed.Add("DownedStardust");
+            if (DownedSolar) downed.Add("DownedSolar");
+
+            List<string> world_state= new List<string>();
+            if (SuperHardMode) world_state.Add("SuperHardMode");
+            if (TheEnd) world_state.Add("TheEnd");
+
+            TagCompound tagCompound = new TagCompound
 			{
-                {"DownedVortex", DownedVortex},
-                {"DownedNebula", DownedNebula},
-                {"DownedStardust", DownedStardust},
-                {"DownedSolar", DownedSolar},
+                {"downed", downed},
+                {"world_state", world_state}
             };
 			SaveSlain(tagCompound);
 			return tagCompound;
@@ -46,10 +63,16 @@ namespace tsorcRevamp {
 
         public override void Load(TagCompound tag) {
             LoadSlain(tag);
-            tag.GetBool("DownedVortex");
-            tag.GetBool("DownedNebula");
-            tag.GetBool("DownedStardust");
-            tag.GetBool("DownedSolar");
+
+            IList<string> downedList = tag.GetList<string>("downed");
+            DownedVortex = downedList.Contains("DownedVortex");
+            DownedNebula = downedList.Contains("DownedNebula");
+            DownedStardust = downedList.Contains("DownedStardust");
+            DownedSolar = downedList.Contains("DownedSolar");
+
+            IList<string> worldStateList = tag.GetList<string>("world_state");
+            SuperHardMode = worldStateList.Contains("SuperHardMode");
+            TheEnd = worldStateList.Contains("TheEnd");
         }
 
         private void LoadSlain(TagCompound tag) {
@@ -78,6 +101,17 @@ namespace tsorcRevamp {
                 Main.dayTime = false;
                 Main.time = 16240.0;
             }
+            if (!Main.dedServ) {
+                if (SuperHardMode) {
+                    for (int i = 0; i < Main.moonTexture.Length; i++) {
+                        Main.moonTexture[i] = mod.GetTexture("Textures/SHMMoon");
+                    }
+                    Main.sunTexture = mod.GetTexture("Textures/SHMSun1");
+                    Main.sun2Texture = mod.GetTexture("Textures/SHMSun2");
+                    Main.sun3Texture = mod.GetTexture("Textures/SHMSun1");
+                }
+            }
         }
+        
     }
 }

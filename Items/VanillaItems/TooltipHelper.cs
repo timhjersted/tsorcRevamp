@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.VanillaItems {
             SimpleModTooltip(mod, item, tooltips, ItemID.GreenWrench, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.YellowWrench, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.MulticolorWrench, "Do not use this!");
-            SimpleModTooltip(mod, item, tooltips, ItemID.IceMachine, "This tile will be turned in a Bonfire upon saving and loading!", "Only place this if you want to create a Bonfire instead!");
+            
         }
     }
 }

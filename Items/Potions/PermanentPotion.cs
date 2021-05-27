@@ -1098,7 +1098,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
     }
 
-    public class PermanentArmorDrugPotion : PermanentPotion {
+    public class PermanentArmorDrug : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/ArmorDrugPotion";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Permanently grants the Armor Drug buff.");
@@ -1194,7 +1194,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
     }
 
-    public class PermanentDemonDrugPotion : PermanentPotion {
+    public class PermanentDemonDrug : PermanentPotion {
         public override string Texture => "tsorcRevamp/Items/Potions/DemonDrugPotion";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Permanently grants the Demon Drug buff.");

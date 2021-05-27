@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == NPCID.EaterofWorldsHead
                 || target.type == NPCID.EaterofWorldsBody
                 || target.type == NPCID.EaterofWorldsTail
-                || target.type == ModContent.NPCType<NPCs.Enemies.GuardianCorruptor>() //please dont use this weapon on a guardian corruptor...
+                || target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>() //please dont use this weapon on a guardian corruptor...
                 ) {
                 damage *= 4;
             }

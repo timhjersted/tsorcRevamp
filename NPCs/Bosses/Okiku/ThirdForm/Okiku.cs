@@ -278,26 +278,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
         }
 
         public override void NPCLoot() {
-            if (npc.life <= 0) {
-                if (Main.netMode != NetmodeID.Server) {
-                    Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Okiku/OkikuGore1"));
-                    Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Okiku/OkikuGore2"));
-                    Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Okiku/OkikuGore3"));
-                    Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Okiku/OkikuGore2"));
-                    Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Okiku/OkikuGore3"));
-                }
-                for (int num36 = 0; num36 < 50; num36++) {
-                    int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 5, npc.velocity.X + (float)Main.rand.Next(-10, 10), npc.velocity.Y + (float)Main.rand.Next(-10, 10), 200, Color.White, 4f);
-                    Main.dust[dust].noGravity = true;
-                }
-                if (Main.expertMode) {
-                    npc.DropBossBags();
-                }
-                else {
-                    Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("OkikuDoll"));
-                }
-                tsorcRevampWorld.DownedOkiku = true;
-            }
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
         }
 
     }

@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies {
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
     class GuardianCorruptor : ModNPC {
 
         public override void SetStaticDefaults() {
@@ -31,12 +31,11 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             float chance = 0;
             var player = spawnInfo.player;
-            var playerY = spawnInfo.playerFloorY;
-            if (Main.hardMode) //I've set it to HM for now, I'm guessing its SHM -C
+            if (tsorcRevampWorld.SuperHardMode)
             {
-                if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.05f;
-                else if (player.ZoneCorrupt && player.ZoneRockLayerHeight && !Main.dayTime) chance = 0.067f;
-                else if (player.ZoneCorrupt) chance = 0.033f;
+                if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.067f;
+                else if (player.ZoneCorrupt && player.ZoneRockLayerHeight && !Main.dayTime) chance = 0.125f;
+                else if (player.ZoneCorrupt) chance = 0.05f;
             }
 
             return chance;

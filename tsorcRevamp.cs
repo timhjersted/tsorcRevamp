@@ -779,12 +779,19 @@ namespace tsorcRevamp {
             PlaceAllowed = null;
             Unbreakable = null;
             tsorcRevampWorld.Slain = null;
+            //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
+            Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
+            Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
+            Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
+            for (int i = 0; i < Main.moonTexture.Length; i++) {
+                Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+            }
         }
         #region permanent potion recipes
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
-            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 5);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
@@ -793,7 +800,7 @@ namespace tsorcRevamp {
         public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
-            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
@@ -802,7 +809,7 @@ namespace tsorcRevamp {
         public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
-            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
@@ -811,7 +818,7 @@ namespace tsorcRevamp {
         public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
-            recipe.AddIngredient(IngredientPotion, 20);
+            recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>());
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(ResultPotion, 1);
@@ -822,9 +829,9 @@ namespace tsorcRevamp {
 
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 #region add s tier potion recipes
-                PermaPotionRecipeS(this, ModContent.ItemType<ArmorDrugPotion>(), ModContent.ItemType<PermanentArmorDrugPotion>());
+                PermaPotionRecipeS(this, ModContent.ItemType<ArmorDrugPotion>(), ModContent.ItemType<PermanentArmorDrug>());
                 PermaPotionRecipeS(this, ModContent.ItemType<BattlefrontPotion>(), ModContent.ItemType<PermanentBattlefrontPotion>());
-                PermaPotionRecipeS(this, ModContent.ItemType<DemonDrugPotion>(), ModContent.ItemType<PermanentDemonDrugPotion>());
+                PermaPotionRecipeS(this, ModContent.ItemType<DemonDrugPotion>(), ModContent.ItemType<PermanentDemonDrug>());
                 PermaPotionRecipeS(this, ModContent.ItemType<StrengthPotion>(), ModContent.ItemType<PermanentStrengthPotion>());
                 PermaPotionRecipeS(this, ModContent.ItemType<SoulSiphonPotion>(), ModContent.ItemType<PermanentSoulSiphonPotion>());
                 PermaPotionRecipeS(this, ItemID.EndurancePotion, ModContent.ItemType<PermanentEndurancePotion>());
@@ -908,6 +915,37 @@ namespace tsorcRevamp {
             recipe1.AddTile(TileID.Bottles);
             recipe1.SetResult(ItemID.LesserManaPotion, 10);
             recipe1.AddRecipe();
+        }
+
+        public static float GetLerpValue(float from, float to, float t, bool clamped = false) {
+            if (clamped) {
+                if (from < to) {
+                    if (t < from) {
+                        return 0f;
+                    }
+                    if (t > to) {
+                        return 1f;
+                    }
+                }
+                else {
+                    if (t < to) {
+                        return 1f;
+                    }
+                    if (t > from) {
+                        return 0f;
+                    }
+                }
+            }
+            return (t - from) / (to - from);
+        }
+
+        public override void PreSaveAndQuit() {
+            Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
+            Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
+            Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
+            for (int i = 0; i < Main.moonTexture.Length; i++) {
+                Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+            }
         }
 
     }

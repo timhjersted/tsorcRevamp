@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,7 +29,12 @@ namespace tsorcRevamp.Items.Weapons {
 			item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
 		}
 
-		public override void AddRecipes() {
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+			tsorcRevampWorld.SuperHardMode = true;
+			return true;
+        }
+
+        public override void AddRecipes() {
 			ModRecipe recipe = new ModRecipe(mod);
 			recipe.AddIngredient(ItemID.MagicMirror, 50);
 			recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);

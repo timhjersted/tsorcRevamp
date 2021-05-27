@@ -435,7 +435,7 @@ namespace tsorcRevamp {
                     player.resistCold = true;
                     player.buffImmune[BuffID.Warmth] = true;
                 }
-                if (item.type == ModContent.ItemType<PermanentArmorDrugPotion>() && PermanentBuffToggles[45]) {
+                if (item.type == ModContent.ItemType<PermanentArmorDrug>() && PermanentBuffToggles[45]) {
                     player.statDefense += 13;
                     player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
                 }
@@ -460,7 +460,7 @@ namespace tsorcRevamp {
                     CrimsonDrain = true;
                     player.buffImmune[ModContent.BuffType<CrimsonDrain>()] = true;
                 }
-                if (item.type == ModContent.ItemType<PermanentDemonDrugPotion>() && PermanentBuffToggles[49]) {
+                if (item.type == ModContent.ItemType<PermanentDemonDrug>() && PermanentBuffToggles[49]) {
                     player.allDamage += 0.2f;
                     player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
                 }

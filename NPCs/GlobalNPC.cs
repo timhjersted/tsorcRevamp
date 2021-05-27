@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -41,6 +42,13 @@ namespace tsorcRevamp.NPCs {
             ElectrocutedEffect = false;
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
+        }
+
+
+        public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo) {
+            if (tsorcRevampWorld.TheEnd) {
+                pool.Clear(); //stop NPC spawns in The End 
+            }
         }
 
         //vanilla npc changes moved to separate file
