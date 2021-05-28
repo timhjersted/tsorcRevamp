@@ -110,8 +110,15 @@ namespace tsorcRevamp {
                     Main.sun2Texture = mod.GetTexture("Textures/SHMSun2");
                     Main.sun3Texture = mod.GetTexture("Textures/SHMSun1");
                 }
+                if (TheEnd) { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
+                    Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
+                    Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
+                    Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
+                    for (int i = 0; i < Main.moonTexture.Length; i++) {
+                        Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+                    }
+                }
             }
         }
-
     }
 }
