@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             bool sky = (spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104);
             float chance = 0;
 
-            if (spawnInfo.player.ZoneHoly && underground) {
+            if (spawnInfo.player.ZoneHoly && underground && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3)) { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
             if (Main.hardMode && sky) {
