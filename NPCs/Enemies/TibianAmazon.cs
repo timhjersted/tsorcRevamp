@@ -3,72 +3,78 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Default;
-using tsorcRevamp.Items.Armors;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	public class DworcVoodooShaman : ModNPC
+	class TibianAmazon : ModNPC
 	{
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Tibian Amazon");
+			Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.Skeleton];
+		}
+
 		public override void SetDefaults()
 		{
-			npc.HitSound = SoundID.NPCHit26;
-			npc.DeathSound = SoundID.NPCDeath29;
-			npc.damage = 42;
-			npc.lifeMax = 1350;
-			npc.defense = 28;
-			npc.value = 6000;
-			npc.width = 18;
+			animationType = NPCID.Skeleton;
 			npc.aiStyle = -1;
 			npc.height = 40;
-			npc.knockBackResist = 0.2f;
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
+			npc.width = 20;
+			npc.lifeMax = 110;
+			npc.damage = 30;
+			npc.scale = 1f;
+			npc.HitSound = SoundID.NPCHit1;
+			npc.DeathSound = SoundID.NPCDeath1;
+			npc.knockBackResist = .6f;
+			npc.value = 1400;
+			npc.defense = 2;
 
-			animationType = NPCID.Skeleton;
-			Main.npcFrameCount[npc.type] = 15;
+			//banner = npc.type;
+			//bannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
 		}
 
 		public override void NPCLoot()
 		{
-			if (Main.rand.Next(16) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
-			if (Main.rand.NextFloat() >= .2f) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(16) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ItemID.FlaskofFire);
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
-			if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-			if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
-			Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 6));
-			Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion, Main.rand.Next(1, 4));
-			Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
+			Item.NewItem(npc.getRect(), ItemID.Torch);
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), Main.rand.Next(1, 26));
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMageTunic>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMagePants>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMageHat>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldDoubleAxe>());
+			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DeadChicken>());
 		}
 
-		int drownTimerMax = 1200;
-		int drownTimer = 1200;
-		int drowningRisk = 500;
-		//Spawns in the Jungle and in the Cavern in HM.
+
+		float customAi1;
+		int drownTimerMax = 2000;
+		int drownTimer = 2000;
+		int drowningRisk = 1200;
+
+		int boredTimer = 0;
+		int tBored = 1;//increasing this increases how long it take for the NP to get bored
+		int boredResetT = 0;
+		int bReset = 70;//increasing this will increase how long an NPC "gives up" before coming back to try again.
+
+
+		//Spawns on the Surface and into the Underground. Does not spawn in the Dungeon, Hardmode, Meteor, or if there are Town NPCs.
 
 		#region Spawn
+
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			var player = spawnInfo.player;
-			bool TropicalOcean = player.position.X < 3600;
+			float chance = 0;
 
-			float chance = 0f;
-
-			if (Main.hardMode && (spawnInfo.player.ZoneMeteor || spawnInfo.player.ZoneJungle) && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson)
+			if (spawnInfo.player.townNPCs > 0f || Main.hardMode || spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneMeteor) chance = 0f;
+			if (spawnInfo.player.ZoneOverworldHeight || spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight)
 			{
-				if (spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return 0.025f;
-				if (spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return 0.05f;
-				if (spawnInfo.player.ZoneDirtLayerHeight) return 0.04f;
-				if (spawnInfo.player.ZoneRockLayerHeight) return 0.04f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.0286f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.04f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && Main.dayTime) return 0.0434f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.0625f;
 			}
-			if (Main.hardMode && TropicalOcean && spawnInfo.player.ZoneJungle) return 0.05f;
 
 			return chance;
 		}
-
 		#endregion
 
 		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
@@ -81,8 +87,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool can_pass_doors = false;  //  can open or break doors; c. bunny, crab, clown, skel archer, gob archer, & chaos elemental cannot
 			bool shoot_and_walk = true;  //  can shoot while walking like clown; uses ai[2] so cannot be used with is_archer or can_pass_doors
 
-			// can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
-			bool can_teleport = true;  //  tp around like chaos ele
+			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
+			bool can_teleport = false;  //  tp around like chaos ele
 			int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
 			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
@@ -92,14 +98,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			int sound_type = 0; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
 			int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
-			float acceleration = .04f;  //  how fast it can speed up
-			float top_speed = 1.5f;  //  max walking speed, also affects jump length
+			float acceleration = .05f;  //  how fast it can speed up
+			float top_speed = 1.8f;  //  max walking speed, also affects jump length
 			float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-			float enrage_percentage = 0.3f;  // double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
-			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
-			float enrage_top_speed = 3;  //  faster when enraged, usually 2*top_speed
+			float enrage_percentage = .1f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+			float enrage_acceleration = .5f;  //  faster when enraged, usually 2*acceleration
+			float enrage_top_speed = 2.6f;  //  faster when enraged, usually 2*top_speed
 
 			bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
 			bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
@@ -126,6 +132,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool tooBig = false; // force bigger creatures to jump
 			bool lavaJumping = false; // Enemies jump on lava.
 			bool canDrown = false; // They will drown if in the water for too long
+			bool quickBored = true; //Enemy will respond to boredom much faster(? -- test)
+			bool oBored = false; //Whether they're bored under the "quickBored" conditions
 
 			// calculated parameters
 			bool moonwalking = false;  //  not jump/fall and moving backwards to facing
@@ -207,14 +215,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			//-------------------------------------------------------------------
 			#region play creature sounds, target/face player, respond to boredom
 			if ((!hates_light || !Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0) && npc.ai[3] < (float)boredom_time)
-			{   // not fleeing light & not bored
+			{  // not fleeing light & not bored
 				if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
 					Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
-				if (!canDrown)
-				{
-					npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
-				}
-				if (canDrown && !npc.wet)
+				if (!canDrown || (canDrown && !npc.wet) || (quickBored && boredTimer > tBored))
 				{
 					npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
 				}
@@ -377,39 +381,18 @@ namespace tsorcRevamp.NPCs.Enemies
 			#endregion
 			//-------------------------------------------------------------------
 			#region shoot and walk
-			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
+			if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
 			{
 				if (npc.justHit)
-				{
-					npc.alpha = 0;
-				}
-
+					npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
-				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (npc.ai[1] >= 10f)
+				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+				if (customAi1 >= 10f)
 				{
 					npc.TargetClosest(true);
-					if (Main.rand.Next(100) == 1)
-					{
-						npc.alpha = 225;
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(200) == 1)
-					{
-						npc.alpha = 0; //0 is fully visible 225 is almost invisible
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(250) == 1)
-					{
-						npc.ai[3] = 1;
-						npc.life += 5;
-						if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-						npc.ai[1] = 1f;
-						npc.netUpdate = true;
-					}
 					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 					{
-						if (Main.rand.Next(20) == 1)
+						if (Main.rand.Next(60) == 1)
 						{
 							float num48 = 8f;
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -421,35 +404,13 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 30;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>();//44;//0x37; //14;
+								int damage = 14;//(int) (14f * npc.scale);
+								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();//44;//0x37; //14;
 								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 200;
-								Main.projectile[num54].aiStyle = 23;
+								Main.projectile[num54].timeLeft = 600;
+								Main.projectile[num54].aiStyle = 1;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								npc.ai[1] = 1f;
-							}
-							npc.netUpdate = true;
-						}
-						if (Main.rand.Next(70) == 1)
-						{
-							float num48 = 8f;
-							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-							{
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= num51;
-								speedY *= num51;
-								int damage = 45;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 0;
-								Main.projectile[num54].aiStyle = 23;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								npc.ai[1] = 1f;
+								customAi1 = 1f;
 							}
 							npc.netUpdate = true;
 						}
@@ -623,10 +584,10 @@ namespace tsorcRevamp.NPCs.Enemies
 				int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
 				int x_blockpos = (int)npc.position.X / 16; // corner not center
 				int y_blockpos = (int)npc.position.Y / 16; // corner not center
-				int tp_radius = 30; // radius around target(upper left corner) in blocks to teleport into
+				int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
 				int tp_counter = 0;
 				bool flag7 = false;
-				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 200000f)
+				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
 				{ // far away from target; 2000 pixels = 125 blocks
 					tp_counter = 100;
 					flag7 = true; // no teleport
@@ -641,8 +602,8 @@ namespace tsorcRevamp.NPCs.Enemies
 					int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
 					for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
 					{ // (tp_x_target,m) is block under its feet I think
-						if ((m < target_y_blockpos - 8 || m > target_y_blockpos + 8 || tp_x_target < target_x_blockpos - 8 || tp_x_target > target_x_blockpos + 8) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-						{ // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+						if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 4 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+						{ // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
 							bool safe_to_stand = true;
 							bool dark_caster = false; // not a fighter type AI...
 							if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
@@ -658,7 +619,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
 								flag7 = true; // end the loop (after testing every lower point :/)
 							}
-						} // END over 6 blocks distant from player...
+						} // END over 4 blocks distant from player...
 					} // END traverse y down to edge of radius
 				} // END try 100 times
 			} // END is server & chaos ele & bored
@@ -711,8 +672,55 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			#endregion
 			//-------------------------------------------------------------------*/
+
+
+			#region New Boredom by Omnir
+			if (quickBored)
+			{
+				if (!oBored)
+				{
+					if (npc.velocity.X == 0f)
+					{
+						boredTimer++;
+						if (boredTimer > tBored)
+						{
+							boredResetT = 0;
+							npc.TargetClosest(false);
+							if (npc.timeLeft > 10)
+							{
+								npc.timeLeft = 10;
+							}
+							npc.directionY = -1;
+							if (npc.velocity.Y > 0f)
+							{
+								npc.direction = 1;
+							}
+							npc.direction = -1;
+							if (npc.velocity.X > 0f)
+							{
+								npc.direction = 1;
+							}
+							oBored = true;
+						}
+					}
+				}
+				if (oBored)
+				{
+					boredResetT++;
+					if (boredResetT > bReset)
+					{
+						boredTimer = 0;
+						npc.TargetClosest(true);
+						oBored = false;
+					}
+				}
+			}
+			#endregion
+
+
 		}
 		#endregion
+
 
 		#region Gore
 		public override void HitEffect(int hitDirection, double damage)
@@ -734,11 +742,11 @@ namespace tsorcRevamp.NPCs.Enemies
 					Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
 				}
 
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Voodoomaster Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
+				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Amazon Gore 1"), 1f);
+				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Amazon Gore 2"), 1f);
+				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Amazon Gore 3"), 1f);
+				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Amazon Gore 2"), 1f);
+				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Amazon Gore 3"), 1f);
 			}
 		}
 		#endregion

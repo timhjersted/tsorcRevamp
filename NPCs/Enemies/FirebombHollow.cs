@@ -33,11 +33,11 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             float chance = 0;
 
-            if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight) return chance = 0.06f;
+            if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight) return chance = 0.075f;
 
-            if (Main.expertMode && Main.bloodMoon) return chance = 0.015f;
+            if (Main.expertMode && Main.bloodMoon) return chance = 0.035f;
 
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight) return chance = 0.04f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight) return chance = 0.045f;
 
             if ((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.01f;
 
@@ -1993,7 +1993,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             if ((npc.type >= 449 && npc.type <= 452) || true)
                             {
                                 num153 = mod.ProjectileType("EnemyFirebomb");
-                                num152 = 16;
+                                num152 = 20;
                             }
                             if (npc.type >= 498 && npc.type <= 506)
                             {
