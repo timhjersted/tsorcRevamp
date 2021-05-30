@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles
         {
             for (int i = 0; i < 20; i++)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X - 15, projectile.position.Y - 15), projectile.width + 30, projectile.height + 30, 89, 0, 0, 70, default(Color), 1f);
+                int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 89, 0, 0, 70, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles
         {
             for (int i = 0; i < 30; i++)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X - 15, projectile.position.Y - 15), projectile.width + 30, projectile.height + 30, 89, projectile.velocity.X, projectile.velocity.Y, 70, default(Color), 1f);
+                int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 89, projectile.velocity.X, projectile.velocity.Y, 70, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
             return true;
@@ -60,14 +60,14 @@ namespace tsorcRevamp.Projectiles
 
             for (int d = 0; d < 2; d++)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X - 15, projectile.position.Y - 15), projectile.width + 30, projectile.height + 30, 89, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 89, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
 
             }
 
             for (int d = 0; d < 2; d++)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X - 15, projectile.position.Y - 15), projectile.width + 30, projectile.height + 30, 110, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 110, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
 

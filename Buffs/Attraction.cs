@@ -11,7 +11,10 @@ namespace tsorcRevamp.Buffs {
         }
 
         public override void Update(Player player, ref int buffIndex) {
-            Main.bloodMoon = true;
+            if (!Main.dayTime)
+            {
+                Main.bloodMoon = true;
+            }
             player.enemySpawns = true;
         }
     }
