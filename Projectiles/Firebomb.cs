@@ -43,11 +43,11 @@ namespace tsorcRevamp.Projectiles
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 60;
-                projectile.height = 60;
+                projectile.width = 150;
+                projectile.height = 150;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = 80;
+                projectile.damage = 100;
                 projectile.knockBack = 9f;
                 projectile.thrown = true;
                 projectile.netUpdate = true;
@@ -68,11 +68,11 @@ namespace tsorcRevamp.Projectiles
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 60;
-                projectile.height = 60;
+                projectile.width = 150;
+                projectile.height = 150;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-                projectile.damage = 80; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
+                projectile.damage = 100; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
                 projectile.knockBack = 9f;
                 projectile.thrown = true;
             }
@@ -119,7 +119,7 @@ namespace tsorcRevamp.Projectiles
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
+                int dustIndex = Dust.NewDust(new Vector2(projectile.position.X + 36, projectile.position.Y + 36), projectile.width - 74, projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 3.5f;
             }

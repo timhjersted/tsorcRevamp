@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Enemies
             animationType = NPCID.BoneThrowingSkeleton;
             npc.aiStyle = -1;
             aiType = -1;
-            npc.lifeMax = 65;
-            npc.damage = 22;
+            npc.lifeMax = 45;
+            npc.damage = 16;
             npc.scale = 1;
             npc.value = 250;
             npc.HitSound = SoundID.NPCHit1;
@@ -37,7 +37,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.expertMode && Main.bloodMoon) return chance = 0.035f;
 
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight) return chance = 0.045f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.035f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.045f;
 
             if ((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.01f;
 
@@ -45,8 +46,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), mod.ItemType("Firebomb"), Main.rand.Next(2, 4));
-            if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            Item.NewItem(npc.getRect(), mod.ItemType("Firebomb"), Main.rand.Next(2, 5));
+            if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
         }
 
         public override void DrawEffects(ref Color drawColor)
