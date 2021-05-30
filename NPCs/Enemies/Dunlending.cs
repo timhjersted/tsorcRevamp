@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override void HitEffect(int hitDirection, double damage) {
-            for (int i = 0; i < 25; i++) {
+            for (int i = 0; i < 5; i++) {
                 int dustType = 5;
                 int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
                 Dust dust = Main.dust[dustIndex];
@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 dust.noGravity = true;
             }
             if (npc.life <= 0) {
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 25; i++) {
                     Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
                 }
 

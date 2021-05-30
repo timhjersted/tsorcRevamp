@@ -660,8 +660,23 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region Gore
 		public override void HitEffect(int hitDirection, double damage)
 		{
+			for (int i = 0; i < 5; i++)
+			{
+				int dustType = 5;
+				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+				Dust dust = Main.dust[dustIndex];
+				dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.06f;
+				dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.06f;
+				dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
+				dust.noGravity = true;
+			}
 			if (npc.life <= 0)
 			{
+				for (int i = 0; i < 25; i++)
+				{
+					Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
+				}
+
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 1"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
