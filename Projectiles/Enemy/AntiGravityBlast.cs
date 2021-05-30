@@ -8,11 +8,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
     class AntiGravityBlast : ModProjectile {
 
         public override void SetDefaults() {
-            projectile.width = 55;
-            projectile.height = 55;
-            projectile.scale = 2.3f;
-            projectile.aiStyle = 9;
-            aiType = 79;
+            projectile.width = 127;
+            projectile.height = 127;
+			//projectile.scale = 2.3f; this was making the rotation code behave strangely
             projectile.hostile = true;
             projectile.damage = 80;
             projectile.penetrate = 2;
@@ -24,7 +22,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
 		public override void AI() {
 			projectile.rotation += 0.5f;
-
 			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X) {
 				if (projectile.velocity.X > -10) projectile.velocity.X -= 0.1f;
 			}

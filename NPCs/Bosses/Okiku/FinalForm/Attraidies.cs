@@ -10,11 +10,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
     [AutoloadBossHead]
     class Attraidies : ModNPC {
 
+        float customAi1;
+        float customAi5;
+        int OptionId = 0;
         float customspawn1;
 
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
         public override void SetDefaults() {
-            npc.aiStyle = 0;
             npc.npcSlots = 200;
             npc.damage = 70;
             npc.defense = 25;
@@ -37,7 +39,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             Main.npcFrameCount[npc.type] = 3;
         }
 
-
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+        }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             if (NPC.AnyNPCs(ModContent.NPCType<Attraidies>())) {
@@ -59,7 +63,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         #region AI
         public override void AI() {
 
-            npc.netUpdate = false;
             npc.ai[0]++; // Timer Scythe
             npc.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
@@ -73,20 +76,25 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 Main.dust[dust].noGravity = true;
             }
 
-            if (npc.ai[0] >= 12 && npc.ai[2] < Main.rand.Next(3, 7))
+            //if (Main.netMode != 2)
+            //{
+            if (npc.ai[0] >= 12 && npc.ai[2] < Main.rand.Next(3, 7)) //(3 + Main.rand.Next(6)==0)
             {
                 float num48 = 0.5f;
                 Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                 int damage = 60;
                 int type = ModContent.ProjectileType<ShadowOrb>();
                 float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);
+                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);
                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                 npc.ai[0] = 0;
                 npc.ai[2]++;
                 npc.netUpdate = true; //new
             }
 
+
+
+            //}
 
             if (npc.ai[1] >= 30) {
                 npc.velocity.X *= 0.17f;
@@ -115,7 +123,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 }
                 else {
 
+
+
+
+
                     Player Pt = Main.player[npc.target];
+                    Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
                     Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
                     npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
                     npc.position.Y = Pt.position.Y - 35 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
@@ -131,14 +144,22 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     }
                     npc.position = Pt.position + Diff;
 
-                    Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
+                    NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
 
                     float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 8) * -1;
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 8) * -1;
+                    npc.velocity.X = (float)(Math.Cos(rotation) * 20) * -1;
+                    npc.velocity.Y = (float)(Math.Sin(rotation) * 20) * -1;
+
 
                 }
             }
+
+
+
+
+
+
+
 
             //end of W1k's Death code
 
@@ -148,6 +169,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             if (npc.ai[3] >= 45) //how often the crystal attack can happen in frames per second
             {
+
+
+
+
+
+
 
                 if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
                 {
@@ -160,13 +187,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 120;//(int) (14f * npc.scale);
-                        int type = ModContent.ProjectileType<MassiveCrystalShardsSpell>();
+                        int damage = 120;
+                        int type = ModContent.ProjectileType<MassiveCrystalShardsSpell>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 100;
-                        Main.projectile[num54].aiStyle = 4;
+                        Main.projectile[num54].timeLeft = 60;
+                        Main.projectile[num54].aiStyle = 0;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
-                        npc.ai[3] = 0; ;
+                        npc.ai[3] = 0;
                     }
                 }
 
@@ -191,7 +218,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     int Random = Main.rand.Next(120);
                     int Paraspawn = 0;
 
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 800 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 500 - this.npc.width / 2, ModContent.NPCType<Enemies.MindflayerIllusion>(), 0); //Mindflayer Illusion
+                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 800 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 500 - this.npc.width / 2, ModContent.NPCType<Enemies.MindflayerIllusion>(), 0);
 
                     Main.npc[Paraspawn].velocity.X = npc.velocity.X;
                     npc.active = true;
@@ -280,11 +307,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     speedX *= num51;
                     speedY *= num51;
                     int damage = 120;//(int) (14f * npc.scale);
-                    int type = ModContent.ProjectileType<EnemySuddenDeathBall>();
+                    int type = ModContent.ProjectileType<EnemySuddenDeathBall>();//44;//0x37; //14;
                     int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                     Main.projectile[num54].timeLeft = 6;
                     Main.projectile[num54].aiStyle = 1;
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                    customAi1 = 1f;
                 }
                 npc.netUpdate = true;
             }
@@ -297,6 +325,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     return;
                 }
             }
+
         }
 
         #endregion
@@ -333,7 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             }
 
-            else if (tsorcRevampWorld.SuperHardMode) {
+            else {
 
                 if (Main.netMode == NetmodeID.SinglePlayer) {
                     Main.NewText("The portal from The Abyss remains open...");

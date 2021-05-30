@@ -28,8 +28,7 @@ namespace tsorcRevamp.Items.BossItems {
             return true;
         }
         public override bool CanUseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny)) {
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Attraidies>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())) {
                 return false;
             }
             return true;

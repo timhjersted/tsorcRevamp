@@ -16,7 +16,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.width = 16;
         }
 
-		public override void Kill(int timeLeft) {
+        public override void PostAI() {
+			projectile.alpha += 5;
+			if (projectile.alpha >= 255) {
+				projectile.Kill();
+            }
+        }
+
+        public override void Kill(int timeLeft) {
 			if (!projectile.active) {
 				return;
 			}

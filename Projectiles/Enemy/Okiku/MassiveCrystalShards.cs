@@ -6,7 +6,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         public override void SetDefaults() {
             projectile.width = 42;
             projectile.height = 84;
-            projectile.aiStyle = 4;
+            projectile.aiStyle = 0;
             projectile.hostile = true;
             projectile.penetrate = 16;
             projectile.tileCollide = false;
