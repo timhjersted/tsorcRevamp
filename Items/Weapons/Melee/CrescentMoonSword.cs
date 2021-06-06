@@ -19,15 +19,15 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             item.autoReuse = true;
             item.rare = ItemRarityID.Cyan;
-            item.damage = 34;
+            item.damage = 24;
             item.width = 40;
             item.height = 40;
-            item.knockBack = 4.5f;
+            item.knockBack = 4f;
             item.maxStack = 1;
             item.melee = true;
             item.scale = 1f;
-            item.useAnimation = 21;
-            item.useTime = 21;
+            item.useAnimation = 25;
+            item.useTime = 25;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.value = 100000;
@@ -37,10 +37,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if ((player.name == "Zeodexic") || (player.name == "Zeodexic TSORC")) //Add whatever names you use -C
+            if ((player.name == "Zeodexic") || (player.name == "Chroma TSORC test")) //Add whatever names you use -C
             {
                 item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
-                item.shootSpeed = 20f;
+                item.shootSpeed = 22f;
                 return true;
             }
             else if (player.statLife > (player.statLifeMax2 * 0.8f))
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
         {
-            if ((player.name == "Zeodexic") || (player.name == "Zeodexic TSORC")) //Add whatever names you use -C
+            if ((player.name == "Zeodexic") || (player.name == "Chroma TSORC test")) //Add whatever names you use -C
             {
                 item.damage = 120; //change this to whatever suits your testing needs -C
             }

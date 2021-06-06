@@ -85,7 +85,7 @@ namespace tsorcRevamp.Projectiles
 
             if (spawned && ChosenStartFrame == 0)
             {
-                if (++projectile.frameCounter >= 3)
+                if (++projectile.frameCounter >= 2)
                 {
                     projectile.frameCounter = 0;
                     if (++projectile.frame > 7)
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Projectiles
 
             if (spawned && ChosenStartFrame == 7)
             {
-                if (++projectile.frameCounter >= 3)
+                if (++projectile.frameCounter >= 2)
                 {
                     projectile.frameCounter = 0;
                     if (++projectile.frame > 13)
@@ -109,7 +109,7 @@ namespace tsorcRevamp.Projectiles
 
             if (spawned && ChosenStartFrame == 14)
             {
-                if (++projectile.frameCounter >= 3)
+                if (++projectile.frameCounter >= 2)
                 {
                     projectile.frameCounter = 0;
                     if (++projectile.frame > 20)
@@ -121,7 +121,7 @@ namespace tsorcRevamp.Projectiles
 
             if (spawned && ChosenStartFrame == 21)
             {
-                if (++projectile.frameCounter >= 3)
+                if (++projectile.frameCounter >= 2)
                 {
                     projectile.frameCounter = 0;
                     if (++projectile.frame > 27)
