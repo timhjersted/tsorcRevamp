@@ -38,7 +38,9 @@ namespace tsorcRevamp.NPCs.Bosses {
         //npc.ai[0] = damage taken counter
         //npc.ai[1] = invulnerability timer
         //npc.ai[3] = state counter
-
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+        }
         public override void AI() {
             npc.netUpdate = true;
             npc.ai[2]++;

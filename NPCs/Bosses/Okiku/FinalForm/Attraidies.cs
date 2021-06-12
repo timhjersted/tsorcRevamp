@@ -10,9 +10,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
     [AutoloadBossHead]
     class Attraidies : ModNPC {
 
-        float customAi1;
-        float customAi5;
-        int OptionId = 0;
         float customspawn1;
 
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
@@ -85,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 int damage = 60;
                 int type = ModContent.ProjectileType<ShadowOrb>();
                 float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);
+                Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);
                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                 npc.ai[0] = 0;
                 npc.ai[2]++;
@@ -128,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
 
                     Player Pt = Main.player[npc.target];
-                    Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
+                    Vector2 NC;
                     Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
                     npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
                     npc.position.Y = Pt.position.Y - 35 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
@@ -312,7 +309,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     Main.projectile[num54].timeLeft = 6;
                     Main.projectile[num54].aiStyle = 1;
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                    customAi1 = 1f;
                 }
                 npc.netUpdate = true;
             }

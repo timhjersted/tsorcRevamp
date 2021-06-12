@@ -34,6 +34,10 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
         }
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+        }
+
         public override void AI() {
             npc.netUpdate = true;
             npc.ai[2]++;
@@ -169,10 +173,10 @@ namespace tsorcRevamp.NPCs.Bosses {
                 npc.ai[3] = 1;
                 Color color = new Color();
                 for (int num36 = 0; num36 < 50; num36++) {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 4, 0, 0, 100, color, 3f);
+                    Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 4, 0, 0, 100, color, 3f);
                 }
                 for (int num36 = 0; num36 < 20; num36++) {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 18, 0, 0, 100, color, 3f);
+                    Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 18, 0, 0, 100, color, 3f);
                 }
                 npc.ai[1] = -200;
                 npc.ai[0] = 0;

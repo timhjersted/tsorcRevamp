@@ -1,9 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles.Enemy {
     class BlackBreath : ModProjectile {
         public override void SetDefaults() {
             projectile.alpha = 150;

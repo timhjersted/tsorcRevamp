@@ -34,6 +34,9 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
         }
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+		}
 		public override void AI() {
 			npc.netUpdate = true;
 			npc.ai[2]++;
