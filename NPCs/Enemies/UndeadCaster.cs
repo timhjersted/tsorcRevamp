@@ -2,6 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -34,15 +35,11 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
 
-            bool nospecialbiome = !spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneHoly && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-
-            bool sky = nospecialbiome && (spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104); //magic number
-
             float chance = 0;
-
-            if (spawnInfo.player.ZoneRockLayerHeight && Main.dayTime) return 0.0285f;
-            if (spawnInfo.player.ZoneRockLayerHeight && !Main.dayTime) return 0.05f;
-            if (!Main.hardMode && sky && !Main.dayTime) return 0.033f;
+            Player p = spawnInfo.player;
+            if (p.ZoneRockLayerHeight && Main.dayTime) return 0.0285f;
+            if (p.ZoneRockLayerHeight && !Main.dayTime) return 0.05f;
+            if (!Main.hardMode && Sky(p) && !Main.dayTime) return 0.033f;
             if (!Main.hardMode && (spawnInfo.player.ZoneRockLayerHeight && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) && !Main.dayTime) return 0.033f;
 
             return chance;

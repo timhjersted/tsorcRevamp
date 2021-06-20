@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System;
 using tsorcRevamp.Projectiles.Enemy;
+using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies {
     class Parasprite : ModNPC {
@@ -29,13 +30,12 @@ namespace tsorcRevamp.NPCs.Enemies {
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             bool underground = (spawnInfo.player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
-            bool sky = (spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104);
             float chance = 0;
 
             if (spawnInfo.player.ZoneHoly && underground && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3)) { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
-            if (Main.hardMode && sky) {
+            if (Main.hardMode && Sky(spawnInfo.player)) {
                 chance = 0.2f;
             }
             return chance;

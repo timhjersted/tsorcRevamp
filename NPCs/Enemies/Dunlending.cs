@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
+using static tsorcRevamp.oSpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies {
     public class Dunlending : ModNPC {
@@ -178,18 +179,14 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            var playerY = spawnInfo.playerFloorY;
-            var player = spawnInfo.player;
-            bool oUnderSurface = (playerY >= (Main.maxTilesY * 0.2f) && playerY < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (playerY >= (Main.maxTilesY * 0.3f) && playerY < (Main.maxTilesY * 0.4f));
-            bool oCavern = (playerY >= (Main.maxTilesY * 0.4f) && playerY < (Main.maxTilesY * 0.6f));
+            var p = spawnInfo.player;
 
             float chance = 0;
-            if (player.ZoneOverworldHeight) {
+            if (p.ZoneOverworldHeight) {
                 if (Main.dayTime) chance = 0.067f;
                 else chance = 0.125f;
             }
-            if (oUnderSurface || oUnderground || oCavern) {
+            if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p)) {
                 if (Main.dayTime) chance = 0.067f;
                 else chance = 0.1f;
             }
