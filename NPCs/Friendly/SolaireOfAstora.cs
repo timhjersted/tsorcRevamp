@@ -12,9 +12,9 @@ using Terraria.Localization;
 namespace tsorcRevamp.NPCs.Friendly {
 	[AutoloadHead]
     class SolaireOfAstora : ModNPC {
-		bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+		public override bool Autoload(ref string name) => false;
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault(LegacyMode ? "Solaire of Astora" : "Warrior of Sunlight");
+			DisplayName.SetDefault("Warrior of Sunlight");
 			Main.npcFrameCount[npc.type] = 25;
 			NPCID.Sets.ExtraFramesCount[npc.type] = 9;
 			NPCID.Sets.AttackFrameCount[npc.type] = 4;
@@ -25,10 +25,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 			NPCID.Sets.HatOffsetY[npc.type] = 4;
 		}
         public override string TownNPCName() {
-			if (LegacyMode) {
-				return "Solaire of Astora";
-            }
-			else return "Solaire";
+			return "Solaire";
         }
 
         public override void SetDefaults() {
@@ -46,15 +43,6 @@ namespace tsorcRevamp.NPCs.Friendly {
 			animationType = NPCID.Guide;
 		}
 
-        public override bool PreAI() {
-			if (LegacyMode) {
-				npc.GivenName = "Solaire of Astora";
-            }
-			else {
-				npc.GivenName = "Solaire";
-            }
-			return true;
-        }
         public override string GetChat() {
 			WeightedRandom<string> chat = new WeightedRandom<string>();
 			chat.Add("Dark Souls possess great powers, but also great responsibilities.");
