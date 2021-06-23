@@ -12,6 +12,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Buffs;
 using System;
+using Microsoft.Xna.Framework.Input;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -85,7 +86,25 @@ namespace tsorcRevamp {
             }
         }
 
+        public static bool JustPressed(Keys key) {
+            return Main.keyState.IsKeyDown(key) && !Main.oldKeyState.IsKeyDown(key);
+        }
+
+        private void TestMethod() {
+            for (int x = 0; x < Main.maxTilesX - 2; x++) {
+                for (int y = 0; y < Main.maxTilesY - 2; y++) {
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
+                        WorldGen.KillTile(x, y, false, false, true);
+                        Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
+                        WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+                    }
+                } 
+            }
+        }
+
         public override void PostUpdate() {
+            if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
+                TestMethod();
             bool charm = false;
             foreach (Player p in Main.player) {
                 for (int i = 3; i <= 8; i++) {
