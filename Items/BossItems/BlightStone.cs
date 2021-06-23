@@ -24,10 +24,9 @@ namespace tsorcRevamp.Items.BossItems {
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
         public override bool UseItem(Player player) {
-            //if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(mod.NPCType("Blight")))
-            if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(NPCID.CorruptBunny)) //placeholder, use above instead
+            if (player.ZoneOverworldHeight && !Main.bloodMoon && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Blight>()))
             {
-                NPC.SpawnOnPlayer(Main.myPlayer, NPCID.CorruptBunny); //placeholder
+                NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.Blight>());
                 Main.NewText("\"You will be destroyed\"", 255, 50, 50);
                 return true;
             }

@@ -16,17 +16,7 @@ using tsorcRevamp.UI;
 
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
-        /*
-        public override void OnEnterWorld(Player player) {
-            for (int x = 1; x <  Main.maxTilesX - 1; x++) {
-                for (int y = 1; y < Main.maxTilesY - 1; y++) {
-                    if (Framing.GetTileSafely(x, y).type == TileID.IceMachine) {
-                        Framing.GetTileSafely(x, y).type = (ushort)ModContent.TileType<Tiles.Bonfire>();
-                    }
-                }
-            }
-            base.OnEnterWorld(player);
-        }*/
+
         public int warpX;
         public int warpY;
         public int warpWorld;
@@ -1218,6 +1208,7 @@ namespace tsorcRevamp {
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
+            
         }
     }
 }

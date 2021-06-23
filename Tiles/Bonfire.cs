@@ -11,7 +11,8 @@ namespace tsorcRevamp.Tiles
 {
 	public class Bonfire : ModTile
 	{
-		public override void SetDefaults()
+		public override bool Autoload(ref string name, ref string texture) => false;
+        public override void SetDefaults()
 		{
 			Main.tileFrameImportant[Type] = true;
 
@@ -93,7 +94,8 @@ namespace tsorcRevamp.Tiles
 	}
 	public class BonfireItem : ModItem
 	{
-		public override void SetStaticDefaults()
+		public override bool Autoload(ref string name) => false;
+        public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Dark Souls Bonfire");
 			Tooltip.SetDefault("Right-click to light" + //re-do once finalized

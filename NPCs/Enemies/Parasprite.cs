@@ -31,11 +31,12 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             bool underground = (spawnInfo.player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
             float chance = 0;
+            Player p = spawnInfo.player;
 
             if (spawnInfo.player.ZoneHoly && underground && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3)) { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
-            if (Main.hardMode && Sky(spawnInfo.player)) {
+            if (Main.hardMode && Sky(p) && NoSpecialBiome(p)) {
                 chance = 0.2f;
             }
             return chance;

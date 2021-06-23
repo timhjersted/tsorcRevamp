@@ -15,8 +15,8 @@ namespace tsorcRevamp {
             return (!p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHoly && !p.ZoneMeteor && !p.ZoneDungeon);
         }
 
-        public static bool Sky(Player p) {
-            return NoSpecialBiome(p) && (p.position.Y < Main.worldSurface * 0.44999998807907104); //ugly, ugly magic number. who wrote this? i want to slap them.
+        public static bool Sky(Player p) { //p.ZoneSkyHeight is more restrictive than this, so use this if an enemy uses it
+            return p.position.Y < Main.worldSurface * 0.44999998807907104;
         }
 
         public static bool Surface(Player p) {

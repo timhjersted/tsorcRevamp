@@ -40,8 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
-            if (target.type == ModContent.NPCType<NPCs.Bosses.TheRage>()) { //todo add correct bosses
-                // ModContent.NPCType<NPCs.Bosses.Witchking
+            if (target.type == ModContent.NPCType<NPCs.Bosses.Witchking>()) { 
                 damage *= 3;
                 target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
             }
