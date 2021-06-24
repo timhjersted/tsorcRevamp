@@ -12,6 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         }
         public override void SetDefaults() {
+            item.autoReuse = true; //why was it the only one without autoreuse?
             item.damage = 32;
             item.height = 10;
             item.knockBack = 0f;
