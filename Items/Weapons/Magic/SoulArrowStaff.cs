@@ -8,6 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     class SoulArrowStaff : ModItem
     {
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         public override void SetStaticDefaults()
         {

@@ -7,6 +7,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class CrescentMoonSword : ModItem
     {
+        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crescent Moon Sword");
