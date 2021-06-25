@@ -88,8 +88,6 @@ namespace tsorcRevamp.NPCs.Friendly {
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldAxe>());
 			nextSlot++;
-			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldSword>());
-			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldLongsword>());
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldMace>());

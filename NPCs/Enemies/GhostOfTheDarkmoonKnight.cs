@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Accessories;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies {
     class GhostOfTheDarkmoonKnight : ModNPC {
@@ -25,6 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 30000;
             npc.knockBackResist = 0;
+            animationType = 28;
+            Main.npcFrameCount[npc.type] = 16;
         }
 
 
@@ -40,6 +43,23 @@ namespace tsorcRevamp.NPCs.Enemies {
         bool chargeDamageFlag = false;
 
 
+        public override void OnHitPlayer(Player target, int damage, bool crit) {
+            if (Main.rand.Next(4) == 0) {
+                target.AddBuff(BuffID.Bleeding, 300);
+                target.AddBuff(BuffID.Poisoned, 300);
+                target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800);
+            }
+        }
+
+        public override void HitEffect(int hitDirection, double damage) {
+            if (npc.life <= 0) {
+                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Darkmoon Knight Gore 1"), 1f);
+                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 2"), 1f);
+                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 3"), 1f);
+                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 2"), 1f);
+                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 3"), 1f);
+            }
+        }
 
         public override void NPCLoot() {
 
@@ -66,6 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         public override void AI()  //  warrior ai
         {
+            Main.NewText("speed is " + npc.velocity.X + " " + npc.velocity.Y);
             #region set up NPC's attributes & behaviors
             // set parameters
             //  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -84,8 +105,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             int sound_type = 0; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
             int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
-            float acceleration = .03f;  //  how fast it can speed up
-            float top_speed = 2f;  //  max walking speed, also affects jump length
+            float acceleration = .175f;  //  how fast it can speed up
+            float top_speed = 6f;  //  max walking speed, also affects jump length
             float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
             double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
@@ -96,20 +117,11 @@ namespace tsorcRevamp.NPCs.Enemies {
             bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
             bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
 
-            bool hops = false; // hops when close to target like Angry Bones, Corrupt Bunny, Armored Skeleton, and Werewolf
-            float hop_velocity = 1f; // forward velocity needed to initiate hopping; usually 1
-            float hop_range_x = 100; // less than this is 'close to target'; usually 100
-            float hop_range_y = 50; // less than this is 'close to target'; usually 50
-            float hop_power = 4; // how hard/high offensive hops are; usually 4
-            float hop_speed = 3; // how fast hops can accelerate vertically; usually 3 (2xSpd is 4 for Hvy Skel & Werewolf so they're noticably capped)
-
             // can_pass_doors only
             float door_break_pow = 2; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
             bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
             // Omnirs creature sorts
-            bool tooBig = true; // force bigger creatures to jump
-            bool lavaJumping = true; // Enemies jump on lava.
             bool canDrown = false; // They will drown if in the water for too long
             bool quickBored = true; //Enemy will respond to boredom much faster(? -- test)
             bool oBored = false; //Whether they're bored under the "quickBored" conditions
@@ -218,23 +230,14 @@ namespace tsorcRevamp.NPCs.Enemies {
 
             Lighting.AddLight((int)((npc.position.X + (float)(npc.width / 2)) / 32f), (int)((npc.position.Y + (float)(npc.height / 2)) / 32f), 0, 254, 255);
 
-            if (!is_archer || (npc.ai[2] <= 0f && !npc.confused))  //  meelee attack/movement. archers only use while not aiming
-            {
-                if (Math.Abs(npc.velocity.X) > top_speed)  //  running/flying faster than top speed
-                {
-                    if (npc.velocity.Y == 0f)  //  and not jump/fall
-                        npc.velocity *= (1f - braking_power);  //  decelerate
-                }
-                else if ((npc.velocity.X < top_speed && npc.direction == 1) || (npc.velocity.X > -top_speed && npc.direction == -1)) {  //  running slower than top speed (forward), can be jump/fall
-                    if (can_teleport && moonwalking)
-                        npc.velocity.X = npc.velocity.X * 0.99f;  //  ? small decelerate for teleporters
-
-                    npc.velocity.X = npc.velocity.X + (float)npc.direction * acceleration;  //  accellerate fwd; can happen midair
-                    if ((float)npc.direction * npc.velocity.X > top_speed)
-                        npc.velocity.X = (float)npc.direction * top_speed;  //  but cap at top speed
-                }  //  END running slower than top speed (forward), can be jump/fall
-            } // END non archer or not aiming*/
+            if (Math.Abs(npc.velocity.X) > top_speed && npc.velocity.Y == 0f) {
+                npc.velocity *= (1f - braking_power);
+            }
+            else {
+                npc.velocity.X += npc.direction * acceleration;
+            }
             #endregion
+            //-------------------------------------------------------------------
 
             #region shoot and walk
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
@@ -444,16 +447,6 @@ namespace tsorcRevamp.NPCs.Enemies {
                             npc.ai[2] = 0f;  //  reset knock counter
                         }
                     } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    if (hops && npc.velocity.Y == 0f && Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2))) < hop_range_x && Math.Abs(npc.position.Y + (float)(npc.height / 2) - (Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2))) < hop_range_y && ((npc.direction > 0 && npc.velocity.X >= hop_velocity) || (npc.direction < 0 && npc.velocity.X <= -hop_velocity))) { // type that hops & no jump/fall & near target & moving forward fast enough: hop code
-                        npc.velocity.X = npc.velocity.X * 2f; // burst forward
-                        if (npc.velocity.X > hop_speed) // but cap at hop_speed
-                            npc.velocity.X = hop_speed;
-                        else if (npc.velocity.X < -hop_speed)
-                            npc.velocity.X = -hop_speed;
-
-                        npc.velocity.Y = -hop_power; // and jump of course
-                        npc.netUpdate = true;
-                    }
                     if (can_teleport && npc.velocity.Y < 0f) // jumping
                         npc.velocity.Y = npc.velocity.Y * 1.1f; // infinite jump? antigravity?
                 }
@@ -582,8 +575,39 @@ namespace tsorcRevamp.NPCs.Enemies {
             #endregion
         }
         #endregion
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor) {
 
+            int spriteWidth = npc.frame.Width; //use same number as ini frameCount
+            int spriteHeight = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
 
+            int spritePosDifX = (int)(npc.frame.Width / 2);
+            int spritePosDifY = npc.frame.Height - 5; // was npc.frame.Height - 4; if not 5 then 8
+
+            int frame = npc.frame.Y / spriteHeight;
+
+            int offsetX = (int)(npc.position.X + (npc.width / 2) - Main.screenPosition.X - spritePosDifX + 0.5f);
+            int offsetY = (int)(npc.position.Y + npc.height - Main.screenPosition.Y - spritePosDifY);
+
+            SpriteEffects flop = SpriteEffects.None;
+            if (npc.spriteDirection == 1) {
+                flop = SpriteEffects.FlipHorizontally;
+            }
+
+            //Glowing Eye Effect
+            for (int i = 1; i > -1; i--) {
+                //draw 3 levels of trail
+                int alphaVal = 255 - (1 * i);
+                Color modifiedColour = new Color((int)(alphaVal), (int)(alphaVal), (int)(alphaVal), alphaVal);
+                spriteBatch.Draw(ModContent.GetTexture("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow"),
+                    new Rectangle((int)(offsetX), (int)(offsetY), spriteWidth, spriteHeight),
+                    new Rectangle(0, npc.frame.Height * frame, spriteWidth, spriteHeight),
+                    modifiedColour,
+                    npc.rotation,  //Just add this here I think
+                    new Vector2(0, 0),
+                    flop,
+                    0);
+            }
+        }
 
 
     }
