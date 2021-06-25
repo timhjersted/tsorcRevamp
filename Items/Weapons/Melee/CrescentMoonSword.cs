@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if ((player.name == "Zeodexic") || (player.name == "Chroma TSORC test")) //Add whatever names you use -C
+            if ((player.name == "Zeodexic")/* || (player.name == "Chroma TSORC test")*/) //Add whatever names you use -C
             {
                 item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
                 item.shootSpeed = 22f;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
         {
-            if ((player.name == "Zeodexic") || (player.name == "Chroma TSORC test")) //Add whatever names you use -C
+            if ((player.name == "Zeodexic")/* || (player.name == "Chroma TSORC test")*/) //Add whatever names you use -C
             {
                 item.damage = 120; //change this to whatever suits your testing needs -C
             }

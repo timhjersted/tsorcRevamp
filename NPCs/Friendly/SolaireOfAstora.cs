@@ -12,16 +12,16 @@ using Terraria.Localization;
 namespace tsorcRevamp.NPCs.Friendly {
 	[AutoloadHead]
     class SolaireOfAstora : ModNPC {
-		public override bool Autoload(ref string name) => false;
+		public override bool Autoload(ref string name) => true;
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Warrior of Sunlight");
 			Main.npcFrameCount[npc.type] = 25;
 			NPCID.Sets.ExtraFramesCount[npc.type] = 9;
 			NPCID.Sets.AttackFrameCount[npc.type] = 4;
-			NPCID.Sets.DangerDetectRange[npc.type] = 700;
+			NPCID.Sets.DangerDetectRange[npc.type] = 40;
 			NPCID.Sets.AttackType[npc.type] = 3;
-			NPCID.Sets.AttackTime[npc.type] = 90;
-			NPCID.Sets.AttackAverageChance[npc.type] = 30;
+			NPCID.Sets.AttackTime[npc.type] = 18;
+			NPCID.Sets.AttackAverageChance[npc.type] = 10;
 			NPCID.Sets.HatOffsetY[npc.type] = 4;
 		}
         public override string TownNPCName() {
@@ -40,10 +40,22 @@ namespace tsorcRevamp.NPCs.Friendly {
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0.5f;
-			animationType = NPCID.Guide;
+			animationType = NPCID.DyeTrader;
+		}
+		public override void AI()
+		{
+			if ((npc.velocity.X == 0 && npc.velocity.Y == 0) && Main.dayTime)
+			{
+				Lighting.AddLight(npc.Center, .850f, .850f, .450f);
+				if (Main.rand.Next(10) == 0)
+				{
+					int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 57, npc.velocity.X * 0f, -1f, 30, default(Color), 1.5f);
+					Main.dust[dust].noGravity = true;
+				}
+			}
 		}
 
-        public override string GetChat() {
+		public override string GetChat() {
 			WeightedRandom<string> chat = new WeightedRandom<string>();
 			chat.Add("Dark Souls possess great powers, but also great responsibilities.");
 			chat.Add("Praise the sun!");
@@ -77,6 +89,8 @@ namespace tsorcRevamp.NPCs.Friendly {
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldAxe>());
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldSword>());
+			nextSlot++;
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldLongsword>());
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldMace>());
 			nextSlot++;
@@ -140,13 +154,13 @@ namespace tsorcRevamp.NPCs.Friendly {
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset) {
 			item = Main.itemTexture[ModContent.ItemType<OldBroadsword>()];
-			scale = 1f;
-			itemSize = 44;
+			scale = .8f;
+			itemSize = 36;
         }
 
         public override void TownNPCAttackSwing(ref int itemWidth, ref int itemHeight) {
-			itemWidth = 44;
-			itemHeight = 44;
+			itemWidth = 36;
+			itemHeight = 36;
 		}
 
         public override bool CanTownNPCSpawn(int numTownNPCs, int money) {
