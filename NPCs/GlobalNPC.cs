@@ -10,7 +10,7 @@ using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
 
 namespace tsorcRevamp.NPCs {
-    class tsorcRevampGlobalNPC : GlobalNPC {
+    public class tsorcRevampGlobalNPC : GlobalNPC {
 
 
         float enemyValue;
@@ -49,6 +49,12 @@ namespace tsorcRevamp.NPCs {
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo) {
             if (tsorcRevampWorld.TheEnd) {
                 pool.Clear(); //stop NPC spawns in The End 
+            }
+        }
+
+        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff) {
+                maxSpawns = 0;
             }
         }
 

@@ -98,6 +98,9 @@ namespace tsorcRevamp {
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
 
+        public bool GiveBossZen;
+        public bool BossZenBuff;
+
         public override void Initialize() {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
             DamageDir = new Dictionary<int, float> {
@@ -163,6 +166,8 @@ namespace tsorcRevamp {
             MiakodaCrescentDust1 = false;
             MiakodaNew = false;
             MiakodaNewDust1 = false;
+            GiveBossZen = false;
+            BossZenBuff = false;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
@@ -477,7 +482,7 @@ namespace tsorcRevamp {
             #endregion
 
 
-            if (Shockwave) { 
+            if (Shockwave) {
                 if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                     if (player.controlDown && player.velocity.Y != 0f) {
                         player.gravity += 5f;
@@ -505,10 +510,10 @@ namespace tsorcRevamp {
                                 Vector2 shotDirection = new Vector2(0f, -16f);
                                 int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
                                 Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))); // (180 / (projectilecount - 1))
-                            } 
+                            }
                         }
 
-                        
+
                         Falling = false;
                     }
                     if (player.velocity.Y <= 2f) {
@@ -519,7 +524,7 @@ namespace tsorcRevamp {
                     }
                     if (StopFalling > 1) {
                         Falling = false;
-                    } 
+                    }
                 }
                 else {
                     var P = player;
@@ -573,7 +578,7 @@ namespace tsorcRevamp {
                             if ((N.position.X >= sx) && (N.position.X <= sx + sw) && (N.position.Y >= sy) && (N.position.Y <= sy + sh)) { // on screen
                                 N.StrikeNPC(2 * fall_dist, 5f, HitDir);
                                 if (Main.netMode != NetmodeID.SinglePlayer) NetMessage.SendData(MessageID.StrikeNPC, -1, -1, null, k, 2 * fall_dist, 10f, HitDir, 0); // for multiplayer support
-                                                                                                                              // optionally add debuff here
+                                                                                                                                                                      // optionally add debuff here
                             } // END on screen
                         } // END iterate through NPCs
                     } // END just fell
@@ -597,7 +602,7 @@ namespace tsorcRevamp {
                     for (int j = 1; j < 50; j++) {
                         var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
                         Main.dust[x].noGravity = true;
-                    } 
+                    }
                 }
                 else { //old crimson pot
                     var P = player;
@@ -713,6 +718,20 @@ namespace tsorcRevamp {
                 player.statDefense = (int)(player.statDefense * REDUCE);
             }
             #endregion
+            //boss zen
+            GiveBossZen = CheckBossZen();
+            if (GiveBossZen && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig) {
+                player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
+            }
+        }
+
+        public static bool CheckBossZen() {
+            for (int i = 0; i < 200; i++) {
+                if (Main.npc[i].active && Main.npc[i].boss) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk) {
@@ -892,10 +911,22 @@ namespace tsorcRevamp {
         {
             if (MiakodaFull) { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > 720) {
-                    if (crit) {
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon)) {
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
-                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199)) {
+                        
+
+
+                        //2 per 100 max hp, plus 2
+                        int HealAmount = (int)((Math.Floor((double)(player.statLifeMax2 / 100)) * 2) + 2);
+                        player.statLife += HealAmount;
+                        player.HealEffect(HealAmount, false);
+                        if (player.statLife > player.statLifeMax2) {
+                            player.statLife = player.statLifeMax2;
+                        }
+
+                        /* do not do this
+                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199)) { 
                             player.HealEffect(4, false);
                             player.statLife += 4;
                             if (player.statLife > player.statLifeMax2) {
@@ -934,6 +965,7 @@ namespace tsorcRevamp {
                                 player.statLife = player.statLifeMax2;
                             }
                         }
+                        */
                         Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
 
                         MiakodaEffectsTimer = 0;

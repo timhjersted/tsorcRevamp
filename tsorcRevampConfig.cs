@@ -11,7 +11,7 @@ namespace tsorcRevamp {
         [Label("Adventure Mode")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Adventure mode prevents breaking and placing most blocks. \nIt also enables some features intended for the custom map. \nLeave this enabled if you're playing with the custom map!")]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool AdventureMode { get; set; }
 
         [Label("Souls Drop on Death")]
@@ -49,7 +49,12 @@ namespace tsorcRevamp {
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Revamp Miakoda giving you Navi flashbacks?\nThis slider controls Miakoda's volume.\nSet to 0 to disable Miakoda sounds.")]
         [DefaultValue(100)]
-
         public uint MiakodaVolume;
+
+        [Label("Boss Zen")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Boss Zen disables enemy spawns while a boss is alive.\nDefaults to On")]
+        [DefaultValue(true)]
+        public bool BossZenConfig { get; set; }
     }
 }

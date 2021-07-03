@@ -23,6 +23,8 @@ namespace tsorcRevamp {
         public static BitArray KillAllowed;
         public static BitArray PlaceAllowed;
         public static BitArray Unbreakable;
+        public static List<int> IgnoredTiles;
+        public static int[] IgnoredTiles2;
 
         internal BonfireUIState BonfireUIState;
         private UserInterface _bonfireUIState;
@@ -489,6 +491,7 @@ namespace tsorcRevamp {
             PlaceAllowed[394] = true; //sluggy cage
             PlaceAllowed[413] = true; //red squirrel cage
             PlaceAllowed[414] = true; //gold squirrel cage
+            PlaceAllowed[463] = true; //defender's forge
             #endregion
             //--------
             #region Unbreakable bit array
@@ -500,6 +503,40 @@ namespace tsorcRevamp {
             Unbreakable[135] = true; //pressure plates
             Unbreakable[136] = true; //switch
             Unbreakable[137] = true; //dart trap
+            #endregion
+            //--------
+            #region IgnoredTiles list
+            //(because im lazy and felt like using a list)
+            IgnoredTiles = new List<int>() {
+                3, //tall grass
+                24, //tall grass (corruption)
+                32, //corruption thorn
+                51, //cobweb
+                52, //vines
+                61, //tall grass (jungle)
+                62, //jungle vines
+                69, //jungle thorn
+                73, //tall grass (misc)
+                74, //tall jungle plants
+                82, //plants (growing)
+                83, //plants (matured)
+                84, //plants (blooming)
+                85, //tombstone
+                115, //hallowed vines
+                129, //crystal shard
+                165, //ambient objects (stalagmites / stalactites, icicles)
+                184, //moss growth
+                185, //ambient objects (small rocks, small coin stashes, gem stashes)
+                186, //ambient objects (bone piles, large rocks, large coin stashes)
+                187, //ambient objects (mossy / lava rocks, spider eggs, misc bg furniture (cave tents, etc))
+                201, //tall grass (crimson)
+                205, //crimson vines
+                227, //strange plant
+                233, //ambient objects (background leafy jungle plants)
+                324, //sea shells
+                352, //crimson thorn
+                382, //flower vines
+            };
             #endregion
         }
 
@@ -778,6 +815,7 @@ namespace tsorcRevamp {
             KillAllowed = null;
             PlaceAllowed = null;
             Unbreakable = null;
+            IgnoredTiles = null;
             tsorcRevampWorld.Slain = null;
             //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
             Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
@@ -917,28 +955,6 @@ namespace tsorcRevamp {
             recipe1.AddRecipe();
         }
 
-        public static float GetLerpValue(float from, float to, float t, bool clamped = false) {
-            if (clamped) {
-                if (from < to) {
-                    if (t < from) {
-                        return 0f;
-                    }
-                    if (t > to) {
-                        return 1f;
-                    }
-                }
-                else {
-                    if (t < to) {
-                        return 1f;
-                    }
-                    if (t > from) {
-                        return 0f;
-                    }
-                }
-            }
-            return (t - from) / (to - from);
-        }
-
         public override void PreSaveAndQuit() {
             Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
             Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
@@ -978,10 +994,10 @@ namespace tsorcRevamp {
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
 
-                bool right = !Main.tile[x + 1, y].active();
-                bool left = !Main.tile[x - 1, y].active();
-                bool below = !Main.tile[x, y - 1].active();
-                bool above = !Main.tile[x, y + 1].active();
+                bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
+                bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
+                bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
+                bool above = !Main.tile[x, y + 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].type);
                 if (x < 10 || x > Main.maxTilesX - 10) {//sanity
                     return false;
                 }
@@ -1010,10 +1026,10 @@ namespace tsorcRevamp {
 
         public override bool CanExplode(int x, int y, int type) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                bool right = !Main.tile[x + 1, y].active();
-                bool left = !Main.tile[x - 1, y].active();
-                bool below = !Main.tile[x, y - 1].active();
-                bool above = !Main.tile[x, y + 1].active();
+                bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
+                bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
+                bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
+                bool above = !Main.tile[x, y + 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].type);
                 bool CanDestroy = false;
                 if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
                     CanDestroy = true;
