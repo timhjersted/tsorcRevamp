@@ -24,7 +24,6 @@ namespace tsorcRevamp {
         public static BitArray PlaceAllowed;
         public static BitArray Unbreakable;
         public static List<int> IgnoredTiles;
-        public static int[] IgnoredTiles2;
 
         internal BonfireUIState BonfireUIState;
         private UserInterface _bonfireUIState;
