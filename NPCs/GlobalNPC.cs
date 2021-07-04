@@ -88,20 +88,15 @@ namespace tsorcRevamp.NPCs {
                 }
 
 
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
-                    multiplier += 0.25f;
-                }
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
-                    multiplier += 0.15f;
-                }
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
-                    multiplier += 0.4f;
-                }
+                multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(Main.LocalPlayer);
 
                 DarkSoulQuantity = (int)(multiplier * enemyValue);
 
                 #region Bosses drop souls once
                 if (npc.boss) {
+                    if (npc.type == NPCID.MoonLordCore) { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
+                        DarkSoulQuantity = 100000; //1 plat / 10
+                    }
                     if (tsorcRevampWorld.Slain.ContainsKey(npc.type)) {
                         DarkSoulQuantity = 0;
                         return;

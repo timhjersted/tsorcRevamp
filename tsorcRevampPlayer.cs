@@ -718,11 +718,12 @@ namespace tsorcRevamp {
                 player.statDefense = (int)(player.statDefense * REDUCE);
             }
             #endregion
-            //boss zen
+            #region boss zen
             GiveBossZen = CheckBossZen();
             if (GiveBossZen && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig) {
                 player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
             }
+            #endregion
         }
 
         public static bool CheckBossZen() {
@@ -779,6 +780,20 @@ namespace tsorcRevamp {
                 }
             }
             return 0;
+        }
+
+        public static float CheckSoulsMultiplier(Player player) {
+            float multiplier = 1f;
+            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
+                multiplier += 0.25f;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
+                multiplier += 0.15f;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
+                multiplier += 0.4f;
+            }
+            return multiplier;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
