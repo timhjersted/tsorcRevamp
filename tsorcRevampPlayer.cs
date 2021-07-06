@@ -845,46 +845,15 @@ namespace tsorcRevamp {
             if (MiakodaFull) { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > 720) {
                     if (crit) {
+
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
-                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199)) {
-                            player.HealEffect(4, false);
-                            player.statLife += 4;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
 
-                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299)) {
-                            player.HealEffect(6, false);
-                            player.statLife += 6;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399)) {
-                            player.HealEffect(8, false);
-                            player.statLife += 8;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499)) {
-                            player.HealEffect(10, false);
-                            player.statLife += 10;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if (player.statLifeMax2 > 499) {
-                            player.HealEffect(12, false);
-                            player.statLife += 12;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
+                        int HealAmount = (int)((Math.Floor((double)(player.statLifeMax2 / 100)) * 2) + 2);
+                        player.statLife += HealAmount;
+                        player.HealEffect(HealAmount, false);
+                        if (player.statLife > player.statLifeMax2) {
+                            player.statLife = player.statLifeMax2;
                         }
 
                         Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
@@ -990,7 +959,7 @@ namespace tsorcRevamp {
 
             if (MiakodaCrescent) { //Miakoda Crescent Moon
                 if (MiakodaEffectsTimer > 720) {
-                    if (crit) {
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon)) {
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
@@ -1004,7 +973,7 @@ namespace tsorcRevamp {
 
             if (MiakodaNew) { //Miakoda New Moon
                 if (MiakodaEffectsTimer > 720) {
-                    if (crit) {
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon)) {
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
                         player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;

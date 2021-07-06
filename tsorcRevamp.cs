@@ -879,7 +879,7 @@ namespace tsorcRevamp {
                 PermaPotionRecipeA(this, ItemID.Ale, ModContent.ItemType<PermanentAle>());
                 PermaPotionRecipeA(this, ItemID.CalmingPotion, ModContent.ItemType<PermanentCalmingPotion>());
                 PermaPotionRecipeA(this, ItemID.ArcheryPotion, ModContent.ItemType<PermanentArcheryPotion>());
-                PermaPotionRecipeA(this, ItemID.BattlePotion, ModContent.ItemType<PermanentBattlefrontPotion>());
+                PermaPotionRecipeA(this, ItemID.BattlePotion, ModContent.ItemType<PermanentBattlePotion>());
                 PermaPotionRecipeA(this, ModContent.ItemType<CrimsonPotion>(), ModContent.ItemType<PermanentCrimsonPotion>());
                 PermaPotionRecipeA(this, ItemID.FlaskofCursedFlames, ModContent.ItemType<PermanentFlaskOfCursedFlames>());
                 PermaPotionRecipeA(this, ItemID.FlaskofIchor, ModContent.ItemType<PermanentFlaskOfIchor>());

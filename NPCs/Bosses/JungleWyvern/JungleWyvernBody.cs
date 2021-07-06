@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 		public override void AI() {
 			if (Timer == -1000) {
 				Timer = -Main.rand.Next(800);
+				npc.netUpdate = true;
 			}
 			npc.TargetClosest();
 			Timer++;
@@ -76,6 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				Main.dust[dust].noGravity = true;
 			}
 			if (Timer >= 600 && Main.netMode != NetmodeID.Server) {
+				npc.netUpdate = true;
 				float num48 = 1f;
 				Vector2 vector8 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
 				float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector8.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
