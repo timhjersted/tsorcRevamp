@@ -9,9 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldHalberd";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Does random damage from 0 to 35" +
-                                "\nMaximum damage is increased by damage modifiers." +
-                                "\nLeft-click to stab like a spear, right-click to swing" +
+            Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +
                                 "\nSwing strike does 25% more damage");
 
         }

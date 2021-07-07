@@ -51,7 +51,7 @@ namespace tsorcRevamp.Tiles {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(ItemID.StoneBlock, 50);
                 recipe.AddIngredient(ItemID.Torch, 5);
-                recipe.AddTile(ItemID.WorkBench);
+                recipe.AddTile(TileID.WorkBenches);
                 recipe.SetResult(this, 1);
                 recipe.AddRecipe();
             }
