@@ -247,7 +247,7 @@ namespace tsorcRevamp {
                 }
                 if (item.type == ModContent.ItemType<PermanentShinePotion>() && PermanentBuffToggles[10]) {
                     Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
-                    player.buffImmune[BuffID.Invisibility] = true;
+                    player.buffImmune[BuffID.Shine] = true;
                 }
                 if (item.type == ModContent.ItemType<PermanentNightOwlPotion>() && PermanentBuffToggles[11]) {
                     player.nightVision = true;
