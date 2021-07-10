@@ -46,10 +46,10 @@ namespace tsorcRevamp.Projectiles {
 					projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2) { //after x animation frames, return
-					moveFactor -= 0.95f;
+					moveFactor -= 1.7f;
                 }
 				else { //extend spear
-					moveFactor += 1.25f;
+					moveFactor += 2.25f;
                 }
 
             }

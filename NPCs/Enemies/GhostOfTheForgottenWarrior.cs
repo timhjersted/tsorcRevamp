@@ -37,16 +37,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (!Main.hardMode && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.5f;
+				return 0.5f; //what the hell? this is so high
 			}
 			else if (Main.hardMode && spawnInfo.player.ZoneDungeon)
 			{
 				return 0.05f;
 			}
-			/*else if (SUPER HM && spawnInfo.player.ZoneDungeon)
+			else if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon)
 			{
 				return 0.01f;
-			}*/
+			}
 
 			return chance;
 		}

@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            mult = (float)player.statLife / player.statLife * 100 + 50;
+            add += (int)((float)player.statLife / 4 + 50) * player.meleeDamage;
         }
     }
 }

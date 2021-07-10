@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items {
 			item.channel = true;
 			item.useAnimation = 25;
 			item.useTime = 7;
-			item.pick = 220;
+			item.pick = 200;
 			item.axe = 100;
 			item.damage = 42;
 			item.knockBack = 5;

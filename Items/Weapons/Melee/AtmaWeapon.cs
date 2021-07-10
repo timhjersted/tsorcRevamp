@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
             item.stack = 1;
             item.rare = ItemRarityID.Pink;
-            item.damage = 105;
+            item.damage = 1;
             item.height = 58;
             item.knockBack = (float)9;
             item.maxStack = 1;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            mult = ((float)player.statLife / (player.statLife) * 50) + 55;
+            add += (int)((float)player.statLife / 8 + 55) * player.meleeDamage;
         }
     }
 }
