@@ -220,6 +220,7 @@ namespace tsorcRevamp.NPCs {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 16;
+                if (Main.hardMode) npc.lifeRegen -= 16;
                 if (damage < 2) {
                     damage = 2;
                 }
