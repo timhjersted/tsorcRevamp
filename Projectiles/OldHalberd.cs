@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles
 			projectile.tileCollide = false;
 			projectile.hide = true;
 			projectile.scale = 1f;
-
+			projectile.ownerHitCheck = true;
 		}
 		public float moveFactor
 		{ //controls spear speed
