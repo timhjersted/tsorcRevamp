@@ -236,7 +236,11 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.EyeofCthulhu): {
-                        //damage changes in PreAI
+                        //damage changes here are for first phase
+                        npc.damage = 27; //legacy: 37
+                        if (Main.expertMode) {
+                            npc.damage = 21; //revamp expert: 42
+                        }
                         if (Main.player[Main.myPlayer].ZoneJungle) {
                             if (Main.expertMode) {
                                 npc.lifeMax = 3077; // Which is actually 4k hp in expert mode
@@ -1448,17 +1452,19 @@ namespace tsorcRevamp.NPCs {
                 return;
             }
             npc.defense = 0;
-            npc.damage = 22;
+            //npc.damage = 22; //does nothing!
+
             if (Main.expertMode) {
-                if (flag24) {
+                if (flag24) { //third phase (start of faster dashing)
+                    npc.damage = (int)(22.5f * Main.expertDamage); //45 (38 - 52)
                     npc.defense = -15;
                 }
-                if (finalDesperation) {
-                    npc.damage = (int)(27f * Main.expertDamage);
+                if (finalDesperation) { //final phase (nonstop dashing)
+                    npc.damage = (int)(25f * Main.expertDamage); //50 (43 - 58)
                     npc.defense = -30;
                 }
-                else {
-                    npc.damage = (int)(22f * Main.expertDamage);
+                else { //second phase (mouth open)
+                    npc.damage = (int)(22.5f * Main.expertDamage); //45 (38 - 52)
                 }
             }
             if (npc.ai[1] == 0f && flag24) {
