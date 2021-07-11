@@ -22,6 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.value = 1090000;
             item.width = 36;
+            item.useTime = 20;
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
             if (Main.rand.Next(15) == 0) {

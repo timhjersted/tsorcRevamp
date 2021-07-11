@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.height = 6;
             projectile.scale = 1f;
             projectile.alpha = 255;
-            projectile.aiStyle = 23;
+            projectile.aiStyle = 0;
             projectile.timeLeft = 3600;
             projectile.friendly = true;
             projectile.penetrate = 4;

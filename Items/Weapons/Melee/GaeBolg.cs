@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.knockBack = 6.6f;
 
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 20;
-            item.useTime = 20;
+            item.useAnimation = 15;
+            item.useTime = 15;
             item.shootSpeed = 8;
             
             item.height = 40;

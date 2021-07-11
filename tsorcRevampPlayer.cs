@@ -599,7 +599,7 @@ namespace tsorcRevamp {
                     }
 
                     Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
-                    for (int j = 1; j < 50; j++) {
+                    for (int j = 1; j < 30; j++) {
                         var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
                         Main.dust[x].noGravity = true;
                     }

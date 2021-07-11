@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
 
-namespace tsorcRevamp.NPCs.Enemies {
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
     class VampireBat : ModNPC {
         public override void SetDefaults() {
             npc.width = 22;
@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.knockBackResist = 0.5f;
             npc.value = 650;
             animationType = NPCID.CaveBat;
+            Main.npcFrameCount[npc.type] = 5;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {

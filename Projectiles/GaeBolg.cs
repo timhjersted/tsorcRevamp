@@ -66,7 +66,15 @@ namespace tsorcRevamp.Projectiles {
             }
 
 
-        }
+			if (Main.rand.Next(5) == 0) {
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, 0f, 0f, 150, default, 1.4f);
+			}
+			int num116 = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, projectile.velocity.X * 0.2f + (float)(projectile.direction * 3), projectile.velocity.Y * 0.2f, 100, default, 1.2f);
+			Main.dust[num116].velocity /= 2f;
+			num116 = Dust.NewDust(projectile.position - projectile.velocity * 2f, projectile.width, projectile.height, 15, 0f, 0f, 150, default, 1.4f);
+			Main.dust[num116].velocity /= 5f;
+
+		}
         
     }
     

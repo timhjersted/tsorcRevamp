@@ -543,6 +543,7 @@ namespace tsorcRevamp.NPCs.Bosses {
 			if (Main.player[npc.target].dead) {
 				if (npc.timeLeft > 10) {
 					npc.timeLeft = 10;
+					npc.noTileCollide = true;
 					return;
 				}
 			}

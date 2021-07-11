@@ -22,7 +22,8 @@ namespace tsorcRevamp.Items.Potions {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Insert(3, new TooltipLine(mod, "", "Hold DOWN to create a damaging shockwave when you land."));
+                tooltips.Insert(3, new TooltipLine(mod, "", "Hold DOWN to increase fall speed."));
+                tooltips.Insert(4, new TooltipLine(mod, "", "Create a damaging shockwave when you land, which grows in strength based on distance fallen."));
             }
             else {
                 tooltips.Insert(3, new TooltipLine(mod, "", "Enemies take damage when you land."));
