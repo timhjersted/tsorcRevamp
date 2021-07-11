@@ -13,7 +13,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Great Soul Arrow Staff");
-            Tooltip.SetDefault("Shoots a lightly homing great soul arrow");
+            Tooltip.SetDefault("Shoots a lightly homing great soul arrow" +
+                                "\nwhich can leave enemies Soulstruck" +
+                                "\nSoulstruck enemies drop 10% more souls");
         }
         public override void SetDefaults()
         {
@@ -29,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.UseSound = SoundID.Item8;
             item.shootSpeed = 7.5f;
             item.noMelee = true;
-            item.value = 10000;
+            item.value = 15000;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.GreatSoulArrow>();
         }
@@ -59,7 +61,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("SoulArrowStaff"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(mod.GetItem("SoulSiphonPotion"));
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

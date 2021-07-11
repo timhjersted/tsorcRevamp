@@ -1919,7 +1919,7 @@ namespace tsorcRevamp.NPCs {
                     Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"));
                 }
 
-                if (Main.rand.Next(200) == 0) { // 0.5% 
+                else if (Main.rand.Next(200) == 0) { // 0.5% 
                     Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"));
                 }
             }

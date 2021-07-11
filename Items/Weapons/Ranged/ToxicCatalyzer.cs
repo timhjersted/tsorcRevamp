@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 2.5f;
-            item.value = 150000;
+            item.value = 20000;
             item.scale = 0.8f;
             item.rare = ItemRarityID.Green;
             item.shoot = mod.ProjectileType("ToxicCatShot");

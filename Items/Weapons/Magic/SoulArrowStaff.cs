@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Soul Arrow Staff");
             Tooltip.SetDefault("Shoots a lightly homing soul arrow" +
-                                "\nCan be upgraded with 4000 Dark Souls");
+                                "\nCan be upgraded with 3000 Dark Souls and a Soul Siphon potion");
         }
         public override void SetDefaults()
         {
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.UseSound = SoundID.Item8;
             item.shootSpeed = 7;
             item.noMelee = true;
-            item.value = 3000;
+            item.value = 5000;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.SoulArrow>();
         }

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true; //so the item's animation doesn't do damage
             item.knockBack = 4;
-            item.value = 300000;
+            item.value = 250000;
             item.scale = 0.9f;
             item.rare = ItemRarityID.Pink;
             item.crit = 5;

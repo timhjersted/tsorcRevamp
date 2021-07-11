@@ -130,5 +130,16 @@ namespace tsorcRevamp.Projectiles
 			}
 			Main.PlaySound(SoundID.NPCHit3.WithVolume(.6f), projectile.position);
 		}
+
+		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+		{
+			if (projectile.owner == Main.myPlayer)
+			{
+				if (Main.rand.Next(2) == 0)
+				{
+					target.AddBuff(mod.BuffType("Soulstruck"), 180);
+				}
+			}
+		}
 	}
 }

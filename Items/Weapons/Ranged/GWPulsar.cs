@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 3.5f;
-            item.value = 350000;
+            item.value = 40000;
             item.scale = 0.8f;
             item.rare = ItemRarityID.Orange;
             item.shoot = mod.ProjectileType("GWPulsarShot");

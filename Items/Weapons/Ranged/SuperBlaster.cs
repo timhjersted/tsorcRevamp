@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useAnimation = 20;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
-            item.knockBack = 2.25f;
-            item.value = 50000;
+            item.knockBack = 3.5f;
+            item.value = 25000;
             item.scale = 0.7f;
             item.rare = ItemRarityID.Orange;
             item.shoot = mod.ProjectileType("SuperBlasterShot");

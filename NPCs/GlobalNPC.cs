@@ -15,6 +15,7 @@ namespace tsorcRevamp.NPCs {
 
         float enemyValue;
         float multiplier = 1f;
+        float divisorMultiplier = 1f;
         int DarkSoulQuantity;
 
         public override bool InstancePerEntity => true;
@@ -29,6 +30,7 @@ namespace tsorcRevamp.NPCs {
         public bool ElectrocutedEffect = false;
         public bool PolarisElectrocutedEffect = false;
         public bool CrescentMoonlight = false;
+        public bool Soulstruck = false;
 
 
         public override void ResetEffects(NPC npc) {
@@ -43,6 +45,7 @@ namespace tsorcRevamp.NPCs {
             ElectrocutedEffect = false;
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
+            Soulstruck = false;
         }
 
 
@@ -65,25 +68,28 @@ namespace tsorcRevamp.NPCs {
 
             #region Dark Souls & Consumable Souls Drops
 
+                if (Soulstruck) {
+                    divisorMultiplier = 0.9f; //10% increase
+                }
 
                 if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss) { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
 
                 if (npc.netID != NPCID.JungleSlime) {
                     if (Main.expertMode) { //npc.value is the amount of coins they drop
-                        enemyValue = (int)npc.value / 25; //all enemies drop more money in expert mode, so the divisor is larger to compensate
+                        enemyValue = (int)npc.value / (divisorMultiplier*25); //all enemies drop more money in expert mode, so the divisor is larger to compensate
                     }
                     else {
-                        enemyValue = (int)npc.value / 10;
+                        enemyValue = (int)npc.value / (divisorMultiplier*10);
                     }
                 }
 
                 if (npc.netID == NPCID.JungleSlime) //jungle slimes drop 10 souls
                 {
                     if (Main.expertMode) {
-                        enemyValue = (int)npc.value / 125;
+                        enemyValue = (int)npc.value / (divisorMultiplier*125);
                     }
                     else {
-                        enemyValue = (int)npc.value / 50;
+                        enemyValue = (int)npc.value / (divisorMultiplier*50);
                     }
                 }
 
@@ -540,6 +546,18 @@ namespace tsorcRevamp.NPCs {
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = false;
                 Main.dust[dust].velocity += npc.velocity;
+            }
+
+            if (Soulstruck) {
+                Lighting.AddLight(npc.Center, .4f, .4f, .850f);
+
+                if (Main.rand.Next(6) == 0)
+                {
+                    int dust = Dust.NewDust(npc.position, npc.width, npc.height, 68, 0, 0, 30, default(Color), 1.25f);
+                    Main.dust[dust].velocity *= 0f;
+                    Main.dust[dust].noGravity = true;
+                    Main.dust[dust].velocity += npc.velocity;
+                }
             }
         }
     }

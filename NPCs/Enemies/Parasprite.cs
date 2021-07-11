@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             float chance = 0;
             Player p = spawnInfo.player;
 
-            if (spawnInfo.player.ZoneHoly && underground && (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3)) { //it's spawning on the surface for some reason too
+            if (spawnInfo.player.ZoneHoly && underground && NPC.downedBoss3) { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
             if (Main.hardMode && Sky(p) && NoSpecialBiome(p)) {
