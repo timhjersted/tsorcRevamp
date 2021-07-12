@@ -90,6 +90,13 @@ namespace tsorcRevamp.Projectiles.Pets {
 				Main.playerInventory = true;
 				Main.PlaySound(p.chest == -2? SoundID.Item59 : new Terraria.Audio.LegacySoundStyle(SoundID.CoinPickup, 0));
 				Recipe.FindRecipes();
+				/*Main.NewText("projTilePosX is  " + projTilePosX);
+				Main.NewText("projTilePosY is  " + projTilePosY);
+				Main.NewText("pTilePosX is  " + pTilePosX);
+				Main.NewText("pTilePosY is  " + pTilePosY);
+				Main.NewText("lastTileRangeX is  " + lastTileRangeX);
+				Main.NewText("lastTileRangeY is  " + lastTileRangeY);*/
+
 			}
 		}
 		internal static bool SolidTile(int x, int y) {

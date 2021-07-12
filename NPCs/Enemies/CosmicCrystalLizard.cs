@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (NPC.CountNPCS(mod.NPCType("CosmicCrystalLizard")) < 1 && (spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneDirtLayerHeight) && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope() && !spawnInfo.player.ZoneJungle)
 			{
-				return 0.03f;
+				return 0.02f;
 			}
 			if (NPC.CountNPCS(mod.NPCType("CosmicCrystalLizard")) < 1 && (spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneDirtLayerHeight) && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope() && spawnInfo.player.ZoneJungle)
 			{
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			if (NPC.CountNPCS(mod.NPCType("CosmicCrystalLizard")) < 1 && spawnInfo.player.ZoneOverworldHeight && !spawnInfo.water && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].rightSlope() && !Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].leftSlope() && (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.DirtUnsafe || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.MudUnsafe || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.Planked))
 			{
-				return 0.03f;
+				return 0.02f;
 			}
 			return chance;
 		}
@@ -1009,7 +1009,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
 
 
-			if (Main.rand.NextFloat() >= 0.66f) // 33% chance
+			if (Main.rand.NextFloat() >= 0.5f) // 50% chance
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("SoulSiphonPotion"));
 			}

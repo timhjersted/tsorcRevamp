@@ -11,7 +11,8 @@ namespace tsorcRevamp.Buffs
         public override void SetDefaults()
         {
             DisplayName.SetDefault("Bonfire");
-            Description.SetDefault("Stay a little while... Let your soul heal");
+            Description.SetDefault("Stay a little while... Let your soul heal \n" +
+                                   "Enemy spawns disabled");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = true;
         }
@@ -20,7 +21,7 @@ namespace tsorcRevamp.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.calmed = true;
+            player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
             bonfireEffectTimer++;
 
             if (player.velocity.X != 0 || player.velocity.Y != 0) //reset if player moves

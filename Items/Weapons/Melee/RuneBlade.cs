@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
     class RuneBlade : ModItem {
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             //todo add mod NPCs to this list
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
-                //|| target.type == ModContent.NPCType<UndeadCaster>()
+                || target.type == ModContent.NPCType<UndeadCaster>()
                 //|| target.type == ModContent.NPCType<MindflayerServant>()
                 ) {
                 damage *= 8;
@@ -37,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 //|| target.type == ModContent.NPCType<DungeonMage>()
                 //|| target.type == ModContent.NPCType<DemonSpirit>()
                 //|| target.type == ModContent.NPCType<ShadowMage>()
-                //|| target.type == ModContent.NPCType<AttraidiesIllusion>()
+                || target.type == ModContent.NPCType<AttraidiesIllusion>()
                 //|| target.type == ModContent.NPCType<AttraidiesManifestation>()
                 //|| target.type == ModContent.NPCType<BrokenOkiku>()
                 //|| target.type == ModContent.NPCType<WyvernMage>()

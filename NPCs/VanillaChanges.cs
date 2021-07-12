@@ -757,6 +757,8 @@ namespace tsorcRevamp.NPCs {
                 return false;
             }
 
+            #region Lunar Towers
+
             if (npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerStardust || npc.type == NPCID.LunarTowerVortex) {
                 if (npc.ai[2] == 1f) {
                     npc.velocity = Vector2.UnitY * npc.velocity.Length();
@@ -1125,8 +1127,12 @@ namespace tsorcRevamp.NPCs {
                 return false;
             }
 
+            #endregion
+
             else return base.PreAI(npc);
         }
+
+        #region Eye of Cthulhu AI
 
         private void AI_EoC(NPC npc) {
             bool flag24 = false;
@@ -1789,6 +1795,9 @@ namespace tsorcRevamp.NPCs {
                 npc.ai[1] = 3f;
             }
         }
+
+        #endregion
+
         public override bool CheckDead(NPC npc) {
             if (npc.type == NPCID.LavaSlime) {
                 try {
