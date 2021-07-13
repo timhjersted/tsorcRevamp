@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Armors {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<AncientDwarvenHelmet>(), 500);
+            recipe.AddIngredient(ModContent.ItemType<AncientDwarvenHelmet>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
