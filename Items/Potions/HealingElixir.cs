@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Potions {
             foreach (int buffType in player.buffType) {
 
                 if ((buffType == BuffID.Bleeding) || (buffType == BuffID.Poisoned) || (buffType == BuffID.Confused) || (buffType == BuffID.BrokenArmor)) {
-                    player.DelBuff(buffIndex);
+                    player.buffTime[buffIndex] = 0;
                 }
                 buffIndex++;
             }

@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                     || (buffType == BuffID.Cursed) // why are these in here? you can't use this item if you have cursed or silenced 
                     || (buffType == BuffID.Silenced) // the original tsorc mod has these in here, so im leaving them, but im *well* aware of how stupid this is
                     ) {
-                    player.DelBuff(buffIndex);
+                    player.buffTime[buffIndex] = 0;
                 }
                 buffIndex++;
             }
