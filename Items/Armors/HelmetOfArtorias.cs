@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Armors
             player.manaCost -= 0.37f;
             player.lifeRegen += 8;
             player.nightVision = true;
-            player.noFallDmg = true
+            player.noFallDmg = true;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 32, player.velocity.X - 3f, player.velocity.Y, 150, Color.Yellow, 1f);
             Main.dust[dust].noGravity = true;
