@@ -175,10 +175,12 @@ namespace tsorcRevamp {
             KillAllowed[201] = true; //tall grass (crimson)
             KillAllowed[205] = true; //crimson vines
             KillAllowed[207] = true; //water fountain
+            KillAllowed[211] = true; //Chlorophyte Ore
             KillAllowed[218] = true; //meat grinder
             KillAllowed[227] = true; //strange plant
             KillAllowed[228] = true; //dye vat
             KillAllowed[233] = true; ////ambient objects (background leafy jungle plants)
+            KillAllowed[238] = true; //Plantera Bulb
             KillAllowed[240] = true; //trophies
             KillAllowed[242] = true; //big paintings
             KillAllowed[245] = true; //tall paintings
