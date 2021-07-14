@@ -273,7 +273,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (Main.rand.Next(25) == 0) { Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion); }
             if (Main.rand.Next(25) == 0) { Item.NewItem(npc.getRect(), ItemID.RegenerationPotion); }
             if (Main.rand.Next(25) == 0) { Item.NewItem(npc.getRect(), ItemID.SpelunkerPotion); }
-            if (Main.rand.Next(5) == 0) { Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>()); }
+            if (Main.rand.Next(5) == 0) { Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>(), 1, false, -1); }
             if (Main.rand.Next(50) == 0) { Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
         }
 

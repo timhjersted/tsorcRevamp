@@ -49,10 +49,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 target.AddBuff(BuffID.Bleeding, 3600, true);
             }
         }
-        public override void NPCLoot()
-        {
-            //Gore.NewGore(npc.position, npc.velocity, "Cloud Bat Gore", 1f); Not added gore, never worked with it before -C
-        }
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int i = 0; i < 15; i++)

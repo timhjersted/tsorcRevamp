@@ -333,7 +333,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
 
 
 

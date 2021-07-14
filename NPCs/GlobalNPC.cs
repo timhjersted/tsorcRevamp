@@ -386,6 +386,13 @@ namespace tsorcRevamp.NPCs {
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
+            if (type == NPCID.Dryad && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<BloodredMossClump>());
+                shop.item[nextSlot].shopCustomPrice = 25;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
+            }
         }
         public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit) {
             if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>())) {
