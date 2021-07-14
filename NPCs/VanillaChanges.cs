@@ -1822,12 +1822,12 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
             }
 
-             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
+            if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
                  
                 Item.NewItem(npc.getRect(), ItemID.DemoniteOre, 4);
                 Item.NewItem(npc.getRect(), ItemID.ShadowScale, 4);
             }
-            
+
             if ((npc.type >= NPCID.BigHornetStingy && npc.type <= NPCID.LittleHornetFatty) ||
                                 (npc.type >= NPCID.GiantMossHornet && npc.type <= NPCID.LittleStinger) ||
                                 npc.type == NPCID.Hornet || npc.type == NPCID.ManEater ||
