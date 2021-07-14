@@ -44,9 +44,6 @@ namespace tsorcRevamp.Items.Armors
                 player.magicDamage -= 0.3f;
                 player.meleeCrit += 5;
             }
-
-            player.eocDash = 20;
-            player.armorEffectDrawShadowEOCShield = true;
         }
 
         public override void UpdateArmorSet(Player player)
@@ -54,6 +51,11 @@ namespace tsorcRevamp.Items.Armors
             player.meleeSpeed += 0.4f;
             player.meleeDamage += 0.15f;
             player.enemySpawns = true;
+        }
+        
+        public override void ArmorSetShadows (Player player)
+        {
+            player.armorEffectDrawShadow = true;
         }
 
         public override void AddRecipes()
