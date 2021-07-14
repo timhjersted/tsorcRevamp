@@ -46,13 +46,16 @@ namespace tsorcRevamp.Items.Armors {
             player.moveSpeed += 0.38f;
             player.manaCost -= 0.38f;
             player.lifeRegen += 6;
-            player.eocDash = 20;
-            player.armorEffectDrawShadowEOCShield = true;
 
             player.wings = 34; // looks like Jim's Wings
             player.wingsLogic = 34;
             player.wingTimeMax = 180;
 
+        }
+        
+        public override void ArmorSetShadows (Player player)
+        {
+            player.armorEffectDrawShadow = true;
         }
 
         public override void AddRecipes() {
