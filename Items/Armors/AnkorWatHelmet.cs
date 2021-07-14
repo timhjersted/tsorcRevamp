@@ -37,14 +37,19 @@ namespace tsorcRevamp.Items.Armors
             return body.type == ModContent.ItemType<AnkorWatChestplate>() && legs.type == ModContent.ItemType<AnkorWatLeggings>();
         }
 
-        public override void UpdateArmorSet(Player player)
+       public override void UpdateArmorSet(Player player)
         {
             player.manaRegenBuff = true;
             player.statManaMax2 += 160;
             player.manaRegen += 8;
-            player.eocDash = 20;
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 60, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Red, 1.0f);
             Main.dust[dust].noGravity = true;
+        }
+
+        public override void ArmorSetShadows (Player player){
+
+            player.armorEffectDrawShadow = true;
+            
         }
 
         public override void AddRecipes()
