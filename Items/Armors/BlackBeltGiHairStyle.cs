@@ -37,9 +37,11 @@ namespace tsorcRevamp.Items.Armors
             player.meleeDamage += 0.20f;
             player.meleeCrit += 7;
             player.lifeRegen += 13;
-            //armor trail
-            player.eocDash = 20;
-            player.armorEffectDrawShadowEOCShield = true;
+        }
+        
+         public override void ArmorSetShadows (Player player)
+        {
+            player.armorEffectDrawShadow = true;
         }
 
         public override void AddRecipes()
