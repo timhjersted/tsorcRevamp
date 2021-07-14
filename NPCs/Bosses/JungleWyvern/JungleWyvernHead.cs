@@ -245,11 +245,11 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			Item.NewItem(npc.getRect(), ItemID.NecroHelmet);
 			Item.NewItem(npc.getRect(), ItemID.NecroBreastplate);
 			Item.NewItem(npc.getRect(), ItemID.NecroGreaves);
-			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())) { //if the boss has been killed
-				if (tsorcRevampWorld.Slain[ModContent.NPCType<JungleWyvernHead>()] == 0) { //and the key value is 0
-					Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 9000);
-					tsorcRevampWorld.Slain[ModContent.NPCType<JungleWyvernHead>()] = 1; //set the value to 1
-				}
+
+
+			if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
+			{ //If the boss has not yet been killed
+				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
 			}
 		}
     }
