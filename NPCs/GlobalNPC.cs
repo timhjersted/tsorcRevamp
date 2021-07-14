@@ -121,6 +121,29 @@ namespace tsorcRevamp.NPCs {
                     }
                 }
                 #endregion
+
+                #region EoW drops souls in a unique way
+                if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)))
+                {
+
+                    DarkSoulQuantity = 110;
+
+                    if (Main.expertMode)
+                    {
+                        //EoW has 5 more segments in Expert mode, so its drops per segment is reduced slightly to keep it consistent. 
+                        DarkSoulQuantity = 102;
+                    }
+                    if (NPC.downedBoss2)
+                    {
+                        //EoW still drops this many souls per segment even after the first kill. The difference between normal and expert is small enough it would get rounded away at this point.
+                        DarkSoulQuantity = 10;
+                    }
+
+                    Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), DarkSoulQuantity);
+                    DarkSoulQuantity = 0;
+                }
+                #endregion
+
                 if (DarkSoulQuantity > 0) {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
                 }

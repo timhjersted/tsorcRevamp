@@ -1823,7 +1823,7 @@ namespace tsorcRevamp.NPCs {
             }
 
             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 10);
+                 
                 Item.NewItem(npc.getRect(), ItemID.DemoniteOre, 4);
                 Item.NewItem(npc.getRect(), ItemID.ShadowScale, 4);
             }
@@ -1840,6 +1840,8 @@ namespace tsorcRevamp.NPCs {
                     Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
                 }
             }
+            
+            
 
             if (npc.type == NPCID.KingSlime) {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 500);
