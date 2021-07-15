@@ -1,21 +1,19 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic
-{
-    public class WallTome : ModItem
-    {
-        public override void SetStaticDefaults()
-        {
+namespace tsorcRevamp.Items.Weapons.Magic {
+    public class WallTome : ModItem {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wall Tome");
             Tooltip.SetDefault("A lost tome that is consumed on use\n" +
                                "Casts Wall on the player, raising defense by 50 for 25 seconds" +
                                "\nDoes not stack with Fog, Barrier or Shield spells");
         }
 
-        public override void SetDefaults()
-        {
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+        public override void SetDefaults() {
             item.stack = 1;
             item.width = 28;
             item.height = 30;
@@ -33,8 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         }
 
-        public override void AddRecipes()
-        {
+        public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.IronskinPotion);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 600);
@@ -43,20 +40,32 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player)
-        {
+        public override bool UseItem(Player player) {
             player.AddBuff(ModContent.BuffType<Buffs.Wall>(), 1500, false);
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 5100); //85 seconds (60 seconds downtime)
+            }
             return true;
         }
-        public override bool CanUseItem(Player player)
-        {
-            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
-            {
+        public override bool CanUseItem(Player player) {
+            if (!LegacyMode) { //in revamp mode
+                if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>())) {
+                    return false;
+                }
+            }
+            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>())) {
                 return false;
             }
-            else
-            {
+            else {
                 return true;
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!LegacyMode) {
+                tooltips.Add(new TooltipLine(mod, "RevampWallNerf1", "[c/00ff00:Revamped Mode:] Reduces damage dealt by 20% and movement speed by 15%"));
+                tooltips.Add(new TooltipLine(mod, "RevampCDNerf1", "[c/00ff00:Revamped Mode:] Cannot be used again for 60 seconds after wearing off"));
+
             }
         }
     }

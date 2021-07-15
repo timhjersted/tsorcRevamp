@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc");
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", "Reduces damage taken by 6%"));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampShieldDR", "[c/00ff00:Revamped Mode:] Reduces damage taken by 6%"));
                 }
             }
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,6 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         }
 
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults()
         {
             item.stack = 1;
@@ -24,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.rare = ItemRarityID.Orange;
             item.magic = true;
             item.noMelee = true;
-            item.mana = 150;
+            item.mana = LegacyMode ? 150 : 130;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 20;
@@ -60,6 +62,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             else
             {
                 return true;
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!LegacyMode) {
+                tooltips.Add(new TooltipLine(mod, "RevampBarrierBuff1", "[c/00ff00:Revamped Mode:] Mana cost reduced to 130, from 150"));
             }
         }
     }

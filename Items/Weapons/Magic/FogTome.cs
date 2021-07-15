@@ -1,10 +1,11 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class FogTome : ModItem
+    public class FogTome : ModItem 
     {
         public override void SetStaticDefaults()
         {
@@ -15,6 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         }
 
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults()
         {
             item.stack = 1;
@@ -44,9 +46,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player)
+        public override bool UseItem(Player player) 
         {
-            player.AddBuff(ModContent.BuffType<Buffs.Fog>(), 600, false);
+
+            player.AddBuff(ModContent.BuffType<Buffs.Fog>(), LegacyMode ? 600 : 720, false);
+
             return true;
         }
         public override bool CanUseItem(Player player)
@@ -58,6 +62,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             else
             {
                 return true;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                tooltips.Add(new TooltipLine(mod, "ElixirCDTip1", "[c/00ff00:Revamped Mode:] Duration increased to 12 seconds"));
             }
         }
     }
