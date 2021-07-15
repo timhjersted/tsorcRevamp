@@ -5,12 +5,12 @@ namespace tsorcRevamp {
     [Label("Config")]
     [BackgroundColor(30, 60, 40, 220)]
     public class tsorcRevampConfig : ModConfig {
-        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
+        public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => true;
         public override ConfigScope Mode => ConfigScope.ServerSide;
         [Header("Gameplay Changes")]
         [Label("Adventure Mode")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Adventure mode prevents breaking and placing most blocks. \nIt also enables some features intended for the custom map. \nLeave this enabled if you're playing with the custom map!")]
+        [Tooltip("Adventure mode prevents breaking and placing most blocks. \nIt also enables some features intended for the custom map. \n\"If the game lets you break it or place it, it's allowed!\"\nLeave this enabled if you're playing with the custom map!")]
         [DefaultValue(false)]
         public bool AdventureMode { get; set; }
 

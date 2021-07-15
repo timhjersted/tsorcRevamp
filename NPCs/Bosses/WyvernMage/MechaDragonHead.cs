@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 
 			//Code unique to this body part:
 			Color color = new Color();
-			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.PurpleTorch, 0, 0, 100, color, 1.0f);
+			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, color, 1.0f);
 			Main.dust[dust].noGravity = true;
 		}
 

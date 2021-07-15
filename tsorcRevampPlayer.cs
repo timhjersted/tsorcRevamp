@@ -1220,11 +1220,14 @@ namespace tsorcRevamp {
         }
 
         public override void OnEnterWorld(Player player) {
+            if (Main.worldName.Contains("Red Cloud")) {
+                Main.NewText("If you are using the custom map, please enable Adventure Mode in Mod Configuration for the intended experience!", Color.GreenYellow);
+            }
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe) { //sandbox mode only, and only once
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
-            
+
         }
     }
 }

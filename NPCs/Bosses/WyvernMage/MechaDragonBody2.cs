@@ -59,13 +59,13 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 				for (int num36 = 0; num36 < 50; num36++)
 				{
 					Color color = new Color();
-					int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+					int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, 6, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 					Main.dust[dust].noGravity = true;
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, 6, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 					Main.dust[dust].noGravity = true;
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, 6, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 					Main.dust[dust].noGravity = true;
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, DustID.Fire, 0, 0, 100, Color.White, 2.0f);
+					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y - 10), npc.width, npc.height, 6, 0, 0, 100, Color.White, 2.0f);
 					Main.dust[dust].noGravity = true;
 				}
 				npc.HitEffect(0, 10.0);
@@ -92,10 +92,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 				if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
 				{
 					//Yes, this one segment had the wrong dust color (presumubly copied from the Jungle Dragon) in the old version. Once you see it you can never unsee it, so i'm fixing it in the revamped version.
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.PurpleTorch, 0, 0, 100, Color.White, 2.0f);
+					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 2.0f);
 				} else
                 {
-					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Fire, 0, 0, 100, Color.White, 2.0f);
+					dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, 0, 0, 100, Color.White, 2.0f);
 				}
 				Main.dust[dust].noGravity = true;
 			}
