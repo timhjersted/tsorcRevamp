@@ -27,19 +27,12 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-            //if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage>()))
-                {
-                return false;
-            }
             if (Main.dayTime) {
                 Main.NewText("The Wyvern Mage is not present in this dimension... Retry at night.", 175, 75, 255);
             }
             else {
                 Main.NewText("It was a mistake to come here, Red... ", 175, 75, 255);
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage>());
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.MechaDragonHead>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
             }
             return true;
         }
