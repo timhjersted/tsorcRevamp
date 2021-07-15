@@ -38,15 +38,15 @@ namespace tsorcRevamp.NPCs.Bosses {
 
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ModContent.ItemType<BrokenStrangeMagicRing>());
-            if (Main.rand.NextFloat() <= .12f) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>());
+            if (Main.rand.NextFloat() <= .12f) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<WitchkingHelmet>());
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<WitchkingTop>());
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<WitchkingBottoms>());
-            if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<RingOfPower>());
-            if (Main.rand.NextFloat() <= .08f) Item.NewItem(npc.getRect(), ModContent.ItemType<GoldenHairpin>());
+            if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<RingOfPower>(), 1, false, -1);
+            if (Main.rand.NextFloat() <= .08f) Item.NewItem(npc.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
             if (Main.rand.NextFloat() <= .15f) Item.NewItem(npc.getRect(), ModContent.ItemType<GuardianSoul>());
             if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-            Item.NewItem(npc.getRect(), ModContent.ItemType<CovenantOfArtorias>());
+            Item.NewItem(npc.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
             Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
         }
 

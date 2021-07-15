@@ -372,9 +372,13 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Item.NewItem(npc.getRect(), mod.ItemType("HealingElixir"));
 
-            if (Main.rand.NextFloat() <= .05f)
+            if (Main.rand.NextFloat() <= .05f && ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) //drops wand of frost in legacy mode
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WandOfFrost"));
+                Item.NewItem(npc.getRect(), mod.ItemType("WandOfFrost"), 1, false, -1);
+            }
+            if (Main.rand.NextFloat() <= .05f && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) //drops aquamarine ring in revamped
+            {
+                Item.NewItem(npc.getRect(), mod.ItemType("AquamarineRing"), 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .3f)
             {

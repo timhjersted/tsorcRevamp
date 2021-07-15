@@ -1823,7 +1823,7 @@ namespace tsorcRevamp.NPCs {
             }
 
             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 10);
+                 
                 Item.NewItem(npc.getRect(), ItemID.DemoniteOre, 4);
                 Item.NewItem(npc.getRect(), ItemID.ShadowScale, 4);
             }
@@ -1833,10 +1833,15 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.Hornet || npc.type == NPCID.ManEater ||
                                 npc.type == NPCID.MossHornet ||
                                 (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
-                if (Main.rand.NextFloat() >= .33f) { // 66% chance
+                if (Main.rand.NextFloat() >= .33f && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 66% chance in legacy
+                    Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
+                }
+                if (Main.rand.NextFloat() >= .66f && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 33% chance in revamped
                     Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
                 }
             }
+            
+            
 
             if (npc.type == NPCID.KingSlime) {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 500);
@@ -1859,8 +1864,8 @@ namespace tsorcRevamp.NPCs {
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
-                Item.NewItem(npc.getRect(), ItemID.AngelWings);
-                Item.NewItem(npc.getRect(), ItemID.AngelWings);
+                Item.NewItem(npc.getRect(), ItemID.AngelWings, 1, false, -1);
+                Item.NewItem(npc.getRect(), ItemID.AngelWings, 1, false, -1);
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
@@ -1881,7 +1886,7 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ItemID.HerosHat);
                 Item.NewItem(npc.getRect(), ItemID.HerosShirt);
                 Item.NewItem(npc.getRect(), ItemID.HerosPants);
-                Item.NewItem(npc.getRect(), ItemID.HermesBoots);
+                Item.NewItem(npc.getRect(), ItemID.HermesBoots, 1, false, -1);
             }
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.Next(50) == 0 && !Main.expertMode) {
@@ -1893,7 +1898,7 @@ namespace tsorcRevamp.NPCs {
             }
 
             if (npc.type == NPCID.Shark && Main.rand.Next(20) == 0) {
-                Item.NewItem(npc.getRect(), mod.ItemType("CoralSword"));
+                Item.NewItem(npc.getRect(), mod.ItemType("CoralSword"), 1, false, -1);
             }
 
             if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
@@ -1912,7 +1917,14 @@ namespace tsorcRevamp.NPCs {
             }
 
             if (npc.type == NPCID.Wraith) {
-                Item.NewItem(npc.getRect(), ItemID.Heart, 7);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(npc.getRect(), ItemID.Heart);
+
             }
 
             if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
@@ -1931,15 +1943,15 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief) {
 
                 if (Main.rand.Next(200) == 0) { // 0.5%
-                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"));
+                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"), 1, false, -1);
                 }
 
                 else if (Main.rand.Next(200) == 0) { // 0.5% 
-                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"));
+                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, -1);
                 }
             }
             if (npc.type == NPCID.Golem) {
-                Item.NewItem(npc.getRect(), ItemID.Picksaw);
+                Item.NewItem(npc.getRect(), ItemID.Picksaw, 1, false, -1);
             }
             #endregion
             #region Pillar ModWorld bools

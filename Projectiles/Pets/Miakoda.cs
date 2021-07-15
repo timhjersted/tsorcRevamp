@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Pets {
 
         public override bool PreAI() {
             Player player = Main.player[projectile.owner];
-            player.petFlagDD2Ghost = false;
+            player.hornet = false;
             return true;
         }
         public override void AI() {

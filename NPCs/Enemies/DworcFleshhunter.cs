@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 			if (Main.rand.Next(100) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>());
+			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>(), 1, false, -1);
 			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
 			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion);
 			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.RegenerationPotion);

@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<BoostPotion>());
             }
             if (Main.rand.Next(10) == 0) { //8%
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 1, false, -1);
             }
 
             if (Main.rand.Next(20) == 0) { //5%

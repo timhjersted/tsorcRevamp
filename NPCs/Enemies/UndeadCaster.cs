@@ -70,15 +70,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.rand.NextFloat() <= .20f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WoodenWand"));
+                Item.NewItem(npc.getRect(), mod.ItemType("WoodenWand"), 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WandOfDarkness"));
+                Item.NewItem(npc.getRect(), mod.ItemType("WandOfDarkness"), 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .05f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("WandOfFire"));
+                Item.NewItem(npc.getRect(), mod.ItemType("WandOfFire"), 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .12f)
             {

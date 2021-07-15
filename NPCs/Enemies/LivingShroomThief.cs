@@ -337,6 +337,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 			Item.NewItem(npc.getRect(), ItemID.Mushroom, Main.rand.Next(1, 3));
+			Item.NewItem(npc.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
 		}
 	}
 }

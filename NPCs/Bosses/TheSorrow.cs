@@ -204,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses {
             }
             else {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
-                Item.NewItem(npc.getRect(), ItemID.AdamantiteDrill); 
+                Item.NewItem(npc.getRect(), ItemID.AdamantiteDrill, 1, false, -1); 
             }
         }
     }
