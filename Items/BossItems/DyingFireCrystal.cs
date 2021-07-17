@@ -22,14 +22,11 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Marilith>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>());
             return true;
         }
         public override bool CanUseItem(Player player) {
-            return !(NPC.AnyNPCs(NPCID.CorruptBunny));
-            //todo fix placeholder
-            //return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Marilith>()));
+            return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()));
         }
 
         public override void AddRecipes() {

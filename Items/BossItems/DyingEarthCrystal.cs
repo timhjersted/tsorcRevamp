@@ -22,14 +22,12 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Lich>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>());
             return true;
         }
         public override bool CanUseItem(Player player) {
-            return !(NPC.AnyNPCs(NPCID.CorruptBunny));
-            //todo fix placeholder
-            //return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Lich>()));
+
+            return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()));
         }
 
         public override void AddRecipes() {

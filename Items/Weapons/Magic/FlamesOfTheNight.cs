@@ -25,5 +25,17 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.CursedFlames>();
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.SpellTome, 1);
+            recipe.AddIngredient(ItemID.CursedFlame, 1);
+            recipe.AddIngredient(ItemID.SoulofSight, 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+        }
     }
 }

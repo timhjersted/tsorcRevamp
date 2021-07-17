@@ -1,12 +1,3 @@
-/**
-[Drops]
-2 Holy War Elixir=100
-1 Lionheart Gunblade=100
-1 Gem Box=100
-1 Lamp Tome=100
-    **/
-
-
 using System;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -18,20 +9,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
     [AutoloadBossHead]
     class WyvernMage : ModNPC
     {
-
-        /**int lookMode = 0; //0 = Stand, 1 = Player's Direction, 2 = Movement Direction.
-        int attackPhase = -1;
-        int subPhase = 0;
-        int genericTimer = 0;
-        int genericTimer2 = 0;
-        int phaseTime = 400;
-        bool phaseStarted = false;
-        **/
         public override void SetDefaults()
         {
-
-            //npc.animationType = 29;
-            //npc.aiStyle = 0;
             npc.scale = 1;
             npc.npcSlots = 150;
             Main.npcFrameCount[npc.type] = 3;
@@ -53,15 +32,12 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
-            //npc.buffImmune[BuffID.paralyzed] = true;
         }
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wyvern Mage");
         }
-
-        //float customAi1;
 
         bool OptionSpawned = false;
         int OptionId = 0;
@@ -93,12 +69,12 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             if (npc.life > 3000)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 150, Color.Black, 1f);
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X, npc.velocity.Y, 150, Color.Black, 1f);
                 Main.dust[dust].noGravity = true;
             }
             else if (npc.life <= 3000)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 100, Color.Black, 2f);
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X, npc.velocity.Y, 100, Color.Black, 2f);
                 Main.dust[dust].noGravity = true;
             }
 
@@ -129,7 +105,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
+                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;
                 }
                 npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
@@ -207,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                             int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 250;
                             Main.projectile[num54].aiStyle = 4;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 25);
+                            Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
                             npc.ai[3] = 0; ;
                         }
                     }
@@ -329,7 +305,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
 
 
-        #region Gore
         public override void NPCLoot()
         {
             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -353,11 +328,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             { //If the boss has not yet been killed
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000); //Then drop the souls
             }
-
-
-
         }
-        #endregion
-
     }
 }

@@ -9,9 +9,12 @@ using Terraria.GameContent.UI;
 using System.Collections;
 using tsorcRevamp.UI;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 using static tsorcRevamp.MethodSwaps;
 
 namespace tsorcRevamp {
+
+   
     public class tsorcRevamp : Mod {
 
         public static ModHotKey toggleDragoonBoots;
@@ -21,6 +24,7 @@ namespace tsorcRevamp {
         public static List<int> Unbreakable;
         public static List<int> IgnoredTiles;
         public static List<int> CrossModTiles;
+        public static List<Texture2D> TransparentTextures;
 
         internal BonfireUIState BonfireUIState;
         private UserInterface _bonfireUIState;
@@ -30,8 +34,6 @@ namespace tsorcRevamp {
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<DarkSoul>(), 99999L));
 
-            
-
             BonfireUIState = new BonfireUIState();
             if (!Main.dedServ) BonfireUIState.Activate();
             _bonfireUIState = new UserInterface();
@@ -39,6 +41,7 @@ namespace tsorcRevamp {
 
             ApplyMethodSwaps();
             PopulateArrays();
+            if(!Main.dedServ) TransparentTextureFix();
         }
 
 
@@ -441,6 +444,17 @@ namespace tsorcRevamp {
                 CrossModTiles.Add(MagicStorage.TileType("StorageUnit"));
             }
             #endregion
+            //--------
+            #region TransparentTextures list
+
+            TransparentTextures = new List<Texture2D>() {
+                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/AntiMatterBlast"),
+                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast"),
+                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")
+                //ModContent.GetTexture("etc")
+                //All other textures with transparency will eventually have to go in here to get premultiplied
+            };
+            #endregion
         }
 
         public override void Unload() {
@@ -476,6 +490,23 @@ namespace tsorcRevamp {
             }
         }
 
+        /**
+         *  tConfig played nice with partially transparent textures, tModloader doesn't.
+         *  It needs them to be premultiplied on load, and that's what this function does.
+         **/
+        private void TransparentTextureFix()
+        {
+            for (int i = 0; i < TransparentTextures.Count; i++)
+            {
+                Color[] buffer = new Color[TransparentTextures[i].Width * TransparentTextures[i].Height];
+                TransparentTextures[i].GetData(buffer);
+                for (int j = 0; j < buffer.Length; j++)
+                {
+                    buffer[j] = Color.FromNonPremultiplied(buffer[j].R, buffer[j].G, buffer[j].B, buffer[j].A);
+                }
+                TransparentTextures[i].SetData(buffer);
+            }
+        }
     }
 
     //config moved to separate file

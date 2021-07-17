@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -20,7 +21,31 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.type = 79;
         }
 
-		public override void AI() {
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+
+
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            //Get the premultiplied, properly transparent texture
+            Texture2D texture = tsorcRevamp.TransparentTextures[1];
+            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int startY = frameHeight * projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Color drawColor = projectile.GetAlpha(lightColor);
+            Main.spriteBatch.Draw(texture,
+                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
+                sourceRectangle, drawColor, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+
+            return false;
+        }
+
+
+        public override void AI() {
 			projectile.rotation += 0.5f;
 			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X) {
 				if (projectile.velocity.X > -10) projectile.velocity.X -= 0.1f;
@@ -39,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 			}
 
 			if (Main.rand.Next(4) == 0) {
-				int dust = Dust.NewDust(new Vector2((float)projectile.position.X + 10, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 200, Color.Red, 1f);
+				int dust = Dust.NewDust(new Vector2((float)projectile.position.X + 10, (float)projectile.position.Y), projectile.width, projectile.height, DustID.Fire, 0, 0, 200, Color.Red, 1f);
 				Main.dust[dust].noGravity = true;
 			}
 			Lighting.AddLight((int)(projectile.position.X / 16f), (int)(projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
