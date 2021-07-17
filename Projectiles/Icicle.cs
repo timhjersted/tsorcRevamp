@@ -10,6 +10,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.width = 38;
             projectile.magic = true;
             projectile.tileCollide = false;
+            projectile.timeLeft = 180;
         }
     }
 }
