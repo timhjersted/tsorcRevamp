@@ -19,6 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.Green;
             item.shootSpeed = 6;
             item.magic = true;
+            item.noMelee = true;
             item.mana = 15;
             item.useAnimation = 20;
             item.UseSound = SoundID.Item21;

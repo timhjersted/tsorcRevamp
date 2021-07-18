@@ -53,7 +53,7 @@ namespace tsorcRevamp.Projectiles
 				}
 			}
 
-			int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * -.05f, projectile.velocity.Y * -.05f, 30, default(Color), 1f);
+			int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * -.05f, projectile.velocity.Y * -.05f, 30, default(Color), 1f);
 			Main.dust[dust].noGravity = true;
 
 
@@ -96,11 +96,6 @@ namespace tsorcRevamp.Projectiles
 					projectile.velocity = (15 * projectile.velocity + move) / 11f; //homing power, higher is less homing
 					AdjustMagnitude(ref projectile.velocity);
 				}
-				if (projectile.alpha <= 70)
-				{
-					//int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, ModContent.DustType<SpectreDust>());
-					//Main.dust[dust].velocity /= 2f;
-				}
 			}
 		}
 
@@ -125,7 +120,7 @@ namespace tsorcRevamp.Projectiles
 		{
 			for (int d = 0; d < 20; d++)
 			{
-				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
 				Main.dust[dust].noGravity = true;
 			}
 			Main.PlaySound(SoundID.NPCHit3.WithVolume(.6f), projectile.position);
