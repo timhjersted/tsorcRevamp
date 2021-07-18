@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override void SetDefaults() {
             projectile.width = 127;
             projectile.height = 127;
-			//projectile.scale = 2.3f; this was making the rotation code behave strangely
+			projectile.scale = 2.3f; //It's working properly now, apparently for scale to work you have to override predraw and tell it to draw the projectile right
             projectile.hostile = true;
             projectile.damage = 80;
             projectile.penetrate = 2;
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            //Get the premultiplied, properly transparent texture
+            //Get the premultiplied, properly transparent texture from the array (if it's not transparent, you can just use Texture2D texture = Main.projectileTexture[projectile.type];
             Texture2D texture = tsorcRevamp.TransparentTextures[1];
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;

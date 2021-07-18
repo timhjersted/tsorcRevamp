@@ -26,8 +26,7 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-            //if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>() || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>())))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Slogra>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
                 {
                 return false;
             }
@@ -36,9 +35,8 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else {
                 Main.PlaySound(SoundID.Roar, -1, -1, 0);
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.NewNPC((int)Main.player[Main.myPlayer].position.X+50, (int)Main.player[Main.myPlayer].position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
-
+                NPC.NewNPC((int)Main.player[Main.myPlayer].position.X + 1000, (int)Main.player[Main.myPlayer].position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
+                NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - 1000, (int)Main.player[Main.myPlayer].position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
             }
             return true;
         }
