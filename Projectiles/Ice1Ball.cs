@@ -15,6 +15,8 @@ namespace tsorcRevamp.Projectiles {
             projectile.tileCollide = true;
             projectile.width = 16;
         }
+
+        public bool isChanneled;
         public override void AI() {
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
@@ -34,8 +36,10 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].noGravity = true;
+            isChanneled = false;
             if (Main.myPlayer == projectile.owner && projectile.ai[0] == 0f) {
                 if (Main.player[projectile.owner].channel) {
+                    isChanneled = true;
                     float num48 = 12f;
                     Vector2 vector6 = new Vector2(projectile.position.X + (float)projectile.width * 0.5f, projectile.position.Y + (float)projectile.height * 0.5f);
                     float num49 = (float)Main.mouseX + Main.screenPosition.X - vector6.X;
