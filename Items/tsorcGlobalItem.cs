@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,7 +20,56 @@ namespace tsorcRevamp.Items {
                 int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 57, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 120, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
-        }
+
+			if (modPlayer.MagicWeapon) {
+				Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.45f);
+				for (int i = 0; i < 4; i++)
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 68, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
+					Main.dust[dust].noGravity = true;
+				}
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 15, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
+					Main.dust[dust].noGravity = true;
+				}
+			}
+
+			if (modPlayer.GreatMagicWeapon)
+			{
+				Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.55f);
+				for (int i = 0; i < 3; i++)
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 172, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
+					Main.dust[dust].noGravity = true;
+				}
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 68, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
+					Main.dust[dust].noGravity = true;
+				}
+                {
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 172, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), 1.3f);
+					Main.dust[dust].noGravity = true;
+				}
+			}
+
+			if (modPlayer.CrystalMagicWeapon)
+			{
+				Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.55f);
+				for (int i = 0; i < 2; i++)
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 221, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
+					Main.dust[dust].noGravity = true;
+				}
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 68, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
+					Main.dust[dust].noGravity = true;
+				}
+				{
+					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 172, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), 1.3f);
+					Main.dust[dust].noGravity = true;
+				}
+			}
+		}
 
         public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit) {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
@@ -31,6 +81,36 @@ namespace tsorcRevamp.Items {
             if (modPlayer.MiakodaNewBoost) {
                 target.AddBuff(BuffID.Midas, 300);
             }
+
+			if (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) {
+				Main.PlaySound(SoundID.NPCHit44.WithVolume(.3f), target.position);
+            }
+
+			if (modPlayer.CrystalMagicWeapon)
+			{
+				Main.PlaySound(SoundID.Item27.WithVolume(.3f), target.position);
+			}
+		}
+
+		public override void ModifyWeaponDamage(Item item, Player player, ref float add, ref float mult, ref float flat)
+		{
+			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+			if (item.melee)
+			{
+				if (modPlayer.MagicWeapon)
+				{
+					add += (player.magicDamage - player.magicDamageMult) * 0.5f /*- (player.meleeDamageMult * 0.05f)*/;
+				}
+				if (modPlayer.GreatMagicWeapon)
+				{
+					add += (player.magicDamage - player.magicDamageMult) * .75f /*- (player.meleeDamageMult * 0.1f)*/; 
+				}
+				if (modPlayer.CrystalMagicWeapon)
+				{
+					add += (player.magicDamage - player.magicDamageMult) * 1f /*- (player.meleeDamageMult * 0.15f)*/; //scales same as melee damage bonus would
+				}
+			}
         }
 
 		#region PrefixChance (taken from Example Mod, leaving most original comments in)

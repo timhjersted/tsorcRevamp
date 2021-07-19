@@ -101,6 +101,10 @@ namespace tsorcRevamp {
         public bool GiveBossZen;
         public bool BossZenBuff;
 
+        public bool MagicWeapon;
+        public bool GreatMagicWeapon;
+        public bool CrystalMagicWeapon;
+
         public override void Initialize() {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
             DamageDir = new Dictionary<int, float> {
@@ -168,6 +172,9 @@ namespace tsorcRevamp {
             MiakodaNewDust1 = false;
             GiveBossZen = false;
             BossZenBuff = false;
+            MagicWeapon = false;
+            GreatMagicWeapon = false;
+            CrystalMagicWeapon = false;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
