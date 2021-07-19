@@ -386,6 +386,10 @@ namespace tsorcRevamp.NPCs {
             if (type == NPCID.Merchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<CharcoalPineResin>());
+                shop.item[nextSlot].shopCustomPrice = 50;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
             }
             if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
