@@ -360,7 +360,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 			//fire melee
-            if (item.type == mod.ItemType("AncientFireSword") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("FieryFalchion") || item.type == mod.ItemType("FieryGreatWarhammer") || item.type == mod.ItemType("FieryMace") || item.type == mod.ItemType("FieryNinjato") || item.type == mod.ItemType("FieryNodachi")
+            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == mod.ItemType("AncientFireSword") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("FieryFalchion") || item.type == mod.ItemType("FieryGreatWarhammer") || item.type == mod.ItemType("FieryMace") || item.type == mod.ItemType("FieryNinjato") || item.type == mod.ItemType("FieryNodachi")
 				 || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FierySickle") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("FieryZweihander") || item.type == mod.ItemType("ForgottenRisingSun") || item.type == mod.ItemType("MagmaTooth")
 				 || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == mod.ItemType("SunBlade"))
             {
@@ -373,7 +373,10 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			damage -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
+			if (!projectile.melee)
+			{
+				damage -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
+			}
 
 			//However... If it is a fire projectile...
 			if (projectile.type == ProjectileID.FireArrow || projectile.type == ProjectileID.BallofFire || projectile.type == ProjectileID.Flamarang || projectile.type == ProjectileID.Flamelash || projectile.type == ProjectileID.Sunfury || projectile.type == ProjectileID.HellfireArrow ||

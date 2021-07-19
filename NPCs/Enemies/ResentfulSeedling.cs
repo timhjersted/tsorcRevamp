@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
             //fire melee
-            if (item.type == mod.ItemType("AncientFireSword") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("FieryFalchion") || item.type == mod.ItemType("FieryGreatWarhammer") || item.type == mod.ItemType("FieryMace") || item.type == mod.ItemType("FieryNinjato") || item.type == mod.ItemType("FieryNodachi")
+            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == mod.ItemType("AncientFireSword") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("FieryFalchion") || item.type == mod.ItemType("FieryGreatWarhammer") || item.type == mod.ItemType("FieryMace") || item.type == mod.ItemType("FieryNinjato") || item.type == mod.ItemType("FieryNodachi")
                  || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FierySickle") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("FieryZweihander") || item.type == mod.ItemType("ForgottenRisingSun") || item.type == mod.ItemType("MagmaTooth")
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == mod.ItemType("SunBlade"))
             {
