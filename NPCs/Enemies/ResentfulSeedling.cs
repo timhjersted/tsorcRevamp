@@ -50,8 +50,40 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 10;
                 }
+
+            }
+            //fire melee
+            if (item.type == mod.ItemType("AncientFireSword") || item.type == mod.ItemType("AncientFireAxe") || item.type == mod.ItemType("FieryFalchion") || item.type == mod.ItemType("FieryGreatWarhammer") || item.type == mod.ItemType("FieryMace") || item.type == mod.ItemType("FieryNinjato") || item.type == mod.ItemType("FieryNodachi")
+                 || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FierySickle") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("FieryZweihander") || item.type == mod.ItemType("ForgottenRisingSun") || item.type == mod.ItemType("MagmaTooth")
+                 || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == mod.ItemType("SunBlade"))
+            {
+                damage *= 2;
+                if (damage < 10)
+                {
+                    damage = 10; //damage before defence
+                }
             }
         }
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            //fire projectiles bonus damage
+            if (projectile.type == ProjectileID.FireArrow || projectile.type == ProjectileID.BallofFire || projectile.type == ProjectileID.Flamarang || projectile.type == ProjectileID.Flamelash || projectile.type == ProjectileID.Sunfury || projectile.type == ProjectileID.HellfireArrow ||
+                projectile.type == ProjectileID.Flames || projectile.type == ProjectileID.CursedFlameFriendly || projectile.type == ProjectileID.CursedArrow || projectile.type == ProjectileID.CursedBullet || projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare ||
+                projectile.type == ProjectileID.FlamesTrap || projectile.type == ProjectileID.FlamethrowerTrap || projectile.type == ProjectileID.ImpFireball || projectile.type == ProjectileID.MolotovCocktail || projectile.type == ProjectileID.MolotovFire || projectile.type == ProjectileID.MolotovFire2 ||
+                projectile.type == ProjectileID.MolotovFire3 || projectile.type == ProjectileID.Meteor1 || projectile.type == ProjectileID.Meteor2 || projectile.type == ProjectileID.Meteor3 || projectile.type == ProjectileID.SolarFlareChainsaw || projectile.type == ProjectileID.SolarFlareDrill ||
+                projectile.type == ProjectileID.CursedDart || projectile.type == ProjectileID.CursedDartFlame || projectile.type == ProjectileID.Hellwing || projectile.type == ProjectileID.ShadowFlameArrow || projectile.type == ProjectileID.ShadowFlame || projectile.type == ProjectileID.ShadowFlameKnife ||
+                projectile.type == ProjectileID.Spark || projectile.type == ProjectileID.Cascade || projectile.type == ProjectileID.HelFire || projectile.type == ProjectileID.DesertDjinnCurse || projectile.type == ProjectileID.SolarWhipSword || projectile.type == ProjectileID.SolarWhipSwordExplosion ||
+                projectile.type == ProjectileID.Daybreak || projectile.type == ProjectileID.SpiritFlame || projectile.type == ProjectileID.DD2FlameBurstTowerT1Shot || projectile.type == ProjectileID.DD2FlameBurstTowerT2Shot || projectile.type == ProjectileID.DD2FlameBurstTowerT3Shot || projectile.type == ProjectileID.DD2PhoenixBowShot ||
+                projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle") ||
+                projectile.type == mod.ProjectileType("FireBall") || projectile.type == mod.ProjectileType("Explosion") || projectile.type == mod.ProjectileType("ExplosionBall") || projectile.type == mod.ProjectileType("Firebomb") || projectile.type == mod.ProjectileType("FireBombBall") ||
+                projectile.type == mod.ProjectileType("FireField") || projectile.type == mod.ProjectileType("FireFieldBall") || projectile.type == mod.ProjectileType("FireSpirit2") || projectile.type == mod.ProjectileType("FlameStrike") || projectile.type == mod.ProjectileType("GreatFireball") ||
+                projectile.type == mod.ProjectileType("GreatFireballBall") || projectile.type == mod.ProjectileType("GreatFireStrike") || projectile.type == mod.ProjectileType("Meteor") || projectile.type == mod.ProjectileType("MeteorShower") || projectile.type == mod.ProjectileType("RedLaserBeam") ||
+                projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle"))
+            {
+                damage *= 2;
+            }
+
+    }
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int i = 0; i < 5; i++)

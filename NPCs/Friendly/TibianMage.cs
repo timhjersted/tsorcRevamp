@@ -110,6 +110,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
 			{
 				shop.item[nextSlot].SetDefaults(ItemID.MagicMirror);
+				shop.item[nextSlot].shopCustomPrice = 30000;
 				nextSlot++;
 			}
 			if (NPC.downedBoss1)
