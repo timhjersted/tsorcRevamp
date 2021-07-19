@@ -63,7 +63,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool sky = nospecialbiome && ((double)p.position.Y < Main.worldSurface * 0.44999998807907104);
 			bool surface = nospecialbiome && !sky && (p.position.Y <= Main.worldSurface);
 			bool underground = nospecialbiome && !surface && (p.position.Y <= Main.rockLayer);
-			bool underworld = (p.position.Y > Main.maxTilesY - 190);
+			bool underworld = (p.ZoneUnderworldHeight);
+			
 			bool cavern = nospecialbiome && (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25);
 			bool undergroundJungle = (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25) && p.ZoneJungle;
 			bool undergroundEvil = (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
