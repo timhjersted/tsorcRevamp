@@ -271,6 +271,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 		}
 		public int wooddropped = 0;
+		public int resindropped = 0;
+
 		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
 		{
 			//axes
@@ -296,6 +298,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					Item.NewItem(npc.Bottom, ItemID.Wood);
 					wooddropped++;
 				}
+
 			}
 
 			//fire melee
@@ -307,6 +310,11 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (damage < 20)
 				{
 					damage = 20; //damage before defence
+				}
+				if (Main.rand.Next(3) == 0 && resindropped < 1)
+				{
+					Item.NewItem(npc.Bottom, mod.ItemType("CharcoalPineResin"));
+					resindropped++;
 				}
 			}
 		}
@@ -335,6 +343,11 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					damage = 20; //damage before defence
 				}
+				if (Main.rand.Next(20) == 0 && resindropped < 1)
+				{
+					Item.NewItem(npc.Bottom, mod.ItemType("CharcoalPineResin"));
+					resindropped++;
+				}
 			}
 		}
 		public override void HitEffect(int hitDirection, double damage)
@@ -360,6 +373,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 			Item.NewItem(npc.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
+			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
 		}
 	}
 }

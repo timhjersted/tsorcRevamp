@@ -48,6 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Item.NewItem(npc.getRect(), mod.ItemType("Firebomb"), Main.rand.Next(2, 5));
             if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
         }
 
         public override void DrawEffects(ref Color drawColor)

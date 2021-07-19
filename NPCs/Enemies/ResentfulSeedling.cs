@@ -31,6 +31,9 @@ namespace tsorcRevamp.NPCs.Enemies
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.ResentfulSeedlingBanner>();
         }
+
+        public int resindropped = 0;
+
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
             if ((item.type == ItemID.CopperAxe) || (item.type == ItemID.TinAxe) || (item.type == ItemID.IronAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.LeadAxe) || (item.type == ItemID.SilverAxe) || (item.type == ItemID.TungstenAxe) || (item.type == ItemID.GoldAxe) || (item.type == ItemID.PlatinumAxe)
@@ -62,6 +65,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     damage = 10; //damage before defence
                 }
+                if (Main.rand.Next(20) == 0 && resindropped < 1)
+                {
+                    Item.NewItem(npc.Bottom, mod.ItemType("CharcoalPineResin"));
+                    resindropped++;
+                }
             }
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -81,9 +89,14 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle"))
             {
                 damage *= 2;
-            }
 
-    }
+                if (Main.rand.Next(30) == 0 && resindropped < 1)
+                {
+                    Item.NewItem(npc.Bottom, mod.ItemType("CharcoalPineResin"));
+                    resindropped++;
+                }
+            }
+        }
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int i = 0; i < 5; i++)

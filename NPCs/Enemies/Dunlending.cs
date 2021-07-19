@@ -227,6 +227,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (Main.rand.Next(100) == 0) { //1%
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrimsonPotion>());
             }
+
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
         }
     }
 }
