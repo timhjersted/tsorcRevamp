@@ -86,7 +86,6 @@ namespace tsorcRevamp.NPCs.Enemies {
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         public override void AI()  //  warrior ai
         {
-            Main.NewText("speed is " + npc.velocity.X + " " + npc.velocity.Y);
             #region set up NPC's attributes & behaviors
             // set parameters
             //  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
