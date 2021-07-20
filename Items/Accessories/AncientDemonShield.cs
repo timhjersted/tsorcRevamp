@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.Shield)]
     public class AncientDemonShield : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Powerful, but slows movement by 25%" +
