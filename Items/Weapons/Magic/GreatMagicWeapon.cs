@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Great Magic Weapon");
             Tooltip.SetDefault("Imbues melee weapons with powerful magic,\n" +
                                 "allowing for greater magic damage scaling" +
-                                "\nLasts 20 seconds, 60 second cooldown");
+                                "\nLasts 25 seconds, 60 second cooldown");
 
         }
 
@@ -48,9 +48,10 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool UseItem(Player player)
         {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>(), 1200); //20s
-            player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 3600);
+            player.AddBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>(), 1500); //25s
+            player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), modPlayer.ManaCloak ? 1800 : 3600);
 
             return true;
         }

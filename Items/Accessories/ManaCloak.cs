@@ -7,7 +7,8 @@ namespace tsorcRevamp.Items.Accessories {
     public class ManaCloak : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Rapid mana regen, +15% magic crit & +15% magic dmg when health falls below 150\n" +
-                                "Provides Star cloak, +5 magic crit & +5% magic damage boost normally");
+                                "Provides Star cloak, +5 magic crit & +5% magic damage boost normally\n" +
+                                "Halves the duration of Magic Imbue Cooldown");
         }
 
         public override void SetDefaults() {
@@ -31,6 +32,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
+
+            player.GetModPlayer<tsorcRevampPlayer>().ManaCloak = true;
+
             if (player.statLife <= 150) {
                 player.manaRegenBuff = true;
                 player.starCloak = true;
@@ -39,6 +43,7 @@ namespace tsorcRevamp.Items.Accessories {
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 65, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Blue, 2.0f);
                 Main.dust[dust].noGravity = true;
+
             }
             else {
                 player.starCloak = true;

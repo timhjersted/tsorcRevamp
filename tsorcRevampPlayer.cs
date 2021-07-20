@@ -104,6 +104,7 @@ namespace tsorcRevamp {
         public bool MagicWeapon;
         public bool GreatMagicWeapon;
         public bool CrystalMagicWeapon;
+        public bool ManaCloak;
 
         public override void Initialize() {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
@@ -175,6 +176,7 @@ namespace tsorcRevamp {
             MagicWeapon = false;
             GreatMagicWeapon = false;
             CrystalMagicWeapon = false;
+            ManaCloak = false;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
