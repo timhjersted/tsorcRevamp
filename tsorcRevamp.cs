@@ -109,7 +109,7 @@ namespace tsorcRevamp {
                 52, //vines
                 53, //sand
                 55, //Sign 
-                56, //obsidian
+                //56, //obsidian (removed at tim's request)
                 60, //jungle grass
                 61, //small jungle plants
                 62, //jungle vines
