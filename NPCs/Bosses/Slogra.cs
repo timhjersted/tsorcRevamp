@@ -843,17 +843,17 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void NPCLoot()
         {
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Slogra Gore 1"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Slogra Gore 2"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Slogra Gore 3"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Slogra Gore 2"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Slogra Gore 3"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 1"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 2"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 3"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 2"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 3"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
 
 
             if(Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);

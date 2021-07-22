@@ -6,11 +6,12 @@ namespace tsorcRevamp.Items.BossItems {
     class StrangeMagicRing : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("You look into the mirror and see your reflection looking back at you... \n" +
-                "As you continue to gaze into the mirror, the background behind \n" +
-                "your reflection becomes murky, as if peering into a dark abyss... \n" +
-                "Use the mirror at night to continue looking into the eyes of your reflection...  \n" +
-                "Or throw it away and rid yourself of this dark relic...");
+            Tooltip.SetDefault("A strange magic ring that Miakoda tells you Will summon Artorias, the Abysswalker.\n" +
+                                "One of Gwyn's Four Knights, Artorias is a holy warrior with an unbendable will of steel\n" +
+                                "and unmatched skills with both melee combat and sorceries.\n" +
+                                "Miakoda: \"Take heart Red, he will be like nothing you have ever faced before, but if you are successful in defeating him\n" +
+                                "it will surely make the rest of our journey to close the seal of the Abyss more easy.\n" +
+                                "Indeed, without the powerful ring he possesses, defeating the other 5 guardians I fear will not be possible...\"");
         }
 
         public override void SetDefaults() {

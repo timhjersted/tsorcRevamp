@@ -46,10 +46,10 @@ namespace tsorcRevamp.Items {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Crest of Earth");
-            Tooltip.SetDefault("A shard of crystallized water\n" +
-                               "A second piece. Are these artifacts part of a puzzle?\n" +
-                               "This shard contains a riddle: \"Beneath the burning hot sun,\n" +
-                               "heading against the western winds, a violet glow illuminates the path.\"");
+            Tooltip.SetDefault("A shard of pure minerals\n" +
+                               "One of six\n" +
+                               "This one contains a riddle: \n" +
+                               "\"The Twin Peaks of Arazium. Twins from birth. Gaurdians of the Sky.\"");
         }
     }
 

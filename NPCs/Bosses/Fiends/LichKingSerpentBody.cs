@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage * 1.3 / 2);
+            npc.damage = (int)(npc.damage *  1.3 / tsorcRevampGlobalNPC.expertScale);
             npc.defense = npc.defense += 12;
         }
 
@@ -66,8 +66,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             if (npc.life <= 0)
             {
                 Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Lich King Serpent Body Gore"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Lich King Serpent Body Gore"), 1f);
+                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
             }
         }
     }

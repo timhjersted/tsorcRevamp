@@ -75,7 +75,6 @@ namespace tsorcRevamp.NPCs.Bosses
 		#region AI
 		public override void AI()
 		{
-			bool flag25 = false;
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
@@ -124,10 +123,6 @@ namespace tsorcRevamp.NPCs.Bosses
 				if (flag26 && flag27)
 				{
 					npc.ai[2] += 1f;
-					if (npc.ai[2] >= 30f && num258 == 16)
-					{
-						flag25 = true;
-					}
 					if (npc.ai[2] >= 60f)
 					{
 						npc.ai[2] = -200f;
@@ -302,15 +297,15 @@ namespace tsorcRevamp.NPCs.Bosses
 		#region gore
 		public override void NPCLoot()
 		{
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 1"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 2"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 3"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 4"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 2"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 3"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gaibon Gore 4"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
-			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Blood Splat"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 1"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 2"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 3"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 4"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 2"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 3"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 4"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
 			Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 500);
 		}
 		#endregion

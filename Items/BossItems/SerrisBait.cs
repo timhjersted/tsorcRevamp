@@ -22,14 +22,12 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SerrisHead>()));
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()))
                 {
                 return false;
             }
             else {
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SerrisHead>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
             }
             return true;
         }

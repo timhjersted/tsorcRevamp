@@ -22,10 +22,9 @@ namespace tsorcRevamp.Items.BossItems {
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
         public override bool UseItem(Player player) {
-            //if (!NPC.AnyNPCs(mod.NPCType("Death")))
-            if (!NPC.AnyNPCs(NPCID.CorruptBunny)) //placeholder, use above instead
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Death>()))
             {
-                NPC.SpawnOnPlayer(Main.myPlayer, NPCID.CorruptBunny); //placeholder
+                NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.Death>()); //placeholder
                 return true;
             }
             else {
