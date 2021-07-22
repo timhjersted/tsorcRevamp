@@ -1120,6 +1120,17 @@ namespace tsorcRevamp {
             }
         }
 
+        //Whenever the player is hit by a projectile, and that projectile is from an enemy in this mod, and that enemy is not a boss, then counter expert scaling and apply our own instead.
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref bool crit)
+        {
+            if (Main.expertMode && projectile.modProjectile != null && projectile.modProjectile.mod == this.mod && !Main.npc[projectile.owner].boss)
+            {
+                damage = damage / 2;
+                damage = (int)(damage * NPCs.tsorcRevampGlobalNPC.expertScale);
+            }
+            base.ModifyHitByProjectile(projectile, ref damage, ref crit);
+        }
+
         public override void UpdateBadLifeRegen() {
             if (DarkInferno) {
                 if (player.lifeRegen > 0) {

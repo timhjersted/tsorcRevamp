@@ -6,12 +6,12 @@ namespace tsorcRevamp.Projectiles {
 		public override void SetDefaults() {
 			projectile.aiStyle = 9;
 			projectile.friendly = true;
-			projectile.height = 16;
+			projectile.height = 48;
+			projectile.width = 48;
 			projectile.light = 0.8f;
 			projectile.magic = true;
 			projectile.penetrate = 1;
 			projectile.tileCollide = false;
-			projectile.width = 16;
 			projectile.timeLeft = 50;
 		}
 

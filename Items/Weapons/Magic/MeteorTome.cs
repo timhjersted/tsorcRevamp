@@ -37,15 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override bool UseItem(Player player) {
-            Projectile.NewProjectile(
-                (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),
-                (float)(Main.mouseY + Main.screenPosition.Y) - 500.0f,
-                (float)(-40 + Main.rand.Next(80)) / 10,
-                14.9f,
-                ModContent.ProjectileType<Projectiles.Meteor>(),
-                50,
-                2.0f,
-                player.whoAmI);
+            Projectile.NewProjectile((float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200), (float)(Main.mouseY + Main.screenPosition.Y) - 500.0f,
+                (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Meteor>(), (int)(item.damage *player.magicDamage), 2.0f, player.whoAmI);
             return true;
         }
     }

@@ -18,6 +18,9 @@ namespace tsorcRevamp.NPCs {
         float divisorMultiplier = 1f;
         int DarkSoulQuantity;
 
+        //Whatever custom expert scaling we want goes here. For reference 1 eliminates all expert mode doubling, and 2 is normal expert mode scaling.
+        public static double expertScale = 2;
+
         public override bool InstancePerEntity => true;
         public bool DarkInferno = false;
         public bool CrimsonBurn = false;
@@ -518,6 +521,21 @@ namespace tsorcRevamp.NPCs {
                     }
                 }
             }
+        }
+
+        
+        
+        //This method lets us scale the stats of NPC's in expert mode.
+        public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
+        {
+            
+            if (!npc.boss && (npc.modNPC != null) && (npc.modNPC.mod == this.mod))
+            {
+                npc.lifeMax = (int)((expertScale * npc.lifeMax) / 2);
+                npc.damage = (int)((expertScale * npc.damage) / 2);
+                
+            }
+            base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
         }
 
         public override void DrawEffects(NPC npc, ref Color drawColor) {
