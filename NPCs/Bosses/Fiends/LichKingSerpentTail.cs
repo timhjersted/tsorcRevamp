@@ -36,6 +36,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Lich King Serpent");
         }
 
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.damage = (int)(npc.damage * 1.3 / 2);
+            npc.defense = npc.defense += 12;
+        }
+
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

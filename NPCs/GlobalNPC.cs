@@ -527,15 +527,24 @@ namespace tsorcRevamp.NPCs {
         
         //This method lets us scale the stats of NPC's in expert mode.
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
-        {
-            
-            if (!npc.boss && (npc.modNPC != null) && (npc.modNPC.mod == this.mod))
+        {            
+            //If it's not one of ours, don't mess with it.
+            if ((npc.modNPC == null) || (npc.modNPC.mod != this.mod))
             {
-                npc.lifeMax = (int)((expertScale * npc.lifeMax) / 2);
-                npc.damage = (int)((expertScale * npc.damage) / 2);
-                
+                base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
+                return;                    
             }
-            base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
+
+            //If it's a boss, do nothing. Bosses will get their own scaling.
+            if (npc.boss)
+            {
+                return;
+            }
+
+            //If if's not, scale it by the main multiplier
+            npc.lifeMax = (int)((expertScale * npc.lifeMax) / 2);
+            npc.damage = (int)((expertScale * npc.damage) / 2);
+           
         }
 
         public override void DrawEffects(NPC npc, ref Color drawColor) {

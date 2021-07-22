@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 30000;
+			npc.lifeMax = 40000;
 			npc.timeLeft = 22500;
 			npc.alpha = 100;
 			npc.friendly = false;
@@ -41,19 +41,18 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Fire Fiend Marilith");
 		}
 
-
-		#region Spawn
-		public override float SpawnChance(NPCSpawnInfo spawnInfo)
+		int lightningDamage = 75;
+		int antiMatterBlastDamage = 110;
+		int crazedPurpleCrushDamage = 90;
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			float chance = 0;
-			if (Main.hardMode && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneMeteor && spawnInfo.player.position.Y > ((Main.rockLayer * 38.0)))
-			{
-				if ((spawnInfo.player.position.X > (Main.rockLayer * 150.0)) || Main.bloodMoon) chance = 0.001f;
-			}
-			else if (Main.hardMode && spawnInfo.player.position.Y > ((Main.rockLayer * 38.0))) chance = 0.00011f;
-			return chance;
+			npc.damage = (int)(npc.damage * 1.3 / 2);
+			npc.defense = npc.defense += 12;
+			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
+			lightningDamage = (int)(lightningDamage * 1.3 / 2);
+			antiMatterBlastDamage = (int)(antiMatterBlastDamage * 1.3 / 2);
+			crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
 		}
-		#endregion
 
 		#region AI
 		public override void AI()
@@ -78,9 +77,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 75;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f);//, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f);//, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 60;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							npc.ai[1] = 1f;
@@ -99,9 +97,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 110;//(int) (14f * npc.scale);
+							//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.AntiMatterBlast>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 9;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -121,9 +119,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 90;//(int) (14f * npc.scale);
+							//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 19;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);

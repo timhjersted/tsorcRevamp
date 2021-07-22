@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.netAlways = true;
 			npc.npcSlots = 50;
 			npc.width = 40;
-			npc.height = 77;
+			npc.height = 40;
 			npc.boss = true;
 			npc.aiStyle = 6;
 			npc.defense = 20;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.damage = 110;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lifeMax = 30000;
+			npc.lifeMax = 50000;
 			npc.knockBackResist = 0;
 			npc.lavaImmune = true;
 			npc.noGravity = true;
@@ -40,31 +40,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 		bool TailSpawned = false;
 
-
-		//This could probably be dramatically simplified and cleaned up, but that applies to a ton of legacy code. For now i'm just gonna port it as-is.
-		public override float SpawnChance(NPCSpawnInfo spawnInfo)
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			bool nospecialbiome = !spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneHoly && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-
-			bool sky = nospecialbiome && ((double)spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104);
-			bool surface = nospecialbiome && !sky && (spawnInfo.player.position.Y <= Main.worldSurface);
-			bool underground = nospecialbiome && !surface && (spawnInfo.player.position.Y <= Main.rockLayer);
-			bool underworld = (spawnInfo.player.position.Y > Main.maxTilesY - 190);
-			bool cavern = nospecialbiome && (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25);
-			bool undergroundJungle = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && spawnInfo.player.ZoneJungle;
-			bool undergroundEvil = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson);
-			bool undergroundHoly = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && spawnInfo.player.ZoneHoly;
-			if (Main.hardMode)
-			{
-				if (underworld || undergroundEvil)
-				{
-					if (Main.rand.Next(800) == 0)
-					{
-						return 1;
-					}
-				}
-			}
-			return 0;
+			npc.damage = (int)(npc.damage * 1.3 / 2);
+			npc.defense = npc.defense += 12;
+			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
 		}
 
 		public override void AI()

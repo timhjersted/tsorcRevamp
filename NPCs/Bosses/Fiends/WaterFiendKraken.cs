@@ -14,15 +14,15 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.scale = 1;
 			npc.npcSlots = 1;
 			Main.npcFrameCount[npc.type] = 8;
-			npc.width = 120;
-			npc.height = 160;
+			npc.width = 150;
+			npc.height = 260;
 			npc.damage = 65;
 			npc.defense = 35;
 			npc.aiStyle = 22;
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 30000;
+			npc.lifeMax = 40000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -41,42 +41,22 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Water Fiend Kraken");
 		}
 
+		int cursedFlamesDamage = 53;
+		int plasmaOrbDamage = 60;
+		int hypnoticDisruptorDamage = 35;
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.damage = (int)(npc.damage * 1.3 / 2);
+			npc.defense = npc.defense += 12;
+			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
+			cursedFlamesDamage = (int)(cursedFlamesDamage * 1.3 / 2);
+			plasmaOrbDamage = (int)(plasmaOrbDamage * 1.3 / 2);
+			hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage * 1.3 / 2);
+		}
+
 
 		int chargeDamage = 0;
 		bool chargeDamageFlag = false;
-
-		#region Spawn
-		public override float SpawnChance(NPCSpawnInfo spawnInfo)
-		{
-			float chance = 0;
-			for (int num36 = 0; num36 < 200; num36++)
-			{
-				if (Main.npc[num36].active && Main.npc[num36].type == ModContent.NPCType<WaterFiendKraken>())
-				{
-					chance = 0f;
-				}
-			}
-			if (!spawnInfo.player.ZoneDungeon && spawnInfo.player.position.X < ((Main.worldSurface * 10.0)) && spawnInfo.player.position.Y < ((Main.rockLayer * 35.0)) && spawnInfo.player.position.Y > ((Main.rockLayer * 12)))
-			{
-				if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-				{
-					//Yes, it had a chance to spawn naturally prehardmode in legacy. A small chance really, but still a chance.
-					chance = 0.0002f;
-					if (Main.bloodMoon) chance = 0.0004f;
-					if (Main.hardMode) chance = 0.0005f;
-				}
-				else if(Main.hardMode)
-                {
-					chance = 0.0005f;
-					if (Main.bloodMoon) chance = 0.001f;
-				}
-			}
-			return chance;
-		}
-		
-			
-	
-		#endregion
 
 		#region AI
 		public override void AI()
@@ -120,10 +100,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
 							speedX *= num51;
-							speedY *= num51;
-							int damage = 53; //(14f * npc.scale);
+							speedY *= num51;//(14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, cursedFlamesDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 1600;
 							Main.projectile[num54].aiStyle = 8;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -142,10 +121,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
 							speedX *= num51;
-							speedY *= num51;
-							int damage = 60;//(int) (14f * npc.scale);
+							speedY *= num51;//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, plasmaOrbDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 1500;
 							//Main.projectile[num54].aiStyle = 4;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -186,10 +164,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
 							speedX *= num51;
-							speedY *= num51;
-							int damage = 35;//(int) (14f * npc.scale);
+							speedY *= num51;//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, hypnoticDisruptorDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 1020;
 							Main.projectile[num54].aiStyle = 4;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);

@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 30000;
+			npc.lifeMax = 40000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -37,7 +37,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
 		}
-
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Earth Fiend Lich");
@@ -46,32 +45,17 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		bool OptionSpawned = false;
 		int OptionId = 0;
 
-
-
-
-		#region Spawn
-		public override float SpawnChance(NPCSpawnInfo spawnInfo)
+		int lightningDamage = 70;
+		int oracleDamage = 70;
+		//We can override this even further on a per-NPC basis here
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			float chance = 0;
-
-			if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				if (!spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneMeteor && spawnInfo.player.position.Y > ((Main.rockLayer * 30.0)) && spawnInfo.player.position.X < ((Main.rockLayer * 50.0)) && spawnInfo.player.position.X > ((Main.rockLayer * 40.0)) && spawnInfo.player.position.Y < ((Main.rockLayer * 33.0)))
-				{
-					//These legacy spawn chances are an order of magnitude higher than the spawn chances for the other fiends, for some reason.
-					chance = 0.002f;
-					if (Main.bloodMoon) chance = 0.005f;
-					if (Main.hardMode) chance = 0.01f;
-				}
-			} 
-			else if (Main.hardMode)
-            {
-				chance = 0.0005f;
-				if (Main.bloodMoon) chance = 0.001f;
-			}
-			return chance;
+			npc.damage = (int)(npc.damage * 1.3 / 2);
+			npc.defense = npc.defense += 12;
+			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
+			lightningDamage = (int)(lightningDamage * 1.3 / 2);
+			oracleDamage = (int)(oracleDamage * 1.3 / 2);
 		}
-		#endregion
 
 		#region AI
 		public override void AI()
@@ -87,10 +71,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				Main.npc[OptionId].velocity.Y = -10;
 				OptionSpawned = true;
 			}
-			
-
-
-
 
 			bool flag25 = false;
 			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
@@ -112,9 +92,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							speedX *= num51;
 							speedY *= num51;
 							//int damage = (int)(14f * npc.scale); (Why was its damage a factor of its scale of all things? What on earth?)
-							int damage = 70;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f);// Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f);// Main.myPlayer);
 							Main.projectile[num54].timeLeft = 600;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							npc.ai[1] = 1f;
@@ -133,9 +112,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 70;//(int) (14f * npc.scale);
+							//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.TheOracle>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, oracleDamage, 0f);
 							Main.projectile[num54].timeLeft = 190;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							npc.ai[1] = 1f;

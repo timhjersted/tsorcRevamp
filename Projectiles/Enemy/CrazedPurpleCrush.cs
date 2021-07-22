@@ -61,9 +61,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             //base.OnHitPlayer(target, damage, crit);
-            Main.player[Main.myPlayer].AddBuff(BuffID.Poisoned, 600, false); //poisoned
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.Crippled>(), 600, false); //crippled
-            Main.player[Main.myPlayer].AddBuff(BuffID.Bleeding, 600, false); //bleeding
+            Main.player[Main.myPlayer].AddBuff(BuffID.Poisoned, 300, false); //poisoned
+            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300, false); //crippled
+            Main.player[Main.myPlayer].AddBuff(BuffID.Bleeding, 300, false); //bleeding
         }
     }
 }
