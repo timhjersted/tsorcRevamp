@@ -197,7 +197,6 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             if(npc.life <= 0)
             {
-                Main.NewText("Death may be dead but this code ain't!");
                 Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 
                 Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Death Gore 1"), 1f);
