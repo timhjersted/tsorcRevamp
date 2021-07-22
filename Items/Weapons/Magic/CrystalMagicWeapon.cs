@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
             player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), 1200); //20s
-            player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), modPlayer.ManaCloak ? 1800 : 3600);
+            player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), modPlayer.DarkmoonCloak ? 1800 : 3600);
 
             return true;
         }

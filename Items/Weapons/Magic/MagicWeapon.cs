@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
             player.AddBuff(ModContent.BuffType<Buffs.MagicWeapon>(), 1800); //30s
 
-            if (!modPlayer.ManaCloak)
+            if (!modPlayer.DarkmoonCloak)
             {
                 player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 3600);
             }

@@ -6,7 +6,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class DragoonCloak : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Combines the effects of the Dark, Light and Mana Cloak into one all-powerful protective cloak.");
+            Tooltip.SetDefault("Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak." +
+                                 "\nThese effects are, however, significantly weaker");
         }
 
         public override void SetDefaults() {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(ItemID.StarCloak);
             recipe.AddIngredient(mod.GetItem("LightCloak"));
             recipe.AddIngredient(mod.GetItem("DarkCloak"));
-            recipe.AddIngredient(mod.GetItem("ManaCloak"));
+            recipe.AddIngredient(mod.GetItem("DarkmoonCloak"));
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 45000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
