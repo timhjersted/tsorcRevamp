@@ -450,7 +450,8 @@ namespace tsorcRevamp {
             TransparentTextures = new List<Texture2D>() {
                 ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/AntiMatterBlast"),
                 ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast"),
-                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")
+                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb"),
+                ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")
                 //ModContent.GetTexture("etc")
                 //All other textures with transparency will eventually have to go in here to get premultiplied
             };

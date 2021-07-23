@@ -68,6 +68,13 @@ namespace tsorcRevamp {
         public int souldroptimer = 0;
         public bool SOADrain = false;
 
+        //An int because it'll probably be necessary to split it into multiple levels
+        public int manaShield = 0;
+        //Stores the projectile so the function can destroy or respawn it.
+        public int manaShieldProjectile;
+        //How many more frames the Mana Shield is disabled after using a mana potion
+        public int manaShieldCooldown = 0;
+
         public bool chests;
         public int safe = -1;
 
@@ -177,6 +184,7 @@ namespace tsorcRevamp {
             GreatMagicWeapon = false;
             CrystalMagicWeapon = false;
             DarkmoonCloak = false;
+            manaShield = 0;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
@@ -235,7 +243,10 @@ namespace tsorcRevamp {
                     player.buffImmune[BuffID.Ironskin] = true;
                 }
                 if (item.type == ModContent.ItemType<PermanentManaRegenerationPotion>() && PermanentBuffToggles[5]) {
-                    player.manaRegenBuff = true;
+                    if (manaShield == 0)
+                    {
+                        player.manaRegenBuff = true;
+                    }
                     player.buffImmune[BuffID.ManaRegeneration] = true;
                 }
                 if (item.type == ModContent.ItemType<PermanentMagicPowerPotion>() && PermanentBuffToggles[6]) {
@@ -1207,6 +1218,67 @@ namespace tsorcRevamp {
             if (MiakodaNewBoostTimer > 150) {
                 player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
+            }
+
+            if (manaShield == 1 && !player.dead)
+            {
+                player.manaRegen = 1;
+                player.manaRegenBonus = 0;
+                //Disable Mana Regen Potions
+                player.buffImmune[BuffID.ManaRegeneration] = true;
+
+                //If they have more than the cost of tanking a hit
+                if (player.statMana > Items.Accessories.ManaShield.manaCost) { 
+                    //And the projectile doesn't exist yet
+                    if (manaShieldProjectile == 0)
+                    {
+                        //Then play a sound, summon it, and record its ID
+                        Main.PlaySound(SoundID.MaxMana);
+                        manaShieldProjectile = Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), player.velocity.X, player.velocity.Y, ModContent.ProjectileType<Projectiles.ManaShield>(), 0, 0f, player.whoAmI, player.statMana, 0f);
+                    }
+                    //If it does exist, refresh its timer. This happens every update, so the initial projectile will stay alive as long as manaShield == 1
+                    Main.projectile[manaShieldProjectile].timeLeft = 8;
+                    Lighting.AddLight(player.Center, 0f, 0.2f, 0.3f);
+                    }
+                    else
+                    {
+                        //If the player doesn't have enough mana to tank a hit, then don't refresh the projectile. Draw particle effects to indicate their mana is too low for it to function.
+                        int dust = Dust.NewDust(player.Center, 1, 1, 221, player.velocity.X + Main.rand.Next(-3, 3), player.velocity.Y + Main.rand.Next(-3, 3), 180, Color.Cyan, 1f);
+                        Main.dust[dust].noGravity = true;
+                        //Also, reset the projectile ID variable
+                        manaShieldProjectile = 0;
+                    }
+                //If they don't have the shield enabled or are dead, reset the projectile ID variable so that next time they equip it a new one is spawaned
+                } else
+                {
+                    manaShieldProjectile = 0;
+                }
+
+        }
+
+        //On hit, subtract the mana cost and disable natural mana regen for a short period
+        //The latter is absolutely necessary, because natural mana regen scales with your base mana
+        //Dragoon Armor gives so much that you regen absurdly fast, and can just tank everything forever
+        //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
+        public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit)
+        {
+            base.Hurt(pvp, quiet, damage, hitDirection, crit);
+            if (manaShield == 1)
+            {
+                if (player.statMana >= Items.Accessories.ManaShield.manaCost)
+                {
+                    player.statMana -= Items.Accessories.ManaShield.manaCost;
+                    player.manaRegenDelay = 900;
+                }
+            }
+        }
+
+        //Reduces the mana restored from potions and such to zero
+        public override void GetHealMana(Item item, bool quickHeal, ref int healValue)
+        {
+            if (manaShield == 1)
+            {
+                healValue = 0;
             }
         }
 
