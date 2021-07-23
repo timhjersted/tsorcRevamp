@@ -1,7 +1,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Ranged {
     public class EnchantedThrowingSpear : ModItem
     {
 
@@ -26,18 +26,17 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.noUseGraphic = true;
             item.noMelee = true;
             item.autoReuse = true;
-            item.thrown = true;
+            item.ranged = true;
 
             item.UseSound = SoundID.Item1;
             item.value = 100000;
-            //item.shoot = ModContent.ProjectileType<Projectiles.DragoonLance>();
             item.shoot = ModContent.ProjectileType<Projectiles.EnchantedThrowingSpear>();
         }
 
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            //recipe.AddIngredient(mod.GetItem("ThrowingSpear"), 1);
+            recipe.AddIngredient(mod.GetItem("ThrowingSpear"), 1);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);

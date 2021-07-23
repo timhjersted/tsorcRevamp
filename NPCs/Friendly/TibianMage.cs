@@ -3,7 +3,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria.Localization;
 using System.Collections.Generic;
 
@@ -19,7 +18,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			Main.npcFrameCount[npc.type] = 26;
 			NPCID.Sets.ExtraFramesCount[npc.type] = 10;
 			NPCID.Sets.AttackFrameCount[npc.type] = 5;
-			NPCID.Sets.DangerDetectRange[npc.type] = 250; // keep this low for melee
+			NPCID.Sets.DangerDetectRange[npc.type] = 450; // keep this low for melee
 			NPCID.Sets.AttackType[npc.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
 			NPCID.Sets.AttackTime[npc.type] = 25;
 			NPCID.Sets.AttackAverageChance[npc.type] = 10;
@@ -158,6 +157,33 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback)
 		{
+			if (Main.hardMode)
+			{
+				if (weaponChoice < 6) 
+				{
+					damage = 50;
+					knockback = 5f;
+				}
+				if (weaponChoice >= 6)
+				{
+					damage = 20;
+					knockback = 6f;
+				}
+			}
+			else
+			{
+				if (weaponChoice < 8) //More likely to use Great Soul Arrow Staff
+				{
+					damage = 25;
+					knockback = 4f;
+				}
+				if (weaponChoice >= 8)
+				{
+					damage = 10;
+					knockback = 5f;
+				}
+			}
+
 			if (weaponChoice < 8) //More likely to use Great Soul Arrow Staff
 			{
 				damage = 25;
@@ -207,9 +233,19 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset)
 		{
-			multiplier = 10f;
-			randomOffset = 0f;
-		}
+			if (weaponChoice < 8)
+			{
+				multiplier = 10f;
+				randomOffset = 0f;
+			}
+			if (weaponChoice >= 8)
+			{
+				multiplier = 10f;
+				randomOffset = 2f;
+				gravityCorrection = 25;
+			}
+
+			}
 
 		public override bool CanTownNPCSpawn(int numTownNPCs, int money)
 		{
