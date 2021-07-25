@@ -33,6 +33,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.behindTiles = true;
 			npc.value = 460;
 		}
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			npc.defense = (int)(npc.defense * (2 / 3));
+		}
+
 		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
 		{
 			return false;

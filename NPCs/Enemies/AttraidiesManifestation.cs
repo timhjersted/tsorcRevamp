@@ -33,7 +33,18 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.Poisoned] = true;
 		}
-		float customAi1;
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			npc.defense = (int)(npc.defense * (2 / 3));
+			demonSpiritDamage = (int)(demonSpiritDamage / 2);
+			poisonFieldDamage = (int)(poisonFieldDamage / 2);
+		}
+
+		int demonSpiritDamage = 35;
+		int poisonFieldDamage = 45;
 
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -49,13 +60,9 @@ namespace tsorcRevamp.NPCs.Enemies
 			return 0;
 		}
 
-
-
 		#region AI
 		public override void AI()
 		{
-
-
 			#region check if standing on a solid tile
 			// warning: this section contains a return statement
 			bool standing_on_solid_tile = false;
@@ -77,8 +84,6 @@ namespace tsorcRevamp.NPCs.Enemies
 				} // END traverse blocks under feet
 			} // END no jump/fall
 			#endregion
-
-
 
 			npc.netUpdate = false;
 			npc.ai[0]++; // Timer Scythe
@@ -110,9 +115,9 @@ namespace tsorcRevamp.NPCs.Enemies
 					num51 = num48 / num51;
 					speedX *= num51;
 					speedY *= num51;
-					int damage = 35;//(int) (14f * npc.scale);
+					//int damage = 35;//(int) (14f * npc.scale);
 					int type = ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>(); ;//44;//0x37; //14;
-					int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+					int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, demonSpiritDamage, 0f, Main.myPlayer);
 					Main.projectile[num54].timeLeft = 120;
 					//Main.projectile[num54].aiStyle = 11; //11 was 4
 					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -238,18 +243,14 @@ namespace tsorcRevamp.NPCs.Enemies
 						num51 = num48 / num51;
 						speedX *= num51;
 						speedY *= num51;
-						int damage = 45;//(int) (14f * npc.scale);
+						//int damage = 45;//(int) (14f * npc.scale);
 						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonFieldBall>();//44;//0x37; //14;
-						int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f);
+						int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, poisonFieldDamage, 0f);
 						Main.projectile[num54].timeLeft = 350;
 						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 25);
 						npc.ai[3] = 0; ;
 					}
 				}
-
-
-
-
 
 				if (Main.rand.Next(350) == 0) //1 in 20 chance boss will summon an NPC
 				{
@@ -261,11 +262,6 @@ namespace tsorcRevamp.NPCs.Enemies
 					npc.active = true;
 
 				}
-
-
-
-
-
 			}
 
 			npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb

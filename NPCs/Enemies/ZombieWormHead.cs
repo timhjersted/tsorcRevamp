@@ -35,7 +35,12 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 4000;
 		}
 
-
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			npc.defense = (int)(npc.defense * (2 / 3));
+		}
 
 		bool TailSpawned = false;
 
