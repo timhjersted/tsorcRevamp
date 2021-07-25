@@ -34,6 +34,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.type = 44; //killpretendtype
             return true;
         }
+
+        Player targetPlayer;
+
         public override void AI()
         {
 
@@ -75,12 +78,59 @@ namespace tsorcRevamp.Projectiles.Enemy
             this.projectile.ai[0] += 1f;
 
 
-            this.projectile.rotation = (float)Math.Atan2((double)this.projectile.velocity.Y, (double)this.projectile.velocity.X) + 1.57f;
-            if (this.projectile.velocity.Y > 16f)
+            projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X) + 1.57f;
+            if (projectile.velocity.Y > 16f)
             {
-                this.projectile.velocity.Y = 16f;
+                projectile.velocity.Y = 16f;
                 return;
             }
+
+            #region Homing Code
+            Vector2 move = Vector2.Zero;
+            float distance = 900f;
+            bool target = false;
+            float speed = 3;
+            if (!target)
+            {
+                int targetIndex = GetClosestPlayer();
+                if(targetIndex != -1)
+                {
+                    targetPlayer = Main.player[targetIndex];
+                    target = true;
+                }
+            }
+                
+            if (target)
+            {
+                Vector2 newMove = targetPlayer.Center - projectile.Center;
+                float distanceTo = (float)Math.Sqrt(newMove.X * newMove.X + newMove.Y * newMove.Y);
+                if (distanceTo < distance)
+                {
+                    move = newMove;
+                    distance = distanceTo;
+                }
+
+                projectile.velocity.X = (move.X / distance) * speed;
+                projectile.velocity.Y = (move.Y / distance) * speed;
+            }
+            #endregion
+        }
+
+        private int GetClosestPlayer()
+        {
+            int closest = -1;
+            float distance = 9999;
+            for (int i = 0; i < Main.player.Length; i++)
+            {
+                Vector2 diff = Main.player[i].Center - projectile.Center;
+                float distanceTo = (float)Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
+                if(distanceTo < distance)
+                {
+                    distance = distanceTo;
+                    closest = i;
+                }
+            }
+            return closest;
         }
     }
 }

@@ -13,6 +13,7 @@ using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Buffs;
 using System;
 using tsorcRevamp.UI;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp {
     public class tsorcRevampPlayer : ModPlayer {
@@ -70,10 +71,12 @@ namespace tsorcRevamp {
 
         //An int because it'll probably be necessary to split it into multiple levels
         public int manaShield = 0;
-        //Stores the projectile so the function can destroy or respawn it.
-        public int manaShieldProjectile;
         //How many more frames the Mana Shield is disabled after using a mana potion
         public int manaShieldCooldown = 0;
+        //What frame of the shield's animation it's on
+        public int shieldFrame = 0;
+        //Did they have the shield up last frame?
+        public bool shieldUp = false;
 
         public bool chests;
         public int safe = -1;
@@ -199,16 +202,83 @@ namespace tsorcRevamp {
                     g *= 0.5176f;
                     b *= 0.3686f;
                 }
+
+               
             }
         }
 
+        public override void ModifyDrawLayers(List<PlayerLayer> layers)
+        {
+            layers.Add(tsorcRevampEffects);
+        }
+
+        public static readonly PlayerLayer tsorcRevampEffects = new PlayerLayer("tsorcRevamp", "tsorcRevampEffects", PlayerLayer.MiscEffectsFront, delegate (PlayerDrawInfo drawInfo) {
+
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+
+            #region Mana Shield Related Effects
+            if (modPlayer.manaShield > 0 && !modPlayer.player.dead)
+            {
+                if (modPlayer.player.statMana > Items.Accessories.ManaShield.manaCost)
+                {
+                    //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
+                    if (!modPlayer.shieldUp)
+                    {
+                        //Soundtype Item SoundStyle 28 is powerful magic cast
+                        Main.PlaySound(SoundID.Item, modPlayer.player.position, 28);
+                        modPlayer.shieldUp = true;
+                    }
+
+                    Lighting.AddLight(modPlayer.player.Center, 0f, 0.2f, 0.3f);
+
+                    int shieldFrameCount = 8;
+                    float shieldScale = 2.5f;
+
+                    Texture2D texture = tsorcRevamp.TransparentTextures[3];
+                    Player drawPlayer = drawInfo.drawPlayer;
+                    int drawX = (int)(drawInfo.position.X + drawPlayer.width / 2f - Main.screenPosition.X);
+                    int drawY = (int)(drawInfo.position.Y + drawPlayer.height / 2f - Main.screenPosition.Y);
+                    int frameHeight = texture.Height / shieldFrameCount;
+                    int startY = frameHeight * (modPlayer.shieldFrame / 3);
+                    Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+                    Color newColor = Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
+                    Vector2 origin = sourceRectangle.Size() / 2f;
+
+                    DrawData data = new DrawData(texture, new Vector2(drawX, drawY), sourceRectangle, newColor, 0f, origin, shieldScale, SpriteEffects.None, 0);
+                    Main.playerDrawData.Add(data);
+                }
+                else
+                {
+                    if (modPlayer.shieldUp)
+                    {
+                        //Soundtype Item SoundStyle 60 is the Terra Beam
+                        Main.PlaySound(SoundID.Item, modPlayer.player.position, 60);
+                        modPlayer.shieldUp = false;
+                    }
+                    //If the player doesn't have enough mana to tank a hit, then draw particle effects to indicate their mana is too low for it to function.
+                    int dust = Dust.NewDust(modPlayer.player.Center, 1, 1, 221, modPlayer.player.velocity.X + Main.rand.Next(-3, 3), modPlayer.player.velocity.Y + Main.rand.Next(-3, 3), 180, Color.Cyan, 1f);
+                    Main.dust[dust].noGravity = true;
+                    modPlayer.shieldUp = false;
+                }
+            }
+            else
+            {
+                modPlayer.shieldUp = false;
+            }
+            
+            #endregion
+
+        });
 
 
         public override void PostUpdateEquips() {
             if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
                 player.chest = -1;
             }
-
+            if (manaShield > 0)
+            {
+                player.manaRegenBuff = false;
+            }
             int PTilePosX = (int)player.position.X / 16;
             bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
             bool underground = (player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
@@ -1167,98 +1237,93 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void PreUpdate() {
+        public override void PreUpdate()
+        {
 
             MiakodaEffectsTimer++;
 
-            if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
+            if (DragoonBoots && DragoonBootsEnable)
+            { //lets do this the smart way
                 Player.jumpSpeed += 10f;
 
             }
 
-            if (!player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
+            if (!player.HasBuff(ModContent.BuffType<Bonfire>()))
+            { //this ensures that BonfireUIState is only visible when within Bonfire range
                 BonfireUIState.Visible = false;
             }
 
-            if (MiakodaFullHeal1) { //dust loop on player the instant they get healed
-                for (int d = 0; d < 100; d++) {
+            if (MiakodaFullHeal1)
+            { //dust loop on player the instant they get healed
+                for (int d = 0; d < 100; d++)
+                {
                     int dust = Dust.NewDust(player.position, player.width, player.height, 107, 0f, 0f, 30, default(Color), .75f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 3.5f);
                     Main.dust[dust].noGravity = true;
                 }
             }
 
-            if (MiakodaCrescentDust1) { //dust loop on player the instant they get imbue
-                for (int d = 0; d < 100; d++) {
+            if (MiakodaCrescentDust1)
+            { //dust loop on player the instant they get imbue
+                for (int d = 0; d < 100; d++)
+                {
                     int dust = Dust.NewDust(player.position, player.width, player.height, 164, 0f, 0f, 30, default(Color), 1.2f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 5f);
                     Main.dust[dust].noGravity = false;
                 }
             }
-            if (MiakodaCrescentBoost) {
+            if (MiakodaCrescentBoost)
+            {
                 MiakodaCrescentBoostTimer++;
             }
-            if (MiakodaCrescentBoostTimer > 150) {
+            if (MiakodaCrescentBoostTimer > 150)
+            {
                 player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = false;
                 MiakodaCrescentBoostTimer = 0;
             }
 
-            if (MiakodaNewDust1) { //dust loop on player the instant they get boost
-                for (int d = 0; d < 100; d++) {
+            if (MiakodaNewDust1)
+            { //dust loop on player the instant they get boost
+                for (int d = 0; d < 100; d++)
+                {
                     int dust = Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0f, 50, default(Color), 1.2f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(2f, 7.5f);
                     Main.dust[dust].noGravity = true;
                 }
             }
-            if (MiakodaNewBoost) {
+            if (MiakodaNewBoost)
+            {
                 MiakodaNewBoostTimer++;
                 player.armorEffectDrawShadow = true;
 
             }
-            if (MiakodaNewBoostTimer > 150) {
+            if (MiakodaNewBoostTimer > 150)
+            {
                 player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
             }
 
-            if (manaShield == 1 && !player.dead)
-            {
-                player.manaRegen = 1;
-                player.manaRegenBonus = 0;
-                //Disable Mana Regen Potions
-                player.buffImmune[BuffID.ManaRegeneration] = true;
+            
 
-                //If they have more than the cost of tanking a hit
-                if (player.statMana > Items.Accessories.ManaShield.manaCost) { 
-                    //And the projectile doesn't exist yet
-                    if (manaShieldProjectile == 0)
-                    {
-                        //Then play a sound, summon it, and record its ID
-                        Main.PlaySound(SoundID.MaxMana);
-                        manaShieldProjectile = Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), player.velocity.X, player.velocity.Y, ModContent.ProjectileType<Projectiles.ManaShield>(), 0, 0f, player.whoAmI, player.statMana, 0f);
-                    }
-                    //If it does exist, refresh its timer. This happens every update, so the initial projectile will stay alive as long as manaShield == 1
-                    Main.projectile[manaShieldProjectile].timeLeft = 8;
-                    Lighting.AddLight(player.Center, 0f, 0.2f, 0.3f);
-                    }
-                    else
-                    {
-                        //If the player doesn't have enough mana to tank a hit, then don't refresh the projectile. Draw particle effects to indicate their mana is too low for it to function.
-                        int dust = Dust.NewDust(player.Center, 1, 1, 221, player.velocity.X + Main.rand.Next(-3, 3), player.velocity.Y + Main.rand.Next(-3, 3), 180, Color.Cyan, 1f);
-                        Main.dust[dust].noGravity = true;
-                        //Also, reset the projectile ID variable
-                        manaShieldProjectile = 0;
-                    }
-                //If they don't have the shield enabled or are dead, reset the projectile ID variable so that next time they equip it a new one is spawaned
-                } else
+            #region manashield
+            if (manaShield > 0)
+            {
+                shieldFrame++;
+                if (shieldFrame > 23)
                 {
-                    manaShieldProjectile = 0;
+                    shieldFrame = 0;
                 }
 
+                //Disable Mana Regen Potions
+                player.manaRegenBuff = false;
+                player.buffImmune[BuffID.ManaRegeneration] = true;
+            }
+            #endregion manashield
         }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
-        //Dragoon Armor gives so much that you regen absurdly fast, and can just tank everything forever
+        //Even as melee there are mana boosting accessories you can stack, as well as armor like Dragoon that makes mana regen obscenely powerful.
         //This means you can tank until your mana bar is exhausted, then have to back off for a bit and actually dodge
         public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit)
         {
@@ -1268,7 +1333,7 @@ namespace tsorcRevamp {
                 if (player.statMana >= Items.Accessories.ManaShield.manaCost)
                 {
                     player.statMana -= Items.Accessories.ManaShield.manaCost;
-                    player.manaRegenDelay = 900;
+                    player.manaRegenDelay = Items.Accessories.ManaShield.regenDelay;
                 }
             }
         }
@@ -1276,7 +1341,7 @@ namespace tsorcRevamp {
         //Reduces the mana restored from potions and such to zero
         public override void GetHealMana(Item item, bool quickHeal, ref int healValue)
         {
-            if (manaShield == 1)
+            if (manaShield >= 1)
             {
                 healValue = 0;
             }
