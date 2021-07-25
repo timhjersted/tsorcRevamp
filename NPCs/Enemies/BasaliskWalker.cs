@@ -48,9 +48,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		int bReset = 50;//increasing this will increase how long an NPC "gives up" before coming back to try again.
 		int chargeDamage = 0;
 		bool chargeDamageFlag = false;
-		int meteorDamage = 35;
-		int hypnoticDisruptorDamage = 30;
-		int bioSpitDamage = 20;
+		int meteorDamage = 17;
+		int hypnoticDisruptorDamage = 15;
+		int bioSpitDamage = 10;
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

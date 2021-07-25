@@ -43,8 +43,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			poisonFieldDamage = (int)(poisonFieldDamage / 2);
 		}
 
-		int demonSpiritDamage = 35;
-		int poisonFieldDamage = 45;
+		int demonSpiritDamage = 18;
+		int poisonFieldDamage = 23;
 
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
