@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.width = 76;
 			projectile.timeLeft = 1500;
 		}
-		public void AI()
+		public override void AI()
 		{
 			//if (projectile.frame < 5)
 			projectile.frameCounter++;

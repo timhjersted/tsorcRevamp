@@ -7,67 +7,59 @@ using System;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	class NecromancerElemental : ModNPC
+	class HeroofLumelia : ModNPC
 	{
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Hero of Lumelia");
+
+		}
 		public override void SetDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 15;
-			animationType = 21;
-			npc.knockBackResist = 0f;
+			Main.npcFrameCount[npc.type] = 16;
+			animationType = 28;
 			npc.aiStyle = 3;
-			npc.damage = 70;
-			npc.defense = 30;
 			npc.height = 40;
 			npc.width = 20;
-			npc.lifeMax = 8780;
+			npc.damage = 75;
+			npc.defense = 35;
+			npc.lifeMax = 8000;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
+			npc.value = 20000;
 			npc.lavaImmune = true;
-			npc.value = 7500;
+			npc.knockBackResist = 0;
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			deathStrikeDamage = (int)(deathStrikeDamage / 2);
+			herosArrowDamage = (int)(herosArrowDamage / 2);
 		}
 
-		int deathStrikeDamage = 35;
+		int herosArrowDamage = 40;
+
 		float customAi1;
-		float customspawn1;
-		int drownTimerMax = 2000;
-		int drownTimer = 2000;
-		int drowningRisk = 1200;
-		//Spawns in the Underground and Cavern before 4.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
+		int drownTimerMax = 4000;
+		int drownTimer = 4000;
+		int drowningRisk = 1500;
+
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			bool oSky = (spawnInfo.spawnTileY < (Main.maxTilesY * 0.1f));
-			bool oSurface = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.1f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.2f));
-			bool oUnderSurface = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.2f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.3f));
-			bool oUnderground = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.3f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.4f));
-			bool oCavern = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.4f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.6f));
-			bool oMagmaCavern = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.6f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.8f));
-			bool oUnderworld = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.8f));
+			Player P = spawnInfo.player;
 
-			if (spawnInfo.player.townNPCs > 0f || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor) return 0;
-
-
-			if (Main.hardMode && (oUnderground || oCavern))
-			{
-				if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.45f || spawnInfo.spawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(350) == 1) return 1;
-			}
-
-			else if (Main.hardMode && oUnderworld)
-			{
-				if (Main.rand.Next(150) == 1) return 1;
-			}
+			if (!(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(500) == 1) return 1;
+			if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(250) == 1) return 1;
+			if (Main.hardMode && P.ZoneSkyHeight && Main.rand.Next(100) == 1) return 1;
+			if (Main.hardMode && P.ZoneRockLayerHeight && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(300) == 1) return 1;
 
 			return 0;
 		}
 		#endregion
+
 
 		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
 		public override void AI()  //  warrior ai
@@ -91,13 +83,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
 			float acceleration = .05f;  //  how fast it can speed up
-			float top_speed = 1.8f;  //  max walking speed, also affects jump length
+			float top_speed = 3f;  //  max walking speed, also affects jump length
 			float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-			float enrage_percentage = 0;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+			float enrage_percentage = 0.2f;  // double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
 			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
-			float enrage_top_speed = 3.6f;  //  faster when enraged, usually 2*top_speed
+			float enrage_top_speed = 4f;  //  faster when enraged, usually 2*top_speed
 
 			bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
 			bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
@@ -377,84 +369,36 @@ namespace tsorcRevamp.NPCs.Enemies
 			#region shoot and walk
 			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
 			{
-				if (npc.justHit)
-					npc.ai[2] = 0f; // reset throw countdown when hit
+				//if (npc.justHit)
+				//	npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f)
 				{
 					npc.TargetClosest(true);
-					if ((customspawn1 < 13) && Main.rand.Next(160) == 1)
-					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.ChaosElemental, 0);
-						npc.ai[0] = 20 - Main.rand.Next(80);
-						customspawn1 += 1f;
-					}
-					if (Main.rand.Next(45) == 1)
-					{
-						npc.ai[3] = 1;
-						npc.life += 10;
-						if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = 0;
-						float speedY = 0;
-						float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-						num51 = num48 / num51;
-						speedX *= 0;
-						speedY *= 0;
-						int damage = 0;//(int) (14f * npc.scale);
-						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>();//44;//0x37; //14;
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-						customAi1 = 1f;
-						npc.netUpdate = true;
-					}
 					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 					{
-						if (Main.rand.Next(50) == 1)
+						if (Main.rand.Next(30) == 1)
 						{
-							npc.ai[3] = 1;
-							Main.player[npc.target].statLife -= 10;
-							if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
 							float num48 = 8f;
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = 0;
-							float speedY = 0;
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= 0;
-							speedY *= 0;
-							int damage = 0;//(int) (14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							customAi1 = 1f;
+							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+							{
+								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+								num51 = num48 / num51;
+								speedX *= num51;
+								speedY *= num51;
+								//int damage = 80;//(int) (14f * npc.scale);
+								int type = ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>();//44;//0x37; //14;
+								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, herosArrowDamage, 0f, Main.myPlayer);
+								Main.projectile[num54].aiStyle = 1;
+								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+								customAi1 = 1f;
+							}
 							npc.netUpdate = true;
 						}
-					}
-					if (Main.rand.Next(120) == 1)
-					{
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, deathStrikeDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 5;
-							Main.projectile[num54].aiStyle = 23;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							customAi1 = 1f;
-						}
-						npc.netUpdate = true;
 					}
 				}
 				#endregion
@@ -625,10 +569,10 @@ namespace tsorcRevamp.NPCs.Enemies
 				int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
 				int x_blockpos = (int)npc.position.X / 16; // corner not center
 				int y_blockpos = (int)npc.position.Y / 16; // corner not center
-				int tp_radius = 80; // radius around target(upper left corner) in blocks to teleport into
+				int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
 				int tp_counter = 0;
 				bool flag7 = false;
-				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 20000f)
 				{ // far away from target; 2000 pixels = 125 blocks
 					tp_counter = 100;
 					flag7 = true; // no teleport
@@ -644,7 +588,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
 					{ // (tp_x_target,m) is block under its feet I think
 						if ((m < target_y_blockpos - 6 || m > target_y_blockpos + 6 || tp_x_target < target_x_blockpos - 6 || tp_x_target > target_x_blockpos + 6) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-						{ // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+						{ // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
 							bool safe_to_stand = true;
 							bool dark_caster = false; // not a fighter type AI...
 							if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
@@ -660,7 +604,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
 								flag7 = true; // end the loop (after testing every lower point :/)
 							}
-						} // END over 6 blocks distant from player...
+						} // END over 4 blocks distant from player...
 					} // END traverse y down to edge of radius
 				} // END try 100 times
 			} // END is server & chaos ele & bored
@@ -719,23 +663,26 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region Gore
 		public override void NPCLoot()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 1"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 3"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 3"), 1.1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 1"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
 
-			Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, 1);
-			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
-			if (Main.rand.Next(99) < 20) Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion, 1);
-			if (Main.rand.Next(99) < 20) Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1);
-			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-			//if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.PiercingPotion>(), 1);
-			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);
-			//if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>(), 1);
+			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.RoyalThrowingSpear>(), 1 + Main.rand.Next(40));
+			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaShirt>(), 1);
+			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaPants>(), 1);
+			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaHairStyle>(), 1);
+			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1);
+			//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>(), 1);
 			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
 			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
+			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
+			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
+			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 1);
+			Item.NewItem(npc.getRect(), ItemID.ArcheryPotion, 1);
+			Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
 		}
 		#endregion
 	}
