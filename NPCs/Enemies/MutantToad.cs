@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (closeTownNPCs == 3 && Main.rand.Next(3) <= 1) return 0;
 			if (closeTownNPCs >= 4) return 0;
 
-			return 1;
+			return 0;
 		}
 
 
@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			if (Main.rand.Next(2) == 0)
 			{
-				player.AddBuff(20, 3600, false); //poisoned!
+				player.AddBuff(20, 1800, false); //poisoned!
 			}
 
 		}
