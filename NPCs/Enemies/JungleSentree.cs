@@ -22,10 +22,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.damage = 25;
 			npc.knockBackResist = 0;
 			npc.defense = 12;
-			npc.lifeMax = 250;
+			npc.lifeMax = 225;
 			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Dig");
 			npc.DeathSound = SoundID.NPCDeath33;
-			npc.value = 350;
+			npc.value = 1000;
 			npc.buffImmune[BuffID.Confused] = true;
 		}
 

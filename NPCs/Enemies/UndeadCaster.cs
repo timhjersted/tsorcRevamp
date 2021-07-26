@@ -19,8 +19,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.CloneDefaults(NPCID.GoblinSorcerer);
             animationType = NPCID.GoblinSorcerer;
             aiType = NPCID.GoblinSorcerer;
-            npc.lifeMax = 50;
-            npc.damage = 30;
+            npc.lifeMax = 30;
+            npc.damage = 15;
             npc.scale = 1f;
             npc.knockBackResist = 0.1f;
             npc.value = 650;
@@ -64,7 +64,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), ItemID.Heart, 3);
+            Item.NewItem(npc.getRect(), ItemID.Heart, 1);
+            Item.NewItem(npc.getRect(), ItemID.Heart, 1);
+            Item.NewItem(npc.getRect(), ItemID.Heart, 1);
             Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ItemID.HealingPotion, 2);
 

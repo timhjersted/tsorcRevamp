@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.lifeMax = 120;
 			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Dig");
 			npc.DeathSound = SoundID.NPCDeath33;
-			npc.value = 150;
+			npc.value = 500;
 			npc.buffImmune[BuffID.Confused] = true;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();

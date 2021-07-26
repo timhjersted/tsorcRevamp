@@ -21,11 +21,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			animationType = 60;
 			npc.width = 50;
 			npc.height = 50;
-			npc.damage = 75;
+			npc.damage = 38;
 			npc.defense = 18;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 1200;
+			npc.lifeMax = 600;
 			npc.friendly = false;
 			npc.noTileCollide = true;
 			npc.lavaImmune = true;

@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			aiType = NPCID.SkeletonArcher;
 			npc.HitSound = SoundID.NPCHit48;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.damage = 55;
+			npc.damage = 52;
 			npc.lifeMax = 3000;
 			npc.scale = 1.1f;
 			npc.defense = 40;

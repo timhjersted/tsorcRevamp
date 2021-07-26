@@ -10,11 +10,11 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.npcSlots = 60;
             //npc.maxSpawns = 2; todo investigate
             npc.aiStyle = 0;
-            npc.damage = 40;
+            npc.damage = 20;
             npc.defense = 10;
             npc.height = 44;
             npc.timeLeft = 22500;
-            npc.lifeMax = 260;
+            npc.lifeMax = 130;
             npc.scale = 1;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 if (npc.ai[0] >= 12 && npc.ai[2] < 5) {
                     float num48 = 2f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    int damage = 25;
+                    int damage = 7;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);

@@ -12,10 +12,10 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.width = 12;
             npc.height = 12;
             npc.aiStyle = 22;
-            npc.damage = 60;
+            npc.damage = 30;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 10;
+            npc.lifeMax = 5;
             npc.friendly = false;
             npc.noTileCollide = false;
             npc.noGravity = true;

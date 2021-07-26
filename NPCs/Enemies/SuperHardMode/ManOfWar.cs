@@ -13,11 +13,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             animationType = NPCID.GreenJellyfish;
             npc.aiStyle = 18;
             npc.timeLeft = 750;
-            npc.damage = 120;
+            npc.damage = 60;
             npc.defense = 40;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 2000;
+            npc.lifeMax = 1000;
             npc.alpha = 20;
             npc.scale = .7f;
             npc.knockBackResist = 0.3f;

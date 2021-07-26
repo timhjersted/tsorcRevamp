@@ -20,8 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.aiStyle = -1;
 			npc.height = 40;
 			npc.width = 20;
-			npc.lifeMax = 110;
-			npc.damage = 30;
+			npc.lifeMax = 95;
+			npc.damage = 28;
 			npc.scale = 1f;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
@@ -404,7 +404,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 14;//(int) (14f * npc.scale);
+								int damage = 8;//(int) (14f * npc.scale);
 								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();//44;//0x37; //14;
 								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 600;

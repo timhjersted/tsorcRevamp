@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.CloneDefaults(NPCID.CaveBat);
             animationType = NPCID.GiantBat;
             aiType = NPCID.CaveBat;
-            npc.lifeMax = 25;
+            npc.lifeMax = 15;
             npc.damage = 20;
             npc.scale = 1.1f;
             npc.knockBackResist = .4f;

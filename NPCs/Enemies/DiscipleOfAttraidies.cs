@@ -10,11 +10,11 @@ namespace tsorcRevamp.NPCs.Enemies {
 
         public override void SetDefaults() {
             npc.npcSlots = 1;
-            npc.damage = 40;
+            npc.damage = 20;
             npc.defense = 15;
             npc.height = 44;
             npc.timeLeft = 22500;
-            npc.lifeMax = 7000;
+            npc.lifeMax = 3500;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
             npc.noGravity = false;
@@ -161,6 +161,10 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (npc.frame.Y >= num * Main.npcFrameCount[npc.type]) {
                 npc.frame.Y = 0;
             }
+        }
+        public override void NPCLoot()
+        {
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 3);
         }
 
         public override void HitEffect(int hitDirection, double damage) {

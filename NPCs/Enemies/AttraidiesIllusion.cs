@@ -19,8 +19,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             animationType = NPCID.GoblinSorcerer;
             npc.npcSlots = 50;
-            npc.lifeMax = 450;
-            npc.damage = 15;
+            npc.lifeMax = 400;
+            npc.damage = 13;
             npc.scale = 1f;
             npc.knockBackResist = 0.3f;
             npc.value = 6000;
@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 8;
+                        int damage = 7;
                         int type = ModContent.ProjectileType<TheOracle>();
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
@@ -280,7 +280,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 15;
+                        int damage = 12;
                         int type = ModContent.ProjectileType<ScrewAttack>();
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 540;

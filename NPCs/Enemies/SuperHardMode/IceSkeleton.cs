@@ -16,11 +16,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.value = 1630;
             npc.aiStyle = 3;
             npc.timeLeft = 750;
-            npc.damage = 120;
+            npc.damage = 60;
             npc.defense = 73;
             npc.HitSound = SoundID.NPCHit2;
             npc.DeathSound = SoundID.NPCDeath2;
-            npc.lifeMax = 2611;
+            npc.lifeMax = 1300;
             npc.scale = 1;
         }
 

@@ -14,13 +14,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
         public override void SetDefaults() {
             npc.width = 124;
             npc.height = 124;
-            npc.damage = 165;
+            npc.damage = 83;
             npc.defense = 150;
-            npc.lifeMax = 30000;
+            npc.lifeMax = 15000;
             npc.aiStyle = -1;
             npc.npcSlots = 30;
             npc.value = 18750;
-            npc.knockBackResist = 0.5f;
+            npc.knockBackResist = 0.01f;
+            npc.scale = .9f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.noGravity = true;
@@ -39,6 +40,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             }
 
             return chance;
+        }
+
+        public override void NPCLoot()
+        {
+            if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ItemID.RottenChunk, Main.rand.Next(1, 5));
+            Item.NewItem(npc.getRect(), mod.ItemType("CursedSoul"), Main.rand.Next(8, 16));
         }
 
         public override void HitEffect(int hitDirection, double damage) {

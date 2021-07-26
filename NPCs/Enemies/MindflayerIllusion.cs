@@ -13,11 +13,11 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.npcSlots = 5;
             animationType = 29;
             npc.aiStyle = 0;
-            npc.damage = 50;
+            npc.damage = 25;
             npc.defense = 12;
             npc.height = 44;
             npc.timeLeft = 22500;
-            npc.lifeMax = 2000;
+            npc.lifeMax = 1000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath6;
             npc.noGravity = false;
@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 30;//(int) (14f * npc.scale);
+                        int damage = 8;//(int) (14f * npc.scale);
                         int type = ModContent.ProjectileType<Projectiles.Enemy.TheOracle>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 200;
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 50;//(int) (14f * npc.scale);
+                        int damage = 13;//(int) (14f * npc.scale);
                         int type = ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer, Main.player[npc.target].whoAmI);
                         Main.projectile[num54].timeLeft = 500;

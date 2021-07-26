@@ -13,11 +13,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.aiStyle = 14;
             aiType = NPCID.CaveBat;
             npc.timeLeft = 750;
-            npc.damage = 88;
+            npc.damage = 44;
             npc.defense = 70;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath4;
-            npc.lifeMax = 2092;
+            npc.lifeMax = 1050;
             npc.scale = 1;
             npc.knockBackResist = 0.5f;
             npc.value = 650;

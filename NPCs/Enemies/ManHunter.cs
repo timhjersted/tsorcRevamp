@@ -14,8 +14,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			aiType = NPCID.SkeletonArcher;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.damage = 40;
-			npc.lifeMax = 125;
+			npc.damage = 38;
+			npc.lifeMax = 110;
 			npc.defense = 10;
 			npc.value = 1000;
 			npc.width = 18;
@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			// is_archer & clown bombs only
 			int shot_rate = 60;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
 			int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
-			int projectile_damage = 18;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
+			int projectile_damage = 12;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
 			int projectile_id = 81; // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
 			float projectile_velocity = 11; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
 

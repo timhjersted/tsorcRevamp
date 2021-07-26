@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Corrupt Jellyfish");
+            DisplayName.SetDefault("Corrupted Jellyfish");
             Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.PinkJellyfish];
         }
 
@@ -18,8 +18,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.CloneDefaults(NPCID.PinkJellyfish);
             animationType = NPCID.PinkJellyfish;
             aiType = NPCID.PinkJellyfish;
-            npc.lifeMax = 235;
-            npc.damage = 70;
+            npc.lifeMax = 118;
+            npc.damage = 35;
             npc.scale = 1f;
             npc.knockBackResist = .7f;
             npc.value = 380;

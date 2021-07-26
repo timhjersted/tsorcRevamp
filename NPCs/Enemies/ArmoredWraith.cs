@@ -18,8 +18,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.CloneDefaults(NPCID.Wraith);
             animationType = NPCID.Wraith;
             aiType = NPCID.CaveBat;
-            npc.lifeMax = 150;
-            npc.damage = 95;
+            npc.lifeMax = 75;
+            npc.damage = 48;
             npc.scale = 1f;
             npc.knockBackResist = 0;
             npc.value = 500;

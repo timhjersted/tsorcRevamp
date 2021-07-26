@@ -14,8 +14,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			npc.HitSound = SoundID.NPCHit26;
 			npc.DeathSound = SoundID.NPCDeath29;
-			npc.damage = 42;
-			npc.lifeMax = 1350;
+			npc.damage = 33;
+			npc.lifeMax = 1260;
 			npc.defense = 28;
 			npc.value = 6000;
 			npc.width = 18;
@@ -421,7 +421,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 30;//(int) (14f * npc.scale);
+								int damage = 18;//(int) (14f * npc.scale);
 								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>();//44;//0x37; //14;
 								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 200;
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 45;//(int) (14f * npc.scale);
+								int damage = 25;//(int) (14f * npc.scale);
 								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();//44;//0x37; //14;
 								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 0;

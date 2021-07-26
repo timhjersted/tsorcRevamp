@@ -19,9 +19,9 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override void SetDefaults() {
             npc.height = 40;
             npc.width = 20;
-            npc.damage = 75;
+            npc.damage = 38;
             npc.defense = 25;
-            npc.lifeMax = 8000;
+            npc.lifeMax = 4000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 30000;
@@ -281,7 +281,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int damage = 80;//(int) (14f * npc.scale);
+                                int damage = 20;//(int) (14f * npc.scale);
                                 int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 100;
