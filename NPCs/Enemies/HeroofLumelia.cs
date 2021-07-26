@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player P = spawnInfo.player;
 
-			if (!(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(500) == 1) return 1;
+			if (!(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(500) == 1) return 1; //why tim xD
 			if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(250) == 1) return 1;
 			if (Main.hardMode && P.ZoneSkyHeight && Main.rand.Next(100) == 1) return 1;
 			if (Main.hardMode && P.ZoneRockLayerHeight && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(300) == 1) return 1;
@@ -674,8 +674,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaShirt>(), 1);
 			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaPants>(), 1);
 			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaHairStyle>(), 1);
-			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1);
-			//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>(), 1);
+			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
+			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
 			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
 			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
 			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);

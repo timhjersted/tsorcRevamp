@@ -247,6 +247,7 @@ namespace tsorcRevamp {
                 394, //sluggy cage
                 413, //red squirrel cage
                 414 //gold squirrel cage
+
             };
 
             #endregion
@@ -442,6 +443,8 @@ namespace tsorcRevamp {
                 CrossModTiles.Add(MagicStorage.TileType("StorageComponent"));
                 CrossModTiles.Add(MagicStorage.TileType("StorageHeart"));
                 CrossModTiles.Add(MagicStorage.TileType("StorageUnit"));
+                CrossModTiles.Add(MagicStorage.TileType("StorageConnector"));
+
             }
             #endregion
             //--------
