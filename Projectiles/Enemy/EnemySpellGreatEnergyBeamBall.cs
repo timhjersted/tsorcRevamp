@@ -60,11 +60,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
 				if (projectile.position.X + (float)(projectile.width / 2) > Main.player[projectile.owner].position.X + (float)(Main.player[projectile.owner].width / 2))
 				{
-					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -13), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), 55, 8f, projectile.owner);
+					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -13), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), projectile.damage, 8f, projectile.owner);
 				}
 				else
 				{
-					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 14f), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), 55, 8f, projectile.owner);
+					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 14f), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), projectile.damage, 8f, projectile.owner);
 				}
 				Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
 				int arg_1394_1 = projectile.width;
