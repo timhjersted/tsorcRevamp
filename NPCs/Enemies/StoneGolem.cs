@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,10 +11,12 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
         public override void SetDefaults() {
             npc.CloneDefaults(NPCID.GraniteGolem);
-            npc.damage = 15;
+            aiType = NPCID.GraniteGolem;
+            npc.damage = 20;
             npc.lifeMax = 60;
             npc.defense = 14;
-            npc.value = 150;
+            npc.value = 250;
+            npc.knockBackResist = 0.5f; //a tad less resist than granite golem
             animationType = NPCID.GraniteGolem;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
@@ -29,6 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
             Item.NewItem(npc.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
+            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
+
         }
     }
 }

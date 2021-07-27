@@ -183,17 +183,6 @@ namespace tsorcRevamp.NPCs.Friendly
 					knockback = 5f;
 				}
 			}
-
-			if (weaponChoice < 8) //More likely to use Great Soul Arrow Staff
-			{
-				damage = 25;
-				knockback = 4f;
-			}
-			if (weaponChoice >= 8)
-			{
-				damage = 10;
-				knockback = 5f;
-			}
 		}
 
 		public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)

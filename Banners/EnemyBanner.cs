@@ -180,7 +180,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 1;
         }
     }
 
@@ -192,7 +192,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 2;
         }
     }
 
@@ -204,7 +204,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 3; 
         }
     }
 
@@ -216,7 +216,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 0;
+            item.placeStyle = 4;
         }
     }
 

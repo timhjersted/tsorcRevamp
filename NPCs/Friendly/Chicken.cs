@@ -13,10 +13,10 @@ namespace tsorcRevamp.NPCs.Friendly {
 		public override void SetDefaults()
 		{
 			npc.knockBackResist = 0;
-			npc.aiStyle = 66; //buggy. You are what you eat
+			npc.aiStyle = 66; //buggy ai. You are what you eat
 			npc.height = 28;
 			npc.width = 20;
-			npc.lifeMax = 3;
+			npc.lifeMax = 5;
 			npc.damage = 0;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
