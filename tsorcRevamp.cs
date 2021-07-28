@@ -24,6 +24,7 @@ namespace tsorcRevamp {
         public static List<int> Unbreakable;
         public static List<int> IgnoredTiles;
         public static List<int> CrossModTiles;
+        public static List<int> PlaceAllowedModTiles;
         public static List<Texture2D> TransparentTextures;
 
         internal BonfireUIState BonfireUIState;
@@ -448,6 +449,16 @@ namespace tsorcRevamp {
             }
             #endregion
             //--------
+            #region PlaceAllowedModTiles list
+            PlaceAllowedModTiles = new List<int>()
+            {
+                TileType("EnemyBannerTile"),
+                TileType("SweatyCyclopsForge")
+
+            };
+
+            #endregion
+            //--------
             #region TransparentTextures list
 
             TransparentTextures = new List<Texture2D>() {
@@ -532,6 +543,10 @@ namespace tsorcRevamp {
                         return true; //allow placing certain tiles from other mods
                     }
 
+                    else if (tsorcRevamp.PlaceAllowedModTiles.Contains(item.createTile)) {
+                        return true; //allow placing certain tiles from this mod
+                    }
+
                     else return false; //disallow using item if it places other tiles
                 }
                 return true; //allow using items if they do not create tiles
@@ -563,7 +578,10 @@ namespace tsorcRevamp {
                 else if (tsorcRevamp.KillAllowed.Contains(type)) {//always allow KillAllowed
                     return true;
                 }
-                else if (tsorcRevamp.CrossModTiles.Contains(type)) {//allow breaking placeable modded tiles
+                else if (tsorcRevamp.CrossModTiles.Contains(type)) {//allow breaking placeable modded tiles from other mods
+                    return true;
+                }
+                else if (tsorcRevamp.PlaceAllowedModTiles.Contains(type)) {//allow breaking placeable modded tiles
                     return true;
                 }
                 else if (tsorcRevamp.Unbreakable.Contains(type)) {//always disallow Unbreakable	
