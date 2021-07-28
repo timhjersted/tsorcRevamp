@@ -141,8 +141,8 @@ namespace tsorcRevamp.NPCs.Friendly
 			ModContent.NPCType<NPCs.Friendly.Archeologist>();
 			return true;
 		}
-		*/
-		/*public override void TownNPCAttackStrength(ref int damage, ref float knockback)
+		
+		public override void TownNPCAttackStrength(ref int damage, ref float knockback)
 		{
 			if (Main.hardMode)
 			{
