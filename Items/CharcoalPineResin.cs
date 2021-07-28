@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items
             item.height = 40;
             item.scale = 0.9f;
             item.maxStack = 99;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Blue;
             item.UseSound = SoundID.Item20;
             item.useStyle = ItemUseStyleID.HoldingUp; //no idea why it still swings sometimes
             item.useTime = 40;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -17,11 +18,16 @@ namespace tsorcRevamp.Banners {
             item.autoReuse = true;
             item.useAnimation = 15;
             item.useTime = 10;
+            item.scale = 1.5f;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.consumable = true;
             item.rare = ItemRarityID.Blue;
             item.value = Item.buyPrice(0, 0, 10, 0);
             item.createTile = ModContent.TileType<EnemyBannerTile>();
+        }
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI) {
+            scale = 1.5f;
+            return true;
         }
     }
 
@@ -163,7 +169,8 @@ namespace tsorcRevamp.Banners {
         //you may notice that all mod enemies with banners drop a guardian corruptor banner. this is NOT a bug
         //it chooses banner type by placeStyle, and they all have placeStyle 0, aka Guardian Corruptor
         //once they have a sprite and placeStyle gets updated, they'll drop the right banners
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
+        //public override string Texture => "tsorcRevamp/Banners/placeholder"; //change name or remove line once texture added
+
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Guardian Corruptor");
         }
@@ -231,7 +238,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class ResentfulSeedlingBanner : EnemyBanner
@@ -245,7 +252,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class LivingShroomBanner : EnemyBanner
@@ -259,7 +266,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class LivingShroomThiefBanner : EnemyBanner
@@ -273,7 +280,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class LivingShroomPoisonBanner : EnemyBanner
@@ -287,7 +294,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class LivingGlowshroomBanner : EnemyBanner
@@ -301,7 +308,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class UndeadCasterBanner : EnemyBanner
@@ -315,7 +322,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class ChickenBanner : EnemyBanner
@@ -329,7 +336,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class AttraidiesIllusionBanner : EnemyBanner
@@ -343,7 +350,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
     public class CosmicCrystalLizardBanner : EnemyBanner
@@ -357,7 +364,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            item.placeStyle = 19; //change when texture added
         }
     }
 }

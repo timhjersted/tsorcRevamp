@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override string GetChat()
 		{
 			WeightedRandom<string> chat = new WeightedRandom<string>();
-			chat.Add("I am the local fletcher. I sell bows, crossbows, and ammunition. Do you need anything?");
+			chat.Add("I am the local fletcher. I sell bows, crossbows and ammunition. Do you need anything?");
 			chat.Add("Tibia, a green island. It is wonderful to walk into the forests and to hunt with a bow there.");
 			chat.Add("I am paladin and fletcher.");
 			chat.Add("We are feared warriors and good marksmen.");
@@ -106,7 +106,11 @@ namespace tsorcRevamp.NPCs.Friendly
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.OldLongbow>());
 				nextSlot++;
-
+				if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+				{
+					shop.item[nextSlot].SetDefaults(ItemID.FrostburnArrow);
+					nextSlot++;
+				}
 			}
 			if (NPC.downedBoss2)
 			{

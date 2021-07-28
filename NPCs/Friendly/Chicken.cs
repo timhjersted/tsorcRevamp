@@ -34,6 +34,10 @@ namespace tsorcRevamp.NPCs.Friendly {
 			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DeadChicken>());
 		}
 
+		public override void AI()
+		{
+			if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ChickenBokbok").WithVolume(.8f).WithPitchVariance(.3f), npc.Center);
+		}
 		public override void FindFrame(int frameHeight)
 		{
 			npc.spriteDirection = npc.direction;
