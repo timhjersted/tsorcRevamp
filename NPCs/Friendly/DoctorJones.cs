@@ -7,21 +7,21 @@ using Terraria.Localization;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
-	[AutoloadHead]
+
 	class DoctorJones : ModNPC
 	{
 		public override bool Autoload(ref string name) => true;
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("DoctorJones");
+			DisplayName.SetDefault("Doctor Jones");
 			Main.npcFrameCount[npc.type] = 26;
-			NPCID.Sets.ExtraFramesCount[npc.type] = 10;
-			NPCID.Sets.AttackFrameCount[npc.type] = 5;
-			NPCID.Sets.DangerDetectRange[npc.type] = 140;
-			NPCID.Sets.AttackType[npc.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
-			NPCID.Sets.AttackTime[npc.type] = 25;
-			NPCID.Sets.AttackAverageChance[npc.type] = 10;
-			NPCID.Sets.HatOffsetY[npc.type] = 4;
+			//NPCID.Sets.ExtraFramesCount[npc.type] = 10;
+			//NPCID.Sets.AttackFrameCount[npc.type] = 5;
+			//NPCID.Sets.DangerDetectRange[npc.type] = 140;
+			//NPCID.Sets.AttackType[npc.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
+			//NPCID.Sets.AttackTime[npc.type] = 25;
+			//NPCID.Sets.AttackAverageChance[npc.type] = 10;
+			//NPCID.Sets.HatOffsetY[npc.type] = 4;
 		}
 
 		/*public static List<string> Names = new List<string> {
@@ -40,7 +40,8 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.friendly = true;
 			npc.width = 18;
 			npc.height = 40;
-			npc.aiStyle = mod.NPCType("Archeologist");
+			//npc.aiStyle = ModContent.NPCType<NPCs.Friendly.Archeologist>();
+			npc.aiStyle = 7;
 			npc.damage = 50;
 			npc.defense = 15;
 			npc.lifeMax = 1000;
@@ -48,6 +49,17 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0.3f;
 			animationType = NPCID.Guide;
+		}
+		public override float SpawnChance(NPCSpawnInfo spawnInfo)
+		{
+			float chance = 0;
+
+			if (spawnInfo.player.ZoneJungle && !NPC.AnyNPCs(mod.NPCType("DoctorJones")) && Main.rand.Next(10) == 0)
+			{
+				Main.NewText("The spirit of adventure is nearby...", 255, 255, 0);
+				return 1f;
+			}
+			return chance;
 		}
 
 		public override string GetChat()
@@ -124,16 +136,13 @@ namespace tsorcRevamp.NPCs.Friendly
 			}
 		}
 
-		int weaponChoice;
-		public override void AI()
+		/*public override bool PreAI()
 		{
-
-			if (Main.rand.Next(40) == 0)
-			{
-				weaponChoice = Main.rand.Next(0, 10);
-			}
+			ModContent.NPCType<NPCs.Friendly.Archeologist>();
+			return true;
 		}
-		public override void TownNPCAttackStrength(ref int damage, ref float knockback)
+		*/
+		/*public override void TownNPCAttackStrength(ref int damage, ref float knockback)
 		{
 			if (Main.hardMode)
 			{
@@ -170,39 +179,6 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			multiplier = 1.5f;
 			randomOffset = 0f;
-		}
-
-		public override float SpawnChance(NPCSpawnInfo spawnInfo)
-		{
-			float chance = 0;
-
-			if (spawnInfo.player.ZoneJungle && NPC.CountNPCS(mod.NPCType("JungleSentree")) < 1 && Main.rand.Next(10) == 0)
-			{
-				Main.NewText("The spirit of adventure is nearby...", 255, 255, 0);
-				return 1f; // It's high because the chance of the conditions being right is pretty low
-			}
-			return chance;
-		}
-
-		/*public override bool CanTownNPCSpawn(int numTownNPCs, int money)
-		{
-			foreach (Player p in Main.player)
-			{
-				if (!p.active)
-				{
-					continue;
-				}
-				if (p.HasItem(ModContent.ItemType<Items.MysteriousIdol>()))
-				{
-					return true;
-				}
-			}
-			return false;
-		}*/
-
-		/*public override bool CanGoToStatue(bool toKingStatue)
-		{
-			return true;
 		}*/
 	}
 }
