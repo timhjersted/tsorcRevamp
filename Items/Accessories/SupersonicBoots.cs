@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +
                                 "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
-                                "\nCan be upgraded eventually with 1 Cloud in a Balloon, 1 Angel Wings & 10000 Dark Souls.");
+                                "\nCan be upgraded eventually with 1 Cloud in a Balloon, 1 Angel Wings & 20000 Dark Souls.");
         }
 
         public override void SetDefaults() {

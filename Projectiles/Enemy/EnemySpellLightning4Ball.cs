@@ -25,6 +25,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].noGravity = true;
+
+            /** This makes it controllable by the player if they're using a 'channeled' magic weapon... but this is an enemy projectile!
             if (Main.myPlayer == projectile.owner && projectile.ai[0] == 0f) {
                 if (Main.player[projectile.owner].channel) {
                     float num48 = 12f;
@@ -60,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     }
                 }
             }
-
+            **/
 
             if (projectile.velocity.X != 0f || projectile.velocity.Y != 0f) {
                 projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) - 2.355f;
