@@ -62,8 +62,6 @@ namespace tsorcRevamp.NPCs.Friendly {
 			chat.Add("Of course, we are not the only ones engaged in this.");
 			chat.Add("Would you like to buy some of my wares?");
 			chat.Add("The way I see it, our fates appear to be intertwined. In a land brimming with Hollows, could that really be mere chance? So, what do you say? Why not help one another on this lonely journey?");
-			chat.Add("Amazons and orcs are a real threat.");
-			chat.Add("I'm far from home, but this isn't so bad.");
 			if (tsorcRevampWorld.TheEnd) {
 				chat.Add("You have done well, indeed you have. You've a strong arm, strong faith, and most importantly, a strong heart.", 1.5);
             }
@@ -140,7 +138,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback) {
-			damage = 20;
+			damage = 30;
 			knockback = 4f;
 		}
 
