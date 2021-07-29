@@ -50,11 +50,17 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.knockBackResist = 0.3f;
 			animationType = NPCID.Guide;
 		}
-		public override float SpawnChance(NPCSpawnInfo spawnInfo)
+
+        public override bool PreAI() {
+			npc.Transform(ModContent.NPCType<Archaeologist>());
+			return true;
+        }
+
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			float chance = 0;
 
-			if (spawnInfo.player.ZoneJungle && !NPC.AnyNPCs(mod.NPCType("DoctorJones")) && Main.rand.Next(10) == 0)
+			if (spawnInfo.player.ZoneJungle && !NPC.AnyNPCs(mod.NPCType("DoctorJones")) && !NPC.AnyNPCs(mod.NPCType("Archaeologist")) && Main.rand.Next(10) == 0)
 			{
 				Main.NewText("The spirit of adventure is nearby...", 255, 255, 0);
 				return 1f;
@@ -135,50 +141,5 @@ namespace tsorcRevamp.NPCs.Friendly
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Archeologist Leg Gore"));
 			}
 		}
-
-		/*public override bool PreAI()
-		{
-			ModContent.NPCType<NPCs.Friendly.Archeologist>();
-			return true;
-		}
-		
-		public override void TownNPCAttackStrength(ref int damage, ref float knockback)
-		{
-			if (Main.hardMode)
-			{
-				damage = 32;
-				knockback = 6f;
-			}
-			else
-			{
-				damage = 16;
-				knockback = 5f;
-			}
-		}
-
-		public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown)
-		{
-			cooldown = 10;
-			randExtraCooldown = 20;
-		}
-		public override void DrawTownAttackGun(ref float scale, ref int item, ref int closeness)
-		{
-			item = ItemID.RopeCoil;
-			scale = .7f;
-			closeness = 26;
-		}
-
-		public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
-		{
-			projType = mod.ProjectileType("ArcheologistWhip");
-
-			attackDelay = 1;
-		}
-
-		public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset)
-		{
-			multiplier = 1.5f;
-			randomOffset = 0f;
-		}*/
 	}
 }

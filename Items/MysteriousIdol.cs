@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items {
     class MysteriousIdol : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("May attract the archeologist to stay in your town if held in your inventory.");
+            Tooltip.SetDefault("May attract the archaeologist to stay in your town if held in your inventory.");
         }
 
         public override void SetDefaults() {

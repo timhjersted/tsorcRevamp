@@ -9,12 +9,12 @@ using System.Collections.Generic;
 namespace tsorcRevamp.NPCs.Friendly
 {
 	[AutoloadHead]
-	class Archeologist : ModNPC
+	class Archaeologist : ModNPC
 	{
 		public override bool Autoload(ref string name) => true;
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Archeologist");
+			DisplayName.SetDefault("Archaeologist");
 			Main.npcFrameCount[npc.type] = 26;
 			NPCID.Sets.ExtraFramesCount[npc.type] = 10;
 			NPCID.Sets.AttackFrameCount[npc.type] = 5;
@@ -125,14 +125,6 @@ namespace tsorcRevamp.NPCs.Friendly
 			}
 		}
 
-		int weaponChoice;
-		public override void AI()
-		{
-			if (Main.rand.Next(40) == 0)
-			{ 
-				weaponChoice = Main.rand.Next(0, 10);
-			}
-		}
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback)
 		{
 			if (Main.hardMode)
