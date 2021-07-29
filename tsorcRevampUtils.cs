@@ -94,4 +94,8 @@ namespace tsorcRevamp {
             return (playerYTile >= (Main.maxTilesY * 0.8f));
         }
     }
+
+    public static class VariousConstants {
+        public const int CUSTOM_MAP_WORLD_ID = 44874972;
+    }
 }

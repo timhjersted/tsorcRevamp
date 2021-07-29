@@ -7,7 +7,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp;
+using static tsorcRevamp.VariousConstants;
 using tsorcRevamp.Items;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Buffs;
@@ -1366,8 +1366,10 @@ namespace tsorcRevamp {
         }
 
         public override void OnEnterWorld(Player player) {
-            if (Main.worldName.Contains("Red Cloud")) {
-                Main.NewText("If you are using the custom map, please enable Adventure Mode in Mod Configuration for the intended experience!", Color.GreenYellow);
+            if (Main.worldID == CUSTOM_MAP_WORLD_ID) {
+                Main.NewText("Custom map detected. Adventure Mode enabled.", Color.GreenYellow);
+                ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
+                tsorcRevampWorld.CampfireToBonfire();
             }
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe) { //sandbox mode only, and only once
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());

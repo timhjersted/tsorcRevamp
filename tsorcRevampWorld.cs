@@ -90,13 +90,16 @@ namespace tsorcRevamp {
             return Main.keyState.IsKeyDown(key) && !Main.oldKeyState.IsKeyDown(key);
         }
 
-        private void TestMethod() {
+        public static void CampfireToBonfire() {
             for (int x = 0; x < Main.maxTilesX - 2; x++) {
                 for (int y = 0; y < Main.maxTilesY - 2; y++) {
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
                         WorldGen.KillTile(x, y, false, false, true);
                         Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
                         WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+                        foreach (Item item in Main.item) {
+                            item.active = false; //delete ground items (in this case campfires)
+                        }
                     }
                 } 
             }
@@ -104,7 +107,7 @@ namespace tsorcRevamp {
 
         public override void PostUpdate() {
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
-                TestMethod();
+                CampfireToBonfire();
             bool charm = false;
             foreach (Player p in Main.player) {
                 for (int i = 3; i <= 8; i++) {
