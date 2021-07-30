@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Friendly
 	[AutoloadHead]
 	class Archaeologist : ModNPC
 	{
-		public override bool Autoload(ref string name) => true;
+		public override bool Autoload(ref string name) => false;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Archaeologist");

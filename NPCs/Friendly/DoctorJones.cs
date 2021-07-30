@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 	class DoctorJones : ModNPC
 	{
-		public override bool Autoload(ref string name) => true;
+		public override bool Autoload(ref string name) => false;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Doctor Jones");
