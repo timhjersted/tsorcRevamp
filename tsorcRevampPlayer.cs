@@ -598,7 +598,7 @@ namespace tsorcRevamp {
                             Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
                             for (int i = -9; i < 10; i++) { //19 projectiles
                                 Vector2 shotDirection = new Vector2(0f, -16f);
-                                int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * 2.75f), 12, player.whoAmI);
+                                int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, player.whoAmI);
                                 Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))); // (180 / (projectilecount - 1))
                             }
                         }
