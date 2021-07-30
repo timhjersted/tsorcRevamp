@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneRockLayerHeight)
             {
-                chance = .25f;
+                chance = .04f;
             }
 
             return chance;
