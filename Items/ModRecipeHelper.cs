@@ -57,7 +57,6 @@ namespace tsorcRevamp.Items {
                 PermaPotionRecipeB(mod, ItemID.InfernoPotion, ModContent.ItemType<PermanentInfernoPotion>());
                 #endregion
                 #region add c tier recipes
-                PermaPotionRecipeC(mod, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
                 PermaPotionRecipeC(mod, ItemID.BuilderPotion, ModContent.ItemType<PermanentBuilderPotion>());
                 PermaPotionRecipeC(mod, ItemID.ShinePotion, ModContent.ItemType<PermanentShinePotion>());
                 PermaPotionRecipeC(mod, ItemID.TrapsightPotion, ModContent.ItemType<PermanentDangersensePotion>());

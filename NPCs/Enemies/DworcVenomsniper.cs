@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
 			if (Main.rand.Next(8) == 0) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
 			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.FlaskofFire);
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
 			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
 			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
 			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.IronskinPotion);

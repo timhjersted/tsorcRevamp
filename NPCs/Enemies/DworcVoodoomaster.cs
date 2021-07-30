@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.TibalMask>()); TO-DO
 			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
 			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.FlaskofFire);
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.FlaskofFire);
 			if (Main.rand.Next(12) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
 			if (Main.rand.Next(25) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
 			if (Main.rand.Next(12) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());

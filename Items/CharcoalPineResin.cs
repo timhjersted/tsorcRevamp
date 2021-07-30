@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items
         {
             DisplayName.SetDefault("Charcoal Pine Resin");
             Tooltip.SetDefault("Black charcoal-like pine resin\n" +
-                               "Consume to imbue melee weapons with fire for 60 seconds\n" +
+                               "Consume to imbue melee weapons with fire for 4 minutes\n" +
                                "Particularly effective against woody enemies\n" +
                                "+10% melee damage");
         }
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items
 
         public override bool UseItem(Player player)
         {
-            player.AddBuff(BuffID.WeaponImbueFire, 3600, false);
+            player.AddBuff(BuffID.WeaponImbueFire, 14400, false);
 
             return true;
         }
