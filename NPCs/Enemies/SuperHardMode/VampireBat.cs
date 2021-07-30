@@ -7,9 +7,16 @@ using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
     class VampireBat : ModNPC {
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Vampire Bat");
+            Main.npcFrameCount[npc.type] = 8;
+        }
+
         public override void SetDefaults() {
-            npc.width = 22;
-            npc.height = 18;
+            npc.width = 48;
+            npc.height = 36;
             npc.aiStyle = 14;
             aiType = NPCID.CaveBat;
             npc.timeLeft = 750;
@@ -21,8 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.scale = 1;
             npc.knockBackResist = 0.5f;
             npc.value = 650;
-            animationType = NPCID.CaveBat;
-            Main.npcFrameCount[npc.type] = 5;
+            //animationType = NPCID.CaveBat;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
@@ -40,6 +46,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
 
         public override void AI() {
             base.AI();
+            
+        }
+
+        public int frame = 0;
+
+        public override void FindFrame(int frameHeight)
+        {
+            npc.spriteDirection = npc.direction;
+
+            if (++npc.frameCounter >= 4)
+            {
+                ++frame;
+                npc.frame.Y = frame * frameHeight;
+                npc.frameCounter = 0;
+
+                if (frame >= 7)
+                {
+                    frame = 0;
+                }
+            }
         }
 
         public override void NPCLoot() {

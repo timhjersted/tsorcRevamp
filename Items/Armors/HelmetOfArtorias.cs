@@ -53,17 +53,18 @@ namespace tsorcRevamp.Items.Armors
             player.nightVision = true;
             player.noFallDmg = true;
 
-            int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 32, player.velocity.X - 3f, player.velocity.Y, 150, Color.Yellow, 1f);
+            int dust = Dust.NewDust(new Vector2((float)player.position.X - 5, (float)player.position.Y), player.width + 10, player.height, 77, player.velocity.X, -2, 180, default, 1.25f);
             Main.dust[dust].noGravity = true;
 
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
-            Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
+            Lighting.AddLight(i2, j2, 0.7f, 0.6f, 0.8f);
         }
         
         public override void ArmorSetShadows (Player player)
         {
             player.armorEffectDrawShadow = true;
+            player.armorEffectDrawOutlinesForbidden = true;
         }
 
         public override void AddRecipes()
