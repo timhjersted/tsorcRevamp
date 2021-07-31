@@ -9,8 +9,10 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("Heals 20 HP, with only 5 seconds of potion sickness." +
                                 "\nRemoves bleeding and poisoned." +
                                 "\nA supply of these may be essential for exploring some areas." +
-                                "\nIf you find yourself losing life quickly, check your buffs to see if you've been poisoned." +
-                                "\nThis plant will save your life."); 
+                                //"\nIf you find yourself losing life quickly, check your buffs to see if you've been poisoned." + //Not really necessary to point this out
+                                "\nThis plant will save your life." +
+                                "\nCan still be used to remove poison and bleeding while under the" +
+                                "\neffect of potion sickness. However, it will not heal any HP.");
         }
         public override void SetDefaults() {
             item.width = 16;
@@ -24,14 +26,6 @@ namespace tsorcRevamp.Items {
             item.value = 2000;
             item.rare = ItemRarityID.Orange;
         }
-        public override bool CanUseItem(Player player)
-        {
-            if (player.HasBuff(BuffID.PotionSickness))
-            {
-                return false;
-            }
-            return true;
-        }
 
         public override bool UseItem(Player player) {
             int buffIndex = 0;
@@ -39,18 +33,21 @@ namespace tsorcRevamp.Items {
             foreach (int buffType in player.buffType) {
                 
                 if ((buffType == BuffID.Bleeding) || (buffType == BuffID.Poisoned)) {
-                    player.DelBuff(buffIndex);
+                    player.buffTime[buffIndex] = 0;
                 }
                 buffIndex++;
             }
 
-            player.statLife += 20;
-            if (player.statLife > player.statLifeMax2)
+            if (!player.HasBuff(BuffID.PotionSickness))
             {
-                player.statLife = player.statLifeMax2;
+                player.statLife += 20;
+                if (player.statLife > player.statLifeMax2)
+                {
+                    player.statLife = player.statLifeMax2;
+                }
+                player.HealEffect(20, true);
+                player.AddBuff(BuffID.PotionSickness, 300);
             }
-            player.HealEffect(20, true);
-            player.AddBuff(BuffID.PotionSickness, 300);
             return true;
         }
     }
