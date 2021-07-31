@@ -111,7 +111,7 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             tooltips.Add(new TooltipLine(mod, "",
-                "Plus immunity to On Fire, 40 defense, and 6% melee damage" +
+                "Plus immunity to On Fire, 60 defense, and 6% melee damage" +
                 "\nReduces Ranged and Magic Damage by 150%. +70% mana cost" +
                 "\n-15% move speed"));
         }
