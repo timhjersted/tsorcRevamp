@@ -181,7 +181,6 @@ namespace tsorcRevamp.Banners {
     }
     public class CloudBatBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Cloud Bat");
         }
@@ -193,7 +192,6 @@ namespace tsorcRevamp.Banners {
 
     public class ArmoredWraithBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Armored Wraith");
         }
@@ -205,7 +203,6 @@ namespace tsorcRevamp.Banners {
 
     public class CorruptJellyfishBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Corrupt Jellyfish");
         }
@@ -217,7 +214,6 @@ namespace tsorcRevamp.Banners {
 
     public class StoneGolemBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Stone Golem");
         }
@@ -227,142 +223,110 @@ namespace tsorcRevamp.Banners {
         }
     }
 
-    public class AbandonedStumpBanner : EnemyBanner
-    {
+    public class AbandonedStumpBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Abandoned Stump");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 19; //change when texture added
+            item.placeStyle = 5;
         }
     }
-    public class ResentfulSeedlingBanner : EnemyBanner
-    {
+    public class ResentfulSeedlingBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Resentful Seedling");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 19; //change when texture added
+            item.placeStyle = 6;
         }
     }
-    public class LivingShroomBanner : EnemyBanner
-    {
+    public class LivingShroomBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
+            DisplayName.SetDefault("Fleeing Fungi Banner");
             Tooltip.SetDefault("Nearby players get a bonus against: Fleeing Fungi");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 19; //change when texture added
+            item.placeStyle = 7; //change when texture added
         }
     }
-    public class LivingShroomThiefBanner : EnemyBanner
-    {
+    public class LivingShroomThiefBanner : EnemyBanner {
 
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
+            DisplayName.SetDefault("Fungi Felon Banner");
             Tooltip.SetDefault("Nearby players get a bonus against: Fungi Felon");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 19; //change when texture added
+            item.placeStyle = 8;
         }
     }
-    public class LivingShroomPoisonBanner : EnemyBanner
-    {
+    public class LivingShroomPoisonBanner : EnemyBanner {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Poisonous Living Shroom");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
             item.placeStyle = 19; //change when texture added
         }
     }
-    public class LivingGlowshroomBanner : EnemyBanner
-    {
+    public class LivingGlowshroomBanner : EnemyBanner {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Living Glowshroom");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
             item.placeStyle = 19; //change when texture added
         }
     }
-    public class UndeadCasterBanner : EnemyBanner
-    {
+    public class UndeadCasterBanner : EnemyBanner {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Undead Caster");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
             item.placeStyle = 19; //change when texture added
         }
     }
-    public class ChickenBanner : EnemyBanner
-    {
+    public class ChickenBanner : EnemyBanner {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Chicken"); //you're gonna need it
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
             item.placeStyle = 19; //change when texture added
         }
     }
-    public class AttraidiesIllusionBanner : EnemyBanner
-    {
+    public class AttraidiesIllusionBanner : EnemyBanner {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Attraidies Illusion");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
             item.placeStyle = 19; //change when texture added
         }
     }
-    public class CosmicCrystalLizardBanner : EnemyBanner
-    {
+    public class CosmicCrystalLizardBanner : EnemyBanner {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
+        public override void SetStaticDefaults() {
             Tooltip.SetDefault("Nearby players get a bonus against: Cosmic Crystal Lizard");
         }
-        public override void SetDefaults()
-        {
+        public override void SetDefaults() {
             base.SetDefaults();
             item.placeStyle = 19; //change when texture added
         }
