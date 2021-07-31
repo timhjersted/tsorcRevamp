@@ -247,7 +247,8 @@ namespace tsorcRevamp {
                 393, //grubby cage
                 394, //sluggy cage
                 413, //red squirrel cage
-                414 //gold squirrel cage
+                414, //gold squirrel cage
+                463 //defenders forge
 
             };
 
