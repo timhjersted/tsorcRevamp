@@ -57,6 +57,7 @@ namespace tsorcRevamp.Items.Potions
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(ItemID.Mushroom, 1);
             recipe.AddIngredient(mod.GetItem("DeadChicken"), 1);
+            recipe.AddIngredient(ItemID.PixieDust, 1);
             recipe.AddTile(TileID.Campfire);
             recipe.SetResult(this);
             recipe.AddRecipe();

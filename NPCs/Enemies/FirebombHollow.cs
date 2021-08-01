@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void NPCLoot()
         {
             Item.NewItem(npc.getRect(), mod.ItemType("Firebomb"), Main.rand.Next(2, 4));
-            if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
         }
 
