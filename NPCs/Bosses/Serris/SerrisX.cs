@@ -83,6 +83,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
 			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
 			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1); if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 20000);
+			}
 		}
 
 		public override void FindFrame(int currentFrame)

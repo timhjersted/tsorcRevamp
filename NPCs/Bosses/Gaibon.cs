@@ -306,6 +306,10 @@ namespace tsorcRevamp.NPCs.Bosses
 			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 4"), 0.9f);
 			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
 			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+			if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2500);
+			}
 			Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 500);
 		}
 		#endregion

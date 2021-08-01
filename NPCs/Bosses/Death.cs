@@ -218,6 +218,10 @@ namespace tsorcRevamp.NPCs.Bosses
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1); if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
+            }
 
         }
     }

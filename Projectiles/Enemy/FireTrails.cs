@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.penetrate = 1;
             projectile.hostile = true;
             projectile.alpha -= 50;
+            projectile.netUpdate = true;
         }
 
         private const int AI_Split_Counter_Slot = 0;

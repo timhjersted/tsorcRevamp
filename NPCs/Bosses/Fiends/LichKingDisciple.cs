@@ -281,8 +281,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
                 Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
             }
+            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+            }
 
-            
+
         }
     }
 }

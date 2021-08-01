@@ -335,6 +335,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
 
+            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type)){
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 70000);
+            }
 
 
             if (!tsorcRevampWorld.SuperHardMode) {

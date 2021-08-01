@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.MaxUpdates = 2;
             projectile.penetrate = 3;
             projectile.hostile = true;
+            projectile.netUpdate = true;
         }
 
         public override void AI() {
@@ -29,12 +30,20 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
             if (projectile.alpha >= 255) {
                 projectile.Kill();
+                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
                 return;
             }
 
 
         }
 
-
+        public override void Kill(int timeLeft)
+        {
+            projectile.active = false;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
 
         public static ModHotKey toggleDragoonBoots;
+        public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         public static List<int> KillAllowed;
         public static List<int> PlaceAllowed;

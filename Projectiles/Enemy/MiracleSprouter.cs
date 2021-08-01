@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.tileCollide = true;
             projectile.ignoreWater = false;
             projectile.hostile = true;
+            projectile.netUpdate = true;
         }
 
         public override void AI() {
@@ -25,6 +26,10 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override void Kill(int timeLeft) {
             Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, -3f, ModContent.ProjectileType<MiracleVines>(), 40, 0f, Main.myPlayer);
             projectile.active = false;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
+            }
         }
     }
 }

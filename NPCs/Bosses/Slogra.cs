@@ -859,6 +859,10 @@ namespace tsorcRevamp.NPCs.Bosses
             if(Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
             if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
             Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
+            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4500);
+            }
 
         }
     }

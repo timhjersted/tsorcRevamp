@@ -15,6 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.hostile = true;
             projectile.MaxUpdates = 2;
             projectile.timeLeft = 75; //this projectile actually uses its timeLeft value. the final set of vines lasts longer, so we need to do the kill check differently
+            projectile.netUpdate = true;
         }
 
         private const int AI_Split_Counter_Slot = 0;
@@ -50,9 +51,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 float rotation = MathHelper.ToRadians(AI_Split_Angle);
                 for (int i = 0; i < AI_Projectile_Split_Rate; i++) {
                     Vector2 shiftSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (AI_Projectile_Split_Rate - 1))); //evenly divide the projectiles among the spread angle
-                    Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<MiracleVines>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
-                }
+                    if (Main.netMode == NetmodeID.SinglePlayer)
+                    {
+                        Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<MiracleVines>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                    }
+                 }
                 projectile.Kill(); //only kill the projectile if we split. timeLeft will kill the final set automatically
+                projectile.active = false;
+                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
             }
 
             if (AI_Timer % 4 == 0) { //spawn a trail vine every 3 frames
@@ -62,6 +68,16 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
             }
         }
+
+        public override void Kill(int timeLeft)
+        {
+            projectile.active = false;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
+            }
+        }
+
         public Vector2 RotateAboutOrigin(Vector2 point, float rotation) {
             if (rotation < 0)
                 rotation += (float)(Math.PI * 4);

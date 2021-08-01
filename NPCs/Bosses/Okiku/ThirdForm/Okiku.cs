@@ -278,6 +278,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
         }
 
         public override void NPCLoot() {
+            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
+            }
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
         }
 
