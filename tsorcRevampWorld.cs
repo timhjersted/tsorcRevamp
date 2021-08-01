@@ -34,6 +34,15 @@ namespace tsorcRevamp {
             SuperHardMode = false;
             TheEnd = false;
             Slain = new Dictionary<int, int>();
+            
+            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
+            {
+                Main.NewText("Custom map detected. Adventure Mode enabled.", Color.GreenYellow);
+                ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
+                if (!(Main.netMode == NetmodeID.MultiplayerClient)){
+                    tsorcRevampWorld.CampfireToBonfire();
+                }
+            }
         }
 
 		public override TagCompound Save() {

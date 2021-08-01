@@ -1366,11 +1366,6 @@ namespace tsorcRevamp {
         }
 
         public override void OnEnterWorld(Player player) {
-            if (Main.worldID == CUSTOM_MAP_WORLD_ID) {
-                Main.NewText("Custom map detected. Adventure Mode enabled.", Color.GreenYellow);
-                ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
-                tsorcRevampWorld.CampfireToBonfire();
-            }
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe) { //sandbox mode only, and only once
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
