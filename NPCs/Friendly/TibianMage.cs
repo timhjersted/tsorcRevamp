@@ -62,6 +62,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			chat.Add("Many call themselves a sorcerer, but only a few truly understand what that means.");
 			chat.Add("Sorcerers are destructive. Their power lies in destruction and pain.");
 			chat.Add("Welcome to our humble guild, wanderer. May I be of any assistance to you?");
+			chat.Add("Attraidies visited this town once. The bottle he drank from is still enchanted with some of his power.", 0.1);
 			return chat;
 		}
 
