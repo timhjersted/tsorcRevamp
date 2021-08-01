@@ -95,35 +95,31 @@ namespace tsorcRevamp.Items.BossBags {
         }
 
         public override bool PreOpenVanillaBag(string context, Player player, int arg) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                if (context == "bossBag" && arg == ItemID.KingSlimeBossBag) {
-                    return false; //for stopping slime hook and saddle, re-add vanilla drops in openvanillabag
-                } 
-            }
+            
+            if (context == "bossBag" && arg == ItemID.KingSlimeBossBag) { //re-implement king slime bag to stop blacklisted items from dropping in adventure mode
+                player.QuickSpawnItem(ItemID.RoyalGel);
+                player.QuickSpawnItem(ItemID.Solidifier);
+                player.QuickSpawnItem(ItemID.GoldCoin, 11);
+                player.QuickSpawnItem(ItemID.Katana);
+                if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(ItemID.NinjaHood); }
+                if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(ItemID.NinjaShirt); }
+                if (Main.rand.Next(99) < 66) { player.QuickSpawnItem(ItemID.NinjaPants); }
+                if (Main.rand.Next(7) == 0) { player.QuickSpawnItem(ItemID.KingSlimeMask); }
+                if (Main.rand.Next(10) == 0) { player.QuickSpawnItem(ItemID.KingSlimeTrophy); }
+                if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimeGun); }
+                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) { //no hooks or saddles in adventure mode
+                    if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimeHook); }
+                    if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimySaddle); }
+                }
+                SoulsOnFirstBag(NPCID.KingSlime, player);
+                return false;
+            } 
+        
             return base.PreOpenVanillaBag(context, player, arg);
         }
         public override void OpenVanillaBag(string context, Player player, int arg) {
             var Slain = tsorcRevampWorld.Slain;
             if (context == "bossBag") {
-                if (arg == ItemID.KingSlimeBossBag) {
-                    player.QuickSpawnItem(ItemID.GoldCoin, 11); //was 10
-                    player.QuickSpawnItem(ItemID.Katana);
-                    SoulsOnFirstBag(NPCID.KingSlime, player);
-
-                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                        //vanilla drops 
-                        player.QuickSpawnItem(ItemID.RoyalGel);
-                        player.QuickSpawnItem(ItemID.Solidifier);
-                        if (Main.rand.Next(7) == 0) { player.QuickSpawnItem(ItemID.KingSlimeMask); }
-                        if (Main.rand.Next(3) == 0) { player.QuickSpawnItem(ItemID.NinjaHood); }
-                        if (Main.rand.Next(3) == 0) { player.QuickSpawnItem(ItemID.NinjaShirt); }
-                        if (Main.rand.Next(3) == 0) { player.QuickSpawnItem(ItemID.NinjaPants); }
-                        if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimeGun); }
-                        //removed: slime hook, slimy saddle
-                        //player.QuickSpawnItem(ItemID.GoldCoin); added above 
-                    }
-                }
-
                 if (arg == ItemID.EyeOfCthulhuBossBag) {
                     player.QuickSpawnItem(ItemID.HermesBoots);
                     player.QuickSpawnItem(ItemID.HerosHat);
