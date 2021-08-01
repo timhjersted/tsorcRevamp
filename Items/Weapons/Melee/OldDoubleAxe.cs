@@ -20,11 +20,11 @@ namespace tsorcRevamp.Items.Weapons.Melee
             item.knockBack = 5;
             item.melee = true;
             item.autoReuse = true;
-            item.useAnimation = 21; // Slowed, why was this so fast??
+            item.useAnimation = 26; // Slowed, why was this so fast??
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
+            item.useTime = 26;
             item.value = 18000;
         }
 

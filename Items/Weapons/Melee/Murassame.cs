@@ -10,8 +10,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void SetDefaults() {
             item.width = 48;
             item.height = 48;
-            item.useAnimation = 11;
-            item.useTime = 11;
+            item.useAnimation = 14;
+            item.useTime = 14;
             item.damage = 50;
             item.knockBack = 9;
             item.autoReuse = true;

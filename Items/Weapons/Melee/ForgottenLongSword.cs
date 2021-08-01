@@ -10,6 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.rare = ItemRarityID.Blue;
             item.damage = 25;
             item.height = 34;
+            item.useStyle = ItemUseStyleID.SwingThrow;
             item.knockBack = 4;
             item.melee = true;
             item.useAnimation = 21;

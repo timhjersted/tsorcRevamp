@@ -5,18 +5,18 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldTwoHandedSword : ModItem {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldTwoHandedSword";
         public override void SetDefaults() {
-            item.damage = 18;
+            item.damage = 22; //it's post EoC
             item.width = 50;
             item.height = 50;
             item.knockBack = 5;
             item.maxStack = 1;
             item.melee = true;
             item.scale = 1f;
-            item.useAnimation = 28;
+            item.useAnimation = 30;
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
+            item.useTime = 30;
             item.value = 15000;
         }
         public override void AddRecipes() {

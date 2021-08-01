@@ -5,7 +5,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldDoubleAxe : ModItem {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldDoubleAxe";
         public override void SetDefaults() {
-            item.damage = 18;
+            item.damage = 16;
             item.width = 36;
             item.height = 36;
             item.knockBack = 5;
@@ -13,11 +13,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.melee = true;
             item.scale = 1.1f;
             item.autoReuse = true;
-            item.useAnimation = 19;
+            item.useAnimation = 26;
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
+            item.useTime = 26;
             item.value = 18000;
         }
         public override void AddRecipes() {

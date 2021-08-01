@@ -115,13 +115,13 @@ namespace tsorcRevamp.NPCs.Friendly {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldTwoHandedSword>());
 				nextSlot++;
 			}
-			if (NPC.downedBoss1) {
+			if (NPC.downedBoss2) {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenLongSword>());
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenKaiserKnuckles>());
 				nextSlot++;
 			}
-			if (NPC.downedBoss1) {
+			if (NPC.downedBoss3) {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenKotetsu>());
 				nextSlot++;
 			}

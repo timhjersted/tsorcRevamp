@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.CobaltShield);
             recipe.AddIngredient(mod.GetItem("SpikedIronShield"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -17,11 +17,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.maxStack = 1;
             item.melee = true;
             item.scale = 1f;
-            item.useAnimation = 28;
+            item.useAnimation = 30;
             item.rare = ItemRarityID.White;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
+            item.useTime = 30;
             item.value = 15000;
         }
 

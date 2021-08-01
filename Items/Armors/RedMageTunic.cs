@@ -20,6 +20,12 @@ namespace tsorcRevamp.Items.Armors
             item.value = 27000;
             item.rare = ItemRarityID.Blue;
         }
+
+        public override void DrawHands(ref bool drawHands, ref bool drawArms)
+        {
+            drawHands = true;
+        }
+
         public override void UpdateEquip(Player player)
         {
             player.manaCost -= 0.15f;
