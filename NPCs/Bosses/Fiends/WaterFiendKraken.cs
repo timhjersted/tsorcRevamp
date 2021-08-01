@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
+			bossBag = ModContent.ItemType<Items.BossBags.KrakenBag>();
 		}
 
 		public override void SetStaticDefaults()
@@ -448,26 +449,29 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 		public override void NPCLoot()
 		{
-			if (npc.life <= 0)
-			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 4"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 5"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 6"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 7"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 8"), 1f);
-			}
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 1"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 2"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 3"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 4"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 5"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 6"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 7"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 8"), 1f);
 
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1); if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			if (Main.expertMode)
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+				npc.DropBossBags();
 			}
-
+			else
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
+				if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+				{
+					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+				}
+			}
 		}
 	}
 }

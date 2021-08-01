@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.value = 45000;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
+            bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
         }
 
         public override void SetStaticDefaults()
@@ -855,15 +856,20 @@ namespace tsorcRevamp.NPCs.Bosses
             Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
             Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
 
-
-            if(Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-            if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
-            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+            if (Main.expertMode)
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4500);
+                npc.DropBossBags();
             }
-
+            else
+            {
+                if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
+                if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4500);
+                }
+            }
         }
     }
 }

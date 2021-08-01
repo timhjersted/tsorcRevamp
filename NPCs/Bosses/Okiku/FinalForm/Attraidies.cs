@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
             Main.npcFrameCount[npc.type] = 3;
+            bossBag = ModContent.ItemType<Items.BossBags.AttraidiesBag>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
@@ -328,17 +329,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
         public override void NPCLoot() {
 
-
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.TheEnd>());
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
-
-            if (!tsorcRevampWorld.Slain.ContainsKey(npc.type)){
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 70000);
+            if (Main.expertMode)
+            {
+                npc.DropBossBags();
             }
-
+            else
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.TheEnd>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
+            }
 
             if (!tsorcRevampWorld.SuperHardMode) {
 

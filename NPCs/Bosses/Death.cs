@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
+            bossBag = ModContent.ItemType<Items.BossBags.DeathBag>();
         }
 
 
@@ -213,16 +214,21 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void NPCLoot()
         {
-            
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1); if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+            if (Main.expertMode)
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
+                npc.DropBossBags();
             }
-
+            else
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+                if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
+                }
+            }
         }
     }
 }

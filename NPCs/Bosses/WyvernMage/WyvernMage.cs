@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
+            bossBag = ModContent.ItemType<Items.BossBags.WyvernMageBag>();
         }
 
         public override void SetStaticDefaults()
@@ -308,25 +309,29 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public override void NPCLoot()
         {
             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            if (npc.life <= 0)
+            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 1"), 1f);
+            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
+            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
+            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
+            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
+
+            if (Main.expertMode)
             {
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 1"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
-                Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
+                npc.DropBossBags();
             }
+            else
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.GemBox>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
 
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.GemBox>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-
-            if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<WyvernMage>())))
-            { //If the boss has not yet been killed
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000); //Then drop the souls
+                if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<WyvernMage>())))
+                { //If the boss has not yet been killed
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000); //Then drop the souls
+                }
             }
         }
     }

@@ -31,6 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			npc.value = 200000;
 
 			npc.buffImmune[BuffID.Confused] = true;
+			bossBag = ModContent.ItemType<Items.BossBags.SerrisBag>();
 		}
 
 		public override void SetStaticDefaults()
@@ -78,15 +79,20 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 1"), 1f);
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 2"), 1f);
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 3"), 1f);
-
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1); if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			if (Main.expertMode)
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 20000);
+				npc.DropBossBags();
+			}
+			else
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+				if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+				{
+					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 20000);
+				}
 			}
 		}
 

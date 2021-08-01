@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.value = 300000;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
+			bossBag = ModContent.ItemType<Items.BossBags.MarilithBag>();
 		}
 
 		public override void SetStaticDefaults()
@@ -401,29 +402,33 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 		public override void NPCLoot()
 		{
-			if (npc.life <= 0)
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 1"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 2"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 3"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 4"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 5"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 6"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 7"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 8"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 9"), 1f);
+
+
+			if (Main.expertMode)
 			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 4"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 5"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 6"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 7"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 8"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Fire Fiend Marilith Gore 9"), 1f);
+				npc.DropBossBags();
 			}
-
-
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1); if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			else
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1);
+				if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+				{
+					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+				}
 			}
-
 		}
 	}
 }

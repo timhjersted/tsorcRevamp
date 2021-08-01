@@ -35,7 +35,8 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
-        }
+			bossBag = ModContent.ItemType<Items.BossBags.JungleWyvernBag>();
+		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
 			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
@@ -235,21 +236,27 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			return false;
 		}
 		public override void NPCLoot() {
-			Item.NewItem(npc.getRect(), ItemID.Sapphire, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.Ruby, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.Topaz, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
-			Item.NewItem(npc.getRect(), ItemID.NecroHelmet);
-			Item.NewItem(npc.getRect(), ItemID.NecroBreastplate);
-			Item.NewItem(npc.getRect(), ItemID.NecroGreaves);
 
-
-			if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
-			{ //If the boss has not yet been killed
-				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
+			if (Main.expertMode)
+			{
+				npc.DropBossBags();
+			}
+			else
+			{
+				Item.NewItem(npc.getRect(), ItemID.Sapphire, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.Ruby, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.Topaz, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
+				Item.NewItem(npc.getRect(), ItemID.NecroHelmet);
+				Item.NewItem(npc.getRect(), ItemID.NecroBreastplate);
+				Item.NewItem(npc.getRect(), ItemID.NecroGreaves);
+				if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
+				{ //If the boss has not yet been killed
+					Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
+				}
 			}
 		}
     }
