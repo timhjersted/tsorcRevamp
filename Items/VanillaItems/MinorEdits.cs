@@ -6,10 +6,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.VanillaItems {
     class MinorEdits : GlobalItem {
 
-        static readonly bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-        static readonly bool AdventureMode = ModContent.GetInstance<tsorcRevampConfig>().AdventureMode;
         public override void SetDefaults(Item item) {
-            if (item.type == ItemID.StaffofRegrowth && AdventureMode && !LegacyMode) {
+            if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 item.createTile = -1; //block placing grass, thus allowing use
             }
             if (item.type == ItemID.DivingHelmet) {
@@ -19,7 +17,7 @@ namespace tsorcRevamp.Items.VanillaItems {
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if (item.type == ItemID.DirtRod && AdventureMode)
+            if (item.type == ItemID.DirtRod && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return false;
             }

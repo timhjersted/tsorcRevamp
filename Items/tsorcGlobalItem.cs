@@ -1,25 +1,43 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
 namespace tsorcRevamp.Items {
-    public class tsorcGlobalItem : GlobalItem {
-
-        public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-            if (modPlayer.MiakodaCrescentBoost) {
-                int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 164, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 80, default(Color), 1.2f);
-                Main.dust[dust].noGravity = true;
+	public class tsorcGlobalItem : GlobalItem
+	{
+		public static List<int> potionList;
+		public static List<int> ammoList;
+		public override void SetDefaults(Item item)
+		{
+			populatePotions();
+			populateAmmo();
+			if (potionList.Contains(item.type))
+			{
+				item.maxStack = 60;
+			}
+			else if (ammoList.Contains(item.type))
+            {
+				item.maxStack = 2000;
             }
+			else base.SetDefaults(item);
+		}
 
-            if (modPlayer.MiakodaNewBoost) {
-                int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 57, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 120, default(Color), 1.2f);
-                Main.dust[dust].noGravity = true;
-            }
+		public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
+			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+			if (modPlayer.MiakodaCrescentBoost) {
+				int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 164, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 80, default(Color), 1.2f);
+				Main.dust[dust].noGravity = true;
+			}
+
+			if (modPlayer.MiakodaNewBoost) {
+				int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 57, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 120, default(Color), 1.2f);
+				Main.dust[dust].noGravity = true;
+			}
 
 			if (modPlayer.MagicWeapon) {
 				Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.45f);
@@ -46,7 +64,7 @@ namespace tsorcRevamp.Items {
 					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 68, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
 					Main.dust[dust].noGravity = true;
 				}
-                {
+				{
 					int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 172, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), 1.3f);
 					Main.dust[dust].noGravity = true;
 				}
@@ -71,20 +89,20 @@ namespace tsorcRevamp.Items {
 			}
 		}
 
-        public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit) {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+		public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit) {
+			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (modPlayer.MiakodaCrescentBoost) {
-                target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 240);
-            }
+			if (modPlayer.MiakodaCrescentBoost) {
+				target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 240);
+			}
 
-            if (modPlayer.MiakodaNewBoost) {
-                target.AddBuff(BuffID.Midas, 300);
-            }
+			if (modPlayer.MiakodaNewBoost) {
+				target.AddBuff(BuffID.Midas, 300);
+			}
 
 			if (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) {
 				Main.PlaySound(SoundID.NPCHit44.WithVolume(.3f), target.position);
-            }
+			}
 
 			if (modPlayer.CrystalMagicWeapon)
 			{
@@ -104,14 +122,14 @@ namespace tsorcRevamp.Items {
 				}
 				if (modPlayer.GreatMagicWeapon)
 				{
-					add += (player.magicDamage - player.magicDamageMult) * .75f /*- (player.meleeDamageMult * 0.1f)*/; 
+					add += (player.magicDamage - player.magicDamageMult) * .75f /*- (player.meleeDamageMult * 0.1f)*/;
 				}
 				if (modPlayer.CrystalMagicWeapon)
 				{
 					add += (player.magicDamage - player.magicDamageMult) * 1f /*- (player.meleeDamageMult * 0.15f)*/; //scales same as melee damage bonus would
 				}
 			}
-        }
+		}
 
 		#region PrefixChance (taken from Example Mod, leaving most original comments in)
 
@@ -173,7 +191,131 @@ namespace tsorcRevamp.Items {
 			return null;
 		}
 
-        #endregion
+		#endregion
 
-    }
+		private void populatePotions() {
+			potionList = new List<int>()
+			{
+				ItemID.LesserHealingPotion,
+				//ItemID.LesserManaPotion,
+				ItemID.LesserRestorationPotion,
+				ItemID.HealingPotion,
+				//ItemID.ManaPotion,
+				//ItemID.RestorationPotion,
+				ItemID.GreaterHealingPotion,
+				//ItemID.GreaterManaPotion,
+				ItemID.SuperHealingPotion,
+				//ItemID.SuperManaPotion,
+
+				ItemID.BowlofSoup,
+				ItemID.SwiftnessPotion,
+				ItemID.AmmoReservationPotion,
+				ItemID.ArcheryPotion,
+				ItemID.BattlePotion,
+				ItemID.BuilderPotion,
+				ItemID.CalmingPotion,
+				ItemID.CratePotion,
+				ItemID.TrapsightPotion,
+				ItemID.EndurancePotion,
+				ItemID.FeatherfallPotion,
+				ItemID.FishingPotion,
+				ItemID.FlipperPotion,
+				ItemID.GillsPotion,
+				ItemID.GravitationPotion,
+				ItemID.HeartreachPotion,
+				ItemID.HunterPotion,
+				ItemID.InfernoPotion,
+				ItemID.InvisibilityPotion,
+				ItemID.IronskinPotion,
+				ItemID.LifeforcePotion,
+				ItemID.MagicPowerPotion,
+				ItemID.ManaRegenerationPotion,
+				ItemID.MiningPotion,
+				ItemID.NightOwlPotion,
+				ItemID.ObsidianSkinPotion,
+				ItemID.RagePotion,
+				ItemID.RegenerationPotion,
+				ItemID.ShinePotion,
+				ItemID.SonarPotion,
+				ItemID.SpelunkerPotion,
+				ItemID.SummoningPotion,
+				ItemID.SwiftnessPotion,
+				ItemID.ThornsPotion,
+				ItemID.TitanPotion,
+				ItemID.WarmthPotion,
+				ItemID.WaterWalkingPotion,
+				ItemID.WrathPotion,
+
+				ItemID.FlaskofCursedFlames,
+				ItemID.FlaskofFire,
+				ItemID.FlaskofGold,
+				ItemID.FlaskofIchor,
+				ItemID.FlaskofNanites,
+				ItemID.FlaskofParty,
+				ItemID.FlaskofPoison,
+				ItemID.FlaskofVenom,
+
+				ItemID.GenderChangePotion,
+				ItemID.RecallPotion,
+				ItemID.TeleportationPotion,
+				ItemID.WormholePotion,
+				ItemID.RedPotion
+			};
+		}
+		private void populateAmmo()
+		{
+			ammoList = new List<int>()
+			{
+				ItemID.MusketBall,
+				ItemID.MeteorShot,
+				ItemID.SilverBullet,
+				ItemID.CrystalBullet,
+				ItemID.ChlorophyteBullet,
+				ItemID.HighVelocityBullet,
+				ItemID.IchorBullet,
+				ItemID.VenomBullet,
+				ItemID.PartyBullet,
+				ItemID.NanoBullet,
+				ItemID.ExplodingBullet,
+				ItemID.GoldenBullet,
+				ItemID.MoonlordBullet,
+
+				ItemID.WoodenArrow,
+				ItemID.FlamingArrow,
+				ItemID.UnholyArrow,
+				ItemID.JestersArrow,
+				ItemID.HellfireArrow,
+				ItemID.HolyArrow,
+				ItemID.CursedArrow,
+				ItemID.FrostburnArrow,
+				ItemID.ChlorophyteArrow,
+				ItemID.IchorArrow,
+				ItemID.VenomArrow,
+				ItemID.BoneArrow,
+				ItemID.MoonlordArrow,
+
+				ItemID.RocketI,
+				ItemID.RocketII,
+				ItemID.RocketIII,
+				ItemID.RocketIV,
+
+				ItemID.PoisonDart,
+				ItemID.CrystalDart,
+				ItemID.CursedDart,
+				ItemID.IchorDart,
+
+				ItemID.FallenStar,
+				ItemID.Gel,
+				ItemID.Seed,
+				ItemID.StyngerBolt,
+				ItemID.CandyCorn,
+				ItemID.ExplosiveJackOLantern,
+				ItemID.Stake,
+				ItemID.Flare,
+				ItemID.BlueFlare,
+				ItemID.Snowball,
+				ItemID.Nail
+			};
+		}
+	}
 }

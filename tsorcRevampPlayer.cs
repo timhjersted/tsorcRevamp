@@ -1235,6 +1235,45 @@ namespace tsorcRevamp {
             if (tsorcRevamp.toggleDragoonBoots.JustPressed) {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
+            if (PlayerInput.Triggers.JustReleased.MouseLeft)
+            {
+                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice1Tome>())
+                {
+
+                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice1Tome)
+                    {
+                        Items.Weapons.Magic.Ice1Tome iceTome = (Items.Weapons.Magic.Ice1Tome)player.HeldItem.modItem;
+                        iceTome.count = 0;
+                    }
+                }
+                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice2Tome>())
+                {
+
+                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice2Tome)
+                    {
+                        Items.Weapons.Magic.Ice2Tome iceTome = (Items.Weapons.Magic.Ice2Tome)player.HeldItem.modItem;
+                        iceTome.count = 0;
+                    }
+                }
+                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>())
+                {
+
+                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice3Tome)
+                    {
+                        Items.Weapons.Magic.Ice3Tome iceTome = (Items.Weapons.Magic.Ice3Tome)player.HeldItem.modItem;
+                       iceTome.count = 0;
+                    }
+                }
+                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice4Tome>())
+                {
+
+                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice4Tome)
+                    {
+                        Items.Weapons.Magic.Ice4Tome iceTome = (Items.Weapons.Magic.Ice4Tome)player.HeldItem.modItem;
+                        iceTome.count = 0;
+                    }
+                }
+            }
         }
 
         public override void PreUpdate()

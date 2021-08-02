@@ -31,24 +31,17 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shoot = ModContent.ProjectileType<Projectiles.Ice1Ball>();
         }
 
+        public int count = 0;
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            int count = 0;
-            for (int i = 0; i < Main.projectile.Length; i++)
+            if (count < 10)
             {
-                if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice1Ball)
-                {
-                    Projectiles.Ice1Ball iceBall = (Projectiles.Ice1Ball)Main.projectile[i].modProjectile;
-                    if (iceBall.isChanneled)
-                    {
-                        count++;
-                    }
-                }
+                count++;
+                return true;
             }
-            if (count < 10) return true;
             else return false;
         }
-        
+
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
