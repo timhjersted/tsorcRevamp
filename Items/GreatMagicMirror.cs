@@ -60,6 +60,11 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool CanUseItem(Player player) {
+
+            if (player.HasBuff(ModContent.BuffType<Buffs.TeleportSickness>())) {
+                return false;
+            }
+
             if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet) {
                 Main.NewText("You haven't set a location!", 255, 240, 20);
                 return false;
@@ -100,6 +105,15 @@ namespace tsorcRevamp.Items {
                         }
                     }
 
+                    if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                        //apply tp sickness if too far away
+                        Vector2 teleportDestination = new Vector2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16, player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16);
+                        float teleportDistance = (player.Center - teleportDestination).Length();
+                        if (teleportDistance > 3600) { //300 tiles (circular) * 16
+                            player.AddBuff(ModContent.BuffType<Buffs.TeleportSickness>(), 7200); //2 minutes
+                        }
+                    }
+
                     player.position.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpX * 16) - (float)((float)player.width / 2.0);
                     player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpY * 16) - (float)player.height;
                     player.velocity.X = 0f;
@@ -116,6 +130,17 @@ namespace tsorcRevamp.Items {
                 Main.NewText("Your warp location is broken! Please file a bug report!", 255, 240, 20);
             }
 
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
+                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc");
+                if (ttindex != -1) {// if we find one
+                    //insert the extra tooltip line
+                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf", "[c/00ff00:Revamped Mode:] Cannot be used again for 2 minutes after teleporting long distance."));
+                }
+            }
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
