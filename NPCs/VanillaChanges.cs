@@ -471,8 +471,8 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.SkeletronHand): {
                         npc.value = 5000;
                         npc.defense = 14; //legacy: 12
-                        npc.damage = 35; //legacy: 40
-                        npc.lifeMax = 1000;
+                        npc.damage = 22; //legacy: 40
+                        npc.lifeMax = 600;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }
@@ -480,8 +480,8 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.SkeletronHead): {
                         npc.value = 80000;
                         npc.defense = 12;
-                        npc.damage = 42; //legacy: 50
-                        npc.lifeMax = 5200;
+                        npc.damage = 35; //legacy: 50
+                        npc.lifeMax = 4400;
                         npc.buffImmune[BuffID.OnFire] = true;
                         break;
                     }

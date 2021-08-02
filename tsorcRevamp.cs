@@ -536,16 +536,19 @@ namespace tsorcRevamp {
                     return false; //prevent placing walls
                 }
                 if (item.createTile > -1) {
-                    
-                    if (tsorcRevamp.PlaceAllowed.Contains(item.createTile)) {
+
+                    if (tsorcRevamp.PlaceAllowed.Contains(item.createTile))
+                    {
                         return true; //allow placing tiles in PlaceAllowed
                     }
 
-                    else if (tsorcRevamp.CrossModTiles.Contains(item.createTile)) {
+                    else if (tsorcRevamp.CrossModTiles.Contains(item.createTile))
+                    {
                         return true; //allow placing certain tiles from other mods
                     }
 
-                    else if (tsorcRevamp.PlaceAllowedModTiles.Contains(item.createTile)) {
+                    else if (tsorcRevamp.PlaceAllowedModTiles.Contains(item.createTile))
+                    {
                         return true; //allow placing certain tiles from this mod
                     }
 

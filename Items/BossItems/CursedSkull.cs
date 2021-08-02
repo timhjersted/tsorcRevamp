@@ -22,7 +22,9 @@ namespace tsorcRevamp.Items.BossItems {
             item.useTime = 5;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool UseItem(Player player)
+        {
+
             /* 
              if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
                  Main.NewText("Gravelord Nito has awoken! ", 175, 75, 255);
@@ -30,17 +32,31 @@ namespace tsorcRevamp.Items.BossItems {
              }
              else {
                  */
-            if (Main.netMode == NetmodeID.SinglePlayer) {
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
                 Main.NewText("Skeletron has awoken!", 175, 75, 255);
             }
-            else if (Main.netMode == NetmodeID.Server) {
+            else if (Main.netMode == NetmodeID.Server)
+            {
                 NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Skeletron has awoken!"), new Color(175, 75, 255));
             }
             NPC.NewNPC((int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
-            //}
+            
             return true;
-        }
 
+        }
+        public override bool CanUseItem(Player player) //this has to go in CanUseItem. If used in UseItem, it prints text  every frame the item is "in use", leading to text spam
+        {
+            if (!Main.dayTime)
+            {
+                return true;
+            }
+            else
+            {
+                Main.NewText("This item can only be used at night...", 220, 180, 180);
+                return false;
+            }
+        }
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.Bone, 10);

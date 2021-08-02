@@ -16,5 +16,15 @@ namespace tsorcRevamp.Items.VanillaItems {
                 item.accessory = true;
             }
         }
+
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if (item.type == ItemID.DirtRod && AdventureMode)
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 }
