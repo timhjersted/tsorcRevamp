@@ -191,7 +191,7 @@ namespace tsorcRevamp.NPCs {
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
             if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload) {
-                int debuffCounter = 0;
+                int debuffCounter = 1;
                 foreach (int buffType in npc.buffType) {
 
                     if (Main.debuff[buffType]) {
@@ -204,7 +204,7 @@ namespace tsorcRevamp.NPCs {
 
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit) {
             if (player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload) {
-                int debuffCounter = 0;
+                int debuffCounter = 1;
                 foreach (int buffType in npc.buffType) {
 
                     if (Main.debuff[buffType]) {
