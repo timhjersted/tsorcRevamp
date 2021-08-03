@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.BossBags {
 				}
 			}
 			player.QuickSpawnItem(ModContent.ItemType<Accessories.WaterShoes>());
-            player.QuickSpawnItem(ModContent.ItemType<CrestOfEarth>(), 2);
+            player.QuickSpawnItem(ModContent.ItemType<CrestOfEarth>(), 1);
 			player.QuickSpawnItem(ItemID.Drax);
 		}
     }
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.BossBags {
 					Slain[ModContent.NPCType<TheRage>()] = 1;
 				}
 			}
-			player.QuickSpawnItem(ModContent.ItemType<CrestOfFire>(), 2);
+			player.QuickSpawnItem(ModContent.ItemType<CrestOfFire>(), 1);
 			player.QuickSpawnItem(ItemID.CobaltDrill);
 		}
     }
@@ -337,7 +337,7 @@ namespace tsorcRevamp.Items.BossBags {
                 if (arg == ItemID.DestroyerBossBag) {
                     SoulsOnFirstBag(NPCID.TheDestroyer, player);
                     player.QuickSpawnItem(ModContent.ItemType<RTQ2>());
-                    player.QuickSpawnItem(ModContent.ItemType<CrestOfCorruption>(), 2);
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfCorruption>(), 1);
                 }
                 if (arg == ItemID.TwinsBossBag) {
                     /* 
@@ -362,12 +362,12 @@ namespace tsorcRevamp.Items.BossBags {
                             Slain[NPCID.Spazmatism] = 1;
                         }
                     }
-                    player.QuickSpawnItem(ModContent.ItemType<CrestOfSky>(), 2);
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfSky>(), 1);
                 }
                 if (arg == ItemID.SkeletronPrimeBossBag) {
                     SoulsOnFirstBag(NPCID.SkeletronPrime, player);
                     player.QuickSpawnItem(ItemID.AngelWings);
-                    player.QuickSpawnItem(ModContent.ItemType<CrestOfSteel>(), 2);
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfSteel>(), 1);
                 }
                 if (arg == ItemID.PlanteraBossBag) {
                     SoulsOnFirstBag(NPCID.Plantera, player);

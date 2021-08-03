@@ -188,6 +188,7 @@ namespace tsorcRevamp {
             CrystalMagicWeapon = false;
             DarkmoonCloak = false;
             manaShield = 0;
+            ConditionOverload = false;
         }
 
         public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
