@@ -9,10 +9,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ice 1 Tome");
-            Tooltip.SetDefault("A lost beginner's tome \nCan be upgraded.");
+            Tooltip.SetDefault("A lost beginner's tome" +
+                "\nMultiple shots can be controlled and stacked" +
+                "\nallowing for high burst damage" +
+                "\nDrops a small icicle upon collision" +
+                "\nCan be upgraded");
         }
         public override void SetDefaults() {
-            item.damage = 10;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.damage = 12;
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.damage = 10;
             item.height = 10;
             item.knockBack = 0f;
             item.channel = true;
@@ -21,11 +26,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 9;
             item.magic = true;
             item.noMelee = true;
-            item.mana = 5;
-            item.useAnimation = 10;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 8;
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 5;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useAnimation = 19;
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useAnimation = 10;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useTime = 19;
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useTime = 10;
             item.value = 200000;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice1Ball>();

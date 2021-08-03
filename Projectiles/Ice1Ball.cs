@@ -9,18 +9,18 @@ namespace tsorcRevamp.Projectiles {
 
         public override void SetDefaults() {
             projectile.friendly = true;
-            projectile.height = 16;
+            projectile.height = 12;
             projectile.magic = true;
             projectile.penetrate = 1;
             projectile.tileCollide = true;
-            projectile.width = 16;
+            projectile.width = 12;
         }
 
         public bool isChanneled;
         public override void AI() {
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9, 0.4f);
             }
             Vector2 arg_2675_0 = new Vector2(projectile.position.X, projectile.position.Y);
             int arg_2675_1 = projectile.width;
@@ -30,12 +30,27 @@ namespace tsorcRevamp.Projectiles {
             float arg_2675_5 = 0f;
             int arg_2675_6 = 100;
             Color newColor = default(Color);
-            int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
-            Dust expr_2684 = Main.dust[num47];
-            expr_2684.velocity *= 0.3f;
-            Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
-            Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
-            Main.dust[num47].noGravity = true;
+            if (Main.rand.Next(2) == 0)
+            {
+                int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
+                Dust expr_2684 = Main.dust[num47];
+                expr_2684.velocity *= 0.3f;
+
+                Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
+                Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
+                Main.dust[num47].noGravity = true;
+            }
+
+            int n1337 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, 172, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
+
+
+            for (int i = 0; i < 2; i++)
+            {
+                Main.dust[n1337].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
+                Main.dust[n1337].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
+                Main.dust[n1337].noGravity = true;
+                Main.dust[n1337].velocity *= 0.8f;
+            }
             isChanneled = false;
             if (Main.myPlayer == projectile.owner && projectile.ai[0] == 0f) {
                 if (Main.player[projectile.owner].channel) {
@@ -118,30 +133,36 @@ namespace tsorcRevamp.Projectiles {
             }
             projectile.timeLeft = 0;
             {
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 27);
                 for (int num40 = 0; num40 < 20; num40++) {
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), 0, 5, ModContent.ProjectileType<Ice1Icicle>(), (int)(projectile.damage), 3f, projectile.owner); ;
-                    Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-                    int arg_1394_1 = projectile.width;
-                    int arg_1394_2 = projectile.height;
-                    int arg_1394_3 = 15;
-                    float arg_1394_4 = 0f;
-                    float arg_1394_5 = 0f;
-                    int arg_1394_6 = 100;
+                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), projectile.velocity.X, 5, ModContent.ProjectileType<Ice1Icicle>(), (int)(projectile.damage), 3f, projectile.owner); ;
                     Color newColor = default(Color);
-                    int num41 = Dust.NewDust(arg_1394_0, arg_1394_1, arg_1394_2, arg_1394_3, arg_1394_4, arg_1394_5, arg_1394_6, newColor, 2f);
-                    Main.dust[num41].noGravity = true;
-                    Dust expr_13B1 = Main.dust[num41];
-                    expr_13B1.velocity *= 2f;
+                    if (Main.rand.Next(2) == 0)
+                    {
+                        Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
+                        int arg_1394_1 = projectile.width;
+                        int arg_1394_2 = projectile.height;
+                        int arg_1394_3 = 15;
+                        float arg_1394_4 = 0f;
+                        float arg_1394_5 = 0f;
+                        int arg_1394_6 = 100;
+                        int num41 = Dust.NewDust(arg_1394_0, arg_1394_1, arg_1394_2, arg_1394_3, arg_1394_4, arg_1394_5, arg_1394_6, newColor, 1.8f);
+                        Main.dust[num41].noGravity = true;
+                        Dust expr_13B1 = Main.dust[num41];
+                        expr_13B1.velocity *= 2f;
+                    }
                     Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
                     int arg_1422_1 = projectile.width;
                     int arg_1422_2 = projectile.height;
-                    int arg_1422_3 = 15;
+                    int arg_1422_3 = 172;
                     float arg_1422_4 = 0f;
                     float arg_1422_5 = 0f;
                     int arg_1422_6 = 100;
                     newColor = default(Color);
-                    Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
+                    int n11 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1.8f);
+                    Main.dust[n11].noGravity = true;
+                    Main.dust[n11].velocity *= 1.5f;
+
                 }
             }
             if (projectile.owner == Main.myPlayer) {

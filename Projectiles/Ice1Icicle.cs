@@ -18,6 +18,13 @@ namespace tsorcRevamp.Projectiles {
 
         public override void AI() {
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+
+            //keep a portion of the projectile's velocity when spawned, so we canmake sure it has the right knockback
+            if (projectile.ai[0] == 0)
+            {
+                projectile.velocity.X *= 0.001f;
+                projectile.ai[0] = 1;
+            }
         }
     }
 }
