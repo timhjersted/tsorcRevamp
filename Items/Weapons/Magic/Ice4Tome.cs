@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             {
                 //This is how much mana it will use while channeling when it can not fire another projectile
                 //Setting this to 0 would make it consume no mana
-                item.mana = 0;
+                item.mana = 1;
                 return false;
             }
         }
