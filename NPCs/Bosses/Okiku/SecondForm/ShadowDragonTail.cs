@@ -31,7 +31,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 		{
 			base.DisplayName.SetDefault("Shadow Dragon");
 		}
-
+		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+		{
+			return false;
+		}
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			base.npc.lifeMax = (int)((float)base.npc.lifeMax * 0.7f * bossLifeScale);

@@ -40,6 +40,12 @@ namespace tsorcRevamp.NPCs.Bosses
 			DisplayName.SetDefault("Gaibon");
 		}
 
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.damage = (int)(npc.damage * 1.3 / 2);
+			npc.defense = npc.defense += 12;
+			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
+		}
 
 		//Note: This whole region was all commented out in the original code. I'm not sure why, but i'll leave it that way for now.
 		//#region Spawn

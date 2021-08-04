@@ -7,20 +7,40 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class Ice1Ball : ModProjectile {
 
-        public override void SetDefaults() {
+        //Whether or not the projectile is actively being channeled by a player. Public so that the tome can check this.
+        public bool isChanneled;
+        //How many other projectiles exist and are being channeled. If more than 3, just don't make the sound.
+        int projCount = 0;
+        public override void SetDefaults()
+        {
             projectile.friendly = true;
             projectile.height = 12;
             projectile.magic = true;
             projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.width = 12;
+
+
+            //Iterate through the projectile array
+            for (int i = 0; i < Main.projectile.Length; i++)
+            {
+                //For each, check if it's modded. If so, check if it's the Ice1Ball.
+                if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice1Ball)
+                {
+                    //Cast it to an Ice1Ball so we can check if it's currently being channeled, and make sure it's still active
+                    if (((Projectiles.Ice1Ball)Main.projectile[i].modProjectile).isChanneled && Main.projectile[i].active)
+                    {
+                        //If so, then up the count
+                        projCount++;
+                    }
+                }
+            }
         }
 
-        public bool isChanneled;
         public override void AI() {
-            if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
+            if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f && projCount <= 3) {
                 projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9, 0.4f);
+                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9, 0.8f);
             }
             Vector2 arg_2675_0 = new Vector2(projectile.position.X, projectile.position.Y);
             int arg_2675_1 = projectile.width;
@@ -89,6 +109,7 @@ namespace tsorcRevamp.Projectiles {
                 }
                 else {
                     if (projectile.ai[0] == 0f) {
+                        isChanneled = false;
                         projectile.ai[0] = 1f;
                         projectile.netUpdate = true;
                         float num60 = 12f;
@@ -133,7 +154,7 @@ namespace tsorcRevamp.Projectiles {
             }
             projectile.timeLeft = 0;
             {
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 27);
+                if(projCount <=3) Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 27);
                 for (int num40 = 0; num40 < 20; num40++) {
                     Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), projectile.velocity.X, 5, ModContent.ProjectileType<Ice1Icicle>(), (int)(projectile.damage), 3f, projectile.owner); ;
                     Color newColor = default(Color);

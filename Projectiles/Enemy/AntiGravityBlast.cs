@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture from the array (if it's not transparent, you can just use Texture2D texture = Main.projectileTexture[projectile.type];
-            Texture2D texture = tsorcRevamp.TransparentTextures[1];
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.AntiGravityBlast];
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

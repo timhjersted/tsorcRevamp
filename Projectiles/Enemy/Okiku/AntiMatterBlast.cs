@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            Texture2D texture = tsorcRevamp.TransparentTextures[0];
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.AntiMatterBlast];
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

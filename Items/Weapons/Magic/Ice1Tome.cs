@@ -15,6 +15,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                 "\nDrops a small icicle upon collision" +
                 "\nCan be upgraded");
         }
+
+        //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
+        int storeManaCost;
         public override void SetDefaults() {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.damage = 12;
             if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.damage = 10;
@@ -28,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.noMelee = true;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 8;
             if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 5;
+            storeManaCost = item.mana;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useAnimation = 19;
             if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useAnimation = 10;
             item.UseSound = SoundID.Item21;
@@ -39,15 +43,36 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shoot = ModContent.ProjectileType<Projectiles.Ice1Ball>();
         }
 
-        public int count = 0;
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if (count < 10)
+            item.mana = storeManaCost;
+            //How many projectiles exist that are being channeled (controlled) by the player using this tome
+            int projCount = 0;
+
+            //Iterate through the projectile array
+            for(int i = 0; i < Main.projectile.Length; i++)
             {
-                count++;
-                return true;
+                //For each, check if it's modded. If so, check if it's the Ice1Ball. If so, check if it's owned by this player (to prevent other players projectiles counting against it)
+                if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice1Ball && (Main.projectile[i].owner == player.whoAmI))
+                {
+                    //Cast it to an Ice1Ball so we can check if it's currently being channeled
+                    if (((Projectiles.Ice1Ball)Main.projectile[i].modProjectile).isChanneled && Main.projectile[i].active)
+                    {
+                        //If so, then up the count
+                        projCount++;
+                    }
+                }
             }
-            else return false;
+
+            //If there's 10, don't fire any more
+            if (projCount < 10) return true;
+            else
+            {
+                //This is how much mana it will use while channeling when it can not fire another projectile
+                //Setting this to 0 would make it consume no mana
+                item.mana = 0;
+                return false;
+            }
         }
 
 

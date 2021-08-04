@@ -42,9 +42,14 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
         bool OptionSpawned = false;
         int OptionId = 0;
+        int frozenSawDamage = 30;
+        int lightningDamage = 70;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
+            npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
+            frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
+            lightningDamage = (int)(lightningDamage * 1.3 / 2);
         }
 
 
@@ -85,10 +90,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 {
                     float num48 = 4f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    int damage = 30;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);
+                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, frozenSawDamage, 0f, 0);
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                     npc.ai[0] = 0;
                     npc.ai[2]++;
@@ -179,9 +183,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                             num51 = num48 / num51;
                             speedX *= num51;
                             speedY *= num51;
-                            int damage = 70;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 250;
                             Main.projectile[num54].aiStyle = 4;
                             Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
@@ -218,9 +221,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         float speedX = projectileSpeed * ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X); //+ Main.rand.Next(-20, 0x15);
                         float speedY = projectileSpeed * ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector9.Y); // + Main.rand.Next(-20, 0x15);
 
-                        int damage = 70;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
-                        int projectileID = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        int projectileID = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
                         Main.projectile[projectileID].timeLeft = 250;
 
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);

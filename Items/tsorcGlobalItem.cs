@@ -269,6 +269,7 @@ namespace tsorcRevamp.Items {
 				ItemID.MusketBall,
 				ItemID.MeteorShot,
 				ItemID.SilverBullet,
+				ItemID.CursedBullet,
 				ItemID.CrystalBullet,
 				ItemID.ChlorophyteBullet,
 				ItemID.HighVelocityBullet,

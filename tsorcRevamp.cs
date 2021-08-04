@@ -26,7 +26,6 @@ namespace tsorcRevamp {
         public static List<int> IgnoredTiles;
         public static List<int> CrossModTiles;
         public static List<int> PlaceAllowedModTiles;
-        public static List<Texture2D> TransparentTextures;
 
         internal BonfireUIState BonfireUIState;
         private UserInterface _bonfireUIState;
@@ -43,7 +42,7 @@ namespace tsorcRevamp {
 
             ApplyMethodSwaps();
             PopulateArrays();
-            if(!Main.dedServ) TransparentTextureFix();
+            if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
 
         }
@@ -251,7 +250,8 @@ namespace tsorcRevamp {
                 394, //sluggy cage
                 413, //red squirrel cage
                 414, //gold squirrel cage
-                463 //defenders forge
+                463, //defenders forge
+                TileID.Titanium
 
             };
 
@@ -463,17 +463,6 @@ namespace tsorcRevamp {
 
             #endregion
             //--------
-            #region TransparentTextures list
-
-            TransparentTextures = new List<Texture2D>() {
-                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/AntiMatterBlast"),
-                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast"),
-                ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb"),
-                ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")
-                //ModContent.GetTexture("etc")
-                //All other textures with transparency will eventually have to go in here to get premultiplied
-            };
-            #endregion
         }
 
         public override void Unload() {
@@ -506,24 +495,6 @@ namespace tsorcRevamp {
             Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
             for (int i = 0; i < Main.moonTexture.Length; i++) {
                 Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
-            }
-        }
-
-        /**
-         *  tConfig played nice with partially transparent textures, tModloader doesn't.
-         *  It needs them to be premultiplied on load, and that's what this function does.
-         **/
-        private void TransparentTextureFix()
-        {
-            for (int i = 0; i < TransparentTextures.Count; i++)
-            {
-                Color[] buffer = new Color[TransparentTextures[i].Width * TransparentTextures[i].Height];
-                TransparentTextures[i].GetData(buffer);
-                for (int j = 0; j < buffer.Length; j++)
-                {
-                    buffer[j] = Color.FromNonPremultiplied(buffer[j].R, buffer[j].G, buffer[j].B, buffer[j].A);
-                }
-                TransparentTextures[i].SetData(buffer);
             }
         }
     }
@@ -715,4 +686,47 @@ namespace tsorcRevamp {
             base.NearbyEffects(i, j, type, closer);
         }
     }
+
+    //tConfig played nice with partially transparent textures, tModloader doesn't. This class helps fix that
+    //Handles premultiplication, allowing textures with alpha transparency to be displayed correctly
+    //To add a texture, add an enum for it under TransparentTextureType, and a KeyValuePair for it in the TransparentTextures dictionary like the others below
+    //You can then get your premultiplied Texture2D from it wherever it's needed via TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.(YourEnum)]; 
+    public static class TransparentTextureHandler
+    {
+        public static Dictionary<TransparentTextureType, Texture2D> TransparentTextures;
+        public enum TransparentTextureType
+        {
+            AntiMatterBlast,
+            AntiGravityBlast,
+            EnemyPlamaOrb,
+            ManaShield,
+            CrazedOrb
+        }          
+        
+        //All textures with transparency will have to get run through this function to get premultiplied
+        public static void TransparentTextureFix()
+        {
+            //Generates the dictionary of textures
+            TransparentTextures = new Dictionary<TransparentTextureType, Texture2D>()
+            {
+                {TransparentTextureType.AntiMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/AntiMatterBlast")},
+                {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
+                {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
+                {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
+                {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")}
+            };
+
+            //Runs each entry through the XNA's premultiplication function
+           foreach(Texture2D textureEntry in TransparentTextures.Values)
+            {
+                Color[] buffer = new Color[textureEntry.Width * textureEntry.Height];
+                textureEntry.GetData(buffer);
+                for (int j = 0; j < buffer.Length; j++)
+                {
+                    buffer[j] = Color.FromNonPremultiplied(buffer[j].R, buffer[j].G, buffer[j].B, buffer[j].A);
+                }
+                textureEntry.SetData(buffer);
+            }
+        }
+    };
 }

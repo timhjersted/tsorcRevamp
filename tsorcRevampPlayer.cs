@@ -235,7 +235,7 @@ namespace tsorcRevamp {
                     int shieldFrameCount = 8;
                     float shieldScale = 2.5f;
 
-                    Texture2D texture = tsorcRevamp.TransparentTextures[3];
+                    Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ManaShield];
                     Player drawPlayer = drawInfo.drawPlayer;
                     int drawX = (int)(drawInfo.position.X + drawPlayer.width / 2f - Main.screenPosition.X);
                     int drawY = (int)(drawInfo.position.Y + drawPlayer.height / 2f - Main.screenPosition.Y);
@@ -1235,45 +1235,6 @@ namespace tsorcRevamp {
         public override void ProcessTriggers(TriggersSet triggersSet) {
             if (tsorcRevamp.toggleDragoonBoots.JustPressed) {
                 DragoonBootsEnable = !DragoonBootsEnable;
-            }
-            if (PlayerInput.Triggers.JustReleased.MouseLeft)
-            {
-                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice1Tome>())
-                {
-
-                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice1Tome)
-                    {
-                        Items.Weapons.Magic.Ice1Tome iceTome = (Items.Weapons.Magic.Ice1Tome)player.HeldItem.modItem;
-                        iceTome.count = 0;
-                    }
-                }
-                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice2Tome>())
-                {
-
-                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice2Tome)
-                    {
-                        Items.Weapons.Magic.Ice2Tome iceTome = (Items.Weapons.Magic.Ice2Tome)player.HeldItem.modItem;
-                        iceTome.count = 0;
-                    }
-                }
-                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>())
-                {
-
-                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice3Tome)
-                    {
-                        Items.Weapons.Magic.Ice3Tome iceTome = (Items.Weapons.Magic.Ice3Tome)player.HeldItem.modItem;
-                       iceTome.count = 0;
-                    }
-                }
-                if (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.Ice4Tome>())
-                {
-
-                    if (player.HeldItem.modItem != null && player.HeldItem.modItem is Items.Weapons.Magic.Ice4Tome)
-                    {
-                        Items.Weapons.Magic.Ice4Tome iceTome = (Items.Weapons.Magic.Ice4Tome)player.HeldItem.modItem;
-                        iceTome.count = 0;
-                    }
-                }
             }
         }
 

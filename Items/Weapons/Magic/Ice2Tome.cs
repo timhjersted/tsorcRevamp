@@ -12,6 +12,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("A lost tome for artisans, with a high rate of casting." +
                                 "\nCan be upgraded with 25,000 Dark Souls and 15 Souls of Light.");
         }
+
+        //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
+        int storeManaCost;
         public override void SetDefaults() {
             item.damage = 15;
             item.height = 10;
@@ -23,6 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
             item.noMelee = true;
             item.mana = 7;
+            storeManaCost = item.mana;
             item.useAnimation = 10;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
@@ -32,15 +36,36 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shoot = ModContent.ProjectileType<Projectiles.Ice2Ball>();
         }
 
-        public int count = 0;
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if (count < 10)
+            item.mana = storeManaCost;
+            //How many projectiles exist that are being channeled (controlled) by the player using this tome
+            int projCount = 0;
+
+            //Iterate through the projectile array
+            for (int i = 0; i < Main.projectile.Length; i++)
             {
-                count++;
-                return true;
+                //For each, check if it's modded. If so, check if it's the Ice2Ball. If so, check if it's owned by this player (to prevent other players projectiles counting against it)
+                if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice2Ball && (Main.projectile[i].owner == player.whoAmI))
+                {
+                    //Cast it to an Ice2Ball so we can check if it's currently being channeled
+                    if (((Projectiles.Ice2Ball)Main.projectile[i].modProjectile).isChanneled && Main.projectile[i].active)
+                    {
+                        //If so, then up the count
+                        projCount++;
+                    }
+                }
             }
-            else return false;
+
+            //If there's 10, don't fire any more
+            if (projCount < 10) return true;
+            else
+            {
+                //This is how much mana it will use while channeling when it can not fire another projectile
+                //Setting this to 0 would make it consume no mana
+                item.mana = 0;
+                return false;
+            }
         }
 
         public override void AddRecipes() {

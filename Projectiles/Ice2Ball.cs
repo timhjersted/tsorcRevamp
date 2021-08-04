@@ -6,8 +6,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class Ice2Ball : ModProjectile {
-
 		public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
+
+		public bool isChanneled;
+		int projCount = 0;
 		public override void SetDefaults() {
             projectile.friendly = true;
             projectile.height = 16;
@@ -15,11 +17,25 @@ namespace tsorcRevamp.Projectiles {
             projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.width = 16;
-        }
 
-		public bool isChanneled;
+			//Iterate through the projectile array
+			for (int i = 0; i < Main.projectile.Length; i++)
+			{
+				//For each, check if it's modded. If so, check if it's the Ice2Ball.
+				if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice2Ball)
+				{
+					//Cast it to an Ice2Ball so we can check if it's currently being channeled, and make sure it's still active
+					if (((Projectiles.Ice2Ball)Main.projectile[i].modProjectile).isChanneled && Main.projectile[i].active)
+					{
+						//If so, then up the count
+						projCount++;
+					}
+				}
+			}
+		}
+
 		public override void AI() {
-			if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
+			if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f && (projCount <=3)) {
 				projectile.soundDelay = 10;
                 _ = Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
 			}
@@ -74,7 +90,9 @@ namespace tsorcRevamp.Projectiles {
 					}
 				}
 				else {
-					if (projectile.ai[0] == 0f) {
+					if (projectile.ai[0] == 0f)
+					{
+						isChanneled = false;
 						projectile.ai[0] = 1f;
 						projectile.netUpdate = true;
 						float num60 = 12f;
@@ -118,7 +136,7 @@ namespace tsorcRevamp.Projectiles {
 			}
 			projectile.timeLeft = 0;
 			{
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+				if(projCount <= 3) Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
 				for (int num40 = 0; num40 < 20; num40++) {
 					Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), 0, 5, ModContent.ProjectileType<Projectiles.Ice2Icicle>(), (int)(projectile.damage), 3f, projectile.owner);
 					Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 2), projectile.position.Y + (float)(projectile.height), 0, 5, ModContent.ProjectileType<Projectiles.Ice2Icicle>(), (int)(projectile.damage), 3f, projectile.owner);
