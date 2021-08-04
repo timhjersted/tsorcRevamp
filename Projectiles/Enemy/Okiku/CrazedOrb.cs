@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.hostile = true;
             projectile.scale = 1.5f;
             projectile.tileCollide = false;
-            projectile.timeLeft = 1500;
+            projectile.timeLeft = 600;
             projectile.light = 1;
         }
 

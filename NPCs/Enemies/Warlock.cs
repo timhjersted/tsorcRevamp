@@ -25,6 +25,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 6700;
+			npc.rarity = 3;
+			if (!(Main.hardMode || ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+			{
+				npc.lifeMax = 2000;
+			}
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -49,6 +54,11 @@ namespace tsorcRevamp.NPCs.Enemies
 		
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
+			if (!NPC.downedBoss1)
+			{
+				return 0;
+			}
+
 			Player P = spawnInfo.player; //These are mostly redundant with the new zone definitions, but it still works.
 			bool Meteor = P.ZoneMeteor;
 			bool Jungle = P.ZoneJungle;

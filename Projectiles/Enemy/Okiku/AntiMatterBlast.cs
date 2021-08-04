@@ -67,9 +67,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {
-            target.AddBuff(BuffID.Confused, 300, false);
-            target.AddBuff(BuffID.Gravitation, 300, false);
-            target.AddBuff(BuffID.Slow, 300, false);
+            int buffLengthMod = 1;
+            if (Main.expertMode)
+            {
+                buffLengthMod = 2;
+            }
+            target.AddBuff(BuffID.Slow, 300 / buffLengthMod, false);
         }
 
     }

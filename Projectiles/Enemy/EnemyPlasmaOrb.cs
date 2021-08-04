@@ -61,24 +61,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 projectile.frame = 0;
             }
-
-            /**
-            Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y, projectile.width, projectile.height);
-            Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player[Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
-
-            if (projrec.Intersects(prec))
-            {
-
-               
-            }
-            **/
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
+            int buffLengthMod = 1;
+            if (Main.expertMode)
+            {
+                buffLengthMod = 2;
+            }
+
             base.OnHitPlayer(target, damage, crit);
-            target.AddBuff(BuffID.Weak, 1200, false);
-            target.AddBuff(BuffID.Slow, 1200, false);
+            target.AddBuff(BuffID.Weak, 1200 / buffLengthMod, false);
+            target.AddBuff(BuffID.Slow, 1200 / buffLengthMod, false);
 
         }
 

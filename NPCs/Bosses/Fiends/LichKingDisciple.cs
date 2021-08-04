@@ -19,14 +19,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.height = 44;
             npc.boss = true;
             npc.timeLeft = 22500;
-            npc.lifeMax = 20000;
+            npc.lifeMax = 45000;
             npc.scale = 1;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
             npc.noGravity = false;
             npc.noTileCollide = false;
             npc.lavaImmune = true;
-            npc.value = 20000;
+            npc.value = 40000;
             npc.width = 28;
             npc.knockBackResist = 0.2f;
             npc.buffImmune[BuffID.Poisoned] = true;
@@ -34,15 +34,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.buffImmune[BuffID.OnFire] = true;
         }
 
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lich King Disciple");
         }
 
-
-        int frozenSawDamage = 33;
-        int crazedPurpleCrushDamage = 27;
+        //In expert, these numbers will get multiplied by 4 by the game: x2 because of expert mode, and x2 because projectile damage is always doubled
+        int frozenSawDamage = 100;
+        //int crazedPurpleCrushDamage = 27; Projectile is disabled because it made the fight far too messy
 
         //We can override this even further on a per-NPC basis here
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -51,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.defense = npc.defense += 12;
             npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
             frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
-            crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
+            //crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
         }
 
         bool OptionSpawned = false;
@@ -61,6 +60,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         #region AI
         public override void AI()
         {
+            
             if (OptionSpawned == false)
             {
                 OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.netUpdate = false;
             npc.ai[0]++; // Timer Scythe
             npc.ai[1]++; // Timer Teleport
-                         // npc.ai[2]++; // Shots
+                            // npc.ai[2]++; // Shots
 
             if (npc.life > 3000)
             {
@@ -126,6 +126,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 }
                 if (Main.player[npc.target].dead)
                 {
+                    Main.NewText("Earth Fiend Lich decends into the ground...", Color.GreenYellow);
                     npc.position.X = 0;
                     npc.position.Y = 0;
                     if (npc.timeLeft > 10)
@@ -136,8 +137,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 }
                 else
                 {
-
-
                     Player Pt = Main.player[npc.target];
                     Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
                     Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
@@ -211,15 +210,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 if (npc.ai[1] == 0) npc.ai[1] = 1;
                 else npc.ai[1] = 0;
             }
-
-
-
-
             if (Main.player[npc.target].dead)
             {
                 npc.velocity.Y -= 0.04f;
                 if (npc.timeLeft > 10)
                 {
+                    Main.NewText("Earth Fiend Lich returns to the ground...", Color.GreenYellow);
                     npc.timeLeft = 10;
                     return;
                 }

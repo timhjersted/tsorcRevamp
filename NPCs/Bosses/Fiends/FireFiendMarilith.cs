@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 40000;
+			npc.lifeMax = 90000;
 			npc.timeLeft = 22500;
 			npc.alpha = 100;
 			npc.friendly = false;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.knockBackResist = 0f;
 			npc.lavaImmune = true;
 			npc.boss = true;
-			npc.value = 300000;
+			npc.value = 600000;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.MarilithBag>();
@@ -43,8 +43,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 
 		int lightningDamage = 75;
-		int antiMatterBlastDamage = 110;
-		int crazedPurpleCrushDamage = 90;
+		int antiMatterBlastDamage = 150;
+		int crazedPurpleCrushDamage = 110;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);

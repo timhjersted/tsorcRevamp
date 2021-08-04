@@ -67,12 +67,20 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			if (projrec.Intersects(prec))
 			{
-				Main.player[Main.myPlayer].AddBuff(BuffID.Confused, 60, false); //confused
-				Main.player[Main.myPlayer].AddBuff(BuffID.Bleeding, 600, false); //bleeding
-				Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600, false); //you take knockback
 
 			}
 
+		}
+		public override void OnHitPlayer(Player target, int damage, bool crit)
+		{
+			int buffLengthMod = 1;
+			if (Main.expertMode)
+			{
+				buffLengthMod = 2;
+			}
+
+			target.AddBuff(BuffID.Bleeding, 600 / buffLengthMod, false); //bleeding
+			target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600 / buffLengthMod, false); //you take knockback
 		}
 	}
 }

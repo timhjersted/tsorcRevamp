@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 40000;
+			npc.lifeMax = 90000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.knockBackResist = 0f;
 			npc.lavaImmune = true;
 			npc.boss = true;
-			npc.value = 300000;
+			npc.value = 600000;
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;

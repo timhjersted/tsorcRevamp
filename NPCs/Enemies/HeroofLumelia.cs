@@ -29,6 +29,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 20000;
 			npc.lavaImmune = true;
 			npc.knockBackResist = 0;
+			npc.rarity = 4;
+            if (!(Main.hardMode || ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+            {
+				npc.lifeMax = 4000;
+			}
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -50,8 +55,11 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			Player P = spawnInfo.player;
-
-			if (!(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(500) == 1) return 1; //why tim xD
+			if (!NPC.downedBoss2)
+			{
+				return 0;
+			}
+				if (!(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(500) == 1) return 1; //why tim xD
 			if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneOverworldHeight && Main.rand.Next(250) == 1) return 1;
 			if (Main.hardMode && P.ZoneSkyHeight && Main.rand.Next(100) == 1) return 1;
 			if (Main.hardMode && P.ZoneRockLayerHeight && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(300) == 1) return 1;

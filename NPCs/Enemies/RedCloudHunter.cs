@@ -23,6 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.aiStyle = -1;
 			npc.height = 48;
 			npc.knockBackResist = 0f;
+			npc.rarity = 3;
 
 			animationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[npc.type] = 20;

@@ -27,6 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.HitSound = SoundID.NPCHit42;
 			npc.DeathSound = SoundID.NPCDeath32;
 			npc.value = 0;
+			npc.rarity = 5;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.Venom] = true;

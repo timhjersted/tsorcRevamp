@@ -53,10 +53,16 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         }
         public override void OnHitPlayer(Player target, int damage, bool crit) {
-            target.AddBuff(BuffID.BrokenArmor, 300);
+            int buffLengthMod = 1;
+            if (Main.expertMode)
+            {
+                buffLengthMod = 2;
+            }
+
+            target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
             if (Main.rand.Next(10) == 0) {
-                target.AddBuff(BuffID.Silenced, 180);
-                target.AddBuff(BuffID.Slow, 300);
+                target.AddBuff(BuffID.Silenced, 180 / buffLengthMod);
+                target.AddBuff(BuffID.Slow, 300 / buffLengthMod);
             }
         }
     }

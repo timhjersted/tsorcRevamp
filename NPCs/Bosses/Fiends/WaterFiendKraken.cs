@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 40000;
+			npc.lifeMax = 90000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.knockBackResist = 0f;
 			npc.lavaImmune = true;
 			npc.boss = true;
-			npc.value = 300000;
+			npc.value = 600000;
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
@@ -42,9 +42,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Water Fiend Kraken");
 		}
 
-		int cursedFlamesDamage = 53;
-		int plasmaOrbDamage = 60;
-		int hypnoticDisruptorDamage = 35;
+		int cursedFlamesDamage = 110;
+		int plasmaOrbDamage = 150;
+		int hypnoticDisruptorDamage = 85;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
@@ -400,6 +400,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					npc.velocity.Y += 0.20f;
 					if (npc.timeLeft > 10)
 					{
+						Main.NewText("Water Fiend Kraken decends into the depths once more...", Color.DeepSkyBlue);
 						npc.timeLeft = 0;
 						return;
 					}

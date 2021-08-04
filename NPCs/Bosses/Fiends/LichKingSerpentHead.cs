@@ -22,16 +22,16 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.aiStyle = 6;
 			npc.defense = 20;
 			npc.timeLeft = 22500;
-			npc.damage = 110;
+			npc.damage = 310;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lifeMax = 50000;
+			npc.lifeMax = 120000;
 			npc.knockBackResist = 0;
 			npc.lavaImmune = true;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.behindTiles = true;
-			npc.value = 20000;
+			npc.value = 40000;
 		}
 
 		public override void SetStaticDefaults()

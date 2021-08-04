@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.aiStyle = 0;
             npc.width = 80;
             npc.height = 100;
-            npc.damage = 95;
+            npc.damage = 250;
             npc.defense = 45;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath6;
@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
 
-        int shadowShotDamage = 40;
+        int shadowShotDamage = 75;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.damage = (int)(npc.damage * 1.3 / 2);
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 npc.velocity.Y *= 0.97f;
             }
 
-            if ((npc.ai[1] >= 200 && npc.life > 2000) || (npc.ai[1] >= 120 && npc.life <= 2000))
+            if ((npc.ai[1] >= 150 && npc.life > 2000) || (npc.ai[1] >= 100 && npc.life <= 2000))
             {
                 Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)

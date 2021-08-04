@@ -37,11 +37,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
-                tooltips.Insert(7, new TooltipLine(mod, "", "Only the first shot consumes ammo"));
+                tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Only the first shot consumes ammo"));
             }
             if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
-                tooltips.Insert(7, new TooltipLine(mod, "", "Beware; Phazon is EXTREMELY toxic."));
+                tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Beware; Phazon is EXTREMELY toxic."));
             }
         }
 

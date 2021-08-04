@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.height = 14;
             npc.aiStyle = 6;
             npc.timeLeft = 750;
-            npc.damage = 50;
+            npc.damage = 190;
             npc.defense = 28;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;

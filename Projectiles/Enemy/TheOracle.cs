@@ -34,9 +34,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 				projectile.velocity.X *= accel;
 				projectile.velocity.Y *= accel;
 			}
-
-			Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y, projectile.width, projectile.height);
-			Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player[Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
 		}
 		public override bool PreKill(int timeLeft)
 		{
@@ -45,10 +42,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
-				target.AddBuff(BuffID.Battle, 600);
-				target.AddBuff(BuffID.BrokenArmor, 300);
-				target.AddBuff(BuffID.Poisoned, 3600);
-				target.AddBuff(BuffID.Bleeding, 7200);
+			int buffLengthMod = 1;
+			if (Main.expertMode)
+			{
+				buffLengthMod = 2;
+			}
+			target.AddBuff(BuffID.Battle, 600 / buffLengthMod);
+			target.AddBuff(BuffID.BrokenArmor, 300 / buffLengthMod);
+			target.AddBuff(BuffID.Poisoned, 3600 / buffLengthMod);
+			target.AddBuff(BuffID.Bleeding, 7200 / buffLengthMod);
 		}
 
 	}

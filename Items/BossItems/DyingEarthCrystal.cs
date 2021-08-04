@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -21,7 +22,9 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
 
-        public override bool UseItem(Player player) {
+        public override bool UseItem(Player player)
+        {
+            //Main.NewText("Earth Fiend Lich ascends from the ground", Color.GreenYellow);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>());
             return true;
         }
