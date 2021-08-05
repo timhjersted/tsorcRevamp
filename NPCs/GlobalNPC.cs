@@ -224,6 +224,10 @@ namespace tsorcRevamp.NPCs {
                     NPCLoader.blockLoot.Add(ItemID.SlimeHook);
                     NPCLoader.blockLoot.Add(ItemID.SlimySaddle); //no lol
                 }
+                if (npc.type == NPCID.Golem)
+                {
+                    NPCLoader.blockLoot.Add(ItemID.Picksaw); //Goodnight sweet prince
+                }
             }
             return base.PreNPCLoot(npc);
         }

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         private const int AI_Max_Splits = 2; //the exponent. projectile can split this many times. this counter is remembered for a projectile's children.
         private const int AI_Projectile_Split_Rate = 2; //the base. projectile will split into this many children each time it splits.
-        private const int AI_Split_Time = 30; //when does the projectile split, in frames
+        private const int AI_Split_Time = 110; //when does the projectile split, in frames
         private const int AI_Split_Angle = 15; //the spread angle for the child projectiles
 
         //all of this stuff before the AI makes the AI pretty
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             Vector2 speedMod = new Vector2(projectile.velocity.X, projectile.velocity.Y);
             int z2 = Main.rand.Next(-1, 2);
-            speedMod = RotateAboutOrigin(speedMod, (float)((Math.PI * z2) / 35f)); //the 28f controls the curve strength. too low and the projectile spins in circles
+            speedMod = RotateAboutOrigin(speedMod, (float)((Math.PI * z2) / 40f)); //the 28f controls the curve strength. too low and the projectile spins in circles
             projectile.velocity = speedMod;
 
             AI_Timer++;

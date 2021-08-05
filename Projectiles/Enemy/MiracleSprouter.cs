@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
         public override void Kill(int timeLeft) {
-            Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, -3f, ModContent.ProjectileType<MiracleVines>(), 40, 0f, Main.myPlayer);
+            Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, -3f, ModContent.ProjectileType<MiracleVines>(), projectile.damage, 0f, Main.myPlayer);
             projectile.active = false;
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {

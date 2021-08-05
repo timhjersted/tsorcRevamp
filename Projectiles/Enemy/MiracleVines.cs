@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.rotation = (float)Math.Atan2((double)this.projectile.velocity.Y, (double)this.projectile.velocity.X) + 1.57f;
             Vector2 speedMod = new Vector2(projectile.velocity.X, projectile.velocity.Y);
             int z2 = Main.rand.Next(-1, 2);
-            speedMod = RotateAboutOrigin(speedMod, (float)((Math.PI * z2) / 28f)); //the 28f controls the curve strength. too low and the projectile spins in circles
+            speedMod = RotateAboutOrigin(speedMod, (float)((Math.PI * z2) / 38f)); //the 38f controls the curve strength. too low and the projectile spins in circles
             projectile.velocity = speedMod;
 
             AI_Timer++;

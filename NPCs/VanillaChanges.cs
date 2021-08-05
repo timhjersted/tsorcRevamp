@@ -1950,8 +1950,14 @@ namespace tsorcRevamp.NPCs {
                     Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, -1);
                 }
             }
-            if (npc.type == NPCID.Golem) {
-                Item.NewItem(npc.getRect(), ItemID.Picksaw, 1, false, -1);
+            if (npc.type == NPCID.Plantera && !Main.expertMode)
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+            }
+            if (npc.type == NPCID.Golem && !Main.expertMode) {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
             }
             #endregion
             #region Pillar ModWorld bools

@@ -91,7 +91,8 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 2000);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
-		}
+            player.QuickSpawnItem(ItemID.Picksaw);
+        }
 	}
     public class KrakenBag : BossBag
     {
@@ -303,8 +304,55 @@ namespace tsorcRevamp.Items.BossBags {
                 }
                 SoulsOnFirstBag(NPCID.KingSlime, player);
                 return false;
-            } 
-        
+            }
+            if (context == "bossBag" && arg == ItemID.GolemBossBag)
+            { 
+                //Picksaw drops from Attraidies who is Post-Golem now, and gates SuperHardMode content. We've gotta stop Golem from dropping it.
+                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                {
+                    if (Main.rand.Next(3) == 0) { player.QuickSpawnItem(ItemID.Picksaw); }
+                }
+
+                //Drops that work in the traditional way. Also, adds the Crest of Stone to its drops.
+                player.QuickSpawnItem(ModContent.ItemType<CrestOfStone>());
+                player.QuickSpawnItem(ItemID.ShinyStone);
+                if (Main.rand.Next(6) == 0) { player.QuickSpawnItem(ItemID.GolemMask); }
+                if (Main.rand.Next(9) == 0) { player.QuickSpawnItem(ItemID.GolemTrophy); }
+                player.QuickSpawnItem(ItemID.GreaterHealingPotion, 5 + Main.rand.Next(10));
+
+                //Always drops one of these things, picked at random
+                int drop = Main.rand.Next(6);
+                switch (drop) { 
+                    case 0:
+                        player.QuickSpawnItem(ItemID.Stynger);
+                        player.QuickSpawnItem(ItemID.StyngerBolt, 60 + Main.rand.Next(39));
+                        break;
+                    case 1:
+                        player.QuickSpawnItem(ItemID.PossessedHatchet);
+                        break;
+                    case 2:
+                        player.QuickSpawnItem(ItemID.SunStone);
+                        break;
+                    case 3:
+                        player.QuickSpawnItem(ItemID.EyeoftheGolem);
+                        break;
+                    case 4:
+                        player.QuickSpawnItem(ItemID.HeatRay);
+                        break;
+                    case 5:
+                        player.QuickSpawnItem(ItemID.StaffofEarth);
+                        break;
+                    case 6:
+                        player.QuickSpawnItem(ItemID.GolemFist);
+                        break;
+                }
+
+                SoulsOnFirstBag(NPCID.Golem, player);
+                return false;
+            }
+
+
+
             return base.PreOpenVanillaBag(context, player, arg);
         }
         public override void OpenVanillaBag(string context, Player player, int arg) {
@@ -369,12 +417,10 @@ namespace tsorcRevamp.Items.BossBags {
                     player.QuickSpawnItem(ItemID.AngelWings);
                     player.QuickSpawnItem(ModContent.ItemType<CrestOfSteel>(), 1);
                 }
-                if (arg == ItemID.PlanteraBossBag) {
+                if (arg == ItemID.PlanteraBossBag)
+                {
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfLife>());
                     SoulsOnFirstBag(NPCID.Plantera, player);
-                }
-                if (arg == ItemID.GolemBossBag) {
-                    SoulsOnFirstBag(NPCID.Golem, player);
-                    player.QuickSpawnItem(ItemID.Picksaw);
                 }
                 if (arg == ItemID.FishronBossBag) {
                     SoulsOnFirstBag(NPCID.DukeFishron, player);

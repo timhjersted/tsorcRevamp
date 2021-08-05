@@ -8,7 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
     class WaterTrail : ModProjectile {
 
         public override void SetDefaults() {
-            projectile.penetrate = 3;
+            projectile.penetrate = 4;
             projectile.width = 16;
             projectile.height = 16;
             projectile.ignoreWater = true;

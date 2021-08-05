@@ -53,6 +53,8 @@ namespace tsorcRevamp.Items.BossItems {
             recipe.AddIngredient(mod.GetItem("CrestOfEarth"), 1);
             recipe.AddIngredient(mod.GetItem("CrestOfCorruption"), 1);
             recipe.AddIngredient(mod.GetItem("CrestOfSteel"), 1);
+            recipe.AddIngredient(mod.GetItem("CrestOfLife"), 1);
+            recipe.AddIngredient(mod.GetItem("CrestOfStone"), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
