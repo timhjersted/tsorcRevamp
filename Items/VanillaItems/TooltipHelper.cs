@@ -44,7 +44,6 @@ namespace tsorcRevamp.Items.VanillaItems {
             SimpleModTooltip(mod, item, tooltips, ItemID.MythrilChainmail, "This armor set can be upgraded with 9000 Dark Souls");
             SimpleModTooltip(mod, item, tooltips, ItemID.ShadowHelmet, "Can be upgraded with 1000 Dark Souls");
             SimpleModTooltip(mod, item, tooltips, ItemID.SilverWatch, "Can be upgraded with Dark Souls to change day to night.");
-            SimpleModTooltip(mod, item, tooltips, ItemID.Spear, "Can be reforged with 3 Souls of Light and 5000 Dark Souls");
             SimpleModTooltip(mod, item, tooltips, ItemID.StickyBomb, "More fun to use than a pickaxe!");
             SimpleModTooltip(mod, item, tooltips, ItemID.WireCutter, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.WormFood, "Item is not consumed so you can retry the fight until victory");
