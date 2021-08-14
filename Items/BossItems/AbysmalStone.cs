@@ -29,9 +29,9 @@ namespace tsorcRevamp.Items.BossItems
         public override bool UseItem(Player player)
         {
             //if (!Main.dayTime && !NPC.AnyNPCs(mod.NPCType("Blight"))
-            if (!Main.dayTime && !NPC.AnyNPCs(NPCID.CorruptBunny)) //placeholder, use above
+            if (!Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>())) //placeholder, use above
             {
-                NPC.SpawnOnPlayer(Main.myPlayer, NPCID.CorruptBunny); //placeholder
+               // NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>()); //placeholder
                 return true;
             }
             else

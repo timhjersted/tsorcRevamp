@@ -13,11 +13,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             animationType = NPCID.GreenJellyfish;
             npc.aiStyle = 18;
             npc.timeLeft = 750;
-            npc.damage = 60;
+            npc.damage = 120;
             npc.defense = 40;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 1000;
+            npc.lifeMax = 2000;
             npc.alpha = 20;
             npc.scale = .7f;
             npc.knockBackResist = 0.3f;
@@ -25,6 +25,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.value = 1250;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.Frozen] = true;
+        }
+
+
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.lifeMax = (int)(npc.lifeMax / 2);
+            npc.damage = (int)(npc.damage / 2);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {

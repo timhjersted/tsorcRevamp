@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.damage = 50;
 			//It genuinely had none in the original.
 			npc.defense = 0;
-			//npc.music = 12;
+			music = 12;
 			npc.defense = 10;
 			npc.boss = true;
 			npc.HitSound = SoundID.NPCHit1;

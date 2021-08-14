@@ -53,9 +53,6 @@ namespace tsorcRevamp.Projectiles.Enemy
            //     projectile.velocity.X *= 1.01f;
            //     projectile.velocity.Y *= 1.01f;
             }
-
-           // Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y, projectile.width, projectile.height);
-           // Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player[Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -65,9 +62,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 buffLengthMod = 2;
             }
-            Main.player[Main.myPlayer].AddBuff(BuffID.Poisoned, 300 / buffLengthMod, false); //poisoned
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300 / buffLengthMod, false); //crippled
-            Main.player[Main.myPlayer].AddBuff(BuffID.Bleeding, 300 / buffLengthMod, false); //bleeding
+            target.AddBuff(BuffID.Poisoned, 300 / buffLengthMod, false); //poisoned
+            target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300 / buffLengthMod, false); //crippled
+            target.AddBuff(BuffID.Bleeding, 300 / buffLengthMod, false); //bleeding
         }
     }
 }

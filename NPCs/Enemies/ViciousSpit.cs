@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.width = 16;
             npc.height = 16;
             npc.aiStyle = -1;
-            npc.damage = 165;
+            npc.damage = 115;
             npc.defense = 0;
             npc.lifeMax = 1;
             npc.HitSound = null;
@@ -19,6 +19,11 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.DeathSound = SoundID.NPCDeath9;
             npc.alpha = 80;
             npc.timeLeft = 600;
+        }
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.lifeMax = (int)(npc.lifeMax / 2);
+            npc.damage = (int)(npc.damage / 2);
         }
 
         public override void AI() {

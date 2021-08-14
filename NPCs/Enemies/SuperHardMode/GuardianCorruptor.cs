@@ -29,6 +29,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             bannerItem = ModContent.ItemType<Banners.GuardianCorruptorBanner>();
         }
 
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.lifeMax = (int)(npc.lifeMax / 2);
+            npc.damage = (int)(npc.damage / 2);
+        }
+
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             float chance = 0;
             var player = spawnInfo.player;
