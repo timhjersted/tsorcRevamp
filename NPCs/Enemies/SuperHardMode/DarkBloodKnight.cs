@@ -17,8 +17,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.width = 18;
 			npc.height = 48;
 
-			aiType = 110;
-			npc.aiStyle = 3;
+			//aiType = 110;
+			npc.aiStyle = 0;
 			npc.timeLeft = 750;
 			npc.damage = 155;
 			npc.defense = 67;

@@ -134,10 +134,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			if (Main.netMode != 2)
 			{
-
-
 				if (npc.ai[0] >= 12 && npc.ai[2] < 5) //2 was 12
-
 				{
 					float num48 = 7f;
 					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -193,14 +190,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				}
 				else
 				{
-
-
-
 					//end of W1k's Death code
-
-
 					//region teleportation - can't believe I got this to work.. yayyyyy :D lol
-
 					int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
 					int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
 					int x_blockpos = (int)npc.position.X / 16; // corner not center
@@ -270,11 +261,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 			npc.ai[3]++;
-
 			if (npc.ai[3] >= 60) //how often the crystal attack can happen in frames per second
 			{
-				if (Main.rand.Next(60) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+
+ 				if (Main.rand.Next(40) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
 				{
+
 					float num48 = 2f;
 					Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 520 + (npc.height / 2));
 					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
@@ -290,7 +282,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						Main.projectile[num54].timeLeft = 600;
 						Main.projectile[num54].aiStyle = 4;
 						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 25);
-						npc.ai[3] = 0; ;
+						npc.ai[3] = 0;
 					}
 
 					npc.netUpdate = true;
@@ -298,9 +290,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 				}
 
-
-				if (Main.rand.Next(50) == 1)
+				if (Main.rand.Next(30) == 1)
 				{
+
 					float num48 = 8f;
 					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -326,25 +318,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-				if (Main.rand.Next(305) == 0) //1 in 805 chance boss will summon an NPC
+				if (Main.rand.Next(205) == 0) //1 in 205 chance boss will summon an NPC
 				{
 					int Random = Main.rand.Next(80);
 					int Paraspawn = 0;
 					if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Parasprite>(), 0);
 					Main.npc[Paraspawn].velocity.X = npc.velocity.X;
 					npc.active = true;
-
 				}
-
-
-
-
-
 			}
 
 			npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
 			if (npc.ai[3] >= 600)
 			{
+				npc.ai[3] = 0;
 				if (npc.ai[1] == 0) npc.ai[1] = 1;
 				else npc.ai[1] = 0;
 			}

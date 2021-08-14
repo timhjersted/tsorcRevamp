@@ -16,8 +16,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.width = 18;
 			npc.height = 48;
 
-			aiType = 110;
-			npc.aiStyle = 3;
+			//aiType = 110;
+			npc.aiStyle = 0;
 			npc.timeLeft = 750;
 			npc.damage = 105;
 			npc.lavaImmune = true;
@@ -291,8 +291,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				else // not confused
 				{
 					if (npc.ai[1] > 0f)
+					{
 						npc.ai[1] -= 1f; // decrement fire & reload counter
-
+					}
+					else
+                    {
+						npc.ai[1] = shot_rate;
+                    }
 					//if (npc.justHit) // was just hit?
 					//{
 					//	npc.ai[1] = 30f; // shot on .5 sec cooldown
@@ -301,7 +306,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 					if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
 					{
 						npc.TargetClosest(true); // target and face closest player
-						if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
+						if ((npc.ai[1]) == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
 						{ // firing:
 							Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
 							float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X; // x vector to target
@@ -336,7 +341,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						if (npc.velocity.Y != 0f || npc.ai[1] <= 0f) // jump/fall or firing reload
 						{
 							npc.ai[2] = 0f; // not aiming
-							npc.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
+							npc.ai[1] = shot_rate; // reset firing/reload counter (necessary? nonzero maybe)
 						}
 						else // no jump/fall and no firing reload
 						{
