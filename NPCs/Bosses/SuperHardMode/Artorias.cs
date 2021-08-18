@@ -4,10 +4,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Bosses {
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
+{
+	[AutoloadBossHead]
 	class Artorias : ModNPC {
-
-        public override void SetStaticDefaults() {
+		public override void SetStaticDefaults() {
 			Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.PossessedArmor]; 
         }
         public override void SetDefaults() {
@@ -24,15 +25,48 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.boss = true;
             npc.lavaImmune = true;
 			animationType = NPCID.PossessedArmor; //this almost feels like cheating lol
-        }
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+			bossBag = ModContent.ItemType<Items.BossBags.ArtoriasBag>();
 		}
+
+		int holdBallDamage = 20;
+		int energyBallDamage = 30;
+		int lightPillarDamage = 75;
+		int blackBreathDamage = 35;
+		int lightning3Damage = 25;
+		int ice3Damage = 25;
+		int phantomSeekerDamage = 40;
+		int lightning4Damage = 40;
+		int shardsDamage = 40;
+		int iceStormDamage = 30;
+		//This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
+		int gravityBallDamage = 0;
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.damage = (int)(npc.damage / 2);
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			holdBallDamage = (int)(holdBallDamage / 2);
+			energyBallDamage = (int)(energyBallDamage / 2);
+			lightPillarDamage = (int)(lightPillarDamage / 2);
+			blackBreathDamage = (int)(blackBreathDamage / 2);
+			lightning3Damage = (int)(lightning3Damage / 2);
+			ice3Damage = (int)(ice3Damage / 2);
+			phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
+			lightning4Damage = (int)(lightning4Damage / 2);
+			shardsDamage = (int)(shardsDamage / 2);
+			iceStormDamage = (int)(iceStormDamage / 2);
+			//gravityBallDamage = (int)(gravityBallDamage / 2);
+		}
+
 		public override void OnHitPlayer(Player target, int damage, bool crit) {
+
+			int expertScale = 1;
+			if (Main.expertMode) expertScale = 2;
+
             if (Main.rand.Next(4) == 0) {
-                target.AddBuff(BuffID.BrokenArmor, 180, false);
-                target.AddBuff(BuffID.Poisoned, 3600, false);
-                target.AddBuff(BuffID.Cursed, 300, false);
+                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false);
+                target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false);
+                target.AddBuff(BuffID.Cursed, 300 / expertScale, false);
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             }
         }
@@ -273,9 +307,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 40;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 105;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -298,9 +331,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 60;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -315,9 +347,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f))) {
 							speedX *= 0;
 							speedY *= 0;
-							int damage = 0;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightPillarBall>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightPillarDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -335,9 +366,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 70;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.BlackBreath>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 10;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -355,9 +385,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 50;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightning3Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -375,9 +404,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 50;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, ice3Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 40;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -386,7 +414,7 @@ namespace tsorcRevamp.NPCs.Bosses {
 						npc.netUpdate = true;
 					}
 					if (Main.rand.Next(200) == 1) {
-						num58 = Projectile.NewProjectile(npc.position.X + 20, npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), 80, 0f, Main.myPlayer);
+						num58 = Projectile.NewProjectile(npc.position.X + 20, npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num58].timeLeft = 400;
 						Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
 						Main.projectile[num58].ai[0] = npc.target;
@@ -407,9 +435,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 80;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightning4Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -430,9 +457,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 							num51 = num48 / num51;
 							speedX *= num51;
 							speedY *= num51;
-							int damage = 40;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.MassiveCrystalShardsSpell>();
-							int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, shardsDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 4;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
@@ -443,7 +469,7 @@ namespace tsorcRevamp.NPCs.Bosses {
 
 
 					if (Main.rand.Next(250) == 1) {
-						num59 = Projectile.NewProjectile(npc.position.X + 20, npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), 80, 0f, Main.myPlayer);
+						num59 = Projectile.NewProjectile(npc.position.X + 20, npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num59].timeLeft = 500;
 						Main.projectile[num59].rotation = Main.rand.Next(700) / 100f;
 						Main.projectile[num59].ai[0] = npc.target;
@@ -471,9 +497,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 						num51 = num48 / num51;
 						speedX *= num51;
 						speedY *= num51;
-						int damage = 60;
 						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 1;
 						Main.projectile[num54].aiStyle = 1;
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -494,9 +519,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 						num51 = num48 / num51;
 						speedX *= num51;
 						speedY *= num51;
-						int damage = 60;
 						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>();
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 300;
 						Main.projectile[num54].aiStyle = 1;
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -514,9 +538,8 @@ namespace tsorcRevamp.NPCs.Bosses {
 						num51 = num48 / num51;
 						speedX *= num51;
 						speedY *= num51;
-						int damage = 0;
 						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity4Ball>();
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 60;
 						Main.projectile[num54].aiStyle = 1;
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -548,6 +571,30 @@ namespace tsorcRevamp.NPCs.Bosses {
 				}
 			}
 		}
+
+		#region Gore
+		public override void NPCLoot()
+		{
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Easterling Gore 1"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Easterling Gore 2"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Easterling Gore 3"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Easterling Gore 2"), 1f);
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Easterling Gore 3"), 1f);
+
+			if (Main.expertMode)
+			{
+				npc.DropBossBags();
+			}
+			else
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.WolfRing>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
+			}
+		}
+		#endregion
 
 	}
 }

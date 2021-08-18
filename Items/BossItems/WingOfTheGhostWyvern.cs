@@ -28,18 +28,17 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-            //if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMageShadow>()))
-                {
+           if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()))
+            {
                 return false;
             }
             if (Main.dayTime) {
                 Main.NewText("The Ghost Wyvern is not present in this dimension... Retry at night.", 175, 75, 255);
+                return false;
             }
             else {
                 Main.NewText("You think death is the end? You haven't begun to understand my powers, Red... ", 175, 75, 255);
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMageShadow>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>());
             }
             return true;
         }

@@ -27,13 +27,13 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Artorias>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>());
             return true;
         }
 
         public override bool CanUseItem(Player player) {
             bool canUse = true;
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Artorias>())) {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())) {
                 canUse = false;
             }
             return canUse;

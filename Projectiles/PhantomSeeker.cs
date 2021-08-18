@@ -32,8 +32,8 @@ namespace tsorcRevamp.Projectiles {
             }
 
             if (projectile.timeLeft > 150 && projectile.timeLeft < 500) {
-                projectile.velocity.X -= (projectile.position.X - Main.player[(int)projectile.ai[0]].position.X) / 1000f;
-                projectile.velocity.Y -= (projectile.position.Y - Main.player[(int)projectile.ai[0]].position.Y) / 1000f;
+                projectile.velocity.X -= (projectile.position.X - Main.player[(int)projectile.ai[0]].position.X) / 1300f;
+                projectile.velocity.Y -= (projectile.position.Y - Main.player[(int)projectile.ai[0]].position.Y) / 1300f;
 
                 projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X);
                 projectile.velocity.Y = (float)Math.Sin(projectile.rotation) * 8;
@@ -45,13 +45,15 @@ namespace tsorcRevamp.Projectiles {
             if (lastposindex > 19) lastposindex = 0;
 
         }
-        public override void PostDraw(SpriteBatch sp, Color lightColor) {
-            Texture2D MyTexture = ModContent.GetTexture(TexturePath);
+        public override void PostDraw(SpriteBatch sp, Color lightColor)
+        {
+            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.projectile.width, this.projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
             int modlastposindex = lastposindex;
-            for (int i = 0; i < 19; i++) {
+            for (int i = 0; i < 19; i++)
+            {
                 float rotmod = Main.rand.Next(-100, 100) / 100f;
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 lastpos[modlastposindex].X += Main.rand.Next(-1, 1);
@@ -76,7 +78,8 @@ namespace tsorcRevamp.Projectiles {
             targetColor = new Color(0, 0, 255, 0);
             modlastposindex = lastposindex;
 
-            for (int i = 0; i < 19; i++) {
+            for (int i = 0; i < 19; i++)
+            {
                 float rotmod = Main.rand.Next(-100, 100) / 100f;
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 PC = lastpos[modlastposindex] + new Vector2(this.projectile.width / 2, this.projectile.height / 2);
@@ -95,6 +98,7 @@ namespace tsorcRevamp.Projectiles {
                 if (modlastposindex > 19) modlastposindex = 0;
 
             }
+            return;
         }
     }
 }

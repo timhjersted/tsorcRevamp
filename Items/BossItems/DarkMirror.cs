@@ -26,15 +26,14 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny); //todo remove placeholder
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.DarkCloud>());
-            //Main.NewText("Your shadow self has manifested from your darkest fears...");
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
+            Main.NewText("Your shadow self has manifested from your darkest fears...");
             return true;
         }
         public override bool CanUseItem(Player player) {
             bool canUse = true;
-            if ((Main.dayTime) || NPC.AnyNPCs(NPCID.CorruptBunny)) {
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.DarkCloud>()))
+            if ((Main.dayTime) || (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()))) {
+                
                 canUse = false;
             }
             return canUse;

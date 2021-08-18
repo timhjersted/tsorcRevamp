@@ -13,6 +13,8 @@ using tsorcRevamp.Items.Potions.PermanentPotions;
 using tsorcRevamp.Buffs;
 using System;
 using Microsoft.Xna.Framework.Input;
+using Terraria.GameContent.NetModules;
+using Terraria.Localization;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -55,6 +57,11 @@ namespace tsorcRevamp {
 
             List<string> world_state= new List<string>();
             if (SuperHardMode) world_state.Add("SuperHardMode");
+            //This saves the fact that SuperHardMode has been disabled
+            if(world_state.Contains("SuperHardMode") && !SuperHardMode)
+            {
+                world_state.Remove("SuperHardMode");
+            }
             if (TheEnd) world_state.Add("TheEnd");
 
             TagCompound tagCompound = new TagCompound
@@ -150,6 +157,47 @@ namespace tsorcRevamp {
                     }
                 }
             }
+        }
+
+        //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".
+        public static void InitiateTheEnd()
+        {
+            Color c = new Color(255f, 255f, 60f);
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if (Main.netMode == 0)
+                {
+                    Main.NewText("The portal from The Abyss has closed!", c);
+                    Main.NewText("The world has been healed. You have inherited the fire of this world! ", c);
+                }
+                else if (Main.netMode == 2)
+                {
+                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The portal from The Abyss has closed!"), c);
+                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The world has been healed. You have inherited the fire of this world!..."), c);
+                }
+            }
+            else
+            {
+                if (Main.netMode == 0)
+                {
+                    Main.NewText("You have vanquished the final guardian...", c);
+                    Main.NewText("The portal from The Abyss remains closed. All is at peace...", c);
+                }
+                else if (Main.netMode == 2)
+                {
+                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("You have vanquished the final guardian..."), c);
+                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The portal from The Abyss remains closed. All is at peace..."), c);
+                }
+            }
+            
+            //These are outside of the if statements just so players can still disable hardmode or superhardmode if they happen to activate them again.
+            Main.hardMode = false;
+            tsorcRevampWorld.SuperHardMode = false;
+            tsorcRevampWorld.TheEnd = true;
+
+            //		Main.NewText("You have vanquished the final guardian of the Abyss...");
+            //		Main.NewText("The kiln of the First Flame has been ignited!");
+            //		//Main.NewText("Congratulations, you have inherited the fire of this world. You will forever be known as the hero of the age.");  
         }
     }
 }

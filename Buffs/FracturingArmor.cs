@@ -5,7 +5,7 @@ namespace tsorcRevamp.Buffs {
     class FracturingArmor : ModBuff {
 
         public override void SetDefaults() {
-            DisplayName.SetDefault("Curse Buildup");
+            DisplayName.SetDefault("Fracturing Armor");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
         }

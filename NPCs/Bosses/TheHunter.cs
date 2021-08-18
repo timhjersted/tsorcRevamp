@@ -5,7 +5,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy;
 
-namespace tsorcRevamp.NPCs.Bosses {
+namespace tsorcRevamp.NPCs.Bosses
+{
+    [AutoloadBossHead]
     class TheHunter : ModNPC {
         public override void SetStaticDefaults() {
             Main.npcFrameCount[npc.type] = 7;

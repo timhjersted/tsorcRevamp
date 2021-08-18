@@ -16,7 +16,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.hostile = true;
             projectile.height = 34;
             projectile.tileCollide = false;
-            projectile.damage = 40;
             projectile.width = 34;
             projectile.timeLeft = 150;
             projectile.light = .3f;

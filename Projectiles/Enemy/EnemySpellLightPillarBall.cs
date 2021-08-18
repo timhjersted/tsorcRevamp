@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override void Kill(int timeLeft) {
             if (Main.rand.NextBool(1)) {
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-                if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(new Vector2(projectile.position.X + (float)(projectile.width * -9), projectile.position.Y + (float)(projectile.height - 0.5f)), new Vector2(0, 0), ModContent.ProjectileType<EnemySpellLightPillar>(), 150, 8f, projectile.owner);
+                if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(new Vector2(projectile.position.X + (float)(projectile.width * -9), projectile.position.Y + (float)(projectile.height - 0.5f)), new Vector2(0, 0), ModContent.ProjectileType<EnemySpellLightPillar>(), projectile.damage, 8f, projectile.owner);
                 Vector2 projectilePos = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
                 int num41 = Dust.NewDust(projectilePos, projectile.width, projectile.height, 15, 0f, 0f, 100, default, 2f);
                 Main.dust[num41].noGravity = true;

@@ -49,11 +49,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             if (Main.expertMode)
             {
-                target.AddBuff(24, 450, false);
+                target.AddBuff(BuffID.OnFire, 450, false);
             }
             else
             {
-                target.AddBuff(24, 900, false);
+                target.AddBuff(BuffID.OnFire, 900, false);
             }
         }
     }

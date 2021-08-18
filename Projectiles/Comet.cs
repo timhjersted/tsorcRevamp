@@ -7,7 +7,17 @@ using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles {
     class Comet : ModProjectile {
-
+        public override void SetDefaults()
+        {
+            projectile.hostile = true;
+            projectile.penetrate = 3;
+            projectile.width = 15;
+            projectile.height = 15;
+            projectile.alpha = 255;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.MaxUpdates = 2;
+        }
 
 
         Vector2[] lastpos = new Vector2[20];
@@ -18,8 +28,8 @@ namespace tsorcRevamp.Projectiles {
 
             projectile.rotation += (Main.rand.Next(-100, 100)) / 2400f;
 
-            projectile.velocity.Y = (float)Math.Sin(projectile.rotation) * 10;
-            projectile.velocity.X = (float)Math.Cos(projectile.rotation) * 10;
+            projectile.velocity.Y = (float)Math.Sin(projectile.rotation) * projectile.ai[1];
+            projectile.velocity.X = (float)Math.Cos(projectile.rotation) * projectile.ai[1];
 
             if (projectile.timeLeft < 100) {
                 projectile.scale *= 0.9f;

@@ -27,18 +27,17 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SeathTheScalelessHead>()));
-                {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))
+            {
                 return false;
             }
             if (Main.dayTime) {
                 Main.NewText("Nothing happens... Retry at night.", 175, 75, 255);
+                return false;
             }
             else {
                 Main.NewText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SeathTheScalelessHead>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             }
             return true;
         }

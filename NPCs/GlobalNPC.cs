@@ -106,7 +106,8 @@ namespace tsorcRevamp.NPCs {
                     if (npc.type == NPCID.MoonLordCore) { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
                         DarkSoulQuantity = 100000; //1 plat / 10
                     }
-                    if (tsorcRevampWorld.Slain.ContainsKey(npc.type)) {
+                    if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
+                    {
                         DarkSoulQuantity = 0;
                         return;
                     }

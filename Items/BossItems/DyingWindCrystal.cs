@@ -20,16 +20,12 @@ namespace tsorcRevamp.Items.BossItems {
             item.consumable = false;
         }
 
-
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Chaos>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>());
             return true;
         }
         public override bool CanUseItem(Player player) {
-            return !(NPC.AnyNPCs(NPCID.CorruptBunny));
-            //todo fix placeholder
-            //return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Chaos>()));
+            return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()));
         }
 
         public override void AddRecipes() {

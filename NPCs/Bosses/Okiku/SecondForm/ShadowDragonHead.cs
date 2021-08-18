@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 	public class ShadowDragonHead : ModNPC
 	{
-		private bool initiate;
+		//private bool initiate;
 
 		public int TimerHeal;
 

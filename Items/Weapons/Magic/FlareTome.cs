@@ -27,6 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.value = 50000000;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.GreatFireballBall>();
+            item.autoReuse = true;
         }
     }
 }

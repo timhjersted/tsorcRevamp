@@ -5,7 +5,10 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Bosses {
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
+{
+    //Intentionally no minimap icon, to keep it mysterious
+    //[AutoloadBossHead]
     class Blight : ModNPC {
         public override void SetStaticDefaults() {
             Main.npcFrameCount[npc.type] = 4;
@@ -30,6 +33,22 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.alpha = 255;
             npc.boss = true;
             npc.buffImmune[BuffID.Confused] = true;
+            bossBag = ModContent.ItemType<Items.BossBags.BlightBag>();
+        }
+
+        int phantomSeekerDamage = 58;
+        int cometDamage = 50;
+        int darkAstronomyDamage = 60;
+        int antimatterCannonDamage = 140;
+
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.lifeMax = (int)(npc.lifeMax / 2);
+            npc.damage = (int)(npc.damage / 2);
+            phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
+            cometDamage = (int)(cometDamage / 2);
+            darkAstronomyDamage = (int)(darkAstronomyDamage / 2);
+            antimatterCannonDamage = (int)(antimatterCannonDamage / 2);
         }
 
         int chargeDamage = 0;
@@ -41,29 +60,57 @@ namespace tsorcRevamp.NPCs.Bosses {
         float spazzlevel;
         float targetspazzlevel;
         public override void OnHitPlayer(Player target, int damage, bool crit) {
+
+            int expertScale = 1;
+            if (Main.expertMode) expertScale = 2;
             if (Main.rand.Next(4) == 0) {
 
-                target.AddBuff(36, 180, false); //broken armor
-                target.AddBuff(20, 3600, false); //poisoned
-                target.AddBuff(30, 1800, false); //bleeding
+                target.AddBuff(36, 180 / expertScale, false); //broken armor
+                target.AddBuff(20, 3600 / expertScale, false); //poisoned
+                target.AddBuff(30, 1800 / expertScale, false); //bleeding
 
             }
 
             if (Main.rand.Next(2) == 0) {
 
-                target.AddBuff(BuffID.BrokenArmor, 180, false); //broken armor
-                target.AddBuff(BuffID.CursedInferno, 180, false); //cursed inferno
+                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
+                target.AddBuff(BuffID.CursedInferno, 180 / expertScale, false); //cursed inferno
                 //player.AddBuff("Powerful Curse Buildup", 18000, false); //chance to lose -20 life for 5 minutes
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false);
             }
         }
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
-        }
+
         public override void AI() {
             int num54;
-
             npc.TargetClosest(true);
+
+            //If it's too far away, target the closest player and charge them
+            if (Math.Abs(Main.player[npc.target].position.X - npc.position.X) > 2800 || Math.Abs(Main.player[npc.target].position.Y - npc.position.Y) > 2200)
+            {
+                npc.TargetClosest(true);
+                if (Main.rand.Next(450) == 1)
+                {
+                    chargeDamageFlag = true;
+                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+                    npc.velocity.X = (float)(Math.Cos(rotation) * 12) * -1;
+                    npc.velocity.Y = (float)(Math.Sin(rotation) * 12) * -1;
+                    npc.ai[1] = 1f;
+                    npc.netUpdate = true;
+                }
+                if (chargeDamageFlag == true)
+                {
+                    npc.damage = 130;
+                    chargeDamage++;
+                }
+                if (chargeDamage >= 50)
+                {
+                    chargeDamageFlag = false;
+                    npc.damage = 80;
+                    chargeDamage = 0;
+                }
+            }
+
             if (Main.player[npc.target].position.Y - 100 > npc.position.Y) {
 
                 Color color = new Color();
@@ -107,9 +154,6 @@ namespace tsorcRevamp.NPCs.Bosses {
             npc.frame.Width = 40;
 
 
-
-
-
             if (attackindex == 0) {
                 npc.frame.Y = 58;
             }
@@ -136,13 +180,6 @@ namespace tsorcRevamp.NPCs.Bosses {
                     chargeDamage = 0;
                 }
             }
-
-
-
-
-
-
-
 
 
             if (npc.direction == -1 && npc.velocity.X > -2f) {
@@ -200,7 +237,16 @@ namespace tsorcRevamp.NPCs.Bosses {
             //Cycle through all attacks linearly		
             if (phase > 1000) {
                 phase = 0;
-                attackindex = Main.rand.Next(1, 5);
+
+                //Chill for a few seconds after either of these attacks, because their projectiles linger
+                if(attackindex == 2 || attackindex == 3)
+                {
+                    phase += 150;
+                    attackindex = 0;
+                } else
+                {
+                    attackindex = Main.rand.Next(1, 5);
+                }
             }
 
 
@@ -211,17 +257,15 @@ namespace tsorcRevamp.NPCs.Bosses {
                 attackindex = 5;
             }
 
-
             //Actual attacks
-
             //Condemnation - Phantom Seeker
             if (attackindex == 1) {
                 targetspazzlevel = 0;
 
 
                 if (((int)Main.time % 60) < 1) {
-                    for (int i = 0; i < 2; i++) {
-                        num54 = Projectile.NewProjectile(new Vector2(npc.position.X + 20, npc.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<Projectiles.Comet>(), 115, 0f, Main.myPlayer); //Phantom Seeker
+                    for (int i = 0; i < 5; i++) {
+                        num54 = Projectile.NewProjectile(new Vector2(npc.position.X + 20, npc.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer); //Phantom Seeker
                         Main.projectile[num54].timeLeft = 400;
                         Main.projectile[num54].rotation = Main.rand.Next(700) / 100f;
                         Main.projectile[num54].ai[0] = npc.target;
@@ -232,12 +276,21 @@ namespace tsorcRevamp.NPCs.Bosses {
 
             //Antimatter - Black Comet
             else if (attackindex == 3) {
-                targetspazzlevel = 10;
-
-
-                if (((int)Main.time % 20) < 1) {
-                    num54 = Projectile.NewProjectile(npc.position.X + Main.rand.Next(-50, 600), npc.position.Y - 450, 0, 5, ModContent.ProjectileType<Projectiles.Comet>(), 100, 0f, Main.myPlayer); //Comet
-                    Main.projectile[num54].timeLeft = 500;
+                targetspazzlevel = 10;                
+                if (((int)Main.time % 5) < 1)
+                {
+                    float posX = Main.player[npc.target].position.X + Main.rand.Next(-1400, 1400);
+                   /** int spread = Main.rand.Next(3);
+                    if (spread < 2) {
+                        if (spread == 1){
+                            posX += 1200;
+                        } else
+                        {
+                            posX -= 1200;
+                        }
+                     }**/
+                    num54 = Projectile.NewProjectile(posX, Main.player[npc.target].position.Y - 650, 0, 5, ModContent.ProjectileType<Projectiles.Comet>(), cometDamage, 0f, Main.myPlayer); //Comet
+                    Main.projectile[num54].ai[1] = 5.5f; //Velocity
                 }
             }
 
@@ -247,12 +300,12 @@ namespace tsorcRevamp.NPCs.Bosses {
                 targetspazzlevel = 25;
 
                 if (((int)Main.time % 60) < 1) {
-                    for (int i = 0; i < 6; i++) {
-                        num54 = Projectile.NewProjectile(new Vector2(npc.position.X + 20, npc.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Comet>(), 60, 0f, Main.myPlayer); //Phantom Spiral
-                        Main.projectile[num54].timeLeft = 350;
+                    for (int i = 0; i < 3; i++) {
+                        num54 = Projectile.NewProjectile(new Vector2(npc.position.X + 20, npc.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.PhantomSpiral>(), darkAstronomyDamage, 0f, Main.myPlayer); //Phantom Spiral
+                        Main.projectile[num54].timeLeft = 1000;
                         Main.projectile[num54].rotation = Main.rand.Next(700) / 100f;
                         Main.projectile[num54].ai[0] = npc.whoAmI;
-                        Main.projectile[num54].ai[1] = Main.rand.Next(200, 600);
+                        Main.projectile[num54].ai[1] = Main.rand.Next(200, 2500);
                     }
                 }
             }
@@ -270,14 +323,13 @@ namespace tsorcRevamp.NPCs.Bosses {
                         int s = Main.rand.Next(2, 10);
                         float m = (float)Math.Sin(j) * -s;
                         float n = (float)Math.Cos(j) * -s;
-                        num54 = Projectile.NewProjectile(new Vector2(npc.position.X + Main.rand.Next(-25, 25), npc.position.Y + Main.rand.Next(50, 150)), new Vector2(m, n), ModContent.ProjectileType<Projectiles.Comet>(), 140, 0f, Main.myPlayer); //Antimatter Cannon
+                        num54 = Projectile.NewProjectile(new Vector2(npc.position.X + Main.rand.Next(-25, 25), npc.position.Y + Main.rand.Next(50, 150)), new Vector2(m, n), ModContent.ProjectileType<Projectiles.Comet>(), antimatterCannonDamage, 0f, Main.myPlayer); //Antimatter Cannon
                         Main.projectile[num54].scale = (Main.rand.Next(50, 100)) / 75f;
                         Main.projectile[num54].timeLeft = 300;
+                        Main.projectile[num54].ai[1] = 10; //Velocity
                     }
                 }
             }
-
-
             else {
                 targetspazzlevel = 0;
             }
@@ -343,7 +395,15 @@ namespace tsorcRevamp.NPCs.Bosses {
         }
 
         public override void NPCLoot() {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 6));
+            if (Main.expertMode)
+            {
+                npc.DropBossBags();
+            }
+            else
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 5));
+            }
         }
     }
 }
