@@ -159,9 +159,94 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
+        bool hasTargeted = false;
+        int targetCount = 0;
+        Player[] targets = new Player[256];
+        bool[] targetAlive = new bool[256];
+        float closestPlayerDistance = 999999;
+        int despawnTime = -1;
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         public override void AI()  //  warrior ai
         {
+            //When despawning, we set timeLeft to 240. If that's been done, we don't need to check for players or target anyone anymore.
+            if (despawnTime < 0)
+            {
+                //Only run this once. Gets all active players and throws them into these arrays so we can track their status.
+                if (!hasTargeted)
+                {
+                    foreach (Player player in Main.player)
+                    {
+                        //For some reason, Main.player always has 255 entries. This ensures we're only pulling real players from it.
+                        if (player.name != "")
+                        {
+                            targets[targetCount] = player;
+                            targetAlive[targetCount] = true;
+                            targetCount++;
+                        }
+                    }
+                    hasTargeted = true;
+                }
+                else
+                {
+                    //Aka, "is there a player who hasn't been killed yet?"
+                    bool viableTarget = false;
+                    //Iterate through all tracked players in the array
+                    for (int i = 0; i < targetCount; i++)
+                    {
+                        //For each of them, check if they're dead. If so, mark it down in targetAlive.
+                        if (targets[i].dead)
+                        {
+                            targetAlive[i] = false;
+                            //Setting this makes it so the dead player's distance won't persist, and it has to check again.
+                            closestPlayerDistance = 999999;
+                        }
+                        else if (targetAlive[i])
+                        {
+                            //If it found a player that hasn't been killed yet, then don't despawn
+                            viableTarget = true;
+                            //Check if they're the closest one, and if so target them
+                            float distance = Vector2.DistanceSquared(targets[i].position, npc.position);
+                            if (distance < closestPlayerDistance)
+                            {
+                                closestPlayerDistance = distance;
+                                npc.target = targets[i].whoAmI;
+                            }
+                        }
+                    }
+                    //If there's no player that has not died, then despawn.
+                    if (!viableTarget)
+                    {
+                        Main.NewText("Your shadow has vanquished you...", Color.Blue);
+                        despawnTime = 240;
+                    }
+                }
+            }
+            else
+            {
+                //Adios
+                if (despawnTime == 0)
+                {
+                    npc.active = false;
+                    for (int i = 0; i < 60; i++)
+                    {
+                        int dustID = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 180, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, Color.Blue, 7f);
+                        Main.dust[dustID].noGravity = true;
+                    }
+                }
+                else
+                {
+                    despawnTime--;
+                }
+            }
+
+
+
+
+
+
+
+
+
             #region set up NPC's attributes & behaviors
             // set parameters
             //  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -279,13 +364,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
                 if (!canDrown || (canDrown && !npc.wet) || (quickBored && boredTimer > tBored))
                 {
-                    npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+                    //npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
                 }
             }
             else if (!is_archer || npc.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
             {
                 if (hates_light && Main.dayTime && (double)(npc.position.Y / 16f) < Main.worldSurface && npc.timeLeft > 10)
-                    npc.timeLeft = 10;  //  if hates light & in light, hasten despawn
+                    //npc.timeLeft = 10;  //  if hates light & in light, hasten despawn
 
                 if (npc.velocity.X == 0f)
                 {
@@ -363,7 +448,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
                     {
-                        npc.TargetClosest(true); // target and face closest player
+                        //npc.TargetClosest(true); // target and face closest player
                         if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
                         { // firing:
                             Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
@@ -489,7 +574,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
                 if (customAi1 >= 10f)
                 {
-                    npc.TargetClosest(true);
+                    //npc.TargetClosest(true);
                     if ((customspawn1 < 1) && Main.rand.Next(1000) == 1)
                     {
                         int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.CrystalKnightII>(), 0);
@@ -908,16 +993,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 // } //end of MP thing
 
                 #endregion
-
-                if (Main.player[npc.target].dead)
-                {
-                    if (npc.timeLeft > 10)
-                    {
-                        Main.NewText("Your shadow has vanquished you...");
-                        npc.timeLeft = 5;
-                        return;
-                    }
-                }
             }
 
             #endregion
@@ -1141,7 +1216,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (boredTimer > tBored)
                         {
                             boredResetT = 0;
-                            npc.TargetClosest(false);                           
+                            //npc.TargetClosest(false);                           
                             npc.directionY = -1;
                             if (npc.velocity.Y > 0f)
                             {
@@ -1162,7 +1237,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (boredResetT > bReset)
                     {
                         boredTimer = 0;
-                        npc.TargetClosest(true);
+                        //npc.TargetClosest(true);
                         oBored = false;
                     }
                 }
