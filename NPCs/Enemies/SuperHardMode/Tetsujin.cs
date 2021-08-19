@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		}
 
 
-		float customAi1;
+		//float customAi1;
 		int breathCD = 30;
 		//int previous = 0;
 		bool breath = false;
@@ -153,7 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 								Main.projectile[num54].timeLeft = 650;
 								Main.projectile[num54].aiStyle = 23;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 12);
-								customAi1 = 1f;
+								//customAi1 = 1f;
 							}
 							npc.netUpdate = true;
 						}

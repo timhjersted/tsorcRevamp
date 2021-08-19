@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region AI
         public void Kill()
         {
-            int num98 = -1;
+            //int num98 = -1;
             if (!projectile.active)
             {
                 return;

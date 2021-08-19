@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region Kill
         public override void Kill(int timeLeft)
         {
-            int num98 = -1;
+            //int num98 = -1;
             if (!projectile.active)
             {
                 return;

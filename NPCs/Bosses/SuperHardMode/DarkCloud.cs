@@ -65,9 +65,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float comboDamage = 0;
         bool breakCombo = false;
         float customAi1;
-        int drownTimerMax = 2000;
-        int drownTimer = 2000;
-        int drowningRisk = 1200;
+        //int drownTimerMax = 2000;
+        //int drownTimer = 2000;
+        //int drowningRisk = 1200;
         int boredTimer = 0;
         int tBored = 1;//increasing this increases how long it take for the NP to get bored
         int boredResetT = 0;
@@ -1129,43 +1129,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             } // END is server & chaos ele & bored
             #endregion
             //-------------------------------------------------------------------
-            #region drown // code by Omnir
-            if (canDrown)
-            {
-                if (!npc.wet)
-                {
-                    npc.TargetClosest(true);
-                    drownTimer = drownTimerMax;
-                }
-                if (npc.wet)
-                {
-                    drownTimer--;
-                }
-                if (npc.wet && drownTimer > drowningRisk)
-                {
-                    npc.TargetClosest(true);
-                }
-                else if (npc.wet && drownTimer <= drowningRisk)
-                {
-                    npc.TargetClosest(false);
-                    if (npc.timeLeft > 10)
-                    {
-                        npc.timeLeft = 10;
-                    }
-                    npc.directionY = -1;
-                    if (npc.velocity.Y > 0f)
-                    {
-                        npc.direction = 1;
-                    }
-                    npc.direction = -1;
-                    if (npc.velocity.X > 0f)
-                    {
-                        npc.direction = 1;
-                    }
-                }
-            }
-            #endregion
-            //-------------------------------------------------------------------*/
+    
             #region New Boredom by Omnir
             if (quickBored)
             {
@@ -1177,11 +1141,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (boredTimer > tBored)
                         {
                             boredResetT = 0;
-                            npc.TargetClosest(false);
-                            if (npc.timeLeft > 10)
-                            {
-                                npc.timeLeft = 10;
-                            }
+                            npc.TargetClosest(false);                           
                             npc.directionY = -1;
                             if (npc.velocity.Y > 0f)
                             {

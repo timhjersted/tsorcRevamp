@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		}
 
 
-		float customAi1;
+		//float customAi1;
 
 
 		#region Spawn

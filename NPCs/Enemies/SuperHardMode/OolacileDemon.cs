@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bioSpitDamage = (int)(bioSpitDamage / 2);
 		}
 
-		float customAi1;
+		//float customAi1;
 		int breathCD = 60;
 		bool breath = false;
 
@@ -284,7 +284,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20);
 
-							customAi1 = 1f;
+							//customAi1 = 1f;
 						}
 						npc.netUpdate = true;
 					}

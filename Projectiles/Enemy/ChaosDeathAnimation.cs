@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.scale = 2;
 		}
 
-		int chaosdacount1 = 0;
+		//int chaosdacount1 = 0;
         public override void AI()
         {
 			projectile.frameCounter++;

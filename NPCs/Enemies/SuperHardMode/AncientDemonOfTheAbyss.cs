@@ -59,10 +59,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		float customAi1;
 		float customspawn1;
-		int movedTowards = 0;
-		int num94 = 0;
-		int num95 = 0;
-		int noJump = 0;
+		//int movedTowards = 0;
+		//int num94 = 0;
+		//int num95 = 0;
+		//int noJump = 0;
 		int drownTimerMax = 8000;
 		int drownTimer = 8000;
 		int drowningRisk = 4000;

@@ -75,11 +75,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			int boredom_time = 20; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
 			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
-			bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
+			//bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
 			bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
 
-			int sound_type = 0; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
-			int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
+			//int sound_type = 0; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
+			//int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
 			float acceleration = .05f;  //  how fast it can speed up
 			float top_speed = 2.6f;  //  max walking speed, also affects jump length
@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			// is_archer & clown bombs only
 			int shot_rate = 70;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
-			int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
+			//int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
 			int projectile_damage = 35;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
 			int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellMeteor>(); // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
 			float projectile_velocity = 11; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
@@ -112,8 +112,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
 			// Omnirs creature sorts
-			bool tooBig = true; // force bigger creatures to jump
-			bool lavaJumping = false; // Enemies jump on lava.
+			//bool tooBig = true; // force bigger creatures to jump
+			//bool lavaJumping = false; // Enemies jump on lava.
 			bool canDrown = false; // They will drown if in the water for too long
 			bool quickBored = true; //Enemy will respond to boredom much faster(? -- test)
 			bool oBored = false; //Whether they're bored under the "quickBored" conditions

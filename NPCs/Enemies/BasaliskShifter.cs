@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			float acceleration = .03f;  //  how fast it can speed up
 			float top_speed = 1f;  //  max walking speed, also affects jump length
-			float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
+			//float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
 			float enrage_percentage = .1f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			// is_archer & clown bombs only
 			int shot_rate = 70;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
-			int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
+			//int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
 			//int projectile_damage = 35;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer //Set in meteorDamage nows
 			int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellMeteor>(); // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
 			float projectile_velocity = 11; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
@@ -155,8 +155,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
 			// Omnirs creature sorts
-			bool tooBig = false; // force bigger creatures to jump
-			bool lavaJumping = true; // Enemies jump on lava.
+			//bool tooBig = false; // force bigger creatures to jump
+			//bool lavaJumping = true; // Enemies jump on lava.
 			bool canDrown = false; // They will drown if in the water for too long
 			bool quickBored = false; //Enemy will respond to boredom much faster(? -- test)
 			bool oBored = false; //Whether they're bored under the "quickBored" conditions
@@ -705,7 +705,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							if (breath)
 							{
 
-								float num48 = 5f;
+								//float num48 = 5f;
 								float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
 								int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType <Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 40;
@@ -1101,40 +1101,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (!Main.dedServ)
 			{
 				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
-			}
-			int num2 = 0;
-			if (npc.aiAction == 0)
-			{
-				if (npc.velocity.Y < 0f)
-				{
-					num2 = 2;
-				}
-				else
-				{
-					if (npc.velocity.Y > 0f)
-					{
-						num2 = 3;
-					}
-					else
-					{
-						if (npc.velocity.X != 0f)
-						{
-							num2 = 1;
-						}
-						else
-						{
-							num2 = 0;
-						}
-					}
-				}
-			}
-			else
-			{
-				if (npc.aiAction == 1)
-				{
-					num2 = 4;
-				}
-			}
+			}			
 			if (npc.velocity.Y == 0f)
 			{
 				if (npc.direction == 1)

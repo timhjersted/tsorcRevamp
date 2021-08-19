@@ -820,11 +820,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 			}
 			#endregion
-			if (Main.player[npc.target].dead)
+
+			 if (Main.player[npc.target].dead)
 			{
 				if (npc.timeLeft > 10)
 				{
-					npc.timeLeft = 5;
+					//npc.timeLeft = 5;
 					return;
 				}
 			}

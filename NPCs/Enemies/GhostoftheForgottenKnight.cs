@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region AI
 		public override void AI()
 		{
-			int num3 = 60;
+			//int num3 = 60;
 			bool flag2 = false;
 			int num5 = 60;
 			bool flag3 = true;

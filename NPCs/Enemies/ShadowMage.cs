@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		int oracleDamage = 16;
 		int ice3Damage = 25;
 
-		float customAi1;
+		//float customAi1;
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			#region check if standing on a solid tile
 			// warning: this section contains a return statement
-			bool standing_on_solid_tile = false;
+			//bool standing_on_solid_tile = false;
 			if (npc.velocity.Y == 0f) // no jump/fall
 			{
 				int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 					if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
 					{
-						standing_on_solid_tile = true;
+						//standing_on_solid_tile = true;
 						break; // one is enough so stop checking
 					}
 				} // END traverse blocks under feet

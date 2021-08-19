@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.BossItems
             //if (!Main.dayTime && !NPC.AnyNPCs(mod.NPCType("Blight"))
             if (!Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>())) //placeholder, use above
             {
-               // NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileSorcerer>()); //placeholder
+                NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()); //placeholder
                 return true;
             }
             else

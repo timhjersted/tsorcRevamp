@@ -28,9 +28,8 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(NPCID.CorruptBunny))
-                //(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Gwyn>()));
-                {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+            {
                 return false;
             }
             if (!Main.bloodMoon) {
@@ -38,8 +37,7 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else {
                 Main.NewText("Defeat me, and you shall inherit the fire of this world... ", 175, 75, 255);
-                NPC.SpawnOnPlayer(player.whoAmI, NPCID.CorruptBunny);
-                //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Gwyn>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>());
             }
             return true;
         }

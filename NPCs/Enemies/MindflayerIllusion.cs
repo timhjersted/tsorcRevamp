@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies {
 
 
 
-        float customAi1;
+        //float customAi1;
 
 
         #region AI

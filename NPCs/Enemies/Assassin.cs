@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			// is_archer & clown bombs only
 			int shot_rate = 100;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
-			int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
+			//int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
 			int projectile_damage = 50;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
 			int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>();//44;//0x37; //14;
 			float projectile_velocity = 14; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
@@ -429,7 +429,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 300;//(int) (14f * npc.scale);
+								//int damage = 300;//(int) (14f * npc.scale);
 								//int type = 1; //Config.projectileID["Archer Bolt"];//44;//0x37; //14;
 								//int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
 								//Main.projectile[num54].timeLeft = 600;
