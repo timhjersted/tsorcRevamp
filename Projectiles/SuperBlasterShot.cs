@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles
             projectile.penetrate = 2;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 32;
+            projectile.timeLeft = 36;
             //These 2 help the projectile hitbox be centered on the projectile sprite.
             drawOffsetX = -2;
             drawOriginOffsetY = -2;
@@ -31,8 +31,10 @@ namespace tsorcRevamp.Projectiles
         public override void AI()
         {
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 111, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), .85f);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 111, 0, 0, 30, default(Color), .85f);
                 Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= .5f;
+
             }
             // Rotation increased by velocity.X 
             projectile.rotation += projectile.velocity.X * 0.08f;
@@ -43,7 +45,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.localAI[0] += 1f;
             }
 
-            Lighting.AddLight(projectile.position, 0.05f, 0.28f, 0.28f);
+            Lighting.AddLight(projectile.position, 0.06f, 0.3f, 0.3f);
 
             if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
             {

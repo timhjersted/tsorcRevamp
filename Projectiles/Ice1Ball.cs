@@ -155,8 +155,8 @@ namespace tsorcRevamp.Projectiles {
             projectile.timeLeft = 0;
             {
                 if(projCount <=3) Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 27);
+                Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), projectile.velocity.X, 5, ModContent.ProjectileType<Ice1Icicle>(), (int)(projectile.damage), 3f, projectile.owner);
                 for (int num40 = 0; num40 < 20; num40++) {
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), projectile.velocity.X, 5, ModContent.ProjectileType<Ice1Icicle>(), (int)(projectile.damage), 3f, projectile.owner); ;
                     Color newColor = default(Color);
                     if (Main.rand.Next(2) == 0)
                     {

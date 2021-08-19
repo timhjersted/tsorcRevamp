@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            item.damage = 26;
+            item.damage = 30;
             item.ranged = true;
             item.crit = 0;
             item.width = 40;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.scale = 0.8f;
             item.rare = ItemRarityID.Orange;
             item.shoot = mod.ProjectileType("VirulentCatShot");
-            item.shootSpeed = 7f;
+            item.shootSpeed = 9.1f;
         }
 
         public override Vector2? HoldoutOffset()
@@ -53,14 +53,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             {
                 item.useTime = 24;
                 item.useAnimation = 24;
-                item.shootSpeed = 10f;
+                item.shootSpeed = 13f;
                 item.shoot = ModContent.ProjectileType<Projectiles.VirulentCatDetonator>();
             }
             else
             {
                 item.useTime = 17;
                 item.useAnimation = 17;
-                item.shootSpeed = 7f;
+                item.shootSpeed = 9.1f;
                 item.shoot = ModContent.ProjectileType<Projectiles.VirulentCatShot>();
             }
 

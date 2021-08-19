@@ -7,6 +7,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     class Ice2Tome : ModItem {
 
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ice 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans, with a high rate of casting." +
@@ -14,9 +16,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
-        int storeManaCost;
+        int storeManaCost2;
         public override void SetDefaults() {
-            item.damage = 15;
+            item.damage = LegacyMode ? 15 : 15;
             item.height = 10;
             item.knockBack = 0f;
             item.rare = ItemRarityID.Green;
@@ -25,12 +27,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 10;
             item.magic = true;
             item.noMelee = true;
-            item.mana = 7;
-            storeManaCost = item.mana;
-            item.useAnimation = 10;
+            //item.mana = LegacyMode ? 7 : 14;
+            item.mana = 14;
+            storeManaCost2 = item.mana;
+            item.useAnimation = LegacyMode ? 10 : 19;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
+            item.useTime = LegacyMode ? 10 : 19;
             item.value = 140000;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice2Ball>();
@@ -38,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            item.mana = storeManaCost;
+            item.mana = storeManaCost2;
             //How many projectiles exist that are being channeled (controlled) by the player using this tome
             int projCount = 0;
 
@@ -57,13 +60,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                 }
             }
 
-            //If there's 10, don't fire any more
-            if (projCount < 10) return true;
+            //If there's 5, don't fire any more
+            if (projCount < 5) return true;
             else
             {
                 //This is how much mana it will use while channeling when it can not fire another projectile
                 //Setting this to 0 would make it consume no mana
-                item.mana = 1;
+                item.mana = 4;
                 return false;
             }
         }

@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     class WandOfFrost : ModItem {
 
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wand of Frost");
             Tooltip.SetDefault("A powerful wand made for fighting magic users that can shoot through walls." +
@@ -17,14 +19,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.height = 30;
             item.knockBack = 4;
             item.rare = ItemRarityID.Green;
-            item.shootSpeed = 6;
+            item.shootSpeed = 11;
             item.magic = true;
             item.noMelee = true;
             item.mana = 15;
-            item.useAnimation = 20;
+            item.autoReuse = LegacyMode ? false : true;
+            item.useAnimation = LegacyMode ? 20 : 26;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 20;
+            item.useTime = LegacyMode ? 20 : 26;
             item.value = 200000;
             item.width = 30;
             item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();

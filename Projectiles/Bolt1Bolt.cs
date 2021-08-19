@@ -16,8 +16,15 @@ namespace tsorcRevamp.Projectiles {
             projectile.friendly = true;
             projectile.tileCollide = false;
             projectile.magic = true;
-            projectile.light = 0.8f;
+            projectile.light = 0.6f;
 
+        }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (Main.rand.Next(5) == 0)
+            {
+                target.AddBuff(mod.BuffType("ElectrocutedBuff"), 120);
+            }
         }
         public override void AI() {
             //keep a portion of the projectile's velocity when spawned, so we canmake sure it has the right knockback

@@ -34,11 +34,10 @@ namespace tsorcRevamp.Projectiles
         {
             if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 60)
             {
-                if (Main.rand.Next(2) == 0)
-                {
-                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 360);
-                }
+
+                target.AddBuff(mod.BuffType("ElectrocutedBuff"), 420);
                 projectile.timeLeft = 2;
+
             }
 
             else
@@ -55,10 +54,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.knockBack = 2.5f;
                 projectile.ranged = true;
 
-                if (Main.rand.Next(2) == 0)
-                {
-                    target.AddBuff(mod.BuffType("ElectrocutedBuff"), 240);
-                }
+                target.AddBuff(mod.BuffType("ElectrocutedBuff"), 300);
 
                 projectile.timeLeft = 0;
             }

@@ -46,11 +46,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddRecipe();
         }
 
+
+
         public override bool UseItem(Player player) 
         {
-
-            player.AddBuff(ModContent.BuffType<Buffs.Fog>(), LegacyMode ? 600 : 720, false);
-
+            player.AddBuff(ModContent.BuffType<Buffs.Fog>(), LegacyMode ? 600 : 900, false);
             return true;
         }
         public override bool CanUseItem(Player player)
@@ -65,8 +65,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            Player player = Main.LocalPlayer;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "ElixirCDTip1", "[c/00ff00:Revamped Mode:] Duration increased to 12 seconds"));
+                tooltips.Add(new TooltipLine(mod, "FogTomeTip", "[c/00ff00:Revamped Mode:] Duration increased to 15 seconds"));
             }
         }
     }

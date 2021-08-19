@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
-        int storeManaCost;
+        int storeManaCost3;
         public override void SetDefaults() {
             item.autoReuse = true; //why was it the only one without autoreuse?
             item.damage = 32;
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
             item.noMelee = true;
             item.mana = 30;
-            storeManaCost = item.mana;
+            storeManaCost3 = item.mana;
             item.useAnimation = 10;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            item.mana = storeManaCost;
+            item.mana = storeManaCost3;
             //How many projectiles exist that are being channeled (controlled) by the player using this tome
             int projCount = 0;
 
@@ -61,8 +61,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                 }
             }
 
-            //If there's 10, don't fire any more
-            if (projCount < 10) return true;
+            //If there's 5, don't fire any more
+            if (projCount < 5) return true;
             else
             {
                 //This is how much mana it will use while channeling when it can not fire another projectile

@@ -12,12 +12,21 @@ namespace tsorcRevamp.Projectiles {
         public override void SetDefaults() {
             projectile.width = 70;
             projectile.height = 124;
-            projectile.penetrate = 8;
+            projectile.penetrate = 6;
             projectile.friendly = true;
             projectile.tileCollide = false;
             projectile.magic = true;
-            projectile.light = 0.8f;
+            projectile.light = 0.6f;
         }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (Main.rand.Next(5) == 0)
+            {
+                target.AddBuff(mod.BuffType("ElectrocutedBuff"), 120);
+            }
+        }
+
         public override void AI() {
             if (projectile.ai[0] == 0) {
                 projectile.velocity.X *= 0.001f;

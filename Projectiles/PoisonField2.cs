@@ -4,21 +4,26 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PoisonField : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PoisonField2 : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/PoisonField";
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[projectile.type] = 5;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             projectile.width = 32;
             projectile.height = 28;
             projectile.friendly = true;
             projectile.magic = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 180;
+            projectile.timeLeft = 300;
             projectile.alpha = 90;
             projectile.light = 0.3f;
             projectile.penetrate = -1;
@@ -27,13 +32,14 @@ namespace tsorcRevamp.Projectiles {
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.Next(2) == 0)
             {
-                target.AddBuff(BuffID.Poisoned, 360);
+                target.AddBuff(BuffID.Poisoned, 580);
             }
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
             if (Main.rand.Next(10) == 0)
             {
@@ -58,11 +64,13 @@ namespace tsorcRevamp.Projectiles {
             }
 
             projectile.frameCounter++;
-            if (projectile.frameCounter > 5) {
+            if (projectile.frameCounter > 5)
+            {
                 projectile.frame++;
                 projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5) {
+            if (projectile.frame >= 5)
+            {
                 projectile.frame = 0;
                 return;
             }

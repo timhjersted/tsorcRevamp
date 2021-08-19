@@ -38,7 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1200);
+            recipe.AddIngredient(ItemID.ManaCrystal, 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

@@ -351,7 +351,7 @@ namespace tsorcRevamp.NPCs {
                 if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 22;
+                npc.lifeRegen -= 12;
                 if (damage < 2) {
                     damage = 2;
                 }
@@ -361,7 +361,7 @@ namespace tsorcRevamp.NPCs {
                 if (npc.lifeRegen > 0) {
                     npc.lifeRegen = 0;
                 }
-                npc.lifeRegen -= 100;
+                npc.lifeRegen -= 70;
                 if (damage < 10) {
                     damage = 10;
                 }

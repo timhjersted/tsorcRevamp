@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.VanillaItems {
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if (item.type == ItemID.DirtRod && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if ((item.type == ItemID.DirtRod || item.type == ItemID.BoneWand) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return false;
             }

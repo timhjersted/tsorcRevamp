@@ -7,10 +7,6 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class MeteorShower : ModProjectile {
 
-        public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 9;
-        }
-
         public override void SetDefaults() {
             projectile.width = 26;
             projectile.height = 26;

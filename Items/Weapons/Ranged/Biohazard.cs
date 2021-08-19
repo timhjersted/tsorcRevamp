@@ -54,14 +54,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             {
                 item.useTime = 22;
                 item.useAnimation = 22;
-                item.shootSpeed = 18.5f;
+                item.shootSpeed = 24.05f;
                 item.shoot = ModContent.ProjectileType<Projectiles.BiohazardDetonator>();
             }
             else
             {
                 item.useTime = 14;
                 item.useAnimation = 14;
-                item.shootSpeed = 12.4f;
+                item.shootSpeed = 16.12f;
                 item.shoot = ModContent.ProjectileType<Projectiles.BiohazardShot>();
             }
 

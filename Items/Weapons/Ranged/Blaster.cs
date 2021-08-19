@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            item.damage = 18;
+            item.damage = 20;
             item.ranged = true;
             item.crit = 4;
             item.width = 44;
@@ -30,7 +30,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.value = 20000;
             item.scale = 0.7f;
             item.rare = ItemRarityID.Blue;
-            //item.autoReuse = true;
             item.shoot = mod.ProjectileType("BlasterShot");
             item.shootSpeed = 14f;
         }

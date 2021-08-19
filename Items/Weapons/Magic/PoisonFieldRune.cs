@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.damage = 15;
+            item.damage = 14;
             item.height = 28;
-            item.knockBack = 4;
+            item.knockBack = 3f;
             item.rare = ItemRarityID.Orange;
             item.shootSpeed = 6;
             item.magic = true;

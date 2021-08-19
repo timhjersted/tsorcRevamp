@@ -18,8 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useTime = 4;
             item.maxStack = 1;
             item.damage = 25;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.knockBack = 1f; //It deserves at least a little KB
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.knockBack = 0f;
+            item.knockBack = 0f;
             item.autoReuse = true;
             item.UseSound = SoundID.Item31;
             item.rare = ItemRarityID.LightRed;
@@ -65,6 +64,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.ClockworkAssaultRifle);
             recipe.AddIngredient(ItemID.MeteoriteBar, 30);
+            recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 15000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

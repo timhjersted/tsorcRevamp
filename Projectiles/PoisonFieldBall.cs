@@ -8,29 +8,44 @@ namespace tsorcRevamp.Projectiles {
 	class PoisonFieldBall : ModProjectile {
 
 		public override void SetDefaults() {
-            projectile.aiStyle = 9;
             projectile.friendly = true;
             projectile.height = 16;
             projectile.width = 16;
-            projectile.light = 0.8f;
+            projectile.light = 0.3f;
             projectile.magic = true;
             projectile.penetrate = 1;
             projectile.tileCollide = true;
 		}
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (Main.rand.Next(4) == 0)
+            {
+                target.AddBuff(BuffID.Poisoned, 360);
+            }
+        }
+
         public override void AI() {
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
             }
+            for (int d = 0; d < 2; d++)
+            {
+                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.Poisoned, 0, 0, 100, default(Color), 1.3f);
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= .5f;
+                Main.dust[dust].fadeIn = 0.3f;
+            }
+
             Vector2 arg_2675_0 = new Vector2(projectile.position.X, projectile.position.Y);
             int arg_2675_1 = projectile.width;
             int arg_2675_2 = projectile.height;
-            int arg_2675_3 = 15;
+            int arg_2675_3 = 74;
             float arg_2675_4 = 0f;
             float arg_2675_5 = 0f;
             int arg_2675_6 = 100;
             Color newColor = default(Color);
-            int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
+            int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 1f);
             Dust expr_2684 = Main.dust[num47];
             expr_2684.velocity *= 0.3f;
             Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
@@ -97,7 +112,6 @@ namespace tsorcRevamp.Projectiles {
                     }
                 }
             }
-            projectile.rotation += 0.3f * (float)projectile.direction;
             if (projectile.velocity.Y > 16f) {
                 projectile.velocity.Y = 16f;
                 return;
@@ -111,29 +125,21 @@ namespace tsorcRevamp.Projectiles {
             projectile.timeLeft = 0;
             {
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-                for (int num40 = 0; num40 < 20; num40++) {
-                    Projectile.NewProjectile(projectile.position.X + projectile.width, projectile.position.Y + projectile.height, 0, 0, ModContent.ProjectileType<PoisonField>(), projectile.damage, 1f, projectile.owner);
-                    Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
+                Projectile.NewProjectile(projectile.position.X + projectile.width / 2, projectile.position.Y + projectile.height / 2, projectile.velocity.X, projectile.velocity.Y, ModContent.ProjectileType<PoisonField>(), projectile.damage, 1f, projectile.owner);
+
+                for (int num40 = 0; num40 < 40; num40++) {
+                    Vector2 arg_1394_0 = new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y);
                     int arg_1394_1 = projectile.width;
                     int arg_1394_2 = projectile.height;
-                    int arg_1394_3 = 15;
+                    int arg_1394_3 = 74;
                     float arg_1394_4 = 0f;
                     float arg_1394_5 = 0f;
                     int arg_1394_6 = 100;
                     Color newColor = default;
-                    int num41 = Dust.NewDust(arg_1394_0, arg_1394_1, arg_1394_2, arg_1394_3, arg_1394_4, arg_1394_5, arg_1394_6, newColor, 2f);
+                    int num41 = Dust.NewDust(arg_1394_0, arg_1394_1, arg_1394_2, arg_1394_3, arg_1394_4, arg_1394_5, arg_1394_6, newColor, 1f);
                     Main.dust[num41].noGravity = true;
                     Dust expr_13B1 = Main.dust[num41];
-                    expr_13B1.velocity *= 2f;
-                    Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-                    int arg_1422_1 = projectile.width;
-                    int arg_1422_2 = projectile.height;
-                    int arg_1422_3 = 15;
-                    float arg_1422_4 = 0f;
-                    float arg_1422_5 = 0f;
-                    int arg_1422_6 = 100;
-                    newColor = default;
-                    num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
+                    expr_13B1.velocity *= 1.2f;
                 }
             }
             if (projectile.owner == Main.myPlayer) {

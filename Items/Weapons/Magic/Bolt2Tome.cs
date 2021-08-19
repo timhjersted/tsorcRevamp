@@ -1,33 +1,38 @@
-﻿using Terraria;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
     public class Bolt2Tome : ModItem {
+
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Bolt 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans." +
+                                "\nDrops a lightning strike upon collision" +
+                                "\nHas a chance to electrify enemies" +
                                 "\nCan be upgraded with 25,000 Dark Souls and 15 Soul of Light.");
 
         }
 
         public override void SetDefaults() {
 
-            item.damage = 18;
+            item.damage = LegacyMode ? 18 : 17;
             item.height = 10;
-            item.width = 34;
-            item.knockBack = 0;
+            item.knockBack = 0f;
             item.autoReuse = true;
+            item.maxStack = 1;
             item.rare = ItemRarityID.Green;
-            item.shootSpeed = 6f;
+            item.shootSpeed = 7f;
             item.magic = true;
             item.noMelee = true;
-            item.mana = 20;
-            item.useAnimation = 22;
+            item.mana = LegacyMode ? 20 : 20;
+            item.useAnimation = LegacyMode ? 22 : 30;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 22;
-            item.value = 4200;
+            item.useTime = LegacyMode ? 22 : 30;
+            item.value = 10000;
+            item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt2Ball>();
         }
 

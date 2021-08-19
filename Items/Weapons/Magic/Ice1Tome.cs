@@ -7,6 +7,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     class Ice1Tome : ModItem {
 
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ice 1 Tome");
             Tooltip.SetDefault("A lost beginner's tome" +
@@ -19,8 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost;
         public override void SetDefaults() {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.damage = 12;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.damage = 10;
+            item.damage = LegacyMode ? 10 : 11;
             item.height = 10;
             item.knockBack = 0f;
             item.channel = true;
@@ -29,15 +30,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 9;
             item.magic = true;
             item.noMelee = true;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 8;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 5;
+            //item.mana = LegacyMode ? 5 : 8;
+            item.mana = 8;
             storeManaCost = item.mana;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useAnimation = 19;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useAnimation = 10;
+            item.useAnimation = LegacyMode ? 10 : 19;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useTime = 19;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.useTime = 10;
+            item.useTime = LegacyMode ? 10 : 19;
             item.value = 200000;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice1Ball>();
@@ -64,13 +63,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                 }
             }
 
-            //If there's 10, don't fire any more
-            if (projCount < 10) return true;
+            //If there's 5, don't fire any more
+            if (projCount < 5) return true;
             else
             {
                 //This is how much mana it will use while channeling when it can not fire another projectile
                 //Setting this to 0 would make it consume no mana
-                item.mana = 1;
+                item.mana = 3;
                 return false;
             }
         }
