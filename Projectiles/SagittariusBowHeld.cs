@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
-    class CernosPrimeHeld : ModProjectile {
+    class SagittariusBowHeld : ModProjectile {
 
         private int charge;
         private int chargeTimer;
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles {
 
         public override void SetDefaults() {
             projectile.CloneDefaults(ProjectileID.LastPrism); //so the visual bow does no damage
-            projectile.width = 48;
+            projectile.width = 50;
             projectile.height = 12;
             projectile.friendly = false;
         }
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles {
                 }
                 bool charging = player.channel && !player.noItems && !player.CCed; //not cursed or frozen, and holding lmb
                 int maxChargeTime; //for modifying the max charge time based on prefix
-                
+
 
                 if ((player.HeldItem.useTime + 1) % MAX_CHARGE_COUNT == 0) { //for rounding up
                     maxChargeTime = player.HeldItem.useTime + 1;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles {
                         charge++;
                     }
                 }
-                else { 
+                else {
                     chargeTimer = 0;
                     Vector2 bowVelocity = Vector2.Normalize(projectile.velocity);
 
@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles {
 
                         FindAmmo(player, ref ammoLocation, ref ammoProjectileType);
 
-                        for (int i = 0; i < 3; i++) {
+                        for (int i = 0; i < 2; i++) {
                             Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
                             //Vector2 projectileVelocity = inaccuracy * (player.HeldItem.shootSpeed - (3 * (MAX_CHARGE_COUNT - charge))); //faster arrows when charged
