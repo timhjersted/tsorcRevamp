@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.damage = 666; //not a meme, actually balanced 
             item.width = 24;
             item.height = 48;
-            item.useTime = 48; //unused, but set to match the exact max charge time so the use time displays as "Extremely Slow"
-            item.useAnimation = 48; //''
+            item.useTime = 48; 
+            item.useAnimation = 48;
             item.reuseDelay = 4;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
@@ -38,6 +38,18 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override bool CanUseItem(Player player) {
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CernosPrimeHeld>()] <= 0;
+        }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ModContent.ItemType<SagittariusBow>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 25);
+            recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
         }
 
     }
