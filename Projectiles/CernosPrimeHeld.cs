@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles {
         public override void SetDefaults() {
             projectile.CloneDefaults(ProjectileID.LastPrism); //so the visual bow does no damage
             projectile.width = 48;
-            projectile.height = 24;
+            projectile.height = 12;
             projectile.friendly = false;
         }
 
@@ -43,8 +43,8 @@ namespace tsorcRevamp.Projectiles {
                 //update character visuals while aiming
                 {
                     Vector2 aimVector = Vector2.Normalize(Main.MouseWorld - playerHandPos);
-                    aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.2f)); //taken straight from RedLaserBeam, thanks past me!
-                    aimVector *= 18; //projectile max velocity
+                    aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.3f)); //taken straight from RedLaserBeam, thanks past me!
+                    aimVector *= player.HeldItem.shootSpeed;
                     if (aimVector != projectile.velocity) {
                         projectile.netUpdate = true; //update the bow visually to other players when we change aim
                     }
@@ -100,9 +100,14 @@ namespace tsorcRevamp.Projectiles {
                         for (int i = 0; i < 3; i++) {
                             Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
-                            Vector2 projectileVelocity = inaccuracy * (player.HeldItem.shootSpeed - (3 * (MAX_CHARGE_COUNT - charge))); //faster arrows when charged
-
-                            
+                            //Vector2 projectileVelocity = inaccuracy * (player.HeldItem.shootSpeed - (3 * (MAX_CHARGE_COUNT - charge))); //faster arrows when charged
+                            Vector2 projectileVelocity = inaccuracy * (1 + (((8 * MAX_CHARGE_COUNT) / (3 * player.HeldItem.shootSpeed)) * (float)(Math.Pow((Math.Floor((double)charge)), 2))));
+                            //this is the ugliest shit ive ever written in my entire life
+                            //speed modifier = 1 + ((8a/3b) * (floor(c))^2)
+                            //a = max_charge_count (6)
+                            //b = helditem.shootspeed (24)
+                            //c = charge
+                            //aka y = 1 + ((2/3) * (floor(x))^2)
 
                             if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
                                 Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, projectile.damage, projectile.knockBack, projectile.owner);

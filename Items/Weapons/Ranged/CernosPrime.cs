@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.rare = ItemRarityID.Lime;
             item.UseSound = SoundID.Item7;
 
-            item.shootSpeed = 18f;
+            item.shootSpeed = 24f;
 
             //item.useAmmo = AmmoID.Arrow; //dont do this! it'll just shoot the arrow instead of using the bow draw animation.
             //TODO investigate displaying the ammo count on the bow
