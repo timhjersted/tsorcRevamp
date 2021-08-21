@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
-    class CernosHeld : ModProjectile {
+    class CernosPrimeHeld : ModProjectile {
 
         private int charge;
         private int chargeTimer;
@@ -63,12 +63,43 @@ namespace tsorcRevamp.Projectiles {
                     Vector2 bowVelocity = Vector2.Normalize(projectile.velocity);
 
                     if (charge != 0) { //dont fire zero-velocity arrows, it looks silly
+
+                        int ammoLocation = 0;
+                        int ammoProjectileType = 0;
+
+                        for (int k = 54; k < 58; k++) {
+                            if (player.inventory[k].ammo == AmmoID.Arrow && player.inventory[k].stack > 0) {
+                                ammoLocation = k;
+                                ammoProjectileType = player.inventory[k].shoot;
+                                break;
+                            }
+                        }
+                        if (ammoLocation == 0) {
+                            for (int j = 0; j < 54; j++) {
+                                if (player.inventory[j].ammo == AmmoID.Arrow && player.inventory[j].stack > 0) {
+                                    ammoLocation = j;
+                                    ammoProjectileType = player.inventory[j].shoot;
+                                    break;
+                                }
+                            }
+                        }
+
                         for (int i = 0; i < 3; i++) {
                             Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
                             Vector2 projectileVelocity = inaccuracy * (18f - (3 * (6 - charge))); //faster arrows when charged, 3 velocity per point of charge
-                            Projectile.NewProjectile(projectile.Center, projectileVelocity, ProjectileID.WoodenArrowFriendly, projectile.damage, projectile.knockBack, projectile.owner);
-                        } 
+
+                            
+
+                            if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
+                                Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, projectile.damage, projectile.knockBack, projectile.owner);
+                                player.inventory[ammoLocation].stack--;
+                                if (player.inventory[ammoLocation].stack == 0) {
+                                    player.inventory[ammoLocation].TurnToAir();
+                                }
+                            }
+                        }
+                        Main.PlaySound(SoundID.Item5.WithVolume(0.8f), player.position);
                     }
                     charge = 0; //reset the charge
                     projectile.Kill(); //and kill the bow so we dont keep shooting
