@@ -28,6 +28,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void AI() {
+            const int MAX_CHARGE_COUNT = 6;
             Player player = Main.player[projectile.owner];
             Vector2 playerHandPos = player.RotatedRelativePoint(player.MountedCenter);
             //update character visuals while idle
@@ -50,10 +51,22 @@ namespace tsorcRevamp.Projectiles {
                     projectile.velocity = aimVector;
                 }
                 bool charging = player.channel && !player.noItems && !player.CCed; //not cursed or frozen, and holding lmb
+                int maxChargeTime; //for modifying the max charge time based on prefix
+                
+
+                if ((player.HeldItem.useTime + 1) % MAX_CHARGE_COUNT == 0) { //for rounding up
+                    maxChargeTime = player.HeldItem.useTime + 1;
+                }
+                else if ((player.HeldItem.useTime + 2) % MAX_CHARGE_COUNT == 0) { //for rounding up
+                    maxChargeTime = player.HeldItem.useTime + 2;
+                }
+                else maxChargeTime = player.HeldItem.useTime - (player.HeldItem.useTime % MAX_CHARGE_COUNT); //round down if 3, 4, or 5
+
+                int chargeInterval = maxChargeTime / MAX_CHARGE_COUNT;
 
                 if (charging) {
                     chargeTimer++;
-                    if ((chargeTimer % 8 == 0) && (chargeTimer <= 48)) { //gain one "charge" every 8 frames, up to max of 6
+                    if ((chargeTimer % chargeInterval == 0) && (chargeTimer <= maxChargeTime)) { //gain one charge every chargeInterval frames, up to max of MAX_CHARGE_COUNT
                         projectile.frame++;
                         charge++;
                     }
@@ -87,7 +100,7 @@ namespace tsorcRevamp.Projectiles {
                         for (int i = 0; i < 3; i++) {
                             Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
-                            Vector2 projectileVelocity = inaccuracy * (18f - (3 * (6 - charge))); //faster arrows when charged, 3 velocity per point of charge
+                            Vector2 projectileVelocity = inaccuracy * (player.HeldItem.shootSpeed - (3 * (MAX_CHARGE_COUNT - charge))); //faster arrows when charged
 
                             
 
