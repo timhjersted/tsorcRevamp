@@ -32,7 +32,6 @@ namespace tsorcRevamp.Items {
             Vector2 vectorItemToPlayer = player.Center - item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
             item.velocity = item.velocity + movement;
-            item.velocity = Collision.TileCollision(item.position, item.velocity, item.width, item.height);
             return true;
         }
 

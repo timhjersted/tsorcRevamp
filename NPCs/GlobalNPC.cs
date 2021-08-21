@@ -68,10 +68,17 @@ namespace tsorcRevamp.NPCs {
 
         public override void NPCLoot(NPC npc) {
 
+            if (npc.boss) {
+                foreach (Player player in Main.player) {
+                    if (!player.active) { continue; }
+                    player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true; ;
+                    player.GetModPlayer<tsorcRevampPlayer>().bossMagnetTimer = 300; //5 seconds of increased grab range, check GlobalItem::GrabStyle and GrabRange
+                }
+            }
 
             #region Dark Souls & Consumable Souls Drops
 
-                if (Soulstruck) {
+            if (Soulstruck) {
                     divisorMultiplier = 0.9f; //10% increase
                 }
 

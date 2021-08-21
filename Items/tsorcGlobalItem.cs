@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items {
 	{
 		public static List<int> potionList;
 		public static List<int> ammoList;
+
 		public override void SetDefaults(Item item)
 		{
 			populatePotions();
@@ -26,7 +27,23 @@ namespace tsorcRevamp.Items {
 			else base.SetDefaults(item);
 		}
 
-		public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
+        public override void GrabRange(Item item, Player player, ref int grabRange) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet) { //bossMagnet is set on every player when a boss is killed, in NPCLoot
+				grabRange *= 20;
+            }
+
+        }
+
+        public override bool GrabStyle(Item item, Player player) { 
+			if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet) { //pulling items is faster and more consistent
+				Vector2 vectorItemToPlayer = player.Center - item.Center;
+                Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.4f;
+                item.velocity += movement;
+            }
+			return base.GrabStyle(item, player);
+		}
+
+        public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
 			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
 			if (modPlayer.MiakodaCrescentBoost) {

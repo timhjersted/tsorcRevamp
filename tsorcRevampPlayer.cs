@@ -116,6 +116,10 @@ namespace tsorcRevamp {
         public bool CrystalMagicWeapon;
         public bool DarkmoonCloak;
 
+        //increased grab range immediately after killing a boss
+        public int bossMagnetTimer;
+        public bool bossMagnet;
+
         public override void Initialize() {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
             DamageDir = new Dictionary<int, float> {
@@ -815,6 +819,15 @@ namespace tsorcRevamp {
                 player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
             }
             #endregion
+            #region boss magnet
+            //actual item grab range is in GlobalItem::GrabRange
+            if (bossMagnet) {
+                bossMagnetTimer--;
+            }
+            if (bossMagnetTimer == 0) {
+                bossMagnet = false;
+            }
+            #endregion
         }
 
         public static bool CheckBossZen() {
@@ -1088,6 +1101,11 @@ namespace tsorcRevamp {
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
+
+            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()) {
+                damage = (int)(damage * 0.55);
+            }
+
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit) {
