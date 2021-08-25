@@ -36,19 +36,18 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.JungleWyvernBag>();
+			despawnHandler = new NPCDespawnHandler("The Jungle Wyvern departs to seek its next prey...", Color.GreenYellow, DustID.GreenFairy);
+
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
 			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
 		}
 
+		NPCDespawnHandler despawnHandler;
 		public override void AI() {
-			if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead) {
-				npc.TargetClosest();
-			}
-			if (Main.player[npc.target].dead && npc.timeLeft > 300) {
-				npc.timeLeft = 300;
-			}
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
 			//spawn body
 			if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[0] == 0f) {
 				npc.ai[2] = npc.whoAmI;

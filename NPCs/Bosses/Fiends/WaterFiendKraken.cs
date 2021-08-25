@@ -35,6 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.KrakenBag>();
+			despawnHandler = new NPCDespawnHandler("Water Fiend Kraken submerges into the depths...", Color.DeepSkyBlue, 180);
 		}
 
 		public override void SetStaticDefaults()
@@ -58,10 +59,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 		int chargeDamage = 0;
 		bool chargeDamageFlag = false;
+		NPCDespawnHandler despawnHandler;
 
 		#region AI
 		public override void AI()
 		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
 			bool flag25 = false;
 			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 			if (npc.ai[1] >= 10f)
@@ -390,22 +394,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				}
 			}
 			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
-			
-			
-			//The "despawn if the player dies" code was unreachable in legacy.
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				if (Main.player[npc.target].dead)
-				{
-					npc.velocity.Y += 0.20f;
-					if (npc.timeLeft > 10)
-					{
-						Main.NewText("Water Fiend Kraken decends into the depths once more...", Color.DeepSkyBlue);
-						npc.timeLeft = 0;
-						return;
-					}
-				}
-			}
 		}
 		#endregion
 

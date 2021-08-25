@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.OolacileSorcererBag>();
+			despawnHandler = new NPCDespawnHandler("The Abysmal Oolacile Sorcerer has shattered your mind...", Color.DarkRed, DustID.Firework_Red);
 		}
 
 
@@ -86,8 +87,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 		#region AI
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			#region check if standing on a solid tile
 			// warning: this section contains a return statement
 			if (npc.velocity.Y == 0f) // no jump/fall
@@ -225,72 +228,56 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
 				npc.ai[2] = 0;
 				npc.ai[1] = 0;
-				if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-				{
-					npc.TargetClosest(true);
+				
+
+
+
+				//end of W1k's Death code
+
+
+				//region teleportation - can't believe I got this to work.. yayyyyy :D lol
+
+				int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
+				int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+				int x_blockpos = (int)npc.position.X / 16; // corner not center
+				int y_blockpos = (int)npc.position.Y / 16; // corner not center
+				int tp_radius = 30; // radius around target(upper left corner) in blocks to teleport into
+				int tp_counter = 0;
+				bool flag7 = false;
+				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 9000000f)
+				{ // far away from target; 4000 pixels = 250 blocks
+					tp_counter = 100;
+					flag7 = false; // always telleport was true for no teleport
 				}
-				if (Main.player[npc.target].dead)
+				while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
 				{
-					npc.position.X = 0;
-					npc.position.Y = 0;
-					if (npc.timeLeft > 10)
-					{
-						npc.timeLeft = 10;
-						return;
-					}
-				}
-				else
-				{
+					if (tp_counter >= 100) // run 100 times
+						break; //return;
+					tp_counter++;
 
+					int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+					int tp_y_target = Main.rand.Next((target_y_blockpos - tp_radius) - 62, (target_y_blockpos + tp_radius) - 26);  //  pick random tp point (centered on corner)
+					for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
+					{ // (tp_x_target,m) is block under its feet I think
+						if ((m < target_y_blockpos - 21 || m > target_y_blockpos + 21 || tp_x_target < target_x_blockpos - 21 || tp_x_target > target_x_blockpos + 21) && (m < y_blockpos - 8 || m > y_blockpos + 8 || tp_x_target < x_blockpos - 8 || tp_x_target > x_blockpos + 8) && !Main.tile[tp_x_target, m].active())
+						{ // over 21 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+							bool safe_to_stand = true;
+							bool dark_caster = false; // not a fighter type AI...
+							if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+								safe_to_stand = false;
+							else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+								safe_to_stand = false;
 
+							if (safe_to_stand && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+							{ //  3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
+								// safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && // removed safe enviornment && solid below feet
 
-					//end of W1k's Death code
-
-
-					//region teleportation - can't believe I got this to work.. yayyyyy :D lol
-
-					int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-					int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-					int x_blockpos = (int)npc.position.X / 16; // corner not center
-					int y_blockpos = (int)npc.position.Y / 16; // corner not center
-					int tp_radius = 30; // radius around target(upper left corner) in blocks to teleport into
-					int tp_counter = 0;
-					bool flag7 = false;
-					if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 9000000f)
-					{ // far away from target; 4000 pixels = 250 blocks
-						tp_counter = 100;
-						flag7 = false; // always telleport was true for no teleport
-					}
-					while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
-					{
-						if (tp_counter >= 100) // run 100 times
-							break; //return;
-						tp_counter++;
-
-						int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-						int tp_y_target = Main.rand.Next((target_y_blockpos - tp_radius) - 62, (target_y_blockpos + tp_radius) - 26);  //  pick random tp point (centered on corner)
-						for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
-						{ // (tp_x_target,m) is block under its feet I think
-							if ((m < target_y_blockpos - 21 || m > target_y_blockpos + 21 || tp_x_target < target_x_blockpos - 21 || tp_x_target > target_x_blockpos + 21) && (m < y_blockpos - 8 || m > y_blockpos + 8 || tp_x_target < x_blockpos - 8 || tp_x_target > x_blockpos + 8) && !Main.tile[tp_x_target, m].active())
-							{ // over 21 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
-								bool safe_to_stand = true;
-								bool dark_caster = false; // not a fighter type AI...
-								if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
-									safe_to_stand = false;
-								else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
-									safe_to_stand = false;
-
-								if (safe_to_stand && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
-								{ //  3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-								  // safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && // removed safe enviornment && solid below feet
-
-									npc.TargetClosest(true);
-									npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-									npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet			
-									Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 5 + (npc.height / 2));
-									float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-									npc.velocity.X = (float)(Math.Cos(rotation) * 1) * -1;
-									npc.velocity.Y = (float)(Math.Sin(rotation) * 1) * -1;
+								npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
+								npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet			
+								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 5 + (npc.height / 2));
+								float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+								npc.velocity.X = (float)(Math.Cos(rotation) * 1) * -1;
+								npc.velocity.Y = (float)(Math.Sin(rotation) * 1) * -1;
 
 
 
@@ -298,18 +285,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-									npc.netUpdate = true;
+								npc.netUpdate = true;
 
-									//npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-									flag7 = true; // end the loop (after testing every lower point :/)
-									npc.ai[1] = 0;
-								}
-							} // END over 17 blocks distant from player...
-						} // END traverse y down to edge of radius
-					} // END try 100 times
+								//npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+								flag7 = true; // end the loop (after testing every lower point :/)
+								npc.ai[1] = 0;
+							}
+						} // END over 17 blocks distant from player...
+					} // END traverse y down to edge of radius
+				} // END try 100 times
 
 
-				}
 			}
 
 

@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
+            despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
         }
 
         public override void SetStaticDefaults()
@@ -53,14 +54,15 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             //crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
         }
 
-        bool OptionSpawned = false;
-        int OptionId = 0;
 
 
         #region AI
+        NPCDespawnHandler despawnHandler;
+        bool OptionSpawned = false;
+        int OptionId = 0;
         public override void AI()
         {
-            
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             if (OptionSpawned == false)
             {
                 OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
@@ -123,18 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 {
                     npc.TargetClosest(true);
-                }
-                if (Main.player[npc.target].dead)
-                {
-                    Main.NewText("Earth Fiend Lich decends into the ground...", Color.GreenYellow);
-                    npc.position.X = 0;
-                    npc.position.Y = 0;
-                    if (npc.timeLeft > 10)
-                    {
-                        npc.timeLeft = 5;
-                        return;
-                    }
-                }
+                }                
                 else
                 {
                     Player Pt = Main.player[npc.target];
@@ -209,16 +200,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (npc.ai[1] == 0) npc.ai[1] = 1;
                 else npc.ai[1] = 0;
-            }
-            if (Main.player[npc.target].dead)
-            {
-                npc.velocity.Y -= 0.04f;
-                if (npc.timeLeft > 10)
-                {
-                    Main.NewText("Earth Fiend Lich returns to the ground...", Color.GreenYellow);
-                    npc.timeLeft = 10;
-                    return;
-                }
             }
         }
         #endregion

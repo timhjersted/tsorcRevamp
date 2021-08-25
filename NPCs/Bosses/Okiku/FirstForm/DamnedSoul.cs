@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0f;
 			Main.npcFrameCount[npc.type] = 4;
+			despawnHandler = new NPCDespawnHandler(54);
 		}
 
 		public override void SetStaticDefaults()
@@ -42,8 +43,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
 		}
 
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			if (!initiate)
 			{
 				npc.ai[3] = -Main.rand.Next(200);
@@ -72,7 +75,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 				return;
 			}
 			npc.ai[3] += 1f;
-			npc.TargetClosest();
 			if (npc.ai[3] >= 0f)
 			{
 				if (npc.life > 1000)

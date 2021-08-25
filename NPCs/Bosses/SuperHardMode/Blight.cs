@@ -36,6 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.boss = true;
             npc.buffImmune[BuffID.Confused] = true;
             bossBag = ModContent.ItemType<Items.BossBags.BlightBag>();
+            despawnHandler = new NPCDespawnHandler("Inevitable.", new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
         int phantomSeekerDamage = 58;
@@ -82,14 +83,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override void AI() {
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             int num54;
-            npc.TargetClosest(true);
 
             //If it's too far away, target the closest player and charge them
             if (Math.Abs(Main.player[npc.target].position.X - npc.position.X) > 2800 || Math.Abs(Main.player[npc.target].position.Y - npc.position.Y) > 2200)
             {
-                npc.TargetClosest(true);
                 if (Main.rand.Next(450) == 1)
                 {
                     chargeDamageFlag = true;
@@ -162,7 +164,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
             if (npc.ai[1] >= 8f) {
-                npc.TargetClosest(true);
                 if (Main.rand.Next(450) == 1) {
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));

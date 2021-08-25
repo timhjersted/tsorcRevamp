@@ -35,6 +35,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             npc.buffImmune[BuffID.Confused] = true;
             Main.npcFrameCount[npc.type] = 3;
             bossBag = ModContent.ItemType<Items.BossBags.AttraidiesBag>();
+            despawnHandler = new NPCDespawnHandler("With your death, dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
+
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
@@ -59,7 +61,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         }
 
         #region AI
-        public override void AI() {
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
 
             npc.ai[0]++; // Timer Scythe
             npc.ai[1]++; // Timer Teleport
@@ -108,56 +113,30 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
                 npc.ai[2] = 0;
                 npc.ai[1] = 0;
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active) {
-                    npc.TargetClosest(true);
+
+                Player Pt = Main.player[npc.target];
+                Vector2 NC;
+                Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
+                npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
+                npc.position.Y = Pt.position.Y - 35 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
+
+                float MinDIST = 360f;
+                float MaxDIST = 410f;
+                Vector2 Diff = npc.position - Pt.position;
+                if (Diff.Length() > MaxDIST) {
+                    Diff *= MaxDIST / Diff.Length();
                 }
-                if (Main.player[npc.target].dead) {
-                    npc.position.X = 0;
-                    npc.position.Y = 0;
-                    if (npc.timeLeft > 10) {
-                        npc.timeLeft = 0;
-                        return;
-                    }
+                if (Diff.Length() < MinDIST) {
+                    Diff *= MinDIST / Diff.Length();
                 }
-                else {
+                npc.position = Pt.position + Diff;
 
+                NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
 
-
-
-
-                    Player Pt = Main.player[npc.target];
-                    Vector2 NC;
-                    Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
-                    npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
-                    npc.position.Y = Pt.position.Y - 35 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
-
-                    float MinDIST = 360f;
-                    float MaxDIST = 410f;
-                    Vector2 Diff = npc.position - Pt.position;
-                    if (Diff.Length() > MaxDIST) {
-                        Diff *= MaxDIST / Diff.Length();
-                    }
-                    if (Diff.Length() < MinDIST) {
-                        Diff *= MinDIST / Diff.Length();
-                    }
-                    npc.position = Pt.position + Diff;
-
-                    NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
-
-                    float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 20) * -1;
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 20) * -1;
-
-
-                }
+                float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
+                npc.velocity.X = (float)(Math.Cos(rotation) * 20) * -1;
+                npc.velocity.Y = (float)(Math.Sin(rotation) * 20) * -1;                
             }
-
-
-
-
-
-
-
 
             //end of W1k's Death code
 
@@ -185,7 +164,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 120;
+                        int damage = 90;
                         int type = ModContent.ProjectileType<MassiveCrystalShardsSpell>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 60;
@@ -225,25 +204,21 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 //if ((npc.life < 45000 && npc.life < 50000) || (npc.life >= 40000 && npc.life <=45000) || (npc.life >= 40000 && npc.life <=45000) || (npc.life >= 40000 && npc.life <=45000))
                 //{
 
-                if (customspawn1 > 0 && Main.rand.Next(7000) == 0) {
+                if (customspawn1 > 0 && Main.rand.Next(2100) == 0) {
                     customspawn1 = 0;
                 }
 
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
 
-                    if (customspawn1 == 0) {
-
-                        if ((customspawn1 < 1) && Main.rand.Next(2030) == 1) {
-                            int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<SecondForm.ShadowDragonHead>(), 0);
-                            Main.npc[Spawned].velocity.Y = -8;
-                            Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                            //npc.ai[5] = 20-Main.rand.Next(80);
-                            customspawn1 += 1f;
-                            if (Main.netMode == NetmodeID.Server) {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-                            }
+                    if (customspawn1 == 0 && (Main.rand.Next(210) == 0)) {
+                        int OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<SecondForm.ShadowDragonHead>(), npc.whoAmI);
+                        if (Main.netMode == NetmodeID.Server && OptionId < 200)
+                        {
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
                         }
+                        Main.npc[OptionId].velocity.Y = -10;
+                        customspawn1 += 1f;
                     }
                 }
 

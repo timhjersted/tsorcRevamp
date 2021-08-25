@@ -26,6 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.lavaImmune = true;
 			animationType = NPCID.PossessedArmor; //this almost feels like cheating lol
 			bossBag = ModContent.ItemType<Items.BossBags.ArtoriasBag>();
+			despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
 		}
 
 		int holdBallDamage = 20;
@@ -73,8 +74,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		float customAi1;
 
 		float customspawn2;
-		public override void AI() {
-
+		NPCDespawnHandler despawnHandler;
+		public override void AI()
+		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			int num58;
 			int num59;
 
@@ -113,27 +116,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			if (npc.ai[3] == (float)num5) {
 				npc.netUpdate = true;
 			}
-			if ((!Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0) && npc.ai[3] < (float)num5) {
-
-				npc.TargetClosest(true);
-			}
-			else {
-				if (npc.velocity.X == 0f) {
-					if (npc.velocity.Y == 0f) {
-						npc.ai[0] += 1f;
-						if (npc.ai[0] >= 2f) {
-							npc.direction *= -1;
-							npc.spriteDirection = npc.direction;
-							npc.ai[0] = 0f;
-						}
+			
+			if (npc.velocity.X == 0f) {
+				if (npc.velocity.Y == 0f) {
+					npc.ai[0] += 1f;
+					if (npc.ai[0] >= 2f) {
+						npc.direction *= -1;
+						npc.spriteDirection = npc.direction;
+						npc.ai[0] = 0f;
 					}
 				}
-				else {
-					npc.ai[0] = 0f;
-				}
-				if (npc.direction == 0) {
-					npc.direction = 1;
-				}
+			}
+			else {
+				npc.ai[0] = 0f;
+			}
+			if (npc.direction == 0) {
+				npc.direction = 1;
 			}
 			if (npc.velocity.X < -1.5f || npc.velocity.X > 1.5f) {
 				if (npc.velocity.Y == 0f) {
@@ -277,7 +275,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f) {
-					npc.TargetClosest(true);
 
 					if ((customspawn2 < 1) && Main.rand.Next(950) == 1) {
 						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Witchking>(), 0); //Witchking
@@ -561,13 +558,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 				if (npc.position.Y < Main.player[npc.target].position.Y) {
 					npc.velocity.Y += 8f;
-				}
-			}
-			if (Main.player[npc.target].dead) {
-				if (npc.timeLeft > 10) {
-					npc.timeLeft = 10;
-					npc.noTileCollide = true;
-					return;
 				}
 			}
 		}

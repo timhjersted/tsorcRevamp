@@ -29,6 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0f;
 			Main.npcFrameCount[npc.type] = 1;
+			despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
 		}
 
 		public override void SetStaticDefaults()
@@ -41,16 +42,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
 		}
 
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
-			{
-				npc.TargetClosest();
-			}
-			if (Main.player[npc.target].dead && npc.timeLeft > 300)
-			{
-				npc.timeLeft = 300;
-			}
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
 			if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[0] == 0f)
 			{
 				npc.ai[2] = npc.whoAmI;

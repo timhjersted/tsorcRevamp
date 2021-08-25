@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.value = 25000;
 			npc.noTileCollide = true;
 			npc.noGravity = true;
+			despawnHandler = new NPCDespawnHandler(DustID.Demonite);
 		}
 
 		public override void SetStaticDefaults()
@@ -79,14 +80,15 @@ namespace tsorcRevamp.NPCs.Bosses
 		//#endregion
 
 		#region AI
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (npc.ai[1] >= 10f)
 				{
-					npc.TargetClosest(true);
 					if (Main.rand.Next(60) == 1)
 					{
 						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.BurningSphere, 0);
@@ -143,7 +145,6 @@ namespace tsorcRevamp.NPCs.Bosses
 					npc.ai[1] = npc.position.Y; //added -60
 					npc.ai[2] = 0f;
 				}
-				npc.TargetClosest(true);
 			}
 			else
 			{

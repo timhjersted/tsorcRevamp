@@ -6,21 +6,26 @@ using Terraria.ModLoader;
 
 
 namespace tsorcRevamp.Projectiles.Enemy {
-    class AntiGravityBlast : ModProjectile {
+    class GravityDistortion : ModProjectile {
 
         public override void SetDefaults() {
-            projectile.width = 100;
-            projectile.height = 100;
-			projectile.scale = 1.3f; //It's working properly now, apparently for scale to work you have to override predraw and tell it to draw the projectile right
+            projectile.width = 30;
+            projectile.height = 30;
+			projectile.scale = 1.5f; //It's working properly now, apparently for scale to work you have to override predraw and tell it to draw the projectile right
             projectile.hostile = true;
             projectile.damage = 80;
             projectile.penetrate = 2;
             projectile.tileCollide = false;
-			projectile.timeLeft = 600;
+			projectile.timeLeft = 200;
         }
         public override void Kill(int timeLeft) {
             projectile.type = 79;
-        }
+			for (int num36 = 0; num36 < 20; num36++)
+			{
+				int dust = Dust.NewDust(projectile.position, (int)(projectile.width), (int)(projectile.height), DustID.PurpleTorch, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
+				Main.dust[dust].noGravity = true;
+			}
+		}
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
@@ -43,23 +48,41 @@ namespace tsorcRevamp.Projectiles.Enemy {
             return false;
         }
 
-
+		float homingStrength = 0.08f;
+		//ai[1] is the projectie's maximum speed, as specified when it's spawned
         public override void AI() {
 			projectile.rotation += 0.5f;
 			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X) {
-				if (projectile.velocity.X > -10) projectile.velocity.X -= 0.1f;
+				if (projectile.velocity.X > -10) projectile.velocity.X -= homingStrength;
 			}
 
 			if (Main.player[(int)projectile.ai[0]].position.X > projectile.position.X) {
-				if (projectile.velocity.X < 10) projectile.velocity.X += 0.1f;
+				if (projectile.velocity.X < 10) projectile.velocity.X += homingStrength;
 			}
 
 			if (Main.player[(int)projectile.ai[0]].position.Y < projectile.position.Y) {
-				if (projectile.velocity.Y > -10) projectile.velocity.Y -= 0.1f;
+				if (projectile.velocity.Y > -10) projectile.velocity.Y -= homingStrength;
 			}
 
 			if (Main.player[(int)projectile.ai[0]].position.Y > projectile.position.Y) {
-				if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;
+				if (projectile.velocity.Y < 10) projectile.velocity.Y += homingStrength;
+			}
+
+			if(projectile.velocity.Y > projectile.ai[1])
+            {
+				projectile.velocity.Y = projectile.ai[1];
+			}
+			if (projectile.velocity.Y < -projectile.ai[1])
+			{
+				projectile.velocity.Y = -projectile.ai[1];
+			}
+			if (projectile.velocity.X > projectile.ai[1])
+			{
+				projectile.velocity.X = projectile.ai[1];
+			}
+			if (projectile.velocity.X < -projectile.ai[1])
+			{
+				projectile.velocity.X = -projectile.ai[1];
 			}
 
 			if (Main.rand.Next(4) == 0) {

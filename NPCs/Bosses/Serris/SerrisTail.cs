@@ -52,24 +52,37 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 		bool SpeedBoost = false;
 		public override void AI()
 		{
+			//tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SerrisHead>(), SerrisHead.bodyTypes, ModContent.NPCType<SerrisTail>(), 16, -2f, 12f, 0.6f, true, false, true, true, true);
+
+			if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
+			{
+				npc.spriteDirection = -1;
+			}
+			if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
+			{
+				npc.spriteDirection = 1;
+			}
+
 			if (!Main.npc[(int)npc.ai[1]].active)
 			{
 				npc.life = 0;
 				npc.HitEffect(0, 10.0);
 				npc.active = false;
+
+				Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris Gore 2"), 1f);
 			}
-			foreach (NPC N in Main.npc) if (N != null)
+			
+				if (Main.npc[(int)npc.ai[2]].active && Main.npc[(int)npc.ai[2]].dontTakeDamage && Main.npc[(int)npc.ai[2]].type == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())
 				{
-					if (N.active && N.dontTakeDamage && N.type == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())
-					{
-						SpeedBoost = true;
-						return;
-					}
-					else
-					{
-						SpeedBoost = false;
-					}
+					SpeedBoost = true;
+					return;
 				}
+				else
+				{
+					SpeedBoost = false;
+				}
+				
 		}
 		public override void FindFrame(int currentFrame)
 		{

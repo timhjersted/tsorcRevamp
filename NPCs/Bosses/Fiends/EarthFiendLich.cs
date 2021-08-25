@@ -37,6 +37,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.LichBag>();
+			despawnHandler = new NPCDespawnHandler("Earth Fiend Lich returns to the ground...", Color.DarkGreen, DustID.GreenFairy);
+
 		}
 		public override void SetStaticDefaults()
 		{
@@ -59,9 +61,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 
 		#region AI
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
 			if (OptionSpawned == false)
 			{
 				OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingDisciple>(), npc.whoAmI);
@@ -77,7 +81,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 			if (npc.ai[1] >= 10f)
 			{
-				npc.TargetClosest(true);
 				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) || !(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
 				{
 					if (Main.rand.Next(90) == 1)
@@ -170,7 +173,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					npc.ai[1] = npc.position.Y;
 					npc.ai[2] = 0f;
 				}
-				npc.TargetClosest(true);
 			}
 			else
 			{
@@ -338,20 +340,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			}
 
 			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
-			
-			//Never despawned if the player died in Legacy
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				if (Main.player[npc.target].dead)
-				{
-					npc.velocity.Y += 0.20f;
-					if (npc.timeLeft > 10)
-					{
-						npc.timeLeft = 0;
-						return;
-					}
-				}
-			}
 		}
 		#endregion
 
@@ -390,24 +378,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			{
 				npc.alpha = 200;
 			}
-
-
-
-
-			if (Main.player[npc.target].dead)
-			{
-				npc.velocity.Y += 0.20f;
-				if (npc.timeLeft > 10)
-				{
-					npc.timeLeft = 0;
-					return;
-				}
-			}
-
-
-
-
-
 		}
 		#endregion
 

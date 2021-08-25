@@ -33,6 +33,8 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
+            despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Ambient_DarkBrown);
+
         }
 
         public override void SetStaticDefaults()
@@ -113,8 +115,10 @@ namespace tsorcRevamp.NPCs.Bosses
         #endregion
 
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-        public override void AI()  //  warrior ai
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
         {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             #region set up NPC's attributes & behaviors
             // set parameters
             //  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -261,9 +265,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
             else if (!is_archer || npc.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
-            {
-                if (hates_light && Main.dayTime && (double)(npc.position.Y / 16f) < Main.worldSurface && npc.timeLeft > 10)
-                    npc.timeLeft = 10;  //  if hates light & in light, hasten despawn
+            {               
 
                 if (npc.velocity.X == 0f)
                 {
@@ -723,53 +725,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 } // END try 100 times
             } // END is server & chaos ele & bored
             #endregion
-            //-------------------------------------------------------------------
-            #region drown // code by Omnir
-            if (canDrown)
-            {
-                if (!npc.wet)
-                {
-                    npc.TargetClosest(true);
-                    drownTimer = drownTimerMax;
-                }
-                if (npc.wet)
-                {
-                    drownTimer--;
-                }
-                if (npc.wet && drownTimer > drowningRisk)
-                {
-                    npc.TargetClosest(true);
-                }
-                else if (npc.wet && drownTimer <= drowningRisk)
-                {
-                    npc.TargetClosest(false);
-                    if (npc.timeLeft > 10)
-                    {
-                        npc.timeLeft = 10;
-                    }
-                    npc.directionY = -1;
-                    if (npc.velocity.Y > 0f)
-                    {
-                        npc.direction = 1;
-                    }
-                    npc.direction = -1;
-                    if (npc.velocity.X > 0f)
-                    {
-                        npc.direction = 1;
-                    }
-                }
-                if (drownTimer <= 0)
-                {
-                    npc.life--;
-                    if (npc.life <= 0)
-                    {
-                        Main.PlaySound(SoundID.NPCKilled, (int)npc.position.X, (int)npc.position.Y, 1);
-                        npc.NPCLoot();
-                        npc.netUpdate = true;
-                    }
-                }
-            }
-            #endregion
             //-------------------------------------------------------------------*/
             #region New Boredom by Omnir
             if (quickBored)
@@ -781,12 +736,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         boredTimer++;
                         if (boredTimer > tBored)
                         {
-                            boredResetT = 0;
-                            npc.TargetClosest(false);
-                            if (npc.timeLeft > 10)
-                            {
-                                npc.timeLeft = 10;
-                            }
+                            boredResetT = 0;                            
                             npc.directionY = -1;
                             if (npc.velocity.Y > 0f)
                             {
@@ -807,7 +757,6 @@ namespace tsorcRevamp.NPCs.Bosses
                     if (boredResetT > bReset)
                     {
                         boredTimer = 0;
-                        npc.TargetClosest(true);
                         oBored = false;
                     }
                 }

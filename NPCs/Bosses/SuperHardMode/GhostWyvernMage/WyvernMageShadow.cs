@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             bossBag = ModContent.ItemType<Items.BossBags.MageShadowBag>();
+            despawnHandler = new NPCDespawnHandler("The Wyvern Mage stands victorious...", Color.DarkCyan, DustID.Demonite);
         }
 
 
@@ -53,8 +54,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
 
         #region AI
+        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             if (OptionSpawned == false)
             {
                 OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>(), npc.whoAmI);
@@ -114,53 +117,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
                 npc.ai[2] = 0;
                 npc.ai[1] = 0;
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
+
+
+                Player Pt = Main.player[npc.target];
+                Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
+                Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
+                npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
+                npc.position.Y = Pt.position.Y - 45 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
+
+                float MinDIST = 200f;
+                float MaxDIST = 600f;
+                Vector2 Diff = npc.position - Pt.position;
+                if (Diff.Length() > MaxDIST)
                 {
-                    npc.TargetClosest(true);
+                    Diff *= MaxDIST / Diff.Length();
                 }
-                if (Main.player[npc.target].dead)
+                if (Diff.Length() < MinDIST)
                 {
-                    npc.position.X = 0;
-                    npc.position.Y = 0;
-                    if (npc.timeLeft > 10)
-                    {
-                        npc.timeLeft = 0;
-                        return;
-                    }
+                    Diff *= MinDIST / Diff.Length();
                 }
-                else
-                {
+                npc.position = Pt.position + Diff;
 
+                NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
 
-                    Player Pt = Main.player[npc.target];
-                    Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
-                    Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
-                    npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
-                    npc.position.Y = Pt.position.Y - 45 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
+                float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
+                npc.velocity.X = (float)(Math.Cos(rotation) * 13) * -1;
+                npc.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
 
-                    float MinDIST = 200f;
-                    float MaxDIST = 600f;
-                    Vector2 Diff = npc.position - Pt.position;
-                    if (Diff.Length() > MaxDIST)
-                    {
-                        Diff *= MaxDIST / Diff.Length();
-                    }
-                    if (Diff.Length() < MinDIST)
-                    {
-                        Diff *= MinDIST / Diff.Length();
-                    }
-                    npc.position = Pt.position + Diff;
-
-                    NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
-
-                    float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 13) * -1;
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
-
-
-
-
-                }
             }
 
             //end of W1k's Death code
@@ -191,9 +174,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     }
                 }
 
-
-
-
                 if (Main.rand.Next(15) == 0) //1 in 20 chance boss will summon an NPC
                 {
                     int Random = Main.rand.Next(80);
@@ -203,14 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.IlluminantBat, 0);
                     Main.npc[Paraspawn].velocity.X = npc.velocity.X;
                     npc.active = true;
-
                 }
-
-
-
-
-
-
             }
 
             npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
@@ -218,19 +191,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             {
                 if (npc.ai[1] == 0) npc.ai[1] = 1;
                 else npc.ai[1] = 0;
-            }
-
-
-
-
-            if (Main.player[npc.target].dead)
-            {
-                npc.velocity.Y -= 0.04f;
-                if (npc.timeLeft > 10)
-                {
-                    npc.timeLeft = 5;
-                    return;
-                }
             }
         }
 

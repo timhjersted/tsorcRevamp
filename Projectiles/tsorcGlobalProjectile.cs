@@ -100,5 +100,16 @@ namespace tsorcRevamp.Projectiles
                 Main.PlaySound(SoundID.Item27.WithVolume(0.3f), target.position);
             }
         }
+
+        public override bool PreKill(Projectile projectile, int timeLeft)
+        {
+            if(projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
+        }
     }
 }

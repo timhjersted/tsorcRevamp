@@ -35,6 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.MarilithBag>();
+			despawnHandler = new NPCDespawnHandler("Fire Fiend Marilith decends to the underworld...", Color.DarkGreen, DustID.FireworkFountain_Red);
 		}
 
 		public override void SetStaticDefaults()
@@ -56,13 +57,15 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 
 		#region AI
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
+
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			bool flag25 = false;
 			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 			if (npc.ai[1] >= 10f)
 			{
-				npc.TargetClosest(true);
 				if ((Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) || !(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
 				{
 					if (Main.rand.Next(70) == 1)
@@ -178,7 +181,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					npc.ai[1] = npc.position.Y;
 					npc.ai[2] = 0f;
 				}
-				npc.TargetClosest(true);
 			}
 			else
 			{
@@ -345,20 +347,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				}
 			}
 			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
-
-			//The "despawn if the player dies" code was unreachable in legacy.
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				if (Main.player[npc.target].dead)
-				{
-					npc.velocity.Y += 0.20f;
-					if (npc.timeLeft > 10)
-					{
-						npc.timeLeft = 0;
-						return;
-					}
-				}
-			}
 		}
 		#endregion
 

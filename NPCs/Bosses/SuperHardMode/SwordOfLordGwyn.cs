@@ -31,5 +31,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             npc.noGravity = true;
             npc.noTileCollide = true;
         }
+
+        public override void AI()
+        {
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+            {
+                for (int i = 0; i < 60; i++)
+                {
+                    int dustID = Dust.NewDust(npc.position, npc.width, npc.height, 6, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+                    Main.dust[dustID].noGravity = true;
+                }
+                npc.active = false;
+            }
+        }
     }
 }

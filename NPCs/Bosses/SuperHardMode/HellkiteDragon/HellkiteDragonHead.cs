@@ -33,6 +33,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
             bossBag = ModContent.ItemType<Items.BossBags.HellkiteBag>();
+
+            Color textColor = new Color(175, 75, 255);
+            despawnHandler = new NPCDespawnHandler("The Hellkite Dragon claims its prey...", textColor, 174);
         }
 
 
@@ -105,8 +108,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
 
 
+        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
 
             Player nT = Main.player[npc.target];
             if (Main.rand.Next(275) == 0)
@@ -155,7 +160,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             }
             
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, 6f, 10f, 0.25f, true, false); //30f was 10f
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, 6f, 10f, 0.25f, true, false, true, false, false); //30f was 10f
 
 
 

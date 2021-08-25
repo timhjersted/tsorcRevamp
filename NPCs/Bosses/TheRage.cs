@@ -39,7 +39,8 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
-        }
+			despawnHandler = new NPCDespawnHandler("The Rage is satisfied...", Color.OrangeRed, 127);
+		}
 
 		int baseContactDamage;
 		int hitTime = 0;
@@ -53,16 +54,16 @@ namespace tsorcRevamp.NPCs.Bosses
 		}
 
 
-		public override void AI() {
+		NPCDespawnHandler despawnHandler;
+		public override void AI()
+		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			npc.netUpdate = true;
 			npc.ai[2]++;
 			npc.ai[1]++;
 			hitTime++;
 			if (npc.ai[0] > 0) npc.ai[0] -= hitTime / 10;
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-			if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active || Main.player[npc.target].position.Y > (Main.maxTilesY - 250) * 16) {
-				npc.TargetClosest(true);
-			}
 			//Fun fact: Dusts apparently have a max Scale of 16. For an incredibly good reason, i'm sure.
 			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X, npc.velocity.Y, 200, new Color(), 0.5f + (15.5f * (npc.ai[0] / (npc.lifeMax / 10))));
 			Main.dust[dust].noGravity = true;
@@ -189,13 +190,6 @@ namespace tsorcRevamp.NPCs.Bosses
 					for (int num36 = 0; num36 < 40; num36++) {
 						Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, 0, 0, 0, new Color(), 3f);
 					}
-				}
-			}
-			if (Main.player[npc.target].dead) {
-				npc.velocity.Y += 0.20f;
-				if (npc.timeLeft > 10) {
-					npc.timeLeft = 0;
-					return;
 				}
 			}
 		}

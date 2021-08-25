@@ -32,6 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.noTileCollide = true;
 			npc.behindTiles = true;
 			npc.value = 40000;
+			despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
 		}
 
 		public override void SetStaticDefaults()
@@ -47,9 +48,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
 		}
 
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			//npc.AI(true);
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			if (!TailSpawned)
 			{
 				int Previous = npc.whoAmI;

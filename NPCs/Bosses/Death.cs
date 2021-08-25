@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             bossBag = ModContent.ItemType<Items.BossBags.DeathBag>();
+            despawnHandler = new NPCDespawnHandler("Death claims you at last...", Color.DarkMagenta, DustID.Demonite);
         }
 
 
@@ -78,8 +79,10 @@ namespace tsorcRevamp.NPCs.Bosses
             return 0;
         }
 
+        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             npc.netUpdate = false;
             npc.ai[0]++; // Timer Scythe
             npc.ai[1]++; // Timer Teleport
@@ -133,29 +136,15 @@ namespace tsorcRevamp.NPCs.Bosses
                 //}
                 npc.ai[2] = 0;
                 npc.ai[1] = 0;
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                {
-                    npc.TargetClosest(true);
-                }
-                if (Main.player[npc.target].dead)
-                {
-                    npc.position.X = 0;
-                    npc.position.Y = 0;
-                    if (npc.timeLeft > 10)
-                    {
-                        npc.timeLeft = 10;
-                        return;
-                    }
-                }
-                else
-                {
-                    npc.position.X = Main.player[npc.target].position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
-                    npc.position.Y = Main.player[npc.target].position.Y + (float)((600 * Math.Sin(npc.ai[3])) * -1);
-                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
-                }
+                
+               
+                npc.position.X = Main.player[npc.target].position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
+                npc.position.Y = Main.player[npc.target].position.Y + (float)((600 * Math.Sin(npc.ai[3])) * -1);
+                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+                npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
+                npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
+                
             }
 
             if (npc.velocity.X > 0)

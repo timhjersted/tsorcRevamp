@@ -7,7 +7,8 @@ namespace tsorcRevamp.Items.Accessories {
     public class SupersonicBoots : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +
-                                "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
+                                "\nDoes not work if Hermes Boots or Spectre Boots are equipped." + 
+                                "\nSpeed boost is multiplied by movement speed boosts." +
                                 "\nCan be upgraded eventually with 1 Cloud in a Balloon, 1 Angel Wings & 20000 Dark Souls.");
         }
 
@@ -42,6 +43,9 @@ namespace tsorcRevamp.Items.Accessories {
                 }
             }
             if (!restricted) {
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 1;
+
+                /** W1K's original code
                 if (player.controlLeft) {
                     if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
                     if (player.velocity.X < -3 && player.velocity.X > -6 * player.moveSpeed) {
@@ -57,7 +61,8 @@ namespace tsorcRevamp.Items.Accessories {
                         else player.velocity.X += 0.2f;
                         player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);
                     }
-                }
+                } **/
+
 
                 if (player.velocity.X > 6 || player.velocity.X < -6) {
                     player.waterWalk = true;

@@ -40,6 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.buffImmune[39] = true;
             npc.buffImmune[69] = true;
             npc.buffImmune[70] = true;
+            despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
             if (damage > npc.life || damage * 2 > npc.life) {
@@ -77,7 +78,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 Main.dust[dustDeath].noGravity = true;
             }
         }
-        public override void AI() {
+
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             if (!Initialized) {
                 lookMode = 0;
                 attackPhase = -1;
@@ -87,12 +92,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 phaseTime = 90;
                 phaseStarted = false;
                 Initialized = true;
-            }
-            npc.TargetClosest(true);
-
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active) {
-                Teleport(-1000, -1000);
-                npc.timeLeft = 0;
             }
 
             for (int num36 = 0; num36 < 10; num36++) {

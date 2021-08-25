@@ -56,7 +56,6 @@ namespace tsorcRevamp.Items.Accessories {
             player.rocketTime = 1200;
             player.rocketBoots = 2;
             player.rocketTimeMax = 1200;
-            player.moveSpeed += 0.6f;
             player.jumpSpeedBoost = 3.2f;
             player.wingTimeMax = 1200;
 
@@ -70,7 +69,8 @@ namespace tsorcRevamp.Items.Accessories {
                 }
             }
             if (!restricted) {
-
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 3;
+                /** W1K's original code
                 if (player.controlLeft) {
                     if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
 
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items.Accessories {
                         else player.velocity.X += 0.2f;
                         player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);
                     }
-                }
+                } **/
 
                 if (player.velocity.X > 6 || player.velocity.X < -6) {
                     player.waterWalk = true;

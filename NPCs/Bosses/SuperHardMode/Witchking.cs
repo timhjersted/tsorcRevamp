@@ -37,6 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             animationType = NPCID.PossessedArmor;
             Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.PossessedArmor];
             bossBag = ModContent.ItemType<Items.BossBags.WitchkingBag>();
+            despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);
         }
 
         int blackBreathDamage = 43;
@@ -90,7 +91,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         #region AI
         #region Movement
-        public override void AI() {
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
             bool flag2 = false;
             int num5 = 60;
             bool flag3 = true;
@@ -305,10 +309,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region Projectiles
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
             if (customAi1 >= 10f) {
-                npc.TargetClosest(true);
-
-
-
                 if ((customspawn1 < 2) && Main.rand.Next(900) == 1) {
                     int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
@@ -344,8 +344,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             //}
 
-
-
             #region Phase Through Walls
             if ((Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))) {
                 npc.noTileCollide = false;
@@ -362,16 +360,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     npc.velocity.Y += 8f;
                 }
             }
-            #endregion
-
-
-
-            if (Main.player[npc.target].dead) {
-                if (npc.timeLeft > 10) {
-                    npc.timeLeft = 10;
-                    return;
-                }
-            }
+            #endregion           
         }
         #endregion
         #endregion

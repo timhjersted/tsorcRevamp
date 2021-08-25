@@ -9,8 +9,10 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Weapons.Ranged;
 using tsorcRevamp.Items.Weapons.Throwing;
 
-namespace tsorcRevamp.NPCs {
-    public class tsorcRevampGlobalNPC : GlobalNPC {
+namespace tsorcRevamp.NPCs
+{
+    public class tsorcRevampGlobalNPC : GlobalNPC
+    {
 
 
         float enemyValue;
@@ -36,7 +38,8 @@ namespace tsorcRevamp.NPCs {
         public bool Soulstruck = false;
 
 
-        public override void ResetEffects(NPC npc) {
+        public override void ResetEffects(NPC npc)
+        {
             DarkInferno = false;
             CrimsonBurn = false;
             ToxicCatDrain = false;
@@ -52,54 +55,69 @@ namespace tsorcRevamp.NPCs {
         }
 
 
-        public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo) {
-            if (tsorcRevampWorld.TheEnd) {
+        public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
+        {
+            if (tsorcRevampWorld.TheEnd)
+            {
                 pool.Clear(); //stop NPC spawns in The End 
             }
         }
 
-        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff) {
+        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff)
+            {
                 maxSpawns = 0;
             }
         }
 
         //vanilla npc changes moved to separate file
 
-        public override void NPCLoot(NPC npc) {
+        public override void NPCLoot(NPC npc)
+        {
 
-            if (npc.boss) {
-                foreach (Player player in Main.player) {
+            if (npc.boss)
+            {
+                foreach (Player player in Main.player)
+                {
                     if (!player.active) { continue; }
                     player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true; ;
                     player.GetModPlayer<tsorcRevampPlayer>().bossMagnetTimer = 300; //5 seconds of increased grab range, check GlobalItem::GrabStyle and GrabRange
                 }
             }
 
+
             #region Dark Souls & Consumable Souls Drops
 
-            if (Soulstruck) {
-                    divisorMultiplier = 0.9f; //10% increase
-                }
+            if (Soulstruck)
+            {
+                divisorMultiplier = 0.9f; //10% increase
+            }
 
-                if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss) { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
+            if (npc.lifeMax > 5 && npc.value >= 10f || npc.boss)
+            { //stop zero-value souls from dropping (the 'or boss' is for expert mode support)
 
-                if (npc.netID != NPCID.JungleSlime) {
-                    if (Main.expertMode) { //npc.value is the amount of coins they drop
-                        enemyValue = (int)npc.value / (divisorMultiplier*25); //all enemies drop more money in expert mode, so the divisor is larger to compensate
+                if (npc.netID != NPCID.JungleSlime)
+                {
+                    if (Main.expertMode)
+                    { //npc.value is the amount of coins they drop
+                        enemyValue = (int)npc.value / (divisorMultiplier * 25); //all enemies drop more money in expert mode, so the divisor is larger to compensate
                     }
-                    else {
-                        enemyValue = (int)npc.value / (divisorMultiplier*10);
+                    else
+                    {
+                        enemyValue = (int)npc.value / (divisorMultiplier * 10);
                     }
                 }
 
                 if (npc.netID == NPCID.JungleSlime) //jungle slimes drop 10 souls
                 {
-                    if (Main.expertMode) {
-                        enemyValue = (int)npc.value / (divisorMultiplier*125);
+                    if (Main.expertMode)
+                    {
+                        enemyValue = (int)npc.value / (divisorMultiplier * 125);
                     }
-                    else {
-                        enemyValue = (int)npc.value / (divisorMultiplier*50);
+                    else
+                    {
+                        enemyValue = (int)npc.value / (divisorMultiplier * 50);
                     }
                 }
 
@@ -109,8 +127,10 @@ namespace tsorcRevamp.NPCs {
                 DarkSoulQuantity = (int)(multiplier * enemyValue);
 
                 #region Bosses drop souls once
-                if (npc.boss) {
-                    if (npc.type == NPCID.MoonLordCore) { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
+                if (npc.boss)
+                {
+                    if (npc.type == NPCID.MoonLordCore)
+                    { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
                         DarkSoulQuantity = 100000; //1 plat / 10
                     }
                     if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
@@ -118,15 +138,19 @@ namespace tsorcRevamp.NPCs {
                         DarkSoulQuantity = 0;
                         return;
                     }
-                    else {
-                        if (Main.netMode == NetmodeID.SinglePlayer) {
+                    else
+                    {
+                        if (Main.netMode == NetmodeID.SinglePlayer)
+                        {
                             Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
                         }
-                        else if (Main.netMode == NetmodeID.Server) {
+                        else if (Main.netMode == NetmodeID.Server)
+                        {
                             NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
                         }
                         tsorcRevampWorld.Slain.Add(npc.type, 0);
-                        if (Main.expertMode) {
+                        if (Main.expertMode)
+                        {
                             DarkSoulQuantity = 0;
                         }
                     }
@@ -155,7 +179,8 @@ namespace tsorcRevamp.NPCs {
                 }
                 #endregion
 
-                if (DarkSoulQuantity > 0) {
+                if (DarkSoulQuantity > 0)
+                {
                     Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
                 }
 
@@ -164,8 +189,10 @@ namespace tsorcRevamp.NPCs {
 
                 float chance = 0.01f;
 
-                if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) == false && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
+                if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) == false && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+                {
+                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
+                    {
                         chance = 0.015f;
                     }
 
@@ -195,14 +222,18 @@ namespace tsorcRevamp.NPCs {
 
         }
 
-            
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
-            if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload) {
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
+            {
                 int debuffCounter = 1;
-                foreach (int buffType in npc.buffType) {
+                foreach (int buffType in npc.buffType)
+                {
 
-                    if (Main.debuff[buffType]) {
+                    if (Main.debuff[buffType])
+                    {
                         debuffCounter++;
                     }
                 }
@@ -210,12 +241,16 @@ namespace tsorcRevamp.NPCs {
             }
         }
 
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload) {
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
+            {
                 int debuffCounter = 1;
-                foreach (int buffType in npc.buffType) {
+                foreach (int buffType in npc.buffType)
+                {
 
-                    if (Main.debuff[buffType]) {
+                    if (Main.debuff[buffType])
+                    {
                         debuffCounter++;
                     }
                 }
@@ -223,12 +258,16 @@ namespace tsorcRevamp.NPCs {
             }
         }
 
-        public override bool PreNPCLoot(NPC npc) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                if (npc.type == NPCID.ChaosElemental) {
+        public override bool PreNPCLoot(NPC npc)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                if (npc.type == NPCID.ChaosElemental)
+                {
                     NPCLoader.blockLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
                 }
-                if (npc.type == NPCID.KingSlime) {
+                if (npc.type == NPCID.KingSlime)
+                {
                     NPCLoader.blockLoot.Add(ItemID.SlimeHook);
                     NPCLoader.blockLoot.Add(ItemID.SlimySaddle); //no lol
                 }
@@ -240,19 +279,24 @@ namespace tsorcRevamp.NPCs {
             return base.PreNPCLoot(npc);
         }
 
-        public override void UpdateLifeRegen(NPC npc, ref int damage) {
-            if (DarkInferno) {
+        public override void UpdateLifeRegen(NPC npc, ref int damage)
+        {
+            if (DarkInferno)
+            {
 
-                if (npc.lifeRegen > 0) {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 16;
-                if (damage < 2) {
+                if (damage < 2)
+                {
                     damage = 2;
                 }
 
                 var N = npc;
-                for (int j = 0; j < 6; j++) {
+                for (int j = 0; j < 6; j++)
+                {
                     int dust = Dust.NewDust(N.position, N.width / 2, N.height / 2, 54, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust].noGravity = true;
 
@@ -261,143 +305,185 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (CrimsonBurn) {
-                if (npc.lifeRegen > 0) {
+            if (CrimsonBurn)
+            {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 16;
                 if (Main.hardMode) npc.lifeRegen -= 16;
-                if (damage < 2) {
+                if (damage < 2)
+                {
                     damage = 2;
                 }
 
             }
 
-            if (ToxicCatDrain) {
-                if (npc.lifeRegen > 0) {
+            if (ToxicCatDrain)
+            {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
 
                 int ToxicCatShotCount = 0;
 
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1000; i++)
+                {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    {
                         ToxicCatShotCount++;
                     }
                 }
-                if (ToxicCatShotCount >= 4) { //this is to make it worth the players time stickying more than 3 times
+                if (ToxicCatShotCount >= 4)
+                { //this is to make it worth the players time stickying more than 3 times
                     npc.lifeRegen -= ToxicCatShotCount * 2 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < ToxicCatShotCount * 1) {
+                    if (damage < ToxicCatShotCount * 1)
+                    {
                         damage = ToxicCatShotCount * 1;
                     }
                 }
-                else {
-                    npc.lifeRegen -= ToxicCatShotCount * 1 * 3; 
-                    if (damage < ToxicCatShotCount * 1) {
+                else
+                {
+                    npc.lifeRegen -= ToxicCatShotCount * 1 * 3;
+                    if (damage < ToxicCatShotCount * 1)
+                    {
                         damage = ToxicCatShotCount * 1;
                     }
                 }
             }
 
-            if (ViruCatDrain) {
-                if (npc.lifeRegen > 0) {
+            if (ViruCatDrain)
+            {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
 
                 int ViruCatShotCount = 0;
 
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1000; i++)
+                {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    {
                         ViruCatShotCount++;
                     }
                 }
-                if (ViruCatShotCount >= 4)  {
+                if (ViruCatShotCount >= 4)
+                {
                     npc.lifeRegen -= ViruCatShotCount * 4 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < ViruCatShotCount * 1) {
+                    if (damage < ViruCatShotCount * 1)
+                    {
                         damage = ViruCatShotCount * 1;
                     }
                 }
-                else {
+                else
+                {
                     npc.lifeRegen -= ViruCatShotCount * 2 * 3;
-                    if (damage < ViruCatShotCount * 1) {
+                    if (damage < ViruCatShotCount * 1)
+                    {
                         damage = ViruCatShotCount * 1;
                     }
                 }
             }
 
-            if (BiohazardDrain) {
-                if (npc.lifeRegen > 0) {
+            if (BiohazardDrain)
+            {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
 
                 int BiohazardShotCount = 0;
 
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1000; i++)
+                {
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI) {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.ai[1] == npc.whoAmI)
+                    {
                         BiohazardShotCount++;
                     }
                 }
-                if (BiohazardShotCount >= 4) {
+                if (BiohazardShotCount >= 4)
+                {
                     npc.lifeRegen -= BiohazardShotCount * 8 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
-                    if (damage < BiohazardShotCount * 1) {
+                    if (damage < BiohazardShotCount * 1)
+                    {
                         damage = BiohazardShotCount * 1;
                     }
                 }
-                else {
+                else
+                {
                     npc.lifeRegen -= BiohazardShotCount * 4 * 3;
-                    if (damage < BiohazardShotCount * 1) {
+                    if (damage < BiohazardShotCount * 1)
+                    {
                         damage = BiohazardShotCount * 1;
                     }
                 }
             }
 
-            if (ElectrocutedEffect) {
-                if (npc.lifeRegen > 0) {
+            if (ElectrocutedEffect)
+            {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 12;
-                if (damage < 2) {
+                if (damage < 2)
+                {
                     damage = 2;
                 }
             }
 
-            if (PolarisElectrocutedEffect) {
-                if (npc.lifeRegen > 0) {
+            if (PolarisElectrocutedEffect)
+            {
+                if (npc.lifeRegen > 0)
+                {
                     npc.lifeRegen = 0;
                 }
                 npc.lifeRegen -= 70;
-                if (damage < 10) {
+                if (damage < 10)
+                {
                     damage = 10;
                 }
             }
 
-            if (CrescentMoonlight) {
-                if (!Main.hardMode) {
-                    if (npc.lifeRegen > 0) {
+            if (CrescentMoonlight)
+            {
+                if (!Main.hardMode)
+                {
+                    if (npc.lifeRegen > 0)
+                    {
                         npc.lifeRegen = 0;
                     }
                     npc.lifeRegen -= 14;
-                    if (damage < 2) {
+                    if (damage < 2)
+                    {
                         damage = 2;
                     }
                 }
-                else { //double the DoT in HM
-                    if (npc.lifeRegen > 0) {
+                else
+                { //double the DoT in HM
+                    if (npc.lifeRegen > 0)
+                    {
                         npc.lifeRegen = 0;
                     }
                     npc.lifeRegen -= 28;
-                    if (damage < 2) {
+                    if (damage < 2)
+                    {
                         damage = 2;
                     }
                 }
             }
         }
 
-        public override void SetupShop(int type, Chest shop, ref int nextSlot) {
-            if (type == NPCID.Merchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        {
+            if (type == NPCID.Merchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<CharcoalPineResin>());
@@ -405,7 +491,8 @@ namespace tsorcRevamp.NPCs {
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
-            if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
                 shop.item[nextSlot].shopCustomPrice = 25;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -419,7 +506,8 @@ namespace tsorcRevamp.NPCs {
                     nextSlot++;
                 }
             }
-            if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
                 shop.item[nextSlot].shopCustomPrice = 5000;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -438,18 +526,24 @@ namespace tsorcRevamp.NPCs {
                 nextSlot++;
             }
         }
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit) {
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>())) {
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ToxicCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.ToxicCatExplosion>()))
+            {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetToxicCatBlobs = true;
                 int tags;
 
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1000; i++)
+                {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI) {
-                        for (int q = 0; q < 1000; q++) {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI) {
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.ToxicCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
                                 tags++;
                             }
                         }
@@ -463,24 +557,30 @@ namespace tsorcRevamp.NPCs {
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
-                        if (buffindex != -1) {
+                        if (buffindex != -1)
+                        {
                             npc.DelBuff(buffindex);
                         }
                     }
                 }
             }
 
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatExplosion>())) {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ViruCatDrain && (projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.VirulentCatExplosion>()))
+            {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetViruCatBlobs = true;
                 int tags;
 
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1000; i++)
+                {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI) {
-                        for (int q = 0; q < 1000; q++) {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI) {
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.VirulentCatShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
                                 tags++;
                             }
                         }
@@ -495,24 +595,30 @@ namespace tsorcRevamp.NPCs {
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
 
-                        if (buffindex != -1) {
+                        if (buffindex != -1)
+                        {
                             npc.DelBuff(buffindex);
                         }
                     }
                 }
             }
 
-            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.BiohazardExplosion>())) {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().BiohazardDrain && (projectile.type == ModContent.ProjectileType<Projectiles.BiohazardDetonator>() || projectile.type == ModContent.ProjectileType<Projectiles.BiohazardExplosion>()))
+            {
                 npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetBiohazardBlobs = true;
                 int tags;
 
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 1000; i++)
+                {
                     tags = 0;
                     Projectile p = Main.projectile[i];
-                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI) {
-                        for (int q = 0; q < 1000; q++) {
+                    if (p.active && p.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && p.ai[0] == 1f && p.timeLeft > 2 && p.ai[1] == npc.whoAmI)
+                    {
+                        for (int q = 0; q < 1000; q++)
+                        {
                             Projectile ñ = Main.projectile[q];
-                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI) {
+                            if (ñ.active && ñ.type == ModContent.ProjectileType<Projectiles.BiohazardShot>() && ñ.ai[0] == 1f && ñ.ai[1] == npc.whoAmI)
+                            {
                                 tags++;
                             }
                         }
@@ -526,7 +632,8 @@ namespace tsorcRevamp.NPCs {
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 
-                        if (buffindex != -1) {
+                        if (buffindex != -1)
+                        {
                             npc.DelBuff(buffindex);
                         }
                     }
@@ -534,16 +641,16 @@ namespace tsorcRevamp.NPCs {
             }
         }
 
-        
-        
+
+
         //This method lets us scale the stats of NPC's in expert mode.
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
-        {            
+        {
             //If it's not one of ours, don't mess with it.
             if ((npc.modNPC == null) || (npc.modNPC.mod != this.mod))
             {
                 base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
-                return;                    
+                return;
             }
 
             //If it's a boss, do nothing. Bosses will get their own scaling.
@@ -551,35 +658,37 @@ namespace tsorcRevamp.NPCs {
             {
                 return;
             }
-
-            //If if's not, scale it by the main multiplier
-            npc.lifeMax = (int)((expertScale * npc.lifeMax) / 2);
-            npc.damage = (int)((expertScale * npc.damage) / 2);
-           
         }
 
-        public override void DrawEffects(NPC npc, ref Color drawColor) {
-            if (ElectrocutedEffect) {
+        public override void DrawEffects(NPC npc, ref Color drawColor)
+        {
+            if (ElectrocutedEffect)
+            {
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (PolarisElectrocutedEffect) {
-                for (int i = 0; i < 2; i++) {
+            if (PolarisElectrocutedEffect)
+            {
+                for (int i = 0; i < 2; i++)
+                {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (Main.rand.Next(2) == 0) {
+                if (Main.rand.Next(2) == 0)
+                {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 226, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .4f);
                     Main.dust[dust].noGravity = false;
                 }
             }
 
-            if (ToxicCatDrain) {
+            if (ToxicCatDrain)
+            {
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(10) == 0) {
+                if (Main.rand.Next(10) == 0)
+                {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
@@ -588,11 +697,13 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (ViruCatDrain) {
+            if (ViruCatDrain)
+            {
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(6) == 0) {
+                if (Main.rand.Next(6) == 0)
+                {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, npc.velocity.Y * 0f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
@@ -601,11 +712,13 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (BiohazardDrain) {
+            if (BiohazardDrain)
+            {
                 drawColor = Color.LimeGreen;
                 Lighting.AddLight(npc.position, 0.125f, 0.23f, 0.065f);
 
-                if (Main.rand.Next(2) == 0) {
+                if (Main.rand.Next(2) == 0)
+                {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, 74, npc.velocity.X * 0f, -2f, 100, default(Color), .8f); ;
                     Main.dust[dust].velocity *= 0f;
                     Main.dust[dust].noGravity = true;
@@ -614,7 +727,8 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            if (CrescentMoonlight) {
+            if (CrescentMoonlight)
+            {
                 drawColor = Color.White;
 
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 164, npc.velocity.X * 0f, 0f, 100, default(Color), 1f); ;
@@ -623,7 +737,8 @@ namespace tsorcRevamp.NPCs {
                 Main.dust[dust].velocity += npc.velocity;
             }
 
-            if (Soulstruck) {
+            if (Soulstruck)
+            {
                 Lighting.AddLight(npc.Center, .4f, .4f, .850f);
 
                 if (Main.rand.Next(6) == 0)
@@ -636,22 +751,48 @@ namespace tsorcRevamp.NPCs {
             }
         }
 
+        //AIWorm(NPC npc, int headType, int[] bodyTypes, int tailType, int wormLength = 3, float partDistanceAddon = 0f, float maxSpeed = 8f, float gravityResist = 0.07f, bool fly = false, bool split = false, bool ignoreTiles = false, bool spawnTileDust = true, bool soundEffects = true)
 
+        /*
+                 * A cleaned up (and edited) copy of Worm AI.
+
+                 * headType/tailType : the type of the head, body, and tail of the worm, respectively.
+                 * bodyTypes: An array of the body types. NOTE: Array must at least be as long as the body length - 2!
+                 * wormLength : the total length of the worm.
+                 * partDistanceAddon : and addon to the distance between parts of the worm.
+                 * maxSpeed : the fastest the worm can accellerate to.
+                 * gravityResist : how much resistance on the X axis the worm has when it is out of tiles. was 0.07f
+                    //higher values cause the wvyern's 'gravity' towards the player to increase
+                    //lower values basically == longer passes
+                 * fly : If true, acts like a Wvyern.
+                 * split : If true, worm will split when parts of it die.
+                 * ignoreTiles : If true, Allows the worm to move outside of tiles as if it were in them. (ignored if fly is true)
+                 * spawnTileDust : If true, worm will spawn tile dust when it digs through tiles.
+                 * soundEffects : If true, will produce a digging sound when nearing the player.
+
+                 * that array works like this: say you have a worm that is 5 segments long
+                 * you would make the body array have 3 ids in it and they would go in order they would appear on the worm from the head
+                 * the array *must* be 2 less than the total length of the worm or it will not work
+        */
 
         #region AIWorm
-        //higher values cause the wvyern's 'gravity' towards the player to increase
-        //lower values basically == longer passes
         public static void AIWorm(NPC npc, int headType, int[] bodyTypes, int tailType, int wormLength = 3, float partDistanceAddon = 0f, float maxSpeed = 8f, float gravityResist = 0.07f, bool fly = false, bool split = false, bool ignoreTiles = false, bool spawnTileDust = true, bool soundEffects = true)
         {
+            if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
+            {
+                npc.spriteDirection = 1;
+            }
+            if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
+            {
+                npc.spriteDirection = -1;
+            }
+
             if (split)
             {
                 npc.realLife = -1;
             }
             else
             if (npc.ai[3] > 0f) { npc.realLife = (int)npc.ai[3]; }
-
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead) { npc.TargetClosest(true); }
-            if (Main.player[npc.target].dead && npc.timeLeft > 300) { npc.timeLeft = 300; }
             if (Main.netMode != 1)
             {
                 //spawn pieces (flying)
@@ -737,7 +878,6 @@ namespace tsorcRevamp.NPCs {
                         npc.SetDefaults(npc.type, -1f);
                         npc.life = (int)((float)npc.lifeMax * lifePercent);
                         npc.ai[0] = lastPiece;
-                        npc.TargetClosest(true);
                         npc.netUpdate = true;
                         npc.whoAmI = npcID;
                     }
@@ -751,7 +891,6 @@ namespace tsorcRevamp.NPCs {
                         npc.SetDefaults(npc.type, -1f);
                         npc.life = (int)((float)npc.lifeMax * lifePercent);
                         npc.ai[1] = lastPiece;
-                        npc.TargetClosest(true);
                         npc.netUpdate = true;
                         npc.whoAmI = npcID;
                     }
@@ -789,8 +928,8 @@ namespace tsorcRevamp.NPCs {
             if (tileCenterY > Main.maxTilesY) { tileCenterY = Main.maxTilesY; }
             bool canMove = false;
             if (fly || ignoreTiles) { canMove = true; }
-           
-            
+
+
             if (!canMove || spawnTileDust)
             {
                 for (int tX = tileX; tX < tileCenterX; tX++)
@@ -814,7 +953,7 @@ namespace tsorcRevamp.NPCs {
                     }
                 }
             }
-            
+
 
             if (!canMove && npc.type == headType)
             {
@@ -880,7 +1019,6 @@ namespace tsorcRevamp.NPCs {
             {
                 if (!canMove)
                 {
-                    npc.TargetClosest(true);
                     npc.velocity.Y = npc.velocity.Y + 0.11f;
                     if (npc.velocity.Y > maxSpeed) { npc.velocity.Y = maxSpeed; }
                     if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)maxSpeed * 0.4)
@@ -923,18 +1061,6 @@ namespace tsorcRevamp.NPCs {
                         {
                             dontFall = true;
                             if (Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y) < maxSpeed) { npc.velocity *= 1.1f; }
-                        }
-                        //if (npc.position.Y > Main.player[npc.target].position.Y || (double)(Main.player[npc.target].position.Y / 16f) > Main.worldSurface || Main.player[npc.target].dead) //part jungle wyvern needs 
-                        if (Main.player[npc.target].dead) //part jungle wyvern needs 
-                        {
-                            dontFall = true;
-                            if (Math.Abs(npc.velocity.X) < maxSpeed / 2f)
-                            {
-                                if (npc.velocity.X == 0f) { npc.velocity.X = npc.velocity.X - (float)npc.direction; }
-                                npc.velocity.X = npc.velocity.X * 1.1f;
-                            }
-                            else
-                            if (npc.velocity.Y > -maxSpeed) { npc.velocity.Y = npc.velocity.Y - gravityResist; }
                         }
                     }
                     if (!dontFall)
@@ -1003,5 +1129,129 @@ namespace tsorcRevamp.NPCs {
         }
 
         #endregion
+
+    }
+
+    ///<summary> 
+    ///Handles boss despawning and targeting.
+    ///This exists to simplify AI code.
+    ///Create an instance of this class in SetDefaults, call targetAndDespawn(npcID) at the start of their AI, and removing any existing targeting or despawning.
+    ///</summary>
+    public class NPCDespawnHandler
+    {
+        ///<summary> 
+        ///Handles all targeting and despawning.
+        ///</summary> 
+        ///<param name="despawnFlavorText">The custom text this boss displays when it despawns</param>
+        ///<param name="textColor">The color of the despawn text</param>
+        ///<param name="dustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
+        public NPCDespawnHandler(string despawnFlavorText, Color textColor, int dustType)
+        {
+            despawnText = despawnFlavorText;
+            despawnTextColor = textColor;
+            despawnDustType = dustType;
+        }
+
+        ///<summary> 
+        ///Handles all targeting and despawning.
+        ///</summary> 
+        ///<param name="dustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
+        public NPCDespawnHandler(int dustType)
+        {
+            despawnDustType = dustType;
+        }
+
+        readonly string despawnText;
+        readonly Color despawnTextColor;
+        readonly int despawnDustType;
+        bool hasTargeted = false;
+        int targetCount = 0;
+        readonly int[] targetIDs = new int[256];
+        readonly bool[] targetAlive = new bool[256];
+        int despawnTime = -1;
+
+        ///<summary> 
+        ///Handles all targeting and despawning.
+        ///</summary>         
+        ///<param name="npcID">The ID of the NPC in question.</param>
+        public void TargetAndDespawn(int npcID)
+        {
+            //When despawning, we set timeLeft to 240. If that's been done, we don't need to check for players or target anyone anymore.
+            if (despawnTime < 0)
+            {
+                //Only run this once. Gets all active players and throws them into these arrays so we can track their status.
+                if (!hasTargeted)
+                {
+                    foreach (Player player in Main.player)
+                    {
+                        //For some reason, Main.player always has 255 entries. This ensures we're only pulling real players from it.
+                        if (player.name != "")
+                        {
+                            targetIDs[targetCount] = player.whoAmI;
+                            targetAlive[targetCount] = true;
+                            targetCount++;
+                        }
+                    }
+                    hasTargeted = true;
+                }
+                else
+                {
+                    //Go through the target list. If everyone has died once, despawn. Else, target the closest one that has not yet died.
+                    //It's important that it only targets players who haven't died, because otherwise one living player could hide far away while the other repeatedly respawned and fought the boss.
+                    //With this, it will intentionally seek out those it has not yet killed instead.
+                    bool viableTarget = false;
+                    float closestPlayerDistance = 999999;
+                    //Iterate through all tracked players in the array
+                    for (int i = 0; i < targetCount; i++)
+                    {
+                        //For each of them, check if they're dead. If so, mark it down in targetAlive.
+                        if (Main.player[targetIDs[i]].dead)
+                        {
+                            targetAlive[i] = false;
+                        }
+                        else if (targetAlive[i])
+                        {
+                            //If it found a player that hasn't been killed yet, then don't despawn
+                            viableTarget = true;
+                            //Check if they're the closest one, and if so target them
+                            float distance = Vector2.DistanceSquared(Main.player[targetIDs[i]].position, Main.npc[npcID].position);
+                            if (distance < closestPlayerDistance)
+                            {
+                                closestPlayerDistance = distance;
+                                Main.npc[npcID].target = targetIDs[i];
+                            }
+                        }
+                    }
+                    //If there's no player that has not yet died, then despawn.
+                    if (!viableTarget)
+                    {
+                        if (despawnText != null)
+                        {
+                            Main.NewText(despawnText, despawnTextColor);
+                        }
+                        despawnTime = 240;
+                    }
+                }
+            }
+            else
+            {
+                //Adios
+                if (despawnTime == 0)
+                {
+                    for (int i = 0; i < 60; i++)
+                    {
+                        int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+                        Main.dust[dustID].noGravity = true;
+                    }
+                    Main.npc[npcID].active = false;
+                }
+                else
+                {
+                    int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 1f);
+                    Main.dust[dustID].noGravity = true;
+                    despawnTime--;
+                }
+            }
+        }
     }
 }

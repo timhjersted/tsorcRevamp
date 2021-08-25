@@ -29,6 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 800000;
 			bossBag = ModContent.ItemType<Items.BossBags.GwynBag>();
+			despawnHandler = new NPCDespawnHandler("You have fallen before the Lord of Cinder...", Color.OrangeRed, 6);
 		}
 
 		public override void SetStaticDefaults()
@@ -89,84 +90,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		#endregion
 
 		#region AI
-		bool hasTargeted = false;
-		int targetCount = 0;
-		Player[] targets = new Player[256];
-		bool[] targetAlive = new bool[256];
-		float closestPlayerDistance = 999999;
-		int despawnTime = -1;
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			//When despawning, we set timeLeft to 240. If that's been done, we don't need to check for players or target anyone anymore.
-			if (despawnTime < 0)
-			{
-				//Only run this once. Gets all active players and throws them into these arrays so we can track their status.
-				if (!hasTargeted)
-				{
-					foreach (Player player in Main.player)
-					{
-						//For some reason, Main.player always has 255 entries. This ensures we're only pulling real players from it.
-						if (player.name != "")
-						{
-							targets[targetCount] = player;
-							targetAlive[targetCount] = true;
-							targetCount++;
-						}
-					}
-					hasTargeted = true;
-				}
-				else
-				{
-					//Aka, "is there a player who hasn't been killed yet?"
-					bool viableTarget = false;
-					//Iterate through all tracked players in the array
-					for (int i = 0; i < targetCount; i++)
-					{
-						//For each of them, check if they're dead. If so, mark it down in targetAlive.
-						if (targets[i].dead)
-						{
-							targetAlive[i] = false;
-							//Setting this makes it so the dead player's distance won't persist, and it has to check again.
-							closestPlayerDistance = 999999;
-						}
-						else if (targetAlive[i])
-						{
-							//If it found a player that hasn't been killed yet, then don't despawn
-							viableTarget = true;
-							//Check if they're the closest one, and if so target them
-							float distance = Vector2.DistanceSquared(targets[i].position, npc.position);
-							if (distance < closestPlayerDistance)
-							{
-								closestPlayerDistance = distance;
-								npc.target = targets[i].whoAmI;
-							}
-						}
-					}
-					//If there's no player that has not died, then despawn.
-					if (!viableTarget)
-					{
-						Main.NewText("You have fallen before the Lord of Cinder...", Color.OrangeRed);
-						despawnTime = 240;
-					}
-				}
-			}
-			 else
-            {
-				//Adios
-				if(despawnTime == 0)
-                {
-					npc.active = false;
-					for (int i = 0; i < 60; i++)
-					{
-						int dustID = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, Color.Red, 7f);
-						Main.dust[dustID].noGravity = true;
-					}
-				} else
-                {
-					despawnTime--;
-				}
-			}
-
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 
 			int num58;
 			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 2f);
@@ -899,14 +826,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 			if (!Main.bloodMoon)
 			{
-				
-
 				if (npc.timeLeft > 5)
 				{
 					Main.NewText("You have broken the Covenant of The Abyss...");
-
-					npc.timeLeft = 5;
-					npc.damage = 9999;
+					for (int i = 0; i < 60; i++)
+					{
+						int dustID = Dust.NewDust(npc.position, npc.width, npc.height, 65, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+						Main.dust[dustID].noGravity = true;
+					}
+					npc.active = false;
 					return;
 				}
 

@@ -39,8 +39,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
-        }
-		
+			despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
+		}
+
 		/**public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
 		{
 			return head ? (bool?)null : false;
@@ -50,11 +51,14 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
 		}
 
-		public override void AI() {
+		NPCDespawnHandler despawnHandler;
+		public override void AI()
+		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 
 			//Generic Worm Part Code:
 			npc.behindTiles = true;
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false); //3f was 6f
+			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false, true, false, false); //3f was 6f
 
 			//Code unique to this body part:
 			Color color = new Color();

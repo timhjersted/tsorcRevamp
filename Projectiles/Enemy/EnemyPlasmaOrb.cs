@@ -15,8 +15,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             projectile.aiStyle = 0;
-            projectile.width = 30;
-            projectile.height = 30;
+            projectile.width = 22;
+            projectile.height = 22;
             projectile.hostile = true;
             projectile.timeLeft = 1500;
             projectile.scale = 2.2f;
@@ -34,6 +34,11 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             projectile.type = 44; //killpretendtype
+            for (int num36 = 0; num36 < 10; num36++)
+            {
+                int dust = Dust.NewDust(projectile.position, (int)(projectile.width), (int)(projectile.height), DustID.Firework_Blue, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, new Color(), 9f);
+                Main.dust[dust].noGravity = true;
+            }
             return true;
         }
 

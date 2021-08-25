@@ -42,6 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.knockBackResist = 0;
             npc.lavaImmune = true;
             npc.value = 350000;
+            despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
         }
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
             npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
@@ -62,7 +63,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             }
         }
 
-        public override void AI() {
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
 
             if (!Initialized) {
                 lookMode = 0; //0 = Stand, 1 = Player's Direction, 2 = Movement Direction.
@@ -75,13 +79,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 phaseStarted = false;
                 Initialized = true;
             }
-            npc.TargetClosest(true);
-
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active) {
-                Teleport(-1000, -1000);
-                npc.timeLeft = 0;
-            }
-
 
 
             Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));

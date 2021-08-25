@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Accessories {
             Tooltip.SetDefault("+20% supersonic movement speed, flight, rocket boots effect, " +
                                 "\nfire-walk skill, knockback protection, and water-walking if moving fast enough." +
                                 "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
-                                "\nYou become so nimble you become silent when you run." +
+                                "\nSpeed boost is multiplied by movement speed boosts." +
                                 "\nCompatible with Dragoon Boots and Dragoon Gear.");
         }
 
@@ -51,7 +51,6 @@ namespace tsorcRevamp.Items.Accessories {
             player.fireWalk = true;
             player.noKnockback = true;
             player.canRocket = true;
-            player.moveSpeed += 0.2f;
             player.jumpSpeedBoost = 1.3f;
             player.wingTimeMax = 12000;
 
@@ -64,6 +63,10 @@ namespace tsorcRevamp.Items.Accessories {
                 }
             }
             if (!restricted) {
+                player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 2;
+
+
+                /** W1K's original code
                 if (player.controlLeft) {
                     if (player.velocity.X > -3) player.velocity.X -= (float)(player.moveSpeed - 1f) / 10;
                     if (player.velocity.X < -3 && player.velocity.X > -6 * player.moveSpeed) {
@@ -79,7 +82,7 @@ namespace tsorcRevamp.Items.Accessories {
                         else player.velocity.X += 0.2f;
                         player.velocity.X += 0.02f + ((player.moveSpeed - 1f) / 10);
                     }
-                }
+                }**/
 
                 if (player.velocity.X > 6 || player.velocity.X < -6) {
                     player.waterWalk = true;

@@ -33,6 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
             bossBag = ModContent.ItemType<Items.BossBags.SeathBag>();
+            despawnHandler = new NPCDespawnHandler("Seath consumes your soul...", Color.Cyan, DustID.BlueFairy);
         }
 
 
@@ -93,8 +94,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         #region AI
 
 
+        NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
 
 
             Player nT = Main.player[npc.target];
@@ -148,7 +151,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.noGravity = true;
             npc.behindTiles = true;
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 17, 6f, 10f, 0.17f, true, false);
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 17, 6f, 10f, 0.17f, true, false, true, false, false);
 
 
             //this makes the head always stay in the same position even when it flips upside down
@@ -156,27 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             //if (npc.velocity.X > 0f){ npc.spriteDirection = -1; }
 
 
-            //AIWorm(NPC npc, int headType, int[] bodyTypes, int tailType, int wormLength = 3, float partDistanceAddon = 0f, float maxSpeed = 8f, float gravityResist = 0.07f, bool fly = false, bool split = false, bool ignoreTiles = false, bool spawnTileDust = true, bool soundEffects = true)
-
-            /*
-                     * A cleaned up (and edited) copy of Worm AI.
-
-                     * headType/tailType : the type of the head, body, and tail of the worm, respectively.
-                     * bodyTypes: An array of the body types. NOTE: Array must at least be as long as the body length - 2!
-                     * wormLength : the total length of the worm.
-                     * partDistanceAddon : and addon to the distance between parts of the worm.
-                     * maxSpeed : the fastest the worm can accellerate to.
-                     * gravityResist : how much resistance on the X axis the worm has when it is out of tiles. was 0.07f
-                     * fly : If true, acts like a Wvyern.
-                     * split : If true, worm will split when parts of it die.
-                     * ignoreTiles : If true, Allows the worm to move outside of tiles as if it were in them. (ignored if fly is true)
-                     * spawnTileDust : If true, worm will spawn tile dust when it digs through tiles.
-                     * soundEffects : If true, will produce a digging sound when nearing the player.
-
-                     * that array works like this: say you have a worm that is 5 segments long
-                     * you would make the body array have 3 ids in it and they would go in order they would appear on the worm from the head
-                     * the array *must* be 2 less than the total length of the worm or it will not work
-            */
+           
 
 
 

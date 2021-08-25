@@ -36,6 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
+            despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, 54);
         }
 
         public override void SetStaticDefaults() {
@@ -86,27 +87,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                 damage = npc.life - 50;
             }
         }
-        public override void AI() {
+
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
+
             if (!initiate) {
                 RotSpeed = 0.015f;
                 npc.alpha = 255;
                 initiate = true;
             }
             if (!Transform) {
-                npc.TargetClosest(true);
-
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active) {
-                    int dustDeath = 0;
-                    for (int num36 = 0; num36 < 20; num36++) {
-                        dustDeath = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 200, Color.White, 4f);
-                        Main.dust[dustDeath].noGravity = true;
-                    }
-                    npc.position.X = -1000;
-                    npc.position.Y = -1000;
-                    npc.velocity.X = 0;
-                    npc.velocity.Y = 0;
-                    npc.timeLeft = 0;
-                }
 
                 if (Main.player[npc.target].position.X + (Main.player[npc.target].width / 2) < npc.position.X + (npc.width / 2) - 500 || Main.player[npc.target].position.X + (Main.player[npc.target].width / 2) > npc.position.X + (npc.width / 2) + 500 || Main.player[npc.target].position.Y + (Main.player[npc.target].height / 2) < npc.position.Y + (npc.height / 2) - 500 || Main.player[npc.target].position.Y + (Main.player[npc.target].height / 2) > npc.position.Y + (npc.height / 2) + 500) {
                     float rotation = (float)Math.Atan2((npc.position.Y + (npc.height / 2)) - (Main.player[npc.target].position.Y + (Main.player[npc.target].height / 2)), (npc.position.X + (npc.width / 2)) - (Main.player[npc.target].position.X + (Main.player[npc.target].width / 2)));
@@ -191,13 +183,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                     npc.ai[2] = 0;
                 }
 
-                if (Main.player[npc.target].dead) {
-                    npc.velocity.Y -= 0.04f;
-                    if (npc.timeLeft > 10) {
-                        npc.timeLeft = 10;
-                        return;
-                    }
-                }
 
                 if (npc.life <= 1000) //debug
                 {

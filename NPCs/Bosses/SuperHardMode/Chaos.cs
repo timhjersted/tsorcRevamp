@@ -32,6 +32,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.ChaosBag>();
+			despawnHandler = new NPCDespawnHandler("Chaos tears you asunder...", Color.Yellow, DustID.GoldFlame);
+
 		}
 
 
@@ -69,8 +71,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		int holdTimer = 0;
 
 		#region AI
+		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
+			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			holdTimer--;
 			if (holdTimer < 0)
 			{
@@ -81,7 +85,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (npc.ai[1] >= 10f)
 				{
-					npc.TargetClosest(true);
 					if (((npc.position.X > Main.player[npc.target].position.X && (npc.position.X - Main.player[npc.target].position.X >= 1000))
 					|| (npc.position.X < Main.player[npc.target].position.X && (Main.player[npc.target].position.X - npc.position.X >= 1000))
 					|| (npc.position.Y > Main.player[npc.target].position.Y && (npc.position.Y - Main.player[npc.target].position.Y >= 1000))
@@ -301,7 +304,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					if (Main.rand.Next(5) == 1)
 					{
-						float num48 = 36f;
+						float num48 = 16f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -420,7 +423,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					npc.ai[1] = npc.position.Y;
 					npc.ai[2] = 0f;
 				}
-				npc.TargetClosest(true);
 			}
 			else
 			{
@@ -568,15 +570,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					}
 					npc.netUpdate = true;
 				}
-			}
-			if (Main.player[npc.target].dead)
-			{
-				if (npc.timeLeft > 10)
-				{
-					npc.timeLeft = 10;
-					return;
-				}
-			}
+			}			
 			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0f);
 			return;
 		}

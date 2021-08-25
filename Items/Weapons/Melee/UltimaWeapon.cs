@@ -7,12 +7,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Ultimate sword drawing power from the wielder" +
-                                "\nThe true form of your tather's legendary sword revealed" +
+                                "\nThe true form of your father's legendary sword revealed" +
                                 "\nDoes 150 damage when at full health, and 100 damage at 200 health, scaling with current HP");
         }
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
-            item.damage = 150;
+            item.damage = 50;
             item.height = 50;
             item.width = 50;
             item.knockBack = 14f;
@@ -37,7 +37,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            add += (int)((float)player.statLife / 4 + 50) * player.meleeDamage;
+
+            //I don't care if this many parentheses aren't necessary, integer division is hell
+            add += ((((float)player.statLife) / ((float)player.statLifeMax2)) * ((float)2)) * player.meleeDamage;
         }
     }
 }

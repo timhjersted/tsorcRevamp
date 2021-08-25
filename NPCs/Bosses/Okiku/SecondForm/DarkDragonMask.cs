@@ -37,6 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
+            despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public override void SetStaticDefaults() {
@@ -59,7 +60,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 damage = npc.life - 50;
             }
         }
-        public override void AI() {
+
+        NPCDespawnHandler despawnHandler;
+        public override void AI()
+        {
+            despawnHandler.TargetAndDespawn(npc.whoAmI);
+
             if (Initialize) {
                 OptionSpawned = false;
                 ShieldBroken = false;
@@ -69,9 +75,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             }
             int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 1.0f);
             Main.dust[dust].noGravity = true;
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active) {
-                npc.TargetClosest(true);
-            }
 
             for (int num36 = 0; num36 < 10; num36++) {
                 if (Main.player[npc.target].buffType[num36] == 18) {
@@ -180,14 +183,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
                 Main.NewText("??????????????????? A booming laughter echoes all around you!", 175, 75, 255);
 
-            }
-
-            if (Main.player[npc.target].dead) {
-                npc.velocity.Y -= 0.04f;
-                if (npc.timeLeft > 10) {
-                    npc.timeLeft = 10;
-                    return;
-                }
             }
         }
 

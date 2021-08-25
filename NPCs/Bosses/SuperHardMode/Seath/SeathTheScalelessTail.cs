@@ -25,7 +25,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             music = 12;
             npc.noGravity = true;
             npc.noTileCollide = true;
-            npc.value = 200000;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -65,11 +64,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             //if (npc.velocity.X > 0f){ npc.spriteDirection = 1; }
 
             if (!Main.npc[(int)npc.ai[1]].active)
-            {
-                npc.life = 0;
-
-                npc.HitEffect(0, 10.0);
-                npc.NPCLoot();
+            { 
                 npc.active = false;
             }
         }
