@@ -110,7 +110,7 @@ namespace tsorcRevamp.Items {
         #region permanent potion recipes
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 150000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 5);
             recipe.AddTile(TileID.DemonAltar);
@@ -119,7 +119,7 @@ namespace tsorcRevamp.Items {
         }
         public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
             recipe.AddTile(TileID.DemonAltar);
@@ -128,7 +128,7 @@ namespace tsorcRevamp.Items {
         }
         public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);
             recipe.AddTile(TileID.DemonAltar);
@@ -137,7 +137,7 @@ namespace tsorcRevamp.Items {
         }
         public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion) {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>());
             recipe.AddTile(TileID.DemonAltar);
