@@ -1439,6 +1439,26 @@ namespace tsorcRevamp
             }
         }
 
+        public override void ModifyHitByProjectile(Projectile proj, ref int damage, ref bool crit)
+        {
+            if (UndeadTalisman)
+            {
+                if (proj.type == ProjectileID.SkeletonBone || proj.type == ProjectileID.Skull)
+                {
+                    if (!Main.expertMode)
+                    {
+                        damage -= 8;
+                    }
+                    if (Main.expertMode)
+                    {
+                        damage -= 4;
+                    }
+
+                    if (damage < 0) damage = 0;
+                }
+            }
+        }
+
         public override void UpdateBadLifeRegen()
         {
             if (DarkInferno)
