@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     public class PoisonBombRune : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Creates 9 poison bombs on impact\n" + "Superior area denial, drains enemy life with the deadliest poison");
+            Tooltip.SetDefault("Creates 9 poison bombs on impact\n" + "Superior area denial, drains enemy life with the deadliest poison\n" + "Not necessarily a direct upgrade");
         }
         public override void SetDefaults() {
             item.damage = 17;
@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
             item.noMelee = true;
             item.autoReuse = true;
-            item.mana = 50;
+            item.mana = 70;
             item.useAnimation = 60;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
