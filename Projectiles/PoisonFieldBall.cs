@@ -51,67 +51,7 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].noGravity = true;
-            if (Main.myPlayer == projectile.owner && projectile.ai[0] == 0f) {
-                if (Main.player[projectile.owner].channel) {
-                    float num48 = 12f;
-                    Vector2 vector6 = new Vector2(projectile.position.X + (float)projectile.width * 0.5f, projectile.position.Y + (float)projectile.height * 0.5f);
-                    float num49 = (float)Main.mouseX + Main.screenPosition.X - vector6.X;
-                    float num50 = (float)Main.mouseY + Main.screenPosition.Y - vector6.Y;
-                    float num51 = (float)Math.Sqrt((double)(num49 * num49 + num50 * num50));
-                    num51 = (float)Math.Sqrt((double)(num49 * num49 + num50 * num50));
-                    if (num51 > num48) {
-                        num51 = num48 / num51;
-                        num49 *= num51;
-                        num50 *= num51;
-                        int num52 = (int)(num49 * 1000f);
-                        int num53 = (int)(projectile.velocity.X * 1000f);
-                        int num54 = (int)(num50 * 1000f);
-                        int num55 = (int)(projectile.velocity.Y * 1000f);
-                        if (num52 != num53 || num54 != num55) {
-                            projectile.netUpdate = true;
-                        }
-                        projectile.velocity.X = num49;
-                        projectile.velocity.Y = num50;
-                    }
-                    else {
-                        int num56 = (int)(num49 * 1000f);
-                        int num57 = (int)(projectile.velocity.X * 1000f);
-                        int num58 = (int)(num50 * 1000f);
-                        int num59 = (int)(projectile.velocity.Y * 1000f);
-                        if (num56 != num57 || num58 != num59) {
-                            projectile.netUpdate = true;
-                        }
-                        projectile.velocity.X = num49;
-                        projectile.velocity.Y = num50;
-                    }
-                }
-                else {
-                    if (projectile.ai[0] == 0f) {
-                        projectile.ai[0] = 1f;
-                        projectile.netUpdate = true;
-                        float num60 = 12f;
-                        Vector2 vector7 = new Vector2(projectile.position.X + (float)projectile.width * 0.5f, projectile.position.Y + (float)projectile.height * 0.5f);
-                        float num61 = (float)Main.mouseX + Main.screenPosition.X - vector7.X;
-                        float num62 = (float)Main.mouseY + Main.screenPosition.Y - vector7.Y;
-                        float num63 = (float)Math.Sqrt((double)(num61 * num61 + num62 * num62));
-                        if (num63 == 0f) {
-                            vector7 = new Vector2(Main.player[projectile.owner].position.X + (float)(Main.player[projectile.owner].width / 2), Main.player[projectile.owner].position.Y + (float)(Main.player[projectile.owner].height / 2));
-                            num61 = projectile.position.X + (float)projectile.width * 0.5f - vector7.X;
-                            num62 = projectile.position.Y + (float)projectile.height * 0.5f - vector7.Y;
-                            num63 = (float)Math.Sqrt((double)(num61 * num61 + num62 * num62));
-                        }
-                        num63 = num60 / num63;
-                        num61 *= num63;
-                        num62 *= num63;
-                        projectile.velocity.X = num61;
-                        projectile.velocity.Y = num62;
-                        if (projectile.velocity.X == 0f && projectile.velocity.Y == 0f) {
-                            projectile.Kill();
-                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<PoisonField>(), 15, 1f, projectile.owner);
-                        }
-                    }
-                }
-            }
+
             if (projectile.velocity.Y > 16f) {
                 projectile.velocity.Y = 16f;
                 return;
