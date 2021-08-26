@@ -1841,13 +1841,15 @@ namespace tsorcRevamp.NPCs {
                 }
             }
             
-            
-
             if (npc.type == NPCID.KingSlime) {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 500);
                 if (!Main.expertMode) {
                     Item.NewItem(npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
                 }
+            }
+
+            if (npc.type == NPCID.QueenBee) {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 1000);
             }
 
             if (npc.type == NPCID.TheDestroyer && !Main.expertMode) {

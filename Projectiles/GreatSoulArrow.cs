@@ -26,6 +26,7 @@ namespace tsorcRevamp.Projectiles
 			projectile.tileCollide = true;
 			projectile.ignoreWater = true;
 			projectile.magic = true;
+			projectile.penetrate = -1;
 			projectile.timeLeft = 300;
 		}
 		int gsoularrowanimtimer = 0;
@@ -120,7 +121,7 @@ namespace tsorcRevamp.Projectiles
 		{
 			for (int d = 0; d < 20; d++)
 			{
-				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(projectile.Center, 10, 10, 172, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
 				Main.dust[dust].noGravity = true;
 			}
 			Main.PlaySound(SoundID.NPCHit3.WithVolume(.6f), projectile.position);
@@ -135,6 +136,16 @@ namespace tsorcRevamp.Projectiles
 					target.AddBuff(mod.BuffType("Soulstruck"), 180);
 				}
 			}
+
+			// change the hitbox size, centered about the original projectile center. This makes the projectile have small aoe.
+			projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
+			projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
+			projectile.width = 40;
+			projectile.height = 40;
+			projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
+			projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
+
+			projectile.timeLeft = 2;
 		}
 	}
 }

@@ -25,6 +25,7 @@ namespace tsorcRevamp.Projectiles
 			projectile.tileCollide = true;
 			projectile.ignoreWater = true;
 			projectile.magic = true;
+			projectile.penetrate = -1;
 			projectile.timeLeft = 300;
 		}
 		int soularrowanimtimer = 0;
@@ -119,12 +120,23 @@ namespace tsorcRevamp.Projectiles
 
 			return false;
 		}
+		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+		{
+			// change the hitbox size, centered about the original projectile center. This makes the projectile have small aoe.
+			projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
+			projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
+			projectile.width = 40;
+			projectile.height = 40;
+			projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
+			projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
 
+			projectile.timeLeft = 2;
+		}
 		public override void Kill(int timeLeft)
 		{
 			for (int d = 0; d < 20; d++)
 			{
-				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(projectile.Center, 8, 8, 68, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
 				Main.dust[dust].noGravity = true;
 			}
 			Main.PlaySound(SoundID.NPCHit3.WithVolume(.45f), projectile.position);

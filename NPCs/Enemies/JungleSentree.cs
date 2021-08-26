@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.damage = 25;
 			npc.knockBackResist = 0;
 			npc.defense = 12;
-			npc.lifeMax = 225;
+			npc.lifeMax = 200;
 			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Dig");
 			npc.DeathSound = SoundID.NPCDeath33;
 			npc.value = 1000;
@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (AI_State == State_Asleep)
 			{
-				 npc.lifeRegen = npc.lifeMax / 10; 
+				 npc.lifeRegen = npc.lifeMax / 12; 
 			}
 		}
 		public int wooddropped = 0;
