@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items {
             item.height = 18;
             item.consumable = true;
             item.maxStack = 1;
-            item.value = 10000;
+            item.value = 0;
             item.rare = ItemRarityID.Pink;
             item.useTime = 5;
             item.useAnimation = 5;
@@ -21,8 +21,7 @@ namespace tsorcRevamp.Items {
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(Main.myPlayer, NPCID.PartyBunny); //placeholder
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Friendly.FreedFairy>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Friendly.FreedFairy>());
             return true;
         }
     }

@@ -14,17 +14,17 @@ using System.Collections.Generic;
 namespace tsorcRevamp.NPCs.Friendly {
 	[AutoloadHead]
 	class ShamanElder : ModNPC {
-		public override bool Autoload(ref string name) => false;
+		public override bool Autoload(ref string name) => true;
 		public static List<string> Names = new List<string> {
 			"Alo", "Dakota", "Esadowa", "Kai", "Koda", "Lonato", "Micah", "Taregan"
 		};
         public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Shaman Elder");
 			Main.npcFrameCount[npc.type] = 25;
-			NPCID.Sets.ExtraFramesCount[npc.type] = 9;
-			NPCID.Sets.AttackFrameCount[npc.type] = 4;
-			NPCID.Sets.DangerDetectRange[npc.type] = 22;
-			NPCID.Sets.AttackType[npc.type] = 3;
+			NPCID.Sets.ExtraFramesCount[npc.type] = 10;
+			NPCID.Sets.AttackFrameCount[npc.type] = 5;
+			NPCID.Sets.DangerDetectRange[npc.type] = 600;
+			NPCID.Sets.AttackType[npc.type] = 2; //magic
 			NPCID.Sets.AttackTime[npc.type] = 22;
 			NPCID.Sets.AttackAverageChance[npc.type] = 30;
 			NPCID.Sets.HatOffsetY[npc.type] = 4;
@@ -40,7 +40,6 @@ namespace tsorcRevamp.NPCs.Friendly {
 			npc.width = 18;
 			npc.height = 40;
 			npc.aiStyle = 7;
-			aiType = NPCID.DyeTrader;
 			npc.damage = 90;
 			npc.defense = 15;
 			npc.lifeMax = 1000;
@@ -48,6 +47,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0.5f;
 			animationType = NPCID.Guide;
+			
 		}
 
 		public override string GetChat() {
@@ -65,6 +65,10 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 		public override void SetChatButtons(ref string button, ref string button2) {
 			button = Language.GetTextValue("LegacyInterface.28");
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+				button2 = "Ask about The Abyss";
+            }
 		}
 
 		public override void OnChatButtonClicked(bool firstButton, ref bool shop) {
@@ -108,8 +112,19 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
 		public override void TownNPCAttackStrength(ref int damage, ref float knockback) {
+			
 			damage = 50;
 			knockback = 2f;
+			if (Main.hardMode)
+            {
+				damage = 120;
+				knockback = 5f;
+            }
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				damage = 250;
+				knockback = 12f;
+			}
 		}
 
 		public override void TownNPCAttackCooldown(ref int cooldown, ref int randExtraCooldown) {
@@ -119,7 +134,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 
 		public override void TownNPCAttackProj(ref int projType, ref int attackDelay) {
 			projType = ModContent.ProjectileType<Projectiles.APShot>();
-			attackDelay = 1;
+			attackDelay = 5;
 		}
 
 		public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset) {

@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.boss = true;
-			npc.value = 200000;
+			npc.value = 500000;
 
 			npc.buffImmune[BuffID.Confused] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.SerrisBag>();

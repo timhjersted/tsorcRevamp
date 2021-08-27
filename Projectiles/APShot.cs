@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 35;
+            projectile.timeLeft = 350;
             projectile.scale = 0.85f;
             projectile.extraUpdates = 1;
         }
