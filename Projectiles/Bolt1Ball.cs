@@ -19,6 +19,11 @@ namespace tsorcRevamp.Projectiles {
         }
         public override void AI() {
 
+            if (projectile.wet)
+            {
+                projectile.timeLeft = 0;
+            }
+
             Lighting.AddLight(projectile.Center, .3f, .3f, .55f);
             projectile.rotation += projectile.velocity.X * 0.08f;
 

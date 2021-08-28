@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Creates 9 poison bombs on impact\n" + "Superior area denial, drains enemy life with the deadliest poison\n" + "Not necessarily a direct upgrade");
         }
         public override void SetDefaults() {
-            item.damage = 17;
+            item.damage = 16;
             item.height = 28;
             item.knockBack = 3;
             item.rare = ItemRarityID.Orange;

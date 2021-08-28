@@ -1,4 +1,6 @@
-﻿using Terraria.ID;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
@@ -27,6 +29,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useTime = 30;
             item.value = 100000;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
+        }
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+            if (player.wet)
+            {
+                player.AddBuff(BuffID.Electrified, 90);
+            }
+
+            return true;
         }
 
         public override void AddRecipes() {

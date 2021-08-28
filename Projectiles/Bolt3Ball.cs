@@ -18,6 +18,12 @@ namespace tsorcRevamp.Projectiles {
             projectile.light = 0.8f;
         }
         public override void AI() {
+
+            if (projectile.wet)
+            {
+                projectile.timeLeft = 0;
+            }
+
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);

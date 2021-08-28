@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items {
                 #endregion
                 #region special perma recipes
                 ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 50000);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
                 recipe.AddIngredient(ItemID.GravitationPotion, 20);
                 recipe.AddIngredient(ItemID.SoulofFlight, 1);
                 recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
@@ -81,7 +81,7 @@ namespace tsorcRevamp.Items {
                 recipe.AddRecipe();
 
                 recipe = new ModRecipe(mod);
-                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 25000);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
                 recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
                 recipe.AddIngredient(ItemID.SoulofLight, 1);
                 recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);

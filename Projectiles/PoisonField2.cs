@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             projectile.timeLeft = 300;
             projectile.alpha = 90;
             projectile.light = 0.3f;
-            projectile.penetrate = -1;
+            projectile.penetrate = 10;
             drawOffsetX = -4;
             drawOriginOffsetY = -10;
         }
