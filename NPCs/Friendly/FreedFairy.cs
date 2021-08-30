@@ -43,7 +43,6 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0.5f;
 			npc.dontTakeDamage = true;
-			animationType = NPCID.Guide;
 
 		}
 
@@ -64,6 +63,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				npc.spriteDirection = 1;
 			}
 			npc.rotation = npc.velocity.X * 0.08f;
+
 			npc.frameCounter += 1.0;
 			if (npc.frameCounter >= 8.0)
 			{

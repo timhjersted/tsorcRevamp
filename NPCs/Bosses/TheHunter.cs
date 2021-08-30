@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         int baseContactDamage;
         int hitTime = 0;
-        int sproutDamage = 25;
+        int sproutDamage = 35;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
@@ -89,14 +89,15 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (npc.ai[1] >= 0 && npc.ai[2] > 120 && npc.ai[2] < 600) {
                         float num48 = 18f;
+
                         int type = ModContent.ProjectileType<MiracleSprouter>();
                         Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, sproutDamage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 50;
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -1), type, sproutDamage, 0f, Main.myPlayer);
+                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 50;
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, sproutDamage, 0f, Main.myPlayer);
+                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 50;
                         npc.ai[1] = -90;
                     }
@@ -115,8 +116,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     npc.velocity.Y *= 0.98f;
                     if ((npc.velocity.X < 2f) && (npc.velocity.X > -2f) && (npc.velocity.Y < 2f) && (npc.velocity.Y > -2f)) {
                         float rotation = (float)Math.Atan2((vector8.Y) - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), (vector8.X) - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                        npc.velocity.X = (float)(Math.Cos(rotation) * 25) * -1;
-                        npc.velocity.Y = (float)(Math.Sin(rotation) * 25) * -1;
+                        npc.velocity.X = ((float)(Math.Cos(rotation) * 25) * -1)  + Main.player[npc.target].velocity.X;
+                        npc.velocity.Y = ((float)(Math.Sin(rotation) * 25) * -1)  + Main.player[npc.target].velocity.Y;
                     }
                 }
                 else npc.ai[2] = 0;
@@ -147,11 +148,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     int type = ModContent.ProjectileType<MiracleSprouter>();
                     Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[npc.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
                     Main.projectile[num54].timeLeft = 50;
-                    num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -1), type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
                     Main.projectile[num54].timeLeft = 50;
-                    num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
                     Main.projectile[num54].timeLeft = 50;
                     npc.ai[1] = -90;
                 }

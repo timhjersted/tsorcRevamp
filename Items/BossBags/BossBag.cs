@@ -182,7 +182,6 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.FairyInABottle>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1);
         }
     }
     public class LichBag : BossBag

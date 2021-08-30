@@ -411,7 +411,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>(), 1);
 				if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
 				{
 					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);

@@ -33,14 +33,15 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.shoot = ModContent.ProjectileType<Projectiles.AncientHolyLance>();
 
         }
-/*
+
         public override void AddRecipes() {
-            //ModRecipe recipe = new ModRecipe(mod);
-            //recipe.AddIngredient(ItemID.DarkLance);
-            //recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
-            //recipe.SetResult(this, 1);
-            //recipe.AddTile(TileID.DemonAltar);
-            //recipe.AddRecipe();
-        }*/
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.MythrilHalberd);
+            recipe.AddIngredient(ItemID.SoulofLight);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            recipe.SetResult(this, 1);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.AddRecipe();
+        }
     }
 }

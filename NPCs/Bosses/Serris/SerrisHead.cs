@@ -189,12 +189,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) / distanceFactor;
 				float angle = (float)Math.Atan2(speedY, speedX);
 				Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.GravityDistortion>(), distortionDamage, 0f, Main.myPlayer, 0, speed);
-
-				if (npc.ai[0] >= 2)
-				{
-					Projectile.NewProjectile(vector8.X, vector8.Y, speedX + (float)Math.Cos(angle + 45), speedY + (float)Math.Sin(angle + 45), ModContent.ProjectileType<Projectiles.Enemy.GravityDistortion>(), distortionDamage, 0f, Main.myPlayer, 0, speed);
-					Projectile.NewProjectile(vector8.X, vector8.Y, speedX + (float)Math.Cos(angle - 45), speedY + (float)Math.Sin(angle - 45), ModContent.ProjectileType<Projectiles.Enemy.GravityDistortion>(), distortionDamage, 0f, Main.myPlayer, 0, speed);
-				}
 			}
 
 		}

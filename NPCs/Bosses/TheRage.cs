@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 		int baseContactDamage;
 		int hitTime = 0;
-		int fireTrailsDamage = 16;
+		int fireTrailsDamage = 25;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
 			npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
 			npc.defense = npc.defense += 12;

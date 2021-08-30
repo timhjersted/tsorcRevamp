@@ -133,7 +133,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
 		public override void TownNPCAttackProj(ref int projType, ref int attackDelay) {
-			projType = ModContent.ProjectileType<Projectiles.APShot>();
+			projType = ModContent.ProjectileType<Projectiles.ShamanBolt>();
 			attackDelay = 5;
 		}
 

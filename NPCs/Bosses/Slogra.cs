@@ -59,9 +59,6 @@ namespace tsorcRevamp.NPCs.Bosses
         float comboDamage = 0;
         bool breakCombo = false;
         bool chargeDamageFlag = false;
-        int drownTimerMax = 2000;
-        int drownTimer = 2000;
-        int drowningRisk = 1200;
         int boredTimer = 0;
         int tBored = 1;//increasing this increases how long it take for the NP to get bored
         int boredResetT = 0;
