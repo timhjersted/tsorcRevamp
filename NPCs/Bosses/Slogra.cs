@@ -19,21 +19,21 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.height = 32;
             animationType = 28;
             npc.aiStyle = 3;
-            npc.timeLeft = 750;
+            npc.timeLeft = 22750;
             npc.damage = 45;
             //npc.music = 12;
             npc.defense = 10;
             npc.boss = true;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-            npc.lifeMax = 8200;
+            npc.lifeMax = 5000;
             npc.scale = 1.1f;
             npc.knockBackResist = 0.4f;
-            npc.value = 45000;
+            npc.value = 35000;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
-            despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Ambient_DarkBrown);
+            despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
 
         }
 
@@ -42,13 +42,17 @@ namespace tsorcRevamp.NPCs.Bosses
             DisplayName.SetDefault("Slogra, Lost Soul of the Depths");
         }
 
-        int tridentDamage = 20; 
+        int tridentDamage = 30;
+        //Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
+        int burningSphereDamage = 60;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.damage = (int)(npc.damage * 1.3 / 2);
             npc.defense = npc.defense += 12;
-            npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
-            tridentDamage = (int)(tridentDamage * 1.5 / 2);
+            npc.lifeMax = npc.lifeMax / 2;
+            tridentDamage = (int)(tridentDamage / 2);
+            //For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
+            //burningSphereDamage = (int)(burningSphereDamage / 2);
         }
 
 
@@ -113,9 +117,62 @@ namespace tsorcRevamp.NPCs.Bosses
 
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         NPCDespawnHandler despawnHandler;
+        bool gaibonDead = false;
+        double fireballTimer = 0;
+        float dustRadius = 20;
+        float dustMin = 3;
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(npc.whoAmI);
+
+            //If gaibon is dead, we don't need to keep calling AnyNPCs.
+            if (!gaibonDead)
+            {
+                if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>()))
+                {
+                    gaibonDead = true;
+                }
+            }
+            else
+            {
+                if(dustRadius > dustMin)
+                {
+                    dustRadius -= 0.25f;
+                }
+
+                int dustPerTick = 20;
+                float speed = 2;
+                for (int i = 0; i < dustPerTick; i++)
+                {
+                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
+                    Vector2 dustPos = npc.Center + dir * dustRadius * 16;
+                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
+                    Dust dustID = Dust.NewDustPerfect(dustPos, 173, dustVel, 200);
+                    dustID.noGravity = true;
+                }                
+                
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    fireballTimer += (Main.rand.Next(2, 5) * 0.1f) * 1.1;
+                    if (fireballTimer >= 10f)
+                    {
+                        if (Main.rand.Next(45) == 1)
+                        {
+                            Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
+                            Vector2 projPos = npc.Center + dir * dustRadius * 16;
+                            int spawned = NPC.NewNPC((int)projPos.X, (int)projPos.Y, NPCID.BurningSphere, 0);
+                            Main.npc[spawned].damage = burningSphereDamage;
+                            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2));
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
+                            }
+                            //npc.netUpdate=true;
+                        }
+                    }
+                }
+            }
+
             #region set up NPC's attributes & behaviors
             // set parameters
             //  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -167,7 +224,7 @@ namespace tsorcRevamp.NPCs.Bosses
             // Omnirs creature sorts
             bool tooBig = true; // force bigger creatures to jump
             bool lavaJumping = true; // Enemies jump on lava.
-            bool canDrown = false; // They will drown if in the water for too long
+            //bool canDrown = false; // They will drown if in the water for too long
             bool quickBored = false; //Enemy will respond to boredom much faster(? -- test)
             bool oBored = false; //Whether they're bored under the "quickBored" conditions
 
@@ -256,10 +313,6 @@ namespace tsorcRevamp.NPCs.Bosses
             {  // not fleeing light & not bored
                 if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
                     Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
-                if (!canDrown || (canDrown && !npc.wet) || (quickBored && boredTimer > tBored))
-                {
-                    npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
-                }
             }
             else if (!is_archer || npc.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
             {               
@@ -343,7 +396,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
                     {
-                        npc.TargetClosest(true); // target and face closest player
+                        //npc.TargetClosest(true); // target and face closest player
                         if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
                         { // firing:
                             Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
@@ -428,14 +481,11 @@ namespace tsorcRevamp.NPCs.Bosses
             #region shoot and walk
             if (!oBored && shoot_and_walk && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
             {
-
-
                 if (comboDamage > 0)
                 {
                     comboDamage -= 0.4f;
                     npc.netUpdate = true; //new
                 }
-
 
                 //if (customspawn1 == 0)
                 //{
@@ -488,7 +538,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
                 if (customAi1 >= 10f)
                 {
-                    npc.TargetClosest(true);
                     if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
                     {
                         if (Main.rand.Next(200) == 1)
@@ -809,19 +858,34 @@ namespace tsorcRevamp.NPCs.Bosses
             Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
             Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
             Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-
-            if (Main.expertMode)
+            if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>()))
             {
-                npc.DropBossBags();
+                if (Main.expertMode)
+                {
+                    npc.DropBossBags();
+                }
+                else
+                {
+                    if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                    if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 700);
+                }
             }
             else
             {
-                if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-                if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
-                if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+                int slograID = NPC.FindFirstNPC(ModContent.NPCType<Gaibon>());
+                int speed = 30;
+                for (int i = 0; i < 200; i++)
                 {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4500);
+                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
+                    Vector2 dustPos = npc.Center + dir * 3 * 16;
+                    float distanceFactor = Vector2.Distance(npc.position, Main.npc[slograID].position) / speed;
+                    Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
+                    float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - npc.position.X) / distanceFactor) + speedRand.X;
+                    float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - npc.position.Y) / distanceFactor) + speedRand.Y;
+                    Vector2 dustSpeed = new Vector2(speedX, speedY);
+                    Dust dustObj = Dust.NewDustPerfect(dustPos, 262, dustSpeed, 200, default, 3);
+                    dustObj.noGravity = true;
                 }
             }
         }

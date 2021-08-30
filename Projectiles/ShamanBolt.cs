@@ -86,25 +86,5 @@ namespace tsorcRevamp.Projectiles
                 damage += 10;
             }
         }
-
-        public override void Kill(int timeLeft)
-        {
-            if (Main.netMode != NetmodeID.Server)
-            {
-                int option = Main.rand.Next(3);
-                if (option == 0)
-                {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetUno").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
-                }
-                else if (option == 1)
-                {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetDos").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
-                }
-                else if (option == 2)
-                {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetTres").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
-                }
-            }
-        }
     }
 }

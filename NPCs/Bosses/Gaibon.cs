@@ -27,13 +27,14 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.boss = true;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-			npc.lifeMax = 4000;
+			npc.lifeMax = 5000;
 			npc.scale = 1.1f;
 			npc.knockBackResist = 0.9f;
-			npc.value = 25000;
+			npc.value = 35000;
 			npc.noTileCollide = true;
 			npc.noGravity = true;
-			despawnHandler = new NPCDespawnHandler(DustID.Demonite);
+			bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
+			despawnHandler = new NPCDespawnHandler(DustID.Fire);
 		}
 
 		public override void SetStaticDefaults()
@@ -41,11 +42,15 @@ namespace tsorcRevamp.NPCs.Bosses
 			DisplayName.SetDefault("Gaibon");
 		}
 
+		//Since burning spheres are an NPC, not a projectile, this damage does not get doubled!
+		int burningSphereDamage = 60;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
 			npc.defense = npc.defense += 12;
-			npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
+			npc.lifeMax = npc.lifeMax / 2;
+			//For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
+			//burningSphereDamage = (int)(burningSphereDamage / 2);
 		}
 
 		//Note: This whole region was all commented out in the original code. I'm not sure why, but i'll leave it that way for now.
@@ -81,21 +86,86 @@ namespace tsorcRevamp.NPCs.Bosses
 
 		#region AI
 		NPCDespawnHandler despawnHandler;
+		bool slograDead = false;
+		int comboDamage = 0;
+		bool breakCombo = false;
+		bool chargeDamageFlag = false;
+		int chargeDamage = 0;
+		float dustRadius = 20;
+		float dustMin = 3;
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
+			//If Slogra is dead, we don't need to keep calling AnyNPCs.
+			if (!slograDead)
+			{
+				if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>()))
+				{
+					slograDead = true;
+				}
+			}
+			else
+			{
+				if (dustRadius > dustMin)
+				{
+					dustRadius -= 0.25f;
+				}
+
+				int dustPerTick = 20;
+				float speed = 2;
+				for (int i = 0; i < dustPerTick; i++)
+				{
+					Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
+					Vector2 dustPos = npc.Center + dir * dustRadius * 16;
+					Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
+					Dust dustID = Dust.NewDustPerfect(dustPos, 262, dustVel, 200);
+					dustID.noGravity = true;
+				}
+
+				if (breakCombo == true)
+				{
+					chargeDamageFlag = true;
+					npc.knockBackResist = 0f;
+					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+					npc.velocity.X = (float)(Math.Cos(rotation) * 13) * -1; //12 was 10
+					npc.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
+
+					breakCombo = false;
+					npc.netUpdate = true;
+
+				}
+				if (chargeDamageFlag == true)
+				{
+					npc.damage = 46;
+					npc.knockBackResist = 0f;
+					chargeDamage++;
+				}
+				if (chargeDamage >= 50) //was 45
+				{
+					chargeDamageFlag = false;
+					//npc.dontTakeDamage = false;
+					npc.damage = 40;
+					chargeDamage = 0;
+
+					npc.knockBackResist = 0.3f;
+				}
+			}
+
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (npc.ai[1] >= 10f)
 				{
-					if (Main.rand.Next(60) == 1)
+					if (Main.rand.Next(45) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.BurningSphere, 0);
+						int spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.BurningSphere, 0);
+						Main.npc[spawned].damage = burningSphereDamage;
 						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2));
 						if (Main.netMode == NetmodeID.Server)
 						{
-							NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+							NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
 						}
 						//npc.netUpdate=true;
 					}
@@ -301,6 +371,40 @@ namespace tsorcRevamp.NPCs.Bosses
 		}
 		#endregion
 
+		public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+		{
+			comboDamage += (int)damage;
+			if (comboDamage > 90)
+			{
+				breakCombo = true;
+				npc.netUpdate = true; //new
+				Color color = new Color();
+				for (int num36 = 0; num36 < 50; num36++)
+				{
+					int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.t_Slime, 0, 0, 100, color, 2f);
+				}
+				for (int num36 = 0; num36 < 20; num36++)
+				{
+					int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Vile, 0, 0, 100, color, 2f);
+				}
+				//npc.ai[1] = -200;
+				comboDamage = 0;
+				npc.netUpdate = true; //new
+			}
+			return true;
+			//if (!npc.justHit)
+			//{
+			//comboDamage --;
+
+			//	if (comboDamage < 0)
+			//	{
+			//	comboDamage = 0;
+			//	}
+			//}
+		}
+
+
+
 		#region gore
 		public override void NPCLoot()
 		{
@@ -313,13 +417,39 @@ namespace tsorcRevamp.NPCs.Bosses
 			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Gaibon Gore 4"), 0.9f);
 			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
 			Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-			if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			
+			if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>()))
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2500);
+				if (Main.expertMode)
+				{
+					npc.DropBossBags();
+				}
+				else
+				{
+					if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+					if (Main.rand.Next(9) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+					Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
+				}
 			}
-			Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 500);
+			else
+			{
+				int slograID = NPC.FindFirstNPC(ModContent.NPCType<Slogra>());
+				int speed = 30;
+				for (int i = 0; i < 200; i++)
+				{
+					Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
+					Vector2 dustPos = npc.Center + dir * 3 * 16;
+					float distanceFactor = Vector2.Distance(npc.position, Main.npc[slograID].position) / speed;
+					Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
+					float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - npc.position.X) / distanceFactor) + speedRand.X;
+					float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - npc.position.Y) / distanceFactor) + speedRand.Y;
+					Vector2 dustSpeed = new Vector2(speedX, speedY);
+					Dust dustObj = Dust.NewDustPerfect(dustPos, 173, dustSpeed, 200, default, 3);
+					dustObj.noGravity = true;
+				}
+			}
 		}
-		#endregion
+			#endregion
 
 	}
 }

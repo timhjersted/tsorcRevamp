@@ -41,13 +41,16 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
-                    VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    //Slogra and Gaibon being a pair means it has to work a little different
+                    //In normal mode, each of them drops half the souls. This ensures the full amount drops in expert mode instead.
+                    player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), (int)((7000) * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                     Slain[BossBagNPC] = 1;
+                    Slain[ModContent.NPCType<Gaibon>()] = 1;
                 }
             }
             if (Main.rand.Next(9) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
             if (Main.rand.Next(9) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
+            player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), (int)((700 + Main.rand.Next(300)) * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
         }
     }
     public class JungleWyvernBag : BossBag
