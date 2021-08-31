@@ -210,19 +210,19 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                     }
                 }
 
-                if (npc.ai[2] > 300 && npc.ai[2] < 600) {
+                if (npc.ai[2] > 250 && npc.ai[2] < 500) {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (npc.ai[2] > 600 && npc.ai[2] < 900) {
+                if (npc.ai[2] > 500 && npc.ai[2] < 700) {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
                     dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (npc.ai[2] > 900) {
+                if (npc.ai[2] > 700) {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                     Main.dust[dust].noGravity = true;
                 }
 
-                if (npc.ai[2] > 1200) {
+                if (npc.ai[2] > 900) {
                     for (int num36 = 0; num36 < 50; num36++) {
                         Color color = new Color();
                         int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
@@ -247,8 +247,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                         Main.dust[dust].noGravity = true;
                     }
                     for (int num36 = 0; num36 < 200; num36++) {
-                        Main.npc[num36].active = false;
-                        if (Main.npc[num36].ai[0] == 5) break;
+                        if (Main.npc[num36].type == ModContent.NPCType<DamnedSoul>())
+                        {
+                            Main.npc[num36].active = false;
+                        }
                     }
                     NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<SecondForm.DarkDragonMask>(), 0);
                     npc.active = false;

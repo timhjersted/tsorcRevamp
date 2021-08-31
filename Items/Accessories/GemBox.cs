@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class GemBox : ModItem {
         public override void SetStaticDefaults() { //TODO "Double cast all spells"? maybe some day
-            Tooltip.SetDefault("All spells have doubled speed and halved mana cost" +
-                               "\nReduce magic damage by 20%");
+            Tooltip.SetDefault("All spells have doubled speed and 25% reduced mana cost" +
+                               "\nReduces magic damage by a flat 35%");
         }
 
         public override void SetDefaults() {
@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
-            player.magicDamage -= 0.2f;
-            player.manaCost -= 0.5f;
+            player.magicDamage *= .65f;
+            player.manaCost -= 0.25f;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox = true;
         }
     }

@@ -247,6 +247,7 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+            player.QuickSpawnItem(ItemID.MidnightRainbowDye, 5);
         }
     }
     public class WyvernMageBag : BossBag

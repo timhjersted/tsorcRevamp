@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
 
                     if (npc.ai[1] >= 0 && npc.ai[2] > 120 && npc.ai[2] < 600) {
-                        float num48 = 18f;
+                        float num48 = 14f;
 
                         int type = ModContent.ProjectileType<MiracleSprouter>();
                         Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);

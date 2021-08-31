@@ -251,7 +251,7 @@ namespace tsorcRevamp {
                 413, //red squirrel cage
                 414, //gold squirrel cage
                 463, //defenders forge
-                TileID.Titanium
+                TileID.Titanium,
 
             };
 
@@ -401,7 +401,8 @@ namespace tsorcRevamp {
                 131, //inactive stone block
                 135, //pressure plates
                 136, //switch
-                137 //dart trap
+                137, //dart trap
+                TileID.LunarMonolith //410
             };
             #endregion
             //--------
@@ -631,6 +632,12 @@ namespace tsorcRevamp {
         }
     }
     public class MiscGlobalTile : GlobalTile {
+
+        bool vortexNotif = false;
+        bool nebulaNotif = false;
+        bool stardustNotif = false;
+        bool solarNotif = false;
+       
         public override void NearbyEffects(int i, int j, int type, bool closer) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 Player player = Main.LocalPlayer;
@@ -638,48 +645,102 @@ namespace tsorcRevamp {
                 var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
                 if (Main.tile[i, j].type == TileID.LunarMonolith && distance <= 800f && !player.dead && Main.tile[i, j].frameY > 54) { //frameY > 54 means enabled
-                    int style = Main.tile[i, j].frameX / 36;
-                    switch (style) {
+                    
+                        int style = Main.tile[i, j].frameX / 36;
+                    switch (style)
+                    {
                         case 0:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !tsorcRevampWorld.DownedVortex) {
-                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                NPC.TowerActiveVortex = true;
-                                NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerVortex) && !tsorcRevampWorld.DownedVortex)
+                            {
+                                if (tsorcRevampWorld.SuperHardMode)
+                                {
+                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
+                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                    NPC.TowerActiveVortex = true;
+                                    NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                }
+                                else
+                                {
+                                    if (!vortexNotif)
+                                    {
+                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.Teal);
+                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.Teal);
+                                        vortexNotif = true;
+                                    }
+                                }
                             }
                             break;
 
                         case 1:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !tsorcRevampWorld.DownedNebula) {
-                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                NPC.TowerActiveNebula = true;
-                                NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerNebula) && !tsorcRevampWorld.DownedNebula)
+                            {
+                                if (tsorcRevampWorld.SuperHardMode)
+                                {
+                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
+                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                    NPC.TowerActiveNebula = true;
+                                    NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                }
+                                else
+                                {
+                                    if (!nebulaNotif)
+                                    {
+                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.Pink);
+                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.Pink);
+                                        nebulaNotif = true;
+                                    }
+                                }
                             }
                             break;
 
                         case 2:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !tsorcRevampWorld.DownedStardust) {
-                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                NPC.TowerActiveStardust = true;
-                                NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
-                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerStardust) && !tsorcRevampWorld.DownedStardust)
+                            {
+                                if (tsorcRevampWorld.SuperHardMode)
+                                {
+                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
+                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                    NPC.TowerActiveStardust = true;
+                                    NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                }
+                                else
+                                {
+                                    if (!stardustNotif)
+                                    {
+                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.LightBlue);
+                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.LightBlue);
+                                        stardustNotif = true;
+                                    }
+                                }
                             }
                             break;
 
                         case 3:
-                            if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !tsorcRevampWorld.DownedSolar) {
-                                int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
-                                NPC.TowerActiveSolar = true;
-                                NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                                NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                            if (!NPC.AnyNPCs(NPCID.LunarTowerSolar) && !tsorcRevampWorld.DownedSolar)
+                            {
+                                if (tsorcRevampWorld.SuperHardMode)
+                                {
+                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
+                                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
+                                    NPC.TowerActiveSolar = true;
+                                    NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+                                    NetMessage.SendData(MessageID.UpdateTowerShieldStrengths);
+                                }
+                                else
+                                {
+                                    if (!solarNotif)
+                                    {
+                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.OrangeRed);
+                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.OrangeRed);
+                                        solarNotif = true;
+                                    }
+                                }
                             }
                             break;
-                    }
+                    }                    
                 } 
             }
 

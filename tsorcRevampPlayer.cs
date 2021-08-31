@@ -955,15 +955,15 @@ namespace tsorcRevamp
             //SupersonicBoots
             if (supersonicLevel == 1)
             {
-                player.accRunSpeed = 6f * player.moveSpeed;
-                player.maxRunSpeed = 6f * player.moveSpeed;
+                player.accRunSpeed = 5f * (player.moveSpeed * 0.7f);
+                player.maxRunSpeed = 5f * (player.moveSpeed * 0.7f);
                 player.moveSpeed += 0.2f;
             }
             //SupersonicWings
             if (supersonicLevel == 2)
             {
-                player.accRunSpeed = 7f * player.moveSpeed;
-                player.maxRunSpeed = 7f * player.moveSpeed;
+                player.accRunSpeed = 6f * (player.moveSpeed * 0.8f);
+                player.maxRunSpeed = 6f * (player.moveSpeed * 0.8f);
                 player.moveSpeed += 0.3f;
             }
             //SupersonicWings2
