@@ -219,7 +219,8 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
-                    VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), (int)(50000 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
+                    //VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
             }

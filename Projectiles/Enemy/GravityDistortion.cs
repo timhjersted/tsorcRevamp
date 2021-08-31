@@ -94,7 +94,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {
 			target.AddBuff(BuffID.Gravitation, 180);
-			target.AddBuff(BuffID.Confused, 180);
         }
     }
 }

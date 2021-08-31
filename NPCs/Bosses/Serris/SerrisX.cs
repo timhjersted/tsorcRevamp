@@ -279,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
 					if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
 					{
-						Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 20000);
+						Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), (int)(50000 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
 					}
 				}
 			}
