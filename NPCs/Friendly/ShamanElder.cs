@@ -59,22 +59,76 @@ namespace tsorcRevamp.NPCs.Friendly {
 			chat.Add("The world is not a pyramid, " + Main.LocalPlayer.name + ", nor is man the top of it. The world is a web, and every strand of the web is connected.");
 			chat.Add("Civilized man has grown a great sickness of the mind -- thinks he is superior to all creation. Thinks the world was made for him!");
 			chat.Add("Apache said it is better to have less thunder in the mouth and more lightning in the hand.");
-			chat.Add("If you are able to defeat Attraidies, come and find me. I will have something for you...");
 			chat.Add("Tuscarora once said they are not dead who live in the hearts they leave behind.");
+			if (!tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.TheEnd)
+			{
+				chat.Add("If you are able to defeat Attraidies, come and find me. I will have something for you...");
+			}
 			return chat;
 		}
 		public override void SetChatButtons(ref string button, ref string button2) {
 			button = Language.GetTextValue("LegacyInterface.28");
             if (tsorcRevampWorld.SuperHardMode)
             {
-				button2 = "Ask about The Abyss";
+				if (chatState == 0)
+				{
+					button2 = "Ask about The Abyss";
+				}
+				if(chatState == 1 || chatState == 2 || chatState == 3)
+                {
+					button2 = "Continue...";
+                }
             }
 		}
 
+		int chatState = 0;
 		public override void OnChatButtonClicked(bool firstButton, ref bool shop) {
 			if (firstButton) {
 				shop = true;
 				return;
+			} else
+            {
+				if (chatState == 0)
+				{
+					Main.npcChatText = "To close the seal to the Abyss and ignite the Kiln of the" +
+									"\nFirst Flame, you must defeat the 6 lords of The Abyss:" +
+									"\n[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], [c/fcff00:Chaos], and" +
+									"\n[c/18ffe2:Seath the Scaleless]. With a lord soul from each of these" +
+									"\nbeings you will be able to summon the final guardian - " +
+									"\n[c/ff6618:Gwyn, Lord of Cinder].";
+					chatState = 1;
+					return;
+				}
+				if (chatState == 1)
+				{
+					Main.npcChatText = "To craft the summoning item for each " +
+									"guardian, you will need to return to eight familiar places " +
+									"and collect a unique item from an enemy you will find there: " +
+									"[c/424bf5:The Western Ocean], [c/00ff00:The Underground], [c/b942f5:The Corruption], " +
+									"[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/888888:The Underworld] and [c/42f2f5:The Eastern Ocean].";
+					chatState = 2;
+					return;
+				}
+				if (chatState == 2)
+				{
+					Main.npcChatText = "Defeating [c/ffbf00:Artorias] and claiming his ring should be your priority. " +
+								"Without it I fear you may stand little chance against these terrors... " +
+								"\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
+								"\nHe will appear out of the Abyss at night, and more often deeper underground, especially in dungeons." +
+								"\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
+					chatState = 3;
+					return;
+				}
+
+
+				if (chatState == 3)
+				{
+					Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells." +
+								"\nHowever, certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
+								"\nSuch a blade may just be strong enough to shatter their protection...";
+
+					chatState = 0;
+				}
 			}
 		}
 
@@ -93,11 +147,6 @@ namespace tsorcRevamp.NPCs.Friendly {
             }
 			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/) {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<CovenantOfArtorias>());
-				nextSlot++;
-				shop.item[nextSlot].SetDefaults(ModContent.ItemType<AbyssScroll>());
-				nextSlot++;
-				shop.item[nextSlot].SetDefaults(ModContent.ItemType<WitchkingScroll>());
-				nextSlot++;
 			}
 		}
 
