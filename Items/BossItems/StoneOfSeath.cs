@@ -25,20 +25,25 @@ namespace tsorcRevamp.Items.BossItems {
             item.consumable = false;
         }
 
-
-        public override bool UseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
+            bool canUse = true;
+            if (Main.dayTime)
+            {
+                Main.NewText("Nothing happens... Retry at night.", 175, 75, 255);
+                canUse =  false;
+            }
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))
             {
-                return false;
+                canUse = false;
             }
-            if (Main.dayTime) {
-                Main.NewText("Nothing happens... Retry at night.", 175, 75, 255);
-                return false;
-            }
-            else {
-                Main.NewText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
-                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
-            }
+            return canUse;
+        }
+
+        public override bool UseItem(Player player) {
+           
+            Main.NewText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());            
             return true;
         }
 

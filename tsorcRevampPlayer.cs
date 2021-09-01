@@ -952,26 +952,46 @@ namespace tsorcRevamp
 
         public override void PostUpdateRunSpeeds()
         {
-            //SupersonicBoots
-            if (supersonicLevel == 1)
+            if (supersonicLevel == 0)
             {
-                player.accRunSpeed = 5f * (player.moveSpeed * 0.7f);
-                player.maxRunSpeed = 5f * (player.moveSpeed * 0.7f);
-                player.moveSpeed += 0.2f;
+                return;
             }
-            //SupersonicWings
-            if (supersonicLevel == 2)
+            else
             {
-                player.accRunSpeed = 6f * (player.moveSpeed * 0.8f);
-                player.maxRunSpeed = 6f * (player.moveSpeed * 0.8f);
-                player.moveSpeed += 0.3f;
-            }
-            //SupersonicWings2
-            if (supersonicLevel == 3)
-            {
-                player.accRunSpeed = 8.5f * player.moveSpeed;
-                player.maxRunSpeed = 8.5f * player.moveSpeed;
-                player.moveSpeed += 0.6f;
+                float moveSpeedPercentBoost = 1;
+                float baseSpeed = 1;
+
+                //SupersonicBoots
+                if (supersonicLevel == 1)
+                {
+                    //moveSpeedPercentBoost is what percent of a player's moveSpeed bonus should be applied to their max running speed
+                    //For vanilla hermes boots and their upgrades, this is 0
+                    moveSpeedPercentBoost = 0.35f;
+                    //6f is hermes boots speed.
+                    baseSpeed = 6f;
+                    player.moveSpeed += 0.2f;
+                }
+                //SupersonicWings
+                if (supersonicLevel == 2)
+                {
+                    moveSpeedPercentBoost = 0.5f;
+                    baseSpeed = 6.8f;
+                    player.moveSpeed += 0.3f;
+                }
+                //SupersonicWings2
+                if (supersonicLevel == 3)
+                {
+
+                    moveSpeedPercentBoost = 1f;
+                    baseSpeed = 7.5f;
+                    player.moveSpeed += 0.6f;
+                }
+
+
+                //((player.moveSpeed * 0.5f) + 0.5) means 50% of the player's moveSpeed bonus will be applied
+                //The general form is ((player.moveSpeed * %theyshouldget) + (1 - %theyshouldget))
+                player.accRunSpeed = baseSpeed * ((player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
+                player.maxRunSpeed = baseSpeed * ((player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
             }
         }
 
