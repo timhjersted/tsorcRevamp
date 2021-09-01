@@ -190,6 +190,14 @@ namespace tsorcRevamp.NPCs.Enemies {
                 if (Main.dayTime) chance = 0.067f;
                 else chance = 0.1f;
             }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                return chance /= 2;
+            }
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                return chance /= 4;
+            }
             return chance;
         }
         public override void NPCLoot() {

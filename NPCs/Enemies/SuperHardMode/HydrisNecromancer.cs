@@ -54,20 +54,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 
 			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
 			bool Hallow = P.ZoneHoly;
-			bool oSky = (P.position.Y < (Main.maxTilesY * 0.1f));
-			bool oSurface = (P.position.Y >= (Main.maxTilesY * 0.1f) && P.position.Y < (Main.maxTilesY * 0.2f));
-			bool oUnderSurface = (P.position.Y >= (Main.maxTilesY * 0.2f) && P.position.Y < (Main.maxTilesY * 0.3f));
-			bool oUnderground = (P.position.Y >= (Main.maxTilesY * 0.3f) && P.position.Y < (Main.maxTilesY * 0.4f));
-			bool oCavern = (P.position.Y >= (Main.maxTilesY * 0.4f) && P.position.Y < (Main.maxTilesY * 0.6f));
 			bool oMagmaCavern = (P.position.Y >= (Main.maxTilesY * 0.6f) && P.position.Y < (Main.maxTilesY * 0.8f));
 			bool oUnderworld = (P.position.Y >= (Main.maxTilesY * 0.8f));
 
-			if (tsorcRevampWorld.SuperHardMode && (oUnderground || oCavern || oMagmaCavern))
+			if (tsorcRevampWorld.SuperHardMode && (P.ZoneDirtLayerHeight || P.ZoneRockLayerHeight || oMagmaCavern))
 			{
 				if (Hallow && Main.rand.Next(20) == 1) return 1;
 				if (Hallow && Main.bloodMoon && Main.rand.Next(6) == 1) return 1;
@@ -82,11 +73,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			}
 			return 0;
 		}
-		#endregion
+        #endregion
 
 
-		public void DamagePlayer(Player player, ref int damage) //hook works!
-		{
+        public override void OnHitPlayer(Player player, int damage, bool crit)
+        {
 			if (Main.rand.Next(2) == 0)
 			{
 				player.AddBuff(BuffID.Frozen, 120, false);
@@ -96,8 +87,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-		public override void AI()  //  warrior ai
+        #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
+        public override void AI()  //  warrior ai
 		{
 			#region set up NPC's attributes & behaviors
 			// set parameters
@@ -752,7 +743,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 2"), 1.1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Necromancer Gore 3"), 1.1f);
 			}
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DyingWindShard>(), 4 + Main.rand.Next(4));
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DyingWindShard>(), 8 + Main.rand.Next(8));
 		}
 		#endregion
 	}

@@ -761,7 +761,8 @@ namespace tsorcRevamp {
             AntiGravityBlast,
             EnemyPlamaOrb,
             ManaShield,
-            CrazedOrb
+            CrazedOrb,
+            MasterBuster
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -774,7 +775,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
                 {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
                 {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
-                {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")}
+                {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
+                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")}
             };
 
             //Runs each entry through the XNA's premultiplication function

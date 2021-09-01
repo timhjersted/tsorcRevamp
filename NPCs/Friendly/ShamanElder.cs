@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 									"guardian, you will need to return to eight familiar places " +
 									"and collect a unique item from an enemy you will find there: " +
 									"[c/424bf5:The Western Ocean], [c/00ff00:The Underground], [c/b942f5:The Corruption], " +
-									"[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/888888:The Underworld] and [c/42f2f5:The Eastern Ocean].";
+									"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/888888:The Underworld], and [c/42f2f5:The Eastern Ocean].";
 					chatState = 2;
 					return;
 				}

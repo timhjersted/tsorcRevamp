@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.boss = true;
             npc.buffImmune[BuffID.Confused] = true;
             bossBag = ModContent.ItemType<Items.BossBags.BlightBag>();
-            despawnHandler = new NPCDespawnHandler("Inevitable.", new Color(255, 50, 50), DustID.Firework_Blue);
+            despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
         int phantomSeekerDamage = 58;

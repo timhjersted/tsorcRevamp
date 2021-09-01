@@ -41,7 +41,6 @@ namespace tsorcRevamp.Items.BossItems {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.MagicMirror, 1);
             recipe.AddIngredient(mod.GetItem("BrokenStrangeMagicRing"), 1);
             recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 7);
             recipe.AddIngredient(mod.GetItem("CursedSoul"), 20);

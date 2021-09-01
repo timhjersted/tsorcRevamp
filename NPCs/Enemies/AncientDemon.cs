@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && oUnderworld && Main.rand.Next(30)==1) return true;
 			//if (tsorcRevampWorld.SuperHardMode && oUnderworld && Main.rand.Next(35)==1) return true;
 
-			if (oUnderworld)
+			if (spawnInfo.player.ZoneUnderworldHeight)
 			{
 				if (!Main.dayTime && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
 				{

@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			bool oSky = (spawnInfo.player.position.Y <= (Main.rockLayer * 4));
+			bool oSky = spawnInfo.player.ZoneSkyHeight;
 			bool oSurface = ((spawnInfo.player.position.Y > (Main.rockLayer * 4)) && (spawnInfo.player.position.Y <= (Main.rockLayer * 8)));
 			bool oUnderSurface = ((spawnInfo.player.position.Y > (Main.rockLayer * 8)) && (spawnInfo.player.position.Y < (Main.rockLayer * 13)));
 			bool oUnderground = ((spawnInfo.player.position.Y >= (Main.rockLayer * 13)) && (spawnInfo.player.position.Y < (Main.rockLayer * 17)));

@@ -97,7 +97,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			float len = 4f;
 			int flam = ModContent.ProjectileType<EnemyBlackFirelet>();
-			int damg = 80;
 			Vector2 dir = new Vector2(1f, 0f);
 
 			// determine how many flamelets to spew (5~8)
@@ -125,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				velY *= len + var;
 
 				//if(projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width-5), projectile.position.Y + (float)(projectile.height-5), 0, 0, flam, 72, 0, projectile.owner);
-				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, velX, velY, flam, damg, 0, projectile.owner);
+				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, velX, velY, flam, projectile.damage, 0, projectile.owner);
 			}
 
 			// setup projectile for explosion

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useAnimation = 2;
             item.useTime = 1;
-            item.damage = 3000;
+            item.damage = 30000;
             item.autoReuse = true;
             item.rare = ItemRarityID.Expert;
             item.shootSpeed = 1;

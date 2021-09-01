@@ -24,8 +24,8 @@ namespace tsorcRevamp.Projectiles {
         public bool IsAtMaxCharge => Charge == MAX_CHARGE;
 
         public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
+            projectile.width = 26;
+            projectile.height = 30;
             projectile.friendly = true;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
@@ -34,10 +34,13 @@ namespace tsorcRevamp.Projectiles {
             projectile.damage = 25;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {           
+            //Get the premultiplied, properly transparent texture
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MasterBuster];           
+
             if (IsAtMaxCharge) {
-                DrawLaser(spriteBatch, Main.projectileTexture[projectile.type], Main.player[projectile.owner].Center,
-                    projectile.velocity, 10, projectile.damage, -1.57f, 1f, 1000f, Color.White, (int)MOVE_DISTANCE);
+                DrawLaser(spriteBatch, texture, Main.player[projectile.owner].Center,
+                    projectile.velocity, 10, projectile.damage, -1.57f, 1f, 2000f, Color.White, (int)MOVE_DISTANCE);
             }
             return false;
         }
@@ -53,18 +56,18 @@ namespace tsorcRevamp.Projectiles {
                 var origin = start + i * unit;
 
                 spriteBatch.Draw(texture, origin - Main.screenPosition,
-                    new Rectangle(0, 26, 28, 26), i < transDist ? Color.Transparent : c, r,
-                    new Vector2(28 * .5f, 26 * .5f), 2.9f, 0, 0);
+                    new Rectangle(0, 26, 26, 30), i < transDist ? Color.Transparent : c, r,
+                    new Vector2(26 * .5f, 30 * .5f), 2.9f, 0, 0);
 
             }
 
             // Draws the laser 'tail'
             spriteBatch.Draw(texture, start + unit * (transDist - step) - Main.screenPosition,
-                new Rectangle(0, 0, 28, 26), Color.White, r, new Vector2(28 * .5f, 26 * .5f), 2.9f, 0, 0);
+                new Rectangle(0, 0, 26, 30), Color.White, r, new Vector2(26 * .5f,  30 * .5f), 2.9f, 0, 0);
 
             // Draws the laser 'head'
             spriteBatch.Draw(texture, start + (Distance + step) * unit - Main.screenPosition,
-                new Rectangle(0, 52, 28, 26), Color.White, r, new Vector2(28 * .5f, 26 * .5f), 2.9f, 0, 0);
+                new Rectangle(0, 52, 26, 30), Color.White, r, new Vector2(26 * .5f, 30 * .5f), 2.9f, 0, 0);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
@@ -123,7 +126,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         private void SetLaserPosition(Player player) {
-            Distance = 1600f;
+            Distance = 2000f;
         }
 
         private void ChargeLaser(Player player) {

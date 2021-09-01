@@ -80,11 +80,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bool oUnderworld = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.8f));
 			bool BeforeThreeAfterSeven = (spawnInfo.player.position.X < Main.maxTilesX * 0.3f) || (spawnInfo.player.position.X > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width
 
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && oUnderworld && Main.rand.Next(8) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && oUnderworld && Main.rand.Next(50) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.player.ZoneUnderworldHeight && Main.rand.Next(20) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneUnderworldHeight && Main.rand.Next(50) == 1) return 1;
 			if (tsorcRevampWorld.SuperHardMode && oMagmaCavern && Main.rand.Next(300) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && BeforeThreeAfterSeven && oUnderworld && Main.rand.Next(20) == 0) return 1;
-			if (tsorcRevampWorld.SuperHardMode && BeforeThreeAfterSeven && oUnderworld && Main.bloodMoon && Main.rand.Next(3) == 0) return 1;
+			if (tsorcRevampWorld.SuperHardMode && BeforeThreeAfterSeven && spawnInfo.player.ZoneUnderworldHeight && Main.rand.Next(50) == 0) return 1;
+			if (tsorcRevampWorld.SuperHardMode && BeforeThreeAfterSeven && spawnInfo.player.ZoneUnderworldHeight && Main.bloodMoon && Main.rand.Next(15) == 0) return 1;
 
 			return 0;
 		}

@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bool InGrayLayer = P.position.Y >= Main.rockLayer && P.position.Y < (Main.maxTilesY - 200) * 16;
 			bool InHell = P.position.Y >= (Main.maxTilesY - 200) * 16;
 			bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
-			bool FrozenOcean = P.position.X > (Main.maxTilesX - 100) * 16;
+			bool FrozenOcean = P.position.X > (Main.maxTilesX - 500) * 16;
 
 			// these are all the regular stuff you get , now lets see......
 
