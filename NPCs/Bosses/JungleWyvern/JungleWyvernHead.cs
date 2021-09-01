@@ -11,7 +11,11 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 	[AutoloadBossHead]
 	class JungleWyvernHead : ModNPC {
 
-        public override void SetStaticDefaults() {
+		int breathCD = 180;
+		bool breath = false;
+		int juvenileSpawnTimer = 0;
+
+		public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ancient Jungle Wyvern");
         }
         public override void SetDefaults() {
@@ -83,6 +87,47 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 					num119 = num122;
 				}
 			}
+			if (NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 2)
+			{
+				juvenileSpawnTimer += Main.rand.Next(1, 3);
+			}
+
+			//Main.NewText(juvenileSpawnTimer);
+			if (juvenileSpawnTimer >= 1200 && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 2)
+			{
+				NPC.NewNPC((int)npc.position.X + Main.rand.Next(-20, 20), (int)npc.position.Y + Main.rand.Next(-20, 20), mod.NPCType("JungleWyvernJuvenileHead"));
+				juvenileSpawnTimer = 0;
+
+			}
+
+			if (Main.rand.Next(120) == 0)
+			{
+				breath = true;
+				Main.PlaySound(SoundID.Item, -1, -1, 20);
+				npc.netUpdate = true;
+			}
+
+			if (breath)
+			{
+
+				float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
+				int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, 22, 0f, Main.myPlayer); //cursed dragons breath
+				Main.projectile[num54].timeLeft = 25;
+				Main.projectile[num54].scale = 1f;
+				npc.netUpdate = true;
+
+
+				breathCD--;
+
+			}
+
+			if (breathCD <= 0)
+			{
+				breath = false;
+				breathCD = 100;
+				Main.PlaySound(SoundID.Item, -1, -1, 20);
+			}
+
 			if (npc.velocity.X < 0f) {
 				npc.spriteDirection = 1;
 			}

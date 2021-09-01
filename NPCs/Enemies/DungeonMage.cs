@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             float chance = 0;
             if (spawnInfo.player.ZoneDungeon) {
-                chance += 0.025f;
+                chance += 0.03f;
             }
             return chance;
         }
@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 if (npc.ai[0] >= 12 && npc.ai[2] < 5) {
                     float num48 = 2f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    int damage = 7;
+                    int damage = 10;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);

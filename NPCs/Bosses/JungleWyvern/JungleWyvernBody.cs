@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
     class JungleWyvernBody : ModNPC {
+
 		public int Timer = -1000;
 
 		public override void SetDefaults() {
@@ -76,14 +77,14 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y + 10), npc.width, npc.height, 62, 0, 0, 100, Color.White, 2.0f);
 				Main.dust[dust].noGravity = true;
 			}
-			if (Timer >= 600 && Main.netMode != NetmodeID.Server) {
+			if (Timer >= 300 && Main.netMode != NetmodeID.Server) {
 				npc.netUpdate = true;
 				float num48 = 1f;
 				Vector2 vector8 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
 				float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector8.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
 				rotation += (float)(Main.rand.Next(-50, 50) / 100);
-				Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 45, 0f, Main.myPlayer); //enemy cursed flamess
-				Timer = -600 - Main.rand.Next(600);
+				Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 40, 0f, Main.myPlayer); //enemy cursed flamess
+				Timer = -300 - Main.rand.Next(300);
 			}
 		}
 

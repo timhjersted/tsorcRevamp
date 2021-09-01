@@ -42,8 +42,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			ice3Damage = (int)(ice3Damage / 2);
 		}
 
-		int oracleDamage = 16;
-		int ice3Damage = 25;
+		int oracleDamage = 20;
+		int ice3Damage = 30;
 
 		//float customAi1;
 
