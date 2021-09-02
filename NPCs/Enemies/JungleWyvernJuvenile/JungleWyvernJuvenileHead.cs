@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Policy;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -34,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			npc.scale = 0.7f;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
-			npc.value = 1500;
+			npc.value = 3000;
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.Confused] = true;
@@ -60,7 +61,6 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		}
 
 		#endregion
-
 
 		public override void AI()
 		{

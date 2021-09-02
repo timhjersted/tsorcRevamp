@@ -70,16 +70,6 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
             if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
             if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-            if (Main.rand.NextFloat() <= .12f) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<WitchkingHelmet>());
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<WitchkingTop>());
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<WitchkingBottoms>());
-            
-            if (Main.rand.NextFloat() <= .08f) Item.NewItem(npc.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
-            if (Main.rand.NextFloat() <= .15f) Item.NewItem(npc.getRect(), ModContent.ItemType<GuardianSoul>());
-            if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-            Item.NewItem(npc.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
         }
 
 

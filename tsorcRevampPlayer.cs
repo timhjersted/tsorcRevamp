@@ -1073,7 +1073,7 @@ namespace tsorcRevamp
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
             {
-                multiplier += 0.15f;
+                multiplier += 0.2f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
             {

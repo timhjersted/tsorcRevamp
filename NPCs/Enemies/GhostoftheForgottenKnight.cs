@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				return 0.12f;
 			}
-			if (Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(20) == 0) return 1;
+			if (Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(15) == 0) return 1;
 			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(100) == 0) return 1;
 
 			return 0;

@@ -33,6 +33,11 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			npc.buffImmune[BuffID.CursedInferno] = true;
 		}
 
+		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+		{
+			return false;
+		}
+
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Jungle Wyvern Juvenile");
