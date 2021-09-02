@@ -43,12 +43,11 @@ namespace tsorcRevamp.Items.Armors
             player.accDivingHelm = true;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.meleeDamage += 0.14f;
-            player.magicDamage += 0.14f;
-            player.rangedDamage += 0.14f;
+            player.allDamage += 0.14f;
             player.rangedCrit += 14;
             player.meleeCrit += 14;
             player.magicCrit += 14;
+            player.thrownCrit += 14;
             player.meleeSpeed += 0.14f;
             player.moveSpeed += 0.14f;
             player.manaCost -= 0.14f;

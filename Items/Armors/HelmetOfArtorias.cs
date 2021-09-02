@@ -43,9 +43,7 @@ namespace tsorcRevamp.Items.Armors
             player.breath = 9999999;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.meleeDamage += 0.37f;
-            player.magicDamage += 0.37f;
-            player.rangedDamage += 0.37f;
+            player.allDamage += 0.37f;
             player.meleeSpeed += 0.37f;
             player.moveSpeed += 0.50f;
             player.manaCost -= 0.37f;

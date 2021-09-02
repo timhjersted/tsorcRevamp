@@ -19,9 +19,7 @@ namespace tsorcRevamp.Items.Accessories {
  
         public override void UpdateEquip(Player player) {
 			player.noKnockback = true;
-			player.meleeDamage *= 2;
-			player.magicDamage *= 2;
-			player.rangedDamage *= 2;
+            player.allDamage *= 2;
         }
  
     }

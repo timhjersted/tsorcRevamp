@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "+20% magic/ranged damage, +10% MS, -30% MC, nightvision, +3 HP regen, +No knockback, fall damage or fire damage.";
+            player.setBonus = "+20% magic and ranged damage, +10% movement speed, -30% mana cost," + "\nnightvision +3 HP regen, no knockback, fall damage or firewalk damage";
             player.fireWalk = true;
             player.noKnockback = true;
             player.magicDamage += 0.20f;

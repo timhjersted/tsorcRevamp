@@ -1,12 +1,12 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
+using System.Collections.Generic;
+
 
 namespace tsorcRevamp.Items.Potions {
     public class DemonDrugPotion : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Demon Drug");
-            Tooltip.SetDefault("Increases damage by 20% for 3 minutes.");
-
         }
 
         public override void SetDefaults() {
@@ -23,6 +23,19 @@ namespace tsorcRevamp.Items.Potions {
             item.value = 300000;
             item.buffType = ModContent.BuffType<Buffs.DemonDrug>();
             item.buffTime = 10800;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                tooltips.Insert(3, new TooltipLine(mod, "RevampCrimsonDrain1", "[c/00ff00:Revamped Mode:] Increases damage by 20% for 3 minutes"));
+                tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "[c/00ff00:Revamped Mode:] However, also lowers defence by 20"));
+            }
+            else
+            {
+                tooltips.Insert(3, new TooltipLine(mod, "", "Increases damage by 20% for 3 minutes."));
+            }
+
         }
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);

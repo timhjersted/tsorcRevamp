@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Dazzling armor cut from crystal.\n+10% movement.");
+            Tooltip.SetDefault("Dazzling armor cut from crystal.\n+10% movement speed");
         }
 
         public override void SetDefaults()

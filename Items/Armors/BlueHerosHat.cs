@@ -37,12 +37,11 @@ namespace tsorcRevamp.Items.Armors
         {
             player.accFlipper = true;
             player.accDivingHelm = true;
-            player.meleeDamage += 0.09f;
-            player.magicDamage += 0.09f;
-            player.rangedDamage += 0.09f;
+            player.allDamage += 0.09f;
             player.rangedCrit += 9;
             player.meleeCrit += 9;
             player.magicCrit += 9;
+            player.thrownCrit += 9;
             player.meleeSpeed += 0.09f;
             player.moveSpeed += 0.09f;
             player.manaCost -= 0.09f;
