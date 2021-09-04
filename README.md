@@ -7,6 +7,8 @@
   <p align="center">
     The Story of Red Cloud's Dark Souls mod, updated to TModLoader 
     <br />
+    <a href="https://github.com/timhjersted/tsorcDownload"><strong>Download the custom map!</strong></a>
+    <br />
     <a href="https://discord.gg/tPkhZgJ"><strong>Join our Discord!</strong></a>
     <br />
     <a href="https://forums.terraria.org/index.php?threads/the-story-of-red-cloud-dark-souls-mod-2018-update.70670/"><strong>Play the original!</strong></a>
