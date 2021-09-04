@@ -277,7 +277,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				if (customAi1 >= 10f) {
 
 					if ((customspawn2 < 1) && Main.rand.Next(950) == 1) {
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Witchking>(), 0); //Witchking
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<BarrowWightNemesis>(), 0); // Spawns Barrow Wight Nemesis
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 						npc.ai[0] = 20 - Main.rand.Next(80);
