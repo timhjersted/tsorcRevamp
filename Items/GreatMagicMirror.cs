@@ -50,6 +50,15 @@ namespace tsorcRevamp.Items {
             item.CloneDefaults(ItemID.MagicMirror);
             item.accessory = true;
             item.value = 25000;
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                item.useTime = 90;
+                item.useAnimation = 90;
+            }
+            else {
+                item.useTime = 240;
+                item.useAnimation = 240;
+            }
+            
         }
 
         public override void SetStaticDefaults() {
@@ -61,7 +70,7 @@ namespace tsorcRevamp.Items {
 
         public override bool CanUseItem(Player player) {
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.TeleportSickness>())) {
+            if (player.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
                 return false;
             }
 
@@ -78,18 +87,21 @@ namespace tsorcRevamp.Items {
         public override void UseStyle(Player player) {
 
             if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY)) {
-                if (Main.rand.NextBool()) { //ambient dust during use
+                if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)) {
+                    player.velocity = Vector2.Zero;
+                }
+                if (Main.rand.NextBool() && player.itemTime != 0) { //ambient dust during use
 
                     // position, width, height, type, speed.X, speed.Y, alpha, color, scale
-                    Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f);
+                    Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f + (float)(4 - (item.useAnimation / (item.useAnimation - player.itemTime))));
                 }
 
                 if (player.itemTime == 0) {
                     Main.NewText("Picking up where you left off...", 255, 240, 20);
                     player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
                 }
-                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2) {
-
+                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? 2 : 4)) {
+                    Main.PlaySound(SoundID.Item60);
 
 
                     for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (source)
@@ -105,14 +117,7 @@ namespace tsorcRevamp.Items {
                         }
                     }
 
-                    if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                        //apply tp sickness if too far away
-                        Vector2 teleportDestination = new Vector2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16, player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16);
-                        float teleportDistance = (player.Center - teleportDestination).Length();
-                        if (teleportDistance > 3600) { //300 tiles (circular) * 16
-                            player.AddBuff(ModContent.BuffType<Buffs.TeleportSickness>(), 7200); //2 minutes
-                        }
-                    }
+
 
                     player.position.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpX * 16) - (float)((float)player.width / 2.0);
                     player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpY * 16) - (float)player.height;
@@ -138,7 +143,7 @@ namespace tsorcRevamp.Items {
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc");
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf", "[c/00ff00:Revamped Mode:] Cannot be used again for 2 minutes after teleporting long distance."));
+                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf", "[c/00ff00:Revamped Mode:] Channel time is greatly increased and you cannot move during the channel."));
                 }
             }
         }
