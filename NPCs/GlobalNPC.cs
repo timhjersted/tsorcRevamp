@@ -1239,7 +1239,6 @@ namespace tsorcRevamp.NPCs
                         int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                         Main.dust[dustID].noGravity = true;
                     }
-                    Main.NewText("TEST~~");
                     Main.npc[npcID].active = false;
                 }
                 else

@@ -62,10 +62,9 @@ namespace tsorcRevamp
         //It also initializes the other dictionary and lists
         private static void InitializeScriptedEvents()
         {
-            ScriptedEvent DarkCloudEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, true);
-            ScriptedEvent ArtoriasEvent = new ScriptedEvent(ArtoriasCustomCondition, new Vector2(506, 867), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Blue, true, ArtoriasCustomAction, false);
-
-            //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), "The Abyssal Toad rises to assist in debugging...", Color.Green) 
+            ScriptedEvent DarkCloudEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false);
+            ScriptedEvent ArtoriasEvent = new ScriptedEvent(ArtoriasCustomCondition, new Vector2(506, 867), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Blue, false, ArtoriasCustomAction, false);
+            //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
 
 
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
@@ -176,26 +175,98 @@ namespace tsorcRevamp
             {
                 if (InactiveEvents[i].condition())
                 {
-                    if (InactiveEvents[i].rangeDetectionMode)
+                    float distance = Vector2.DistanceSquared(player.position, InactiveEvents[i].centerpoint);
+                    int dustPerTick = 20;
+                    float speed = 2;
+                    if (!InactiveEvents[i].square)
                     {
-                        float distance = Vector2.DistanceSquared(player.position, InactiveEvents[i].centerpoint);
                         //If the player is nearby, display some dust to make the region visible to them
-                        //This has a Math.Sqrt here, because running it once per on-screen event is better than it running once for *every* event
-                        if (InactiveEvents[i].visible && distance < 3000000)
+                        //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
+                        if (InactiveEvents[i].visible && distance < 6000000)
                         {
-                            int dustPerTick = 20;
-                            float speed = 2;
                             float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
                             for (int j = 0; j < dustPerTick; j++)
                             {
                                 Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
                                 Vector2 dustPos = InactiveEvents[i].centerpoint + dir * sqrtRadius;
-                                Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
-                                Dust dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
-                                dustID.noGravity = true;
-                            }
+                                if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                {
+                                    Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
+                                    Dust dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
+                                    dustID.noGravity = true;
+                                }
+                            }                            
                         }
                         if (distance < InactiveEvents[i].radius)
+                        {
+                           
+                            for (int j = 0; j < 100; j++)
+                            {
+                                Dust.NewDustPerfect(InactiveEvents[i].centerpoint, InactiveEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                            }
+                            ActiveEvents.Add(InactiveEvents[i]);
+                            InactiveEvents.RemoveAt(i);
+                        }
+                        
+                    }
+                    //Do the same thing, but square
+                    else
+                    {
+                        float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
+                        if (InactiveEvents[i].visible && distance < 6000000)
+                        {
+                            Vector2 dustPos;
+                            Vector2 dustVel;
+                            Dust dustID;
+                            for (int j = 0; j < dustPerTick; j++)
+                            {
+                                int side = Main.rand.Next(0, 4);
+                                if (side == 0)
+                                {
+                                    dustPos = new Vector2(InactiveEvents[i].centerpoint.X + sqrtRadius, InactiveEvents[i].centerpoint.Y + Main.rand.NextFloat(-sqrtRadius, sqrtRadius));
+                                    if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                    {
+                                        dustVel = new Vector2(0, speed);
+                                        dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
+                                        dustID.noGravity = true;
+                                    }
+                                }
+                                if (side == 1)
+                                {
+                                    dustPos = new Vector2(InactiveEvents[i].centerpoint.X + Main.rand.NextFloat(-sqrtRadius, sqrtRadius), InactiveEvents[i].centerpoint.Y + sqrtRadius);
+                                    if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                    {
+                                        dustVel = new Vector2(-speed, 0);
+                                        dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
+                                        dustID.noGravity = true;
+                                    }
+                                }
+                                if (side == 2)
+                                {
+                                    dustPos = new Vector2(InactiveEvents[i].centerpoint.X - sqrtRadius, InactiveEvents[i].centerpoint.Y + Main.rand.NextFloat(-sqrtRadius, sqrtRadius));
+                                    if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                    {
+                                        dustVel = new Vector2(0, -speed);
+                                        dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
+                                        dustID.noGravity = true;
+                                    }
+                                }
+                                if (side == 3)
+                                {
+                                    dustPos = new Vector2(InactiveEvents[i].centerpoint.X + Main.rand.NextFloat(-sqrtRadius, sqrtRadius), InactiveEvents[i].centerpoint.Y - sqrtRadius);
+                                    if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                    {
+                                        dustVel = new Vector2(speed, 0);
+                                        dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
+                                        dustID.noGravity = true;
+                                    }
+                                }
+
+                            }                            
+                        }
+
+
+                        if ((Math.Abs(player.position.X - InactiveEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(player.position.Y - InactiveEvents[i].centerpoint.Y) < sqrtRadius))
                         {
                             for (int j = 0; j < 100; j++)
                             {
@@ -249,9 +320,9 @@ namespace tsorcRevamp
         public bool rangeDetectionMode;
         //What is the centerpoint of the region?
         public Vector2 centerpoint;
-        //Is it checking if they're in a square range around a point, or a circular one?
-        public float radius;
         //What is the radius in blocks it should check around that centerpoint?
+        public float radius;
+        //Is it checking if they're in a square range around a point, or a circular one?
         public bool square;
 
         public bool hasCustomAction = false;
