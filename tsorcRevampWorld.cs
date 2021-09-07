@@ -67,10 +67,11 @@ namespace tsorcRevamp {
             TagCompound tagCompound = new TagCompound
 			{
                 {"downed", downed},
-                {"world_state", world_state}
+                {"world_state", world_state},
             };
 			SaveSlain(tagCompound);
-			return tagCompound;
+            tsorcScriptedEvents.SaveScriptedEvents(tagCompound);
+            return tagCompound;
 		}
 
 		private void SaveSlain(TagCompound tag) {
@@ -80,6 +81,7 @@ namespace tsorcRevamp {
 
         public override void Load(TagCompound tag) {
             LoadSlain(tag);
+            tsorcScriptedEvents.LoadScriptedEvents(tag);
 
             IList<string> downedList = tag.GetList<string>("downed");
             DownedVortex = downedList.Contains("DownedVortex");

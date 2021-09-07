@@ -13,8 +13,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         {
             npc.netAlways = true;
             npc.npcSlots = 10;
-            npc.width = 32;
-            npc.height = 32;
+            npc.width = 60;
+            npc.height = 60;
+            drawOffsetY = 42;
             npc.aiStyle = 6;
             npc.knockBackResist = 0;
             npc.timeLeft = 22500;
@@ -27,6 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             npc.boss = true;
             npc.noGravity = true;
             npc.noTileCollide = true;
+            npc.behindTiles = true;
             npc.value = 200000;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
@@ -160,12 +162,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             }
             
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, 6f, 10f, 0.25f, true, false, true, false, false); //30f was 10f
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, .8f, 22, 0.25f, true, false, true, false, false); //30f was 10f
 
 
 
 
-
+            
             //if (!Main.npc[(int)npc.ai[1]].active)
             //{
             //	npc.life = 0;

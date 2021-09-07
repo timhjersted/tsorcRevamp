@@ -43,8 +43,6 @@ namespace tsorcRevamp {
             ApplyMethodSwaps();
             PopulateArrays();
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
-
-
         }
 
 

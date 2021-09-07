@@ -992,15 +992,11 @@ namespace tsorcRevamp.NPCs
             float dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
             if (npc.ai[1] > 0f && npc.ai[1] < (float)Main.npc.Length)
             {
-                try
-                {
-                    npcCenter = npc.Center;
-                    playerCenterX = Main.npc[(int)npc.ai[1]].Center.X - npcCenter.X;
-                    playerCenterY = Main.npc[(int)npc.ai[1]].Center.Y - npcCenter.Y;
-                }
-                catch
-                {
-                }
+                
+                npcCenter = npc.Center;
+                playerCenterX = Main.npc[(int)npc.ai[1]].Center.X - npcCenter.X;
+                playerCenterY = Main.npc[(int)npc.ai[1]].Center.Y - npcCenter.Y;
+                
                 npc.rotation = (float)Math.Atan2((double)playerCenterY, (double)playerCenterX) + 1.57f;
                 dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
                 dist = (dist - (float)npc.width - (float)partDistanceAddon) / dist;
@@ -1243,6 +1239,7 @@ namespace tsorcRevamp.NPCs
                         int dustID = Dust.NewDust(Main.npc[npcID].position, Main.npc[npcID].width, Main.npc[npcID].height, despawnDustType, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
                         Main.dust[dustID].noGravity = true;
                     }
+                    Main.NewText("TEST~~");
                     Main.npc[npcID].active = false;
                 }
                 else

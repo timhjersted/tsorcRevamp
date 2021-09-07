@@ -88,16 +88,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                 newColor = default(Color);
                 num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
             }
-            projectile.active = false;
-            Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y,
-            projectile.width, projectile.height);
-            Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player
-            [Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
-            if (projrec.Intersects(prec))
-            {
-                Main.player[Main.myPlayer].AddBuff(24, 900, false);
-            }
+            projectile.active = false;           
         }
         #endregion
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(24, 900, false);
+        }
     }
 }

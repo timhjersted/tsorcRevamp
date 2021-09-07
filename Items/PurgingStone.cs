@@ -7,8 +7,8 @@ namespace tsorcRevamp.Items {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Ash-colored stone encasing a skull." +
                                 "\nSecret treasure of Arstor, the Earl of Carim." +
-                                "\nbsorbs curse build-up and breaks curse, restoring your max HP to 500." +
-                                "\nIf Max HP is already at 500, the stone will heal 5500 HP." +
+                                "\nAbsorbs curse build-up and breaks curse, restoring your max HP to 500." +
+                                "\nIf Max HP is already at 500, the stone will heal 500 HP." +
                                 "\nHumans are helpless against curses, and can only redirect their influence." +
                                 "\nThe Purging Stone does not dispel curses, but receives them as a surrogate. " +
                                 "\nThe stone itself was once a person or some other being.");
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool CanUseItem(Player player) {
-            return (player.statLifeMax < 500) || player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()) /*|| player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>())*/;
+            return (player.statLifeMax < 500) || player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()) || player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>());
         }
 
         public override bool UseItem(Player player) {
@@ -57,8 +57,10 @@ namespace tsorcRevamp.Items {
 
             foreach (int buffType in player.buffType) {
 
-                if (buffType == ModContent.BuffType<Buffs.CurseBuildup>() /*|| buffType == ModContent.BuffType<Buffs.CurseBuildup>()*/) {
+                if (buffType == ModContent.BuffType<Buffs.CurseBuildup>() || buffType == ModContent.BuffType<Buffs.PowerfulCurseBuildup>()) {
                     player.DelBuff(buffIndex);
+                    player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 0;
+                    player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0;
                 }
                 buffIndex++;
             }

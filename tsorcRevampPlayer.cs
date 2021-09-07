@@ -1540,7 +1540,10 @@ namespace tsorcRevamp
 
         public override void PreUpdate()
         {
-
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                tsorcScriptedEvents.PlayerScriptedEventCheck(this.player);
+            }
             MiakodaEffectsTimer++;
 
             if (DragoonBoots && DragoonBootsEnable)
@@ -1679,6 +1682,11 @@ namespace tsorcRevamp
                 gotPickaxe = true;
             }
 
+        }
+
+        public override void OnRespawn(Player player)
+        {
+            tsorcScriptedEvents.RefreshEvents();
         }
     }
 }

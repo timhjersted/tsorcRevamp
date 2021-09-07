@@ -15,6 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.npcSlots = 101;
             npc.width = 32;
             npc.height = 32;
+            drawOffsetY = 60;
             npc.aiStyle = 6;
             npc.knockBackResist = 0;
             npc.timeLeft = 22500;
@@ -142,7 +143,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
             if (Main.rand.Next(2) == 0)
             {
-                int d = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                int d = Dust.NewDust(npc.position, npc.width, npc.height, DustID.BlueFairy, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;
             }
 

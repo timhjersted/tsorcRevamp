@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Items.BossItems {
 
         public override bool UseItem(Player player) {
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
-            Main.NewText("Your shadow self has manifested from your darkest fears...");
+            Main.NewText("Your shadow self has manifested from your darkest fears...", Color.Blue);
             return true;
         }
         public override bool CanUseItem(Player player) {

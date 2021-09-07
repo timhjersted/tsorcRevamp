@@ -14,6 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.npcSlots = 1;
             npc.width = 45;
             npc.height = 45;
+            drawOffsetY = GhostDragonHead.drawOffset;
             npc.aiStyle = 6;
             npc.knockBackResist = 0;
             npc.timeLeft = 750;
@@ -30,6 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
         }
+
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {

@@ -1191,7 +1191,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
             }
 
-            Main.NewText("You have vanquished your shadow...");
+            Main.NewText("You have vanquished your shadow...", Color.Blue);
 
         }
         #endregion

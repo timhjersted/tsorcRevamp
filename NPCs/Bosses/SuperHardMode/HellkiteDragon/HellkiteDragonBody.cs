@@ -12,11 +12,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         {
             npc.netAlways = true;
             npc.npcSlots = 2;
-            npc.width = 32;
-            npc.height = 32;
+            npc.width = 44;
+            npc.height = 44;
+            drawOffsetY = 48;
+            
             npc.aiStyle = 6;
             npc.knockBackResist = 0;
-            npc.timeLeft = 1750;
+            npc.timeLeft = 22750;
             npc.damage = 85;
             npc.defense = 40;
             npc.HitSound = SoundID.NPCHit7;
@@ -24,7 +26,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             npc.lifeMax = 20000;
             npc.noGravity = true;
             npc.noTileCollide = true;
-            npc.value = 100000;
+            npc.behindTiles = true;
+            npc.value = 0;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -48,11 +51,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         }
         public override void AI()
         {
-            npc.noTileCollide = true;
-            npc.noGravity = true;
-            npc.behindTiles = true;
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, 6f, 9f, 0.25f, true, false);
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, -1, 22, 0.25f, true, false);
 
             if (!Main.npc[(int)npc.ai[1]].active)
             {
@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             npc.netUpdate = true;
             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            if (npc.life <= 0)
+            if (Main.player[npc.target].active)
             {
                 Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hellkite Dragon Body Gore"), 1f);
 

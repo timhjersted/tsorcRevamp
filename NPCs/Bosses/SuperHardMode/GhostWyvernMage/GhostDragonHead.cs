@@ -15,6 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.npcSlots = 1;
             npc.width = 45;
             npc.height = 45;
+            drawOffsetY = drawOffset;
             npc.aiStyle = 6;
             npc.knockBackResist = 0;
             npc.timeLeft = 22750;
@@ -35,6 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
         }
 
+        public static int drawOffset = 52;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);

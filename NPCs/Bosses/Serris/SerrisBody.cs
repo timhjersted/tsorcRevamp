@@ -74,15 +74,15 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris Gore 2"), 1f);
 			}
 			
-					if (Main.npc[(int)npc.ai[2]].active && Main.npc[(int)npc.ai[2]].dontTakeDamage && Main.npc[(int)npc.ai[2]].type == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())
-					{
-						SpeedBoost = true;
-						return;
-					}
-					else
-					{
-						SpeedBoost = false;
-					}
+			if (Main.npc[(int)npc.ai[2]].active && Main.npc[(int)npc.ai[2]].dontTakeDamage && Main.npc[(int)npc.ai[2]].type == ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>())
+			{
+				SpeedBoost = true;
+				return;
+			}
+			else
+			{
+				SpeedBoost = false;
+			}
 				
 		}
 		public override void FindFrame(int currentFrame)

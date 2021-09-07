@@ -62,14 +62,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 			{
 				Lighting.AddLight((int)(projectile.position.X / 16f), (int)(projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
 			}
-			Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y, projectile.width, projectile.height);
-			Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player[Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
-
-			if (projrec.Intersects(prec))
-			{
-
-			}
-
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{

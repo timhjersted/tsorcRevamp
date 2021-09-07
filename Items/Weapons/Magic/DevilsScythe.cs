@@ -40,5 +40,16 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Projectile.NewProjectile(new Vector2(player.position.X + (player.width * 0.5f), player.position.Y + (player.height * 0.5f)), new Vector2((float)speedX, (float)speedY), ModContent.ProjectileType<Projectiles.DevilSickle>(), (int)(player.inventory[player.selectedItem].damage * player.magicDamage), 3, player.whoAmI);
             return true;
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.DemonScythe, 1);
+            recipe.AddIngredient(ItemID.HellstoneBar, 30);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
+        }
     }
 }

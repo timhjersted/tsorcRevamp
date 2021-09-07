@@ -22,16 +22,21 @@ namespace tsorcRevamp.Items.BossItems {
 
 
         public override bool UseItem(Player player) {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))
+            
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>());
+            return true;
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            if (Main.dayTime)
             {
-                return false;
-            }
-            if (Main.dayTime) {
                 Main.NewText("Nothing happens... Retry at night.", 175, 75, 255);
                 return false;
             }
-            else {
-                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>());
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))
+            {
+                return false;
             }
             return true;
         }

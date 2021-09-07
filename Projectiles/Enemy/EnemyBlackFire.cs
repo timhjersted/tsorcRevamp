@@ -74,17 +74,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
 
-			Rectangle projrec = new Rectangle((int)projectile.position.X + (int)projectile.velocity.X, (int)projectile.position.Y + (int)projectile.velocity.Y, projectile.width, projectile.height);
-			Rectangle prec = new Rectangle((int)Main.player[Main.myPlayer].position.X, (int)Main.player[Main.myPlayer].position.Y, (int)Main.player[Main.myPlayer].width, (int)Main.player[Main.myPlayer].height);
-
-			if (projrec.Intersects(prec)) //&& Main.rand.Next(2) == 0
-			{
-				Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240, false);
-			}
+			
 		}
 
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+			target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240, false);
+		}
 
-		public override bool PreKill(int timeLeft)
+        public override bool PreKill(int timeLeft)
 		{
 			if (!projectile.active)
 			{
