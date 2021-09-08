@@ -188,7 +188,7 @@ namespace tsorcRevamp.NPCs
                 // Consumable Soul drops ahead - Current numbers give aprox. +20% souls
 
                 float chance = 0.01f + (0.0005f * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult);
-                Main.NewText(chance);
+                //Main.NewText(chance);
 
                 if (npc.type == NPCID.EaterofWorldsBody == false && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
                 {
