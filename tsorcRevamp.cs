@@ -30,6 +30,8 @@ namespace tsorcRevamp {
 
         internal BonfireUIState BonfireUIState;
         private UserInterface _bonfireUIState;
+        internal DarkSoulCounterUIState DarkSoulCounterUIState;
+        private UserInterface _darkSoulCounterUIState;
 
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
@@ -40,6 +42,11 @@ namespace tsorcRevamp {
             if (!Main.dedServ) BonfireUIState.Activate();
             _bonfireUIState = new UserInterface();
             if (!Main.dedServ) _bonfireUIState.SetState(BonfireUIState);
+
+            DarkSoulCounterUIState = new DarkSoulCounterUIState();
+            //if (!Main.dedServ) DarkSoulCounterUIState.Activate();
+            _darkSoulCounterUIState = new UserInterface();
+            if (!Main.dedServ) _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
 
             ApplyMethodSwaps();
             PopulateArrays();
@@ -53,6 +60,10 @@ namespace tsorcRevamp {
             if (BonfireUIState.Visible) {
                 _bonfireUIState?.Update(gameTime);
             }
+            if (DarkSoulCounterUIState.Visible)
+            {
+                _darkSoulCounterUIState?.Update(gameTime);
+            }
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
@@ -65,6 +76,18 @@ namespace tsorcRevamp {
 
                             _bonfireUIState.Draw(Main.spriteBatch, new GameTime());
                         }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
+            int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
+            if (resourceBarIndex != -1) {
+                layers.Insert(resourceBarIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Dark Soul Counter UI",
+                    delegate {
+                        _darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
                         return true;
                     },
                     InterfaceScaleType.UI)
