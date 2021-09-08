@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.Pink;
             item.shootSpeed = 10;
             item.crit = 6;
-            item.mana = 16;
+            item.mana = 50;
             item.noMelee = true;
             item.value = 250000;
             item.magic = true;

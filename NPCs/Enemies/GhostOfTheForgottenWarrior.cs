@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			else if (Main.hardMode && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.05f;
+				return 0.025f;
 			}
 			else if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon)
 			{

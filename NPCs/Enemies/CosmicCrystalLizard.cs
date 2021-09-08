@@ -1010,7 +1010,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
 
 
-			if (Main.rand.NextFloat() >= 0.6f) // 60% chance
+			if (Main.rand.NextFloat() >= 0.4f) // 60% chance
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("SoulSiphonPotion"));
 			}

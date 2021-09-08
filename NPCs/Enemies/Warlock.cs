@@ -464,7 +464,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						int Paraspawn = 0;
 
 
-						if (Random == 50) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 50 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 50 - this.npc.width / 2, NPCID.IlluminantBat, 0);
+						if (Random == 50) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 50 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 80 - this.npc.width / 2, NPCID.IlluminantBat, 0);
 
 
 						Main.npc[Paraspawn].velocity.X = npc.velocity.X;

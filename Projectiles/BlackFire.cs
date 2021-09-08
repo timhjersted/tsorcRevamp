@@ -166,7 +166,7 @@ namespace tsorcRevamp.Projectiles {
 			}
 
 			// setup projectile for explosion
-			projectile.damage = projectile.damage << 2;
+			projectile.damage = projectile.damage * 2;
 			projectile.penetrate = 20;
 			projectile.width = projectile.width << 3;
 			projectile.height = projectile.height << 3;

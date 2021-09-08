@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of pure minerals\n" +
                                "One of eight\n" +
                                "This one contains a riddle: \n" +
-                               "\"The Twin Peaks of Arazium. Twins from birth. Gaurdians of the Sky.\"");
+                               "\"The Twin Peaks of Arazium. Twins from birth. Guardians of the Sky.\"");
         }
     }
 

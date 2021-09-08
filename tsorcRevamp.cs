@@ -10,6 +10,7 @@ using System.Collections;
 using tsorcRevamp.UI;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using MonoMod.Cil;
 using static tsorcRevamp.MethodSwaps;
 
 namespace tsorcRevamp {
@@ -43,6 +44,8 @@ namespace tsorcRevamp {
             ApplyMethodSwaps();
             PopulateArrays();
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
+
+            IL.Terraria.Player.Update += Player_Update;
         }
 
 
@@ -495,6 +498,19 @@ namespace tsorcRevamp {
             for (int i = 0; i < Main.moonTexture.Length; i++) {
                 Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
             }
+        }
+
+        private void Player_Update(ILContext il) {
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before,
+                                    i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
+                                    i => i.MatchLdcI4(400))) {
+                Logger.Fatal("Could not find instruction to patch");
+                return;
+            }
+
+            cursor.Next.Next.Operand = int.MaxValue;
         }
     }
 
