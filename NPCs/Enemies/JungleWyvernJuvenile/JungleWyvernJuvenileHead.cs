@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			{
 				return 0.1f; //what the hell? this is so high
 			}
-			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneJungle && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 1)
+			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneJungle && spawnInfo.player.ZoneRockLayerHeight && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 1)
 			{
 				return 0.05f;
 			}

@@ -35,6 +35,10 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(item.Center, 0.15f, 0.42f, 0.05f);
         }
+        public override void GrabRange(Player player, ref int grabRange)
+        {
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
+        }
 
         public override bool UseItem(Player player) // Won't consume item without this
         {

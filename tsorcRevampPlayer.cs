@@ -66,12 +66,15 @@ namespace tsorcRevamp
 
         public bool BoneRevenge = false;
         public bool SoulSiphon = false;
+        public int ConsSoulChanceMult;
 
         public int souldroplooptimer = 0;
         public int souldroptimer = 0;
         public bool SOADrain = false;
 
         public int supersonicLevel = 0;
+
+        public int darkSoulQuantity;
 
         //An int because it'll probably be necessary to split it into multiple levels
         public int manaShield = 0;
@@ -201,9 +204,11 @@ namespace tsorcRevamp
             manaShield = 0;
             ConditionOverload = false;
             supersonicLevel = 0;
-        }
+            ConsSoulChanceMult = 0;
 
-        public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
+    }
+
+    public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
 
             //This is going here, because unlike most hooks this one keeps running even when the game is paused via AutoPause
@@ -651,6 +656,8 @@ namespace tsorcRevamp
                 if (item.type == ModContent.ItemType<PermanentSoulSiphonPotion>() && PermanentBuffToggles[52])
                 {
                     SoulSiphon = true;
+                    SoulReaper += 5;
+                    ConsSoulChanceMult += 10;
                     player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
                 }
             }
@@ -1540,6 +1547,10 @@ namespace tsorcRevamp
 
         public override void PreUpdate()
         {
+            //Main.NewText(darkSoulQuantity);
+            darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
+
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tsorcScriptedEvents.PlayerScriptedEventCheck(this.player);

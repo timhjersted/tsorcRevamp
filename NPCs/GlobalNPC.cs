@@ -187,14 +187,11 @@ namespace tsorcRevamp.NPCs
 
                 // Consumable Soul drops ahead - Current numbers give aprox. +20% souls
 
-                float chance = 0.01f;
+                float chance = 0.01f + (0.0005f * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult);
+                Main.NewText(chance);
 
-                if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) == false && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+                if (npc.type == NPCID.EaterofWorldsBody == false && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
                 {
-                    if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
-                    {
-                        chance = 0.015f;
-                    }
 
                     if ((enemyValue >= 1) && (enemyValue <= 200) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 200 dropping FadingSoul aka 1/75
                     {

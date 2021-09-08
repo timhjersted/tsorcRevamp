@@ -6,7 +6,8 @@ namespace tsorcRevamp.Items.Accessories {
     public class SoulReaper2 : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Soul Reaper II");
-            Tooltip.SetDefault("Draws souls to you from more than double the previous distance");
+            Tooltip.SetDefault("Greatly increases Dark Soul pick-up range and" +
+                               "\nincreases consumable soul drop chance by 50%");
         }
 
         public override void SetDefaults() {
@@ -27,7 +28,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper = 8;
+            player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 10;
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 10; //50% increase
         }
 
     }

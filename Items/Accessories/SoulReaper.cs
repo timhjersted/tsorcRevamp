@@ -5,7 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class SoulReaper : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Possesses a mysterious benefit" +
+            Tooltip.SetDefault("Increases Dark Soul pick-up range and increases" +
+                                "\nconsumable soul drop chance by 25%" +
                                 "\nCan be upgraded with 7000 Dark Souls");
         }
 
@@ -26,7 +27,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper = 2;
+            player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 5; //25% increase
+
         }
 
     }

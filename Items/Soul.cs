@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -44,12 +43,43 @@ namespace tsorcRevamp.Items {
 
         public override void SetStaticDefaults() {
             base.SetStaticDefaults();
+            //DisplayName.SetDefault("[c/3df25e:Dark Soul]");
             Tooltip.SetDefault("Soul of a fallen creature." + 
                 "\nCan be used at Demon Altars to forge new weapons, items, and armors.");
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.15f, 0.72f, 0.05f);
+            Lighting.AddLight(item.Center, 0.15f, 0.6f, 0.32f);
+
+        }
+
+        public override bool OnPickup(Player player)
+        {
+            Main.PlaySound(SoundID.NPCDeath52.WithVolume(.15f).WithPitchVariance(.3f), player.position); // Plays sound.
+
+            int quantity = item.stack / 50;
+
+            if (quantity > 10)
+            {
+                quantity = 10;
+            }
+
+            for (int j = 1; j < (6 + (1 * quantity)); j++)
+            {
+                int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default(Color), 1f);
+                Main.dust[z].noGravity = true;
+                Main.dust[z].velocity *= 2.75f;
+                Main.dust[z].fadeIn = 1.3f;
+                Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+                vectorother.Normalize();
+                vectorother *= (float)Main.rand.Next(60, 100) * (0.04f);
+                Main.dust[z].velocity = vectorother;
+                vectorother.Normalize();
+                vectorother *= 35f;
+                Main.dust[z].position = player.Center - vectorother;
+            }
+            
+            return base.OnPickup(player);
         }
     }
     

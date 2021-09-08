@@ -16,7 +16,8 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon = true;
-            Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper = 4;
+            player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
+            player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 10; //50% increase
         }
     }
 }
