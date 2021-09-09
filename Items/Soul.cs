@@ -39,18 +39,54 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class DarkSoul : Soul {
+    public class DarkSoul : BaseRarityItem
+    {
 
         public override void SetStaticDefaults() {
-            base.SetStaticDefaults();
-            //DisplayName.SetDefault("[c/3df25e:Dark Soul]");
+            Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(5, 4));
+            ItemID.Sets.AnimatesAsSoul[item.type] = true;
+            ItemID.Sets.ItemIconPulse[item.type] = true;
+            ItemID.Sets.ItemNoGravity[item.type] = true;
             Tooltip.SetDefault("Soul of a fallen creature." + 
                 "\nCan be used at Demon Altars to forge new weapons, items, and armors.");
+        }
+        public override void SetDefaults()
+        {
+            Item refItem = new Item();
+            refItem.SetDefaults(ItemID.SoulofSight);
+            item.width = refItem.width;
+            item.height = refItem.height;
+            item.maxStack = 999999;
+            item.value = 1;
+            item.rare = ItemRarityID.Lime;
+            DarkSoulRarity = 12;
+        }
+        public override bool GrabStyle(Player player)
+        { //make pulling souls through walls more consistent
+            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
+            item.velocity = item.velocity + movement;
+            return true;
+        }
+
+        public override void GrabRange(Player player, ref int grabRange)
+        {
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
         }
 
         public override void PostUpdate() {
             Lighting.AddLight(item.Center, 0.15f, 0.6f, 0.32f);
 
+        }
+        public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
+        {
+            foreach (TooltipLine line2 in list)
+            {
+                if (line2.mod == "Terraria" && line2.Name == "ItemName")
+                {
+                    line2.overrideColor = BaseColor.RarityExample;
+                }
+            }
         }
 
         public override bool OnPickup(Player player)
