@@ -14,6 +14,8 @@ using tsorcRevamp.Buffs;
 using System;
 using tsorcRevamp.UI;
 using Microsoft.Xna.Framework.Graphics;
+using TerraUI.Objects;
+using Terraria.UI;
 
 namespace tsorcRevamp
 {
@@ -126,6 +128,8 @@ namespace tsorcRevamp
         //increased grab range immediately after killing a boss
         public int bossMagnetTimer;
         public bool bossMagnet;
+
+        public UIItemSlot SoulSlot;
         public override void Initialize()
         {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
@@ -134,6 +138,43 @@ namespace tsorcRevamp
                 { 76, 4 }, //hellstone
                 { 232, 4 } //wooden spike, in case tim decides to use them
             };
+
+            SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, "Dark Souls", null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
+            SoulSlot.BackOpacity = 0.8f;
+            SoulSlot.Item = new Item();
+            SoulSlot.Item.SetDefaults(0, true);
+        }
+
+        public override void clientClone(ModPlayer clientClone) {
+            tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
+            if (clone == null) { return; }
+
+            clone.SoulSlot.Item = SoulSlot.Item.Clone();
+        }
+
+        public override void SendClientChanges(ModPlayer clientPlayer) {
+            tsorcRevampPlayer oldClone = clientPlayer as tsorcRevampPlayer;
+            if (oldClone == null) { return; }
+
+            if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item)) {
+                SendSingleItemPacket(1, SoulSlot.Item, -1, player.whoAmI);
+            }
+        }
+
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+            ModPacket packet = mod.GetPacket();
+            packet.Write((byte)1);
+            packet.Write((byte)player.whoAmI);
+            ItemIO.Send(SoulSlot.Item, packet);
+            packet.Send(toWho, fromWho);
+        }
+
+        internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho) {
+            ModPacket packet = mod.GetPacket();
+            packet.Write((byte)message);
+            packet.Write((byte)player.whoAmI);
+            ItemIO.Send(item, packet);
+            packet.Send(toWho, fromWho);
         }
 
         public override TagCompound Save()
@@ -148,6 +189,8 @@ namespace tsorcRevamp
             {"townWarpWorld", townWarpWorld},
             {"townWarpSet", townWarpSet},
             {"gotPickaxe", gotPickaxe},
+
+            {"soulSlot", ItemIO.Save(SoulSlot.Item) }
             };
 
         }
@@ -163,6 +206,11 @@ namespace tsorcRevamp
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
             gotPickaxe = tag.GetBool("gotPickaxe");
+
+            Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
+            SoulSlot.Item = soulSlotSouls.Clone();
+
+
         }
 
         public override void ResetEffects()
@@ -660,6 +708,26 @@ namespace tsorcRevamp
                     ConsSoulChanceMult += 10;
                     player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
                 }
+                
+                
+                //block souls from going in normal inventory slots (including the cursor)
+                if (!Main.InGuideCraftMenu) {
+                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    if (item.type == ModContent.ItemType<DarkSoul>()) {
+                        //if the player's soul slot is empty
+                        if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
+                            modPlayer.SoulSlot.Item = item.Clone();
+                        }
+                        else {
+                            modPlayer.SoulSlot.Item.stack += item.stack;
+                        }
+                        //dont send the souls to the normal inventory
+                        item.TurnToAir();
+                        if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
+                            Main.mouseItem.TurnToAir();
+                        }
+                    } 
+                }
             }
 
             #endregion
@@ -1130,7 +1198,7 @@ namespace tsorcRevamp
                 if (souldroptimer == 5 && souldroplooptimer < 13)
                 {
                     foreach (Item item in player.inventory)
-                    {
+                    { //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
                         if (item.type == ModContent.ItemType<DarkSoul>() /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
                         { //could this be dropping double though? Test with Zeo
                             Item.NewItem(player.Center, item.type, item.stack);
@@ -1138,6 +1206,19 @@ namespace tsorcRevamp
                             souldroptimer = 0;
                             item.stack = 0;
                         }
+                    }
+
+                    if (SoulSlot.Item.stack > 0) {
+                        if (souldroplooptimer == 12) {
+                            Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
+                            SoulSlot.Item.TurnToAir();
+                            Main.NewText("here");
+                        }
+                        else {
+                            Item.NewItem(player.Center, SoulSlot.Item.type, 0);
+                        }
+                        souldroplooptimer++;
+                        souldroptimer = 0;
                     }
                 }
             }
@@ -1548,7 +1629,11 @@ namespace tsorcRevamp
         public override void PreUpdate()
         {
             //Main.NewText(darkSoulQuantity);
+
             darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
+
+            //the item in the soul slot will only ever be souls, so we dont need to check type
+            if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
 
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -1699,5 +1784,96 @@ namespace tsorcRevamp
         {
             tsorcScriptedEvents.RefreshEvents();
         }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            if (!ShouldDrawSoulSlot()) {
+                return;
+            }
+
+            int mapH = 0;
+            int rX;
+            int rY;
+            float origScale = Main.inventoryScale;
+
+            Main.inventoryScale = 0.85f;
+
+            if (Main.mapEnabled) {
+                if (!Main.mapFullscreen && Main.mapStyle == 1) {
+                    mapH = 256;
+                }
+            }
+
+           
+            if (Main.mapEnabled) {
+                int adjustY = 600;
+
+                if (Main.player[Main.myPlayer].ExtraAccessorySlotsShouldShow) {
+                    adjustY = 610 + PlayerInput.UsingGamepad.ToInt() * 30;
+                }
+
+                if ((mapH + adjustY) > Main.screenHeight) {
+                    mapH = Main.screenHeight - adjustY;
+                }
+            }
+
+            int slotCount = 7 + Main.player[Main.myPlayer].extraAccessorySlots;
+
+            if ((Main.screenHeight < 900) && (slotCount >= 8)) {
+                slotCount = 7;
+            }
+
+            rX = Main.screenWidth - 92 - 14 - (47 * 3) - (int)(Main.extraTexture[58].Width * Main.inventoryScale);
+            rY = (int)(mapH + 174 + 4 + (slotCount - 2) * 56 * Main.inventoryScale);
+            
+
+            SoulSlot.Position = new Vector2(rX, rY);
+
+            SoulSlot.Draw(spriteBatch);
+
+            Main.inventoryScale = origScale;
+
+            SoulSlot.Update();
+        }
+
+
+        #region Soul Slot
+        internal static bool SoulSlotCondition(Item item) {
+            if (item.type != ModContent.ItemType<DarkSoul>()) {
+                return false;
+            }
+            return true;
+        }
+
+        internal void DrawSoulSlotBackground(UIObject sender, SpriteBatch spriteBatch) {
+            UIItemSlot slot = (UIItemSlot)sender;
+
+            if (ShouldDrawSoulSlot()) {
+                slot.OnDrawBackground(spriteBatch);
+
+                if (slot.Item.stack == 0) {
+                    Texture2D tex = mod.GetTexture("UI/SoulSlotBackground");
+                    Vector2 origin = tex.Size() / 2f * Main.inventoryScale;
+                    Vector2 position = slot.Rectangle.TopLeft();
+
+                    spriteBatch.Draw(
+                        tex,
+                        position + (slot.Rectangle.Size() / 2f) - (origin / 2f),
+                        null,
+                        Color.White * 0.35f,
+                        0f,
+                        origin,
+                        Main.inventoryScale,
+                        SpriteEffects.None,
+                        0f); // layer depth 0 = front
+                }
+            }
+        }
+
+        internal static bool ShouldDrawSoulSlot() {
+            return (Main.playerInventory && Main.EquipPage == 0);
+        }
+
+
+        #endregion
     }
 }

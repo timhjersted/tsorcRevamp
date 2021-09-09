@@ -12,6 +12,8 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using static tsorcRevamp.MethodSwaps;
+using System.IO;
+using Terraria.ModLoader.IO;
 
 namespace tsorcRevamp {
 
@@ -535,6 +537,30 @@ namespace tsorcRevamp {
 
             cursor.Next.Next.Operand = int.MaxValue;
         }
+
+        public override void PostDrawInterface(SpriteBatch spriteBatch) {
+            tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.Draw(spriteBatch);
+        }
+
+
+        public override void HandlePacket(BinaryReader reader, int whoAmI) {
+            int message = reader.ReadByte(); //(byte) 1;
+            byte player = reader.ReadByte(); //player.whoAmI;
+            tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+
+            if (message == 1) {
+                modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
+                if (Main.netMode == NetmodeID.Server) {
+                    modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+                }
+            }
+
+            else {
+                Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
+            }
+        }
+
     }
 
     //config moved to separate file
