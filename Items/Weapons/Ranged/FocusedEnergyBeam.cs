@@ -34,8 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("CompactFrame"), 3000);
-            recipe.AddIngredient(mod.GetItem("DestructionElement"), 3000);
+            recipe.AddIngredient(mod.GetItem("CompactFrame"));
+            recipe.AddIngredient(mod.GetItem("DestructionElement"));
             recipe.AddIngredient(ItemID.SpaceGun, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 250000);
 

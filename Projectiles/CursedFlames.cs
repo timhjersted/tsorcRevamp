@@ -11,12 +11,14 @@ namespace tsorcRevamp.Projectiles {
             projectile.height = 20;
             projectile.scale = 1.3f;
             projectile.alpha = 255;
-            projectile.timeLeft = 45;
+            projectile.timeLeft = 100;
             projectile.friendly = true;
-            projectile.light = 0.8f;
             projectile.penetrate = 3;
+            projectile.light = 0.8f;
             projectile.tileCollide = true;
             projectile.magic = true;
+            projectile.usesIDStaticNPCImmunity = true;
+            projectile.idStaticNPCHitCooldown = 4;
         }
 
         public override void AI() {

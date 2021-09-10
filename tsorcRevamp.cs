@@ -825,7 +825,11 @@ namespace tsorcRevamp {
             EnemyPlamaOrb,
             ManaShield,
             CrazedOrb,
-            MasterBuster
+            MasterBuster,
+            AntiMaterialRound,
+            GlaiveBeam,
+            GlaiveBeamItemGlowmask,
+            GlaiveBeamHeldGlowmask
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -839,7 +843,11 @@ namespace tsorcRevamp {
                 {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
                 {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
                 {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
-                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")}
+                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")},
+                {TransparentTextureType.AntiMaterialRound, ModContent.GetTexture("tsorcRevamp/Projectiles/AntiMaterialRound")},
+                {TransparentTextureType.GlaiveBeam, ModContent.GetTexture("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
+                {TransparentTextureType.GlaiveBeamItemGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
+                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")}
             };
 
             //Runs each entry through the XNA's premultiplication function

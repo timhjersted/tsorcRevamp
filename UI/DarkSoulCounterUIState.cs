@@ -52,8 +52,8 @@ namespace tsorcRevamp.UI
         public override void Update(GameTime gameTime)
 		{
 			if (Main.time % 30 == 0) {
-				Main.NewText("config pos " + ConfigInstance.SoulCounterPosX + ", " + ConfigInstance.SoulCounterPosY);
-				Main.NewText("set pos " + (-area.Left.Pixels) + ", " + -(area.Top.Pixels));
+				//Main.NewText("config pos " + ConfigInstance.SoulCounterPosX + ", " + ConfigInstance.SoulCounterPosY);
+				//Main.NewText("set pos " + (-area.Left.Pixels) + ", " + -(area.Top.Pixels));
             }
 			var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
 			var item = ModContent.ItemType<Items.DarkSoul>();

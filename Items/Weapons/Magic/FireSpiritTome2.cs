@@ -32,6 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("FireSpiritTome"), 1);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 45000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

@@ -13,6 +13,8 @@ namespace tsorcRevamp.Projectiles {
 			projectile.friendly = true;
 			projectile.penetrate = 1;
 			projectile.tileCollide = true;
+			projectile.usesIDStaticNPCImmunity = true;
+			projectile.idStaticNPCHitCooldown = 6;
         }
         public override bool PreKill(int timeLeft) {
 			projectile.type = 15;

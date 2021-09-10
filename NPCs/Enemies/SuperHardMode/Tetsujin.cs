@@ -10,13 +10,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 	{
 		public override void SetDefaults()
 		{
-
-
 			npc.npcSlots = 30;
 			Main.npcFrameCount[npc.type] = 2;
-			animationType = 62;
-			npc.width = 100;
-			npc.height = 70;
+			npc.width = 42;
+			npc.height = 42;
 			npc.aiStyle = 22;
 			npc.damage = 165;
 			npc.defense = 190;
@@ -377,9 +374,37 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			}
 			return;
 		}
-		#endregion
-		#region Debuffs
-		public void DamagePlayer(Player player, ref int damage) //hook works!
+        #endregion
+
+        public override void FindFrame(int frameHeight)
+        {
+			int frameSize = 1;
+			if (!Main.dedServ)
+			{
+				frameSize = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+			}
+			if (npc.velocity.X < 0)
+			{
+				npc.spriteDirection = -1;
+			}
+			else
+			{
+				npc.spriteDirection = 1;
+			}
+
+			npc.frameCounter++;
+			if (npc.frameCounter >= 12.0)
+			{
+				npc.frame.Y = npc.frame.Y + frameSize;
+				npc.frameCounter = 0.0;
+			}
+			if (npc.frame.Y >= Main.npcTexture[npc.type].Height)
+			{
+				npc.frame.Y = 0;
+			}
+        }
+        #region Debuffs
+        public void DamagePlayer(Player player, ref int damage) //hook works!
 		{
 
 			if (Main.rand.Next(2) == 0)

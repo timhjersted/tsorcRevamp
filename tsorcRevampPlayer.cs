@@ -286,10 +286,67 @@ namespace tsorcRevamp
         {
             layers.Add(tsorcRevampEffects);
         }
+        public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo)
+        {
+            base.ModifyDrawInfo(ref drawInfo);  
+        }
 
         public static readonly PlayerLayer tsorcRevampEffects = new PlayerLayer("tsorcRevamp", "tsorcRevampEffects", PlayerLayer.MiscEffectsFront, delegate (PlayerDrawInfo drawInfo) {
 
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+
+            #region Glaive Beam HeldItem glowmask and animation
+            //If the player is holding the glaive beam
+            if(modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>()) {
+                //And the projectile that creates the laser exists
+                if (modPlayer.player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0)
+                {
+                    Projectiles.GlaiveBeamLaser heldBeam;
+
+                    //Then find the laser in the projectile array
+                    for (int i = 0; i < Main.projectile.Length; i++)
+                    {
+                        //If it found it, we're in business.
+                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>() && Main.projectile[i].owner == modPlayer.player.whoAmI)
+                        {                            
+                            //Get the transparent texture
+                            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamHeldGlowmask];
+
+                            //Get the animation frame
+                            heldBeam = (Projectiles.GlaiveBeamLaser)Main.projectile[i].modProjectile;
+                            int textureFrames = 10;
+                            int frameHeight = (int)texture.Height / textureFrames;
+                            int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / 300));
+                            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);                            
+
+                            //Get the offsets and shift the draw position based on them
+                            Player drawPlayer = drawInfo.drawPlayer;
+                            float textureMidpoint = texture.Height / (2 * textureFrames);
+                            Vector2 drawPos = drawInfo.itemLocation - Main.screenPosition;
+                            Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
+                            Vector2 originOffset = new Vector2(0, textureMidpoint);
+                            ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
+                            holdOffset.Y = originOffset.Y;
+                            drawPos += holdOffset;
+
+                            //Set the origin based on the offset point
+                            Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
+
+                            //Shift everything if the player is facing the other way
+                            if (drawPlayer.direction == -1)
+                            {
+                                origin.X = texture.Width + originOffset.X;
+                            }
+
+                            ///Draw, partner.
+                            DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.player.HeldItem.scale, drawInfo.spriteEffects, 0);
+                            Main.playerDrawData.Add(data);           
+                            break;
+                        }
+                    }
+                }
+            }
+            #endregion
 
             #region Mana Shield Related Effects
             if (modPlayer.manaShield > 0 && !modPlayer.player.dead)
@@ -316,7 +373,7 @@ namespace tsorcRevamp
                     int frameHeight = texture.Height / shieldFrameCount;
                     int startY = frameHeight * (modPlayer.shieldFrame / 3);
                     Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-                    Color newColor = Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
+                    Color newColor = Color.White;// Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
                     Vector2 origin = sourceRectangle.Size() / 2f;
 
                     DrawData data = new DrawData(texture, new Vector2(drawX, drawY), sourceRectangle, newColor, 0f, origin, shieldScale, SpriteEffects.None, 0);
