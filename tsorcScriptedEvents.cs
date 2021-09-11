@@ -99,7 +99,7 @@ namespace tsorcRevamp
         public static List<ScriptedEvent> ActiveEvents;
         //Stores events that the player has triggered and are no longer active. Upon player death, these will be restored to InactiveEvents.
         public static List<ScriptedEvent> DisabledEvents;
-
+        public static bool hasInitializedScriptedEvents = false;
 
 
 
@@ -296,7 +296,11 @@ namespace tsorcRevamp
         //We could spread the checks out over a full second or longer if we wanted to though, reducing the performance hit to 1/60th what it otherwise would be.
         public static void LoadScriptedEvents(TagCompound tag)
         {
-            InitializeScriptedEvents();
+            if (!hasInitializedScriptedEvents)
+            {
+                InitializeScriptedEvents();
+                hasInitializedScriptedEvents = true;
+            }
 
             if (tag.ContainsKey("event_types"))
             {
@@ -339,6 +343,12 @@ namespace tsorcRevamp
         //int tickSpread = 20;
         public static void PlayerScriptedEventCheck(Player player)
         {
+            if (!hasInitializedScriptedEvents)
+            {
+                InitializeScriptedEvents();
+                hasInitializedScriptedEvents = true;
+            }
+
             //Check if the player is in range of any inactive events
             for (int i = 0; i < InactiveEvents.Count; i++)
             {

@@ -1345,7 +1345,6 @@ namespace tsorcRevamp
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
 
-
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 tsorcScriptedEvents.PlayerScriptedEventCheck(this.player);
@@ -1430,6 +1429,8 @@ namespace tsorcRevamp
             }
             #endregion manashield
         }
+
+
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
