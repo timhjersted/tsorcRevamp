@@ -18,7 +18,9 @@ namespace tsorcRevamp
          * On mod load, that dictionary is loaded into a list: InactiveEvents
          * As the game runs, it checks whether the player entered the activation range for any event.
          * If they have, it is removed from InactiveEvents (meaning it is no longer getting checked) and into ActiveEvents
-         * Once in there, it spawns the specified NPC and watches it. Once it dies, the event removes itself from ActiveEvents.
+         * Once in there, it spawns the specified NPCs and watches them. Once all the NPCs associated with an event die, the event removes itself from ActiveEvents.
+         * If the player dies and respawns, the world is reloaded, or other similar things then the events are all re-added to InactiveEvents and can be activated again
+         * If an event is set to save, however, it will never activate again once the player has finished it.
          * It saves the status of each event in such a way that should make it resistant to corruption due to events being added, changed, or removed.
          * However, since enum names are how it identifies events, if you change one it will reset its save status to 'never run'.
          * 
@@ -78,8 +80,8 @@ namespace tsorcRevamp
          * Then, follow it up with a list of the coordinates of each enemy in the swarm. The coordinates are passed as Vector2's, and an example is the ExampleHarpySwarm
          * 
          * TODO:
-         * Add the ability to pass a list of NPC's and list of Positions, to allow spawning multiple NPC's per event.
-         * Make specifying a NPC to spawn optional. This essentially turns this into a scripting tool, letting us have many of the events that currently occur in sign dialogue occur in-game instead. Examples are many instances of NPC dialogue or boss spawns.
+         * Minibosses
+         * Potentially make it easier to modify enemy projectile damage. Not sure if that's feasable, though.
          * 
          * Another idea: Add the option to spawn particles around the edge of/within the detection range, so that players know it's there and can willingly trigger it (ex, for boss fights so they don't trigger it by accident)
          * 
@@ -151,7 +153,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.ExampleBlackKnightFight, ExampleBlackKnightFight},
                 {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent}
-                //Example 2: {ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
+                //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();

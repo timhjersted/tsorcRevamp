@@ -33,6 +33,7 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.dayTime = false;
 			Main.time = 13000;
+			Main.NewText(player.position / 16);
 			return true;
         }
     }
