@@ -312,9 +312,15 @@ namespace tsorcRevamp
                 for (int i = 0; i < eventTypeStrings.Count; i++)
                 {
                     ScriptedEventType scriptedEventOut;
+
+                    //If it contains a matching event
                     if (Enum.TryParse(eventTypeStrings[i], out scriptedEventOut))
                     {
-                        ScriptedEventValues.Add(scriptedEventOut, event_values[i]);
+                        //And doesn't already contain that key
+                        if (!ScriptedEventValues.ContainsKey(scriptedEventOut))
+                        {
+                            ScriptedEventValues.Add(scriptedEventOut, event_values[i]);
+                        }
                     }
                 }
             }
