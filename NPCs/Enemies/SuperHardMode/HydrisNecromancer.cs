@@ -464,9 +464,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							speedX *= num51;
 							speedY *= num51;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, deathStrikeDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 8;
-							Main.projectile[num54].aiStyle = 23;
+							int num54 = Projectile.NewProjectile(vector8.X + (8 * npc.direction), vector8.Y, speedX, speedY, type, deathStrikeDamage, 0f, Main.myPlayer);
 							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							customAi1 = 1f;
 						}

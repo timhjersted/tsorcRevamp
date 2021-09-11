@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useAnimation = 15;
             item.useTime = 15;
-            item.damage = 45;
+            item.damage = 60;
             item.knockBack = 6;
             item.autoReuse = true;
             item.alpha = 100;
@@ -30,13 +30,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override bool UseItem(Player player) {
             float x = (float)(Main.mouseX + Main.screenPosition.X);
             float y = (float)(Main.mouseY + Main.screenPosition.Y);
-            float speedX = (Main.rand.Next(80) - 40) / 10f;
+            float speedX = (Main.rand.Next(-20, 20) ) / 10f;
             float speedY = 14.9f;
             int type = ProjectileID.Starfury;
             int damage = item.damage;
             float knockback = 3.0f;
             int owner = player.whoAmI;
-            y += -500f;
+            y = player.position.Y - 800f;
 
             for (int i = 0; i < 5; i++) {
                 Projectile.NewProjectile(x + ((i * 40) - 80), y, speedX, speedY, type, damage, knockback, owner);

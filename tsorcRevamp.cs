@@ -12,6 +12,8 @@ using System;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using static tsorcRevamp.MethodSwaps;
+using System.IO;
+using Terraria.ModLoader.IO;
 
 namespace tsorcRevamp {
 
@@ -535,6 +537,30 @@ namespace tsorcRevamp {
 
             cursor.Next.Next.Operand = int.MaxValue;
         }
+
+        public override void PostDrawInterface(SpriteBatch spriteBatch) {
+            tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.Draw(spriteBatch);
+        }
+
+
+        public override void HandlePacket(BinaryReader reader, int whoAmI) {
+            int message = reader.ReadByte(); //(byte) 1;
+            byte player = reader.ReadByte(); //player.whoAmI;
+            tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+
+            if (message == 1) {
+                modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
+                if (Main.netMode == NetmodeID.Server) {
+                    modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
+                }
+            }
+
+            else {
+                Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
+            }
+        }
+
     }
 
     //config moved to separate file
@@ -799,7 +825,11 @@ namespace tsorcRevamp {
             EnemyPlamaOrb,
             ManaShield,
             CrazedOrb,
-            MasterBuster
+            MasterBuster,
+            AntiMaterialRound,
+            GlaiveBeam,
+            GlaiveBeamItemGlowmask,
+            GlaiveBeamHeldGlowmask
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -813,7 +843,11 @@ namespace tsorcRevamp {
                 {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
                 {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
                 {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
-                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")}
+                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")},
+                {TransparentTextureType.AntiMaterialRound, ModContent.GetTexture("tsorcRevamp/Projectiles/AntiMaterialRound")},
+                {TransparentTextureType.GlaiveBeam, ModContent.GetTexture("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
+                {TransparentTextureType.GlaiveBeamItemGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
+                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")}
             };
 
             //Runs each entry through the XNA's premultiplication function

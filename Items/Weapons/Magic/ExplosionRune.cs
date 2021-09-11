@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
         public override void SetDefaults() {
             item.consumable = false;
-            item.damage = 65;
+            item.damage = 40;
             item.height = 28;
             item.knockBack = 4;
             item.rare = ItemRarityID.Orange;

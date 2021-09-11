@@ -8,19 +8,16 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
     public class AntimatRifle : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Antimat Rifle");
-            Tooltip.SetDefault("Unbelievable damage at the cost of a 2.5 second cooldown between shots. \n" +
-                                "Fires piercing high-velocity rounds.\n" +
-                                "Uses Musket Balls as ammo.\n" +
-                                "Musket Ball damage increases with enemy armor.\n" +
-                                "(Does not work in PVP)");
-
+            Tooltip.SetDefault("Unbelievable damage at the cost of a 2.5 second cooldown between shots \n" +
+                                "Fires piercing high-velocity rounds that punch through thin walls\n" +
+                                "Damage increases with enemy armor");
         }
 
         public override void SetDefaults() {
 
             //item.prefixType=96;
             item.autoReuse = true;
-            item.damage = 2000;
+            item.damage = 3000;
             item.width = 78;
             item.height = 26;
             item.knockBack = 5;
@@ -31,13 +28,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useAmmo = AmmoID.Bullet;
             item.ranged = true;
             item.shoot = AmmoID.Bullet;
-            item.shootSpeed = 20;
+            item.shootSpeed = 10;
             //item.pretendType=96;
             item.useAnimation = 150;
             item.useTime = 150;
             item.UseSound = SoundID.Item36;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 25000000;
+            item.value = 1000000;
         }
 
         public override void AddRecipes() {
@@ -54,6 +51,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
+        public override void HoldItem(Player player)
+        {
+            player.scope = true;
+        }
 
         public override void UseStyle(Player player) {
             float backX = 24f; // move the weapon back
@@ -64,9 +65,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             player.itemLocation.X = player.itemLocation.X - backX * cosRot * player.direction - downY * sinRot * player.gravDir;
             player.itemLocation.Y = player.itemLocation.Y - backX * sinRot * player.direction + downY * cosRot * player.gravDir;
         }
-        public override bool Shoot(Player P, ref Vector2 Pos, ref float speedX, ref float speedY, ref int type, ref int DMG, ref float KB) {//as usual, ty Yoraiz0r
-            if (type == AmmoID.Bullet) { type = mod.ProjectileType("AntiMaterialRound"); }
+        public override bool Shoot(Player P, ref Vector2 Pos, ref float speedX, ref float speedY, ref int type, ref int DMG, ref float KB) {
 
+            type = ModContent.ProjectileType<Projectiles.AntiMaterialRound>();
             Projectile.NewProjectile(Pos.X, Pos.Y, speedX, speedY, type, DMG, KB, P.whoAmI);
             return false;
         }

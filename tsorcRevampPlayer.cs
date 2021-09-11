@@ -14,6 +14,8 @@ using tsorcRevamp.Buffs;
 using System;
 using tsorcRevamp.UI;
 using Microsoft.Xna.Framework.Graphics;
+using TerraUI.Objects;
+using Terraria.UI;
 
 namespace tsorcRevamp
 {
@@ -126,6 +128,8 @@ namespace tsorcRevamp
         //increased grab range immediately after killing a boss
         public int bossMagnetTimer;
         public bool bossMagnet;
+
+        public UIItemSlot SoulSlot;
         public override void Initialize()
         {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
@@ -134,6 +138,43 @@ namespace tsorcRevamp
                 { 76, 4 }, //hellstone
                 { 232, 4 } //wooden spike, in case tim decides to use them
             };
+
+            SoulSlot = new UIItemSlot(Vector2.Zero, 52, ItemSlot.Context.InventoryItem, "Dark Souls", null, SoulSlotCondition, DrawSoulSlotBackground, null, null, false, true);
+            SoulSlot.BackOpacity = 0.8f;
+            SoulSlot.Item = new Item();
+            SoulSlot.Item.SetDefaults(0, true);
+        }
+
+        public override void clientClone(ModPlayer clientClone) {
+            tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
+            if (clone == null) { return; }
+
+            clone.SoulSlot.Item = SoulSlot.Item.Clone();
+        }
+
+        public override void SendClientChanges(ModPlayer clientPlayer) {
+            tsorcRevampPlayer oldClone = clientPlayer as tsorcRevampPlayer;
+            if (oldClone == null) { return; }
+
+            if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item)) {
+                SendSingleItemPacket(1, SoulSlot.Item, -1, player.whoAmI);
+            }
+        }
+
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+            ModPacket packet = mod.GetPacket();
+            packet.Write((byte)1);
+            packet.Write((byte)player.whoAmI);
+            ItemIO.Send(SoulSlot.Item, packet);
+            packet.Send(toWho, fromWho);
+        }
+
+        internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho) {
+            ModPacket packet = mod.GetPacket();
+            packet.Write((byte)message);
+            packet.Write((byte)player.whoAmI);
+            ItemIO.Send(item, packet);
+            packet.Send(toWho, fromWho);
         }
 
         public override TagCompound Save()
@@ -148,6 +189,8 @@ namespace tsorcRevamp
             {"townWarpWorld", townWarpWorld},
             {"townWarpSet", townWarpSet},
             {"gotPickaxe", gotPickaxe},
+
+            {"soulSlot", ItemIO.Save(SoulSlot.Item) }
             };
 
         }
@@ -163,6 +206,11 @@ namespace tsorcRevamp
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
             gotPickaxe = tag.GetBool("gotPickaxe");
+
+            Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
+            SoulSlot.Item = soulSlotSouls.Clone();
+
+
         }
 
         public override void ResetEffects()
@@ -238,10 +286,67 @@ namespace tsorcRevamp
         {
             layers.Add(tsorcRevampEffects);
         }
+        public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo)
+        {
+            base.ModifyDrawInfo(ref drawInfo);  
+        }
 
         public static readonly PlayerLayer tsorcRevampEffects = new PlayerLayer("tsorcRevamp", "tsorcRevampEffects", PlayerLayer.MiscEffectsFront, delegate (PlayerDrawInfo drawInfo) {
 
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+
+            #region Glaive Beam HeldItem glowmask and animation
+            //If the player is holding the glaive beam
+            if(modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>()) {
+                //And the projectile that creates the laser exists
+                if (modPlayer.player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0)
+                {
+                    Projectiles.GlaiveBeamLaser heldBeam;
+
+                    //Then find the laser in the projectile array
+                    for (int i = 0; i < Main.projectile.Length; i++)
+                    {
+                        //If it found it, we're in business.
+                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>() && Main.projectile[i].owner == modPlayer.player.whoAmI)
+                        {                            
+                            //Get the transparent texture
+                            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamHeldGlowmask];
+
+                            //Get the animation frame
+                            heldBeam = (Projectiles.GlaiveBeamLaser)Main.projectile[i].modProjectile;
+                            int textureFrames = 10;
+                            int frameHeight = (int)texture.Height / textureFrames;
+                            int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / 300));
+                            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);                            
+
+                            //Get the offsets and shift the draw position based on them
+                            Player drawPlayer = drawInfo.drawPlayer;
+                            float textureMidpoint = texture.Height / (2 * textureFrames);
+                            Vector2 drawPos = drawInfo.itemLocation - Main.screenPosition;
+                            Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
+                            Vector2 originOffset = new Vector2(0, textureMidpoint);
+                            ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
+                            holdOffset.Y = originOffset.Y;
+                            drawPos += holdOffset;
+
+                            //Set the origin based on the offset point
+                            Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
+
+                            //Shift everything if the player is facing the other way
+                            if (drawPlayer.direction == -1)
+                            {
+                                origin.X = texture.Width + originOffset.X;
+                            }
+
+                            ///Draw, partner.
+                            DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.player.HeldItem.scale, drawInfo.spriteEffects, 0);
+                            Main.playerDrawData.Add(data);           
+                            break;
+                        }
+                    }
+                }
+            }
+            #endregion
 
             #region Mana Shield Related Effects
             if (modPlayer.manaShield > 0 && !modPlayer.player.dead)
@@ -268,7 +373,7 @@ namespace tsorcRevamp
                     int frameHeight = texture.Height / shieldFrameCount;
                     int startY = frameHeight * (modPlayer.shieldFrame / 3);
                     Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-                    Color newColor = Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
+                    Color newColor = Color.White;// Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
                     Vector2 origin = sourceRectangle.Size() / 2f;
 
                     DrawData data = new DrawData(texture, new Vector2(drawX, drawY), sourceRectangle, newColor, 0f, origin, shieldScale, SpriteEffects.None, 0);
@@ -313,356 +418,29 @@ namespace tsorcRevamp
 
                 player.gravControl = true;
             }
-            #region Permanent Potions
+
 
             foreach (Item item in player.inventory)
             {
-                if (item.type == ModContent.ItemType<PermanentObsidianSkinPotion>() && PermanentBuffToggles[0])
-                {
-                    player.lavaImmune = true;
-                    player.fireWalk = true;
-                    player.buffImmune[BuffID.OnFire] = true;
-                    player.buffImmune[BuffID.ObsidianSkin] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentRegenerationPotion>() && PermanentBuffToggles[1])
-                {
-                    player.lifeRegen += 4;
-                    player.buffImmune[BuffID.Regeneration] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentSwiftnessPotion>() && PermanentBuffToggles[2])
-                {
-                    player.moveSpeed += 0.25f;
-                    player.buffImmune[BuffID.Swiftness] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentGillsPotion>() && PermanentBuffToggles[3])
-                {
-                    player.gills = true;
-                    player.buffImmune[BuffID.Gills] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentIronskinPotion>() && PermanentBuffToggles[4])
-                {
-                    player.statDefense += 8;
-                    player.buffImmune[BuffID.Ironskin] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentManaRegenerationPotion>() && PermanentBuffToggles[5])
-                {
-                    if (manaShield == 0)
-                    {
-                        player.manaRegenBuff = true;
-                    }
-                    player.buffImmune[BuffID.ManaRegeneration] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentMagicPowerPotion>() && PermanentBuffToggles[6])
-                {
-                    player.magicDamage += 0.2f;
-                    player.buffImmune[BuffID.MagicPower] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFeatherfallPotion>() && PermanentBuffToggles[7])
-                {
-                    player.slowFall = true;
-                    player.buffImmune[BuffID.Featherfall] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentSpelunkerPotion>() && PermanentBuffToggles[8])
-                {
-                    player.findTreasure = true;
-                    player.buffImmune[BuffID.Spelunker] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentInvisibilityPotion>() && PermanentBuffToggles[9])
-                {
-                    player.invis = true;
-                    player.buffImmune[BuffID.Invisibility] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentShinePotion>() && PermanentBuffToggles[10])
-                {
-                    Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
-                    player.buffImmune[BuffID.Shine] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentNightOwlPotion>() && PermanentBuffToggles[11])
-                {
-                    player.nightVision = true;
-                    player.buffImmune[BuffID.NightOwl] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentBattlePotion>() && PermanentBuffToggles[12])
-                {
-                    player.enemySpawns = true;
-                    player.buffImmune[BuffID.Battle] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentThornsPotion>() && PermanentBuffToggles[13])
-                {
-                    player.thorns += 1f;
-                    player.buffImmune[BuffID.Thorns] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentWaterWalkingPotion>() && PermanentBuffToggles[14])
-                {
-                    player.waterWalk = true;
-                    player.buffImmune[BuffID.WaterWalking] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentArcheryPotion>() && PermanentBuffToggles[15])
-                {
-                    player.archery = true;
-                    player.buffImmune[BuffID.Archery] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentHunterPotion>() && PermanentBuffToggles[16])
-                {
-                    player.detectCreature = true;
-                    player.buffImmune[BuffID.Hunter] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentGravitationPotion>() && PermanentBuffToggles[17])
-                {
-                    player.gravControl = true;
-                    player.buffImmune[BuffID.Gravitation] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentAle>() && PermanentBuffToggles[18])
-                {
-                    player.statDefense -= 4;
-                    player.meleeDamage += 0.1f;
-                    player.meleeCrit += 2;
-                    player.meleeSpeed += 0.1f;
-                    player.buffImmune[BuffID.Tipsy] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfVenom>() && PermanentBuffToggles[19])
-                {
-                    player.meleeEnchant = 1;
-                    player.buffImmune[BuffID.WeaponImbueVenom] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfCursedFlames>() && PermanentBuffToggles[20])
-                {
-                    player.meleeEnchant = 2;
-                    player.buffImmune[BuffID.WeaponImbueCursedFlames] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfFire>() && PermanentBuffToggles[21])
-                {
-                    player.meleeEnchant = 3;
-                    player.buffImmune[BuffID.WeaponImbueFire] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfGold>() && PermanentBuffToggles[22])
-                {
-                    player.meleeEnchant = 4;
-                    player.buffImmune[BuffID.WeaponImbueGold] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfIchor>() && PermanentBuffToggles[23])
-                {
-                    player.meleeEnchant = 5;
-                    player.buffImmune[BuffID.WeaponImbueIchor] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfNanites>() && PermanentBuffToggles[24])
-                {
-                    player.meleeEnchant = 6;
-                    player.buffImmune[BuffID.WeaponImbueNanites] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfParty>() && PermanentBuffToggles[25])
-                {
-                    player.meleeEnchant = 7;
-                    player.buffImmune[BuffID.WeaponImbueConfetti] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlaskOfPoison>() && PermanentBuffToggles[26])
-                {
-                    player.meleeEnchant = 8;
-                    player.buffImmune[BuffID.WeaponImbuePoison] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentMiningPotion>() && PermanentBuffToggles[27])
-                {
-                    player.pickSpeed -= 0.25f;
-                    player.buffImmune[BuffID.Mining] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentHeartreachPotion>() && PermanentBuffToggles[28])
-                {
-                    player.lifeMagnet = true;
-                    player.buffImmune[BuffID.Heartreach] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentCalmingPotion>() && PermanentBuffToggles[29])
-                {
-                    player.calmed = true;
-                    player.buffImmune[BuffID.Calm] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentBuilderPotion>() && PermanentBuffToggles[30])
-                {
-                    player.tileSpeed += 0.25f;
-                    player.wallSpeed += 0.25f;
-                    player.blockRange++;
-                    player.buffImmune[BuffID.Builder] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentTitanPotion>() && PermanentBuffToggles[31])
-                {
-                    player.kbBuff = true;
-                    player.buffImmune[BuffID.Titan] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFlipperPotion>() && PermanentBuffToggles[32])
-                {
-                    player.accFlipper = true;
-                    player.ignoreWater = true;
-                    player.buffImmune[BuffID.Flipper] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentSummoningPotion>() && PermanentBuffToggles[33])
-                {
-                    player.maxMinions++;
-                    player.buffImmune[BuffID.Summoning] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentDangersensePotion>() && PermanentBuffToggles[34])
-                {
-                    player.dangerSense = true;
-                    player.buffImmune[BuffID.Dangersense] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentAmmoReservationPotion>() && PermanentBuffToggles[35])
-                {
-                    player.ammoPotion = true;
-                    player.buffImmune[BuffID.AmmoReservation] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentLifeforcePotion>() && PermanentBuffToggles[36])
-                {
-                    player.lifeForce = true;
-                    player.statLifeMax2 += player.statLifeMax / 5 / 20 * 20;
-                    player.buffImmune[BuffID.Lifeforce] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentEndurancePotion>() && PermanentBuffToggles[37])
-                {
-                    player.endurance += 0.1f;
-                    player.buffImmune[BuffID.Endurance] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentRagePotion>() && PermanentBuffToggles[38])
-                {
-                    player.magicCrit += 10;
-                    player.meleeCrit += 10;
-                    player.rangedCrit += 10;
-                    player.thrownCrit += 10;
-                    player.buffImmune[BuffID.Rage] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentInfernoPotion>() && PermanentBuffToggles[39])
-                {
-                    player.buffImmune[BuffID.Inferno] = true;
-                    player.inferno = true;
-                    Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.65f, 0.4f, 0.1f);
-                    int num = 24;
-                    float num12 = 200f;
-                    bool flag = player.infernoCounter % 60 == 0;
-                    int damage = 10;
-                    if (player.whoAmI == Main.myPlayer)
-                    {
-                        for (int l = 0; l < 200; l++)
-                        {
-                            NPC nPC = Main.npc[l];
-                            if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[num] && Vector2.Distance(player.Center, nPC.Center) <= num12)
-                            {
-                                if (nPC.FindBuffIndex(num) == -1)
-                                {
-                                    nPC.AddBuff(num, 120);
-                                }
-                                if (flag)
-                                {
-                                    player.ApplyDamageToNPC(nPC, damage, 0f, 0, crit: false);
-                                }
-                            }
+                //block souls from going in normal inventory slots (including the cursor)
+                if (!Main.InGuideCraftMenu) {
+                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    if (item.type == ModContent.ItemType<DarkSoul>()) {
+                        //if the player's soul slot is empty
+                        if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
+                            modPlayer.SoulSlot.Item = item.Clone();
                         }
-                        if (Main.netMode != NetmodeID.SinglePlayer && player.hostile)
-                        {
-                            for (int m = 0; m < 255; m++)
-                            {
-                                Player player = Main.player[m];
-                                if (player != base.player && player.active && !player.dead && player.hostile && !player.buffImmune[24] && (player.team != base.player.team || player.team == 0) && Vector2.DistanceSquared(base.player.Center, player.Center) <= num)
-                                {
-                                    if (player.FindBuffIndex(num) == -1)
-                                    {
-                                        player.AddBuff(num, 120);
-                                    }
-                                    if (flag)
-                                    {
-                                        player.Hurt(PlayerDeathReason.LegacyEmpty(), damage, 0, pvp: true);
-                                        if (Main.netMode != NetmodeID.SinglePlayer)
-                                        {
-                                            PlayerDeathReason reason = PlayerDeathReason.ByPlayer(player.whoAmI);
-                                            NetMessage.SendPlayerHurt(m, reason, damage, 0, critical: false, pvp: true, 0);
-                                        }
-                                    }
-                                }
-                            }
+                        else {
+                            modPlayer.SoulSlot.Item.stack += item.stack;
                         }
-                    }
-                }
-                if (item.type == ModContent.ItemType<PermanentWrathPotion>() && PermanentBuffToggles[40])
-                {
-                    player.allDamage += 0.1f;
-                    player.buffImmune[BuffID.Wrath] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentFishingPotion>() && PermanentBuffToggles[41])
-                {
-                    player.fishingSkill += 15;
-                    player.buffImmune[BuffID.Fishing] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentSonarPotion>() && PermanentBuffToggles[42])
-                {
-                    player.sonarPotion = true;
-                    player.buffImmune[BuffID.Sonar] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentCratePotion>() && PermanentBuffToggles[43])
-                {
-                    player.cratePotion = true;
-                    player.buffImmune[BuffID.Crate] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentWarmthPotion>() && PermanentBuffToggles[44])
-                {
-                    player.resistCold = true;
-                    player.buffImmune[BuffID.Warmth] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentArmorDrug>() && PermanentBuffToggles[45])
-                {
-                    player.statDefense += 13;
-                    player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentBattlefrontPotion>() && PermanentBuffToggles[46])
-                {
-                    player.statDefense += 8;
-                    player.allDamage += 0.2f;
-                    player.magicCrit += 5;
-                    player.meleeCrit += 5;
-                    player.rangedCrit += 5;
-                    player.meleeSpeed += 0.2f;
-                    player.pickSpeed += 0.2f;
-                    player.thorns += 1f;
-                    player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentBoostPotion>() && PermanentBuffToggles[47])
-                {
-                    player.magicCrit += 5;
-                    player.meleeCrit += 5;
-                    player.rangedCrit += 5;
-                    player.buffImmune[ModContent.BuffType<Boost>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentCrimsonPotion>() && PermanentBuffToggles[48])
-                {
-                    CrimsonDrain = true;
-                    player.buffImmune[ModContent.BuffType<CrimsonDrain>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentDemonDrug>() && PermanentBuffToggles[49])
-                {
-                    player.allDamage += 0.2f;
-                    player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentShockwavePotion>() && PermanentBuffToggles[50])
-                {
-                    Shockwave = true;
-                    player.buffImmune[ModContent.BuffType<Shockwave>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentStrengthPotion>() && PermanentBuffToggles[51])
-                {
-                    player.statDefense += 15;
-                    player.allDamage += 0.15f;
-                    player.meleeSpeed += 0.15f;
-                    player.pickSpeed += 0.15f;
-                    player.magicCrit += 2;
-                    player.meleeCrit += 2;
-                    player.rangedCrit += 2;
-                    player.buffImmune[ModContent.BuffType<Strength>()] = true;
-                }
-                if (item.type == ModContent.ItemType<PermanentSoulSiphonPotion>() && PermanentBuffToggles[52])
-                {
-                    SoulSiphon = true;
-                    SoulReaper += 5;
-                    ConsSoulChanceMult += 10;
-                    player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
+                        //dont send the souls to the normal inventory
+                        item.TurnToAir();
+                        if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
+                            Main.mouseItem.TurnToAir();
+                        }
+                    } 
                 }
             }
-
-            #endregion
 
 
             if (Shockwave)
@@ -1130,7 +908,7 @@ namespace tsorcRevamp
                 if (souldroptimer == 5 && souldroplooptimer < 13)
                 {
                     foreach (Item item in player.inventory)
-                    {
+                    { //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
                         if (item.type == ModContent.ItemType<DarkSoul>() /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
                         { //could this be dropping double though? Test with Zeo
                             Item.NewItem(player.Center, item.type, item.stack);
@@ -1138,6 +916,19 @@ namespace tsorcRevamp
                             souldroptimer = 0;
                             item.stack = 0;
                         }
+                    }
+
+                    if (SoulSlot.Item.stack > 0) {
+                        if (souldroplooptimer == 12) {
+                            Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
+                            SoulSlot.Item.TurnToAir();
+                            Main.NewText("here");
+                        }
+                        else {
+                            Item.NewItem(player.Center, SoulSlot.Item.type, 0);
+                        }
+                        souldroplooptimer++;
+                        souldroptimer = 0;
                     }
                 }
             }
@@ -1548,7 +1339,11 @@ namespace tsorcRevamp
         public override void PreUpdate()
         {
             //Main.NewText(darkSoulQuantity);
+
             darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
+
+            //the item in the soul slot will only ever be souls, so we dont need to check type
+            if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
 
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -1699,5 +1494,96 @@ namespace tsorcRevamp
         {
             tsorcScriptedEvents.RefreshEvents();
         }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            if (!ShouldDrawSoulSlot()) {
+                return;
+            }
+
+            int mapH = 0;
+            int rX;
+            int rY;
+            float origScale = Main.inventoryScale;
+
+            Main.inventoryScale = 0.85f;
+
+            if (Main.mapEnabled) {
+                if (!Main.mapFullscreen && Main.mapStyle == 1) {
+                    mapH = 256;
+                }
+            }
+
+           
+            if (Main.mapEnabled) {
+                int adjustY = 600;
+
+                if (Main.player[Main.myPlayer].ExtraAccessorySlotsShouldShow) {
+                    adjustY = 610 + PlayerInput.UsingGamepad.ToInt() * 30;
+                }
+
+                if ((mapH + adjustY) > Main.screenHeight) {
+                    mapH = Main.screenHeight - adjustY;
+                }
+            }
+
+            int slotCount = 7 + Main.player[Main.myPlayer].extraAccessorySlots;
+
+            if ((Main.screenHeight < 900) && (slotCount >= 8)) {
+                slotCount = 7;
+            }
+
+            rX = Main.screenWidth - 92 - 14 - (47 * 3) - (int)(Main.extraTexture[58].Width * Main.inventoryScale);
+            rY = (int)(mapH + 174 + 4 + (slotCount - 2) * 56 * Main.inventoryScale);
+            
+
+            SoulSlot.Position = new Vector2(rX, rY);
+
+            SoulSlot.Draw(spriteBatch);
+
+            Main.inventoryScale = origScale;
+
+            SoulSlot.Update();
+        }
+
+
+        #region Soul Slot
+        internal static bool SoulSlotCondition(Item item) {
+            if (item.type != ModContent.ItemType<DarkSoul>()) {
+                return false;
+            }
+            return true;
+        }
+
+        internal void DrawSoulSlotBackground(UIObject sender, SpriteBatch spriteBatch) {
+            UIItemSlot slot = (UIItemSlot)sender;
+
+            if (ShouldDrawSoulSlot()) {
+                slot.OnDrawBackground(spriteBatch);
+
+                if (slot.Item.stack == 0) {
+                    Texture2D tex = mod.GetTexture("UI/SoulSlotBackground");
+                    Vector2 origin = tex.Size() / 2f * Main.inventoryScale;
+                    Vector2 position = slot.Rectangle.TopLeft();
+
+                    spriteBatch.Draw(
+                        tex,
+                        position + (slot.Rectangle.Size() / 2f) - (origin / 2f),
+                        null,
+                        Color.White * 0.35f,
+                        0f,
+                        origin,
+                        Main.inventoryScale,
+                        SpriteEffects.None,
+                        0f); // layer depth 0 = front
+                }
+            }
+        }
+
+        internal static bool ShouldDrawSoulSlot() {
+            return (Main.playerInventory && Main.EquipPage == 0);
+        }
+
+
+        #endregion
     }
 }

@@ -16,7 +16,8 @@ namespace tsorcRevamp.Projectiles {
             projectile.tileCollide = true;
             projectile.ignoreWater = false;
             projectile.friendly = true;
-            projectile.penetrate = 10;
+            projectile.usesLocalNPCImmunity = true;
+            projectile.localNPCHitCooldown = 60;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {

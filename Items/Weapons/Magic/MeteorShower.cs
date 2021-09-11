@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item8;
             item.rare = ItemRarityID.LightRed;
             item.knockBack = 3;
-            item.mana = 5;
-            item.damage = 50;
+            item.mana = 10;
+            item.damage = 40;
             item.autoReuse = true;
             item.noMelee = true;
             item.value = 100000;
@@ -36,11 +36,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player) {
+        public override bool UseItem(Player player)
+        {
             Projectile.NewProjectile(
                 (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),
-                (float)(Main.mouseY + Main.screenPosition.Y) - 500.0f,
-                (float)(-40 + Main.rand.Next(80)) / 10,
+                (float)player.position.Y - 800.0f,
+                (float)(Main.rand.Next(-40, 40)) / 10,
                 14.9f,
                 ModContent.ProjectileType<Projectiles.MeteorShower>(),
                 50,

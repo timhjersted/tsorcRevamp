@@ -95,11 +95,11 @@ namespace tsorcRevamp.Projectiles {
                         projectile.velocity.Y = num62;
                         if (projectile.velocity.X == 0f && projectile.velocity.Y == 0f) {
                             projectile.Kill();
-                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), 33, 8f, projectile.owner);
-                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), 33, 8f, projectile.owner);
-                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), 33, 8f, projectile.owner);
-                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<Explosion>(), 33, 8f, projectile.owner);
-                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<Explosion>(), 33, 8f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), projectile.damage, 8f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), projectile.damage, 8f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<Explosion>(), projectile.damage, 8f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<Explosion>(), projectile.damage, 8f, projectile.owner);
+                            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<Explosion>(), projectile.damage, 8f, projectile.owner);
                         }
                     }
                 }

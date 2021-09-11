@@ -43,6 +43,12 @@ namespace tsorcRevamp {
         //todo before release, set this to constant and comment out the legacy mode block
         public bool LegacyMode { get; set; }
 
+        [Label("Boss Zen")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Boss Zen disables enemy spawns while a boss is alive.\nDefaults to On")]
+        [DefaultValue(true)]
+        public bool BossZenConfig { get; set; }
+
 
         [Header("Options")]
         [Label("Miakoda Volume")]
@@ -51,10 +57,23 @@ namespace tsorcRevamp {
         [DefaultValue(100)]
         public uint MiakodaVolume;
 
-        [Label("Boss Zen")]
+        
+
+        [Label("Soul Counter X position")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Boss Zen disables enemy spawns while a boss is alive.\nDefaults to On")]
-        [DefaultValue(true)]
-        public bool BossZenConfig { get; set; }
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 3840)]
+        [DefaultValue(220)]
+        [Tooltip("The X position of the Soul Counter.")]
+        public int SoulCounterPosX { get; set; }
+
+        [Label("Soul Counter Y position")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 2160)]
+        [DefaultValue(70)]
+        [Tooltip("The Y position of the Soul Counter.")]
+        public int SoulCounterPosY { get; set; }
+
     }
 }
