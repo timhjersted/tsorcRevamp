@@ -63,7 +63,7 @@ namespace tsorcRevamp
         private static void InitializeScriptedEvents()
         {
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false);
-            ScriptedEvent ArtoriasEvent = new ScriptedEvent(ArtoriasCustomCondition, new Vector2(556, 867), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Blue, false, ArtoriasCustomAction, false);
+            ScriptedEvent ArtoriasEvent = new ScriptedEvent(ArtoriasCustomCondition, new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Blue, false, ArtoriasCustomAction, false);
             //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
 
 
