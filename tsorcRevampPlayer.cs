@@ -16,6 +16,7 @@ using tsorcRevamp.UI;
 using Microsoft.Xna.Framework.Graphics;
 using TerraUI.Objects;
 using Terraria.UI;
+using ReLogic.Graphics;
 
 namespace tsorcRevamp
 {
@@ -420,26 +421,21 @@ namespace tsorcRevamp
             }
 
 
-            foreach (Item item in player.inventory)
-            {
-                //block souls from going in normal inventory slots (including the cursor)
-                if (!Main.InGuideCraftMenu) {
-                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                    if (item.type == ModContent.ItemType<DarkSoul>()) {
-                        //if the player's soul slot is empty
-                        if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
-                            modPlayer.SoulSlot.Item = item.Clone();
-                        }
-                        else {
-                            modPlayer.SoulSlot.Item.stack += item.stack;
-                        }
-                        //dont send the souls to the normal inventory
-                        item.TurnToAir();
-                        if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
-                            Main.mouseItem.TurnToAir();
-                        }
-                    } 
+            for (int i = 0; i < 50; i++) {
+                //block souls from going in normal inventory slots
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                if (player.inventory[i].type == ModContent.ItemType<DarkSoul>()) {
+                    //if the player's soul slot is empty
+                    if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
+                        modPlayer.SoulSlot.Item = player.inventory[i].Clone();
+                    }
+                    else {
+                        modPlayer.SoulSlot.Item.stack += player.inventory[i].stack;
+                    }
+                    //dont send the souls to the normal inventory
+                    player.inventory[i].TurnToAir();
                 }
+
             }
 
 
@@ -1501,49 +1497,23 @@ namespace tsorcRevamp
                 return;
             }
 
-            int mapH = 0;
-            int rX;
-            int rY;
             float origScale = Main.inventoryScale;
-
             Main.inventoryScale = 0.85f;
 
-            if (Main.mapEnabled) {
-                if (!Main.mapFullscreen && Main.mapStyle == 1) {
-                    mapH = 256;
-                }
-            }
+            int slotIndexX = 11;
+            int slotIndexY = 0;
+            int slotPosX = (int)(20f + (float)(slotIndexX * 56) * Main.inventoryScale);
+            int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
 
-           
-            if (Main.mapEnabled) {
-                int adjustY = 600;
-
-                if (Main.player[Main.myPlayer].ExtraAccessorySlotsShouldShow) {
-                    adjustY = 610 + PlayerInput.UsingGamepad.ToInt() * 30;
-                }
-
-                if ((mapH + adjustY) > Main.screenHeight) {
-                    mapH = Main.screenHeight - adjustY;
-                }
-            }
-
-            int slotCount = 7 + Main.player[Main.myPlayer].extraAccessorySlots;
-
-            if ((Main.screenHeight < 900) && (slotCount >= 8)) {
-                slotCount = 7;
-            }
-
-            rX = Main.screenWidth - 92 - 14 - (47 * 3) - (int)(Main.extraTexture[58].Width * Main.inventoryScale);
-            rY = (int)(mapH + 174 + 4 + (slotCount - 2) * 56 * Main.inventoryScale);
-            
-
-            SoulSlot.Position = new Vector2(rX, rY);
+            SoulSlot.Position = new Vector2(slotPosX, slotPosY);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, "Souls", new Vector2(slotPosX + 6f, slotPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0f);
 
             SoulSlot.Draw(spriteBatch);
 
             Main.inventoryScale = origScale;
 
             SoulSlot.Update();
+
         }
 
 
@@ -1581,7 +1551,7 @@ namespace tsorcRevamp
         }
 
         internal static bool ShouldDrawSoulSlot() {
-            return (Main.playerInventory && Main.EquipPage == 0);
+            return (Main.playerInventory);
         }
 
 
