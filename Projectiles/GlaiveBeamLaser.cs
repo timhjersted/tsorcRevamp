@@ -55,7 +55,9 @@ namespace tsorcRevamp.Projectiles {
 
 
         //Moves the centerpoint of the beam so it's always aligned with the sprite
-        //Was there a better way to do this? Probably. This works though.
+        //Kinda hacky, required manually tuning it.
+        //There was a better way to do it, which I learned later when drawing the glowmasks.
+        //Might go back and change this to use that code for this at some point. It works for now, though.
         private Vector2 GetOrigin()
         {
             Vector2 origin = Main.player[projectile.owner].Center;
@@ -101,10 +103,6 @@ namespace tsorcRevamp.Projectiles {
 
             if (IsAtMaxCharge && FiringTimeLeft > 0) {
                 float scale = 0.4f;
-
-                #region Beam offset code
-               
-                #endregion
 
                 DrawLaser(spriteBatch, texture, GetOrigin(),
                     projectile.velocity, 28 * scale, projectile.damage, -1.57f, scale, 2000f, Color.White, (int)MOVE_DISTANCE);
@@ -273,7 +271,7 @@ namespace tsorcRevamp.Projectiles {
                     //Only play the sound once, on the frame it hits max charge
                     if(Charge == MAX_CHARGE)
                     {
-                        Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GlaiveBeam"));
+                        Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GlaiveBeam").WithVolume(50f));
                         FiringTimeLeft = FIRING_TIME;
                     }
                 }

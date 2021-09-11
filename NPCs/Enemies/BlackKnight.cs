@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			spearDamage = (int)(spearDamage / 2);
 		}
 
-		int spearDamage = 50;
+		public int spearDamage = 50;
 
 		float customAi1;
 

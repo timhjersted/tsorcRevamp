@@ -9,13 +9,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("A legendary weapon of war from beyond the stars\n" +
-                               "Fabled to take out entire ships with a single blast");
+                               "Fabled to cut entire ships in half with a single blast");
         }
         public override void SetDefaults() {
             //item.CloneDefaults(ItemID.LastPrism);
             item.mana = 0;
             item.magic = false;
-            item.damage = 1000;
+            item.damage = 850;
             item.noMelee = true;
             item.ranged = true;
             item.height = 28;
@@ -37,10 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamHoldout>()] <= 0;
         }
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
-        {
-            return true;
-        }
+
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamItemGlowmask];
@@ -52,16 +49,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
 
             return new Vector2(-18, -10);
-        }
-
-        public override void HoldStyle(Player player)
-        {
-            base.HoldStyle(player);
-        }
-
-        public override void UseStyle(Player player)
-        {
-            base.UseStyle(player);
         }
 
         public override void AddRecipes() {

@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             music = 12;
             npc.damage = 105;
             npc.defense = 160;
-            npc.lifeMax = 96000;
+            npc.lifeMax = 300000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 670000;

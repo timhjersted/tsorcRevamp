@@ -29,18 +29,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
 		}
 
-		int holdBallDamage = 20;
-		int energyBallDamage = 30;
-		int lightPillarDamage = 75;
-		int blackBreathDamage = 35;
-		int lightning3Damage = 25;
-		int ice3Damage = 25;
-		int phantomSeekerDamage = 40;
-		int lightning4Damage = 40;
-		int shardsDamage = 40;
-		int iceStormDamage = 30;
+		public int holdBallDamage = 20;
+		public int energyBallDamage = 30;
+		public int lightPillarDamage = 75;
+		public int blackBreathDamage = 35;
+		public int lightning3Damage = 25;
+		public int ice3Damage = 25;
+		public int phantomSeekerDamage = 40;
+		public int lightning4Damage = 40;
+		public int shardsDamage = 40;
+		public int iceStormDamage = 30;
 		//This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
-		int gravityBallDamage = 0;
+		public int gravityBallDamage = 0;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
