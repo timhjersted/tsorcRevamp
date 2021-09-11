@@ -45,6 +45,7 @@ namespace tsorcRevamp {
                     tsorcRevampWorld.CampfireToBonfire();
                 }
             }
+                tsorcScriptedEvents.InitializeScriptedEvents();
         }
 
 		public override TagCompound Save() {

@@ -99,7 +99,6 @@ namespace tsorcRevamp
         public static List<ScriptedEvent> ActiveEvents;
         //Stores events that the player has triggered and are no longer active. Upon player death, these will be restored to InactiveEvents.
         public static List<ScriptedEvent> DisabledEvents;
-        public static bool hasInitializedScriptedEvents = false;
 
 
 
@@ -120,7 +119,7 @@ namespace tsorcRevamp
 
         //Contains all the info defining each scripted event, and loads it all into the dictionary
         //It also initializes the other dictionary and lists
-        private static void InitializeScriptedEvents()
+        public static void InitializeScriptedEvents()
         {
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
 
@@ -156,8 +155,24 @@ namespace tsorcRevamp
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
             };
 
-            ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
+            ScriptedEventValues = new Dictionary<ScriptedEventType, bool>()
+            {
+                {ScriptedEventType.DarkCloudPyramidFight, false},
+                {ScriptedEventType.ExampleArtoriasFight, false},
+                {ScriptedEventType.ExampleBlackKnightFight, false},
+                {ScriptedEventType.ExampleHarpySwarm, false},
+                {ScriptedEventType.ExampleNoNPCScriptEvent, false}
+
+            };
+
             InactiveEvents = new List<ScriptedEvent>();
+            
+            //Add everything to InactiveEvents to start fresh.
+            //If the player is NOT loading a fresh world, then this will get wiped later and re-loaded with only the appropriate events.
+            foreach (KeyValuePair<ScriptedEventType, ScriptedEvent> eventValuePair in ScriptedEventDict)
+            {
+                InactiveEvents.Add(eventValuePair.Value);                
+            }
             ActiveEvents = new List<ScriptedEvent>();
             DisabledEvents = new List<ScriptedEvent>();
         }
@@ -289,23 +304,14 @@ namespace tsorcRevamp
             tag.Add("event_values", ScriptedEventValues.Values.ToList());
         }
 
-        //Called upon mod load, adds all our events to a list
+        //Called upon mod load, but ONLY if the mod already has a .twld file.
+        //Adds all our events to a list, InactiveEvents
         //The advantage of having them in a list instead of a dictionary is that we can skip entries
-        //If we have enough of these that checking them risks becoming a performance issue, we could spread the checks out over multiple ticks instead of having them all run every single tick
-        //The simplest example: Check the even #'d events on even ticks, check the odd ones on odd ticks.
-        //We could spread the checks out over a full second or longer if we wanted to though, reducing the performance hit to 1/60th what it otherwise would be.
         public static void LoadScriptedEvents(TagCompound tag)
         {
-            if (!hasInitializedScriptedEvents)
-            {
-                InitializeScriptedEvents();
-                hasInitializedScriptedEvents = true;
-            }
-
             if (tag.ContainsKey("event_types"))
             {
                 //Converts the keys from strings into enums, then puts both keys and values into ScriptedEventValues
-                List<ScriptedEventType> event_types = new List<ScriptedEventType>();
                 List<string> eventTypeStrings = tag.Get<List<string>>("event_types");
                 List<bool> event_values = tag.Get<List<bool>>("event_values");
 
@@ -316,7 +322,7 @@ namespace tsorcRevamp
                     //If it contains a matching event
                     if (Enum.TryParse(eventTypeStrings[i], out scriptedEventOut))
                     {
-                        //And doesn't already contain that key
+                        //And doesn't already contain that key (just in case)
                         if (!ScriptedEventValues.ContainsKey(scriptedEventOut))
                         {
                             ScriptedEventValues.Add(scriptedEventOut, event_values[i]);
@@ -324,6 +330,9 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            //First, refresh the InactiveEvents list. It is initialized as full, containing every event, just in case the player loads a world without a .twld file.
+            InactiveEvents = new List<ScriptedEvent>();
 
             //Once that's done, parse though the main dictionary of events.
             //First check if there's an entry in ScriptedEventValues for each entry. If not, add one and set it to false.
@@ -349,13 +358,8 @@ namespace tsorcRevamp
         //int tickSpread = 20;
         public static void PlayerScriptedEventCheck(Player player)
         {
-            if (!hasInitializedScriptedEvents)
-            {
-                InitializeScriptedEvents();
-                hasInitializedScriptedEvents = true;
-            }
-
             //Check if the player is in range of any inactive events
+
             for (int i = 0; i < InactiveEvents.Count; i++)
             {
                 if (InactiveEvents[i].condition())
