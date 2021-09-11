@@ -2,12 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Items.Potions.PermanentPotions {
         //memory management is scary
     public abstract class PermanentPotion : ModItem {
+
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults() {
             item.width = 16;
@@ -50,6 +53,15 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[0]) {
+                player.lavaImmune = true;
+                player.fireWalk = true;
+                player.buffImmune[BuffID.OnFire] = true;
+                player.buffImmune[BuffID.ObsidianSkin] = true;
+            }
+        }
     }
 
     public class PermanentRegenerationPotion : PermanentPotion {
@@ -73,6 +85,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[1]) {
+                player.lifeRegen += 4;
+                player.buffImmune[BuffID.Regeneration] = true;
+            }
         }
     }
 
@@ -98,6 +117,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[2]) {
+                player.moveSpeed += 0.25f;
+                player.buffImmune[BuffID.Swiftness] = true;
+            }
+        }
     }
     public class PermanentGillsPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_291";
@@ -120,6 +146,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[3]) {
+                player.gills = true;
+                player.buffImmune[BuffID.Gills] = true;
+            }
         }
     }
     public class PermanentIronskinPotion : PermanentPotion {
@@ -144,6 +177,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[4]) {
+                player.statDefense += 8;
+                player.buffImmune[BuffID.Ironskin] = true;
+            }
+        }
     }
     public class PermanentManaRegenerationPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_293";
@@ -166,6 +206,15 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[5]) {
+                if (player.GetModPlayer<tsorcRevampPlayer>().manaShield == 0) {
+                    player.manaRegenBuff = true;
+                }
+                player.buffImmune[BuffID.ManaRegeneration] = true;
+            }
         }
     }
     public class PermanentMagicPowerPotion : PermanentPotion {
@@ -190,6 +239,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[6]) {
+                player.magicDamage += 0.2f;
+                player.buffImmune[BuffID.MagicPower] = true;
+            }
+        }
     }
     public class PermanentFeatherfallPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_295";
@@ -212,6 +268,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[7]) {
+                player.slowFall = true;
+                player.buffImmune[BuffID.Featherfall] = true;
+            }
         }
     }
     public class PermanentSpelunkerPotion : PermanentPotion {
@@ -236,6 +299,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[8]) {
+                player.findTreasure = true;
+                player.buffImmune[BuffID.Spelunker] = true;
+            }
+        }
     }
     public class PermanentInvisibilityPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_297";
@@ -258,6 +328,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[9]) {
+                player.invis = true;
+                player.buffImmune[BuffID.Invisibility] = true;
+            }
         }
     }
     public class PermanentShinePotion : PermanentPotion {
@@ -282,6 +359,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10]) {
+                Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
+                player.buffImmune[BuffID.Shine] = true;
+            }
+        }
     }
     public class PermanentNightOwlPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_299";
@@ -304,6 +388,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[11]) {
+                player.nightVision = true;
+                player.buffImmune[BuffID.NightOwl] = true;
+            }
         }
     }
     public class PermanentBattlePotion : PermanentPotion {
@@ -328,6 +419,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[12]) {
+                player.enemySpawns = true;
+                player.buffImmune[BuffID.Battle] = true;
+            }
+        }
     }
     public class PermanentThornsPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_301";
@@ -350,6 +448,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[13]) {
+                player.thorns += 1f;
+                player.buffImmune[BuffID.Thorns] = true;
+            }
         }
     }
 
@@ -375,6 +480,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[14]) {
+                player.waterWalk = true;
+                player.buffImmune[BuffID.WaterWalking] = true;
+            }
+        }
     }
 
     public class PermanentArcheryPotion : PermanentPotion {
@@ -399,6 +511,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[15]) {
+                player.archery = true;
+                player.buffImmune[BuffID.Archery] = true;
+            }
+        }
     }
     public class PermanentHunterPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_304";
@@ -421,6 +540,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[16]) {
+                player.detectCreature = true;
+                player.buffImmune[BuffID.Hunter] = true;
+            }
         }
     }
     public class PermanentGravitationPotion : PermanentPotion {
@@ -445,6 +571,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[17]) {
+                player.gravControl = true;
+                player.buffImmune[BuffID.Gravitation] = true;
+            }
+        }
     }
     public class PermanentAle : PermanentPotion {
         public override string Texture => "Terraria/Item_353";
@@ -467,6 +600,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[18]) {
+                player.statDefense -= 4;
+                player.meleeDamage += 0.1f;
+                player.meleeCrit += 2;
+                player.meleeSpeed += 0.1f;
+                player.buffImmune[BuffID.Tipsy] = true;
+            }
         }
     }
 
@@ -493,6 +636,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[19]) {
+                player.meleeEnchant = 1;
+                player.buffImmune[BuffID.WeaponImbueVenom] = true;
+            }
+        }
     }
     public class PermanentFlaskOfCursedFlames : PermanentPotion {
         public override string Texture => "Terraria/Item_1353";
@@ -516,6 +666,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[20]) {
+                player.meleeEnchant = 2;
+                player.buffImmune[BuffID.WeaponImbueCursedFlames] = true;
+            }
         }
     }
 
@@ -542,6 +699,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[21]) {
+                player.meleeEnchant = 3;
+                player.buffImmune[BuffID.WeaponImbueFire] = true;
+            }
+        }
     }
 
     public class PermanentFlaskOfGold : PermanentPotion {
@@ -566,6 +730,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[22]) {
+                player.meleeEnchant = 4;
+                player.buffImmune[BuffID.WeaponImbueGold] = true;
+            }
         }
     }
 
@@ -592,6 +763,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[23]) {
+                player.meleeEnchant = 5;
+                player.buffImmune[BuffID.WeaponImbueIchor] = true;
+            }
+        }
     }
 
     public class PermanentFlaskOfNanites : PermanentPotion {
@@ -616,6 +794,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[24]) {
+                player.meleeEnchant = 6;
+                player.buffImmune[BuffID.WeaponImbueNanites] = true;
+            }
         }
     }
 
@@ -642,6 +827,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[25]) {
+                player.meleeEnchant = 7;
+                player.buffImmune[BuffID.WeaponImbueConfetti] = true;
+            }
+        }
     }
 
     public class PermanentFlaskOfPoison : PermanentPotion {
@@ -667,6 +859,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[26]) {
+                player.meleeEnchant = 8;
+                player.buffImmune[BuffID.WeaponImbuePoison] = true;
+            }
+        }
     }
 
     public class PermanentMiningPotion : PermanentPotion {
@@ -690,6 +889,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[27]) {
+                player.pickSpeed -= 0.25f;
+                player.buffImmune[BuffID.Mining] = true;
+            }
         }
     }
 
@@ -715,6 +921,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[28]) {
+                player.lifeMagnet = true;
+                player.buffImmune[BuffID.Heartreach] = true;
+            }
+        }
     }
 
     public class PermanentCalmingPotion : PermanentPotion {
@@ -739,6 +952,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[29]) {
+                player.calmed = true;
+                player.buffImmune[BuffID.Calm] = true;
+            }
+        }
     }
     public class PermanentBuilderPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2325";
@@ -762,6 +982,15 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[30]) {
+                player.tileSpeed += 0.25f;
+                player.wallSpeed += 0.25f;
+                player.blockRange++;
+                player.buffImmune[BuffID.Builder] = true;
+            }
+        }
     }
     public class PermanentTitanPotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2326";
@@ -784,6 +1013,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[31]) {
+                player.kbBuff = true;
+                player.buffImmune[BuffID.Titan] = true;
+            }
         }
     }
 
@@ -809,6 +1045,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[32]) {
+                player.accFlipper = true;
+                player.ignoreWater = true;
+                player.buffImmune[BuffID.Flipper] = true;
+            }
+        }
     }
 
     public class PermanentSummoningPotion : PermanentPotion {
@@ -833,6 +1077,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[33]) {
+                player.maxMinions++;
+                player.buffImmune[BuffID.Summoning] = true;
+            }
+        }
     }
     public class PermanentDangersensePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2329";
@@ -855,6 +1106,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[34]) {
+                player.dangerSense = true;
+                player.buffImmune[BuffID.Dangersense] = true;
+            }
         }
     }
 
@@ -880,6 +1138,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[35]) {
+                player.ammoPotion = true;
+                player.buffImmune[BuffID.AmmoReservation] = true;
+            }
+        }
     }
 
     public class PermanentLifeforcePotion : PermanentPotion {
@@ -903,6 +1168,14 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[36]) {
+                player.lifeForce = true;
+                player.statLifeMax2 += player.statLifeMax / 5 / 20 * 20; //why is this written like this? i will never understand vanilla terraria
+                player.buffImmune[BuffID.Lifeforce] = true;
+            }
         }
     }
 
@@ -928,6 +1201,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[37]) {
+                player.endurance += 0.1f;
+                player.buffImmune[BuffID.Endurance] = true;
+            }
+        }
     }
 
     public class PermanentRagePotion : PermanentPotion {
@@ -951,6 +1231,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[38]) {
+                player.magicCrit += 10;
+                player.meleeCrit += 10;
+                player.rangedCrit += 10;
+                player.thrownCrit += 10;
+                player.buffImmune[BuffID.Rage] = true;
+            }
         }
     }
 
@@ -976,6 +1266,48 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[39]) {
+                player.buffImmune[BuffID.Inferno] = true;
+                player.inferno = true;
+                Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.65f, 0.4f, 0.1f);
+                int num = 24;
+                float num12 = 200f;
+                bool flag = player.infernoCounter % 60 == 0;
+                int damage = 10;
+                if (player.whoAmI == Main.myPlayer) {
+                    for (int l = 0; l < 200; l++) {
+                        NPC nPC = Main.npc[l];
+                        if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[num] && Vector2.Distance(player.Center, nPC.Center) <= num12) {
+                            if (nPC.FindBuffIndex(num) == -1) {
+                                nPC.AddBuff(num, 120);
+                            }
+                            if (flag) {
+                                player.ApplyDamageToNPC(nPC, damage, 0f, 0, crit: false);
+                            }
+                        }
+                    }
+                    if (Main.netMode != NetmodeID.SinglePlayer && player.hostile) {
+                        for (int m = 0; m < 255; m++) {
+                            Player otherPlayer = Main.player[m];
+                            if (otherPlayer != player && otherPlayer.active && !otherPlayer.dead && otherPlayer.hostile && !otherPlayer.buffImmune[24] && (otherPlayer.team != player.team || otherPlayer.team == 0) && Vector2.DistanceSquared(player.Center, otherPlayer.Center) <= num) {
+                                if (otherPlayer.FindBuffIndex(num) == -1) {
+                                    otherPlayer.AddBuff(num, 120);
+                                }
+                                if (flag) {
+                                    otherPlayer.Hurt(PlayerDeathReason.LegacyEmpty(), damage, 0, pvp: true);
+                                    if (Main.netMode != NetmodeID.SinglePlayer) {
+                                        PlayerDeathReason reason = PlayerDeathReason.ByPlayer(otherPlayer.whoAmI);
+                                        NetMessage.SendPlayerHurt(m, reason, damage, 0, critical: false, pvp: true, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public class PermanentWrathPotion : PermanentPotion {
@@ -999,6 +1331,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[40]) {
+                player.allDamage += 0.1f;
+                player.buffImmune[BuffID.Wrath] = true;
+            }
         }
     }
 
@@ -1024,6 +1363,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[41]) {
+                player.fishingSkill += 15;
+                player.buffImmune[BuffID.Fishing] = true;
+            }
+        }
     }
 
     public class PermanentSonarPotion : PermanentPotion {
@@ -1048,12 +1394,19 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[42]) {
+                player.sonarPotion = true;
+                player.buffImmune[BuffID.Sonar] = true;
+            }
+        }
     }
 
     public class PermanentCratePotion : PermanentPotion {
         public override string Texture => "Terraria/Item_2356";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently grants the 'Crate chance increased' buff.");
+            Tooltip.SetDefault("Permanently grants the Crate buff.");
         }
 
         
@@ -1071,6 +1424,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[43]) {
+                player.cratePotion = true;
+                player.buffImmune[BuffID.Crate] = true;
+            }
         }
     }
 
@@ -1096,6 +1456,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[44]) {
+                player.resistCold = true;
+                player.buffImmune[BuffID.Warmth] = true;
+            }
+        }
     }
 
     public class PermanentArmorDrug : PermanentPotion {
@@ -1119,6 +1486,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[45]) {
+                player.statDefense += 13;
+                player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
+            }
         }
     }
 
@@ -1144,6 +1518,20 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46]) {
+                player.statDefense += 8;
+                player.allDamage += 0.2f;
+                player.magicCrit += 5;
+                player.meleeCrit += 5;
+                player.rangedCrit += 5;
+                player.meleeSpeed += 0.2f;
+                player.pickSpeed += 0.2f;
+                player.thorns += 1f;
+                player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
+            }
+        }
     }
 
     public class PermanentBoostPotion : PermanentPotion {
@@ -1167,6 +1555,15 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[47]) {
+                player.magicCrit += 5;
+                player.meleeCrit += 5;
+                player.rangedCrit += 5;
+                player.buffImmune[ModContent.BuffType<Boost>()] = true;
+            }
         }
     }
 
@@ -1192,6 +1589,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[48]) {
+                player.GetModPlayer<tsorcRevampPlayer>().CrimsonDrain = true;
+                player.buffImmune[ModContent.BuffType<CrimsonDrain>()] = true;
+            }
+        }
     }
 
     public class PermanentDemonDrug : PermanentPotion {
@@ -1215,6 +1619,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[49]) {
+                player.allDamage += 0.2f;
+                player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
+            }
         }
     }
 
@@ -1240,6 +1651,13 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             }
             return true;
         }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[50]) {
+                player.GetModPlayer<tsorcRevampPlayer>().Shockwave = true;
+                player.buffImmune[ModContent.BuffType<Shockwave>()] = true;
+            }
+        }
     }
 
     public class PermanentStrengthPotion : PermanentPotion {
@@ -1263,6 +1681,19 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
+                player.statDefense += 15;
+                player.allDamage += 0.15f;
+                player.meleeSpeed += 0.15f;
+                player.pickSpeed += 0.15f;
+                player.magicCrit += 2;
+                player.meleeCrit += 2;
+                player.rangedCrit += 2;
+                player.buffImmune[ModContent.BuffType<Strength>()] = true;
+            }
         }
     }
 
@@ -1290,6 +1721,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 }
             }
             return true;
+        }
+
+        public override void UpdateInventory(Player player) {
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.PermanentBuffToggles[52]) {
+                modPlayer.SoulSiphon = true;
+                modPlayer.SoulReaper += 5;
+                modPlayer.ConsSoulChanceMult += 10;
+                player.buffImmune[ModContent.BuffType<SoulSiphon>()] = true;
+            }
         }
     }
 }
