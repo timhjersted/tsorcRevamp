@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Accessories {
     public class Oxyale : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Gear worn by Dragoons.\n" +
-                                "Allows you to breath underwater.");
+                                "Allows you to breathe underwater.");
 
         }
 
