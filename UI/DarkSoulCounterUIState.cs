@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Input;
 using System.Reflection;
 using Terraria.ModLoader.Config;
+using System;
 
 namespace tsorcRevamp.UI
 {
@@ -19,6 +20,7 @@ namespace tsorcRevamp.UI
 		private UIImage counterFrame;
 
 		public static bool Visible = true;
+		int initialTextPosX = 133; //was 60
 
 		public static tsorcRevampConfig ConfigInstance = ModContent.GetInstance<tsorcRevampConfig>();
 		public static Vector2 DrawPos = new Vector2(ConfigInstance.SoulCounterPosX, ConfigInstance.SoulCounterPosY);
@@ -44,7 +46,7 @@ namespace tsorcRevamp.UI
 			soulQuantityText.Width.Set(0, 0f);
 			soulQuantityText.Height.Set(0, 0f);
 			soulQuantityText.Top.Set(12, 0f);
-			soulQuantityText.Left.Set(60, 0f);
+			soulQuantityText.Left.Set(initialTextPosX, 0f);
 			area.Append(soulQuantityText);
 
 			Append(area);
@@ -68,9 +70,8 @@ namespace tsorcRevamp.UI
 				area.Top.Pixels = -ConfigInstance.SoulCounterPosY;
 			}
 
+			soulQuantityText.Left.Set((float)(initialTextPosX - (10 * Math.Floor(Math.Log10(modPlayer.darkSoulQuantity == 0 ? 1 : modPlayer.darkSoulQuantity) + 1))), 0f);
 			base.Update(gameTime);
 		}
-
-
 	}
 }
