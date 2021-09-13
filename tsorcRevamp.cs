@@ -14,6 +14,8 @@ using MonoMod.Cil;
 using static tsorcRevamp.MethodSwaps;
 using System.IO;
 using Terraria.ModLoader.IO;
+using Terraria.Graphics.Shaders;
+using Terraria.Graphics.Effects;
 
 namespace tsorcRevamp {
 
@@ -35,6 +37,8 @@ namespace tsorcRevamp {
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         private UserInterface _darkSoulCounterUIState;
 
+        public static Effect TheAbyssEffect;
+
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
@@ -55,6 +59,11 @@ namespace tsorcRevamp {
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
             IL.Terraria.Player.Update += Player_Update;
+            if (!Main.dedServ) {
+                tsorcRevamp Instance = this;
+                TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
+                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low); 
+            }
         }
 
 

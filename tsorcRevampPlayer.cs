@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TerraUI.Objects;
 using Terraria.UI;
 using ReLogic.Graphics;
+using Terraria.Graphics.Effects;
 
 namespace tsorcRevamp
 {
@@ -214,8 +215,7 @@ namespace tsorcRevamp
 
         }
 
-        public override void ResetEffects()
-        {
+        public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
             SoulReaper = 0;
@@ -254,7 +254,6 @@ namespace tsorcRevamp
             ConditionOverload = false;
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;
-
     }
 
     public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
@@ -729,6 +728,10 @@ namespace tsorcRevamp
                 bossMagnet = false;
             }
             #endregion
+
+
+
+
         }
 
         public override void PostUpdateRunSpeeds()
@@ -941,6 +944,7 @@ namespace tsorcRevamp
                 {
                     player.HealEffect(damage / 10);
                     player.statLife += (damage / 10);
+
                 }
             }
             if (NUVamp)
@@ -1424,6 +1428,35 @@ namespace tsorcRevamp
                 player.buffImmune[BuffID.ManaRegeneration] = true;
             }
             #endregion manashield
+
+
+
+
+            #region Abyss Shader
+            bool hasCoA = false;
+
+            if (Main.netMode != NetmodeID.Server) {
+
+                //does the player have a covenant of artorias
+                for (int i = 3; i < (8 + player.extraAccessorySlots); i++) {
+                    if (player.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+                        hasCoA = true;
+                        break;
+                    }
+                }
+
+                //if they do, and the shader is inactive
+                if (hasCoA && !(Filters.Scene["tsorcRevamp:TheAbyss"].Active)) {
+                    Filters.Scene.Activate("tsorcRevamp:TheAbyss");
+                }
+
+                //if the abyss shader is active and the player is no longer wearing the CoA
+                if (Filters.Scene["tsorcRevamp:TheAbyss"].Active && !hasCoA) {
+                    Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
+                }
+            }
+
+            #endregion
         }
 
 
