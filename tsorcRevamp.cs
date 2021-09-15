@@ -59,6 +59,7 @@ namespace tsorcRevamp {
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
             IL.Terraria.Player.Update += Player_Update;
+            IL.Terraria.Player.Update += Chest_Patch;
             if (!Main.dedServ) {
                 tsorcRevamp Instance = this;
                 TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
@@ -540,11 +541,33 @@ namespace tsorcRevamp {
             if (!cursor.TryGotoNext(MoveType.Before,
                                     i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
                                     i => i.MatchLdcI4(400))) {
-                Logger.Fatal("Could not find instruction to patch");
+                Logger.Fatal("Could not find instruction to patch (Player_Update)");
                 return;
             }
 
             cursor.Next.Next.Operand = int.MaxValue;
+        }
+
+        private void Chest_Patch(ILContext il) {
+            ILCursor c = new ILCursor(il);
+
+            if (!c.TryGotoNext(instr => instr.MatchLdcR4(1f) && instr.Next.Next.Next.Next.Next.Next.MatchStfld(typeof(Player).GetField("chest")))) {
+                throw new Exception("Could not find instruction to patch (Chest_Patch)");
+            }
+
+            c.FindNext(out ILCursor[] cursors, instr => instr.MatchLdcR4(1f));
+            c = cursors[0];
+
+            c.Index++;
+            c.EmitDelegate<Func<float, float>>((volume) => {
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().chestBankOpen
+                || Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().chestPiggyOpen) {
+                    // Return 0 volume if one is open so the sound is silent
+                    return 0f;
+                }
+
+                return volume;
+            });
         }
 
         public override void PostDrawInterface(SpriteBatch spriteBatch) {

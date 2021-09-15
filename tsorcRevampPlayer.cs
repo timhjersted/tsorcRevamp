@@ -18,6 +18,8 @@ using TerraUI.Objects;
 using Terraria.UI;
 using ReLogic.Graphics;
 using Terraria.Graphics.Effects;
+using Terraria.Audio;
+using tsorcRevamp.Projectiles.Pets;
 
 namespace tsorcRevamp
 {
@@ -89,8 +91,11 @@ namespace tsorcRevamp
         //Did they have the shield up last frame?
         public bool shieldUp = false;
 
-        public bool chests;
-        public int safe = -1;
+        public bool chestBankOpen;
+        public int chestBank = -1;
+
+        public bool chestPiggyOpen;
+        public int chestPiggy = -1;
 
         public int FracturingArmor = 1;
 
@@ -145,6 +150,51 @@ namespace tsorcRevamp
             SoulSlot.BackOpacity = 0.8f;
             SoulSlot.Item = new Item();
             SoulSlot.Item.SetDefaults(0, true);
+
+            chestBankOpen = false;
+            chestBank = -1;
+
+            chestPiggyOpen = false;
+            chestPiggy = -1;
+
+        }
+
+        public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new() {
+            int projectileType = ModContent.ProjectileType<T>();
+            T instance = ModContent.GetInstance<T>();
+            int bankID = instance.ChestType;
+            LegacySoundStyle useSound = instance.UseSound;
+
+            if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType) {
+                int oldChest = player.chest;
+                player.chest = bankID;
+                toggle = true;
+
+                int num17 = (int)((player.position.X + player.width * 0.5) / 16.0);
+                int num18 = (int)((player.position.Y + player.height * 0.5) / 16.0);
+                player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
+                player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
+                if ((oldChest != bankID && oldChest != -1) || num17 < player.chestX - Player.tileRangeX || num17 > player.chestX + Player.tileRangeX + 1 || num18 < player.chestY - Player.tileRangeY || num18 > player.chestY + Player.tileRangeY + 1) {
+                    whoAmI = -1;
+                    if (player.chest != -1) {
+                        Main.PlaySound(useSound);
+                    }
+
+                    if (oldChest != bankID)
+                        player.chest = oldChest;
+                    else
+                        player.chest = -1;
+
+                    Recipe.FindRecipes();
+                }
+            }
+            else {
+                Main.PlaySound(useSound);
+
+                whoAmI = -1;
+                player.chest = -1; //none
+                Recipe.FindRecipes();
+            }
         }
 
         public override void clientClone(ModPlayer clientClone) {
@@ -1485,6 +1535,16 @@ namespace tsorcRevamp
             {
                 healValue = 0;
             }
+        }
+
+        public override void PreUpdateBuffs() {
+            if (chestBank >= 0) {
+                DoPortableChest<SafeProjectile>(ref chestBank, ref chestBankOpen);
+            }
+            if (chestPiggy >= 0) {
+                DoPortableChest<PiggyBankProjectile>(ref chestPiggy, ref chestPiggyOpen);
+            }
+
         }
 
         public override void PostUpdateBuffs()
