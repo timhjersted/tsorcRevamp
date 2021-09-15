@@ -43,23 +43,6 @@ namespace tsorcRevamp.Items {
 			return base.GrabStyle(item, player);
 		}
 
-        public override bool OnPickup(Item item, Player player) {
-			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-			if (item.type == ModContent.ItemType<DarkSoul>()) {
-				//if the player's soul slot is empty
-				if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
-					modPlayer.SoulSlot.Item = item.Clone();
-				}
-				else {
-					modPlayer.SoulSlot.Item.stack += item.stack;
-				}
-				//dont send the souls to the normal inventory
-				return false;
-            }
-			return base.OnPickup(item, player);
-        }
-
         public override void OnCraft(Item item, Recipe recipe) {
 			tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
 			foreach (Item ingredient in recipe.requiredItem) {
