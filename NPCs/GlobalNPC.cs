@@ -492,42 +492,36 @@ namespace tsorcRevamp.NPCs
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<CharcoalPineResin>());
-                shop.item[nextSlot].shopCustomPrice = 50;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 1000;
                 nextSlot++;
             }
             if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
-                shop.item[nextSlot].shopCustomPrice = 25;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 250;
                 nextSlot++;
 
                 if (Main.rand.Next(2) == 0)
                 {
                     shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
-                    shop.item[nextSlot].shopCustomPrice = 5000;
-                    shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                    shop.item[nextSlot].shopCustomPrice = 250000;
                     nextSlot++;
                 }
             }
             if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
-                shop.item[nextSlot].shopCustomPrice = 5000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 100000;
                 nextSlot++;
 
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<ToxicCatalyzer>());
-                shop.item[nextSlot].shopCustomPrice = 5000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 100000;
                 nextSlot++;
             }
             if (type == NPCID.Dryad && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<BloodredMossClump>());
-                shop.item[nextSlot].shopCustomPrice = 25;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 300;
                 nextSlot++;
             }
         }

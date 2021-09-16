@@ -4,27 +4,27 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Throwing
 {
-    class Firebomb : ModItem
+    class BlackFirebomb : ModItem
     {
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Firebomb");
-            Tooltip.SetDefault("Explodes, dealing damage in a small area");
+            DisplayName.SetDefault("Black Firebomb");
+            Tooltip.SetDefault("Explodes, dealing fire damage in a small area" +
+                               "\nSets the ground and enemies alight");
         }
         public override void SetDefaults()
         {
-
             item.rare = ItemRarityID.Blue;
             item.width = 22;
-            item.damage = 100;
+            item.damage = 200;
             item.height = 24;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.knockBack = 8f;
+            item.knockBack = 10f;
             item.noUseGraphic = true;
             item.noMelee = true;
             item.value = 500;
-            item.shoot = mod.ProjectileType("Firebomb");
+            item.shoot = mod.ProjectileType("BlackFirebomb");
             item.shootSpeed = 6.5f;
             item.useAnimation = 50;
             item.useTime = 50;
@@ -37,9 +37,10 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Grenade);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10);
-            recipe.SetResult(this);
+            recipe.AddIngredient(mod.GetItem("Firebomb"), 10);
+            recipe.AddIngredient(mod.GetItem("CharcoalPineResin"));
+            recipe.AddIngredient(ItemID.SoulofNight);
+            recipe.SetResult(this, 10);
             recipe.AddRecipe();
         }
     }

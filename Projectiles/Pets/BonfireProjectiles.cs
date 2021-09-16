@@ -123,14 +123,56 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override LegacySoundStyle UseSound => SoundID.Item37;
 
         public override void SetWhoAmI(tsorcRevampPlayer player, int value) => player.chestBank = value;
-
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Soul Safe");
+            Main.projFrames[projectile.type] = 10;
+        }
         public override void SetDefaults() {
-            projectile.width = 24;
-            projectile.height = 24;
+            projectile.width = 30;
+            projectile.height = 38;
             projectile.tileCollide = false;
             projectile.timeLeft = 10800;
+            projectile.alpha = 120;
         }
+        public override void AI()
+        {
+            if (projectile.alpha <= 200)
+            {
+                Lighting.AddLight(projectile.Center, 0.15f, 0.6f, 0.32f);
+            }
+            if (projectile.alpha > 200)
+            {
+                Lighting.AddLight(projectile.Center, 0.1f, 0.45f, 0.21f);
+            }
 
+            if (++projectile.frameCounter >= 8)
+            {
+                projectile.frameCounter = 0;
+                if (++projectile.frame >= 10)
+                {
+                    projectile.frame = 0;
+                }
+            }
+
+            if (Main.player[projectile.owner].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+            {
+                projectile.alpha += 1;
+            }
+
+            if ((Main.player[projectile.owner].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
+            {
+                projectile.alpha -= 2;
+            }
+
+            if (projectile.alpha == 255)
+            {
+                projectile.timeLeft = 0;
+            }
+
+
+            base.AI();
+        }
     }
     public class PiggyBankProjectile : BonfireProjectiles {
         public override int ChestType => -2;
@@ -141,7 +183,7 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Piglett");
-            Main.projFrames[projectile.type] = 9;
+            Main.projFrames[projectile.type] = 10;
         }
         public override void SetDefaults() {
             projectile.height = 24;
@@ -153,23 +195,30 @@ namespace tsorcRevamp.Projectiles.Pets {
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, 0.15f, 0.6f, 0.32f);
+            if (projectile.alpha <= 200)
+            {
+                Lighting.AddLight(projectile.Center, 0.15f, 0.6f, 0.32f);
+            }
+            if (projectile.alpha > 200)
+            {
+                Lighting.AddLight(projectile.Center, 0.1f, 0.45f, 0.21f);
+            }
 
-            if (++projectile.frameCounter >= 8)
+            if (++projectile.frameCounter >= 10)
             {
                 projectile.frameCounter = 0;
-                if (++projectile.frame >= 9)
+                if (++projectile.frame >= 10)
                 {
                     projectile.frame = 0;
                 }
             }
 
-            if (Main.player[projectile.owner].Distance(projectile.Center) >= 300f)
+            if (Main.player[projectile.owner].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
             {
                 projectile.alpha += 1;
             }
 
-            if ((Main.player[projectile.owner].Distance(projectile.Center) <= 250f) && projectile.alpha >= 120)
+            if ((Main.player[projectile.owner].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
             {
                 projectile.alpha -= 2;
             }

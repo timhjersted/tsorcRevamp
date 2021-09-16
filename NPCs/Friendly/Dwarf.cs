@@ -10,6 +10,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Localization;
 using System.Collections.Generic;
+using static tsorcRevamp.Tiles.SweatyCyclopsForge;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -117,6 +118,8 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void SetupShop(Chest chest, ref int index)
         {
             chest.item[index].SetDefaults(ModContent.ItemType<DwarvenContract>());
+            index++;
+            chest.item[index].SetDefaults(ModContent.ItemType<SweatyCyclopsForgeItem>());
             index++;
             chest.item[index].SetDefaults(ItemID.Flipper);
             index++;

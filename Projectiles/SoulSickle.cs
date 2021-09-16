@@ -32,13 +32,11 @@ namespace tsorcRevamp.Projectiles
 
             Lighting.AddLight(projectile.Center, 0.3f, 0.462f, 0.4f);
 
-            if (Main.rand.Next(4) == 0)
-            {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 89, 0, 0, 0, default, .5f);
-                Main.dust[dust].velocity *= 0.25f;
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].fadeIn = 1f;
-            }
+            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 89, 0, 0, 0, default, .5f);
+            Main.dust[dust].velocity *= 0.25f;
+            Main.dust[dust].noGravity = true;
+            Main.dust[dust].fadeIn = 1f;
+
 
             //ANIMATION
 
