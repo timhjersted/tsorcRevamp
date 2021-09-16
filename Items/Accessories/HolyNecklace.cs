@@ -25,6 +25,14 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+
+            ModRecipe recipe2 = new ModRecipe(mod);
+            recipe2.AddIngredient(mod.GetItem("FrozenStarlight"), 1);
+            recipe2.AddIngredient(ItemID.StarVeil, 1);
+            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.SetResult(this, 1);
+            recipe2.AddRecipe();
         }
  
         public override void UpdateEquip(Player player) {

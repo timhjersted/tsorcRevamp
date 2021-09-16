@@ -15,6 +15,7 @@ using System;
 using Microsoft.Xna.Framework.Input;
 using Terraria.GameContent.NetModules;
 using Terraria.Localization;
+using System.IO;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -103,6 +104,39 @@ namespace tsorcRevamp {
                     Slain.Add(list[i], list2[i]);
                 }
             }
+        }
+
+        public override void NetSend(BinaryWriter writer)
+        {
+            if(Main.netMode == NetmodeID.Server)
+            {
+                //Storing it in an int32 just so its exact type is guranteed, since that does matter
+                int slainSize = Slain.Count;
+                writer.Write(slainSize);
+                foreach (KeyValuePair<int, int> pair in Slain)
+                {
+                    //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
+                    writer.WriteVector2(new Vector2(pair.Key, pair.Value));
+                }
+            }
+        }
+
+        public override void NetReceive(BinaryReader reader)
+        {
+            int slainSize = reader.ReadInt32();
+            for (int i = 0; i < slainSize; i++)
+            {
+                Vector2 readData = reader.ReadVector2();
+                if (Slain.ContainsKey((int)readData.X))
+                {
+                    Slain[(int)readData.X] = (int)readData.Y;
+                }
+                else
+                {
+                    Slain.Add((int)readData.X, (int)readData.Y);
+                }
+            }
+            Main.NewText("done!");
         }
 
         public static bool JustPressed(Keys key) {

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.aiStyle = 2;
             projectile.friendly = true;
             projectile.height = 22;
-            projectile.penetrate = 1;
+            projectile.penetrate = 4;
             projectile.melee = true;
             projectile.tileCollide = false;
             projectile.width = 22;

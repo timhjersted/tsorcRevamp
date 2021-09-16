@@ -11,6 +11,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                                 "Does not stack with Fog, Barrier or Wall spells");
         }
 
+        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetDefaults() {
             item.stack = 1;
             item.width = 28;
@@ -44,6 +46,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
         public override bool CanUseItem(Player player) {
+            if (!LegacyMode)
+            { //in revamp mode
+                if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+                {
+                    return false;
+                }
+            }
             if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>())) {
                 return false;
             }

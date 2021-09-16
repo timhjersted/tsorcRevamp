@@ -72,10 +72,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
+			int buffMod = 1;
+            if (Main.expertMode)
+            {
+				buffMod = 2;
+            }
 			target.AddBuff(BuffID.Battle, 600);
-			target.AddBuff(BuffID.BrokenArmor, 300);
-			target.AddBuff(BuffID.Poisoned, 3600);
-			target.AddBuff(BuffID.Bleeding, 7200);
+			target.AddBuff(BuffID.BrokenArmor, 300 / buffMod);
+			target.AddBuff(BuffID.Poisoned, 600 / buffMod);
+			target.AddBuff(BuffID.Bleeding, 600 / buffMod);
 		}
 
 	}

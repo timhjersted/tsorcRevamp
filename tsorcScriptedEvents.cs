@@ -821,17 +821,5 @@ namespace tsorcRevamp
         {
             return true;
         }
-
-    }
-
-    public class Ref<T>
-    {
-        public Ref(T value)
-        {
-            Value = value;
-        }
-        public T Value { get; set; }
-
-        public static implicit operator T(Ref<T> reference) => reference.Value;
     }
 }

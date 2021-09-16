@@ -55,6 +55,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override bool CanUseItem(Player player)
         {
+            if (!LegacyMode)
+            { //in revamp mode
+                if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+                {
+                    return false;
+                }
+            }
             if (player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
             {
                 return false;

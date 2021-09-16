@@ -133,6 +133,7 @@ namespace tsorcRevamp.NPCs
                     { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
                         DarkSoulQuantity = 100000; //1 plat / 10
                     }
+
                     if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
                     {
                         DarkSoulQuantity = 0;
@@ -148,7 +149,14 @@ namespace tsorcRevamp.NPCs
                         {
                             NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
                         }
+
                         tsorcRevampWorld.Slain.Add(npc.type, 0);
+                        
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
+                        }
+
                         if (Main.expertMode)
                         {
                             DarkSoulQuantity = 0;

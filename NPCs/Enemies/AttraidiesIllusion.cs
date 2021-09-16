@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 npc.velocity.Y *= 0.17f;
             }
 
-            if ((npc.ai[1] >= 280 && npc.life > 300) || (npc.ai[1] >= 140 && npc.life <= 300))
+            if ((npc.ai[1] >= 280 && npc.life > 300) || (npc.ai[1] >= 200 && npc.life <= 300))
             {
                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)

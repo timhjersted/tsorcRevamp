@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wall Tome");
             Tooltip.SetDefault("A lost tome that is consumed on use\n" +
-                               "Casts Wall on the player, raising defense by 50 for 25 seconds" +
+                               "Casts Wall on the player, raising defense by 25 for 25 seconds" +
                                "\nDoes not stack with Fog, Barrier or Shield spells");
         }
 
