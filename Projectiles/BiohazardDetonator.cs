@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 40;
+            projectile.timeLeft = 87;
             projectile.penetrate = 3;
             projectile.usesLocalNPCImmunity = true;
             projectile.localNPCHitCooldown = -1;

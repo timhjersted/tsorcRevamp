@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-			projectile.timeLeft = 74;
+			projectile.timeLeft = 145;
 			projectile.penetrate = 3;
 
 			drawOffsetX = -2;

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 35;
+            projectile.timeLeft = 37;
             projectile.scale = 0.85f;
             projectile.extraUpdates = 1;
         }
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2; // projectile faces sprite right
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 33)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 35)
             {
                 for (int i = 0; i < 10; i++)
                 {

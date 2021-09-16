@@ -6,12 +6,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Uses Bolts as ammo. 10 are crafted with" +
-                                "\none wood and two Dark Souls at a Demon Altar");
+                                "\none wood and two Dark Souls at a Demon Altar" +
+                                 "\nBolts pierce once");
         }
         public override void SetDefaults() {
-            item.damage = 9;
+            item.damage = 16;
             item.height = 28;
             item.knockBack = 4;
+            item.crit = 6;
             item.noMelee = true;
             item.ranged = true;
             item.shoot = ProjectileID.PurificationPowder;

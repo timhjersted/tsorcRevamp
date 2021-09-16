@@ -12,18 +12,18 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.shoot = ProjectileID.PurificationPowder;
 
 
-            item.damage = 25;
+            item.damage = 24; //Demon Bow is 14
             item.height = 58;
             item.width = 16;
-            item.knockBack = (float)5;
+            item.knockBack = 1.5f; //DB is 1
             item.maxStack = 1;
             item.noMelee = true;
             item.autoReuse = true;
             item.rare = ItemRarityID.Green;
             item.scale = (float)1;
-            item.shootSpeed = (float)8;
+            item.shootSpeed = (float)7.5; //DB is 6.7
             item.useAmmo = AmmoID.Arrow;
-            item.useTime = 25;
+            item.useTime = 25; //Same as DB
             item.useAnimation = 25;
             item.UseSound = SoundID.Item5;
             item.useStyle = ItemUseStyleID.HoldingOut;

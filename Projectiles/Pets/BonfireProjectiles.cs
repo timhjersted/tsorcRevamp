@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Mono.Cecil;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -137,12 +138,49 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override LegacySoundStyle UseSound => SoundID.Item59;
 
         public override void SetWhoAmI(tsorcRevampPlayer player, int value) => player.chestPiggy = value;
-
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Soul Piglett");
+            Main.projFrames[projectile.type] = 9;
+        }
         public override void SetDefaults() {
-            projectile.height = 16;
+            projectile.height = 24;
             projectile.width = 24;
             projectile.tileCollide = false;
             projectile.timeLeft = 10800;
+            projectile.alpha = 120;
+        }
+
+        public override void AI()
+        {
+            Lighting.AddLight(projectile.Center, 0.15f, 0.6f, 0.32f);
+
+            if (++projectile.frameCounter >= 8)
+            {
+                projectile.frameCounter = 0;
+                if (++projectile.frame >= 9)
+                {
+                    projectile.frame = 0;
+                }
+            }
+
+            if (Main.player[projectile.owner].Distance(projectile.Center) >= 300f)
+            {
+                projectile.alpha += 1;
+            }
+
+            if ((Main.player[projectile.owner].Distance(projectile.Center) <= 250f) && projectile.alpha >= 120)
+            {
+                projectile.alpha -= 2;
+            }
+
+            if (projectile.alpha == 255)
+            {
+                projectile.timeLeft = 0;
+            }
+
+
+            base.AI();
         }
     }
 }
