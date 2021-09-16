@@ -35,6 +35,13 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(item.Center, 0.15f, 0.42f, 0.05f);
         }
+        public override bool GrabStyle(Player player)
+        { //make pulling souls through walls more consistent
+            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
+            item.velocity = item.velocity + movement;
+            return true;
+        }
         public override void GrabRange(Player player, ref int grabRange)
         {
             grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);

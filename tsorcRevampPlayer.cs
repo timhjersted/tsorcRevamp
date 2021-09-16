@@ -38,7 +38,7 @@ namespace tsorcRevamp
 
         public bool SilverSerpentRing = false;
         public bool DragonStone = false;
-        public int SoulReaper = 0;
+        public int SoulReaper = 5;
 
         public bool DuskCrownRing = false;
         public bool UndeadTalisman = false;
@@ -73,6 +73,7 @@ namespace tsorcRevamp
         public bool BoneRevenge = false;
         public bool SoulSiphon = false;
         public int ConsSoulChanceMult;
+        public bool SoulSickle = false;
 
         public int souldroplooptimer = 0;
         public int souldroptimer = 0;
@@ -268,7 +269,7 @@ namespace tsorcRevamp
         public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
-            SoulReaper = 0;
+            SoulReaper = 5;
             DragoonBoots = false;
             player.eocDash = 0;
             player.armorEffectDrawShadowEOCShield = false;
@@ -304,6 +305,7 @@ namespace tsorcRevamp
             ConditionOverload = false;
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;
+            SoulSickle = false;
     }
 
     public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
@@ -1288,6 +1290,18 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            {
+                if (!Main.hardMode)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 30, 7f, 0, 0, 0);
+                }
+                else
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 9f, 0, 0, 0);
+                }
+            }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
             {
                 player.AddBuff(BuffID.Bleeding, 1800);
@@ -1312,6 +1326,18 @@ namespace tsorcRevamp
                     {
                         Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
+                }
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            {
+                if (!Main.hardMode)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
+                }
+                else
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
             if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
