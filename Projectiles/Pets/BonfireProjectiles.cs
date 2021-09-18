@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Pets {
 
         public abstract int ChestType { get; }
         public abstract int ItemType { get; }
-        public abstract void SetWhoAmI(tsorcRevampPlayer player, int value);
+        public virtual void SetWhoAmI(tsorcRevampPlayer player, int value) => player.chestBank = value;
 
         public abstract LegacySoundStyle UseSound { get; }
 
@@ -122,7 +122,6 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override int ItemType => ItemID.Safe;
         public override LegacySoundStyle UseSound => SoundID.Item37;
 
-        public override void SetWhoAmI(tsorcRevampPlayer player, int value) => player.chestBank = value;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Safe");
@@ -179,7 +178,11 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override int ItemType => ItemID.PiggyBank;
         public override LegacySoundStyle UseSound => SoundID.Item59;
 
-        public override void SetWhoAmI(tsorcRevampPlayer player, int value) => player.chestPiggy = value;
+        public override void SetWhoAmI(tsorcRevampPlayer player, int value) {
+            player.chestPiggy = value;
+            player.chestBank = -1;
+            player.chestBankOpen = false;
+        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Piglett");

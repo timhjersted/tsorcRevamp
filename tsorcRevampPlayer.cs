@@ -190,7 +190,7 @@ namespace tsorcRevamp
                 }
             }
             else {
-                Main.PlaySound(useSound);
+                
 
                 whoAmI = -1;
                 player.chest = -1; //none
@@ -1571,6 +1571,12 @@ namespace tsorcRevamp
                 DoPortableChest<PiggyBankProjectile>(ref chestPiggy, ref chestPiggyOpen);
             }
 
+            if (!Main.playerInventory) {
+                chestPiggy = -1;
+                chestPiggyOpen = false;
+                chestBank = -1;
+                chestBankOpen = false;
+            }
         }
 
         public override void PostUpdateBuffs()
