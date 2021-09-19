@@ -342,7 +342,15 @@ namespace tsorcRevamp
                         {
                             ScriptedEventValues.Add(scriptedEventOut, event_values[i]);
                         }
+                        else
+                        {
+                            ScriptedEventValues[scriptedEventOut] = event_values[i];
+                        }
                     }
+                    else
+                    {
+                        Main.NewText("ERROR: Failed to convert string " + eventTypeStrings[i] + "to enum. Please report this!! You can do so in our discord: https://discord.gg/kSptDbe", Color.Red);
+                    }               
                 }
             }
 
