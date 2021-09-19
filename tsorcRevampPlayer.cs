@@ -973,7 +973,6 @@ namespace tsorcRevamp
                         if (souldroplooptimer == 12) {
                             Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
                             SoulSlot.Item.TurnToAir();
-                            Main.NewText("here");
                         }
                         else {
                             Item.NewItem(player.Center, SoulSlot.Item.type, 0);

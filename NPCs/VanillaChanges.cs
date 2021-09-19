@@ -1833,7 +1833,7 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.Hornet || npc.type == NPCID.ManEater ||
                                 npc.type == NPCID.MossHornet ||
                                 (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
-                if (Main.rand.NextFloat() >= .33f && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 66% chance in legacy
+                if (Main.rand.NextFloat() >= .33f && ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 66% chance in legacy
                     Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
                 }
                 if (Main.rand.NextFloat() >= .66f && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 33% chance in revamped
