@@ -110,7 +110,8 @@ namespace tsorcRevamp
             ExampleArtoriasFight,
             ExampleBlackKnightFight,
             ExampleHarpySwarm,
-            ExampleNoNPCScriptEvent
+            ExampleNoNPCScriptEvent,
+            SpawnGoblin
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -144,6 +145,7 @@ namespace tsorcRevamp
 
             //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
 
+            ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, null, 31, true, true, "", default, true, TinkererCondition, TinkererAction);
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
@@ -151,8 +153,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.ExampleArtoriasFight, ExampleArtoriasEvent},
                 {ScriptedEventType.ExampleBlackKnightFight, ExampleBlackKnightFight},
                 {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
-                {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent}
+                {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
+                {ScriptedEventType.SpawnGoblin, SpawnGoblin }
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>()
@@ -161,8 +164,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.ExampleArtoriasFight, false},
                 {ScriptedEventType.ExampleBlackKnightFight, false},
                 {ScriptedEventType.ExampleHarpySwarm, false},
-                {ScriptedEventType.ExampleNoNPCScriptEvent, false}
-
+                {ScriptedEventType.ExampleNoNPCScriptEvent, false},
+                {ScriptedEventType.SpawnGoblin, false }
             };
 
             InactiveEvents = new List<ScriptedEvent>();
@@ -226,6 +229,10 @@ namespace tsorcRevamp
             {
                 return false;
             }
+        }
+
+        public static bool TinkererCondition() {
+            return !NPC.AnyNPCs(NPCID.GoblinTinkerer);
         }
         #endregion
 
@@ -294,6 +301,14 @@ namespace tsorcRevamp
             }
             return false;
         }
+
+        //i dont want this event to last forever, so just spawn the tinkerer and immediately end the event
+        //... is what it SHOULD do?
+        public static bool TinkererAction(Player player, int npcID) {
+            NPC.NewNPC(4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
+            return true;
+        }
+
         #endregion
 
         public static void SaveScriptedEvents(TagCompound tag)
