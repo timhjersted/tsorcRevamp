@@ -37,10 +37,10 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("Firebomb"), 10);
+            recipe.AddIngredient(mod.GetItem("Firebomb"), 2);
             recipe.AddIngredient(mod.GetItem("CharcoalPineResin"));
             recipe.AddIngredient(ItemID.SoulofNight);
-            recipe.SetResult(this, 10);
+            recipe.SetResult(this, 2);
             recipe.AddRecipe();
         }
     }
