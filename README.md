@@ -34,7 +34,7 @@ We're looking to do a full transfer of the original mod, which includes:
 
 ~~The current plan has us finish the transfer of the mod to TModLoader. Once that's done, we'll be taking community feedback on our next step. The goal is to have the custom map updated and to expand on the original mod with custom content and support for new vanilla features.~~
 
-#####As of August 30, 2021, all of the content from the original mod has been ported to TModLoader!
+**As of August 30, 2021, all of the content from the original mod has been ported to TModLoader!**
 We will continue to polish, update, and add content well into the future. In the meantime, [download the latest release!](https://github.com/Zeodexic/tsorcRevamp/releases/)
 
 
