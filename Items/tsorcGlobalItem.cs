@@ -351,7 +351,10 @@ namespace tsorcRevamp.Items {
 				ItemID.Flare,
 				ItemID.BlueFlare,
 				ItemID.Snowball,
-				ItemID.Nail
+				ItemID.Nail,
+
+				//yes clearly this is not ammo but im gonna have a stroke if i have to carry stacks of 99 torches
+				ItemID.Torch
 			};
 		}
 	}
