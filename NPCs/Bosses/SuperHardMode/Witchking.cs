@@ -57,6 +57,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
+            if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>())) {
+                damage += 3050;
+            }
+            return base.StrikeNPC(ref damage, defense, ref knockback, hitDirection, ref crit);
+        }
+
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             Player p = spawnInfo.player;
             if (tsorcRevampWorld.SuperHardMode) {

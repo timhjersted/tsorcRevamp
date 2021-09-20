@@ -14,12 +14,5 @@ namespace tsorcRevamp.Buffs {
             DisplayName.SetDefault("Dispel Shadow");
             Description.SetDefault("Your defense has been dispelled");
         }
-
-        public override void Update(NPC npc, ref int buffIndex) {
-            npc.defense -= 65535;
-            if (npc.defense < 0 ) {
-                npc.defense = 0;
-            }
-        }
     }
 }

@@ -42,6 +42,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		//This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
 		public int gravityBallDamage = 0;
 
+		public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
+			if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>())) {
+				damage += 65535;
+			}
+			return base.StrikeNPC(ref damage, defense, ref knockback, hitDirection, ref crit);
+		}
+
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage / 2);
