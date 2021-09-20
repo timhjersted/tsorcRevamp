@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items
             item.useTime = 45;
             item.useAnimation = 45;
             item.UseSound = mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh");
-            item.scale = .7f;
+            item.scale = 1f;
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
         public override bool UseItem(Player player)

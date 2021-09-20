@@ -3,11 +3,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
  
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.HandsOn)]
+
     public class MoltenRing : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Enchanted Molten Ring grants fire-walking ability and negates knockback." + 
+            Tooltip.SetDefault("Enchanted Molten Ring grants fire-walking ability and negates knockback" + 
 								"\n+10% Melee Damage" + 
-								"\nThe enchanted ring's power is fueled by a +5% mana cost.");
+								"\nThe enchanted ring's power is fueled by a +5% mana cost");
         }
  
         public override void SetDefaults() {

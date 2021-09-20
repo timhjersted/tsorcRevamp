@@ -6,7 +6,6 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Legs)]
     public class HollowSoldierWaistcloth : ModItem
     {
-
         public override void SetDefaults()
         {
             item.vanity = true;
@@ -17,15 +16,15 @@ namespace tsorcRevamp.Items.Armors
             item.rare = ItemRarityID.Green;
         }
 
-        public override void AddRecipes()
+        /*public override void AddRecipes()
         {
-            /*ModRecipe recipe = new ModRecipe(mod);
+            ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.IronGreaves, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
-            recipe.AddRecipe();*/
-        }
+            recipe.AddRecipe();
+        }*/
     }
 }
 

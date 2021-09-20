@@ -62,7 +62,8 @@ namespace tsorcRevamp.Projectiles {
 
 			projectile.position += projectile.velocity * moveFactor;
 			projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);
-			
+			projectile.spriteDirection = projectile.direction;
+
 			if (projectile.spriteDirection == -1) {
 				projectile.rotation -= MathHelper.ToRadians(90f);
             }
