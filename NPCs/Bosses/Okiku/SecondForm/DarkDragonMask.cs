@@ -19,7 +19,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
         public bool Initialize = false;
 
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
+        public bool ChannellingDragon;
+
         public override void SetDefaults() {
             npc.width = 28;
             npc.height = 44;
@@ -41,7 +42,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         }
 
         public override void SetStaticDefaults() {
-            Main.npcFrameCount[npc.type] = 3;
+            Main.npcFrameCount[npc.type] = 7;
             DisplayName.SetDefault("Attraidies");
         }
 
@@ -72,6 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 TimerRain = 0;
                 OptionId = 0;
                 TimerSpawn = 0;
+                ChannellingDragon = false;
             }
             int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 1.0f);
             Main.dust[dust].noGravity = true;
@@ -108,39 +110,53 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
             if (ShieldBroken) {
 
-                if (npc.velocity.X > 7 || npc.velocity.X < -7 || npc.velocity.Y > 7 || npc.velocity.Y < -7) {
-                    npc.velocity.X = 0;
-                    npc.velocity.Y = 0;
-                }
-                if (Main.player[npc.target].position.X + (Main.player[npc.target].width / 2) + 100 < npc.position.X + (npc.width / 2)) {
-                    if (npc.velocity.X > -6) { float accel = (Main.rand.Next(-40, 40) / 10) + 0.4f; npc.velocity.X -= accel; }
-                }
-                if (Main.player[npc.target].position.X + (Main.player[npc.target].width / 2) - 100 > npc.position.X + (npc.width / 2)) {
-                    if (npc.velocity.X < 6) { float accel = (Main.rand.Next(-40, 40) / 10) + 0.4f; npc.velocity.X += accel; }
-                }
+                TimerSpawn++;
 
-                if (Main.player[npc.target].position.Y + (Main.player[npc.target].height / 2) - 200 < npc.position.Y + (npc.height / 2)) {
-                    if (npc.velocity.Y > 0f) npc.velocity.Y -= 0.4f;
-                    else npc.velocity.Y -= 0.05f;
-                }
-                if (Main.player[npc.target].position.Y + (Main.player[npc.target].height / 2) - 200 > npc.position.Y + (npc.height / 2)) {
-                    if (npc.velocity.Y < 0f) npc.velocity.Y += 0.4f;
-                    else npc.velocity.Y += 0.1f;
-                }
+                if (TimerSpawn <= 600)
+                {
+                    npc.velocity.X = Main.player[npc.target].velocity.X;
+                    npc.velocity.Y = Main.player[npc.target].velocity.Y;
 
-                if (npc.position.Y < Main.player[npc.target].position.Y - 50) {
-                    TimerRain++;
-                    if (TimerRain >= 2) {
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
-                        Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(-100, 100) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 64, 0f, 0);
-                        TimerRain = 0;
+                    if (npc.position.Y < Main.player[npc.target].position.Y - 50)
+                    {
+                        TimerRain++;
+                        if (TimerRain >= 2)
+                        {
+                            Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
+                            Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(-120, 120) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 64, 0f, 0);
+
+                            if (Main.rand.Next(4) == 0)
+                            {
+                                Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(Main.rand.Next(-160, -120), Main.rand.Next(120, 160)) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 64, 0f, 0);
+                            }
+
+                            TimerRain = 0;
+                        }
+
                     }
                 }
-                TimerSpawn++;
-                if (TimerSpawn >= 600) {
+
+                if (TimerSpawn > 600 && TimerSpawn < 780)
+                {
+                    npc.velocity.X = 0;
+                    npc.velocity.Y = 0;
+                    ChannellingDragon = true;
+                }
+
+                if (TimerSpawn >= 780) 
+                {
+                    ChannellingDragon = false;
                     OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
                     Main.npc[OptionId].velocity.Y = -10;
                     TimerSpawn = 0;
+                }
+                if (TimerSpawn == 1) //teleport above player right after dragon is killed
+                {
+                    int randPosX = Main.rand.Next(-250, 250);
+                    //Main.NewText(randPosX);
+
+                    npc.position.X = Main.player[npc.target].position.X + randPosX;
+                    npc.position.Y = Main.player[npc.target].position.Y - 300;
                 }
 
             }
@@ -193,35 +209,69 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
         public override void FindFrame(int frameHeight) {
 
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2)) {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
-                if (npc.position.X > Main.player[npc.target].position.X) {
-                    npc.spriteDirection = -1;
-                }
-                else {
-                    npc.spriteDirection = 1;
-                }
-            }
             int num = 1;
-            if (!Main.dedServ) {
+            if (!Main.dedServ)
+            {
                 num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
             }
 
-            if (npc.velocity.X > 1.5f) npc.frame.Y = num;
-            if (npc.velocity.X < -1.5f) npc.frame.Y = num * 2;
-            if (npc.velocity.X > -1.5f && npc.velocity.X < 1.5f) npc.frame.Y = 0;
-            if (ShieldBroken) {
+            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2) && !ChannellingDragon)
+            {
+                npc.frameCounter = 0;
+                npc.frame.Y = 0;
+                if (npc.position.X > Main.player[npc.target].position.X)
+                {
+                    npc.spriteDirection = -1;
+                }
+                else
+                {
+                    npc.spriteDirection = 1;
+                }
+            }
+
+            if (ShieldBroken)
+            {
                 if (npc.alpha > 40) npc.alpha -= 1;
                 if (npc.alpha < 40) npc.alpha += 1;
             }
-            else {
+            else
+            {
                 if (npc.alpha < 200) npc.alpha += 1;
                 if (npc.alpha > 200) npc.alpha -= 1;
             }
+
+            if (ChannellingDragon)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.frameCounter++;
+                if (npc.frameCounter < 8)
+                {
+                    npc.frame.Y = num * 3;
+                }
+                else if (npc.frameCounter < 16)
+                {
+                    npc.frame.Y = num * 4;
+                }
+                else if (npc.frameCounter < 24)
+                {
+                    npc.frame.Y = num * 5;
+                }
+                else if (npc.frameCounter < 32)
+                {
+                    npc.frame.Y = num * 4;
+                }
+                else
+                {
+                    npc.frameCounter = 0;
+                }
+            }
+
+            else
+            {
+                if (npc.velocity.X > 1.5f) npc.frame.Y = num;
+                if (npc.velocity.X < -1.5f) npc.frame.Y = num * 2;
+                if (npc.velocity.X > -1.5f && npc.velocity.X < 1.5f) npc.frame.Y = 0;
+            }
         }
-
-
-
     }
 }
