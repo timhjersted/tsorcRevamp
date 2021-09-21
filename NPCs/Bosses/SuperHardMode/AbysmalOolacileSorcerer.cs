@@ -387,8 +387,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		}
 
 		#endregion
-
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 		public override void FindFrame(int currentFrame)
 		{
 

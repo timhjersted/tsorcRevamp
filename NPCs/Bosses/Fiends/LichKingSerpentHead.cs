@@ -105,7 +105,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 			return false;
 		}
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 		public override void NPCLoot()
 		{
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));

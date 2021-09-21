@@ -385,7 +385,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Dust.NewDust(npc.position, npc.height, npc.width, 54, 0.2f, 0.2f, 200, default(Color), 2f);
             }
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void NPCLoot()
         {
             if (Main.expertMode)

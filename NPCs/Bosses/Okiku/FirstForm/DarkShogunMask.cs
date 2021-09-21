@@ -257,6 +257,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                 }
             }
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
     }
 }

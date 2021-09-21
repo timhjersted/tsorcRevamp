@@ -396,7 +396,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             return false;
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void NPCLoot() {
             if (Main.expertMode)
             {

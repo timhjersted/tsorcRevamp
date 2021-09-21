@@ -200,7 +200,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void NPCLoot()
         {
             if (Main.expertMode)

@@ -475,7 +475,6 @@ namespace tsorcRevamp.Items.BossBags {
                     Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()] = 1; //set the value to 1
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<Items.DragonScale>(), 35 + Main.rand.Next(5));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 7000);
             player.QuickSpawnItem(ModContent.ItemType<Items.BequeathedSoul>(), 2);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());

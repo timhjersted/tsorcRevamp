@@ -283,8 +283,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 npc.frame.Y = 0;
             }
         }
-
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void NPCLoot()
         {

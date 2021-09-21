@@ -629,6 +629,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			}
 		}
 		#endregion
+		public override bool CheckActive()
+		{
+			return false;
+		}
 
 		#region Magic Defense
 		public int MagicDefenseValue()

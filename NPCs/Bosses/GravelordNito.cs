@@ -48,7 +48,10 @@ namespace tsorcRevamp.NPCs.Bosses {
             }
             return true;
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void AI() {
 
             npc.defense = npc.defDefense;

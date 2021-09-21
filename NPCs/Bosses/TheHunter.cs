@@ -196,7 +196,10 @@ namespace tsorcRevamp.NPCs.Bosses
                 npc.alpha = 200;
             }
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
             hitTime = 0;

@@ -568,6 +568,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 			}
 		}
+		public override bool CheckActive()
+		{
+			return false;
+		}
 
 		#region Gore
 		public override void NPCLoot()

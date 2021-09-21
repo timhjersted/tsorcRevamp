@@ -307,8 +307,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 {
                     npc.position.X = Main.player[npc.target].position.X;
                     npc.position.Y -= 800;
-                    //Gives the player infinite flight. Sticks around for a bit afterward as a bonus.
-                    Main.player[npc.target].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);
+
+                    //Gives the player infinite flight for the duration of the attack. Sticks around for a bit afterward as a bonus.
+                    Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);
+                    Main.NewText("You suddenly feel weightless...", Color.DeepSkyBlue);
                 }
 
                 npc.velocity = Vector2.Zero;
@@ -590,45 +592,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             DragonSpawned = 1;
                         }
                         #endregion
-                    }
-
-                    /**
-                     * Secondary attacks were terrible idea, and will stay buried. Will probably find somewhere to reuse concepts/code from here, though.
-                    #region Secondary Mode 1: Rotating Lasers
-                    if(SecondaryAttackMode == 1)
-                    {
-                        //Scrapped, turned into Attack Mode 6
-                    }
-                    #endregion
-
-                    #region Secondary Mode 2: Timed Laser Spawning
-                    if (SecondaryAttackMode == 2)
-                    {
-                        if (TeleportingLaserCooldown <= 0)
-                        {
-                            TeleportingLaser = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(npc.position, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), TeleportingLaserDamage, .5f).modProjectile;
-                            TeleportingLaser.LaserOrigin = Main.player[npc.target].position + Main.rand.NextVector2CircularEdge(1000, 1000);
-                            TeleportingLaser.LaserTarget = Main.player[npc.target].position;
-                            TeleportingLaser.LaserTexture = TransparentTextureHandler.TransparentTextureType.DarkLaser;
-                            TeleportingLaser.LaserTargetingTexture = TransparentTextureHandler.TransparentTextureType.DarkLaserTargeting;
-                            TeleportingLaser.TelegraphTime = 120;
-                            TeleportingLaser.LaserColor = Color.Purple;
-                            TeleportingLaser.TileCollide = false;
-                            TeleportingLaser.FiringDuration = 600;
-                            TeleportingLaserCooldown = 600;
-                        } 
-                        else
-                        {
-                            if(TeleportingLaser != null)
-                            {
-                                //TeleportingLaser.LaserTarget = Vector2.Lerp(TeleportingLaser.LaserTarget, Main.player[npc.target].position, 0.03f);
-                            }
-                            TeleportingLaserCooldown--;
-                        }
-                    }
-                    #endregion
-
-                    **/
+                    }                    
                 }
                 #endregion
             }

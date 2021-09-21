@@ -403,7 +403,10 @@ namespace tsorcRevamp.NPCs.Bosses
 			//}
 		}
 
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 
 		#region gore
 		public override void NPCLoot()

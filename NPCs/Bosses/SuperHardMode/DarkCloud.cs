@@ -160,7 +160,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
-
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         NPCDespawnHandler despawnHandler;
         public override void AI() //warrior ai
@@ -1165,6 +1164,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #endregion
         }
         #endregion
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         #region Gore
         public override void NPCLoot()

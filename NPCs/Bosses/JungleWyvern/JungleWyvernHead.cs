@@ -279,6 +279,10 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			npc.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 			return false;
 		}
+		public override bool CheckActive()
+		{
+			return false;
+		}
 		public override void NPCLoot() {
 
 			if (Main.expertMode)

@@ -61,6 +61,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         //int previous = 0;
         bool breath = false;
         //bool tailD = false;
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

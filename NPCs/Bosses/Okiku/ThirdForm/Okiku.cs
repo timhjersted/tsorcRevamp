@@ -276,6 +276,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             }
         }
 
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void NPCLoot() {
             if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
             {

@@ -380,7 +380,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			}
 		}
 		#endregion
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 		public override void NPCLoot()
 		{
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 1"), 1f);

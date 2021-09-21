@@ -186,8 +186,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             }
         }
 
-
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void FindFrame(int frameHeight) {
 

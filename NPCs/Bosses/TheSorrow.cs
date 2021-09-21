@@ -224,7 +224,10 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             return true;
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void NPCLoot() {
             for (int num36 = 0; num36 < 100; num36++)
             {

@@ -434,7 +434,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			}
 		}
 		#endregion
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 
 		public override void NPCLoot()
 		{
