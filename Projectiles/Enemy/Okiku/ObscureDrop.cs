@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.aiStyle = 1;
             projectile.hostile = true;
             projectile.tileCollide = false;
-            projectile.timeLeft = 1500;
+            projectile.timeLeft = 300;
         }
         public override bool PreKill(int timeLeft) {
             projectile.type = 44; //killpretendtype
@@ -35,6 +35,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             }
 
             if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;
+
+            if (projectile.timeLeft == 170)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Projectile ObscureDropSplits = Main.projectile[Projectile.NewProjectile(projectile.position.X, projectile.position.Y, Main.rand.Next(-100, 100) / 10, projectile.velocity.Y, ModContent.ProjectileType<ObscureDrop>(), 40, 0f, 0)];
+                    ObscureDropSplits.timeLeft = 169;
+                }
+            }
 
             return true;
         }
