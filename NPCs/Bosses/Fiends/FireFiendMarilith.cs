@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							speedX *= num51;
 							speedY *= num51;
 							//(int) (14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.AntiMatterBlast>();//44;//0x37; //14;
+							int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>();//44;//0x37; //14;
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 9;

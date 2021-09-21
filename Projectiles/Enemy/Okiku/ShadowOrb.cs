@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.height = 15;
             projectile.width = 15;
             projectile.scale = 0.9f;
-
+			projectile.tileCollide = false;
         }
 
         public override void Kill(int timeLeft) {
@@ -35,7 +35,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 				target.AddBuff(BuffID.BrokenArmor, 120, false); //broken armor
 				target.AddBuff(BuffID.Weak, 600, false); //weak
 				target.AddBuff(BuffID.OnFire, 180, false); //on fire!
-				target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 7200, false);
 			}
 
 			if (Main.rand.Next(8) == 0) {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,11 +13,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.height = 16;
             projectile.penetrate = 1;
             projectile.scale = 1;
-            projectile.tileCollide = true;
+            projectile.tileCollide = false;
             projectile.width = 16;
+
         }
 
         public override void PostAI() {
+			Lighting.AddLight(projectile.position, Color.Cyan.ToVector3());
 			projectile.alpha += 5;
 			if (projectile.alpha >= 255) {
 				projectile.Kill();
@@ -49,6 +52,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 				}
 			}
 			projectile.active = false;
+		}
+
+		//This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
+		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		{
+			SpriteEffects spriteEffects = SpriteEffects.None;
+			if (projectile.spriteDirection == -1)
+			{
+				spriteEffects = SpriteEffects.FlipHorizontally;
+			}
+			//Get the premultiplied, properly transparent texture
+			Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
+			int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+			int startY = frameHeight * projectile.frame;
+			Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+			Vector2 origin = sourceRectangle.Size() / 2f;
+			Main.spriteBatch.Draw(texture,
+				projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
+				sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+
+			return false;
 		}
 	}
 }

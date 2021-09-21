@@ -38,6 +38,7 @@ namespace tsorcRevamp {
         private UserInterface _darkSoulCounterUIState;
 
         public static Effect TheAbyssEffect;
+        //public static Effect AttraidiesEffect;
 
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
@@ -63,7 +64,11 @@ namespace tsorcRevamp {
             if (!Main.dedServ) {
                 tsorcRevamp Instance = this;
                 TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
-                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low); 
+                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);  
+                
+                //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
+                //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
             }
         }
 
@@ -852,7 +857,7 @@ namespace tsorcRevamp {
         public static Dictionary<TransparentTextureType, Texture2D> TransparentTextures;
         public enum TransparentTextureType
         {
-            AntiMatterBlast,
+            PhasedMatterBlast,
             AntiGravityBlast,
             EnemyPlamaOrb,
             ManaShield,
@@ -861,7 +866,11 @@ namespace tsorcRevamp {
             AntiMaterialRound,
             GlaiveBeam,
             GlaiveBeamItemGlowmask,
-            GlaiveBeamHeldGlowmask
+            GlaiveBeamHeldGlowmask,
+            GenericLaser,
+            GenericLaserTargeting,
+            DarkLaser,
+            DarkLaserTargeting
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -870,7 +879,7 @@ namespace tsorcRevamp {
             //Generates the dictionary of textures
             TransparentTextures = new Dictionary<TransparentTextureType, Texture2D>()
             {
-                {TransparentTextureType.AntiMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/AntiMatterBlast")},
+                {TransparentTextureType.PhasedMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast")},
                 {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
                 {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
                 {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
@@ -879,7 +888,10 @@ namespace tsorcRevamp {
                 {TransparentTextureType.AntiMaterialRound, ModContent.GetTexture("tsorcRevamp/Projectiles/AntiMaterialRound")},
                 {TransparentTextureType.GlaiveBeam, ModContent.GetTexture("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
                 {TransparentTextureType.GlaiveBeamItemGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
-                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")}
+                {TransparentTextureType.GenericLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaser")},
+                {TransparentTextureType.GenericLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaserTargeting")},
+                {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
+                {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")}
             };
 
             //Runs each entry through the XNA's premultiplication function

@@ -230,18 +230,10 @@ namespace tsorcRevamp.Projectiles {
 			// After creating the beams, mark the Prism as having an important network event. This will make Terraria sync its data to other players ASAP.
 			projectile.netUpdate = true;
 		}
-		
-		// Because the Prism is a holdout projectile and stays glued to its user, it needs custom drawcode.
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
 			return false;			
 		}
-
-		/**
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
-        {
-			//TODO: Glow mask
-            base.PostDraw(spriteBatch, lightColor);
-        }**/
 	}
 }

@@ -124,11 +124,11 @@ namespace tsorcRevamp
         {
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
 
-            ScriptedEvent ExampleArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ExampleArtoriasCustomAction, false);
+            ScriptedEvent ExampleArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ExampleArtoriasCustomAction);
             ExampleArtoriasEvent.SetCustomStats(50000, 30, 50);
             ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
-            ScriptedEvent ExampleBlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, ExampleBlackKnightCustomAction, true);
+            ScriptedEvent ExampleBlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, ExampleBlackKnightCustomAction);
             ExampleBlackKnightFight.SetCustomStats(1500, 10, 50);
             ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1000 });
 
@@ -253,7 +253,8 @@ namespace tsorcRevamp
             return false;
         }
 
-        //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias.
+
+        //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
         public static bool ExampleArtoriasCustomAction(Player player, int npcID)
         {
             //Spawning meteors:
@@ -275,7 +276,7 @@ namespace tsorcRevamp
 
                 //Now we can change the damages!!
                 //Note: If you can't find the damages for a NPC, their damage stats might not be public.
-                //In this case, the NPC will have to be modified slightly: Find the damage variables you want to modify (in this case blackBreathDamage and phantomSeekerDamage) and put 'public' in front of them.
+                //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case blackBreathDamage and phantomSeekerDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
                 ourArtorias.blackBreathDamage = 40;
                 ourArtorias.phantomSeekerDamage = 50;
@@ -283,7 +284,7 @@ namespace tsorcRevamp
             return false;
         }
 
-        //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias.
+        //This is an example custom action that just changes the damage of an NPC's projectile. Most enemies will require a very small change for this to work with them (the word 'public' needs to be in front of the variable controlling that projectile's damage).
         public static bool ExampleBlackKnightCustomAction(Player player, int npcID)
         {
             //Changing projectile damage:
@@ -294,12 +295,12 @@ namespace tsorcRevamp
                 NPCs.Enemies.BlackKnight ourKnight = (NPCs.Enemies.BlackKnight)Main.npc[npcID].modNPC;
 
                 //Now we can change the damages!!
-                //Note: If you can't find the damages for a NPC, their damage stats might not be public.
-                //In this case, the NPC will have to be modified slightly: Find the damage variables you want to modify (in this case blackBreathDamage and phantomSeekerDamage) and put 'public' in front of them.
+                //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
+                //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
                 ourKnight.spearDamage = 40;
             }
-            return false;
+            return true;
         }
 
         //i dont want this event to last forever, so just spawn the tinkerer and immediately end the event

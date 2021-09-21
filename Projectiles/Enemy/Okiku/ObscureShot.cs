@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,10 +10,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         public override void SetDefaults() {
             projectile.aiStyle = 0;
             projectile.hostile = true;
-            projectile.height = 16;
+            projectile.height = 14;
+            projectile.width = 14;
             projectile.scale = 2;
             projectile.tileCollide = false;
-            projectile.width = 16;
             projectile.timeLeft = 1500;
         }
 
@@ -33,6 +34,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 projectile.velocity.X *= 1.02f;
                 projectile.velocity.Y *= 1.02f;
             }
+        }
+        
+        //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            //Get the premultiplied, properly transparent texture
+            Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
+            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int startY = frameHeight * projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Main.spriteBatch.Draw(texture,
+                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
+                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+
+            return false;
         }
     }
 }

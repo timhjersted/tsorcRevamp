@@ -136,7 +136,6 @@ namespace tsorcRevamp {
                     Slain.Add((int)readData.X, (int)readData.Y);
                 }
             }
-            Main.NewText("done!");
         }
 
         public static bool JustPressed(Keys key) {

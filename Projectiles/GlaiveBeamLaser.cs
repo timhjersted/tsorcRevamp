@@ -237,7 +237,7 @@ namespace tsorcRevamp.Projectiles {
             {
                 Vector2 origin = GetOrigin();
                 var start = origin + projectile.velocity * Distance;
-                if (!Collision.CanHit(origin, 1, 1, start, 1, 1))
+                if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
                 {
                     Distance -= 5f;
                     break;
