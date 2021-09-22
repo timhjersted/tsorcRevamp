@@ -320,7 +320,6 @@ namespace tsorcRevamp {
                 42, //chain lantern
                 49, //water candle
                 50, //books
-                55, //Sign 
                 73, //plants
                 74, //plants
                 78, //clay pot
