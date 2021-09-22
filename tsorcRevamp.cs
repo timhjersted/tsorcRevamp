@@ -43,7 +43,7 @@ namespace tsorcRevamp {
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
-            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulToken>(), 99999L));
+            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
             BonfireUIState = new BonfireUIState();
             if (!Main.dedServ) BonfireUIState.Activate();

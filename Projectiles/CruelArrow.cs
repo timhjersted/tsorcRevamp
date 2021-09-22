@@ -19,24 +19,26 @@ namespace tsorcRevamp.Projectiles {
             projectile.width = 5;
         }
 
-        /* TODO add modified damage to special NPCs
-        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit ){
 
-            if (npc.name=="Ghost of the Forgotten Knight") damage *= 8;
-            if (npc.name=="Ghost of the Forgotten Warrior") damage *= 8;
-            if (npc.name=="Demon Spirit") damage *= 8;
-            if (npc.name=="Crazed Demon Spirit") damage *= 8;
-            if (npc.name=="Ghost Dragon Body") damage *= 8;
-            if (npc.name=="Ghost Dragon Head") damage *= 8;
-            if (npc.name=="Ghost Dragon Legs") damage *= 8;
-            if (npc.name=="Wyvern Mage Shadow") damage *= 8;
-            if (npc.name=="Barrow Wight") damage *= 8;
-            if (npc.name=="Barrow Wight Nemesis") damage *= 8;
-            if (npc.name=="Ghost of the Darkmoon Knight") damage *= 8;
-
+        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit )
+        {
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheForgottenWarrior>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.BarrowWight>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody2>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody3>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>()) damage *= 8;
+            if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>()) damage *= 8;
         }
 
-        */
         public override void Kill(int timeLeft) {
             Collision.HitTiles(projectile.position + projectile.velocity, projectile.velocity, projectile.width, projectile.height);
             Main.PlaySound(SoundID.Dig, projectile.position);

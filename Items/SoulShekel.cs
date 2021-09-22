@@ -7,13 +7,13 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items
 {
-    class SoulToken : BaseRarityItem
+    class SoulShekel : BaseRarityItem
     {
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("A mysterious token formed out of dark souls" +
+            Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
                 "\nUsed as a currency among the undead");
             ItemID.Sets.ItemNoGravity[item.type] = true;
             //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items
 
 
             Lighting.AddLight(item.Center, 0.1f, 0.45f, 0.21f);
-            Texture2D texture = mod.GetTexture("Items/SoulToken_InWorld");
+            Texture2D texture = mod.GetTexture("Items/SoulShekel_InWorld");
             var myrectangle = texture.Frame(1, 8, 0, itemframe);
             spriteBatch.Draw(texture, item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), item.scale, SpriteEffects.None, 0.1f);
 
