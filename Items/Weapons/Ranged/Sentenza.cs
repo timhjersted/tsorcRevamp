@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetStaticDefaults()
         { 
             DisplayName.SetDefault("Sentenza");
-            Tooltip.SetDefault("Deals etra damage to hallowed creatures");
+            Tooltip.SetDefault("Deals extra damage to hallowed creatures");
         }
 
         public override void SetDefaults()
