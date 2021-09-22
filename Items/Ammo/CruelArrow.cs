@@ -7,8 +7,8 @@ namespace tsorcRevamp.Items.Ammo {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Cruel Arrow");
             Tooltip.SetDefault("An arrow fashioned to kill lost and forgotten souls...\n" +
-                                "Does 8x greater damage to some enemies.\n" +
-                                "");
+                                "Does 8x greater damage to some enemies\n" +
+                                "Pierces once");
 
         }
 
