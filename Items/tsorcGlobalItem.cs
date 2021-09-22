@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items {
 		}
 
         public override void GrabRange(Item item, Player player, ref int grabRange) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet) { //bossMagnet is set on every player when a boss is killed, in NPCLoot
+            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoul>()) { //bossMagnet is set on every player when a boss is killed, in NPCLoot
 				grabRange *= 20;
             }
 
