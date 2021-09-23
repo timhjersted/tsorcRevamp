@@ -287,7 +287,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				}
 			}
 		}
-
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
 		public override void FindFrame(int currentFrame)
 		{
 			int num = 1;

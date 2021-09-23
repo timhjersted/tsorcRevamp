@@ -283,6 +283,10 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 		{
 			return false;
 		}
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
 		public override void NPCLoot() {
 
 			if (Main.expertMode)

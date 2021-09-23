@@ -181,6 +181,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             //}
 
         }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
+        }
 
         public override void NPCLoot()
         {

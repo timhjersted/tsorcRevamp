@@ -204,6 +204,10 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             return false;
         }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
+        }
         public override void NPCLoot()
         {
             if (Main.expertMode)

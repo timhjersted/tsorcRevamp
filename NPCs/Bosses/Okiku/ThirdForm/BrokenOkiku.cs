@@ -282,6 +282,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 } 
             }
         }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
+        }
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
         }

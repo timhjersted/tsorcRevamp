@@ -689,7 +689,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         {
             return false;
         }
-        
+
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
+        }
+
         public override void NPCLoot() {
 
             //if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:AttraidiesShader"].IsActive())

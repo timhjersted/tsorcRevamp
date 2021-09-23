@@ -391,6 +391,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		{
 			return false;
 		}
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.SuperHealingPotion;
+		}
 		public override void FindFrame(int currentFrame)
 		{
 

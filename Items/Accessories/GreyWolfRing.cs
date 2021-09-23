@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.AddBuff(BuffID.WeaponImbueFire, 60, false);   
+            player.magmaStone = true;
 			player.spawnMax = true;
 			player.statManaMax2 += 100;
 			player.buffImmune[BuffID.OnFire] = true;
