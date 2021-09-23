@@ -121,6 +121,7 @@ namespace tsorcRevamp.Items {
 
                     player.position.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpX * 16) - (float)((float)player.width / 2.0);
                     player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpY * 16) - (float)player.height;
+                    player.gravDir = 1;
                     player.velocity.X = 0f;
                     player.velocity.Y = 0f;
                     player.fallStart = (int)player.Center.Y;
