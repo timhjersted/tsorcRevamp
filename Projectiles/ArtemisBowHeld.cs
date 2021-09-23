@@ -88,13 +88,13 @@ namespace tsorcRevamp.Projectiles {
                         Vector2 projectileVelocity = inaccuracy * (1 + ((player.HeldItem.shootSpeed / 27) * (float)(Math.Pow((Math.Floor((double)charge)), 2))));
 
                         if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
-                            Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, projectile.damage, projectile.knockBack, projectile.owner);
+                            //the projectile damage math has to be cast like this for it to work! it wont work if you just cast the result! do not change it! 
+                            Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, (int)(projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), projectile.knockBack, projectile.owner);
                             player.inventory[ammoLocation].stack--;
                             if (player.inventory[ammoLocation].stack == 0) {
                                 player.inventory[ammoLocation].TurnToAir();
                             }
                         }
-
                         Main.PlaySound(SoundID.Item5.WithVolume(0.8f), player.position);
                     }
                     charge = 0; //reset the charge
