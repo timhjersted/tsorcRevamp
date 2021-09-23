@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 item.shoot = ModContent.ProjectileType<Projectiles.ArtemisBowHeld>();
                 item.channel = true;
 
-                item.damage = 400;
+                item.damage = 365;
                 item.width = 14;
                 item.height = 28;
                 item.useTime = 60;

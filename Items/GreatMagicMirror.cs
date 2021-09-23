@@ -144,8 +144,8 @@ namespace tsorcRevamp.Items {
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is greatly increased and you cannot move during the channel."));
-                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf2", "Cannot be used while in combat."));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is greatly increased and you cannot move during the channel."));
+                    tooltips.Insert(ttindex + 2, new TooltipLine(mod, "RevampMirrorNerf2", "Cannot be used while in combat."));
                 }
             }
         }
