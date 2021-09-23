@@ -63,11 +63,11 @@ namespace tsorcRevamp.Items.Accessories {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc");
+                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1)
                 {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampDarkmoonCloak", "[c/00ff00:Revamped Mode:] Halves the duration of Magic Imbue Cooldown"));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampDarkmoonCloak", "Halves the duration of Magic Imbue Cooldown"));
                 }
             }
         }

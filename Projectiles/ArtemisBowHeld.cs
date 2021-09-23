@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
-    class CernosPrimeHeld : ModProjectile {
+    class ArtemisBowHeld : ModProjectile {
 
         private int charge;
         private int chargeTimer;
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles {
 
         public override void SetDefaults() {
             projectile.CloneDefaults(ProjectileID.LastPrism); //so the visual bow does no damage
-            projectile.width = 48;
+            projectile.width = 60;
             projectile.height = 12;
             projectile.friendly = false;
         }
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles {
                 {
                     Vector2 aimVector = Vector2.Normalize(Main.MouseWorld - playerHandPos);
                     aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.3f)); //taken straight from RedLaserBeam, thanks past me!
-                    aimVector *= 15;
+                    aimVector *= 24;
                     if (aimVector != projectile.velocity) {
                         projectile.netUpdate = true; //update the bow visually to other players when we change aim
                     }
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles {
                 }
                 bool charging = player.channel && !player.noItems && !player.CCed; //not cursed or frozen, and holding lmb
                 int maxChargeTime; //for modifying the max charge time based on prefix
-                
+
 
                 if ((player.HeldItem.useTime + 1) % MAX_CHARGE_COUNT == 0) { //for rounding up
                     maxChargeTime = player.HeldItem.useTime + 1;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles {
                         charge++;
                     }
                 }
-                else { 
+                else {
                     chargeTimer = 0;
                     Vector2 bowVelocity = Vector2.Normalize(projectile.velocity);
 
@@ -82,19 +82,19 @@ namespace tsorcRevamp.Projectiles {
 
                         FindAmmo(player, ref ammoLocation, ref ammoProjectileType);
 
-                        for (int i = 0; i < 3; i++) {
-                            Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
-                            Vector2 projectileVelocity = inaccuracy * (1 + ((player.HeldItem.shootSpeed / 27) * (float)(Math.Pow((Math.Floor((double)charge)), 2))));
+                        Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
-                            if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
-                                Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, projectile.damage, projectile.knockBack, projectile.owner);
-                                player.inventory[ammoLocation].stack--;
-                                if (player.inventory[ammoLocation].stack == 0) {
-                                    player.inventory[ammoLocation].TurnToAir();
-                                }
+                        Vector2 projectileVelocity = inaccuracy * (1 + ((player.HeldItem.shootSpeed / 27) * (float)(Math.Pow((Math.Floor((double)charge)), 2))));
+
+                        if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
+                            Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, projectile.damage, projectile.knockBack, projectile.owner);
+                            player.inventory[ammoLocation].stack--;
+                            if (player.inventory[ammoLocation].stack == 0) {
+                                player.inventory[ammoLocation].TurnToAir();
                             }
                         }
+
                         Main.PlaySound(SoundID.Item5.WithVolume(0.8f), player.position);
                     }
                     charge = 0; //reset the charge

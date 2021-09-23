@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Pets
             Tooltip.SetDefault("Miakoda - an ancient being of light over 100 years old, " +
                                 "\nwho has vowed to help you find your wife and defeat Attraidies." +
                                 "\nMiakoda is an indigenous name that means \"Power of the Moon\"." +
-                                "\n[c/00ff00:Revamped Mode:] Full Moon Form - Heals you when you get a crit" +
+                                "\nFull Moon Form - Heals you when you get a crit" +
                                 "\n(12 second cooldown - heal scales with max hp)" +
                                 "\n+3% damage reduction" +
                                 "\nCan switch between forms at an altar");

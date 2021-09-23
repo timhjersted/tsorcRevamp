@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Pets
             Tooltip.SetDefault("Miakoda - an ancient being of light over 100 years old, " +
                                 "\nwho has vowed to help you find your wife and defeat Attraidies." +
                                 "\nMiakoda is an indigenous name that means \"Power of the Moon\"." +
-                                "\n[c/00ff00:Revamped Mode:] Crescent Moon Form - Imbues weapons with Crescent Moonlight" +
+                                "\nCrescent Moon Form - Imbues weapons with Crescent Moonlight" +
                                 "\nwhen you get a crit (2 second duration, 12 second cooldown)" +
                                 "\n+3% damage, +7% more while weapon imbue is active" +
                                 "\nCan switch between forms at an altar");

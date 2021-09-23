@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Potions {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             if (!LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "RevampCDNerf1", "[c/00ff00:Revamped Mode:] Cannot be used again for 60 seconds after wearing off."));
+                tooltips.Add(new TooltipLine(mod, "RevampCDNerf1", "Cannot be used again for 60 seconds after wearing off."));
             }
         }
     }

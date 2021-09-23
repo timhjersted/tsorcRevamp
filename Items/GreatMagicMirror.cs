@@ -140,11 +140,11 @@ namespace tsorcRevamp.Items {
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc");
+                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf1", "[c/00ff00:Revamped Mode:] Channel time is greatly increased and you cannot move during the channel."));
-                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf2", "[c/00ff00:Revamped Mode:] Cannot be used while in combat."));
+                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is greatly increased and you cannot move during the channel."));
+                    tooltips.Add(new TooltipLine(mod, "RevampMirrorNerf2", "Cannot be used while in combat."));
                 }
             }
         }
