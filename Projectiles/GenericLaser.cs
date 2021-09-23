@@ -262,11 +262,11 @@ namespace tsorcRevamp.Projectiles {
         }
 
         private void SetLaserPosition() {
-            for (Distance = MOVE_DISTANCE; Distance <= 20200f; Distance += 50f)
+            for (Distance = MOVE_DISTANCE; Distance <= LaserLength; Distance += 50f)
             {
                 if (!TileCollide)
                 {
-                    Distance = 20200;
+                    Distance = LaserLength;
                     break;
                 }
                 Vector2 origin = GetOrigin();

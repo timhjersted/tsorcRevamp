@@ -105,6 +105,12 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 		{
 			return false;
 		}
+
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
+
 		public override void NPCLoot() {
 
 			//Kind of like EoW, it always drops this many extra souls whether it's been killed or not.

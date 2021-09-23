@@ -633,6 +633,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		{
 			return false;
 		}
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.SuperHealingPotion;
+		}
 
 		#region Magic Defense
 		public int MagicDefenseValue()

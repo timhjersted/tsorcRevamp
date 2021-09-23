@@ -438,7 +438,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		{
 			return false;
 		}
-
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
 		public override void NPCLoot()
 		{
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 1"), 1f);

@@ -407,6 +407,10 @@ namespace tsorcRevamp.NPCs.Bosses
 		{
 			return false;
 		}
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
 
 		#region gore
 		public override void NPCLoot()
