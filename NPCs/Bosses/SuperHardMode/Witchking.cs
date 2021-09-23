@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
             if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>())) {
-                damage += 3050;
+                damage += (0.5 * npc.defense);
             }
             return base.StrikeNPC(ref damage, defense, ref knockback, hitDirection, ref crit);
         }
