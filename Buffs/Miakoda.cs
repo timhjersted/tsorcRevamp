@@ -6,7 +6,7 @@ namespace tsorcRevamp.Buffs {
     class Miakoda : ModBuff {
         public override void SetDefaults() {
             DisplayName.SetDefault("Miakoda");
-            Description.SetDefault("An ancient being freed from Gravelord Nito.");
+            Description.SetDefault("An ancient being freed from Skeletron.");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

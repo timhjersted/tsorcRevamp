@@ -46,7 +46,6 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                     || target.type == NPCID.TheGroom
                     || target.type == NPCID.SkeletronHand
                     || target.type == NPCID.SkeletronHead
-                    || target.type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()
                     || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentHead>()
                     || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentBody>()
                     || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentTail>()

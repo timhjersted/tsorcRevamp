@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs
         public override void SetDefaults()
         {
             DisplayName.SetDefault("Miakoda - Crescent Moon Form");
-            Description.SetDefault("An ancient being freed from Gravelord Nito." +
+            Description.SetDefault("An ancient being freed from Skeletron." +
                                    "\nIt is said to possess a divine smile");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
