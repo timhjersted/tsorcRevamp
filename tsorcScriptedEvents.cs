@@ -109,7 +109,7 @@ namespace tsorcRevamp
         {
             DarkCloudPyramidFight,
             ExampleArtoriasFight,
-            ExampleBlackKnightFight,
+            BlackKnightFight,
             ExampleHarpySwarm,
             ExampleNoNPCScriptEvent
 
@@ -126,11 +126,11 @@ namespace tsorcRevamp
 
             ScriptedEvent ExampleArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ExampleArtoriasCustomAction, false);
             ExampleArtoriasEvent.SetCustomStats(50000, 30, 50);
-            ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
+            //ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
-            ScriptedEvent ExampleBlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, ExampleBlackKnightCustomAction, true);
-            ExampleBlackKnightFight.SetCustomStats(1500, 10, 50);
-            ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1000 });
+            ScriptedEvent BlackKnightFight = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight awakens...", Color.Purple, false, NormalModeCustomCondition, BlackKnightCustomAction);
+            BlackKnightFight.SetCustomStats(1000, 2, 60);
+            BlackKnightFight.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 650 });
 
 
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
@@ -150,7 +150,7 @@ namespace tsorcRevamp
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.ExampleArtoriasFight, ExampleArtoriasEvent},
-                {ScriptedEventType.ExampleBlackKnightFight, ExampleBlackKnightFight},
+                {ScriptedEventType.BlackKnightFight, BlackKnightFight},
                 {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent}
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
@@ -262,7 +262,7 @@ namespace tsorcRevamp
         }
 
         //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias.
-        public static bool ExampleBlackKnightCustomAction(Player player, int npcID)
+        public static bool BlackKnightCustomAction(Player player, int npcID)
         {
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
