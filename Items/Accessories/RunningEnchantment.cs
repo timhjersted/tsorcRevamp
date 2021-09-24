@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 28;
             item.accessory = true;
             item.maxStack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.value = 60000;
+            item.rare = ItemRarityID.Blue;
+            item.value = PriceByRarity.Blue_1 + 2500 /*because being the same cost as boots of haste would be weird*/;
         }
 
         public override void AddRecipes() {

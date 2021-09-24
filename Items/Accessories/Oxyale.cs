@@ -16,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 26;
             item.accessory = true;
             item.maxStack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.value = 0;
+            item.rare = ItemRarityID.Lime; //this thing is *technically* shm tier but wow is it useless at that point, lmao
+            item.value = PriceByRarity.Lime_7;
         }
 
         public override void UpdateEquip(Player player) {

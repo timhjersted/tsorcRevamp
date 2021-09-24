@@ -105,16 +105,16 @@ namespace tsorcRevamp {
         public static readonly int White_0 = Item.buyPrice(platinum: 0, gold: 0, silver: 40, copper: 0);
 
         //underground chest loots (shoe spikes, CiaB, etc), shadow orb items, floating island
-        public static readonly int Blue_1 = Item.buyPrice(platinum: 0, gold: 2, silver: 50, copper: 0);
+        public static readonly int Blue_1 = Item.buyPrice(platinum: 0, gold: 2, silver: 25, copper: 0);
 
         //gold dungeon chest (handgun, cobalt shield, etc), goblin invasion
-        public static readonly int Green_2 = Item.buyPrice(platinum: 0, gold: 5, silver: 0, copper: 0);
+        public static readonly int Green_2 = Item.buyPrice(platinum: 0, gold: 4, silver: 50, copper: 0);
 
         //hell, underground jungle
-        public static readonly int Orange_3 = Item.buyPrice(platinum: 0, gold: 10, silver: 0, copper: 0);
+        public static readonly int Orange_3 = Item.buyPrice(platinum: 0, gold: 7, silver: 50, copper: 0);
 
         //early hardmode (hm ores), mimics
-        public static readonly int LightRed_4 = Item.buyPrice(platinum: 0, gold: 14, silver: 50, copper: 0);
+        public static readonly int LightRed_4 = Item.buyPrice(platinum: 0, gold: 12, silver: 50, copper: 0);
 
         //hallowed tier. post mech, pre plantera. pirates.
         public static readonly int Pink_5 = Item.buyPrice(platinum: 0, gold: 25, silver: 50, copper: 0);

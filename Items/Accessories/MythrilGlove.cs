@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Accessories
             item.height = 34;
             item.accessory = true;
             item.rare = ItemRarityID.Cyan;
-            item.value = 500000;
+            item.value = PriceByRarity.Cyan_9;
         }
 
         public override void UpdateEquip(Player player)

@@ -13,8 +13,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 22;
             item.defense = 2;
             item.accessory = true;
-            item.value = 100;
-            item.rare = ItemRarityID.Blue;
+            item.value = PriceByRarity.White_0; // i didnt think this would actually get used...
+            item.rare = ItemRarityID.White;
         }
 
         public override void AddRecipes() {

@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 28;
             item.lifeRegen = 3;
             item.accessory = true;
-            item.value = 10000;
+            item.value = PriceByRarity.Orange_3;
             item.rare = ItemRarityID.Orange;
         }
 

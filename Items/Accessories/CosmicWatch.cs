@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Accessories {
             item.useAnimation = 15;
             item.useTime = 15;
             item.accessory = true;
-            item.value = 10000;
+            item.value = PriceByRarity.Blue_1;
             item.rare = ItemRarityID.Blue;
         }
 

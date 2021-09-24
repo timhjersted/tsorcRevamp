@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 22;
             item.height = 26;
             item.accessory = true;
-            item.value = 20000000;
-            item.rare = ItemRarityID.Pink;
+            item.value = PriceByRarity.Purple_11;
+            item.rare = ItemRarityID.Purple;
         }
 
         public override void AddRecipes() {

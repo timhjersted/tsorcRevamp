@@ -15,9 +15,9 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 22;
             item.width = 20;
             item.maxStack = 1;
-            item.rare = ItemRarityID.Blue;
+            item.rare = ItemRarityID.Green;
             item.scale = (float)1;
-            item.value = 45000;
+            item.value = PriceByRarity.Green_2;
             item.defense = 3;
         }
 
