@@ -122,11 +122,14 @@ namespace tsorcRevamp
         //It also initializes the other dictionary and lists
         public static void InitializeScriptedEvents()
         {
+            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.GoldFlame, false, true, "The Blight surfaces from the ocean...", Color.Blue, false, SuperHardModeCustomCondition);
+            //BlightEvent.SetCustomStats(50000, 30, 50);
+
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
 
             ScriptedEvent ExampleArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ExampleArtoriasCustomAction);
             ExampleArtoriasEvent.SetCustomStats(50000, 30, 50);
-            ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
+            //ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             ScriptedEvent ExampleBlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, ExampleBlackKnightCustomAction);
             ExampleBlackKnightFight.SetCustomStats(1500, 10, 50);
@@ -149,6 +152,7 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
+                {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.ExampleArtoriasFight, ExampleArtoriasEvent},
                 {ScriptedEventType.ExampleBlackKnightFight, ExampleBlackKnightFight},
@@ -156,10 +160,12 @@ namespace tsorcRevamp
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin }
+                
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>()
             {
+                {ScriptedEventType.BlightFight, false},
                 {ScriptedEventType.DarkCloudPyramidFight, false},
                 {ScriptedEventType.ExampleArtoriasFight, false},
                 {ScriptedEventType.ExampleBlackKnightFight, false},
