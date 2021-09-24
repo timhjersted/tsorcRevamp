@@ -106,6 +106,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            BlightFight,
             DarkCloudPyramidFight,
             ExampleArtoriasFight,
             ExampleBlackKnightFight,
