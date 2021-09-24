@@ -570,6 +570,7 @@ namespace tsorcRevamp.Items.BossBags {
                 //Drops that work in the traditional way. Also, adds the Crest of Stone to its drops.
                 player.QuickSpawnItem(ModContent.ItemType<CrestOfStone>());
                 player.QuickSpawnItem(ItemID.ShinyStone);
+                player.QuickSpawnItem(ModContent.ItemType<Items.BrokenPicksaw>());
                 if (Main.rand.Next(6) == 0) { player.QuickSpawnItem(ItemID.GolemMask); }
                 if (Main.rand.Next(9) == 0) { player.QuickSpawnItem(ItemID.GolemTrophy); }
                 player.QuickSpawnItem(ItemID.GreaterHealingPotion, 5 + Main.rand.Next(10));

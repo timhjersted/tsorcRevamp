@@ -1957,7 +1957,9 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
             }
-            if (npc.type == NPCID.Golem && !Main.expertMode) {
+            if (npc.type == NPCID.Golem && !Main.expertMode)
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<BrokenPicksaw>());
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
             }

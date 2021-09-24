@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override string Texture => "tsorcRevamp/Items/Accessories/WolfRing";
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
-                                "\nImmunity to the on-fire, bleeding and broken-armor debuffs." + 
+                                "\nImmunity to the on-fire, bleeding, poisoned, and broken-armor debuffs." + 
 								"\n+23 defense within the Abyss, +16 defense otherwise." + 
 								"\nWhen awakening from death, you regain full health." + 
 								"\nSwords inflict fire damage." +

@@ -123,7 +123,7 @@ namespace tsorcRevamp
         //It also initializes the other dictionary and lists
         public static void InitializeScriptedEvents()
         {
-            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.GoldFlame, false, true, "The Blight surfaces from the ocean...", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, false, true, "The Blight surfaces from the ocean...", Color.Blue, false, SuperHardModeCustomCondition);
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
@@ -164,25 +164,21 @@ namespace tsorcRevamp
                 
             };
 
-            ScriptedEventValues = new Dictionary<ScriptedEventType, bool>()
+            ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
+            foreach (ScriptedEventType currentEvent in ScriptedEventDict.Keys)
             {
-                {ScriptedEventType.BlightFight, false},
-                {ScriptedEventType.DarkCloudPyramidFight, false},
-                {ScriptedEventType.ExampleArtoriasFight, false},
-                {ScriptedEventType.ExampleBlackKnightFight, false},
-                {ScriptedEventType.ExampleHarpySwarm, false},
-                {ScriptedEventType.ExampleNoNPCScriptEvent, false},
-                {ScriptedEventType.SpawnGoblin, false }
-            };
+                ScriptedEventValues.Add(currentEvent, false);
+            }
 
-            InactiveEvents = new List<ScriptedEvent>();
-            
+
             //Add everything to InactiveEvents to start fresh.
             //If the player is NOT loading a fresh world, then this will get wiped later and re-loaded with only the appropriate events.
+            InactiveEvents = new List<ScriptedEvent>();
             foreach (KeyValuePair<ScriptedEventType, ScriptedEvent> eventValuePair in ScriptedEventDict)
             {
                 InactiveEvents.Add(eventValuePair.Value);                
             }
+
             ActiveEvents = new List<ScriptedEvent>();
             DisabledEvents = new List<ScriptedEvent>();
         }

@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useAnimation = 2;
             item.useTime = 1;
             item.maxStack = 1;
-            item.damage = 350;
+            item.damage = 300;
             item.autoReuse = true;
             item.rare = ItemRarityID.Blue;
             item.shootSpeed = 1;

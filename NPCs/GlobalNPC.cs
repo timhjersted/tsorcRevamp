@@ -74,8 +74,7 @@ namespace tsorcRevamp.NPCs
         //vanilla npc changes moved to separate file
 
         public override void NPCLoot(NPC npc)
-        {
-
+        {            
             if (npc.boss)
             {
                 foreach (Player player in Main.player)

@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.rare = ItemRarityID.Pink;
             item.useAmmo = mod.ItemType("TeslaBolt");
             item.shootSpeed = 30;
-            item.useAnimation = 110;
-            item.useTime = 110;
+            item.useAnimation = 60;
+            item.useTime = 60;
             item.UseSound = SoundID.Item12;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.value = 450000;

@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of burning hot steel\n" +
                                "One of eight.\n" +
                                "A riddle is etched into the metal: \n" +
-                               "\"Beyond the machine, a verdant realm lies lost to time.\"");
+                               "\"Above the machine's throne, below the Dryad's cove: A verdant realm lies lost to time.\"");
         }
     }
     public class CrestOfLife : Crest
@@ -105,7 +105,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of woven vine, stronger than iron\n" +
                                "One of eight.\n" +
                                "Threaded between its strands, another riddle: \n" +
-                               "\"You've found the key. But where is the lock?\"");
+                               "\"You've found the key. But where is the lock?");
         }
     }
     public class CrestOfStone : Crest

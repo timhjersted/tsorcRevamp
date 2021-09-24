@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             //item.CloneDefaults(ItemID.LastPrism);
             item.mana = 0;
             item.magic = false;
-            item.damage = 850;
+            item.damage = 750;
             item.noMelee = true;
             item.ranged = true;
             item.height = 28;
