@@ -133,6 +133,7 @@ namespace tsorcRevamp.NPCs
                     { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
                         DarkSoulQuantity = 100000; //1 plat / 10
                     }
+
                     if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
                     {
                         DarkSoulQuantity = 0;
@@ -148,7 +149,14 @@ namespace tsorcRevamp.NPCs
                         {
                             NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
                         }
+
                         tsorcRevampWorld.Slain.Add(npc.type, 0);
+                        
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
+                        }
+
                         if (Main.expertMode)
                         {
                             DarkSoulQuantity = 0;
@@ -336,7 +344,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (ToxicCatShotCount >= 4)
                 { //this is to make it worth the players time stickying more than 3 times
-                    npc.lifeRegen -= ToxicCatShotCount * 2 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
+                    npc.lifeRegen -= ToxicCatShotCount * 3 * 2; //Use 1st N for damage, second N can be used to make it tick faster.
                     if (damage < ToxicCatShotCount * 1)
                     {
                         damage = ToxicCatShotCount * 1;
@@ -344,7 +352,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    npc.lifeRegen -= ToxicCatShotCount * 1 * 3;
+                    npc.lifeRegen -= ToxicCatShotCount * 2 * 2;
                     if (damage < ToxicCatShotCount * 1)
                     {
                         damage = ToxicCatShotCount * 1;
@@ -371,7 +379,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (ViruCatShotCount >= 4)
                 {
-                    npc.lifeRegen -= ViruCatShotCount * 4 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
+                    npc.lifeRegen -= ViruCatShotCount * 3 * 5; //I use 1st N for damage, second N can be used to make it tick faster.
                     if (damage < ViruCatShotCount * 1)
                     {
                         damage = ViruCatShotCount * 1;
@@ -379,7 +387,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    npc.lifeRegen -= ViruCatShotCount * 2 * 3;
+                    npc.lifeRegen -= ViruCatShotCount * 2 * 5;
                     if (damage < ViruCatShotCount * 1)
                     {
                         damage = ViruCatShotCount * 1;
@@ -406,7 +414,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (BiohazardShotCount >= 4)
                 {
-                    npc.lifeRegen -= BiohazardShotCount * 8 * 2; //I use 1st N for damage, second N can be used to make it tick faster.
+                    npc.lifeRegen -= BiohazardShotCount * 9 * 4; //I use 1st N for damage, second N can be used to make it tick faster.
                     if (damage < BiohazardShotCount * 1)
                     {
                         damage = BiohazardShotCount * 1;
@@ -414,7 +422,7 @@ namespace tsorcRevamp.NPCs
                 }
                 else
                 {
-                    npc.lifeRegen -= BiohazardShotCount * 4 * 3;
+                    npc.lifeRegen -= BiohazardShotCount * 6 * 4;
                     if (damage < BiohazardShotCount * 1)
                     {
                         damage = BiohazardShotCount * 1;
@@ -483,22 +491,18 @@ namespace tsorcRevamp.NPCs
             {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<CharcoalPineResin>());
-                shop.item[nextSlot].shopCustomPrice = 50;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
             }
             if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
-                shop.item[nextSlot].shopCustomPrice = 25;
+                shop.item[nextSlot].shopCustomPrice = 5;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
 
                 if (Main.rand.Next(2) == 0)
                 {
                     shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
-                    shop.item[nextSlot].shopCustomPrice = 5000;
+                    shop.item[nextSlot].shopCustomPrice = 2000;
                     shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                     nextSlot++;
                 }
@@ -506,20 +510,11 @@ namespace tsorcRevamp.NPCs
             if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
-                shop.item[nextSlot].shopCustomPrice = 5000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 100000;
                 nextSlot++;
 
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<ToxicCatalyzer>());
-                shop.item[nextSlot].shopCustomPrice = 5000;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                nextSlot++;
-            }
-            if (type == NPCID.Dryad && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<BloodredMossClump>());
-                shop.item[nextSlot].shopCustomPrice = 25;
-                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                shop.item[nextSlot].shopCustomPrice = 100000;
                 nextSlot++;
             }
         }

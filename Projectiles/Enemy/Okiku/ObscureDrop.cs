@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.aiStyle = 1;
             projectile.hostile = true;
             projectile.tileCollide = false;
-            projectile.timeLeft = 1500;
+            projectile.timeLeft = 300;
         }
         public override bool PreKill(int timeLeft) {
             projectile.type = 44; //killpretendtype
@@ -35,6 +36,15 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
             if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;
 
+            if (projectile.timeLeft == 170)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Projectile ObscureDropSplits = Main.projectile[Projectile.NewProjectile(projectile.position.X, projectile.position.Y, Main.rand.Next(-100, 100) / 10, projectile.velocity.Y, ModContent.ProjectileType<ObscureDrop>(), 40, 0f, 0)];
+                    ObscureDropSplits.timeLeft = 169;
+                }
+            }
+
             return true;
         }
 
@@ -48,6 +58,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             if (Main.rand.Next(8) == 0) {
                 target.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 1800);
             }
+        }
+
+        //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            //Get the premultiplied, properly transparent texture
+            Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureDrop");
+            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int startY = frameHeight * projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Main.spriteBatch.Draw(texture,
+                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
+                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+
+            return false;
         }
     }
 }

@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Potions {
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
-                tooltips.Insert(3, new TooltipLine(mod, "RevampCrimsonDrain1", "[c/00ff00:Revamped Mode:] Increases damage by 20% for 3 minutes"));
-                tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "[c/00ff00:Revamped Mode:] However, also lowers defence by 20"));
+                tooltips.Insert(3, new TooltipLine(mod, "RevampCrimsonDrain1", "Increases damage by 20% for 3 minutes"));
+                tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "However, also lowers defence by 20"));
             }
             else
             {

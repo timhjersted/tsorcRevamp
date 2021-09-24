@@ -844,7 +844,14 @@ namespace tsorcRevamp.NPCs.Bosses
             //}
         }
         #endregion
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
+        }
         public override void NPCLoot()
         {
             Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Slogra Gore 1"), 0.9f);

@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -65,6 +66,18 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                //find the knockback tooltip line
+                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name == "Knockback");
+                if (ttindex != -1) {// if we find one
+                    //insert the extra tooltip line
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampSagittarius1", "Fires two arrows."));
+                    tooltips.Insert(ttindex + 2, new TooltipLine(mod, "RevampSagittarius2", "Hold FIRE to charge."));
+                    tooltips.Insert(ttindex + 3, new TooltipLine(mod, "RevampSagittarius3", "Arrows are faster and more accurate when the bow is charged."));
+                }
+            }
         }
     }
 }

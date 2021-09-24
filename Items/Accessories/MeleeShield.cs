@@ -40,7 +40,8 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetDefaults() {
             base.SetDefaults();
             item.defense = 20;
-            item.value = 3000000;
+            item.value = PriceByRarity.LightRed_4;
+            item.rare = ItemRarityID.LightRed;
         }
 
 
@@ -80,7 +81,8 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetDefaults() {
             base.SetDefaults();
             item.defense = 40;
-            item.value = 3000000; 
+            item.value = PriceByRarity.Pink_5;
+            item.rare = ItemRarityID.Pink;
         }
 
         public override void UpdateEquip(Player player) {
@@ -118,7 +120,8 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetDefaults() {
             base.SetDefaults();
             item.defense = 60;
-            item.value = 3000000;
+            item.value = PriceByRarity.Cyan_9;
+            item.rare = ItemRarityID.Cyan;
         }
 
         public override void UpdateEquip(Player player) {
@@ -154,7 +157,8 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetDefaults() {
             base.SetDefaults();
             item.defense = 80;
-            item.value = 3000000;
+            item.value = PriceByRarity.Red_10;
+            item.rare = ItemRarityID.Red;
         }
 
         public override void UpdateEquip(Player player) {

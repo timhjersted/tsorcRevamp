@@ -25,14 +25,6 @@ namespace tsorcRevamp {
         [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDefaults to On")]
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
-        /*
-        [Label("Rename Skeletron")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Renames Skeletron to Gravelord Nito.\nOnly turn this off if you are experiencing \ncrashes or other strange behavior when \nyou attempt to summon Skeletron.\nDefaults to On")]
-        [DefaultValue(true)]
-        [ReloadRequired]
-        public bool RenameSkeletron { get; set; }
-        */
 
         [Label("Legacy Mode")]
         [BackgroundColor(60, 140, 80, 192)]
@@ -63,7 +55,7 @@ namespace tsorcRevamp {
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 3840)]
-        [DefaultValue(220)]
+        [DefaultValue(180)]
         [Tooltip("The X position of the Soul Counter.")]
         public int SoulCounterPosX { get; set; }
 
@@ -71,7 +63,7 @@ namespace tsorcRevamp {
         [BackgroundColor(60, 140, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [Range(0, 2160)]
-        [DefaultValue(70)]
+        [DefaultValue(60)]
         [Tooltip("The Y position of the Soul Counter.")]
         public int SoulCounterPosY { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -7,6 +8,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Increases Dark Soul pick-up range and increases" +
                                 "\nconsumable soul drop chance by 25%" +
+                                "\nGives off a faint glow" +
                                 "\nCan be upgraded with 7000 Dark Souls");
         }
 
@@ -14,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 24;
             item.height = 24;
             item.accessory = true;
-            item.value = 200000;
-            item.rare = ItemRarityID.LightRed;
+            item.value = PriceByRarity.Blue_1;
+            item.rare = ItemRarityID.Blue;
         }
 
         public override void AddRecipes() {
@@ -30,6 +32,15 @@ namespace tsorcRevamp.Items.Accessories {
             player.GetModPlayer<tsorcRevampPlayer>().SoulReaper += 5;
             player.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult += 5; //25% increase
 
+            Lighting.AddLight(player.Center, 0.45f, 0.3f, 0.5f);
+
+            if (Main.rand.Next(20) == 0)
+            {
+                int dust = Dust.NewDust(new Vector2((float)player.position.X - 20, (float)player.position.Y - 20), player.width + 40, player.height + 20, 21, 0, 0, 0, default, 1f);
+                Main.dust[dust].velocity *= 0.25f;
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].fadeIn = 1f;
+            }
         }
 
     }

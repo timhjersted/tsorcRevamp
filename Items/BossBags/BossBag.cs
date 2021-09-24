@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items.BossBags {
 			if (Slain.ContainsKey(ModContent.NPCType<TheHunter>())) { //if the boss has been killed
 				if (Slain[ModContent.NPCType<TheHunter>()] == 0) { //and the key value is 0
 					VanillaBossBag.AddBossBagSouls(ModContent.NPCType<TheHunter>(), player); //give the player souls
-					Slain[ModContent.NPCType<TheHunter>()] = 1; //set the value to 1
+					Slain[ModContent.NPCType<TheHunter>()] = 1; //set the value to 1aa
 				}
 			}
 			player.QuickSpawnItem(ModContent.ItemType<Accessories.WaterShoes>());
@@ -475,7 +475,6 @@ namespace tsorcRevamp.Items.BossBags {
                     Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()] = 1; //set the value to 1
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<Items.DragonScale>(), 35 + Main.rand.Next(5));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 7000);
             player.QuickSpawnItem(ModContent.ItemType<Items.BequeathedSoul>(), 2);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
@@ -518,6 +517,12 @@ namespace tsorcRevamp.Items.BossBags {
             npc.SetDefaults(EnemyID);
             float enemyValue = (int)npc.value / 25;
             float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
+            tsorcRevampWorld.Slain[EnemyID] = 1; //set the value to 1
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
+            }
 
             int DarkSoulQuantity = (int)(multiplier * enemyValue);
 

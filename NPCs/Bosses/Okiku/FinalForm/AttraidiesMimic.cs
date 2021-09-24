@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             npc.defense = 25;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 3000;
+            npc.lifeMax = 1500;
             npc.timeLeft = 22500;
             npc.friendly = false;
             npc.noTileCollide = true;
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 if (genericTimer2 >= 20) {
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<AntiMatterBlast>(), 50, 0f, 0);
+                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 50, 0f, 0);
                     genericTimer2 = 0;
                 }
             }

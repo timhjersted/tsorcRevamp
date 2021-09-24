@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.tileCollide = false;
 			projectile.timeLeft = 600;
         }
+
         public override void Kill(int timeLeft) {
             projectile.type = 79;
         }
@@ -70,8 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 		}
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {
-			target.AddBuff(BuffID.Gravitation, 180);
-			target.AddBuff(BuffID.Confused, 180);
+			target.AddBuff(BuffID.Featherfall, 180);
         }
     }
 }

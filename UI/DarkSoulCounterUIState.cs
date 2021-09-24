@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Input;
 using System.Reflection;
 using Terraria.ModLoader.Config;
+using System;
 
 namespace tsorcRevamp.UI
 {
@@ -19,6 +20,7 @@ namespace tsorcRevamp.UI
 		private UIImage counterFrame;
 
 		public static bool Visible = true;
+		int initialTextPosX = 133; //was 60
 
 		public static tsorcRevampConfig ConfigInstance = ModContent.GetInstance<tsorcRevampConfig>();
 		public static Vector2 DrawPos = new Vector2(ConfigInstance.SoulCounterPosX, ConfigInstance.SoulCounterPosY);
@@ -30,8 +32,8 @@ namespace tsorcRevamp.UI
 			area = new UIElement();
 			area.Left.Set(-(ConfigInstance.SoulCounterPosX), 1f); // Place the resource bar to the left of the hearts.
 			area.Top.Set(-(ConfigInstance.SoulCounterPosY), 1f); // Placing it just a bit below the top of the screen.
-			area.Width.Set(200, 0f); // We will be placing the following 2 UIElements within this 182x60 area.
-			area.Height.Set(50, 0f);
+			area.Width.Set(160, 0f); // We will be placing the following 2 UIElements within this 182x60 area.
+			area.Height.Set(40, 0f);
 
 			counterFrame = new UIImage(ModContent.GetTexture("tsorcRevamp/UI/DarkSoulCounterFrame"));
 			counterFrame.Left.Set(0, 0f);
@@ -43,8 +45,8 @@ namespace tsorcRevamp.UI
 			soulQuantityText = new UIText("0", 0.5f, true); // text to show stat
 			soulQuantityText.Width.Set(0, 0f);
 			soulQuantityText.Height.Set(0, 0f);
-			soulQuantityText.Top.Set(17, 0f);
-			soulQuantityText.Left.Set(90, 0f);
+			soulQuantityText.Top.Set(12, 0f);
+			soulQuantityText.Left.Set(initialTextPosX, 0f);
 			area.Append(soulQuantityText);
 
 			Append(area);
@@ -58,7 +60,7 @@ namespace tsorcRevamp.UI
 			var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
 			var item = ModContent.ItemType<Items.DarkSoul>();
 			// Setting the text per tick to update and show our DS values.
-			soulQuantityText.SetText($"[i:{item}]  [c/D3D3D3:{modPlayer.darkSoulQuantity}]");
+			soulQuantityText.SetText($"[c/D3D3D3:{modPlayer.darkSoulQuantity}]");
 
 			if ((-area.Left.Pixels) != ConfigInstance.SoulCounterPosX) {
 				area.Left.Pixels = -ConfigInstance.SoulCounterPosX;
@@ -68,9 +70,8 @@ namespace tsorcRevamp.UI
 				area.Top.Pixels = -ConfigInstance.SoulCounterPosY;
 			}
 
+			soulQuantityText.Left.Set((float)(initialTextPosX - (10 * Math.Floor(Math.Log10(modPlayer.darkSoulQuantity == 0 ? 1 : modPlayer.darkSoulQuantity) + 1))), 0f);
 			base.Update(gameTime);
 		}
-
-
 	}
 }

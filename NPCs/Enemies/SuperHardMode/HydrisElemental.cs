@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-		public void DamagePlayer(Player player, ref int damage) //hook works!
+		public override void OnHitPlayer(Player player, int target, bool crit) 
 		{
 			if (Main.rand.Next(2) == 0)
 			{

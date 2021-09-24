@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles
             projectile.penetrate = 2;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 32;
+            projectile.timeLeft = 38;
             //These 2 help the projectile hitbox be centered on the projectile sprite.
             drawOffsetX = -2;
             drawOriginOffsetY = -2;

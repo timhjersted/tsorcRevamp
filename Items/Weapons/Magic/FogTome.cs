@@ -55,6 +55,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override bool CanUseItem(Player player)
         {
+            if (!LegacyMode)
+            { //in revamp mode
+                if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+                {
+                    return false;
+                }
+            }
             if (player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
             {
                 return false;
@@ -67,7 +74,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             Player player = Main.LocalPlayer;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "FogTomeTip", "[c/00ff00:Revamped Mode:] Duration increased to 15 seconds"));
+                tooltips.Add(new TooltipLine(mod, "FogTomeTip", "Duration increased to 15 seconds"));
             }
         }
     }

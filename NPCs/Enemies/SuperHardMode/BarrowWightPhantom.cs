@@ -360,15 +360,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-
-
-		public void DamagePlayer(Player player, ref int damage) //hook works!
+		public override void OnHitPlayer(Player player, int target, bool crit) 
 		{
-			if (Main.rand.Next(0) == 0)
-			{
 				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 life after several hits
 				player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
-			}
+			
 
 			if (Main.rand.Next(4) == 0)
 			{

@@ -15,8 +15,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 24;
             item.height = 22;
             item.accessory = true;
-            item.value = 15000000;
-            item.rare = ItemRarityID.Pink;
+            item.value = PriceByRarity.LightRed_4; //prohibitively expensive soul cost
+            item.rare = ItemRarityID.LightRed;
         }
 
         public override void AddRecipes() {

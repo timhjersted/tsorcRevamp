@@ -3,10 +3,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.Shoes)]
     public class BootsOfHaste : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Boots of Haste");
-            Tooltip.SetDefault("Adds 20% speed.");
+            Tooltip.SetDefault("Adds 20% speed");
 
         }
 
@@ -15,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 26;
             item.accessory = true;
             item.maxStack = 1;
-            item.rare = ItemRarityID.Orange;
-            item.value = 30000;
+            item.rare = ItemRarityID.Blue;
+            item.value = PriceByRarity.Blue_1;
         }
 
         public override void AddRecipes() {

@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.defense = 16;
 			item.lifeRegen = 8;
             item.accessory = true;
-            item.value = 1000000;
-            item.rare = ItemRarityID.Pink;
+            item.value = PriceByRarity.Red_10;
+            item.rare = ItemRarityID.Red;
         }
 
 

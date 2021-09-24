@@ -6,8 +6,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class SunBlade : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("A sword used to kill the undead." +
-                                "\nDoes up to 100 damage against the heartless.");
+            Tooltip.SetDefault("A sword used to kill the undead" +
+                                "\nDoes 4x damage against the heartless");
         }
 
         public override void SetDefaults() {
@@ -46,12 +46,16 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                     || target.type == NPCID.TheGroom
                     || target.type == NPCID.SkeletronHand
                     || target.type == NPCID.SkeletronHead
-                    || target.type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()
-                //|| target.type == ModContent.NPCType<LichKingSerpent>()
-                //|| target.type == ModContent.NPCType<DemonSpirit>()
-                //|| target.type == ModContent.NPCType<CrazedDemonSpirit>()
-                //|| target.type == ModContent.NPCType<ParasiticWorm>()
-                ) {
+                    || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentHead>()
+                    || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentBody>()
+                    || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingSerpentTail>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.DemonSpirit>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.CrazedDemonSpirit>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormHead>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormBody>()
+                    || target.type == ModContent.NPCType<NPCs.Enemies.ZombieWormTail>()
+                    )
+            {
                 damage *= 4;
             }
         }

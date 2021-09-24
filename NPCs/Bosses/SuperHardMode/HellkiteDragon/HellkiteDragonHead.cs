@@ -61,6 +61,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         //int previous = 0;
         bool breath = false;
         //bool tailD = false;
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -176,6 +180,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             //	npc.active = false;
             //}
 
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
         }
 
         public override void NPCLoot()

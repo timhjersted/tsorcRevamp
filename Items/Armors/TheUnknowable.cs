@@ -20,6 +20,10 @@ namespace tsorcRevamp.Items.Armors
             item.value = 300000;
             item.rare = ItemRarityID.LightPurple;
         }
+        public override void DrawHair(ref bool drawHair, ref bool drawAltHair)
+        {
+            drawHair = true;
+        }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {

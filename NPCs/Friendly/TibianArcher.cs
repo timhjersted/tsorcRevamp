@@ -119,7 +119,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			}
 			if (Main.hardMode)
 			{
-				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.EnchantedThrowingSpear>());
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.EnchantedThrowingSpear>());
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Ammo.PowerBolt>());
 				nextSlot++;

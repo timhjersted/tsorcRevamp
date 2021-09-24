@@ -68,10 +68,23 @@ namespace tsorcRevamp.UI {
         private void ButtonSetSpawnClicked(UIMouseEvent evt, UIElement listeningElement) {
             Player player = Main.LocalPlayer;
             Main.PlaySound(SoundID.MenuTick, player.Center);
-            int spawnX = (int)((player.position.X + player.width / 2.0 + 8.0) / 16.0);
+            int spawnX = (int)((player.position.X + player.width / 2.0) / 16.0);
             int spawnY = (int)((player.position.Y + player.height) / 16.0);
-            player.ChangeSpawn(spawnX, spawnY);
-            Main.NewText("Spawn point set!", 255, 240, 20, false);
+
+            //Main.NewText("spawnX is " + spawnX + ", spawnY is " + spawnY);
+           //Main.NewText("Player.SpawnX is " + player.SpawnX + ", Player.SpawnY is " + player.SpawnY);
+
+            if (player.SpawnX != spawnX && player.SpawnY != spawnY)
+            {
+                player.ChangeSpawn(spawnX, spawnY);
+                player.FindSpawn();
+                Main.NewText("Spawn point set!", 255, 240, 20, false);
+            }
+            else
+            {
+                player.RemoveSpawn();
+                Main.NewText("Spawn point removed!", 150, 140, 0, false);
+            }
         }
 
         private void ButtonPiggyBankClicked(UIMouseEvent evt, UIElement listeningElement) {

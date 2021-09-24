@@ -74,9 +74,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		float customspawn2;
 		float customspawn3;
 
-        #region debuffs
-        public override void OnHitPlayer(Player player, int damage, bool crit)
-        {
+		#region debuffs
+		public override void OnHitPlayer(Player player, int damage, bool crit)
+		{
 			if (Main.rand.Next(2) == 0)
 			{
 				player.AddBuff(33, 7200, false); //weak
@@ -840,6 +840,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 			}
 		}
+		public override bool CheckActive()
+		{
+			return false;
+		}
+
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.SuperHealingPotion;
+		}
 
 		#region Gore
 		public override void NPCLoot()
@@ -849,7 +858,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
-			
+
 			if (Main.expertMode)
 			{
 				npc.DropBossBags();

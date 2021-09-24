@@ -3,19 +3,24 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.HandsOn)]
+
     public class BoneRing : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("+8% Ranged damage" +
                                 "\n+8% Ranged critical strike chance");
         }
-
+        public override void DrawHands(ref bool drawHands, ref bool drawArms)
+        {
+            drawHands = true;
+        }
         public override void SetDefaults() {
             item.width = 24;
             item.height = 22;
             item.defense = 2;
             item.accessory = true;
-            item.value = 2000;
-            item.rare = ItemRarityID.Orange;
+            item.value = PriceByRarity.Green_2;
+            item.rare = ItemRarityID.Green;
         }
 
         public override void AddRecipes() {

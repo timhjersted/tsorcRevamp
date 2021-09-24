@@ -14,6 +14,8 @@ using MonoMod.Cil;
 using static tsorcRevamp.MethodSwaps;
 using System.IO;
 using Terraria.ModLoader.IO;
+using Terraria.Graphics.Shaders;
+using Terraria.Graphics.Effects;
 
 namespace tsorcRevamp {
 
@@ -35,10 +37,13 @@ namespace tsorcRevamp {
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         private UserInterface _darkSoulCounterUIState;
 
+        public static Effect TheAbyssEffect;
+        //public static Effect AttraidiesEffect;
+
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
 
-            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<DarkSoul>(), 99999L));
+            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
             BonfireUIState = new BonfireUIState();
             if (!Main.dedServ) BonfireUIState.Activate();
@@ -55,6 +60,16 @@ namespace tsorcRevamp {
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
             IL.Terraria.Player.Update += Player_Update;
+            IL.Terraria.Player.Update += Chest_Patch;
+            if (!Main.dedServ) {
+                tsorcRevamp Instance = this;
+                TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
+                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);  
+                
+                //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
+                //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
+            }
         }
 
 
@@ -305,7 +320,6 @@ namespace tsorcRevamp {
                 42, //chain lantern
                 49, //water candle
                 50, //books
-                55, //Sign 
                 73, //plants
                 74, //plants
                 78, //clay pot
@@ -531,11 +545,33 @@ namespace tsorcRevamp {
             if (!cursor.TryGotoNext(MoveType.Before,
                                     i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
                                     i => i.MatchLdcI4(400))) {
-                Logger.Fatal("Could not find instruction to patch");
+                Logger.Fatal("Could not find instruction to patch (Player_Update)");
                 return;
             }
 
             cursor.Next.Next.Operand = int.MaxValue;
+        }
+
+        private void Chest_Patch(ILContext il) {
+            ILCursor c = new ILCursor(il);
+
+            if (!c.TryGotoNext(instr => instr.MatchLdcR4(1f) && instr.Next.Next.Next.Next.Next.Next.MatchStfld(typeof(Player).GetField("chest")))) {
+                throw new Exception("Could not find instruction to patch (Chest_Patch)");
+            }
+
+            c.FindNext(out ILCursor[] cursors, instr => instr.MatchLdcR4(1f));
+            c = cursors[0];
+
+            c.Index++;
+            c.EmitDelegate<Func<float, float>>((volume) => {
+                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().chestBankOpen
+                || Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().chestPiggyOpen) {
+                    // Return 0 volume if one is open so the sound is silent
+                    return 0f;
+                }
+
+                return volume;
+            });
         }
 
         public override void PostDrawInterface(SpriteBatch spriteBatch) {
@@ -820,7 +856,7 @@ namespace tsorcRevamp {
         public static Dictionary<TransparentTextureType, Texture2D> TransparentTextures;
         public enum TransparentTextureType
         {
-            AntiMatterBlast,
+            PhasedMatterBlast,
             AntiGravityBlast,
             EnemyPlamaOrb,
             ManaShield,
@@ -829,7 +865,11 @@ namespace tsorcRevamp {
             AntiMaterialRound,
             GlaiveBeam,
             GlaiveBeamItemGlowmask,
-            GlaiveBeamHeldGlowmask
+            GlaiveBeamHeldGlowmask,
+            GenericLaser,
+            GenericLaserTargeting,
+            DarkLaser,
+            DarkLaserTargeting
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -838,7 +878,7 @@ namespace tsorcRevamp {
             //Generates the dictionary of textures
             TransparentTextures = new Dictionary<TransparentTextureType, Texture2D>()
             {
-                {TransparentTextureType.AntiMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/AntiMatterBlast")},
+                {TransparentTextureType.PhasedMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast")},
                 {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
                 {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
                 {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
@@ -847,7 +887,11 @@ namespace tsorcRevamp {
                 {TransparentTextureType.AntiMaterialRound, ModContent.GetTexture("tsorcRevamp/Projectiles/AntiMaterialRound")},
                 {TransparentTextureType.GlaiveBeam, ModContent.GetTexture("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
                 {TransparentTextureType.GlaiveBeamItemGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
-                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")}
+                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")},
+                {TransparentTextureType.GenericLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaser")},
+                {TransparentTextureType.GenericLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaserTargeting")},
+                {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
+                {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")}
             };
 
             //Runs each entry through the XNA's premultiplication function

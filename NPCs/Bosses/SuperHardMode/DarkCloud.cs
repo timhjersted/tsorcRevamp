@@ -160,7 +160,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
-
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         NPCDespawnHandler despawnHandler;
         public override void AI() //warrior ai
@@ -1165,6 +1164,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #endregion
         }
         #endregion
+        public override bool CheckActive()
+        {
+            return false;
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
+        }
 
         #region Gore
         public override void NPCLoot()

@@ -3,6 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.HandsOn)]
+
     public class BandOfGreatCosmicPower : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Band of Great Cosmic Power");
@@ -15,7 +17,7 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 28;
             item.lifeRegen = 3;
             item.accessory = true;
-            item.value = 10000;
+            item.value = PriceByRarity.Orange_3;
             item.rare = ItemRarityID.Orange;
         }
 

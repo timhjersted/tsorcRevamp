@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.HandsOn)]
     public class BandOfCosmicPower : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Band of Cosmic Power");
@@ -15,8 +16,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 28;
             item.lifeRegen = 2;
             item.accessory = true;
-            item.value = 5000;
-            item.rare = ItemRarityID.Green;
+            item.value = PriceByRarity.Blue_1;
+            item.rare = ItemRarityID.Blue;
         }
 
         public override void AddRecipes() {
@@ -27,6 +28,13 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+
+            ModRecipe recipe2 = new ModRecipe(mod);
+            recipe2.AddIngredient(ItemID.ManaRegenerationBand, 1);
+            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.SetResult(this, 1);
+            recipe2.AddRecipe();
         }
 
         public override void UpdateEquip(Player player) {

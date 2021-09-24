@@ -14,8 +14,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 20;
             item.height = 22;
             item.maxStack = 1;
-            item.rare = ItemRarityID.Blue;
-            item.value = 45000;
+            item.rare = ItemRarityID.Blue;//for the soul cost
+            item.value = PriceByRarity.Blue_1; 
             item.defense = 1;
         }
 

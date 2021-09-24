@@ -20,8 +20,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.defense = 16;
 			item.lifeRegen = 8;
             item.accessory = true;
-            item.value = 2000000;
-            item.rare = ItemRarityID.Pink;
+            item.value = PriceByRarity.Red_10;
+            item.rare = ItemRarityID.Red;
         }
 
         public override void AddRecipes() {
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.AddBuff(BuffID.WeaponImbueFire, 60, false);   
+            player.magmaStone = true;
 			player.spawnMax = true;
 			player.statManaMax2 += 100;
 			player.buffImmune[BuffID.OnFire] = true;

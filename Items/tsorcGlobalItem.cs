@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items {
 		}
 
         public override void GrabRange(Item item, Player player, ref int grabRange) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet) { //bossMagnet is set on every player when a boss is killed, in NPCLoot
+            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoul>()) { //bossMagnet is set on every player when a boss is killed, in NPCLoot
 				grabRange *= 20;
             }
 
@@ -42,23 +42,6 @@ namespace tsorcRevamp.Items {
             }
 			return base.GrabStyle(item, player);
 		}
-
-        public override bool OnPickup(Item item, Player player) {
-			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-			if (item.type == ModContent.ItemType<DarkSoul>()) {
-				//if the player's soul slot is empty
-				if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
-					modPlayer.SoulSlot.Item = item.Clone();
-				}
-				else {
-					modPlayer.SoulSlot.Item.stack += item.stack;
-				}
-				//dont send the souls to the normal inventory
-				return false;
-            }
-			return base.OnPickup(item, player);
-        }
 
         public override void OnCraft(Item item, Recipe recipe) {
 			tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
@@ -368,7 +351,10 @@ namespace tsorcRevamp.Items {
 				ItemID.Flare,
 				ItemID.BlueFlare,
 				ItemID.Snowball,
-				ItemID.Nail
+				ItemID.Nail,
+
+				//yes clearly this is not ammo but im gonna have a stroke if i have to carry stacks of 99 torches
+				ItemID.Torch
 			};
 		}
 	}

@@ -15,8 +15,8 @@ namespace tsorcRevamp.Items.Accessories {
             item.height = 32;
             item.width = 32;
             item.maxStack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.value = 50000;
+            item.rare = ItemRarityID.Blue;
+            item.value = PriceByRarity.Blue_1;
         }
 
         public override void AddRecipes() {
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             int playerX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int playerY = (int)(player.position.Y + 2f) / 16;
-            Lighting.AddLight(playerX, playerY, 0.25f, 0.25f, 1.5f);
+            Lighting.AddLight(playerX, playerY, 0.75f, 0.75f, 1.5f);
         }
     }
 }

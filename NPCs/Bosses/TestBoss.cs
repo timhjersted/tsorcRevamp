@@ -27,11 +27,8 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.knockBackResist = 0;
-            npc.value = 150000;
+            npc.value = 1;
 
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
         }
 
 
@@ -52,6 +49,14 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void NPCLoot()
         {
            
+        }
+
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            if(item.type == ItemID.WoodenHammer)
+            {
+                npc.life = 0;
+            }
         }
     }
 }

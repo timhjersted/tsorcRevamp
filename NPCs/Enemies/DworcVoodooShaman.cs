@@ -59,12 +59,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.hardMode && (spawnInfo.player.ZoneMeteor || spawnInfo.player.ZoneJungle) && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson)
 			{
-				if (spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return 0.025f;
-				if (spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return 0.05f;
-				if (spawnInfo.player.ZoneDirtLayerHeight) return 0.04f;
-				if (spawnInfo.player.ZoneRockLayerHeight) return 0.04f;
+				if (spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return 0.02f;
+				if (spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return 0.045f;
+				if (spawnInfo.player.ZoneDirtLayerHeight) return 0.035f;
+				if (spawnInfo.player.ZoneRockLayerHeight) return 0.035f;
 			}
-			if (Main.hardMode && TropicalOcean && spawnInfo.player.ZoneJungle) return 0.05f;
+			if (Main.hardMode && TropicalOcean && spawnInfo.player.ZoneJungle) return 0.045f;
 
 			return chance;
 		}

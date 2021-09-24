@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles {
                 {
                     Vector2 aimVector = Vector2.Normalize(Main.MouseWorld - playerHandPos);
                     aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.3f)); //taken straight from RedLaserBeam, thanks past me!
-                    aimVector *= player.HeldItem.shootSpeed;
+                    aimVector *= 15;
                     if (aimVector != projectile.velocity) {
                         projectile.netUpdate = true; //update the bow visually to other players when we change aim
                     }
@@ -85,17 +85,11 @@ namespace tsorcRevamp.Projectiles {
                         for (int i = 0; i < 3; i++) {
                             Vector2 inaccuracy = new Vector2(bowVelocity.X, bowVelocity.Y).RotatedByRandom(MathHelper.ToRadians((float)16f - (charge) * 2.5f)); //more accurate when charged
 
-                            //Vector2 projectileVelocity = inaccuracy * (player.HeldItem.shootSpeed - (3 * (MAX_CHARGE_COUNT - charge))); //faster arrows when charged
-                            Vector2 projectileVelocity = inaccuracy * (1 + (((8 * MAX_CHARGE_COUNT) / (3 * player.HeldItem.shootSpeed)) * (float)(Math.Pow((Math.Floor((double)charge)), 2))));
-                            //this is the ugliest shit ive ever written in my entire life
-                            //speed modifier = 1 + ((8a/3b) * (floor(c))^2)
-                            //a = max_charge_count (6)
-                            //b = helditem.shootspeed (24)
-                            //c = charge
-                            //aka y = 1 + ((2/3) * (floor(x))^2)
+                            Vector2 projectileVelocity = inaccuracy * (1 + ((player.HeldItem.shootSpeed / 27) * (float)(Math.Pow((Math.Floor((double)charge)), 2))));
 
                             if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
-                                Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, projectile.damage, projectile.knockBack, projectile.owner);
+                                //the projectile damage math has to be cast like this for it to work! it wont work if you just cast the result! do not change it! 
+                                Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, (int)(projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), projectile.knockBack, projectile.owner);
                                 player.inventory[ammoLocation].stack--;
                                 if (player.inventory[ammoLocation].stack == 0) {
                                     player.inventory[ammoLocation].TurnToAir();

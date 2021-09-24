@@ -93,8 +93,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
 
         #region AI
-
-
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -175,6 +173,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
         }
         #endregion
+        public override bool CheckActive()
+        {
+            return false;
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.SuperHealingPotion;
+        }
 
         public override void NPCLoot()
         {
@@ -191,7 +197,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
                 else
                 {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DragonScale>(), 35 + Main.rand.Next(5));
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());

@@ -30,29 +30,33 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
                 || target.type == ModContent.NPCType<UndeadCaster>()
-                //|| target.type == ModContent.NPCType<MindflayerServant>()
+                || target.type == ModContent.NPCType<MindflayerServant>()
                 ) {
                 damage *= 8;
             }
             if (target.type == NPCID.Tim
-                //|| target.type == ModContent.NPCType<DungeonMage>()
-                //|| target.type == ModContent.NPCType<DemonSpirit>()
-                //|| target.type == ModContent.NPCType<ShadowMage>()
+                || target.type == ModContent.NPCType<DungeonMage>()
+                || target.type == ModContent.NPCType<DemonSpirit>()
+                || target.type == ModContent.NPCType<ShadowMage>()
                 || target.type == ModContent.NPCType<AttraidiesIllusion>()
-                //|| target.type == ModContent.NPCType<AttraidiesManifestation>()
-                //|| target.type == ModContent.NPCType<BrokenOkiku>()
-                //|| target.type == ModContent.NPCType<WyvernMage>()
+                || target.type == ModContent.NPCType<AttraidiesManifestation>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.AttraidiesMimic>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                 ) {
                 damage *= 4;
             }
-            if (target.type == NPCID.BoundWizard //placeholder. remove when adding mod NPCs
-                                                 //|| target.type == ModContent.NPCType<CrazedDemonSpirit>()
-                                                 //|| target.type == ModContent.NPCType<MindflayerKing>()
-                                                 //|| target.type == ModContent.NPCType<DarkShogunMask>()
-                                                 //|| target.type == ModContent.NPCType<DarkDragonMask>()
-                                                 //|| target.type == ModContent.NPCType<Okiku>()
-                                                 //|| target.type == ModContent.NPCType<LichKingDisciple>()
-                                                 //|| target.type == ModContent.NPCType<Attraidies>()
+            if (target.type == ModContent.NPCType<CrazedDemonSpirit>() 
+
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()
+
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
                 ) {
                 damage *= 5;
             }

@@ -1,7 +1,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
+namespace tsorcRevamp.Items.Weapons.Magic {
     public class EnchantedThrowingSpear : ModItem
     {
 
@@ -15,8 +15,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.damage = 39;
             item.knockBack = 9f;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 15;
-            item.useTime = 15;
+            item.useAnimation = 20;
+            item.useTime = 20;
+            item.mana = 10;
             item.width = 64;
             item.height = 64;
             item.maxStack = 1;
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.noUseGraphic = true;
             item.noMelee = true;
             item.autoReuse = true;
-            item.ranged = true;
+            item.magic = true;
 
             item.UseSound = SoundID.Item1;
             item.value = 100000;

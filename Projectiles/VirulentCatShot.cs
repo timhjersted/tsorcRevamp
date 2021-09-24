@@ -19,10 +19,9 @@ namespace tsorcRevamp.Projectiles
 			projectile.width = 10;
 			projectile.height = 10;
 			projectile.friendly = true;
-			projectile.aiStyle = 0;
 			projectile.ranged = true;
 			projectile.tileCollide = true;
-			projectile.timeLeft = 74;
+			projectile.timeLeft = 125;
 			projectile.penetrate = 3;
 			projectile.usesLocalNPCImmunity = true;
 			projectile.localNPCHitCooldown = -1; 
@@ -77,13 +76,13 @@ namespace tsorcRevamp.Projectiles
 			// These 2 could probably be moved to the ModifyNPCHit hook, but in vanilla they are present in the AI
 			projectile.ignoreWater = true; // Make sure the projectile ignores water
 			projectile.tileCollide = false; // Make sure the projectile doesn't collide with tiles anymore
-			const int aiFactor = 8; // Change this factor to change the 'lifetime' of this sticking javelin //These are seconds. Keep debuff duration to same duration as is set here.
+			const int aiFactor = 10; // Change this factor to change the 'lifetime' of this sticking javelin //These are seconds. Keep debuff duration to same duration as is set here.
 			projectile.localAI[0] += 1f;
 
-			if (projectile.timeLeft > 2)
+			/*if (projectile.timeLeft > 2)
 			{
 				projectile.timeLeft = 100;
-			}
+			}*/
 
 			projectile.rotation = projectile.velocity.ToRotation();
 			// Every 30 ticks, the javelin will perform a hit effect
@@ -207,11 +206,12 @@ namespace tsorcRevamp.Projectiles
 		{
 			IsStickingToTarget = true; // we are sticking to a target
 			TargetWhoAmI = target.whoAmI; // Set the target whoAmI
+			projectile.timeLeft = 600;
 			projectile.velocity =
 				(target.Center - projectile.Center) *
 				0.75f; // Change velocity based on delta center of targets (difference between entity centers)
 			projectile.netUpdate = true; // netUpdate this javelin
-			target.AddBuff(ModContent.BuffType<Buffs.ViruCatDrain>(), 480); // Adds the ExampleJavelin debuff for a very small DoT
+			target.AddBuff(ModContent.BuffType<Buffs.ViruCatDrain>(), 600); // Adds the ExampleJavelin debuff for a very small DoT
 
 			projectile.damage = 0; // Makes sure the sticking javelins do not deal damage anymore
 

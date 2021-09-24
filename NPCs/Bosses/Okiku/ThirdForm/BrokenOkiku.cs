@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 if (genericTimer2 >= 10) {
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<AntiMatterBlast>(), 65, 0f, 0);
+                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 65, 0f, 0);
                     genericTimer2 = 0;
                 }
             }
@@ -281,6 +281,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     }
                 } 
             }
+        }
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
         }
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());

@@ -304,7 +304,6 @@ namespace tsorcRevamp.NPCs.Enemies
 		private const int Frame_PeaceOut_15 = 27;
 		private const int Frame_PeaceOut_16 = 28;
 
-
 		public override void FindFrame(int frameHeight)
 		{
 

@@ -16,6 +16,10 @@ using tsorcRevamp.UI;
 using Microsoft.Xna.Framework.Graphics;
 using TerraUI.Objects;
 using Terraria.UI;
+using ReLogic.Graphics;
+using Terraria.Graphics.Effects;
+using Terraria.Audio;
+using tsorcRevamp.Projectiles.Pets;
 
 namespace tsorcRevamp
 {
@@ -34,7 +38,7 @@ namespace tsorcRevamp
 
         public bool SilverSerpentRing = false;
         public bool DragonStone = false;
-        public int SoulReaper = 0;
+        public int SoulReaper = 5;
 
         public bool DuskCrownRing = false;
         public bool UndeadTalisman = false;
@@ -69,6 +73,7 @@ namespace tsorcRevamp
         public bool BoneRevenge = false;
         public bool SoulSiphon = false;
         public int ConsSoulChanceMult;
+        public bool SoulSickle = false;
 
         public int souldroplooptimer = 0;
         public int souldroptimer = 0;
@@ -87,8 +92,11 @@ namespace tsorcRevamp
         //Did they have the shield up last frame?
         public bool shieldUp = false;
 
-        public bool chests;
-        public int safe = -1;
+        public bool chestBankOpen;
+        public int chestBank = -1;
+
+        public bool chestPiggyOpen;
+        public int chestPiggy = -1;
 
         public int FracturingArmor = 1;
 
@@ -143,6 +151,51 @@ namespace tsorcRevamp
             SoulSlot.BackOpacity = 0.8f;
             SoulSlot.Item = new Item();
             SoulSlot.Item.SetDefaults(0, true);
+
+            chestBankOpen = false;
+            chestBank = -1;
+
+            chestPiggyOpen = false;
+            chestPiggy = -1;
+
+        }
+
+        public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new() {
+            int projectileType = ModContent.ProjectileType<T>();
+            T instance = ModContent.GetInstance<T>();
+            int bankID = instance.ChestType;
+            LegacySoundStyle useSound = instance.UseSound;
+
+            if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType) {
+                int oldChest = player.chest;
+                player.chest = bankID;
+                toggle = true;
+
+                int num17 = (int)((player.position.X + player.width * 0.5) / 16.0);
+                int num18 = (int)((player.position.Y + player.height * 0.5) / 16.0);
+                player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
+                player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
+                if ((oldChest != bankID && oldChest != -1) || num17 < player.chestX - Player.tileRangeX || num17 > player.chestX + Player.tileRangeX + 1 || num18 < player.chestY - Player.tileRangeY || num18 > player.chestY + Player.tileRangeY + 1) {
+                    whoAmI = -1;
+                    if (player.chest != -1) {
+                        Main.PlaySound(useSound);
+                    }
+
+                    if (oldChest != bankID)
+                        player.chest = oldChest;
+                    else
+                        player.chest = -1;
+
+                    Recipe.FindRecipes();
+                }
+            }
+            else {
+                
+
+                whoAmI = -1;
+                player.chest = -1; //none
+                Recipe.FindRecipes();
+            }
         }
 
         public override void clientClone(ModPlayer clientClone) {
@@ -213,11 +266,10 @@ namespace tsorcRevamp
 
         }
 
-        public override void ResetEffects()
-        {
+        public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
-            SoulReaper = 0;
+            SoulReaper = 5;
             DragoonBoots = false;
             player.eocDash = 0;
             player.armorEffectDrawShadowEOCShield = false;
@@ -253,7 +305,7 @@ namespace tsorcRevamp
             ConditionOverload = false;
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;
-
+            SoulSickle = false;
     }
 
     public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
@@ -420,26 +472,21 @@ namespace tsorcRevamp
             }
 
 
-            foreach (Item item in player.inventory)
-            {
-                //block souls from going in normal inventory slots (including the cursor)
-                if (!Main.InGuideCraftMenu) {
-                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                    if (item.type == ModContent.ItemType<DarkSoul>()) {
-                        //if the player's soul slot is empty
-                        if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
-                            modPlayer.SoulSlot.Item = item.Clone();
-                        }
-                        else {
-                            modPlayer.SoulSlot.Item.stack += item.stack;
-                        }
-                        //dont send the souls to the normal inventory
-                        item.TurnToAir();
-                        if (Main.mouseItem.type == ModContent.ItemType<DarkSoul>()) {
-                            Main.mouseItem.TurnToAir();
-                        }
-                    } 
+            for (int i = 0; i < 50; i++) {
+                //block souls from going in normal inventory slots
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                if (player.inventory[i].type == ModContent.ItemType<DarkSoul>()) {
+                    //if the player's soul slot is empty
+                    if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
+                        modPlayer.SoulSlot.Item = player.inventory[i].Clone();
+                    }
+                    else {
+                        modPlayer.SoulSlot.Item.stack += player.inventory[i].stack;
+                    }
+                    //dont send the souls to the normal inventory
+                    player.inventory[i].TurnToAir();
                 }
+
             }
 
 
@@ -733,6 +780,10 @@ namespace tsorcRevamp
                 bossMagnet = false;
             }
             #endregion
+
+
+
+
         }
 
         public override void PostUpdateRunSpeeds()
@@ -870,14 +921,14 @@ namespace tsorcRevamp
 
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                player.AddBuff(ModContent.BuffType<InCombat>(), 900); //15s 
+                player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             }
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
 
         public override void OnHitAnything(float x, float y, Entity victim) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                player.AddBuff(ModContent.BuffType<InCombat>(), 900); //15s 
+                player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             }
             base.OnHitAnything(x, y, victim);
         }
@@ -922,7 +973,6 @@ namespace tsorcRevamp
                         if (souldroplooptimer == 12) {
                             Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
                             SoulSlot.Item.TurnToAir();
-                            Main.NewText("here");
                         }
                         else {
                             Item.NewItem(player.Center, SoulSlot.Item.type, 0);
@@ -945,6 +995,7 @@ namespace tsorcRevamp
                 {
                     player.HealEffect(damage / 10);
                     player.statLife += (damage / 10);
+
                 }
             }
             if (NUVamp)
@@ -1208,7 +1259,6 @@ namespace tsorcRevamp
                     || npc.type == NPCID.TheGroom
                     || npc.type == NPCID.SkeletronHand
                     || npc.type == NPCID.SkeletronHead
-                    || npc.type == ModContent.NPCType<NPCs.Bosses.GravelordNito>()
                     /* || NT == mod.NPCType("MagmaSkeleton") || NT == mod.NPCType("Troll") || NT == mod.NPCType("HeavyZombie") || NT == mod.NPCType("IceSkeleton") || NT == mod.NPCType("IrateBones")*/)
                 {
                     damage -= 15;
@@ -1238,6 +1288,18 @@ namespace tsorcRevamp
                     }
                 }
             }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            {
+                if (!Main.hardMode)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 30, 7f, 0, 0, 0);
+                }
+                else
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 9f, 0, 0, 0);
+                }
+            }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
             {
                 player.AddBuff(BuffID.Bleeding, 1800);
@@ -1262,6 +1324,18 @@ namespace tsorcRevamp
                     {
                         Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
+                }
+            }
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            {
+                if (!Main.hardMode)
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
+                }
+                else
+                {
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
             if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
@@ -1428,6 +1502,35 @@ namespace tsorcRevamp
                 player.buffImmune[BuffID.ManaRegeneration] = true;
             }
             #endregion manashield
+
+
+
+
+            #region Abyss Shader
+            bool hasCoA = false;
+
+            if (Main.netMode != NetmodeID.Server) {
+
+                //does the player have a covenant of artorias
+                for (int i = 3; i < (8 + player.extraAccessorySlots); i++) {
+                    if (player.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+                        hasCoA = true;
+                        break;
+                    }
+                }
+
+                //if they do, and the shader is inactive
+                if (hasCoA && !(Filters.Scene["tsorcRevamp:TheAbyss"].Active)) {
+                    Filters.Scene.Activate("tsorcRevamp:TheAbyss");
+                }
+
+                //if the abyss shader is active and the player is no longer wearing the CoA
+                if (Filters.Scene["tsorcRevamp:TheAbyss"].Active && !hasCoA) {
+                    Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
+                }
+            }
+
+            #endregion
         }
 
 
@@ -1455,6 +1558,22 @@ namespace tsorcRevamp
             if (manaShield >= 1)
             {
                 healValue = 0;
+            }
+        }
+
+        public override void PreUpdateBuffs() {
+            if (chestBank >= 0) {
+                DoPortableChest<SafeProjectile>(ref chestBank, ref chestBankOpen);
+            }
+            if (chestPiggy >= 0) {
+                DoPortableChest<PiggyBankProjectile>(ref chestPiggy, ref chestPiggyOpen);
+            }
+
+            if (!Main.playerInventory) {
+                chestPiggy = -1;
+                chestPiggyOpen = false;
+                chestBank = -1;
+                chestBankOpen = false;
             }
         }
 
@@ -1501,49 +1620,23 @@ namespace tsorcRevamp
                 return;
             }
 
-            int mapH = 0;
-            int rX;
-            int rY;
             float origScale = Main.inventoryScale;
-
             Main.inventoryScale = 0.85f;
 
-            if (Main.mapEnabled) {
-                if (!Main.mapFullscreen && Main.mapStyle == 1) {
-                    mapH = 256;
-                }
-            }
+            int slotIndexX = 11;
+            int slotIndexY = 0;
+            int slotPosX = (int)(20f + (float)(slotIndexX * 56) * Main.inventoryScale);
+            int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
 
-           
-            if (Main.mapEnabled) {
-                int adjustY = 600;
-
-                if (Main.player[Main.myPlayer].ExtraAccessorySlotsShouldShow) {
-                    adjustY = 610 + PlayerInput.UsingGamepad.ToInt() * 30;
-                }
-
-                if ((mapH + adjustY) > Main.screenHeight) {
-                    mapH = Main.screenHeight - adjustY;
-                }
-            }
-
-            int slotCount = 7 + Main.player[Main.myPlayer].extraAccessorySlots;
-
-            if ((Main.screenHeight < 900) && (slotCount >= 8)) {
-                slotCount = 7;
-            }
-
-            rX = Main.screenWidth - 92 - 14 - (47 * 3) - (int)(Main.extraTexture[58].Width * Main.inventoryScale);
-            rY = (int)(mapH + 174 + 4 + (slotCount - 2) * 56 * Main.inventoryScale);
-            
-
-            SoulSlot.Position = new Vector2(rX, rY);
+            SoulSlot.Position = new Vector2(slotPosX, slotPosY);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, "Souls", new Vector2(slotPosX + 6f, slotPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0f);
 
             SoulSlot.Draw(spriteBatch);
 
             Main.inventoryScale = origScale;
 
             SoulSlot.Update();
+
         }
 
 
@@ -1581,7 +1674,7 @@ namespace tsorcRevamp
         }
 
         internal static bool ShouldDrawSoulSlot() {
-            return (Main.playerInventory && Main.EquipPage == 0);
+            return (Main.playerInventory);
         }
 
 

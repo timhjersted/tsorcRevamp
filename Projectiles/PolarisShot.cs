@@ -22,13 +22,13 @@ namespace tsorcRevamp.Projectiles
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = 90;
+            projectile.timeLeft = 120;
             projectile.penetrate = -1;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 70)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 100)
             {
                 if (Main.rand.Next(2) == 0)
                 {
@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 72)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 102)
             {
                 projectile.timeLeft = 0;
 
@@ -186,19 +186,28 @@ namespace tsorcRevamp.Projectiles
                 polarisdusttimer = 0;
             }
 
-            if (++projectile.frameCounter >= 10)
+            if (projectile.timeLeft >= 102)
             {
-                projectile.frameCounter = 0;
-                if (projectile.timeLeft >= 72)
+                if (++projectile.frameCounter >= 10)
                 {
+                    projectile.frameCounter = 0;
                     if (++projectile.frame == 4)
                     {
                         projectile.frame = 0;
                     }
                 }
-                if (projectile.timeLeft <= 71)
+            }
+
+            if (projectile.timeLeft <= 101)
+            {
+                if (projectile.frame < 5)
                 {
-                    projectile.frameCounter = 5;
+                    projectile.frame = 5;
+                }
+
+                if (++projectile.frameCounter >= 10)
+                {
+                    projectile.frameCounter = 0;
                     if (++projectile.frame >= 8)
                     {
                         projectile.frame = 5;
@@ -208,7 +217,7 @@ namespace tsorcRevamp.Projectiles
 
             Vector2 oldSize = projectile.Size;
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 70)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 100)
             {
                 projectile.tileCollide = true;
                 projectile.width = 22;
@@ -218,7 +227,7 @@ namespace tsorcRevamp.Projectiles
                 projectile.ranged = true;
             }
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 71)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 101)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {

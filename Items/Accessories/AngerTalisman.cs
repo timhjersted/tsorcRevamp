@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 24;
             item.height = 28;
             item.accessory = true;
-            item.value = 300000;
+            item.value = PriceByRarity.LightRed_4;
             item.rare = ItemRarityID.LightRed;
         }
 

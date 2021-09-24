@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs
         public override void SetDefaults()
         {
             DisplayName.SetDefault("Miakoda - Full Moon Form");
-            Description.SetDefault("An ancient being freed from Gravelord Nito.");
+            Description.SetDefault("An ancient being freed from Skeletron.");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

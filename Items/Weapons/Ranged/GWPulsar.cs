@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.scale = 0.8f;
             item.rare = ItemRarityID.Orange;
             item.shoot = mod.ProjectileType("GWPulsarShot");
-            item.shootSpeed = 5.2f;
+            item.shootSpeed = 6.2f;
         }
         public override void AddRecipes()
         {

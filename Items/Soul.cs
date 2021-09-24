@@ -114,8 +114,21 @@ namespace tsorcRevamp.Items {
                 vectorother *= 35f;
                 Main.dust[z].position = player.Center - vectorother;
             }
-            
-            return base.OnPickup(player);
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
+                modPlayer.SoulSlot.Item = item.Clone();
+            }
+            else {
+                modPlayer.SoulSlot.Item.stack += item.stack;
+            }
+            Main.PlaySound(7, (int)player.position.X, (int)player.position.Y);
+            ItemText.NewText(item, item.stack);
+            return false;
+        }
+
+        //allow picking up even when out of inventory space
+        public override bool ItemSpace(Player player) {
+            return true;
         }
     }
     

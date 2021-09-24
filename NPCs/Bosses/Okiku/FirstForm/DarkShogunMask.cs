@@ -257,6 +257,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                 }
             }
         }
-
+        public override void BossLoot(ref string name, ref int potionType)
+        {
+            potionType = ItemID.GreaterHealingPotion;
+        }
+        public override bool CheckActive()
+        {
+            return false;
+        }
     }
 }

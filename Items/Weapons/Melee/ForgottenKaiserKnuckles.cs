@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.autoReuse = true;
             item.useTurn = true;
             item.rare = ItemRarityID.Pink;
-            item.damage = 25;
+            item.damage = 17;
             item.height = 23;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.knockBack = 3;

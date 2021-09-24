@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.BossItems {
     class CursedSkull : ModItem {
         public override string Texture => "tsorcRevamp/Items/BossItems/BloodySkull";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Summons Gravelord Nito, the First of the Dead." +
+            Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
                                 "\nYou must use this at the demon altar in the ancient temple ruins" +
                                 "\nBut be warned, this battle will not be easy..." +
                                 "\nItem is not consumed so you can retry the fight until victory.");
@@ -25,13 +25,6 @@ namespace tsorcRevamp.Items.BossItems {
         public override bool UseItem(Player player)
         {
 
-            /* 
-             if (ModContent.GetInstance<tsorcRevampConfig>().RenameSkeletron) {
-                 Main.NewText("Gravelord Nito has awoken! ", 175, 75, 255);
-                 NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - 1070, (int)Main.player[Main.myPlayer].position.Y - 150, ModContent.NPCType<NPCs.Bosses.GravelordNito>(), 1);
-             }
-             else {
-                 */
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
                 Main.NewText("Skeletron has awoken!", 175, 75, 255);

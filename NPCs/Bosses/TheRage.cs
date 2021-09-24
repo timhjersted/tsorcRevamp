@@ -8,27 +8,30 @@ using tsorcRevamp.Projectiles.Enemy;
 namespace tsorcRevamp.NPCs.Bosses
 {
 	[AutoloadBossHead]
-	class TheRage : ModNPC {
-        public override void SetStaticDefaults() { 
-            Main.npcFrameCount[npc.type] = 7;
-        }
+	class TheRage : ModNPC
+	{
+		public override void SetStaticDefaults()
+		{
+			Main.npcFrameCount[npc.type] = 7;
+		}
 
-        public override void SetDefaults() {
-            npc.aiStyle = -1;
-            npc.lifeMax = 16500;
-            npc.damage = 65;
+		public override void SetDefaults()
+		{
+			npc.aiStyle = -1;
+			npc.lifeMax = 16500;
+			npc.damage = 65;
 			baseContactDamage = npc.damage;
 			npc.defense = 24;
-            npc.knockBackResist = 0f;
+			npc.knockBackResist = 0f;
 			npc.scale = 1.4f;
-            npc.value = 100000;
-            npc.npcSlots = 180;
-            npc.boss = true;
-            npc.lavaImmune = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
+			npc.value = 100000;
+			npc.npcSlots = 180;
+			npc.boss = true;
+			npc.lavaImmune = true;
+			npc.noGravity = true;
+			npc.noTileCollide = true;
+			npc.HitSound = SoundID.NPCHit1;
+			npc.DeathSound = SoundID.NPCDeath1;
 			bossBag = ModContent.ItemType<Items.BossBags.TheRageBag>();
 			npc.timeLeft = 22500;
 
@@ -37,15 +40,16 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.height = 60;
 
 			npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.Confused] = true;
+			npc.buffImmune[BuffID.Poisoned] = true;
+			npc.buffImmune[BuffID.Confused] = true;
 			despawnHandler = new NPCDespawnHandler("The Rage is satisfied...", Color.OrangeRed, 127);
 		}
 
 		int baseContactDamage;
 		int hitTime = 0;
 		int fireTrailsDamage = 25;
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
 			npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
 			npc.defense = npc.defense += 12;
 			npc.lifeMax = 20000;
@@ -68,7 +72,8 @@ namespace tsorcRevamp.NPCs.Bosses
 			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X, npc.velocity.Y, 200, new Color(), 0.5f + (15.5f * (npc.ai[0] / (npc.lifeMax / 10))));
 			Main.dust[dust].noGravity = true;
 
-			if (npc.ai[3] == 0) {
+			if (npc.ai[3] == 0)
+			{
 				npc.alpha = 0;
 				npc.dontTakeDamage = false;
 				npc.damage = 65;
@@ -137,22 +142,27 @@ namespace tsorcRevamp.NPCs.Bosses
 				}
 				else npc.ai[2] = 0;
 			}
-			else {
+			else
+			{
 				npc.ai[3]++;
 				npc.alpha = 200;
 				npc.damage = 90;
 				npc.dontTakeDamage = true;
-				if (Main.player[npc.target].position.X < vector8.X) {
+				if (Main.player[npc.target].position.X < vector8.X)
+				{
 					if (npc.velocity.X > -6) { npc.velocity.X -= 0.22f; }
 				}
-				if (Main.player[npc.target].position.X > vector8.X) {
+				if (Main.player[npc.target].position.X > vector8.X)
+				{
 					if (npc.velocity.X < 6) { npc.velocity.X += 0.22f; }
 				}
-				if (Main.player[npc.target].position.Y < vector8.Y) {
+				if (Main.player[npc.target].position.Y < vector8.Y)
+				{
 					if (npc.velocity.Y > 0f) npc.velocity.Y -= 0.8f;
 					else npc.velocity.Y -= 0.07f;
 				}
-				if (Main.player[npc.target].position.Y > vector8.Y) {
+				if (Main.player[npc.target].position.Y > vector8.Y)
+				{
 					if (npc.velocity.Y < 0f) npc.velocity.Y += 0.8f;
 					else npc.velocity.Y += 0.07f;
 				}
@@ -178,58 +188,76 @@ namespace tsorcRevamp.NPCs.Bosses
 						Main.dust[fireDust].noGravity = true;
 					}
 				}
-				
-				
-				if (npc.ai[3] == 100) {
+
+
+				if (npc.ai[3] == 100)
+				{
 					npc.ai[3] = 1;
 					npc.life += 200;
 					if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
 				}
-				if (npc.ai[1] >= 0) {
+				if (npc.ai[1] >= 0)
+				{
 					npc.ai[3] = 0;
-					for (int num36 = 0; num36 < 40; num36++) {
+					for (int num36 = 0; num36 < 40; num36++)
+					{
 						Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, 0, 0, 0, new Color(), 3f);
 					}
 				}
 			}
 		}
-		public override void FindFrame(int currentFrame) {
+		public override void FindFrame(int currentFrame)
+		{
 			int num = 1;
-			if (!Main.dedServ) {
+			if (!Main.dedServ)
+			{
 				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
 			}
-			if (npc.velocity.X < 0) {
+			if (npc.velocity.X < 0)
+			{
 				npc.spriteDirection = -1;
 			}
-			else {
+			else
+			{
 				npc.spriteDirection = 1;
 			}
 			npc.rotation = npc.velocity.X * 0.08f;
 			npc.frameCounter += 1.0;
-			if (npc.frameCounter >= 4.0) {
+			if (npc.frameCounter >= 4.0)
+			{
 				npc.frame.Y = npc.frame.Y + num;
 				npc.frameCounter = 0.0;
 			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type]) {
+			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+			{
 				npc.frame.Y = 0;
 			}
-			if (npc.ai[3] == 0) {
+			if (npc.ai[3] == 0)
+			{
 				npc.alpha = 0;
 			}
-			else {
+			else
+			{
 				npc.alpha = 200;
 			}
 		}
-
-		public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
+		public override bool CheckActive()
+		{
+			return false;
+		}
+		public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+		{
 			hitTime = 0;
 			npc.ai[0] += (float)damage;
-			if (npc.ai[0] > (npc.lifeMax / 10)) {
+			if (npc.ai[0] > (npc.lifeMax / 10))
+			{
 				npc.ai[3] = 1;
-				for (int i = 0; i < 50; i++) {
+				for (int i = 0; i < 50; i++)
+				{
 					Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 4, 0, 0, 100, default, 3f);
 				}
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0; i < 20; i++)
+				{
 					Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, 0, 0, 100, default, 3f);
 				}
 				npc.ai[1] = -250;
@@ -237,7 +265,13 @@ namespace tsorcRevamp.NPCs.Bosses
 			}
 			return true;
 		}
-		public override void NPCLoot() {
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
+
+		public override void NPCLoot()
+		{
 			for (int num36 = 0; num36 < 100; num36++)
 			{
 				int dust = Dust.NewDust(npc.position, (int)(npc.width * 1.5), (int)(npc.height * 1.5), 127, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
@@ -247,13 +281,15 @@ namespace tsorcRevamp.NPCs.Bosses
 			{
 				Dust.NewDust(npc.position, (int)(npc.width * 1.5), (int)(npc.height * 1.5), 130, Main.rand.Next(-50, 50), Main.rand.Next(-40, 40), 100, Color.Orange, 3f);
 			}
-			if (Main.expertMode) {
+			if (Main.expertMode)
+			{
 				npc.DropBossBags();
-            }
-            else {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfFire>(), 2);
-                Item.NewItem(npc.getRect(), ItemID.CobaltDrill, 1, false, -1); 
-            }
+			}
+			else
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfFire>(), 2);
+				Item.NewItem(npc.getRect(), ItemID.CobaltDrill, 1, false, -1);
+			}
 		}
 	}
 }

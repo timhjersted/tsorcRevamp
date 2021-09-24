@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.rare = ItemRarityID.Lime;
             item.autoReuse = true;
             item.shoot = mod.ProjectileType("PolarisShot");
-            item.shootSpeed = 7f;
+            item.shootSpeed = 8f;
         }
 
 

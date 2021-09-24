@@ -250,7 +250,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			npc.ai[0] = 2;
 			Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
 		}
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 		public override void NPCLoot()
 		{
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -284,7 +287,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				}
 			}
 		}
-
+		public override void BossLoot(ref string name, ref int potionType)
+		{
+			potionType = ItemID.GreaterHealingPotion;
+		}
 		public override void FindFrame(int currentFrame)
 		{
 			int num = 1;

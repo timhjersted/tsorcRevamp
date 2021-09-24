@@ -4,6 +4,9 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
     public class TreasureMap : ModItem {
+
+        //this thing has no drop location or recipe. what?
+        public override bool Autoload(ref string name) => false;
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Shows location, and may reveal hidden rewards");
 
