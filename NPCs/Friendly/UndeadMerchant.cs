@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		}
 		public override string TownNPCName()
 		{
-			return "Undead Merchant";
+			return "Uldred";
 		}
 
 		public override void SetDefaults()

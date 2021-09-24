@@ -304,27 +304,6 @@ namespace tsorcRevamp.NPCs.Enemies
 		private const int Frame_PeaceOut_15 = 27;
 		private const int Frame_PeaceOut_16 = 28;
 
-		/*
-
-		//Emerald Herald Anim
-
-		private const int Frame_Idle = 0;
-		private const int Frame_Wind_1 = 1; //Minimum wind
-		private const int Frame_Wind_2 = 2;
-		private const int Frame_Wind_3 = 3;
-		private const int Frame_Wind_4 = 4; //Use only on wind out
-		private const int Frame_Wind_5 = 5; //Peak wind
-
-
-		//Emerald Herald Eye Anim
-
-		private const int Frame_Closed = 0;
-		private const int Frame_Half_Open = 1;
-		private const int Frame_Fully_Open = 2;
-		private const int Frame_Fully_Open_Glint = 3;
-
-		*/
-
 		public override void FindFrame(int frameHeight)
 		{
 
