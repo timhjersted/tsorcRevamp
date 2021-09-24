@@ -106,9 +106,12 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            WitchkingFight,
+            WyvernMageShadowFight,
+            ChaosFight,
             BlightFight,
             DarkCloudPyramidFight,
-            ExampleArtoriasFight,
+            ArtoriasFight,
             ExampleBlackKnightFight,
             ExampleHarpySwarm,
             ExampleNoNPCScriptEvent,
@@ -123,18 +126,31 @@ namespace tsorcRevamp
         //It also initializes the other dictionary and lists
         public static void InitializeScriptedEvents()
         {
-            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, false, true, "The Blight surfaces from the ocean...", Color.Blue, false, SuperHardModeCustomCondition);
+            //WITCHKING
+            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.MagicMirror, true, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
+            
+            //BLIGHT
+            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, "The Blight surfaces from the ocean!", Color.Blue, false, SuperHardModeCustomCondition);
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
+            //CHAOS
+            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.MagicMirror, true, true, "Chaos has entered this dimension!", Color.Red, false, SuperHardModeCustomCondition);
+
+            //WYVERN MAGE 
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6342, 246), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.WyvernMageShadow>(), DustID.MagicMirror, true, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
+          
+            //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
 
-            ScriptedEvent ExampleArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ExampleArtoriasCustomAction);
-            ExampleArtoriasEvent.SetCustomStats(50000, 30, 50);
-            //ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
+            //ARTORIAS
+            ScriptedEvent ArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, true, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ArtoriasCustomAction);
+            ArtoriasEvent.SetCustomStats(50000, 30, 50);
+            //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
+            //BLACK KNIGHT
             ScriptedEvent ExampleBlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, ExampleBlackKnightCustomAction);
             ExampleBlackKnightFight.SetCustomStats(1500, 10, 50);
-            ExampleArtoriasEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1000 });
+            ExampleBlackKnightEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
 
 
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
@@ -153,9 +169,12 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
+                {ScriptedEventType.WitchkingFight, WitchkingEvent},
+                {ScriptedEventType.ChaosFight, ChaosEvent},
+                {ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
                 {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
-                {ScriptedEventType.ExampleArtoriasFight, ExampleArtoriasEvent},
+                {ScriptedEventType.ArtoriasFight, ArtoriasEvent},
                 {ScriptedEventType.ExampleBlackKnightFight, ExampleBlackKnightFight},
                 {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
@@ -258,12 +277,12 @@ namespace tsorcRevamp
 
 
         //This is an example artorias custom action. It spawns meteors and displays text every so often, and also changes the projectile damage for Artorias. Most enemies will require a very small change for their projectile damage changes to work (the word 'public' needs to be in front of the variable controlling that projectile's damage).
-        public static bool ExampleArtoriasCustomAction(Player player, int npcID)
+        public static bool ArtoriasCustomAction(Player player, int npcID)
         {
             //Spawning meteors:
             if (Main.rand.Next(200) == 0)
             {
-                Main.NewText("Example Artorias rains fire from the sky...", Color.Gold);
+                Main.NewText("Artorias rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < 10; i++)
                 {
                     Projectile.NewProjectile((float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), Main.npc[npcID].damage / 4, 2f, 255);
