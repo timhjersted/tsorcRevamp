@@ -121,6 +121,9 @@ namespace tsorcRevamp
         public bool MiakodaNewDust2;
 
         internal bool gotPickaxe;
+        internal bool EmeraldHeraldSpawned;
+        public bool FirstEncounter;
+        public bool ReceivedGift;
 
         public bool[] PermanentBuffToggles;
         public static Dictionary<int, float> DamageDir;
@@ -242,6 +245,10 @@ namespace tsorcRevamp
             {"townWarpWorld", townWarpWorld},
             {"townWarpSet", townWarpSet},
             {"gotPickaxe", gotPickaxe},
+            {"EmeraldHeraldSpawned", EmeraldHeraldSpawned},
+            {"FirstEncounter", FirstEncounter},
+            {"ReceivedGift", ReceivedGift},
+
 
             {"soulSlot", ItemIO.Save(SoulSlot.Item) }
             };
@@ -259,6 +266,9 @@ namespace tsorcRevamp
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
             gotPickaxe = tag.GetBool("gotPickaxe");
+            EmeraldHeraldSpawned = tag.GetBool("EmeraldHeraldSpawned");
+            FirstEncounter = tag.GetBool("FirstEncounter");
+            ReceivedGift = tag.GetBool("ReceivedGift");
 
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
@@ -1087,47 +1097,6 @@ namespace tsorcRevamp
                             player.statLife = player.statLifeMax2;
                         }
 
-                        /* do not do this
-                        if ((player.statLifeMax2 > 99) && (player.statLifeMax2 <= 199)) { 
-                            player.HealEffect(4, false);
-                            player.statLife += 4;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if ((player.statLifeMax2 > 199) && (player.statLifeMax2 <= 299)) {
-                            player.HealEffect(6, false);
-                            player.statLife += 6;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if ((player.statLifeMax2 > 299) && (player.statLifeMax2 <= 399)) {
-                            player.HealEffect(8, false);
-                            player.statLife += 8;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if ((player.statLifeMax2 > 399) && (player.statLifeMax2 <= 499)) {
-                            player.HealEffect(10, false);
-                            player.statLife += 10;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-
-                        if (player.statLifeMax2 > 499) {
-                            player.HealEffect(12, false);
-                            player.statLife += 12;
-                            if (player.statLife > player.statLifeMax2) {
-                                player.statLife = player.statLifeMax2;
-                            }
-                        }
-                        */
                         Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
 
                         MiakodaEffectsTimer = 0;
@@ -1607,7 +1576,12 @@ namespace tsorcRevamp
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
-
+            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()) && !EmeraldHeraldSpawned)
+            {
+                NPC.NewNPC((int)player.position.X + 3000, (int)player.position.Y, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                //Main.NewText("hi");
+                EmeraldHeraldSpawned = true;
+            }
         }
 
         public override void OnRespawn(Player player)

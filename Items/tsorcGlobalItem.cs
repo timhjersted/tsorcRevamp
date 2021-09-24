@@ -61,8 +61,19 @@ namespace tsorcRevamp.Items {
 			
 			base.OnCraft(item, recipe);
         }
+        public override void HoldItem(Item item, Player player)
+        {
+			/*if (item.Prefix(mod.PrefixType("Blessed"))) //THIS LITERALY BLESSES EVERYTHING YOU TOUCH
+            {
+				player.lifeRegen += 1;
+            }*/
 
-        public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
+			if (item.prefix == mod.PrefixType("Blessed"))	
+            {
+				player.lifeRegen += 1;
+            }
+		}
+		public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
 			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
 			if (modPlayer.MiakodaCrescentBoost) {

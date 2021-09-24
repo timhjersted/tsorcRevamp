@@ -36,6 +36,8 @@ namespace tsorcRevamp {
         private UserInterface _bonfireUIState;
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         private UserInterface _darkSoulCounterUIState;
+        internal UserInterface EmeraldHeraldUserInterface;
+
 
         public static Effect TheAbyssEffect;
         //public static Effect AttraidiesEffect;
@@ -64,11 +66,12 @@ namespace tsorcRevamp {
             if (!Main.dedServ) {
                 tsorcRevamp Instance = this;
                 TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
-                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);  
-                
+                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+
                 //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
                 //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
-
+               
+                EmeraldHeraldUserInterface = new UserInterface();
             }
         }
 
@@ -81,6 +84,8 @@ namespace tsorcRevamp {
             {
                 _darkSoulCounterUIState?.Update(gameTime);
             }
+
+            EmeraldHeraldUserInterface?.Update(gameTime);
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
@@ -105,6 +110,19 @@ namespace tsorcRevamp {
                     "tsorcRevamp: Dark Soul Counter UI",
                     delegate {
                         _darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
+            int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
+            if (inventoryIndex != -1)
+            {
+                layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Emerald Herald UI",
+                    delegate {
+                        EmeraldHeraldUserInterface.Draw(Main.spriteBatch, new GameTime());
                         return true;
                     },
                     InterfaceScaleType.UI)
