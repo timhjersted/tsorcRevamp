@@ -3,6 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.HandsOn)]
+
     public class BandOfSupremeCosmicPower : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Band of Supreme Cosmic Power");
