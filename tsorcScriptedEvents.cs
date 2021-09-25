@@ -106,6 +106,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            AbysmalOolacileSorcererFight,
             WitchkingFight,
             WyvernMageShadowFight,
             ChaosFight,
@@ -126,6 +127,9 @@ namespace tsorcRevamp
         //It also initializes the other dictionary and lists
         public static void InitializeScriptedEvents()
         {
+            //ABYSMAL OOLACILE SORCERER
+            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.MagicMirror, true, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
+
             //WITCHKING
             ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.MagicMirror, true, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
             
@@ -169,6 +173,7 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
+                {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
                 {ScriptedEventType.ChaosFight, ChaosEvent},
                 {ScriptedEventType.WyvernMageShadowFight, WyvernMageShadowEvent},
