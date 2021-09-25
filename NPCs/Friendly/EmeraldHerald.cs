@@ -4,7 +4,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using static tsorcRevamp.tsorcRevampPlayer;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -20,17 +19,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override string TownNPCName()
 		{
-			/*Player player = Main.LocalPlayer;		//Sadly once the world is given her name, it saves it. She would be know forever as ???
-
-			if (player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter) 
-			{
-				return "Jade";
-			}
-			else
-			{
-				return "???";
-			}*/
-
 			return "Jade";
 		}
 
@@ -53,7 +41,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		#region Chat Functionality Stuff
 
 
-		public override string GetChat() //  Why yes, look at you, you must be. 
+		public override string GetChat()
 		{
 			Player player = Main.LocalPlayer;
 			WeightedRandom<string> chat = new WeightedRandom<string>();
@@ -105,8 +93,6 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void OnChatButtonClicked(bool firstButton, ref bool shop)
 		{
 			Player player = Main.LocalPlayer;
-			//Main.NewText(player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift);
-			//Main.NewText(player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter);
 
 			if (firstButton)
 			{
@@ -161,7 +147,7 @@ namespace tsorcRevamp.NPCs.Friendly
 					return;
 				}
 
-				if (chatState == 7) //if you click while on the second page of text
+				if (chatState == 7)
 				{
 
 					if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
@@ -179,7 +165,6 @@ namespace tsorcRevamp.NPCs.Friendly
 				}
 				if (chatState == 8)
 				{
-						//Main.PlaySound(SoundID.Item37); // Reforge/Anvil sound
 						Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
 						Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
 						chatState = 0;

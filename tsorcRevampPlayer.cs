@@ -121,7 +121,6 @@ namespace tsorcRevamp
         public bool MiakodaNewDust2;
 
         internal bool gotPickaxe;
-        internal bool EmeraldHeraldSpawned;
         public bool FirstEncounter;
         public bool ReceivedGift;
 
@@ -235,7 +234,8 @@ namespace tsorcRevamp
 
         public override TagCompound Save()
         {
-            return new TagCompound {
+            return new TagCompound 
+            {
             {"warpX", warpX},
             {"warpY", warpY},
             {"warpWorld", warpWorld},
@@ -245,7 +245,6 @@ namespace tsorcRevamp
             {"townWarpWorld", townWarpWorld},
             {"townWarpSet", townWarpSet},
             {"gotPickaxe", gotPickaxe},
-            {"EmeraldHeraldSpawned", EmeraldHeraldSpawned},
             {"FirstEncounter", FirstEncounter},
             {"ReceivedGift", ReceivedGift},
 
@@ -266,7 +265,6 @@ namespace tsorcRevamp
             townWarpWorld = tag.GetInt("townWarpWorld");
             townWarpSet = tag.GetBool("townWarpSet");
             gotPickaxe = tag.GetBool("gotPickaxe");
-            EmeraldHeraldSpawned = tag.GetBool("EmeraldHeraldSpawned");
             FirstEncounter = tag.GetBool("FirstEncounter");
             ReceivedGift = tag.GetBool("ReceivedGift");
 
@@ -1576,11 +1574,11 @@ namespace tsorcRevamp
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
-            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()) && !EmeraldHeraldSpawned)
+            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()) && !ModContent.GetInstance<tsorcRevampWorld>().EmeraldHeraldSpawned)
             {
                 NPC.NewNPC((int)player.position.X + 3000, (int)player.position.Y, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                 //Main.NewText("hi");
-                EmeraldHeraldSpawned = true;
+                ModContent.GetInstance<tsorcRevampWorld>().EmeraldHeraldSpawned = true;
             }
         }
 
