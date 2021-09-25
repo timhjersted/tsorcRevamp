@@ -27,7 +27,7 @@ We're looking to do a full transfer of the original mod, which includes:
 * Over 400 custom items, weapons, and armor
 * 22 new bosses
 * Tons of new enemies
-* A completely handmade map, with 13 dungeons and tons of secrets
+* A completely handmade map, with ~~13~~ **17** dungeons and tons of secrets
 
 
 ## Roadmap
