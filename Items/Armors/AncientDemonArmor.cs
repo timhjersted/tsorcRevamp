@@ -22,6 +22,10 @@ namespace tsorcRevamp.Items.Armors
             item.rare = ItemRarityID.Orange;
         }
 
+        public override void DrawHands(ref bool drawHands, ref bool drawArms)
+        {
+            drawHands = true;
+        }
         public override void UpdateEquip(Player player)
         {
             player.magicDamage += 0.10f;
