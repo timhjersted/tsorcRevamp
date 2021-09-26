@@ -82,7 +82,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				{
 					SpeedBoost = false;
 				}
-				
+
+		}
+		public override bool CheckActive()
+		{
+			return false;
 		}
 		public override void FindFrame(int currentFrame)
 		{

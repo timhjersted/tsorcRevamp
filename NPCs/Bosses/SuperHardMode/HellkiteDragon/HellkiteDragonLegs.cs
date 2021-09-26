@@ -61,6 +61,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 npc.active = false;
             }
         }
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void NPCLoot()
         {
 

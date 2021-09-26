@@ -95,8 +95,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
 		}
 
-
-
+		public override bool CheckActive()
+		{
+			return false;
+		}
 
 		public override void NPCLoot()
 		{

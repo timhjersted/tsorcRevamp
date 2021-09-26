@@ -101,6 +101,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 			}
 		}
 
+		public override bool CheckActive()
+		{
+			return false;
+		}
 		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor) {
 			Vector2 origin = new Vector2(Main.npcTexture[npc.type].Width / 2, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type] / 2);
 			Color alpha = Color.White;

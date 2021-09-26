@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.MarilithBag>();
-			despawnHandler = new NPCDespawnHandler("Fire Fiend Marilith decends to the underworld...", Color.DarkGreen, DustID.FireworkFountain_Red);
+			despawnHandler = new NPCDespawnHandler("Fire Fiend Marilith decends to the underworld...", Color.OrangeRed, DustID.FireworkFountain_Red);
 		}
 
 		public override void SetStaticDefaults()

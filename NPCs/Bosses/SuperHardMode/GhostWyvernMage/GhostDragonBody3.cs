@@ -49,6 +49,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
         int Timer = -Main.rand.Next(800);
 
+        public override bool CheckActive()
+        {
+            return false;
+        }
         public override void AI()
         {
 

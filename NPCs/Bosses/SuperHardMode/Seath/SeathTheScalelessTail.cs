@@ -69,7 +69,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 npc.active = false;
             }
         }
-
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void NPCLoot()
         {

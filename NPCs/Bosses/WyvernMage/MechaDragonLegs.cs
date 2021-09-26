@@ -79,7 +79,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 			npc.alpha = 255;
 			return true;
 		}
-        public override void NPCLoot()
+		public override bool CheckActive()
+		{
+			return false;
+		}
+		public override void NPCLoot()
         {
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-0, 1) * 0.2f, (float)Main.rand.Next(-0, 1) * 0.2f), Main.rand.Next(61, 64), 1f);

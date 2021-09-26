@@ -46,6 +46,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         {
             return false;
         }
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void AI()
         {
