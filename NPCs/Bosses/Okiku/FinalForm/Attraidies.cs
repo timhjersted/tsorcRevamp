@@ -528,7 +528,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             DarkLasers[i].TelegraphTime = 300;
                             DarkLasers[i].MaxCharge = 240;
                             DarkLasers[i].FiringDuration = 1000;
-                            DarkLasers[i].LaserLength = 400000;
+                            DarkLasers[i].LaserLength = 10000;
                             DarkLasers[i].LaserColor = Color.Purple;
                             DarkLasers[i].TileCollide = false;
                             DarkLasers[i].CastLight = true;
