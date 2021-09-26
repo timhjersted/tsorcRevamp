@@ -113,7 +113,7 @@ namespace tsorcRevamp
             BlightFight,
             DarkCloudPyramidFight,
             ArtoriasFight,
-            ExampleBlackKnightFight,
+            BlackKnightFight,
             ExampleHarpySwarm,
             ExampleNoNPCScriptEvent,
             SpawnGoblin
@@ -152,9 +152,9 @@ namespace tsorcRevamp
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT
-            ScriptedEvent ExampleBlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, ExampleBlackKnightCustomAction);
-            ExampleBlackKnightFight.SetCustomStats(1500, 10, 50);
-            ExampleBlackKnightFight.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
+            ScriptedEvent BlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
+            BlackKnightFight.SetCustomStats(1500, 10, 50);
+            BlackKnightFight.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
 
 
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
@@ -180,7 +180,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.ArtoriasFight, ArtoriasEvent},
-                {ScriptedEventType.ExampleBlackKnightFight, ExampleBlackKnightFight},
+                {ScriptedEventType.BlackKnightFight, BlackKnightFight},
                 {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
@@ -312,7 +312,7 @@ namespace tsorcRevamp
         }
 
         //This is an example custom action that just changes the damage of an NPC's projectile. Most enemies will require a very small change for this to work with them (the word 'public' needs to be in front of the variable controlling that projectile's damage).
-        public static bool ExampleBlackKnightCustomAction(Player player, int npcID)
+        public static bool BlackKnightCustomAction(Player player, int npcID)
         {
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
