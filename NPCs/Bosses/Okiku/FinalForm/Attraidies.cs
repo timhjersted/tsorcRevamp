@@ -283,11 +283,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 Lighting.AddLight(npc.position, Color.OrangeRed.ToVector3());               
                 npc.noGravity = true;
                 npc.noTileCollide = true;
-                NewVelocity = new Vector2(0, 1.2f).RotatedByRandom(MathHelper.TwoPi);
+                NewVelocity = new Vector2(0, 2f).RotatedByRandom(MathHelper.TwoPi);
                 SetVelocity = true;
 
                 npc.position = Main.player[npc.target].position + OrbitOffset.RotatedBy(RotationProgress);
-                RotationProgress += 0.005f; AttackModeCounter++;
+                RotationProgress += 0.01f; AttackModeCounter++;
                 if (AttackModeCounter > 830)
                 {
                     ChangeAttackModes();
@@ -527,7 +527,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             DarkLasers[i].LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
                             DarkLasers[i].TelegraphTime = 300;
                             DarkLasers[i].MaxCharge = 240;
-                            DarkLasers[i].FiringDuration = 1000;
+                            DarkLasers[i].FiringDuration = 940;
                             DarkLasers[i].LaserLength = 10000;
                             DarkLasers[i].LaserColor = Color.Purple;
                             DarkLasers[i].TileCollide = false;

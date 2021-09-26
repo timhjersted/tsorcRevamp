@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 laser.LaserTarget = Main.player[(int)projectile.ai[0]].position;
                 laser.TelegraphTime = 300;
                 laser.FiringDuration = 120;
-                laser.LaserLength = 40000; //What could go wrong?
+                laser.LaserLength = 8000; //What could go wrong? Turns out, plenty!
                 laser.LaserColor = Color.DeepSkyBlue;
                 laser.TileCollide = false;
                 laser.CastLight = false;
