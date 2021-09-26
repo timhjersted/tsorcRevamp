@@ -116,7 +116,8 @@ namespace tsorcRevamp
             BlackKnightFight,
             ExampleHarpySwarm,
             ExampleNoNPCScriptEvent,
-            SpawnGoblin
+            SpawnGoblin,
+            AttraidiesTheSorrowEvent
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -156,6 +157,8 @@ namespace tsorcRevamp
             BlackKnightFight.SetCustomStats(1500, 10, 50);
             BlackKnightFight.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
 
+            //ATTRAIDIES THE SORROW EVENT
+            ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, false, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
 
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
             List<Vector2> HarpySwarmEnemyLocations = new List<Vector2>() { new Vector2(525, 837), new Vector2(545, 837), new Vector2(505, 837), new Vector2(525, 817), new Vector2(525, 857) };
@@ -184,8 +187,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
-                {ScriptedEventType.SpawnGoblin, SpawnGoblin }
-                
+                {ScriptedEventType.SpawnGoblin, SpawnGoblin },
+                {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent}
+
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -261,6 +265,16 @@ namespace tsorcRevamp
         public static bool TinkererCondition() {
             return !NPC.AnyNPCs(NPCID.GoblinTinkerer);
         }
+
+        public static bool AttraidiesTheSorrowCondition()
+        {
+            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            {
+                return true;
+            }
+            else { return false; }
+        }
+
         #endregion
 
         #region customactions
