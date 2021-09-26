@@ -562,7 +562,7 @@ namespace tsorcRevamp {
 
         //stop npc heads from displaying on the map
         private static int MapHeadPatch(On.Terraria.NPC.orig_TypeToHeadIndex orig, int type) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !(Main.EquipPage == 1)) {
                 NPC npc = new NPC();
                 npc.SetDefaults(type);
                 if (npc.townNPC) {
