@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = .6f;
-            npc.value = 1400;
+            npc.value = 200;
             npc.defense = 2;
 
             //banner = npc.type;
