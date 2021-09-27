@@ -117,7 +117,8 @@ namespace tsorcRevamp
             ExampleHarpySwarm,
             ExampleNoNPCScriptEvent,
             SpawnGoblin,
-            AttraidiesTheSorrowEvent
+            AttraidiesTheSorrowEvent,
+            TwinEoWFight
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -160,6 +161,10 @@ namespace tsorcRevamp
             //ATTRAIDIES THE SORROW EVENT
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, false, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
 
+            //TWIN EATER OF WORLDS FIGHT
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, false, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
+
+
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
             List<Vector2> HarpySwarmEnemyLocations = new List<Vector2>() { new Vector2(525, 837), new Vector2(545, 837), new Vector2(505, 837), new Vector2(525, 817), new Vector2(525, 857) };
             ScriptedEvent ExampleHarpySwarm = new ScriptedEvent(new Vector2(525, 837), 50, HarpySwarmEnemyTypeList, HarpySwarmEnemyLocations, DustID.BlueFairy, false, true, "A Swarm of Harpies appears!", Color.Cyan, false, NormalModeCustomCondition);
@@ -188,7 +193,8 @@ namespace tsorcRevamp
                 {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
-                {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent}
+                {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
+                {ScriptedEventType.TwinEoWFight, TwinEoWFight}
 
             };
 
@@ -348,6 +354,14 @@ namespace tsorcRevamp
         //... is what it SHOULD do?
         public static bool TinkererAction(Player player, int npcID) {
             NPC.NewNPC(4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
+            return true;
+        }
+
+        //TWIN EOW ACTION
+        public static bool TwinEoWAction(Player player, int npcID)
+        {
+            NPC.NewNPC(3183 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
+            NPC.NewNPC(3330 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
             return true;
         }
 
