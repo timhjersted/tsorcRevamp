@@ -164,10 +164,10 @@ namespace tsorcRevamp
             //TWIN EATER OF WORLDS FIGHT
             ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, false, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
 
-
+            //HARPY SWARM DEMO FIGHT
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
             List<Vector2> HarpySwarmEnemyLocations = new List<Vector2>() { new Vector2(525, 837), new Vector2(545, 837), new Vector2(505, 837), new Vector2(525, 817), new Vector2(525, 857) };
-            ScriptedEvent ExampleHarpySwarm = new ScriptedEvent(new Vector2(525, 837), 50, HarpySwarmEnemyTypeList, HarpySwarmEnemyLocations, DustID.BlueFairy, false, true, "A Swarm of Harpies appears!", Color.Cyan, false, NormalModeCustomCondition);
+            ScriptedEvent ExampleHarpySwarm = new ScriptedEvent(new Vector2(525, 837), 50, HarpySwarmEnemyTypeList, HarpySwarmEnemyLocations, DustID.BlueFairy, false, true, "A Swarm of Harpies appears!", Color.Cyan);
             ExampleHarpySwarm.SetCustomStats(50, 5, 30);
             List<int> HarpyDropList = new List<int>() { ModContent.ItemType<Items.DarkSoul>(), ItemID.Feather };
             List<int> HarpyDropCounts = new List<int>() { 50, 10 };
@@ -553,11 +553,11 @@ namespace tsorcRevamp
 
         public static void RefreshEvents()
         {
-            for (int i = 0; i < DisabledEvents.Count; i++)
+            foreach(ScriptedEvent currentEvent in DisabledEvents)
             {
-                InactiveEvents.Add(DisabledEvents[i]);
-                DisabledEvents.RemoveAt(i);
+                InactiveEvents.Add(currentEvent);
             }
+            DisabledEvents = new List<ScriptedEvent>();
         }
     }
 
@@ -573,7 +573,7 @@ namespace tsorcRevamp
         public bool useListSpawns = false;
         List<int> NPCIDs;
         List<Vector2> NPCCoordinates;
-        List<int> spawnedNPCIDs = new List<int>();
+        List<NPC> spawnedNPCs = new List<NPC>();
         List<bool> NPCDroppedLoot = new List<bool>();
 
         bool hasCustomDrops = false;
@@ -779,49 +779,48 @@ namespace tsorcRevamp
                 else
                 {
                     bool oneAlive = false;
-                    for (int i = 0; i < spawnedNPCIDs.Count; i++)
+                    for (int i = 0; i < spawnedNPCs.Count; i++)
                     {
 
-                        if (Main.npc[spawnedNPCIDs[i]].active)
+                        if (spawnedNPCs[i].active)
                         {
                             oneAlive = true;
                         }
                         else
                         {
-                            if (tsorcRevampWorld.Slain.ContainsKey(npcToSpawn) && save)
-                            {
-                                foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
-                                {
-                                    if (pair.Value == this)
-                                    {
-                                        tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
-                                    }
-                                }
-
-                            }
-                            else
-                            {
-                                tsorcScriptedEvents.DisabledEvents.Add(this);
-                            }
-
                             if (hasCustomDrops && !NPCDroppedLoot[i])
                             {
                                 NPCDroppedLoot[i] = true;
                                 for (int j = 0; j < CustomDrops.Count; j++)
                                 {
-                                    Item.NewItem(Main.npc[spawnedNPCIDs[i]].getRect(), CustomDrops[j], DropAmounts[j]);
+                                    Item.NewItem(spawnedNPCs[i].getRect(), CustomDrops[j], DropAmounts[j]);
                                 }
-                            }
+                            }                            
                         }
                     }
                     if (!oneAlive)
                     {
+                        if (tsorcRevampWorld.Slain.ContainsKey(npcToSpawn) && save)
+                        {
+                            foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
+                            {
+                                if (pair.Value == this)
+                                {
+                                    tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            tsorcScriptedEvents.DisabledEvents.Add(this);
+                        }
 
                         tsorcScriptedEvents.ActiveEvents.Remove(this);
                         NPCDroppedLoot = new List<bool>();
+                        spawnedNPCs = new List<NPC>();
                         runOnce = false;
                     }
-
                 }
             }
             else if (endEvent)
@@ -850,20 +849,20 @@ namespace tsorcRevamp
             {
                 for (int i = 0; i < NPCIDs.Count; i++)
                 {
-                    spawnedNPCIDs.Add(NPC.NewNPC((int)NPCCoordinates[i].X * 16, (int)NPCCoordinates[i].Y * 16, NPCIDs[i]));
+                    spawnedNPCs.Add(Main.npc[NPC.NewNPC((int)NPCCoordinates[i].X * 16, (int)NPCCoordinates[i].Y * 16, NPCIDs[i])]);
                     NPCDroppedLoot.Add(false);
                     if (healthChange)
                     {
-                        Main.npc[spawnedNPCIDs[i]].lifeMax = newMaxLife;
-                        Main.npc[spawnedNPCIDs[i]].life = newMaxLife;
+                        spawnedNPCs[i].lifeMax = newMaxLife;
+                        spawnedNPCs[i].life = newMaxLife;
                     }
                     if (defChange)
                     {
-                        Main.npc[spawnedNPCIDs[i]].defense = newDefense;
+                        spawnedNPCs[i].defense = newDefense;
                     }
                     if (damageChange)
                     {
-                        Main.npc[spawnedNPCIDs[i]].damage = newDamage;
+                        spawnedNPCs[i].damage = newDamage;
                     }
 
                     if (Main.netMode == NetmodeID.Server)
