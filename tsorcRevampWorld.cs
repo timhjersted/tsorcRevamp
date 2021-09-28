@@ -20,7 +20,6 @@ using System.IO;
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
 
-        internal bool EmeraldHeraldSpawned;
         public static bool DownedVortex;
         public static bool DownedNebula;
         public static bool DownedStardust;
@@ -72,8 +71,6 @@ namespace tsorcRevamp {
 			{
                 {"downed", downed},
                 {"world_state", world_state},
-                {"EmeraldHeraldSpawned", EmeraldHeraldSpawned}
-
             };
 			SaveSlain(tagCompound);
             tsorcScriptedEvents.SaveScriptedEvents(tagCompound);
@@ -98,9 +95,6 @@ namespace tsorcRevamp {
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
-
-            EmeraldHeraldSpawned = tag.GetBool("EmeraldHeraldSpawned");
-
         }
 
         private void LoadSlain(TagCompound tag) {

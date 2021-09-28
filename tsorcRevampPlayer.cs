@@ -1260,11 +1260,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 30, 7f, 0, 0, 0);
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 9f, 0, 0, 0);
+                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
@@ -1574,12 +1574,12 @@ namespace tsorcRevamp
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
-            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()) && !ModContent.GetInstance<tsorcRevampWorld>().EmeraldHeraldSpawned)
+            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
             {
                 NPC.NewNPC((int)player.position.X + 3000, (int)player.position.Y, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
-                //Main.NewText("hi");
-                ModContent.GetInstance<tsorcRevampWorld>().EmeraldHeraldSpawned = true;
             }
+            tsorcScriptedEvents.RefreshEvents(); //Let me know if it's best this doesnt go here -C It's to set miscEventTimer back to 0
+
         }
 
         public override void OnRespawn(Player player)

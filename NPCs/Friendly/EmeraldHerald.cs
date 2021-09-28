@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.friendly = true;
 			npc.width = 18;
 			npc.height = 46;
-			npc.aiStyle = 7;
+			npc.aiStyle = -1;
 			npc.damage = 50;
 			npc.defense = 9999;
 			npc.lifeMax = 1000;
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				}
 				if (chatState == 2) //if you click while on the second page of text
 				{
-					Main.npcChatText = "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide.";
+					Main.npcChatText = "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can use them as checkpoints and storage.";
 					chatState = 3; //move to state 3, etc
 					return;
 				}
@@ -182,6 +182,8 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void AI()
 		{
+			npc.homeless = true;
+
 			if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID) // If it is our custom map
 			{
 				npc.velocity.X = 0; // Don't move left or right

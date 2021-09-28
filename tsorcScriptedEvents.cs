@@ -118,7 +118,8 @@ namespace tsorcRevamp
             ExampleNoNPCScriptEvent,
             SpawnGoblin,
             AttraidiesTheSorrowEvent,
-            TwinEoWFight
+            TwinEoWFight,
+            DunledingAmbush
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -129,6 +130,8 @@ namespace tsorcRevamp
         //It also initializes the other dictionary and lists
         public static void InitializeScriptedEvents()
         {
+            Player player = Main.LocalPlayer;
+
             //ABYSMAL OOLACILE SORCERER
             ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.MagicMirror, true, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
 
@@ -164,7 +167,16 @@ namespace tsorcRevamp
             //TWIN EATER OF WORLDS FIGHT
             ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, false, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
 
-            //HARPY SWARM DEMO FIGHT
+            //DUNLEDING AMBUSH
+            List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
+            List<Vector2> DunledingAmbushEnemyLocations = new List<Vector2>() { new Vector2(4697, 858), new Vector2(4645, 858), new Vector2(4645, 841) };
+            ScriptedEvent DunledingAmbush = new ScriptedEvent(new Vector2(4666, 856), 10, DunledingAmbushEnemyTypeList, DunledingAmbushEnemyLocations, default, false, false, "Ambush!", Color.Red, false, NormalModeCustomCondition, DundledingAmbushAction);
+            if (Main.netMode == NetmodeID.SinglePlayer && Main.expertMode)
+            {
+                DunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
+            }
+
+            //HARPY SWARM
             List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
             List<Vector2> HarpySwarmEnemyLocations = new List<Vector2>() { new Vector2(525, 837), new Vector2(545, 837), new Vector2(505, 837), new Vector2(525, 817), new Vector2(525, 857) };
             ScriptedEvent ExampleHarpySwarm = new ScriptedEvent(new Vector2(525, 837), 50, HarpySwarmEnemyTypeList, HarpySwarmEnemyLocations, DustID.BlueFairy, false, true, "A Swarm of Harpies appears!", Color.Cyan);
@@ -173,10 +185,12 @@ namespace tsorcRevamp
             List<int> HarpyDropCounts = new List<int>() { 50, 10 };
             ExampleHarpySwarm.SetCustomDrops(HarpyDropList, HarpyDropCounts);
 
+            //EXAMPLE NO NPC SCRIPTED EVENT
             ScriptedEvent ExampleNoNPCScriptEvent = new ScriptedEvent(new Vector2(456, 867), 60, default, DustID.GreenFairy, default, true, "The example scripted event has begun...", Color.Green, false, ExampleCondition, ExampleCustomAction);
 
             //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
 
+            //GOBLIN TINKERER  SPAWN EVENT
             ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, null, 31, true, true, "", default, true, TinkererCondition, TinkererAction);
 
             //Every enum and ScriptedEvent has to get paired up here
@@ -194,7 +208,8 @@ namespace tsorcRevamp
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
-                {ScriptedEventType.TwinEoWFight, TwinEoWFight}
+                {ScriptedEventType.TwinEoWFight, TwinEoWFight},
+                {ScriptedEventType.DunledingAmbush, DunledingAmbush}
 
             };
 
@@ -287,16 +302,16 @@ namespace tsorcRevamp
 
 
         //You can make custom actions like this, and pass them as arguments to the event!
-        static int exampleTimer = 0;
+        public static int miscEventTimer = 0; //This timer can be used for events, just don't accidentally use the same timer for two events that could be active at the same time. -C
         public static bool ExampleCustomAction(Player player, int npcID)
         {
             Dust.NewDust(player.position, 30, 30, DustID.GreenFairy, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 255);
-            if (exampleTimer > 900)
+            if (miscEventTimer > 900)
             {
                 Main.NewText("The example scripted event ends...", Color.Green);
                 return true;
             }
-            exampleTimer++;
+            miscEventTimer++;
             return false;
         }
 
@@ -365,9 +380,33 @@ namespace tsorcRevamp
             return true;
         }
 
-        #endregion
+        //DUNDLEDING AMBUSH SPAWN DUSTS
+        public static bool DundledingAmbushAction(Player player, int npcID)
+        {
+            miscEventTimer++;
 
-        public static void SaveScriptedEvents(TagCompound tag)
+            if (miscEventTimer == 1)
+            {
+                Main.PlaySound(SoundID.Grass, player.Center);
+            }
+            if (miscEventTimer < 20)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    int dust1 = Dust.NewDust(new Vector2(4697 * 16, 856 * 16), 40, 52, DustID.Grass, -5, 0, 0, default, 1.5f);
+                    Main.dust[dust1].noGravity = true;
+                    int dust2 = Dust.NewDust(new Vector2(4643 * 16, 856 * 16), 40, 52, 7, 5, 0, 0, default, 1.5f);
+                    Main.dust[dust2].noGravity = true;
+                    int dust3 = Dust.NewDust(new Vector2(4643 * 16, 839 * 16), 40, 52, DustID.Cloud, 5, 0, 150, default, 1.5f);
+                    Main.dust[dust3].noGravity = true;
+                }
+            }
+            return true;
+        }
+
+    #endregion
+
+    public static void SaveScriptedEvents(TagCompound tag)
         {
             //Converts the keys from enums into strings, because apparently it isn't a huge fan of enums
             List<string> stringList = ScriptedEventValues.Keys.ToList().ConvertAll(enumMember => enumMember.ToString());
@@ -564,6 +603,7 @@ namespace tsorcRevamp
                 InactiveEvents.Add(currentEvent);
             }
             DisabledEvents = new List<ScriptedEvent>();
+            miscEventTimer = 0;
         }
     }
 
