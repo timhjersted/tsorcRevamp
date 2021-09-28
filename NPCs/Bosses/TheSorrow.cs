@@ -93,7 +93,16 @@ namespace tsorcRevamp.NPCs.Bosses
 
                     if (npc.ai[1] >= 0 && npc.ai[2] > 120 && npc.ai[2] < 600)
                     {
+                        //If the sorrow doesn't have line of sight to the player due to blocks in the way, its projectiles will be able to phase through walls to hit them and travel much faster.
+                        //phasedBullets is passed to the projectile's ai[0] value (which takes a float) to tell it whether or not to collide with tiles
                         float speed = 9f;
+                        float phasedBullets = 0;
+                        if (!Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+                        {
+                            speed = 18f;
+                            phasedBullets = 1;
+                        }
+
                         int type = ModContent.ProjectileType<WaterTrail>();
                         Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                         
@@ -104,25 +113,25 @@ namespace tsorcRevamp.NPCs.Bosses
                         Vector2 velocity = new Vector2(speed, 0).RotatedBy(difference.ToRotation());
 
                         //Fire a projectile right at the player
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
 
                         //Rotate it further to fire the shots angled away from the player
                         Vector2 angledVelocity = velocity.RotatedBy(Math.PI / 6);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
                         angledVelocity = velocity.RotatedBy(-Math.PI / 6);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
 
                         //And again the more offset shots
                         angledVelocity = velocity.RotatedBy(Math.PI / 3);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
                         angledVelocity = velocity.RotatedBy(-Math.PI / 3);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
 
                         //And once mroe for the most offset shots
                         angledVelocity = velocity.RotatedBy(Math.PI / 1.8);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
                         angledVelocity = velocity.RotatedBy(-Math.PI / 1.8);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
                         //Could this all have been a for loop? Yeah. Easier to read like this though, imo.
 
                         npc.ai[1] = -180;

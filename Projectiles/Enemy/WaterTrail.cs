@@ -13,9 +13,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.height = 16;
             projectile.ignoreWater = true;
             projectile.tileCollide = true;
-            projectile.hostile = true;
+            projectile.hostile = true;            
         }
         public override void AI() {
+            if (projectile.ai[0] == 1)
+            {
+                projectile.tileCollide = false;
+            }
             projectile.rotation += 4f;
             if (Main.rand.Next(4) == 0) 
             {
