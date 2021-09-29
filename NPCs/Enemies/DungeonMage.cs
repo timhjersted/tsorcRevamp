@@ -61,10 +61,10 @@ namespace tsorcRevamp.NPCs.Enemies {
                 if (npc.ai[0] >= 12 && npc.ai[2] < 5) {
                     float num48 = 2f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    int damage = 10;
+                    int damage = 18;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, 0);
+                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f);
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                     npc.ai[0] = 0;
                     npc.ai[2]++;
@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         num51 = num48 / num51;
                         speedX *= num51;
                         speedY *= num51;
-                        int damage = 50;
+                        int damage = 25;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.MiracleSprouter>();
                         int num54 = Projectile.NewProjectile(myPos.X, myPos.Y, speedX, speedY, type, damage, 0f, npc.whoAmI);
                         Main.projectile[num54].timeLeft = 110;
@@ -196,36 +196,14 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
         }
 
-        public override void FindFrame(int currentFrame) {
-
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2)) {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
-                if (npc.position.X > Main.player[npc.target].position.X) {
-                    npc.spriteDirection = -1;
-                }
-                else {
-                    npc.spriteDirection = 1;
-                }
+        public override void FindFrame(int frameHeight) {
+            if ((npc.velocity.X != 0 || npc.velocity.Y != 0) || (npc.ai[0] >= 12 && npc.ai[2] < 5))
+            {
+                npc.frame.Y = 1 * frameHeight;
             }
-
-            int num = 1;
-            if (!Main.dedServ) {
-                num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
-            }
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2)) {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
-            }
-            else {
-                npc.frameCounter += 1.0;
-            }
-            if (npc.frameCounter >= 1.0) {
-                npc.frame.Y = npc.frame.Y + num;
-                npc.frameCounter = 0.0;
-            }
-            if (npc.frame.Y >= num * Main.npcFrameCount[npc.type]) {
-                npc.frame.Y = 0;
+            else 
+            {
+                npc.frame.Y = 0 * frameHeight;
             }
         }
 
