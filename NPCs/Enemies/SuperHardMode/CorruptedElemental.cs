@@ -25,7 +25,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.DeathSound = SoundID.NPCDeath6;
 			npc.lifeMax = 5200;
 			npc.value = 1300;
-				
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.CorruptedElementalBanner>();
+
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;

@@ -28,6 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.knockBackResist = 0;
             animationType = 28;
             Main.npcFrameCount[npc.type] = 16;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
         }
 
 

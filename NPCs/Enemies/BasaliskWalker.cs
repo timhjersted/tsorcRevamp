@@ -25,6 +25,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.DeathSound = SoundID.NPCDeath5;
 			npc.value = 2000;
 			npc.lavaImmune = true;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.BasaliskWalkerBanner>();
 
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[24] = true;

@@ -28,6 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 3000;
 			npc.width = 28;
 			npc.knockBackResist = 0.3f;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.ShadowMageBanner>();
 
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.OnFire] = true;

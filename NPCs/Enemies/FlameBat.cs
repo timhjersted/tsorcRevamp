@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.lavaImmune = true;
 			Main.npcFrameCount[npc.type] = 4;
 			animationType = 93;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.FlameBatBanner>();
 
 			npc.buffImmune[BuffID.Confused] = true;
 		}

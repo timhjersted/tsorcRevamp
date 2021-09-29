@@ -33,6 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.noTileCollide = true;
 			npc.behindTiles = true;
 			npc.value = 4000;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

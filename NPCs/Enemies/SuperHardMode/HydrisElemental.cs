@@ -27,7 +27,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.lifeMax = 3200;
 			npc.scale = 1.1f;
 			npc.value = 1200;
-				
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.HydrisElementalBanner>();
+
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;

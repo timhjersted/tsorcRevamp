@@ -25,6 +25,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.value = 1250;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.Frozen] = true;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
         }
 
 

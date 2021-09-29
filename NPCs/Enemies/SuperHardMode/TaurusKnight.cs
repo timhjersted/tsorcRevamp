@@ -29,7 +29,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.value = 12000;
             npc.knockBackResist = 0.01f;
             npc.lavaImmune = true;
-            	
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.TaurusKnightBanner>();
+
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;

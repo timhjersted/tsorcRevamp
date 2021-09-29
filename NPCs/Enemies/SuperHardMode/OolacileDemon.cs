@@ -33,6 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.noGravity = true;
 			npc.noTileCollide = false;
 			npc.value = 18750;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.OolacileDemonBanner>();
 		}
 
 		int cursedBreathDamage = 38;

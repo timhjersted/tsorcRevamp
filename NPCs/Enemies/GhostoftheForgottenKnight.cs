@@ -30,6 +30,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.lavaImmune = true;
 			npc.value = 650;
 			npc.knockBackResist = 0;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

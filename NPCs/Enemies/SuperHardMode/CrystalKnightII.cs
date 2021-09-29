@@ -31,6 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.scale = 0.9f;
 			npc.knockBackResist = 0.1f;
 			npc.value = 1000;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.CrystalKnightIIBanner>();
 		}
 
 		int crystalBoltDamage = 43;

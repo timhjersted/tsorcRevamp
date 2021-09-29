@@ -24,6 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 12500;
 			npc.width = 18;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
 		}
 
 

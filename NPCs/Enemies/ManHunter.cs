@@ -22,6 +22,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.aiStyle = -1;
 			npc.height = 48;
 			npc.knockBackResist = 0f;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.ManHunterBanner>();
 
 			animationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[npc.type] = 20;

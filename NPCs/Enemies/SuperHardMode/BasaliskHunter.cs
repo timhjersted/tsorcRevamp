@@ -25,7 +25,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.DeathSound = SoundID.NPCDeath5;
             npc.value = 10620;
             npc.lavaImmune = true;
-            	
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.BasaliskHunterBanner>();
+
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
         }

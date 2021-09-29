@@ -26,6 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.noGravity = true;
 			npc.noTileCollide = false;
 			npc.value = 18750;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.TetsujinBanner>();
 		}
 
 		int meteorDamage = 17;

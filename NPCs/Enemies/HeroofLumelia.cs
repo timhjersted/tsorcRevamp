@@ -30,7 +30,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.lavaImmune = true;
 			npc.knockBackResist = 0;
 			npc.rarity = 4;
-            if (!(Main.hardMode || ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.HeroOfLumeliaBanner>();
+
+			if (!(Main.hardMode || ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
             {
 				npc.lifeMax = 4000;
 			}

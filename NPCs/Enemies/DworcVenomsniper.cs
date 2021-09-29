@@ -20,6 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.aiStyle = -1;
 			npc.height = 40;
 			npc.knockBackResist = 0.1f;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.DworcVenomsniperBanner>();
 
 			animationType = NPCID.Skeleton;
 			Main.npcFrameCount[npc.type] = 15;

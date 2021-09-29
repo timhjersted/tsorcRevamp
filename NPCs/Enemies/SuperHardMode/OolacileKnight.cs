@@ -31,6 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 28750;
             npc.knockBackResist = 0.02f;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
         }
 
         int meteorDamage = 17;

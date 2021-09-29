@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.DeathSound = SoundID.NPCDeath33;
 			npc.value = 1000;
 			npc.buffImmune[BuffID.Confused] = true;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.JungleSentreeBanner>();
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

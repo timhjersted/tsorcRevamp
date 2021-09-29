@@ -33,6 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.knockBackResist = 0;
 			npc.alpha = 100;
 			npc.value = 1600;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.CrazedDemonSpiritBanner>();
 
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.OnFire] = true;

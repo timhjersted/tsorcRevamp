@@ -29,6 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.DungeonMageBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {

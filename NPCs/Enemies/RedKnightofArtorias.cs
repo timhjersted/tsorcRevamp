@@ -29,6 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 12000;
             npc.knockBackResist = 0.01f;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

@@ -25,6 +25,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 350;
 			npc.width = 28;
 			npc.knockBackResist = 0.5f;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.MindflayerServantBanner>();
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

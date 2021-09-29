@@ -28,6 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.lifeMax = 18200;
             npc.knockBackResist = 0.1f;
             npc.value = 6000;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
         }
 
         int meteorDamage = 17;

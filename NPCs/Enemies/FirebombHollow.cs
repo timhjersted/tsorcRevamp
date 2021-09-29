@@ -28,6 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
             npc.defense = 6;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.FirebombHollowBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

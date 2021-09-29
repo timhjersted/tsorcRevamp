@@ -20,10 +20,12 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.height = 40;
             npc.width = 20;
             npc.lifeMax = 45;
-            npc.value = 250;
+            npc.value = 150;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
             animationType = NPCID.PossessedArmor;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
         }
 
         public override void HitEffect(int hitDirection, double damage) {

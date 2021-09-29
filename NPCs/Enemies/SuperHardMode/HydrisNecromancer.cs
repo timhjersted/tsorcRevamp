@@ -28,7 +28,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 16050;
-			
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.HydrisNecromancerBanner>();
+
 		}
 
 		int meteorDamage = 17;

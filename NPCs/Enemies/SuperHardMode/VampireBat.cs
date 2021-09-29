@@ -28,7 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.scale = 1;
             npc.knockBackResist = 0.5f;
             npc.value = 650;
-            //animationType = NPCID.CaveBat;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

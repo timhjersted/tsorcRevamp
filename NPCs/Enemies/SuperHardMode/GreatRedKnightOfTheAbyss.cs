@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 21870;
             npc.knockBackResist = 0;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
         }
 
         int meteorDamage = 17;

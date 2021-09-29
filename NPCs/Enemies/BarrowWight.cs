@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             Main.npcFrameCount[npc.type] = 4;
+            banner = npc.type;
+            bannerItem = ModContent.ItemType<Banners.BarrowWightBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {

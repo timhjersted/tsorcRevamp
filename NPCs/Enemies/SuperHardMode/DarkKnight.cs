@@ -27,6 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.lifeMax = 10700;
 			npc.knockBackResist = 0f;
 			npc.value = 3680;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.DarkKnightBanner>();
 		}
 
 		int stormWaveDamage = 45;

@@ -23,6 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 1500;
 			npc.width = 18;
 			npc.knockBackResist = 0.15f;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

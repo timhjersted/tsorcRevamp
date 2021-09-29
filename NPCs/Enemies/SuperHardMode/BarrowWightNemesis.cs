@@ -30,6 +30,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.value = 6230;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
