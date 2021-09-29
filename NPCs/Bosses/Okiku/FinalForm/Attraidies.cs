@@ -93,10 +93,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             set => npc.ai[2] = value;
         }
 
+        public float AttackModeCounter
+        {
+            get => npc.ai[3];
+            set => npc.ai[3] = value;
+        }
+
         public float ShadowShotCount = 0;
         public float CrystalShardsTimer = 0;
         public float NPCSummonCooldown = 0;
-        public float AttackModeCounter = 0;
         public bool SetVelocity = false;
         public Vector2 NewVelocity = Vector2.Zero;
         Projectiles.GenericLaser[] DarkLasers;
@@ -110,10 +115,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-            if(Main.netMode == NetmodeID.Server)
-            {
-                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, this.npc.whoAmI);
-            }
+            //if(Main.netMode == NetmodeID.Server)
+            //{
+           //     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
+            //}
             
             despawnHandler.TargetAndDespawn(npc.whoAmI);
             TeleportTimer++;
@@ -687,6 +692,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             npc.noTileCollide = false;
             TravelDir = 0;
             DarkLasers = null;
+
+            if(Main.netMode == NetmodeID.Server)
+            {
+                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
+            }
         }
 
         public override bool CheckActive()
