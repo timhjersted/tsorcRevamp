@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 			if (!player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter)
 			{
-				chat.Add("Are you he who I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King." +
+				chat.Add("Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King." +
 					"\nHe has grown mighty in power and seeks to destroy not only your world, but also mine and many others.");
 				player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter = true;
 			}
