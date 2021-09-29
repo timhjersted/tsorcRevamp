@@ -19,8 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses
 		{
 			npc.aiStyle = -1;
 			npc.lifeMax = 16500;
-			npc.damage = 65;
-			baseContactDamage = npc.damage;
+			npc.damage = 100;
 			npc.defense = 24;
 			npc.knockBackResist = 0f;
 			npc.scale = 1.4f;
@@ -45,16 +44,15 @@ namespace tsorcRevamp.NPCs.Bosses
 			despawnHandler = new NPCDespawnHandler("The Rage is satisfied...", Color.OrangeRed, 127);
 		}
 
-		int baseContactDamage;
 		int hitTime = 0;
-		int fireTrailsDamage = 25;
+		int fireTrailsDamage = 45;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
+			npc.damage = npc.damage / 2;
 			npc.defense = npc.defense += 12;
 			npc.lifeMax = 20000;
 			fireTrailsDamage = (int)(fireTrailsDamage * 1.3 / 2);
-			baseContactDamage = (int)(npc.damage * 1.3 / 2);
 		}
 
 
@@ -76,7 +74,6 @@ namespace tsorcRevamp.NPCs.Bosses
 			{
 				npc.alpha = 0;
 				npc.dontTakeDamage = false;
-				npc.damage = 65;
 				if (npc.ai[2] < 600)
 				{
 					if (Main.player[npc.target].position.X < vector8.X)
@@ -112,11 +109,11 @@ namespace tsorcRevamp.NPCs.Bosses
 						//Added some dust so the projectiles aren't just appearing out of thin air
 						for (int num36 = 0; num36 < 20; num36++)
 						{
-							int fireDust = Dust.NewDust(new Vector2(vector8.X + 300, vector8.Y - 100), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+							int fireDust = Dust.NewDust(new Vector2(vector8.X + 500, vector8.Y - 100), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
 							Main.dust[fireDust].noGravity = true;
 							fireDust = Dust.NewDust(new Vector2(vector8.X, vector8.Y - 100), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
 							Main.dust[fireDust].noGravity = true;
-							fireDust = Dust.NewDust(new Vector2(vector8.X - 300, vector8.Y - 100), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
+							fireDust = Dust.NewDust(new Vector2(vector8.X - 500, vector8.Y - 100), 20, 20, 244, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.Orange, 2f);
 							Main.dust[fireDust].noGravity = true;
 						}
 					}
@@ -146,7 +143,6 @@ namespace tsorcRevamp.NPCs.Bosses
 			{
 				npc.ai[3]++;
 				npc.alpha = 200;
-				npc.damage = 90;
 				npc.dontTakeDamage = true;
 				if (Main.player[npc.target].position.X < vector8.X)
 				{

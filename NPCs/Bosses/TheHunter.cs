@@ -20,7 +20,6 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.aiStyle = -1;
             npc.lifeMax = 22000;
             npc.damage = 95;
-            baseContactDamage = npc.damage;
             npc.defense = 25;
             npc.knockBackResist = 0f;
             npc.scale = 1.4f;
@@ -44,16 +43,15 @@ namespace tsorcRevamp.NPCs.Bosses
             despawnHandler = new NPCDespawnHandler("The Hunter seeks its next prey...", Color.Green, 89);
         }
 
-        int baseContactDamage;
         int hitTime = 0;
         int sproutDamage = 35;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
+            npc.damage = npc.damage / 2;
             npc.defense = npc.defense += 12;
             npc.lifeMax = 35000;
             sproutDamage = (int)(sproutDamage * 1.3 / 2);
-            baseContactDamage = (int)(baseContactDamage * 1.3);
         }
 
         NPCDespawnHandler despawnHandler;
@@ -73,7 +71,6 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 npc.alpha = 0;
                 npc.dontTakeDamage = false;
-                npc.damage = baseContactDamage;
                 if (npc.ai[2] < 600)
                 {
                     if (Main.player[npc.target].position.X < vector8.X)
@@ -103,12 +100,27 @@ namespace tsorcRevamp.NPCs.Bosses
                         int type = ModContent.ProjectileType<MiracleSprouter>();
                         Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 50;
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 50;
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 50;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int projIndex = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
+                            Main.projectile[projIndex].timeLeft = 50;
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
+                            }
+                            projIndex = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
+                            Main.projectile[projIndex].timeLeft = 50;
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
+                            }
+                            projIndex = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[npc.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
+                            Main.projectile[projIndex].timeLeft = 50;
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
+                            }
+                        }
                         npc.ai[1] = -90;
                     }
                     npc.netUpdate = true; //new
@@ -138,7 +150,6 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 npc.ai[3]++;
                 npc.alpha = 200;
-                npc.damage = (int)(baseContactDamage * 1.2);
                 npc.dontTakeDamage = true;
                 if (Main.player[npc.target].position.X < vector8.X)
                 {

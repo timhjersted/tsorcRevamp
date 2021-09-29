@@ -38,7 +38,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
             set => projectile.ai[AI_Timer_Slot] = value;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncProjectile, number: this.projectile.whoAmI);
+            }
+
             projectile.rotation = (float)Math.Atan2((double)this.projectile.velocity.Y, (double)this.projectile.velocity.X) + 1.57f;
             Vector2 speedMod = new Vector2(projectile.velocity.X, projectile.velocity.Y);
             int z2 = Main.rand.Next(-1, 2);
@@ -51,14 +57,22 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 float rotation = MathHelper.ToRadians(AI_Split_Angle);
                 for (int i = 0; i < AI_Projectile_Split_Rate; i++) {
                     Vector2 shiftSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (AI_Projectile_Split_Rate - 1))); //evenly divide the projectiles among the spread angle
-                    if (Main.netMode == NetmodeID.SinglePlayer)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<MiracleVines>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                        int projIndex = Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<MiracleVines>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
+                        }
                     }
-                 }
+                }
+
                 projectile.Kill(); //only kill the projectile if we split. timeLeft will kill the final set automatically
                 projectile.active = false;
-                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, this.projectile.whoAmI);
+                }
             }
 
             if (AI_Timer % 4 == 0) { //spawn a trail vine every 3 frames

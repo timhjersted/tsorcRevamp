@@ -24,12 +24,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
         public override void Kill(int timeLeft) {
-            Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, -3f, ModContent.ProjectileType<MiracleVines>(), projectile.damage, 0f, Main.myPlayer);
-            projectile.active = false;
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null);
-            }
+                int projIndex = Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, -3f, ModContent.ProjectileType<MiracleVines>(), projectile.damage, 0f, Main.myPlayer); projectile.active = false;
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
+                    NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, this.projectile.whoAmI);
+                }
+            }            
         }
     }
 }

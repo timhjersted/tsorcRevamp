@@ -16,8 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults() {
             npc.aiStyle = -1;
             npc.lifeMax = 19000;
-            npc.damage = 85;
-            baseContactDamage = npc.damage;
+            npc.damage = 95;
             npc.defense = 20;
             npc.knockBackResist = 0f;
             npc.scale = 1.4f;
@@ -45,15 +44,14 @@ namespace tsorcRevamp.NPCs.Bosses
         //npc.ai[1] = invulnerability timer
         //npc.ai[3] = state counter
         int hitTime = 0; //How long since it's last been hit (used for reducing damage counter)
-        int waterTrailsDamage = 35;
-        int baseContactDamage; //This stores its true contact damage stat, allowing us to modify it upon enrage and then return to the original value seamlessly
+        int waterTrailsDamage = 45;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
+            npc.damage = npc.damage / 2;
             npc.defense = npc.defense += 12;
             npc.lifeMax = 28000;
             waterTrailsDamage = (int)(waterTrailsDamage * 1.3 / 2);
-            baseContactDamage = (int)(npc.damage * 1.3 / 2);
         }
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -72,7 +70,6 @@ namespace tsorcRevamp.NPCs.Bosses
             if (npc.ai[3] == 0) {
                 npc.alpha = 0;
                 npc.dontTakeDamage = false;
-                npc.damage = baseContactDamage;
                 if (npc.ai[2] < 600)
                 {
                     if (Main.player[npc.target].position.X < vector8.X) {
@@ -161,7 +158,6 @@ namespace tsorcRevamp.NPCs.Bosses
             else {
                 npc.ai[3]++;
                 npc.alpha = 200;
-                npc.damage = (int)(baseContactDamage * 1.2);
                 npc.dontTakeDamage = true;
                 if (Main.player[npc.target].position.X < vector8.X) {
                     if (npc.velocity.X > -6) { npc.velocity.X -= 0.22f; }

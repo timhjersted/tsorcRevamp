@@ -43,6 +43,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void AI() {
 
+            //These take almost no data, so we can afford to do it every tick
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncProjectile, number: this.projectile.whoAmI);
+            }
             projectile.rotation += 4f;
 
             Vector2 speedMod = new Vector2(projectile.velocity.X, projectile.velocity.Y);
@@ -57,10 +62,21 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     float rotation = MathHelper.ToRadians(AI_Split_Angle);
                     for (int i = 0; i < AI_Projectile_Split_Rate; i++) {
                         Vector2 shiftSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (AI_Projectile_Split_Rate - 1))); //evenly divide the projectiles among the spread angle
-                        Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<FireTrails>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int proj = Projectile.NewProjectile(projectile.position, shiftSpeed, ModContent.ProjectileType<FireTrails>(), projectile.damage, projectile.knockBack, projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, proj);
+                            }
+                        }                       
                     }
                 }
                 projectile.Kill(); //not necessary (we check if ai_timer is *exactly* 12) but to stay true to the rage's original ai, we kill it
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.KillProjectile, number: this.projectile.whoAmI);
+                }
             }
             if (AI_Timer % 7 == 0) { //spawn a trail fireball every 4 frames
                 Projectile.NewProjectile(new Vector2(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2)), new Vector2(0, 0), ModContent.ProjectileType<FireTrail>(), projectile.damage, projectile.knockBack, projectile.owner);
