@@ -110,6 +110,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+            if(Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, this.npc.whoAmI);
+            }
             
             despawnHandler.TargetAndDespawn(npc.whoAmI);
             TeleportTimer++;
@@ -193,7 +197,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             {
                 Lighting.AddLight(npc.position, Color.Cyan.ToVector3());
                 npc.noGravity = true;
-                npc.noTileCollide = false;
+                npc.noTileCollide = true;
                 if(Main.player[npc.target].position.X > npc.position.X)
                 {
                     npc.velocity.X = 4;
@@ -332,8 +336,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             #region Attacks
             //These should only ever run on either a single player client or the multiplayer server!
-            if (!(Main.netMode == NetmodeID.MultiplayerClient))
-            {
+            //if (!(Main.netMode == NetmodeID.MultiplayerClient))
+            //{
                 #region Mode 0: Teleport and Fire Waves
                 if (AttackMode == 0) {
                     #region Shadow Orb Attack
@@ -595,7 +599,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     }                    
                 }
                 #endregion
-            }
+            //}
             #endregion
         }
         #endregion
