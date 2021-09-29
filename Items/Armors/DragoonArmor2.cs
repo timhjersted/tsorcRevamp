@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Armors {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DragoonArmor"), 1);
             recipe.AddIngredient(mod.GetItem("DragoonCloak"), 1);
-            recipe.AddIngredient(mod.GetItem("DragonScale"), 10);
+            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(mod.GetItem("Humanity"), 10);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);

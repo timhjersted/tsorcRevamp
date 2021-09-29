@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Armors {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DragoonHelmet"), 1);
-            recipe.AddIngredient(mod.GetItem("DragonScale"), 10);
+            recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(mod.GetItem("DyingWindShard"), 10);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 40000);
             recipe.AddTile(TileID.DemonAltar);

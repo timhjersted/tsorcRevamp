@@ -456,7 +456,7 @@ namespace tsorcRevamp.Items.BossBags {
                     Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()] = 1; //set the value to 1
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<Items.DragonScale>(), 22 + Main.rand.Next(6));
+            player.QuickSpawnItem(ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 4000);
             if (Main.rand.Next(99) < 10) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonStone>());
         }
@@ -475,6 +475,7 @@ namespace tsorcRevamp.Items.BossBags {
                     Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()] = 1; //set the value to 1
                 }
             }
+            player.QuickSpawnItem(ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 7000);
             player.QuickSpawnItem(ModContent.ItemType<Items.BequeathedSoul>(), 2);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());

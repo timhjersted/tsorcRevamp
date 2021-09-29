@@ -3,9 +3,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items {
-    class DragonScale : ModItem {
+    class DragonEssence : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Used to craft the Stone of Seath, among other things.");
+            Tooltip.SetDefault("The essence of slain dragons.\nA rare and valuable material.");
         }
 
         public override void SetDefaults() {

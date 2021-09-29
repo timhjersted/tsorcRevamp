@@ -197,6 +197,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
                 else
                 {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
