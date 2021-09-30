@@ -183,6 +183,7 @@ namespace tsorcRevamp.NPCs.Friendly
         public override void AI()
 		{
 			npc.homeless = true;
+			npc.spriteDirection = npc.direction; //she's technically facing the opposite way she's looking but whatevs
 
 			if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID) // If it is our custom map
 			{
@@ -197,13 +198,13 @@ namespace tsorcRevamp.NPCs.Friendly
 					npc.position = new Vector2(4489.25f * 16, 732 * 16); // Stand by bonfire
 				}
 
-				if (npc.position == new Vector2(4510.5f * 16, 737 * 16)) // If standing under structure
+				if (npc.position.X > 4505f * 16) // If standing under structure
 				{
-					npc.spriteDirection = -1; // Sprite face left (it's flipped so she faces right)
+					npc.direction = -1;
 				}
-				if (npc.position == new Vector2(4489.25f * 16, 732 * 16)) // If standing by bonfire
+				if (npc.position.X < 4505f * 16) // If standing by bonfire
 				{
-					npc.spriteDirection = 1; // Sprite face right (it's flipped so she faces left)
+					npc.direction = 1;
 				}
 			}
 		}

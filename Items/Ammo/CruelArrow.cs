@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.Ammo {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.WoodenArrow, 30);
             recipe.AddIngredient(ItemID.IronOre, 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 15); //480 DS per 1000, I think that's fair. They do double the damage of wooden arrows and pierce once. Basically quadruple the damage of base arrows.
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 30);
             recipe.AddRecipe();
