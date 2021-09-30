@@ -90,9 +90,11 @@ namespace tsorcRevamp.Projectiles {
                             if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
                                 //the projectile damage math has to be cast like this for it to work! it wont work if you just cast the result! do not change it! 
                                 Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, (int)(projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), projectile.knockBack, projectile.owner);
-                                player.inventory[ammoLocation].stack--;
-                                if (player.inventory[ammoLocation].stack == 0) {
-                                    player.inventory[ammoLocation].TurnToAir();
+                                if (player.inventory[ammoLocation].type != ItemID.EndlessQuiver) {
+                                    player.inventory[ammoLocation].stack--;
+                                    if (player.inventory[ammoLocation].stack == 0) {
+                                        player.inventory[ammoLocation].TurnToAir();
+                                    }
                                 }
                             }
                         }
