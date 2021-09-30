@@ -569,38 +569,7 @@ namespace tsorcRevamp {
                     return 0;
                 }
                 else {
-                    //need to access NPCHeadLoader.GetNPCHeadSlot, but its access modifier is internal
-
-                    //get the tml assembly
-                    Assembly tml = npc.GetType().Assembly;
-                    
-                    //create an empty type
-                    Type nhlclass = null;
-
-                    //find the correct class and put it into the nhlclass type 
-                    foreach(Type T in tml.GetTypes()) {
-                        if (T.Name == "NPCHeadLoader") {
-                            nhlclass = T;
-                            break;
-                        }
-                    }
-
-                    //Static or Instance must be included with Public or NonPublic, else GetMethods will return nothing
-                    //in this case, the method is internal and static, so use NonPublic and Static as the binding flags
-                    MethodInfo[] methods = nhlclass.GetMethods(BindingFlags.NonPublic | BindingFlags.Static);
-
-                    for (int i = 0; i < methods.Length - 1; i++) {
-                        if (methods[i].Name == "GetNPCHeadSlot") {
-
-                            //invoke takes 2 arguments: obj? and obj?[]?
-                            //the first is the object on which to invoke the method
-                            //if the method is static (as it is here) this argument is ignored
-                            //the second is an array of the parameters for the method being called
-                            //we can just cast back and forth from obj and int here
-                            return (int)methods[i].Invoke(null, new object[] { type });
-                        }
-                    }
-                    return 0; 
+                    return orig(type);
                 }
 
             }
