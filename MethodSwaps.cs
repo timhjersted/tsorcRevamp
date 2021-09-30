@@ -23,9 +23,9 @@ namespace tsorcRevamp {
             On.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
 
             On.Terraria.NPC.TypeToHeadIndex += MapHeadPatch;
-        }
 
-        
+            On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
+        }
 
         //allow spawns to be set outside a valid house (for bonfires)
         internal static void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self) {
@@ -606,6 +606,53 @@ namespace tsorcRevamp {
             }
             else { return orig(type); }
         }
+
+
+        //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
+        internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.tileSign[Main.tile[myX, myY].type]) {
+                if (Main.tile[myX, myY] == null) {
+                    Main.tile[myX, myY] = new Tile();
+                }
+                if (!Main.tile[myX, myY].active()) {
+                    return;
+                }
+                if (Main.tile[myX, myY].type == 21) {
+                    orig(self, myX, myY);
+                }
+                if (Main.tile[myX, myY].type == 88) {
+                    orig(self, myX, myY);
+                }
+                if (Main.tileSign[Main.tile[myX, myY].type]) {
+                    Vector2 signPos = new Vector2(myX * 16, myY * 16);
+                    Vector2 toSign = signPos - self.position;
+                    if (Collision.CanHitLine(self.position, 0, 0, signPos, 0, 0) && toSign.Length() < 240) { 
+                        self.noThrow = 2;
+                        int num3 = Main.tile[myX, myY].frameX / 18;
+                        int num4 = Main.tile[myX, myY].frameY / 18;
+                        num3 %= 2;
+                        int num7 = myX - num3;
+                        int num5 = myY - num4;
+                        Main.signBubble = true;
+                        Main.signX = num7 * 16 + 16;
+                        Main.signY = num5 * 16;
+                        int num6 = Sign.ReadSign(num7, num5);
+                        if (num6 != -1) {
+                            Main.signHover = num6;
+                            self.showItemIcon = false;
+                            self.showItemIcon2 = -1;
+                        }
+                    }
+                }
+                TileLoader.MouseOverFar(myX, myY);
+            }
+            else {
+                orig(self, myX, myY);
+            }
+        }
+
+
+
 
     }
 }
