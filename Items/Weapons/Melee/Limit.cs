@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.value = Item.sellPrice(0, 20);
             item.crit = 10;
             item.rare = ItemRarityID.Red;
-            item.glowMask = 271;
+            //item.glowMask = 271; was this actually trying to do something?
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
