@@ -182,7 +182,6 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void AI()
 		{
-			npc.homeless = true;
 			npc.spriteDirection = npc.direction; //she's technically facing the opposite way she's looking but whatevs
 
 			if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID) // If it is our custom map
