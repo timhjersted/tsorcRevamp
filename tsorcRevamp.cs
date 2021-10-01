@@ -887,7 +887,8 @@ namespace tsorcRevamp {
             GenericLaser,
             GenericLaserTargeting,
             DarkLaser,
-            DarkLaserTargeting
+            DarkLaserTargeting,
+            PulsarGlowmask
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -909,7 +910,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.GenericLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaser")},
                 {TransparentTextureType.GenericLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaserTargeting")},
                 {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
-                {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")}
+                {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
+                {TransparentTextureType.PulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
             };
 
             //Runs each entry through the XNA's premultiplication function
