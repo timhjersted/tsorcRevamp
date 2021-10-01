@@ -20,7 +20,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         float DetonationRange = 80;
         int DetonationTime = 240;
         bool spawnedLasers = false;
-        int[] pickedDirections = new int[5];
+        const int LASER_COUNT = 6;
+        int[] pickedDirections = new int[LASER_COUNT];
 
         public override void AI() {
             projectile.rotation++;
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             if (!spawnedLasers)
             {
                 spawnedLasers = true;
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < LASER_COUNT; i++)
                 {
                     GenericLaser SolarLaser = (GenericLaser)Projectile.NewProjectileDirect(projectile.position, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), projectile.damage, .5f).modProjectile;
                     SolarLaser.LaserOrigin = projectile.Center;
@@ -87,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                             break;
                     }
 
-                    SolarLaser.TelegraphTime = 300;
+                    SolarLaser.TelegraphTime = 60;
                     SolarLaser.FiringDuration = 20;
                     SolarLaser.LaserLength = 4000;
                     SolarLaser.LaserColor = Color.OrangeRed;
@@ -114,11 +115,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
         public override bool PreKill(int timeLeft)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 10; i++)
             {
-                Projectile fireball = Projectile.NewProjectileDirect(projectile.Center, Main.rand.NextVector2Square(-8, 8), 686, projectile.damage, .5f);
-                fireball.Name = "Solar Detonation";
-                fireball.tileCollide = false;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile fireball = Projectile.NewProjectileDirect(projectile.Center, Main.rand.NextVector2Square(-18, 18), 686, projectile.damage, .5f, Main.myPlayer);
+                    fireball.Name = "Solar Detonation";
+                    fireball.tileCollide = false;
+                }
             }
             
             

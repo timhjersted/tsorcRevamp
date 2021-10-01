@@ -81,30 +81,29 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             get => npc.ai[0];
             set => npc.ai[0] = value;
         }
-
-        public float TeleportTimer
+        public float AttackModeCounter
         {
             get => npc.ai[1];
             set => npc.ai[1] = value;
         }
-        public float DragonSpawned
+        public float TeleportTimer
         {
             get => npc.ai[2];
             set => npc.ai[2] = value;
         }
-
-        public float AttackModeCounter
+        public float DragonSpawned
         {
             get => npc.ai[3];
             set => npc.ai[3] = value;
         }
+
+        
 
         public float ShadowShotCount = 0;
         public float CrystalShardsTimer = 0;
         public float NPCSummonCooldown = 0;
         public bool SetVelocity = false;
         public Vector2 NewVelocity = Vector2.Zero;
-        Projectiles.GenericLaser[] DarkLasers;
         int TravelDir = 0;
         Vector2 OrbitOffset = new Vector2(300, 0);
         float RotationProgress = 0;
@@ -115,11 +114,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
+           
+            
             //if(Main.netMode == NetmodeID.Server)
             //{
-           //     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
+            //     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
             //}
-            
+
             despawnHandler.TargetAndDespawn(npc.whoAmI);
             TeleportTimer++;
             //npc.ai[2] = 
@@ -193,9 +194,25 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 {
                     npc.noGravity = true;
                     npc.noTileCollide = true;
-                    npc.velocity = Main.player[npc.target].velocity;
+                    if (Math.Abs((int)Main.player[npc.target].position.X - (int)npc.position.X) > 100)
+                    {
+                        if (npc.Center.X - Main.player[npc.target].Center.X < 0)
+                        {
+                            npc.velocity = new Vector2(3, 0);
+                        }
+                        else
+                        {
+                            npc.velocity = new Vector2(-3, 0);
+                        }
+                    }
+                    npc.velocity.Y = -0.75f;
                 }
-                npc.velocity = NewVelocity;
+
+                AttackModeCounter++;
+                if (AttackModeCounter > 600)
+                {
+                    ChangeAttackModes();
+                }
             }
 
             if (AttackMode == 2)
@@ -203,32 +220,30 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 Lighting.AddLight(npc.position, Color.Cyan.ToVector3());
                 npc.noGravity = true;
                 npc.noTileCollide = true;
-                if(Main.player[npc.target].position.X > npc.position.X)
+
+                //To prevent rapid diretion changes
+                if (Math.Abs((int)Main.player[npc.target].position.X - (int)npc.position.X) < 100)
                 {
-                    npc.velocity.X = 4;
-                }
-                else
-                {
-                    npc.velocity.X = -4;
-                }
-                //To prevent rapid left and right flipping
-                if(Math.Abs((int)Main.player[npc.target].position.X - (int)npc.position.X) < 10)
-                {
-                    npc.velocity.X = 0;
+                    if (Main.player[npc.target].position.X > npc.position.X)
+                    {
+                        npc.velocity.X = 4;
+                    }
+                    else
+                    {
+                        npc.velocity.X = -4;
+                    }
                 }
 
-                if (Main.player[npc.target].position.Y > npc.position.Y)
+                if (Math.Abs((int)Main.player[npc.target].position.Y - (int)npc.position.Y) < 100)
                 {
-                    npc.velocity.Y = 4;
-                }
-                else
-                {
-                    npc.velocity.Y = -4;
-                }
-                //To prevent rapid left and right flipping
-                if (Math.Abs((int)Main.player[npc.target].position.Y - (int)npc.position.Y) < 10)
-                {
-                    npc.velocity.Y = 0;
+                    if (Main.player[npc.target].position.Y > npc.position.Y)
+                    {
+                        npc.velocity.Y = 4;
+                    }
+                    else
+                    {
+                        npc.velocity.Y = -4;
+                    }
                 }
 
 
@@ -312,14 +327,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             if(AttackMode == 6)
             {
                 npc.noTileCollide = true;
-                if (AttackModeCounter == 0)
+                if (AttackModeCounter == 5)
                 {
                     npc.position.X = Main.player[npc.target].position.X;
                     npc.position.Y -= 800;
 
-                    //Gives the player infinite flight for the duration of the attack. Sticks around for a bit afterward as a bonus.
-                    Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);
+                    //Gives the player infinite flight for the duration of the attack. Sticks around for a bit afterward as a bonus.                
                     Main.NewText("You suddenly feel weightless...", Color.DeepSkyBlue);
+                    Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);                    
                 }
 
                 npc.velocity = Vector2.Zero;
@@ -341,8 +356,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             #region Attacks
             //These should only ever run on either a single player client or the multiplayer server!
-            //if (!(Main.netMode == NetmodeID.MultiplayerClient))
-            //{
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
                 #region Mode 0: Teleport and Fire Waves
                 if (AttackMode == 0) {
                     #region Shadow Orb Attack
@@ -352,7 +367,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                         int type = ModContent.ProjectileType<ShadowOrb>();
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                        Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, ShadowOrbDamage, 0f, 0);
+                        Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, ShadowOrbDamage, 0f, Main.myPlayer);
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                         ShadowShotCount++;
                         npc.netUpdate = true; //new
@@ -423,7 +438,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
                             Vector2 position = npc.position + new Vector2(Main.rand.Next(-20, 20), Main.rand.Next(-20, 20));
                             Vector2 velocity = new Vector2(Main.rand.Next(-2, 2), -50);
-                            Projectile blackFire = Projectile.NewProjectileDirect(position, velocity, ModContent.ProjectileType<EnemyBlackFireVisual>(), BlackFireDamage, .5f);
+                            Projectile blackFire = Projectile.NewProjectileDirect(position, velocity, ModContent.ProjectileType<EnemyBlackFireVisual>(), BlackFireDamage, .5f, Main.myPlayer);
                             blackFire.timeLeft = 20;
                         }
                     }
@@ -434,13 +449,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         Vector2 position = Main.player[npc.target].position + new Vector2(Main.rand.Next(-1400, 1400), -700);
                         //Very similar to normal Black Fire, but phases through blocks until it reaches the player's height.
                         //Also the explosion doesn't do damage (for obvious reasons)
-                        Projectile.NewProjectileDirect(position, new Vector2(0, 5), ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, .5f, 0, npc.target);
-                    }
-
-                    AttackModeCounter++;
-                    if (AttackModeCounter > 600)
-                    {
-                        ChangeAttackModes();
+                        Projectile.NewProjectileDirect(position, new Vector2(0, 5), ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, .5f, Main.myPlayer, npc.target);
                     }
                 }
                 #endregion
@@ -458,7 +467,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             Vector2 position = npc.position;
                             Vector2 velocity = vagueVelocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5));
                             int firingDelay = (int)(329 - TeleportTimer);
-                            Projectile.NewProjectileDirect(position, velocity, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, default, npc.target, firingDelay);
+                            Projectile.NewProjectileDirect(position, velocity, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, Main.myPlayer, npc.target, firingDelay);
                         }
                     }
                 }
@@ -471,11 +480,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     {
                         if (TeleportTimer % 60 == 0)
                         {
-                            Projectile.NewProjectileDirect(npc.position, Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(npc.position + new Vector2(10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(npc.position + new Vector2(-10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(npc.position + new Vector2(0, 10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(npc.position + new Vector2(0, -10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(npc.position, Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(npc.position + new Vector2(10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(npc.position + new Vector2(-10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(npc.position + new Vector2(0, 10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(npc.position + new Vector2(0, -10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
                         }
                     }
                     else
@@ -486,11 +495,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             {
                                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
                                 Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
-                                Projectile.NewProjectileDirect(npc.position, velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(npc.position + new Vector2(10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(npc.position + new Vector2(-10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(npc.position + new Vector2(0, 10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(npc.position + new Vector2(0, -10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, default).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(npc.position, velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(npc.position + new Vector2(10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(npc.position + new Vector2(-10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(npc.position + new Vector2(0, 10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(npc.position + new Vector2(0, -10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
                             }
                         }
                     }
@@ -500,10 +509,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 #region Mode 4: Solar Detonators
                 if (AttackMode == 4)
                 {                    
-                    if (AttackModeCounter % 55 == 0 && AttackModeCounter < 730)
+                    if (AttackModeCounter % 45 == 0 && AttackModeCounter < 730)
                     {
                         Vector2 position = Main.player[npc.target].position + Main.rand.NextVector2Square(-600, 600);
-                        Projectile.NewProjectileDirect(position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, default, npc.target);
+                        Projectile.NewProjectileDirect(position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, npc.target);
                     }                    
                 }
                 #endregion
@@ -518,38 +527,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 #region Mode 6: Dark Lasers
                 if (AttackMode == 6)
                 {
-                    RotationProgress += 0.005f;
                     if (AttackModeCounter % 2 == 0 && AttackModeCounter > 120)
                     {
-                        Projectile.NewProjectileDirect(npc.Center, Main.rand.NextVector2CircularEdge(8, 8), ModContent.ProjectileType<Projectiles.Enemy.Okiku.ObscureShot>(), DarkLaserDamage, .5f);
+                        Projectile.NewProjectileDirect(npc.Center, Main.rand.NextVector2CircularEdge(8, 8), ModContent.ProjectileType<ObscureShot>(), DarkLaserDamage, .5f, Main.myPlayer);
                     }
-                    if (DarkLasers == null)
+                    if (AttackModeCounter == 5)
                     {
-                        DarkLasers = new Projectiles.GenericLaser[5];
-                    }
-                    for (int i = 0; i < DarkLasers.Length; i++)
-                    {
-                        if (DarkLasers[i] == null)
-                        {
-                            DarkLasers[i] = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(npc.Center, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), DarkLaserDamage, .5f).modProjectile;
-                            DarkLasers[i].LaserOrigin = npc.Center;
-                            DarkLasers[i].LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
-                            DarkLasers[i].TelegraphTime = 300;
-                            DarkLasers[i].MaxCharge = 240;
-                            DarkLasers[i].FiringDuration = 940;
-                            DarkLasers[i].LaserLength = 10000;
-                            DarkLasers[i].LaserColor = Color.Purple;
-                            DarkLasers[i].TileCollide = false;
-                            DarkLasers[i].CastLight = true;
-                        }
-                        else
-                        {
-                            Dust.NewDustPerfect(npc.Center, 54, new Vector2(8, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5))).noGravity = true;
-                            DarkLasers[i].LaserOrigin = npc.Center;
-                            DarkLasers[i].LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
-                        }
-                    }
-                    
+                       Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, npc.whoAmI);
+                    }                   
                 }
                 #endregion
 
@@ -604,7 +589,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     }                    
                 }
                 #endregion
-            //}
+            }
             #endregion
         }
         #endregion
@@ -691,8 +676,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             npc.noGravity = false;
             npc.noTileCollide = false;
             TravelDir = 0;
-            DarkLasers = null;
-
+            
             if(Main.netMode == NetmodeID.Server)
             {
                  NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);

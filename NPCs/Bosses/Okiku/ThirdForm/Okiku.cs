@@ -159,14 +159,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     if (subPhase == 0) // SUB PHASE 0
                     {
                         for (int num36 = 0; num36 < 9; num36++) {
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<ObscureSaw>(), 65, 0f, 0);
+                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<ObscureSaw>(), 65, 0f, Main.myPlayer);
                         }
                         genericTimer2 = 0;
                     }
                     if (subPhase == 1) // SUB PHASE 1
                     {
                         for (int num36 = 0; num36 < 6; num36++) {
-                            int num54 = Projectile.NewProjectile(vector8, new Vector2((float)Math.Sin(randomrot + ((360 / 10) * (1 + num36))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + num36))) * 6), ModContent.ProjectileType<CrazyOrb>(), 45, 0f, 0);
+                            int num54 = Projectile.NewProjectile(vector8, new Vector2((float)Math.Sin(randomrot + ((360 / 10) * (1 + num36))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + num36))) * 6), ModContent.ProjectileType<CrazyOrb>(), 45, 0f, Main.myPlayer);
                             Main.projectile[num54].ai[0] = npc.target;
                         }
                         genericTimer2 = -200;

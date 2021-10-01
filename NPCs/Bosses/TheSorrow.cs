@@ -110,25 +110,25 @@ namespace tsorcRevamp.NPCs.Bosses
                         Vector2 velocity = new Vector2(speed, 0).RotatedBy(difference.ToRotation());
 
                         //Fire a projectile right at the player
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
                         //Rotate it further to fire the shots angled away from the player
                         Vector2 angledVelocity = velocity.RotatedBy(Math.PI / 6);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                         angledVelocity = velocity.RotatedBy(-Math.PI / 6);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
                         //And again the more offset shots
                         angledVelocity = velocity.RotatedBy(Math.PI / 3);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                         angledVelocity = velocity.RotatedBy(-Math.PI / 3);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
                         //And once mroe for the most offset shots
                         angledVelocity = velocity.RotatedBy(Math.PI / 1.8);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                         angledVelocity = velocity.RotatedBy(-Math.PI / 1.8);
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, default, phasedBullets);
+                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                         //Could this all have been a for loop? Yeah. Easier to read like this though, imo.
 
                         npc.ai[1] = -180;

@@ -458,7 +458,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             {
                                 //while (breathCD > 0) {
                                 //for (int pcy = 0; pcy < 10; pcy++) {
-                                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 1f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), breathDamage, 1.2f, 255); //96 was Config.projDefs.byName["Enemy Light Spirit"].type,  85 is damage
+                                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 1f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer); //96 was Config.projDefs.byName["Enemy Light Spirit"].type,  85 is damage
                                                                                                                                                                                                                                                                                                                          //}
                                 breathCD--;
                                 //}

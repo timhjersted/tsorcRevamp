@@ -41,8 +41,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 		{
 			return false;
 		}
+
+		int CrystalFireDamage = 35;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
 			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+			CrystalFireDamage /= 2;
 		}
 		public override void AI() {
 
@@ -80,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 					Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
 					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
 					rotation += Main.rand.Next(-50, 50) / 100;
-					Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), 15, 0f, 0);
+					Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), CrystalFireDamage, Main.myPlayer);
 					Timer = -1200 - Main.rand.Next(1400);
 				}
 				//npc.netUpdate=true; //new

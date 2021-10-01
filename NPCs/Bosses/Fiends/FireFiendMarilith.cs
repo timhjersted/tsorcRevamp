@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							speedX *= num51;
 							speedY *= num51;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f);//, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 60;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							npc.ai[1] = 1f;

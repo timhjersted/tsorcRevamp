@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 //while (breathCD > 0) {
                 //for (int pcy = 0; pcy < 10; pcy++) {
-                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, 255);
+                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                 //}
                 npc.netUpdate = true; //new
                 breathCD--;
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, 255);
+                    Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
                     Main.PlaySound(2, -1, -1, 20);
                     npc.netUpdate = true; //new
                 }
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, 255);
+                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer);
                     Main.PlaySound(2, -1, -1, 20);
                     npc.netUpdate = true; //new
                 }

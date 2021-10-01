@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                     int damage = 18;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f);
+                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                     npc.ai[0] = 0;
                     npc.ai[2]++;

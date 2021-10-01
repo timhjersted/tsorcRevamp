@@ -325,7 +325,7 @@ namespace tsorcRevamp
                 Main.NewText("Artorias rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < 10; i++)
                 {
-                    Projectile.NewProjectile((float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), Main.npc[npcID].damage / 4, 2f, 255);
+                    Projectile.NewProjectile((float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), Main.npc[npcID].damage / 4, 2f, Main.myPlayer);
                 }
             }
 

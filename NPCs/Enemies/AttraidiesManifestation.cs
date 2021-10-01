@@ -245,7 +245,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						speedY *= num51;
 						//int damage = 45;//(int) (14f * npc.scale);
 						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonFieldBall>();//44;//0x37; //14;
-						int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, poisonFieldDamage, 0f);
+						int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, poisonFieldDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 350;
 						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 25);
 						npc.ai[3] = 0; ;

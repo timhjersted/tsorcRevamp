@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							speedY *= num51;
 							//int damage = (int)(14f * npc.scale); (Why was its damage a factor of its scale of all things? What on earth?)
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f);// Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 600;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							npc.ai[1] = 1f;
@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 							speedY *= num51;
 							//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.TheOracle>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, oracleDamage, 0f);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, oracleDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 190;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							npc.ai[1] = 1f;
