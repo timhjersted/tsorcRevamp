@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Bosses
             else
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CrestOfEarth>(), 2);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.WaterShoes>(), 1, false, -1);
+                Item.NewItem(npc.getRect(), ItemID.WaterWalkingBoots, 1, false, -1);
                 Item.NewItem(npc.getRect(), ItemID.Drax, 1, false, -1);
             }
         }

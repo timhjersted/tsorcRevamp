@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(ItemID.Aglet, 1);
             recipe.AddIngredient(ItemID.AnkletoftheWind, 1);
             recipe.AddIngredient(ItemID.FeralClaws, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 300);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

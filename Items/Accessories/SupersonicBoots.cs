@@ -4,6 +4,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+    [AutoloadEquip(EquipType.Shoes)]
+
     public class SupersonicBoots : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +

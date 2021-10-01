@@ -92,7 +92,7 @@ namespace tsorcRevamp.Items.BossBags {
 					Slain[ModContent.NPCType<TheHunter>()] = 1; //set the value to 1aa
 				}
 			}
-			player.QuickSpawnItem(ModContent.ItemType<Accessories.WaterShoes>());
+			player.QuickSpawnItem(ItemID.WaterWalkingBoots, 1);
             player.QuickSpawnItem(ModContent.ItemType<CrestOfEarth>(), 1);
 			player.QuickSpawnItem(ItemID.Drax);
 		}
