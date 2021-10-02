@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items
 
         public override void GrabRange(Player player, ref int grabRange)
         {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
+            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper / 2);
         }
 
         public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
@@ -52,6 +52,13 @@ namespace tsorcRevamp.Items
                     line2.overrideColor = BaseColor.RarityExample;
                 }
             }
+        }
+
+        public override bool OnPickup(Player player)
+        {
+            Main.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
+
+            return true;
         }
 
         public override void AddRecipes()
@@ -84,7 +91,9 @@ namespace tsorcRevamp.Items
             var myrectangle = texture.Frame(1, 8, 0, itemframe);
             spriteBatch.Draw(texture, item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), item.scale, SpriteEffects.None, 0.1f);
 
-            if (++itemframeCounter >= 10)
+            itemframeCounter += Main.rand.Next(1, 3);
+
+            if (itemframeCounter >= 15)
             {
                 itemframeCounter = 0;
                 if (++itemframe >= 7)

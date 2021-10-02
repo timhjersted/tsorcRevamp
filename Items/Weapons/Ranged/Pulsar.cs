@@ -73,13 +73,21 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             Lighting.AddLight(item.Right, 0.0452f, 0.24f, 0.24f);
 
+            if (Main.rand.Next(15) == 0)
+            {
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 32, item.position.Y), 8, 28, 226, 1f, 0, 100, default(Color), .4f)];
+                dust.noGravity = true;
+                dust.velocity += item.velocity;
+                dust.fadeIn = .4f;
+            }
+
             if (Main.rand.Next(10) == 0)
             {
                 Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 32, item.position.Y), 8, 28, 226, 0, 0, 100, default(Color), .4f)];
                 dust.velocity *= 0f;
                 dust.noGravity = true;
                 dust.velocity += item.velocity;
-                dust.fadeIn = .3f;
+                dust.fadeIn = .4f;
             }
 
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PulsarGlowmask];

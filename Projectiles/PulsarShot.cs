@@ -191,24 +191,35 @@ namespace tsorcRevamp.Projectiles
                 pulsardusttimer = 0;
             }
 
-            if (++projectile.frameCounter >= 10) //ticks spent on each frame
+            if (projectile.timeLeft >= 92)
             {
-                projectile.frameCounter = 0;
-                if (projectile.timeLeft >= 92)
+                if (++projectile.frameCounter >= 10) //ticks spent on each frame
                 {
+                    projectile.frameCounter = 0;
                     if (++projectile.frame == 4)
                     {
                         projectile.frame = 0;
                     }
                 }
-                if (projectile.timeLeft <= 91)
+            }
+
+            if (projectile.timeLeft <= 91)
+            {
+                if (projectile.frame < 5)
                 {
+                    projectile.frame = 5;
+                }
+
+                if (++projectile.frameCounter >= 10)
+                {
+                    projectile.frameCounter = 0;
                     if (++projectile.frame >= 8)
                     {
                         projectile.frame = 5;
                     }
                 }
             }
+
 
             Vector2 oldSize = projectile.Size;
 

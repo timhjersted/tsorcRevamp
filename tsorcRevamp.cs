@@ -61,6 +61,8 @@ namespace tsorcRevamp {
             PopulateArrays();
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
+            //AddEquipTexture(null, EquipType.Shoes, "SupersonicWings2_Shoes", "tsorcRevamp/Items/Accessories/SupersonicWings2_Shoes");
+
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
             if (!Main.dedServ) {
@@ -888,7 +890,8 @@ namespace tsorcRevamp {
             GenericLaserTargeting,
             DarkLaser,
             DarkLaserTargeting,
-            PulsarGlowmask
+            PulsarGlowmask,
+            GWPulsarGlowmask
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -912,6 +915,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
                 {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
                 {TransparentTextureType.PulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
+                {TransparentTextureType.GWPulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")}
+
             };
 
             //Runs each entry through the XNA's premultiplication function
