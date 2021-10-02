@@ -55,6 +55,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 			return chat;
 		}
+
 		public override void SetChatButtons(ref string button, ref string button2)
 		{
 			button = Language.GetTextValue("LegacyInterface.28");
@@ -164,12 +165,12 @@ namespace tsorcRevamp.NPCs.Friendly
 			cooldown = 50;
 			randExtraCooldown = 30;
 		}
+
 		public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
 		{
 			projType = ModContent.ProjectileType<Projectiles.Firebomb>();
 			attackDelay = 5;
 		}
-
 
 		public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset)
 		{
@@ -177,15 +178,20 @@ namespace tsorcRevamp.NPCs.Friendly
 			gravityCorrection = 30f;
 			randomOffset = 0f;
 		}
+
 		public override bool CanTownNPCSpawn(int numTownNPCs, int money)
 		{
-			foreach (Player p in Main.player)
+			int type = ModContent.ItemType<Items.SoulShekel>();
+
+			for (int i = 0; i < Main.maxPlayers; i++)
 			{
-				if (!p.active)
+				Player player = Main.player[i];
+				if (!player.active)
 				{
 					continue;
 				}
-				if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3)
+
+				if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 50) >= 50)
 				{
 					return true;
 				}

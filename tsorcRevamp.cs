@@ -61,8 +61,6 @@ namespace tsorcRevamp {
             PopulateArrays();
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
-            //AddEquipTexture(null, EquipType.Shoes, "SupersonicWings2_Shoes", "tsorcRevamp/Items/Accessories/SupersonicWings2_Shoes");
-
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
             if (!Main.dedServ) {

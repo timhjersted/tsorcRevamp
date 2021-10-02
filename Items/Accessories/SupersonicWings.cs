@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
-    [AutoloadEquip(EquipType.Wings)]
+    [AutoloadEquip(EquipType.Wings, EquipType.Shoes)]
     public class SupersonicWings : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("+20% supersonic movement speed, flight, rocket boots effect, " +

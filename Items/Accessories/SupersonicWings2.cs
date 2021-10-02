@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
-    [AutoloadEquip(EquipType.Wings)]
+    [AutoloadEquip(EquipType.Wings, EquipType.Shoes)]
     public class SupersonicWings2 : ModItem {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Supersonic Wings II");

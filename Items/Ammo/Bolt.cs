@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Ammo {
             item.stack = 1;
             item.consumable = true;
             item.ammo = item.type; //this is what defines a custom ammo type. now we can call mod.ItemType("Bolt") as useAmmo for weapons
-            item.damage = 5;
+            item.damage = 7;
             item.height = 28;
             item.knockBack = (float)3;
             item.maxStack = 2000;
