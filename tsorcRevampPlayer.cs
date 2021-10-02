@@ -411,13 +411,26 @@ namespace tsorcRevamp
             #endregion
 
 
-            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>())
+            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>() || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>() || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>())
             {
                 //Make sure it's actually being displayed, not just selected
                 if (modPlayer.player.itemAnimation > 0)
                 {
                     //Get the transparent texture
-                    Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PulsarGlowmask];
+                    Texture2D texture = null;
+
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PulsarGlowmask];
+                    }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GWPulsarGlowmask];
+                    }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PolarisGlowmask];
+                    }
 
                     #region animation
                     //These lines also can handle animation. Since this glowmask isn't animated a few of these lines are redundant, but they serve as an example for how it could be done.

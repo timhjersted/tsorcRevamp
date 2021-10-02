@@ -889,7 +889,9 @@ namespace tsorcRevamp {
             DarkLaser,
             DarkLaserTargeting,
             PulsarGlowmask,
-            GWPulsarGlowmask
+            GWPulsarGlowmask,
+            PolarisGlowmask
+
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -913,7 +915,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
                 {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
                 {TransparentTextureType.PulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
-                {TransparentTextureType.GWPulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")}
+                {TransparentTextureType.GWPulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")},
+                {TransparentTextureType.PolarisGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask")}
 
             };
 
