@@ -25,6 +25,7 @@ namespace tsorcRevamp.Projectiles
             projectile.tileCollide = false;
             projectile.hide = false;
             projectile.scale = 1f;
+            projectile.magic = true;
 
         }
 

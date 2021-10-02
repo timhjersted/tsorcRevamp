@@ -18,6 +18,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.friendly = true;
             projectile.usesLocalNPCImmunity = true;
             projectile.localNPCHitCooldown = 60;
+            projectile.magic = true;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {

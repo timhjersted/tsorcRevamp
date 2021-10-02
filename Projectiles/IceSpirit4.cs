@@ -17,6 +17,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.damage = 60;
             projectile.friendly = true;
             projectile.penetrate = 3;
+            projectile.magic = true;
         }
 
         public override void AI() {
