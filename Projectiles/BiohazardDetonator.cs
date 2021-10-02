@@ -56,19 +56,21 @@ namespace tsorcRevamp.Projectiles
             bool rotateClockwise = true;
             projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 6f);
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft == 86)
             {
-                projectile.alpha += 25;
-
-                if (projectile.alpha > 255)
+                for (int d = 0; d < 10; d++)
                 {
-                    projectile.alpha = 225;
+                    Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 7), projectile.width, 24, 75, projectile.velocity.X * .8f, projectile.velocity.Y * .8f, 100, default(Color), .8f)];
+                    dust.noGravity = true;
                 }
             }
-            for (int d = 0; d < 4; d++)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft < 86)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                Main.dust[dust].noGravity = true;
+                for (int d = 0; d < 4; d++)
+                {
+                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
+                }
             }
         }
 

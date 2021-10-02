@@ -52,19 +52,22 @@ namespace tsorcRevamp.Projectiles
             Lighting.AddLight(projectile.position, 0.455f, 0.826f, 0.238f);
             projectile.rotation = projectile.velocity.ToRotation(); // projectile faces sprite right
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 89 && projectile.timeLeft <= 90)
             {
-                projectile.alpha += 25;
-
-                if (projectile.alpha > 255)
+                for (int d = 0; d < 6; d++)
                 {
-                    projectile.alpha = 225;
+                    Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 7), projectile.width, 24, 75, projectile.velocity.X * .5f, projectile.velocity.Y * .5f, 100, default(Color), .8f)];
+                    dust.noGravity = true;
                 }
             }
-            for (int d = 0; d < 2; d++)
+
+            if (projectile.owner == Main.myPlayer && projectile.timeLeft < 91)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                Main.dust[dust].noGravity = true;
+                for (int d = 0; d < 2; d++)
+                {
+                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    Main.dust[dust].noGravity = true;
+                }
             }
         }
 

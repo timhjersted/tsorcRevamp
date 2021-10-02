@@ -890,7 +890,10 @@ namespace tsorcRevamp {
             DarkLaserTargeting,
             PulsarGlowmask,
             GWPulsarGlowmask,
-            PolarisGlowmask
+            PolarisGlowmask,
+            ToxicCatalyzerGlowmask,
+            VirulentCatalyzerGlowmask,
+            BiohazardGlowmask
 
         }          
         
@@ -916,7 +919,11 @@ namespace tsorcRevamp {
                 {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
                 {TransparentTextureType.PulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
                 {TransparentTextureType.GWPulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")},
-                {TransparentTextureType.PolarisGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask")}
+                {TransparentTextureType.PolarisGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask")},
+                {TransparentTextureType.ToxicCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/ToxicCatalyzer_Glowmask")},
+                {TransparentTextureType.VirulentCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask")},
+                {TransparentTextureType.BiohazardGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask")}
+
 
             };
 

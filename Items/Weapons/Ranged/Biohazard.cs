@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -84,6 +85,32 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 }
             }
             return true;
+        }
+
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+        {
+            Lighting.AddLight(item.Right, 0.2496f, 0.4584f, 0.130f);
+
+            if (Main.rand.Next(10) == 0)
+            {
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 34, item.position.Y), 8, 28, 75, 1f, 0, 100, default(Color), .8f)];
+                dust.noGravity = true;
+                dust.velocity += item.velocity;
+                dust.fadeIn = .4f;
+            }
+
+            if (Main.rand.Next(5) == 0)
+            {
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 34, item.position.Y), 8, 28, 75, 0, 0, 100, default(Color), .8f)];
+                dust.velocity *= 0f;
+                dust.noGravity = true;
+                dust.velocity += item.velocity;
+                dust.fadeIn = .4f;
+            }
+
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
+            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 2f),
+                new Rectangle(0, 0, texture.Width, texture.Height), Color.White, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
         public override void AddRecipes()

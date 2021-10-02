@@ -411,7 +411,12 @@ namespace tsorcRevamp
             #endregion
 
 
-            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>() || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>() || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>())
+            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>() 
+            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>() 
+            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>()
+            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>()
+            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.VirulentCatalyzer>()
+            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>())
             {
                 //Make sure it's actually being displayed, not just selected
                 if (modPlayer.player.itemAnimation > 0)
@@ -430,6 +435,18 @@ namespace tsorcRevamp
                     if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PolarisGlowmask];
+                    }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ToxicCatalyzerGlowmask];
+                    }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.VirulentCatalyzer>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.VirulentCatalyzerGlowmask];
+                    }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
                     }
 
                     #region animation

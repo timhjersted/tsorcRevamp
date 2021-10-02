@@ -152,6 +152,7 @@ namespace tsorcRevamp.Projectiles
 		private void NormalAI()
 		{
 			projectile.damage = 1;
+
 			//Change these two variables to affect the rotation of your projectile
 			float rotationsPerSecond = 3f;
 			bool rotateClockwise = true;
@@ -160,13 +161,12 @@ namespace tsorcRevamp.Projectiles
 
 			Lighting.AddLight(projectile.position, 0.2496f, 0.4584f, 0.130f);
 
-			if (projectile.owner == Main.myPlayer && projectile.timeLeft <= 6)
+			if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 139 && projectile.timeLeft < 142)
 			{
-				projectile.alpha += 25;
-
-				if (projectile.alpha > 255)
+				for (int d = 0; d < 2; d++)
 				{
-					projectile.alpha = 225;
+					Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 7), projectile.width, 24, 75, projectile.velocity.X * .5f, projectile.velocity.Y * .5f, 100, default(Color), .8f)];
+					dust.noGravity = true;
 				}
 			}
 		}
