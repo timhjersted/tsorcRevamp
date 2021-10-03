@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Rapid mana regen, +15% magic crit & +15% magic dmg when health falls below 150\n" +
-                                "Provides Star Cloak, +5 magic crit & +5% magic damage boost normally");
+                                "Provides Star Cloak, +5% magic crit & +5% magic damage boost normally");
         }
 
         public override void SetDefaults()

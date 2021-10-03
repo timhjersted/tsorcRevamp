@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Forged by those who brave Annihilation.\nMana Regen Skill activates when health falls below 160 \nSet bonus: +15% Magic Critical Chance, -15% Mana Usage, +15 Magic Damage");
+            Tooltip.SetDefault("Forged by those who brave Annihilation.\nMana Regen Skill activates when health falls below 160 \nSet bonus: +15% Magic Critical Chance, -15% Mana Usage, +15% Magic Damage");
         }
 
         public override void SetDefaults()
