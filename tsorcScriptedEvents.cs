@@ -120,7 +120,11 @@ namespace tsorcRevamp
             SpawnGoblin,
             AttraidiesTheSorrowEvent,
             TwinEoWFight,
-            DunledingAmbush
+            DunledingAmbush,
+            BoulderfallEvent1,
+            BoulderfallEvent2,
+            BoulderfallEvent3,
+            FirbombHollowAmbush
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -194,6 +198,21 @@ namespace tsorcRevamp
             //GOBLIN TINKERER  SPAWN EVENT
             ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, null, 31, true, true, "", default, true, TinkererCondition, TinkererAction);
 
+            //BOULDERFALL EVENT 1 - EARTH TEMPLE ENTRANCE
+            ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, false, false, "", default, false, default, BoulderfallEvent1Action);
+
+            //BOULDERFALL EVENT 2 - BLUE DUNGEON BRICK PARKOUR ROOM IN MOUNTAIN
+            ScriptedEvent BoulderfallEvent2 = new ScriptedEvent(new Vector2(3518, 429), 2, default, default, false, false, "", default, false, default, BoulderfallEvent2Action);
+
+            //BOULDERFALL EVENT 3 - TWIN PEAK RIGHTMOST ENTRANCE
+            ScriptedEvent BoulderfallEvent3 = new ScriptedEvent(new Vector2(3665, 360), 6, default, default, false, false, "", default, false, default, BoulderfallEvent3Action);
+
+            //FIREBOMB HOLLOW AMBUSH - ON BRIDGE AT TWIN PEAKS - ONLY ONCE
+            List<int> FirebombHollowAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.FirebombHollow>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
+            List<Vector2> FirebombHollowAmbushEnemyLocations = new List<Vector2>() { new Vector2(3386, 367), new Vector2(3451, 367) };
+            ScriptedEvent FirebombHollowAmbush = new ScriptedEvent(new Vector2(3418, 364), 10, FirebombHollowAmbushEnemyTypeList, FirebombHollowAmbushEnemyLocations, default, false, false, "Ambush!", Color.Red, false, default, FirebombHollowAmbushAction);
+
+
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
                 {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
@@ -210,7 +229,11 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
                 {ScriptedEventType.TwinEoWFight, TwinEoWFight},
-                {ScriptedEventType.DunledingAmbush, DunledingAmbush}
+                {ScriptedEventType.DunledingAmbush, DunledingAmbush},
+                {ScriptedEventType.BoulderfallEvent1, BoulderfallEvent1},
+                {ScriptedEventType.BoulderfallEvent2, BoulderfallEvent2},
+                {ScriptedEventType.BoulderfallEvent3, BoulderfallEvent3},
+                {ScriptedEventType.FirbombHollowAmbush, FirebombHollowAmbush}
 
             };
 
@@ -401,12 +424,79 @@ namespace tsorcRevamp
                     Main.dust[dust3].noGravity = true;
                 }
             }
+            return false;
+        }
+
+        //BOULDERFALL EVENT 1 ACTION
+
+        public static bool BoulderfallEvent1Action(Player player, ScriptedEvent thisEvent)
+        {
+            Projectile.NewProjectile(new Vector2(4401 * 16, 895 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
             return true;
         }
 
-    #endregion
+        //BOULDERFALL EVENT 2 ACTION
 
-    public static void SaveScriptedEvents(TagCompound tag)
+        public static bool BoulderfallEvent2Action(Player player, ScriptedEvent thisEvent)
+        {
+            int rand1 = Main.rand.Next(10, 40);
+            int rand2 = Main.rand.Next(240, 300);
+
+            if (thisEvent.eventTimer == 1)
+            {
+                Projectile.NewProjectile(new Vector2(3515 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+            }
+            if (thisEvent.eventTimer == rand1)
+            {
+                Projectile.NewProjectile(new Vector2(3528 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+                thisEvent.eventTimer = 42;
+            }
+            if (thisEvent.eventTimer == 41)
+            {
+                thisEvent.eventTimer = 2;
+            }
+            if (thisEvent.eventTimer == 301)
+            {
+                thisEvent.eventTimer = 240;
+            }
+            if (thisEvent.eventTimer == rand2)
+            {
+                Projectile.NewProjectile(new Vector2(3523 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+                return true;
+            }
+            return false;
+        }
+
+        //BOULDERFALL EVENT 3 ACTION
+
+        public static bool BoulderfallEvent3Action(Player player, ScriptedEvent thisEvent)
+        {
+            Projectile.NewProjectile(new Vector2(3639 * 16, 349 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropRight>(), 70, 1);
+            return true;
+        }
+
+        //FIREBOMB HOLLOW AMBUSH SPAWN DUSTS
+        public static bool FirebombHollowAmbushAction(Player player, ScriptedEvent thisEvent)
+        {
+            if (thisEvent.eventTimer == 1)
+            {
+                Main.PlaySound(SoundID.Grass, player.Center);
+            }
+            if (thisEvent.eventTimer < 20)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    int dust1 = Dust.NewDust(new Vector2(3384 * 16, 365 * 16), 40, 52, 7, 5, 0, 0, default, 1.5f); //left enemy
+                    Main.dust[dust1].noGravity = true;
+                    int dust2 = Dust.NewDust(new Vector2(3451 * 16, 365 * 16), 40, 52, 7, -5, 0, 0, default, 1.5f); //right enemy
+                    Main.dust[dust2].noGravity = true;
+                }
+            }
+            return false;
+        }
+        #endregion
+
+        public static void SaveScriptedEvents(TagCompound tag)
         {
             //Converts the keys from enums into strings, because apparently it isn't a huge fan of enums
             List<string> stringList = ScriptedEventValues.Keys.ToList().ConvertAll(enumMember => enumMember.ToString());

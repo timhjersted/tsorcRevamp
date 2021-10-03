@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles
             {
                 for (int d = 0; d < 10; d++)
                 {
-                    Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 7), projectile.width, 24, 75, projectile.velocity.X * .8f, projectile.velocity.Y * .8f, 100, default(Color), .8f)];
+                    Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X - 7, projectile.position.Y - 7), 24, 24, 75, projectile.velocity.X * .8f, projectile.velocity.Y * .8f, 100, default(Color), .8f)];
                     dust.noGravity = true;
                 }
             }

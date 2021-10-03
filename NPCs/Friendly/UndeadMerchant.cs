@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.HealingElixir>());
-			shop.item[nextSlot].shopCustomPrice = 25;
+			shop.item[nextSlot].shopCustomPrice = 30;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ItemID.BattlePotion);
