@@ -37,6 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.rare = ItemRarityID.Green;
             item.shoot = mod.ProjectileType("PulsarShot");
             item.shootSpeed = 5f;
+            //item.glowMask = TransparentTextureType.PulsarGlowmask;
         }
 
 

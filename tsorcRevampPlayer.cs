@@ -20,6 +20,7 @@ using ReLogic.Graphics;
 using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using tsorcRevamp.Projectiles.Pets;
+using static tsorcRevamp.TransparentTextureHandler;
 
 namespace tsorcRevamp
 {
@@ -344,21 +345,26 @@ namespace tsorcRevamp
 
         public override void ModifyDrawLayers(List<PlayerLayer> layers)
         {
-            layers.Add(tsorcRevampEffects);
+            if (layers.Contains(PlayerLayer.HeldItem))
+            {
+                layers.Insert(layers.IndexOf(PlayerLayer.HeldItem) + 1, tsorcRevampGlowmasks);
+            }
+            layers.Add(tsorcRevampManaShield);
         }
         public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo)
         {
-            base.ModifyDrawInfo(ref drawInfo);  
+            base.ModifyDrawInfo(ref drawInfo);
         }
 
-        public static readonly PlayerLayer tsorcRevampEffects = new PlayerLayer("tsorcRevamp", "tsorcRevampEffects", PlayerLayer.MiscEffectsFront, delegate (PlayerDrawInfo drawInfo)
+        public static readonly PlayerLayer tsorcRevampGlowmasks = new PlayerLayer("tsorcRevamp", "tsorcRevampGlowmasks", PlayerLayer.HeldItem, delegate (PlayerDrawInfo drawInfo)
         {
 
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+            Item thisItem = modPlayer.player.HeldItem;
 
             #region Glaive Beam HeldItem glowmask and animation
             //If the player is holding the glaive beam
-            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>())
+            if (thisItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>())
             {
                 //And the projectile that creates the laser exists
                 if (modPlayer.player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0)
@@ -409,21 +415,13 @@ namespace tsorcRevamp
                 }
             }
             #endregion
-
-
-            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>() 
-            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GWPulsar>() 
-            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Polaris>()
-            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ToxicCatalyzer>()
-            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.VirulentCatalyzer>()
-            || modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>())
+            //Make sure it's actually being displayed, not just selected
+            if (modPlayer.player.itemAnimation > 0)
             {
-                //Make sure it's actually being displayed, not just selected
-                if (modPlayer.player.itemAnimation > 0)
+                //Make sure it's from our mod
+                if (thisItem.modItem != null && thisItem.modItem.mod == ModLoader.GetMod("tsorcRevamp"))               
                 {
-                    //Get the transparent texture
                     Texture2D texture = null;
-
                     if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Pulsar>())
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PulsarGlowmask];
@@ -449,103 +447,102 @@ namespace tsorcRevamp
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
                     }
 
-                    #region animation
-                    //These lines also can handle animation. Since this glowmask isn't animated a few of these lines are redundant, but they serve as an example for how it could be done.
-                    //It's essentially the same to all other animation, you're just picking different parts of the texture to draw.
-                    //In this case animationFrame is set as a function that depends on game time, making it animate as time passes. For another example, the Glaive Beam above animates based on weapon charge.
-                    int textureFrames = 1;
-                    int animationFrame = (int)Math.Floor(textureFrames * (((Main.time / 5) % 10) / 10));
-                    int frameHeight = (int)texture.Height / textureFrames;
-                    int startY = frameHeight * animationFrame;
-                    Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-                    float textureMidpoint = texture.Height / (2 * textureFrames);
-                    #endregion
-
-                    //Since we're not doing animation, we can actually just 
-                    //sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-
-                    //Get the offsets and shift the draw position based on them
-                    Player drawPlayer = drawInfo.drawPlayer;
-                    Vector2 drawPos = drawInfo.itemLocation - Main.screenPosition;
-                    Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
-                    Vector2 originOffset = new Vector2(0, textureMidpoint);
-                    ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
-                    holdOffset.Y = originOffset.Y;
-                    drawPos += holdOffset;
-
-                    //Set the origin based on the offset point
-                    Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
-
-                    //Shift everything if the player is facing the other way
-                    if (drawPlayer.direction == -1)
+                    //If it's not on the list, don't bother.
+                    if (texture != null)
                     {
-                        origin.X = texture.Width + originOffset.X;
-                    }
+                        #region animation
+                        //These lines also can handle animation. Since this glowmask isn't animated a few of these lines are redundant, but they serve as an example for how it could be done.
+                        //It's essentially the same to all other animation, you're just picking different parts of the texture to draw.
+                        //In this case animationFrame is set as a function that depends on game time, making it animate as time passes. For another example, the Glaive Beam above animates based on weapon charge.
+                        int textureFrames = 1;
+                        int animationFrame = (int)Math.Floor(textureFrames * (((Main.time / 5) % 10) / 10));
+                        int frameHeight = (int)texture.Height / textureFrames;
+                        int startY = frameHeight * animationFrame;
+                        Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+                        float textureMidpoint = texture.Height / (2 * textureFrames);
+                        #endregion
 
-                    DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.player.HeldItem.scale, drawInfo.spriteEffects, 0);
-                    Main.playerDrawData.Add(data);
-                }
-            }
+                        //Since we're not doing animation, we can actually just 
+                        //sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
 
+                        //Get the offsets and shift the draw position based on them
+                        Player drawPlayer = drawInfo.drawPlayer;
+                        Vector2 drawPos = drawInfo.itemLocation - Main.screenPosition;
+                        Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
+                        Vector2 originOffset = new Vector2(0, textureMidpoint);
+                        ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
+                        holdOffset.Y = originOffset.Y;
+                        drawPos += holdOffset;
 
-            if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>())
-            {
+                        //Set the origin based on the offset point
+                        Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
 
-                #region Mana Shield Related Effects
-                if (modPlayer.manaShield > 0 && !modPlayer.player.dead)
-                {
-                    if (modPlayer.player.statMana > Items.Accessories.ManaShield.manaCost)
-                    {
-                        //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
-                        if (!modPlayer.shieldUp)
+                        //Shift everything if the player is facing the other way
+                        if (drawPlayer.direction == -1)
                         {
-                            //Soundtype Item SoundStyle 28 is powerful magic cast
-                            Main.PlaySound(SoundID.Item, modPlayer.player.position, 28);
-                            modPlayer.shieldUp = true;
+                            origin.X = texture.Width + originOffset.X;
                         }
 
-                        Lighting.AddLight(modPlayer.player.Center, 0f, 0.2f, 0.3f);
-
-                        int shieldFrameCount = 8;
-                        float shieldScale = 2.5f;
-
-                        Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ManaShield];
-                        Player drawPlayer = drawInfo.drawPlayer;
-                        int drawX = (int)(drawInfo.position.X + drawPlayer.width / 2f - Main.screenPosition.X);
-                        int drawY = (int)(drawInfo.position.Y + drawPlayer.height / 2f - Main.screenPosition.Y);
-                        int frameHeight = texture.Height / shieldFrameCount;
-                        int startY = frameHeight * (modPlayer.shieldFrame / 3);
-                        Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
-                        Color newColor = Color.White;// Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
-                        Vector2 origin = sourceRectangle.Size() / 2f;
-
-                        DrawData data = new DrawData(texture, new Vector2(drawX, drawY), sourceRectangle, newColor, 0f, origin, shieldScale, SpriteEffects.None, 0);
+                        DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.player.HeldItem.scale, drawInfo.spriteEffects, 3);
                         Main.playerDrawData.Add(data);
                     }
-                    else
+                }
+            }                      
+        });
+
+        public static readonly PlayerLayer tsorcRevampManaShield = new PlayerLayer("tsorcRevamp", "tsorcRevampManaShield", PlayerLayer.MiscEffectsFront, delegate (PlayerDrawInfo drawInfo)
+        {
+            tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
+
+            if (modPlayer.manaShield > 0 && !modPlayer.player.dead)
+            {
+                if (modPlayer.player.statMana > Items.Accessories.ManaShield.manaCost)
+                {
+                    //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
+                    if (!modPlayer.shieldUp)
                     {
-                        if (modPlayer.shieldUp)
-                        {
-                            //Soundtype Item SoundStyle 60 is the Terra Beam
-                            Main.PlaySound(SoundID.Item, modPlayer.player.position, 60);
-                            modPlayer.shieldUp = false;
-                        }
-                        //If the player doesn't have enough mana to tank a hit, then draw particle effects to indicate their mana is too low for it to function.
-                        int dust = Dust.NewDust(modPlayer.player.Center, 1, 1, 221, modPlayer.player.velocity.X + Main.rand.Next(-3, 3), modPlayer.player.velocity.Y + Main.rand.Next(-3, 3), 180, Color.Cyan, 1f);
-                        Main.dust[dust].noGravity = true;
-                        modPlayer.shieldUp = false;
+                        //Soundtype Item SoundStyle 28 is powerful magic cast
+                        Main.PlaySound(SoundID.Item, modPlayer.player.position, 28);
+                        modPlayer.shieldUp = true;
                     }
+
+                    Lighting.AddLight(modPlayer.player.Center, 0f, 0.2f, 0.3f);
+
+                    int shieldFrameCount = 8;
+                    float shieldScale = 2.5f;
+
+                    Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ManaShield];
+                    Player drawPlayer = drawInfo.drawPlayer;
+                    int drawX = (int)(drawInfo.position.X + drawPlayer.width / 2f - Main.screenPosition.X);
+                    int drawY = (int)(drawInfo.position.Y + drawPlayer.height / 2f - Main.screenPosition.Y);
+                    int frameHeight = texture.Height / shieldFrameCount;
+                    int startY = frameHeight * (modPlayer.shieldFrame / 3);
+                    Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+                    Color newColor = Color.White;// Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
+                    Vector2 origin = sourceRectangle.Size() / 2f;
+
+                    DrawData data = new DrawData(texture, new Vector2(drawX, drawY), sourceRectangle, newColor, 0f, origin, shieldScale, SpriteEffects.None, 0);
+                    Main.playerDrawData.Add(data);
                 }
                 else
                 {
+                    if (modPlayer.shieldUp)
+                    {
+                        //Soundtype Item SoundStyle 60 is the Terra Beam
+                        Main.PlaySound(SoundID.Item, modPlayer.player.position, 60);
+                        modPlayer.shieldUp = false;
+                    }
+                    //If the player doesn't have enough mana to tank a hit, then draw particle effects to indicate their mana is too low for it to function.
+                    int dust = Dust.NewDust(modPlayer.player.Center, 1, 1, 221, modPlayer.player.velocity.X + Main.rand.Next(-3, 3), modPlayer.player.velocity.Y + Main.rand.Next(-3, 3), 180, Color.Cyan, 1f);
+                    Main.dust[dust].noGravity = true;
                     modPlayer.shieldUp = false;
                 }
-
-                #endregion
-
+            }
+            else
+            {
+                modPlayer.shieldUp = false;
             }
         });
-
 
         public override void PostUpdateEquips()
         {
