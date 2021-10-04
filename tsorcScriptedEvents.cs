@@ -151,7 +151,7 @@ namespace tsorcRevamp
             ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.MagicMirror, true, true, "Chaos has entered this dimension!", Color.Red, false, SuperHardModeCustomCondition);
 
             //WYVERN MAGE 
-            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6342, 246), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, true, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6342, 217), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, true, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
           
             //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
