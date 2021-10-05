@@ -25,15 +25,11 @@ namespace tsorcRevamp.Items {
                 return false;
             }
 
-            for (int sanityX2 = x - 1; sanityX2 < x + 1; sanityX2++) {
-                for (int sanityY2 = y - 3; sanityY2 < y; sanityY2++) {
-                    if (Main.tile[sanityX2, sanityY2] == null) {
-                        Main.NewText("Warp tile null! (" + sanityX2 + ", " + sanityY2 + ")!", 255, 240, 20);
-                        return false;
-                    }
-
-                    if (Main.tile[sanityX2, sanityY2].active() && Main.tileSolid[Main.tile[sanityX2, sanityY2].type] && !Main.tileSolidTop[Main.tile[sanityX2, sanityY2].type]) {
-                        WorldGen.KillTile(sanityX2, sanityY2, false, false, false);
+            for (int sanityX = x - 1; sanityX < x + 1; sanityX++) {
+                for (int sanityY = y - 3; sanityY < y; sanityY++) {
+                    Tile tile = Framing.GetTileSafely(sanityX, sanityY);
+                    if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type]) {
+                        WorldGen.KillTile(sanityX, sanityY);
                     }
 
                 }
