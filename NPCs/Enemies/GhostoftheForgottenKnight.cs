@@ -693,7 +693,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 3"), 1f);
 
 			if (Main.rand.Next(99) < 25) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.RoyalThrowingSpear>(), 26 + Main.rand.Next(10));
-			if (Main.rand.Next(99) < 40) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.EphemeralThrowingSpear>(), 26 + Main.rand.Next(10));
+			if (Main.rand.Next(99) < 40) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), 26 + Main.rand.Next(10));
 			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
 			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.EphemeralDust>(), 3 + Main.rand.Next(6));
 			if (Main.rand.Next(99) < 4) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);

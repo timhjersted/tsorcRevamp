@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Ammo.Bolt>());
 			nextSlot++;
-			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.ThrowingAxe>());
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ThrowingAxe>());
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>());
 			nextSlot++;

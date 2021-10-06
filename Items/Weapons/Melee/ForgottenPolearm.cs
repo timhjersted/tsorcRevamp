@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useAnimation = 11;
-            item.useTime = 3;
+            item.useTime = 6;
             item.shootSpeed = 10;
             //item.shoot = ProjectileID.DarkLance;
             
@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Gungnir);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 30000);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 35);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();

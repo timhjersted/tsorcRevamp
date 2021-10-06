@@ -2,7 +2,7 @@
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Ranged {
     class EphemeralThrowingSpear : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Passes through solid walls.");
@@ -14,9 +14,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.height = 64;
             item.knockBack = 6;
             item.maxStack = 3000;
-            item.noMelee = true;
             item.noUseGraphic = true;
-            item.melee = true;
+            item.ranged = true;
             item.scale = 0.9f;
             item.shootSpeed = 14;
             item.useAnimation = 15;

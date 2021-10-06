@@ -1,7 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
+namespace tsorcRevamp.Items.Weapons.Melee {
     class ThrowingAxe : ModItem {
 
         public override void SetDefaults() {
@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.maxStack = 250;
             item.noMelee = true;
             item.noUseGraphic = true;
-            item.ranged = true;
+            item.melee = true;
             item.shootSpeed = 8;
             item.useAnimation = 15;
             item.UseSound = SoundID.Item1;

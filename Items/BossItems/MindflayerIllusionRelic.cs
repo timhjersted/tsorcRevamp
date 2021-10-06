@@ -67,7 +67,8 @@ namespace tsorcRevamp.Items.BossItems {
             return true;
         }
 
-        int cast = 0;
+        //Was gonna make it have to charge up for a second to activate, but... eh
+        //int cast = 0;
         public override bool CanUseItem(Player player) {
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())) {
                 return false;

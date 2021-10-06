@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void NPCLoot()
 		{
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
+			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
 			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
 		}
 

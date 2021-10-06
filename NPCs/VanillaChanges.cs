@@ -1928,6 +1928,7 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ItemID.Heart);
 
             }
+            
 
             if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigFemaleZombie && npc.type <= NPCID.SmallFemaleZombie) ||
                                 (npc.type >= NPCID.BigTwiggyZombie && npc.type <= NPCID.SmallZombie) ||
@@ -1959,7 +1960,10 @@ namespace tsorcRevamp.NPCs {
             }
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<BrokenPicksaw>());
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<BrokenPicksaw>());
+                }
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
             }

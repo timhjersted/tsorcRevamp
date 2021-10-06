@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<ForgottenMetalKnuckles>());
 			nextSlot++;
-			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Ranged.ThrowingAxe>());
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ThrowingAxe>());
 			nextSlot++;
 			if (NPC.downedBoss1) {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<OldTwoHandedSword>());

@@ -20,9 +20,9 @@ namespace tsorcRevamp.Projectiles {
 
 		public override void AI()
         {
-			int dust = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width / 2), projectile.position.Y - (float)(projectile.height / 2)), projectile.width, projectile.height, 127, projectile.velocity.X / 2, projectile.velocity.Y / 2, 160, default, 3f);
+			int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 127, projectile.velocity.X / 2, projectile.velocity.Y / 2, 160, default, 3f);
 			Main.dust[dust].noGravity = true;
-			dust = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width / 2), projectile.position.Y - (float)(projectile.height / 2)), projectile.width, projectile.height, 130, projectile.velocity.X / 2, projectile.velocity.Y / 2, 220, default, 1f);
+			dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 130, projectile.velocity.X / 2, projectile.velocity.Y / 2, 220, default, 1f);
 			Main.dust[dust].noGravity = true;
 			Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(58, Main.LocalPlayer);
 		}
