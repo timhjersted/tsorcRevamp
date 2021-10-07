@@ -54,6 +54,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         }
         public override void AI()
         {
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialCrystal>()))
+            {
+                npc.dontTakeDamage = true;
+            }
+            else
+            {
+                npc.dontTakeDamage = false;
+            }
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.behindTiles = true;
@@ -70,6 +78,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             return false;
         }
 
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            SeathTheScalelessHead.SetImmune(projectile, npc);
+        }
 
         public override void NPCLoot()
         {

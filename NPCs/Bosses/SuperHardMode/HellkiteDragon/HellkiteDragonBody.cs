@@ -62,6 +62,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 npc.active = false;
             }
         }
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            HellkiteDragonHead.SetImmune(projectile, npc);
+        }
 
         public override bool CheckActive()
         {

@@ -2,6 +2,7 @@
 using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
@@ -23,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.defense = 50;
             npc.HitSound = SoundID.NPCHit7;
             npc.DeathSound = SoundID.NPCDeath8;
-            npc.lifeMax = 170000;
+            npc.lifeMax = 125000;
             music = 12;
             npc.boss = true;
             npc.noGravity = true;
@@ -57,7 +58,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
         int breathCD = 110;
         bool breath = false;
-        //bool tailD = false;
+        bool firstCrystalSpawned = false;
+        bool secondCrystalSpawned = false;
+        bool finalCrystalsSpawned = false;
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -97,6 +100,67 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(npc.whoAmI);
+
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialCrystal>()))
+            {
+                npc.dontTakeDamage = true;
+            }
+            else
+            {
+                npc.dontTakeDamage = false;
+            }
+         
+            
+            
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int crystalVelocity = 16;
+                if (!firstCrystalSpawned && npc.life <= (2 * npc.lifeMax / 3))
+                {
+                    int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                    Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
+                    firstCrystalSpawned = true;
+                    if (Main.netMode == NetmodeID.SinglePlayer)
+                    {
+                        Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                    }
+                    else
+                    {
+                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon a Primordial Crystal..."), Color.Cyan);
+                    }
+                }
+
+                if (!secondCrystalSpawned && npc.life <= (npc.lifeMax / 3))
+                {
+                    int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                    Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
+                    secondCrystalSpawned = true; if (Main.netMode == NetmodeID.SinglePlayer)
+                    {
+                        Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                    }
+                    else
+                    {
+                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon a Primordial Crystal..."), Color.Cyan);
+                    }
+                }
+
+                if (!finalCrystalsSpawned && npc.life <= (npc.lifeMax / 6))
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                        Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
+                    }
+                    finalCrystalsSpawned = true; if (Main.netMode == NetmodeID.SinglePlayer)
+                    {
+                        Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                    }
+                    else
+                    {
+                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon his final Primordial Crystals..."), Color.Cyan);
+                    }
+                }
+            }
 
 
             Player nT = Main.player[npc.target];
@@ -180,6 +244,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
+        }
+
+        public static void SetImmune(Projectile projectile, NPC hitNPC)
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC currentNPC = Main.npc[i];
+                if (currentNPC.type == ModContent.NPCType<SeathTheScalelessHead>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody2>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessBody3>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessLegs>() || currentNPC.type == ModContent.NPCType<SeathTheScalelessTail>())
+                {
+                    currentNPC.immune[projectile.owner] = 10;
+                }
+            }
+        }
+
+        public  override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            SetImmune(projectile, npc);
         }
 
         public override void NPCLoot()

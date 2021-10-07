@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             npc.defense = 10;
             npc.HitSound = SoundID.NPCHit7;
             npc.DeathSound = SoundID.NPCDeath8;
-            npc.lifeMax = 75000;
+            npc.lifeMax = 100000;
             music = 12;
             npc.boss = true;
             npc.noGravity = true;
@@ -168,19 +168,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             int[] bodyTypes = new int[] { ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>() };
             tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<HellkiteDragonHead>(), bodyTypes, ModContent.NPCType<HellkiteDragonTail>(), 12, .8f, 22, 0.25f, true, false, true, false, false); //30f was 10f
 
-
-
-
-            
-            //if (!Main.npc[(int)npc.ai[1]].active)
-            //{
-            //	npc.life = 0;
-            //	npc.HitEffect(0, 10.0);
-            //	NPCLoot();
-            //	npc.active = false;
-            //}
-
         }
+        public static void SetImmune(Projectile projectile, NPC hitNPC)
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC currentNPC = Main.npc[i];
+                if (currentNPC.type == ModContent.NPCType<HellkiteDragonHead>() || currentNPC.type == ModContent.NPCType<HellkiteDragonBody>() || currentNPC.type == ModContent.NPCType<HellkiteDragonBody2>() || currentNPC.type == ModContent.NPCType<HellkiteDragonBody3>() || currentNPC.type == ModContent.NPCType<HellkiteDragonLegs>() || currentNPC.type == ModContent.NPCType<HellkiteDragonTail>())
+                {
+                    currentNPC.immune[projectile.owner] = 10;
+                }
+            }
+        }
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            SetImmune(projectile, npc);
+        }
+
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
