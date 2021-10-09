@@ -6,7 +6,9 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons {
 	public class DebugTome : ModItem {
 		public override void SetStaticDefaults() {
-			Tooltip.SetDefault("You should not have this.");
+			Tooltip.SetDefault("You should not have this" +
+				"\nDev item used for testing purposes only" +
+				"\nUsing this may cause irreversible effects on your world");
 		}
 
 		public override void SetDefaults() {
@@ -29,12 +31,20 @@ namespace tsorcRevamp.Items.Weapons {
 			item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
 		}
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.dayTime = false;
 			Main.time = 13000;
 			Main.NewText(player.position / 16);
 			return true;
-        }
-    }
+		}
+		public override bool CanUseItem(Player player)
+        {
+			if (player.name == "Zeodexic" || player.name == "RecursiveCollapse" || player.name == "Chroma TSORC test")
+			{
+				return true;
+			}
+			return false;
+		}
+	}
 }

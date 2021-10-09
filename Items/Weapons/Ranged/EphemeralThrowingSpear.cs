@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class EphemeralThrowingSpear : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Passes through solid walls.");
+            Tooltip.SetDefault("Passes through solid walls");
         }
 
         public override void SetDefaults() {
@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.damage = 29;
             item.height = 64;
             item.knockBack = 6;
-            item.maxStack = 3000;
+            item.maxStack = 2000;
             item.noUseGraphic = true;
             item.ranged = true;
             item.scale = 0.9f;

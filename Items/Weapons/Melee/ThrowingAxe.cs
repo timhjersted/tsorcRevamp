@@ -6,18 +6,18 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetDefaults() {
             item.consumable = true;
-            item.damage = 9;
+            item.damage = 14;
             item.height = 34;
-            item.knockBack = 7;
-            item.maxStack = 250;
+            item.knockBack = 6;
+            item.maxStack = 2000;
             item.noMelee = true;
             item.noUseGraphic = true;
             item.melee = true;
-            item.shootSpeed = 8;
-            item.useAnimation = 15;
+            item.shootSpeed = 7;
+            item.useAnimation = 22;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 15;
+            item.useTime = 22;
             item.value = 5;
             item.width = 22;
             item.shoot = ModContent.ProjectileType<Projectiles.ThrowingAxe>();

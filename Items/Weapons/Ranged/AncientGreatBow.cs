@@ -34,6 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.DemonBow, 1);
+            recipe.AddIngredient(ItemID.ShadowScale, 10);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
 
             recipe.AddTile(TileID.DemonAltar);
