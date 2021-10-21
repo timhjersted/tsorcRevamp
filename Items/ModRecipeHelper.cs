@@ -55,7 +55,9 @@ namespace tsorcRevamp.Items {
                 PermaPotionRecipeB(mod, ModContent.ItemType<ShockwavePotion>(), ModContent.ItemType<PermanentShockwavePotion>());
                 PermaPotionRecipeB(mod, ItemID.TitanPotion, ModContent.ItemType<PermanentTitanPotion>());
                 PermaPotionRecipeB(mod, ItemID.InfernoPotion, ModContent.ItemType<PermanentInfernoPotion>());
-                PermaPotionRecipeC(mod, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
+                PermaPotionRecipeB(mod, ItemID.WaterWalkingPotion, ModContent.ItemType<PermanentWaterWalkingPotion>());
+                PermaPotionRecipeB(mod, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
+                PermaPotionRecipeB(mod, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
 
                 #endregion
                 #region add c tier recipes
@@ -63,8 +65,6 @@ namespace tsorcRevamp.Items {
                 PermaPotionRecipeC(mod, ItemID.ShinePotion, ModContent.ItemType<PermanentShinePotion>());
                 PermaPotionRecipeC(mod, ItemID.TrapsightPotion, ModContent.ItemType<PermanentDangersensePotion>());
                 PermaPotionRecipeC(mod, ItemID.FeatherfallPotion, ModContent.ItemType<PermanentFeatherfallPotion>());
-                PermaPotionRecipeC(mod, ItemID.FlaskofParty, ModContent.ItemType<PermanentFlaskOfParty>());
-                PermaPotionRecipeC(mod, ItemID.FlaskofPoison, ModContent.ItemType<PermanentFlaskOfPoison>());
                 PermaPotionRecipeC(mod, ItemID.FlipperPotion, ModContent.ItemType<PermanentFlipperPotion>());
                 PermaPotionRecipeC(mod, ItemID.HunterPotion, ModContent.ItemType<PermanentHunterPotion>());
                 PermaPotionRecipeC(mod, ItemID.InvisibilityPotion, ModContent.ItemType<PermanentInvisibilityPotion>());

@@ -640,6 +640,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[19]) {
                 player.meleeEnchant = 1;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueVenom] = true;
             }
         }
@@ -671,6 +672,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[20]) {
                 player.meleeEnchant = 2;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueCursedFlames] = true;
             }
         }
@@ -703,6 +705,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[21]) {
                 player.meleeEnchant = 3;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueFire] = true;
             }
         }
@@ -735,6 +738,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[22]) {
                 player.meleeEnchant = 4;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueGold] = true;
             }
         }
@@ -767,6 +771,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[23]) {
                 player.meleeEnchant = 5;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueIchor] = true;
             }
         }
@@ -799,6 +804,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[24]) {
                 player.meleeEnchant = 6;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueNanites] = true;
             }
         }
@@ -831,6 +837,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[25]) {
                 player.meleeEnchant = 7;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueConfetti] = true;
             }
         }
@@ -863,6 +870,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void UpdateInventory(Player player) {
             if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[26]) {
                 player.meleeEnchant = 8;
+                player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbuePoison] = true;
             }
         }
