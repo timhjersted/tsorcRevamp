@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useTime = 15;
             item.autoReuse = true;
             item.maxStack = 10;
-            item.damage = 48;
+            item.damage = 248;
             item.knockBack = 5;
             item.UseSound = SoundID.Item1;
             item.shootSpeed = 21;
@@ -27,16 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override bool CanUseItem(Player player) {
-            int limit = 10;
-            int counter = 0;
-            int projectile = ModContent.ProjectileType<Projectiles.ForgottenRisingSun>();
-
-            foreach (Projectile P in Main.projectile) {
-                if (P.active && P.owner == player.whoAmI && P.type == projectile) {
-                    counter++;
-                }
-            }
-            return counter < limit;
+            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSun>()] > 10;
         }
     }
 }

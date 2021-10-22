@@ -25,6 +25,8 @@ namespace tsorcRevamp {
             On.Terraria.NPC.TypeToHeadIndex += MapHeadPatch;
 
             On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
+
+            On.Terraria.NPC.SpawnNPC += BossZenPatch;
         }
 
         //allow spawns to be set outside a valid house (for bonfires)
@@ -576,7 +578,6 @@ namespace tsorcRevamp {
             else { return orig(type); }
         }
 
-
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
         internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.tileSign[Main.tile[myX, myY].type]) {
@@ -620,6 +621,19 @@ namespace tsorcRevamp {
             }
         }
 
+        //boss zen actually zens
+        internal static void BossZenPatch(On.Terraria.NPC.orig_SpawnNPC orig) {
+            for (int i = 0; i < Main.maxPlayers; i++) {
+                if (!Main.player[i].active || Main.player[i].dead) { continue; }
+                if (Main.player[i].HasBuff(ModContent.BuffType<Buffs.BossZenBuff>())) {
+                    return;
+                }
+                else {
+                    Main.NewText("no boss zen");
+                    orig();
+                }
+            }
+        }
 
 
 
