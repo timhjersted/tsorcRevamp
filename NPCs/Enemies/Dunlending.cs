@@ -87,6 +87,14 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (Math.Abs(npc.velocity.X) > top_speed && npc.velocity.Y == 0f) {
                 npc.velocity *= (1f - braking_power);
             }
+            if (npc.velocity.X > 6f) //hard limit of 6f
+            {
+                npc.velocity.X = 6f;
+            }
+            if (npc.velocity.X < -6f) //both directions
+            {
+                npc.velocity.X = -6f;
+            }
             else {
                 npc.velocity.X += npc.direction * acceleration;
             }

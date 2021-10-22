@@ -381,6 +381,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
+			Player player = Main.LocalPlayer;
+
 			if (!projectile.melee)
 			{
 				damage -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
@@ -398,7 +400,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				projectile.type == mod.ProjectileType("FireBall") || projectile.type == mod.ProjectileType("Explosion") || projectile.type == mod.ProjectileType("ExplosionBall") || projectile.type == mod.ProjectileType("Firebomb") || projectile.type == mod.ProjectileType("FireBombBall") ||
 				projectile.type == mod.ProjectileType("FireField") || projectile.type == mod.ProjectileType("FireFieldBall") || projectile.type == mod.ProjectileType("FireSpirit2") || projectile.type == mod.ProjectileType("FlameStrike") || projectile.type == mod.ProjectileType("GreatFireball") ||
 				projectile.type == mod.ProjectileType("GreatFireballBall") || projectile.type == mod.ProjectileType("GreatFireStrike") || projectile.type == mod.ProjectileType("Meteor") || projectile.type == mod.ProjectileType("MeteorShower") || projectile.type == mod.ProjectileType("RedLaserBeam") ||
-				projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle"))
+				projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle") ||
+				(projectile.melee && player.meleeEnchant == 3))
 			{
 				damage *= 2;
 				if (damage < 20)

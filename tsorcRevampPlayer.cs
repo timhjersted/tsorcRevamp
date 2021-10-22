@@ -40,6 +40,7 @@ namespace tsorcRevamp
         public bool SilverSerpentRing = false;
         public bool DragonStone = false;
         public int SoulReaper = 5;
+        public bool Crippled = false;
 
         public bool DuskCrownRing = false;
         public bool UndeadTalisman = false;
@@ -315,6 +316,7 @@ namespace tsorcRevamp
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;
             SoulSickle = false;
+            Crippled = false;
     }
 
     public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
@@ -560,6 +562,20 @@ namespace tsorcRevamp
                 player.gravControl = true;
             }
 
+            if (Crippled)
+            {
+                player.doubleJumpBlizzard = false;
+                player.doubleJumpCloud = false;
+                player.doubleJumpFart = false;
+                player.doubleJumpSail = false;
+                player.doubleJumpSandstorm = false;
+                player.doubleJumpUnicorn = false;
+                player.canRocket = false;
+                player.rocketTime = 0;
+                player.jumpBoost = false;
+                player.jumpSpeedBoost = 0f;
+                player.wingTime = 0;
+            }
 
             for (int i = 0; i < 50; i++) {
                 //block souls from going in normal inventory slots
@@ -1533,6 +1549,7 @@ namespace tsorcRevamp
                 player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
             }
+
 
 
 

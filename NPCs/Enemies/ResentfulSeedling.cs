@@ -74,6 +74,8 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            Player player = Main.LocalPlayer;
+
             //fire projectiles bonus damage
             if (projectile.type == ProjectileID.FireArrow || projectile.type == ProjectileID.BallofFire || projectile.type == ProjectileID.Flamarang || projectile.type == ProjectileID.Flamelash || projectile.type == ProjectileID.Sunfury || projectile.type == ProjectileID.HellfireArrow ||
                 projectile.type == ProjectileID.Flames || projectile.type == ProjectileID.CursedFlameFriendly || projectile.type == ProjectileID.CursedArrow || projectile.type == ProjectileID.CursedBullet || projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare ||
@@ -86,7 +88,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == mod.ProjectileType("FireBall") || projectile.type == mod.ProjectileType("Explosion") || projectile.type == mod.ProjectileType("ExplosionBall") || projectile.type == mod.ProjectileType("Firebomb") || projectile.type == mod.ProjectileType("FireBombBall") ||
                 projectile.type == mod.ProjectileType("FireField") || projectile.type == mod.ProjectileType("FireFieldBall") || projectile.type == mod.ProjectileType("FireSpirit2") || projectile.type == mod.ProjectileType("FlameStrike") || projectile.type == mod.ProjectileType("GreatFireball") ||
                 projectile.type == mod.ProjectileType("GreatFireballBall") || projectile.type == mod.ProjectileType("GreatFireStrike") || projectile.type == mod.ProjectileType("Meteor") || projectile.type == mod.ProjectileType("MeteorShower") || projectile.type == mod.ProjectileType("RedLaserBeam") ||
-                projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle"))
+                projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle") ||
+                (projectile.melee && player.meleeEnchant == 3))
             {
                 damage *= 2;
 
