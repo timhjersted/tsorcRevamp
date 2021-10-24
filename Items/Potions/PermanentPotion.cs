@@ -617,7 +617,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1340";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Venom");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Venom buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Venom buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -649,7 +649,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1353";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Cursed Flames");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Cursed Flames buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Cursed Flames buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -682,7 +682,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1354";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Fire");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Fire buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Fire buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -715,7 +715,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1355";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Gold");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Gold buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Gold buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -748,7 +748,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1356";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Ichor");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Ichor buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Ichor buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -781,7 +781,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1357";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Nanites");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Nanites buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Nanites buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -814,7 +814,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1358";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Party");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Confetti buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Confetti buff. \nNot compatible with other weapon imbues.");
         }
 
         
@@ -847,7 +847,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override string Texture => "Terraria/Item_1359";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Permanent Flask of Poison");
-            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Poison buff. \nNot compatible with other flasks.");
+            Tooltip.SetDefault("Permanently grants the Weapon Imbue: Poison buff. \nNot compatible with other weapon imbues.");
         }
 
         

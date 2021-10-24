@@ -13,7 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Crystal Magic Weapon");
             Tooltip.SetDefault("Imbues melee weapons with crystalline magic,\n" +
                                 "allowing for incredible magic damage scaling" +
-                                "\nLasts 20 seconds, 60 second cooldown");
+                                "\nLasts 20 seconds, 60 second cooldown" +
+                                "\nNot compatible with other weapon imbues");
 
         }
 
@@ -61,7 +62,16 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>()) || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>()) || player.HasBuff(BuffID.WeaponImbueFire))
+            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>()) 
+                || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
+                || player.meleeEnchant == 1
+                || player.meleeEnchant == 2
+                || player.meleeEnchant == 3
+                || player.meleeEnchant == 4
+                || player.meleeEnchant == 5
+                || player.meleeEnchant == 6
+                || player.meleeEnchant == 7
+                || player.meleeEnchant == 8)
             {
                 return false;
             }

@@ -629,7 +629,7 @@ namespace tsorcRevamp {
                     return;
                 }
                 else {
-                    Main.NewText("no boss zen");
+                    //Main.NewText("no boss zen");
                     orig();
                 }
             }

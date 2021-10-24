@@ -13,7 +13,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Magic Weapon");
             Tooltip.SetDefault("Imbues melee weapons with magic,\n" +
                                 "allowing for weak magic damage scaling" +
-                                "\nLasts 30 seconds, 60 second cooldown");
+                                "\nLasts 30 seconds, 60 second cooldown" +
+                                "\nNot compatible with other weapon imbues");
 
         }
 
@@ -65,7 +66,16 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>()) || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>()) || player.HasBuff(BuffID.WeaponImbueFire))
+            if (player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>()) 
+                || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>()) 
+                || player.meleeEnchant == 1
+                || player.meleeEnchant == 2
+                || player.meleeEnchant == 3
+                || player.meleeEnchant == 4
+                || player.meleeEnchant == 5
+                || player.meleeEnchant == 6
+                || player.meleeEnchant == 7
+                || player.meleeEnchant == 8)
             {
                 return false;
             }

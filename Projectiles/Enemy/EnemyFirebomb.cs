@@ -41,8 +41,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 50;
-                projectile.height = 50;
+                projectile.width = 120;
+                projectile.height = 120;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
                 projectile.damage = 18;
@@ -77,8 +77,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 projectile.position.X = projectile.position.X + (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y + (float)(projectile.height / 2);
-                projectile.width = 50;
-                projectile.height = 50;
+                projectile.width = 120;
+                projectile.height = 120;
                 projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
                 projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
                 projectile.damage = 18; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
@@ -127,15 +127,13 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
 
         public override void Kill(int timeLeft)
-
         {
-
             // Play explosion sound
             Main.PlaySound(SoundID.Item74.WithPitchVariance(.5f), projectile.position);
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {
-                int dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
+                int dustIndex = Dust.NewDust(new Vector2(projectile.position.X + 36, projectile.position.Y + 36), projectile.width - 74, projectile.height - 74, 6, Main.rand.Next(-6, 6), Main.rand.Next(-6, 6), 100, default(Color), 2f);
                 Main.dust[dustIndex].noGravity = true;
                 Main.dust[dustIndex].velocity *= 3.5f;
             }
@@ -159,7 +157,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.height = 10;
             projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
             projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
-
         }
     }
 }
