@@ -575,6 +575,7 @@ namespace tsorcRevamp
                 player.jumpBoost = false;
                 player.jumpSpeedBoost = 0f;
                 player.wingTime = 0;
+                player.moveSpeed *= 0.8f;
             }
 
             for (int i = 0; i < 50; i++) {
@@ -1654,6 +1655,26 @@ namespace tsorcRevamp
                 player.moveSpeed += 0.9f;
                 player.endurance = .5f;
                 player.noKnockback = true;
+            }
+
+
+        }
+
+        public override void PostUpdate()
+        {
+            if ((player.HasBuff(ModContent.BuffType<MagicWeapon>()) || player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && player.meleeEnchant > 0)
+            {
+                int buffIndex = 0;
+
+                foreach (int buffType in player.buffType)
+                {
+
+                    if ((buffType == ModContent.BuffType<MagicWeapon>()) || (buffType == ModContent.BuffType<GreatMagicWeapon>()) || (buffType == ModContent.BuffType<CrystalMagicWeapon>()))
+                    {
+                        player.buffTime[buffIndex] = 0;
+                    }
+                    buffIndex++;
+                }
             }
         }
 
