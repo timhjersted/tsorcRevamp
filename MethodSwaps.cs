@@ -623,15 +623,19 @@ namespace tsorcRevamp {
 
         //boss zen actually zens
         internal static void BossZenPatch(On.Terraria.NPC.orig_SpawnNPC orig) {
+            bool BossZen = false;
+
             for (int i = 0; i < Main.maxPlayers; i++) {
                 if (!Main.player[i].active || Main.player[i].dead) { continue; }
                 if (Main.player[i].HasBuff(ModContent.BuffType<Buffs.BossZenBuff>())) {
-                    return;
+                    BossZen = true;
+                    break;
                 }
-                else {
-                    //Main.NewText("no boss zen");
-                    orig();
-                }
+            }
+
+            if (BossZen) { return; }
+            else {
+                orig();
             }
         }
 
