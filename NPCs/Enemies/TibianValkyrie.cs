@@ -56,9 +56,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (spawnInfo.player.townNPCs > 0f) chance = 0f; //wot?
-			if (spawnInfo.player.ZoneOverworldHeight && !Main.hardMode && !Main.dayTime) return 0.02857f;
-			if (spawnInfo.player.ZoneOverworldHeight && !Main.hardMode && Main.dayTime) return 0.0167f;
+			if (spawnInfo.player.townNPCs > 0f) chance = 0f;
+			if (spawnInfo.player.ZoneOverworldHeight && !Main.hardMode && !Main.dayTime) return 0.0327f;
+			if (spawnInfo.player.ZoneOverworldHeight && !Main.hardMode && Main.dayTime) return 0.028f;
 
 			if (!Main.hardMode && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneJungle)
 			{

@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                     int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
                     int x_blockpos = (int)npc.position.X / 16; // corner not center
                     int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                    int tp_radius = 15; // radius around target(upper left corner) in blocks to teleport into
+                    int tp_radius = 35; // radius around target(upper left corner) in blocks to teleport into
                     int tp_counter = 0;
                     bool flag7 = false;
                     if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 9000000f) { // far away from target; 4000 pixels = 250 blocks

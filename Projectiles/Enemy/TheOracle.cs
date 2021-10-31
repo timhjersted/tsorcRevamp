@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
 				Main.dust[dust].noGravity = false;
 			}
-			Lighting.AddLight(projectile.position, 0.4f, 0.1f, 0.1f);
+			Lighting.AddLight(projectile.position, 0.5f, 0.6f, 0.1f);
 
 			if (projectile.velocity.X <= 4 && projectile.velocity.Y <= 4 && projectile.velocity.X >= -4 && projectile.velocity.Y >= -4)
 			{

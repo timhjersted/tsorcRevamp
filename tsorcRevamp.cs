@@ -311,6 +311,7 @@ namespace tsorcRevamp {
                 414, //gold squirrel cage
                 463, //defenders forge
                 TileID.Titanium,
+                TileID.Pumpkins, //the harvestable kind, not the block
 
             };
 
@@ -446,7 +447,9 @@ namespace tsorcRevamp {
                 394, //sluggy cage
                 413, //red squirrel cage
                 414, //gold squirrel cage
-                463 //defender's forge
+                463, //defender's forge
+                TileID.Pumpkins //the harvestable kind, not the block
+
             };
             #endregion
             //--------
@@ -894,7 +897,9 @@ namespace tsorcRevamp {
             ToxicCatalyzerGlowmask,
             VirulentCatalyzerGlowmask,
             BiohazardGlowmask,
-            HealingElixirGlowmask
+            HealingElixirGlowmask,
+            ShatteredMoonlightGlowmask,
+            GreySlashGlowmask
 
         }          
         
@@ -924,7 +929,9 @@ namespace tsorcRevamp {
                 {TransparentTextureType.ToxicCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/ToxicCatalyzer_Glowmask")},
                 {TransparentTextureType.VirulentCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask")},
                 {TransparentTextureType.BiohazardGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask")},
-                {TransparentTextureType.HealingElixirGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Potions/HealingElixir_Glowmask")}
+                {TransparentTextureType.HealingElixirGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Potions/HealingElixir_Glowmask")},
+                {TransparentTextureType.ShatteredMoonlightGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask")},
+                {TransparentTextureType.GreySlashGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask")}
 
 
 

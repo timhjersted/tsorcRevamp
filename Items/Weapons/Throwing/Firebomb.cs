@@ -34,13 +34,5 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             item.maxStack = 999;
             item.thrown = true;
         }
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Grenade);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-        }
     }
 }

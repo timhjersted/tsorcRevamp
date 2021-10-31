@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.lifeMax = 60;
             npc.defense = 14;
             npc.value = 250;
-            npc.knockBackResist = 0.5f; //a tad less resist than granite golem
+            npc.knockBackResist = 0.35f;
             animationType = NPCID.GraniteGolem;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();

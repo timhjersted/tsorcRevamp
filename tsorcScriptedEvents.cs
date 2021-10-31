@@ -124,7 +124,12 @@ namespace tsorcRevamp
             BoulderfallEvent1,
             BoulderfallEvent2,
             BoulderfallEvent3,
-            FirbombHollowAmbush
+            FirebombHollowAmbush,
+            LeonhardPhase1Event,
+            HollowAmbush1,
+            GoblinAmbush1,
+            ShadowMageAmbush1,
+            BridgeAmbush1,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -170,12 +175,12 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, false, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, false, true, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, false, false, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
             List<Vector2> DunledingAmbushEnemyLocations = new List<Vector2>() { new Vector2(4697, 858), new Vector2(4645, 858), new Vector2(4645, 841) };
-            ScriptedEvent DunledingAmbush = new ScriptedEvent(new Vector2(4666, 856), 10, DunledingAmbushEnemyTypeList, DunledingAmbushEnemyLocations, default, false, false, "Ambush!", Color.Red, false, NormalModeCustomCondition, DundledingAmbushAction);
+            ScriptedEvent DunledingAmbush = new ScriptedEvent(new Vector2(4666, 856), 10, DunledingAmbushEnemyTypeList, DunledingAmbushEnemyLocations, default, true, false, "Ambush!", Color.Red, false, PreEoCCustomCondition, DundledingAmbushAction);
             if (Main.netMode == NetmodeID.SinglePlayer && Main.expertMode)
             {
                 DunledingAmbush.SetCustomStats((int?)(player.statLifeMax2 * .5f), null, (int?)(player.statLifeMax2 * 0.10f) + 25); //damage doesn't double for Expert
@@ -212,6 +217,31 @@ namespace tsorcRevamp
             List<Vector2> FirebombHollowAmbushEnemyLocations = new List<Vector2>() { new Vector2(3386, 367), new Vector2(3451, 367) };
             ScriptedEvent FirebombHollowAmbush = new ScriptedEvent(new Vector2(3418, 364), 10, FirebombHollowAmbushEnemyTypeList, FirebombHollowAmbushEnemyLocations, default, false, false, "Ambush!", Color.Red, false, default, FirebombHollowAmbushAction);
 
+            //LEONHARD PHASE 1 EVENT
+            ScriptedEvent LeonhardPhase1Event = new ScriptedEvent(new Vector2(3314, 355), 34, ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), 54, true, false, "You hear footsteps...", Color.Red, false);
+
+            //HOLLOW AMBUSH 1 - BOTTOM RIGHT OF EARTH TEMPLE
+            List<int> HollowAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
+            List<Vector2> HollowAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4446, 1211), new Vector2(4456, 1211) };
+            ScriptedEvent HollowAmbush1 = new ScriptedEvent(new Vector2(4422, 1210), 10, HollowAmbush1EnemyTypeList, HollowAmbush1EnemyLocations, default, false, false, "Ambush!", Color.Red, false, PreEoCCustomCondition, null);
+
+            //GOBLIN AMBUSH 1 - RIGHT OF WORLD SPAWN
+            List<int> GoblinAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.AbandonedStump>(), NPCID.GoblinSorcerer, NPCID.GoblinScout };
+            List<Vector2> GoblinAmbush1EnemyLocations = new List<Vector2>() { new Vector2(5012, 851), new Vector2(5013, 823), new Vector2(5049f, 839) };
+            ScriptedEvent GoblinAmbush1 = new ScriptedEvent(new Vector2(5028, 837), 18, GoblinAmbush1EnemyTypeList, GoblinAmbush1EnemyLocations, default, false, false, "Ambush!", Color.Red, false, PostEoWCustomCondition, null);
+
+            //SHADOW MAGE AMBUSH - IN TUNNEL AFTER TWIN EOW FIGHT
+            List<int> ShadowMageAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ShadowMage>() };
+            List<Vector2> ShadowMageAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4029, 1429), new Vector2(4074, 1399) };
+            ScriptedEvent ShadowMageAmbush1 = new ScriptedEvent(new Vector2(4060, 1418), 10, ShadowMageAmbush1EnemyTypeList, ShadowMageAmbush1EnemyLocations, DustID.CursedTorch, false, false, "Ambush!", Color.Red, false, PreSkeletronCustomCondition, null);
+            ShadowMageAmbush1.SetCustomStats(null, 18, null);
+
+            //BRIDGE AMBUSH 1 - ON BRIDGE POST EOW
+            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.TibianAmazon>(), NPCID.Piranha, NPCID.Piranha, NPCID.Piranha };
+            List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858), new Vector2(4608f, 870), new Vector2(4616f, 872), new Vector2(4626f, 870) };
+            ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, false, false, "Ambush!", Color.Red, false, PostEoWCustomCondition, null);
+
+
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
@@ -233,7 +263,16 @@ namespace tsorcRevamp
                 {ScriptedEventType.BoulderfallEvent1, BoulderfallEvent1},
                 {ScriptedEventType.BoulderfallEvent2, BoulderfallEvent2},
                 {ScriptedEventType.BoulderfallEvent3, BoulderfallEvent3},
-                {ScriptedEventType.FirbombHollowAmbush, FirebombHollowAmbush}
+                {ScriptedEventType.LeonhardPhase1Event, LeonhardPhase1Event},
+                {ScriptedEventType.HollowAmbush1, HollowAmbush1},
+                {ScriptedEventType.GoblinAmbush1, GoblinAmbush1},
+                {ScriptedEventType.ShadowMageAmbush1, ShadowMageAmbush1},
+                {ScriptedEventType.BridgeAmbush1, BridgeAmbush1},
+
+
+
+
+                //{ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush} currently disabled
 
             };
 
@@ -278,6 +317,22 @@ namespace tsorcRevamp
         public static bool NormalModeCustomCondition()
         {
             return !Main.hardMode;
+        }
+        public static bool PreEoCCustomCondition()
+        {
+            return !NPC.downedBoss1;
+        }
+        public static bool PreEoWCustomCondition()
+        {
+            return !NPC.downedBoss2;
+        }
+        public static bool PostEoWCustomCondition()
+        {
+            return NPC.downedBoss2;
+        }
+        public static bool PreSkeletronCustomCondition()
+        {
+            return !NPC.downedBoss3;
         }
         public static bool NightCustomCondition()
         {

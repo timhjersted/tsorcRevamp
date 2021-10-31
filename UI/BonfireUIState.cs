@@ -9,9 +9,9 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.UI {
     class BonfireUIState : UIState {
         public tsorcDragableUIPanel BonfireUI;
-        public tsorcUIHoverTextButton ButtonSetSpawn;
-        public tsorcUIHoverTextButton ButtonPiggyBank;
-        public tsorcUIHoverTextButton ButtonSafe;
+        //public tsorcUIHoverTextButton ButtonSetSpawn;
+        //public tsorcUIHoverTextButton ButtonPiggyBank;
+        //public tsorcUIHoverTextButton ButtonSafe;
         //public tsorcUIHoverTextButton ButtonClose;
 
         public static bool Visible = false;

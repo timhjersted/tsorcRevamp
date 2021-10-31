@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -11,8 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 3;
-			Main.npcFrameCount[npc.type] = 3;
+			Main.npcFrameCount[npc.type] = 2;
 			animationType = 29;
 			npc.aiStyle = 0;
 			npc.damage = 50;
@@ -44,8 +44,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			ice3Damage = (int)(ice3Damage / 2);
 		}
 
-		int oracleDamage = 20;
-		int ice3Damage = 30;
+		int oracleDamage = 25;
+		int ice3Damage = 35;
 
 		//float customAi1;
 
@@ -100,12 +100,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (npc.life > 50)
 			{
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 21, npc.velocity.X, npc.velocity.Y, 200, Color.Red, 1f);
+				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y, 200, default, 1f);
 				Main.dust[dust].noGravity = true;
 			}
 			else if (npc.life <= 50)
 			{
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 21, npc.velocity.X, npc.velocity.Y, 140, Color.Red, 2f);
+				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y, 140, default, 2f);
 				Main.dust[dust].noGravity = true;
 			}
 
@@ -262,8 +262,8 @@ namespace tsorcRevamp.NPCs.Enemies
 						int Paraspawn = 0;
 						if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 736 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.CursedSkull, 0);
 						if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 700 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - this.npc.width / 2, NPCID.CursedSkull, 0);
-						if (Random == 15) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 700 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - this.npc.width / 2, NPCID.Wraith, 0);
-						if (Random == 15) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 750 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - this.npc.width / 2, NPCID.Wraith, 0);
+						if (Random == 15 && Main.hardMode) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 700 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - this.npc.width / 2, NPCID.Wraith, 0);
+						if (Random == 15 && Main.hardMode) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 750 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - this.npc.width / 2, NPCID.Wraith, 0);
 
 						Main.npc[Paraspawn].velocity.X = npc.velocity.X;
 						npc.active = true;
@@ -284,47 +284,33 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 		}
 
-		#endregion
+        #endregion
 
-		public override void FindFrame(int currentFrame)
-		{
+        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+			Texture2D glowTexture = mod.GetTexture("NPCs/Enemies/ShadowMage_Glowmask");
+			SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-			if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2))
+			if (npc.spriteDirection == 1)
 			{
-				npc.frameCounter = 0;
-				npc.frame.Y = 0;
-				if (npc.position.X > Main.player[npc.target].position.X)
-				{
-					npc.spriteDirection = -1;
-				}
-				else
-				{
-					npc.spriteDirection = 1;
-				}
-			}
-
-			int num = 1;
-			if (!Main.dedServ)
-			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
-			}
-			if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2))
-			{
-				npc.frameCounter = 0;
-				npc.frame.Y = 0;
+				spriteBatch.Draw(glowTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 56, 54), lightColor, npc.rotation, new Vector2(28, 27), npc.scale, effects, 0f);
 			}
 			else
 			{
-				npc.frameCounter += 1.0;
+				spriteBatch.Draw(glowTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 56, 54), lightColor, npc.rotation, new Vector2(28, 27), npc.scale, effects, 0f);
 			}
-			if (npc.frameCounter >= 1.0)
+
+		}
+		public override void FindFrame(int frameHeight)
+		{
+
+			if ((npc.velocity.X != 0 || npc.velocity.Y != 0) || (npc.ai[0] >= 12 && npc.ai[2] < 5))
 			{
-				npc.frame.Y = npc.frame.Y + num;
-				npc.frameCounter = 0.0;
+				npc.frame.Y = 1 * frameHeight;
 			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+			else
 			{
-				npc.frame.Y = 0;
+				npc.frame.Y = 0 * frameHeight;
 			}
 		}
 
