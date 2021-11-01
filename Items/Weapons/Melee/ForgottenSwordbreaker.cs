@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
+            item.useStyle = ItemUseStyleID.SwingThrow;
             item.autoReuse = true;
             item.useTurn = true;
             item.rare = ItemRarityID.Pink;

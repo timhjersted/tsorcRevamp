@@ -97,12 +97,12 @@ namespace tsorcRevamp.NPCs.Enemies
             //Debug utilities
 
             //Main.NewText(Math.Abs(npc.velocity.X));
-            Main.NewText("AI_State is " + AI_State);
-            Main.NewText("AI_Timer_Shielding is " + AI_Timer_Shielding);
-            Main.NewText("AI_Timer_Attacking is " + AI_Timer_Attacking);
-            Main.NewText("AI_Timer is " + AI_Timer);
+            //Main.NewText("AI_State is " + AI_State);
+            //Main.NewText("AI_Timer_Shielding is " + AI_Timer_Shielding);
+            //Main.NewText("AI_Timer_Attacking is " + AI_Timer_Attacking);
+            //Main.NewText("AI_Timer is " + AI_Timer);
             //Main.NewText("npc.frameCounter is " + npc.frameCounter);
-            Main.NewText("Distance is " + npc.Distance(player.Center));
+            //Main.NewText("Distance is " + npc.Distance(player.Center));
             //Main.NewText("knockbackresist is " + npc.knockBackResist);
 
 

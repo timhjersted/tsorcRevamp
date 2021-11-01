@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override bool CanUseItem(Player player) {
-            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSun>()] > 10;
+            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSun>()] < 10;
         }
     }
 }

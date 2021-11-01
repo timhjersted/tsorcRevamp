@@ -622,7 +622,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (npc.ai[1] > 489)
                     {
-                        npc.ai[1] = 360;
+                        npc.ai[1] = 280;
                         stabbing = false;
                     }
 
