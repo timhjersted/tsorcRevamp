@@ -46,6 +46,10 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
             npc.lavaImmune = true;
+            npc.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
+            npc.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
+            npc.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
+
             /*banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
         }
@@ -77,9 +81,10 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player player = Main.player[npc.target];
 
-            if (npc.Distance(player.Center) < 1000)
+            if (npc.Distance(player.Center) < 600)
             {
                 player.ZonePeaceCandle = true;
+                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
             }
 
             int lifePercentage = (npc.life * 100) / npc.lifeMax;
@@ -237,13 +242,22 @@ namespace tsorcRevamp.NPCs.Enemies
                 int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
                 int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
 
-                if (npc.position.Y > player.position.Y + 3 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 4f * 16)
+                if (npc.position.Y > player.position.Y + 3 * 16 && npc.position.Y < player.position.Y + 8 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                 {
                     slashing = true;
                     npc.ai[3] = 22;
                     npc.velocity.Y = -8f; // jump with power 8 if directly under player
                     npc.netUpdate = true;
                 }
+
+                if (npc.position.Y >= player.position.Y + 8 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+                {
+                    slashing = true;
+                    npc.ai[3] = 10;
+                    npc.velocity.Y = -9.5f; // jump with power 9.5 if directly under player
+                    npc.netUpdate = true;
+                }
+
 
                 if (Main.tile[x_in_front, y_above_feet] == null)
                 {
@@ -336,7 +350,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!shielding && !jumpSlashing && !stabbing)
             {
-                if (npc.ai[3] == 10 && npc.Distance(player.Center) < 55)
+                if (npc.ai[3] == 10 && npc.Distance(player.Center) < 55 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                 {
                     slashing = true;
                 }
@@ -460,7 +474,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!shielding && !slashing && !stabbing)
             {
-                if (npc.ai[1] == 420 && npc.Distance(player.Center) < 150 && npc.Distance(player.Center) >= 55 && npc.velocity.Y == 0 && standing_on_solid_tile) //If timer is at 0 and player is within range
+                if (npc.ai[1] == 420 && npc.Distance(player.Center) < 150 && npc.Distance(player.Center) >= 55 && npc.velocity.Y == 0 && standing_on_solid_tile && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0)) //If timer is at 0 and player is within range
                 {
                     jumpSlashing = true;
                 }
@@ -550,7 +564,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //Dash Stab
             if (!shielding && !slashing && !jumpSlashing)
             {
-                if (npc.ai[1] == 420 && npc.Distance(player.Center) < 300 && npc.Distance(player.Center) >= 150 && npc.velocity.Y == 0) //If timer is at 0 and player is within range
+                if (npc.ai[1] == 420 && npc.Distance(player.Center) < 300 && npc.Distance(player.Center) >= 150 && npc.velocity.Y == 0 && Math.Abs(npc.Center.Y - player.Center.Y) < 6.5f * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0)) //If timer is at 0 and player is within range
                 {
                     stabbing = true;
                 }

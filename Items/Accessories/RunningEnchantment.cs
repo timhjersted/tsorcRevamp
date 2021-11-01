@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
     public class RunningEnchantment : ModItem {
+        public override bool Autoload(ref string name) => ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Running Enchantment");
             Tooltip.SetDefault("Adds an enchantment to your feet\n" +

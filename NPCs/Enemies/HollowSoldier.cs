@@ -222,7 +222,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
                     int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
 
-                    if (npc.position.Y > player.position.Y + 3 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 4f * 16)
+                    if (npc.position.Y > player.position.Y + 3 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 4f * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                     {
                         slashing = true;
                         npc.ai[3] = 20;
@@ -321,7 +321,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!shielding && !jumpSlashing)
             {
-                if (npc.ai[3] == 10 && npc.Distance(player.Center) < 50)
+                if (npc.ai[3] == 10 && npc.Distance(player.Center) < 50 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                 {
                     slashing = true;
                 }
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!shielding && !slashing)
             {
-                if (npc.ai[1] == 420 && npc.Distance(player.Center) < 140 && npc.Distance(player.Center) >= 50 && npc.velocity.Y == 0 && standing_on_solid_tile) //If timer is at 0 and player is within slash range
+                if (npc.ai[1] == 420 && npc.Distance(player.Center) < 140 && npc.Distance(player.Center) >= 50 && npc.velocity.Y == 0 && standing_on_solid_tile && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0)) //If timer is at 0 and player is within slash range
                 {
                     jumpSlashing = true;
                 }
@@ -720,7 +720,10 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.expertMode && Main.bloodMoon && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
 
             if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.035f;
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.05f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.075f;
+
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime) return chance = 0.06f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime) return chance = 0.08f;
 
             if (NPC.downedBoss2 || NPC.downedBoss3) return chance = 0.025f;
 

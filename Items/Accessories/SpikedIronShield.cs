@@ -6,6 +6,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
 
+    [AutoloadEquip(EquipType.Shield)]
+
     public class SpikedIronShield : ModItem {
 
         public override void SetStaticDefaults() {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -9,10 +10,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
     class GreatSoulArrowStaff : ModItem
     {
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+        public override string Texture => "tsorcRevamp/Items/Weapons/Magic/SoulArrowStaff";
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Soul Arrow Staff");
+            DisplayName.SetDefault("Great Soul Arrow");
             Tooltip.SetDefault("Shoots a lightly homing great soul arrow" +
                                 "\nwhich can leave enemies Soulstruck" +
                                 "\nSoulstruck enemies drop 10% more souls");
@@ -34,11 +36,30 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.value = 15000;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.GreatSoulArrow>();
+            item.rare = ItemRarityID.Green;
         }
+
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-6, 0);
         }
+
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = mod.GetTexture("Items/Weapons/Magic/GreatSoulArrow_Scroll");
+            spriteBatch.Draw(texture, position, new Rectangle(0, 0, texture.Width, texture.Height), drawColor, 0f, origin, scale, SpriteEffects.None, 0.1f);
+
+            return false;
+        }
+
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            Texture2D texture = mod.GetTexture("Items/Weapons/Magic/GreatSoulArrow_Scroll");
+            spriteBatch.Draw(texture, item.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, 0f, new Vector2(19, 20), item.scale, SpriteEffects.None, 0.1f);
+
+            return false;
+        }
+
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
 
             Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 25f;

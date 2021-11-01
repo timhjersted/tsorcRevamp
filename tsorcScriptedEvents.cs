@@ -130,6 +130,7 @@ namespace tsorcRevamp
             GoblinAmbush1,
             ShadowMageAmbush1,
             BridgeAmbush1,
+            LothricAmbush1,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack,
@@ -217,7 +218,7 @@ namespace tsorcRevamp
             List<Vector2> FirebombHollowAmbushEnemyLocations = new List<Vector2>() { new Vector2(3386, 367), new Vector2(3451, 367) };
             ScriptedEvent FirebombHollowAmbush = new ScriptedEvent(new Vector2(3418, 364), 10, FirebombHollowAmbushEnemyTypeList, FirebombHollowAmbushEnemyLocations, default, false, false, "Ambush!", Color.Red, false, default, FirebombHollowAmbushAction);
 
-            //LEONHARD PHASE 1 EVENT
+            //LEONHARD PHASE 1 EVENT - BY ADAMANTITE GATE ACROSS BRIDGE FROM WIZARDS HOUSE
             ScriptedEvent LeonhardPhase1Event = new ScriptedEvent(new Vector2(3314, 355), 34, ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), 54, true, false, "You hear footsteps...", Color.Red, false);
 
             //HOLLOW AMBUSH 1 - BOTTOM RIGHT OF EARTH TEMPLE
@@ -241,6 +242,10 @@ namespace tsorcRevamp
             List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858), new Vector2(4608f, 870), new Vector2(4616f, 872), new Vector2(4626f, 870) };
             ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, false, false, "Ambush!", Color.Red, false, PostEoWCustomCondition, null);
 
+            //LOTHRIC AMBUSH 1 - IN ROOM BELOW ARTORIAS BOSS FIGHT ROOM, APPROACHING JUNGLE PYRAMID FROM FORGOTTEN CITY
+            List<int> LothricAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>(), ModContent.NPCType<NPCs.Enemies.LothricSpearKnight>() };
+            List<Vector2> LothricAmbush1EnemyLocations = new List<Vector2>() { new Vector2(5148, 1757), new Vector2(5197, 1757) };
+            ScriptedEvent LothricAmbush1 = new ScriptedEvent(new Vector2(5173, 1750), 6, LothricAmbush1EnemyTypeList, LothricAmbush1EnemyLocations, DustID.DungeonWater, false, false, "Ambush!", Color.Red, false, PreMechCustomCondition, null);
 
 
             //Every enum and ScriptedEvent has to get paired up here
@@ -268,6 +273,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.GoblinAmbush1, GoblinAmbush1},
                 {ScriptedEventType.ShadowMageAmbush1, ShadowMageAmbush1},
                 {ScriptedEventType.BridgeAmbush1, BridgeAmbush1},
+                {ScriptedEventType.LothricAmbush1, LothricAmbush1},
 
 
 
@@ -333,6 +339,10 @@ namespace tsorcRevamp
         public static bool PreSkeletronCustomCondition()
         {
             return !NPC.downedBoss3;
+        }
+        public static bool PreMechCustomCondition()
+        {
+            return !NPC.downedMechBossAny;
         }
         public static bool NightCustomCondition()
         {

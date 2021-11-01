@@ -35,6 +35,10 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.DeathSound = SoundID.NPCDeath2;
             npc.noTileCollide = false;
             npc.lavaImmune = true;
+            npc.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
+            npc.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
+            npc.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
+
             /*banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
         }
@@ -77,15 +81,14 @@ namespace tsorcRevamp.NPCs.Enemies
             set => npc.ai[AI_Timer_Slot] = value;
         }
 
-        
-
         public override void AI()
         {
             Player player = Main.player[npc.target];
 
-            if (npc.Distance(player.Center) < 1000)
+            if (npc.Distance(player.Center) < 600)
             {
                 player.ZonePeaceCandle = true;
+                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
             }
 
             int lifePercentage = (npc.life * 100) / npc.lifeMax;
@@ -279,11 +282,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 #region New Tile()s, jumping
                 if (standing_on_solid_tile)  //  if standing on solid tile
                 {                            
-                    if (npc.position.Y > player.position.Y + 3 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 3f * 16) 
+                    if (npc.position.Y > player.position.Y + 3 * 16 && npc.position.Y < player.position.Y + 8 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0)) 
                     {
                         npc.velocity.Y = -8f; // jump with power 8 if directly under player
                         npc.netUpdate = true;
                     }
+
+                    if (npc.position.Y >= player.position.Y + 8 * 16 && Math.Abs(npc.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+                    {
+                        npc.velocity.Y = -9.5f; // jump with power 9.5 if directly under player
+                        npc.netUpdate = true;
+                    }
+
 
                     if (Main.tile[x_in_front, y_above_feet] == null)
                     {

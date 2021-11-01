@@ -9,6 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wand of Darkness");
+            Tooltip.SetDefault("Shoots a piercing bolt of darkness");
             Item.staff[item.type] = true;
         }
         public override void SetDefaults() {
@@ -20,8 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useTime = 25;
             item.damage = 11;
             item.knockBack = 1f;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 3;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 2;
+            item.mana = 2;
             item.UseSound = SoundID.Item8;
             item.shootSpeed = 6;
             item.noMelee = true;

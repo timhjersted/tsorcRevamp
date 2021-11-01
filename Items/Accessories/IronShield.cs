@@ -4,6 +4,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Accessories {
+
+    [AutoloadEquip(EquipType.Shield)]
+
     public class IronShield : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Greater defense at the cost of mobility" +

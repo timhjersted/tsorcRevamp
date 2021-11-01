@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (projectile.ai[0] < 2)
             {
-                AIBoomerang(projectile, ref projectile.ai, default(Vector2), -1, -1, true, 12f, 15, 1.2f, .8f, false);
+                AIBoomerang(projectile, ref projectile.ai, default(Vector2), -1, -1, true, 15f, 15, 1.2f, .8f, false);
             }
 
             if (projectile.ai[0] == 2)
@@ -149,7 +149,7 @@ namespace tsorcRevamp.Projectiles
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
-         {
+        {
             if (projectile.ai[0] < 2)
             {
                 projectile.ai[0] = 1f;

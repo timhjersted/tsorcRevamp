@@ -97,6 +97,12 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>());
 			nextSlot++;
+			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+			{
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.FarronDart>());
+				shop.item[nextSlot].shopCustomPrice = 15000;
+				nextSlot++;
+			}
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedMageHat>());

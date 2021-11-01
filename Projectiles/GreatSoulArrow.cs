@@ -54,9 +54,40 @@ namespace tsorcRevamp.Projectiles
 				}
 			}
 
-			int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * -.05f, projectile.velocity.Y * -.05f, 30, default(Color), 1f);
-			Main.dust[dust].noGravity = true;
+			if (projectile.velocity.X > 0) //if going right
+			{
+				for (int d = 0; d < 6; d++)
+				{
+					int num44 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 2), projectile.width - 2, projectile.height - 2, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+					Main.dust[num44].noGravity = true;
+					Main.dust[num44].velocity *= 0f;
+				}
 
+				for (int d = 0; d < 6; d++)
+				{
+					int num45 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 2), projectile.width - 6, projectile.height - 2, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), .5f);
+					Main.dust[num45].noGravity = true;
+					Main.dust[num45].velocity *= 0f;
+					Main.dust[num45].fadeIn *= 1f;
+				}
+			}
+			else //if going left
+			{
+				for (int d = 0; d < 6; d++)
+				{
+					int num44 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width - 2, projectile.height - 2, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+					Main.dust[num44].noGravity = true;
+					Main.dust[num44].velocity *= 0f;
+				}
+
+				for (int d = 0; d < 6; d++)
+				{
+					int num45 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width - 6, projectile.height - 2, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), .5f);
+					Main.dust[num45].noGravity = true;
+					Main.dust[num45].velocity *= 0f;
+					Main.dust[num45].fadeIn *= 1f;
+				}
+			}
 
 			if (projectile.alpha > 70)
 			{
@@ -119,9 +150,9 @@ namespace tsorcRevamp.Projectiles
 
 		public override void Kill(int timeLeft)
 		{
-			for (int d = 0; d < 20; d++)
+			for (int d = 0; d < 25; d++)
 			{
-				int dust = Dust.NewDust(projectile.Center, 10, 10, 172, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(projectile.Center, 10, 10, 172, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1.5f);
 				Main.dust[dust].noGravity = true;
 			}
 			Main.PlaySound(SoundID.NPCHit3.WithVolume(.6f), projectile.position);
