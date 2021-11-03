@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items.Weapons.Throwing
             item.shootSpeed = 6.5f;
             item.useAnimation = 50;
             item.useTime = 50;
-            item.crit = 4;
             item.UseSound = SoundID.Item1;
             item.consumable = true;
             item.maxStack = 999;

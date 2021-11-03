@@ -104,7 +104,7 @@ namespace tsorcRevamp.NPCs.Special
             if (npc.Distance(player.Center) < 1000)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
-                Main.NewText(player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff);
+                //Main.NewText(player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff);
             }
 
             int lifePercentage = (npc.life * 100) / npc.lifeMax;
