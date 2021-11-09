@@ -28,13 +28,28 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 7000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            recipe.AddRecipe(); 
+
+            ModRecipe recipe2 = new ModRecipe(mod);
+            recipe2.AddIngredient(ItemID.LightningBoots, 1);
+            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 7000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.SetResult(this, 1);
+            recipe2.AddRecipe();
+
+            ModRecipe recipe3 = new ModRecipe(mod);
+            recipe3.AddIngredient(ItemID.FrostsparkBoots, 1);
+            recipe3.AddIngredient(mod.GetItem("DarkSoul"), 7000);
+            recipe3.AddTile(TileID.DemonAltar);
+            recipe3.SetResult(this, 1);
+            recipe3.AddRecipe();
         }
 
         public override void UpdateEquip(Player player) {
             player.noKnockback = true;
             player.moveSpeed += 0.2f;
             player.rocketBoots = 2;
+            player.iceSkate = true;
 
             bool restricted = false;
             for (int i = 3; i <= 8; i++) {

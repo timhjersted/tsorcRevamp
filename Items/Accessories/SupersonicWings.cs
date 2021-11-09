@@ -51,6 +51,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.fireWalk = true;
             player.noKnockback = true;
             player.canRocket = true;
+            player.iceSkate = true;
             player.jumpSpeedBoost = 1.3f;
             player.wingTimeMax = 12000;
 

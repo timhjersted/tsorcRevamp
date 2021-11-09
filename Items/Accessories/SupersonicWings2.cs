@@ -53,6 +53,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.noKnockback = true;
             player.noFallDmg = true;
             player.canRocket = true;
+            player.iceSkate = true;
             player.rocketTime = 1200;
             player.rocketBoots = 2;
             player.rocketTimeMax = 1200;
