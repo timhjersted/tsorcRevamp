@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons {
@@ -10,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons {
 				"\nDev item used for testing purposes only" +
 				"\nUsing this may cause irreversible effects on your world");
 		}
-
+		
 		public override void SetDefaults() {
 			item.damage = 999999;
 			item.knockBack = 4;
@@ -40,7 +41,15 @@ namespace tsorcRevamp.Items.Weapons {
 		}
 		public override bool CanUseItem(Player player)
         {
-			if (player.name == "Zeodexic" || player.name == "RecursiveCollapse" || player.name == "Chroma TSORC test")
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+			{
+				Main.NewText("client");
+			}
+			if (Main.netMode == NetmodeID.Server)
+			{
+				NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("server"), Color.Blue);
+			}
+			if (player.name == "Zeodexic" || player.name.Contains("Sam") || player.name == "Chroma TSORC test")
 			{
 				return true;
 			}

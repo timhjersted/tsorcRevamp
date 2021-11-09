@@ -5,23 +5,38 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
     class EnemyArrowOfDarkCloud : ModProjectile
     {
         public override void SetDefaults()
         {
-            projectile.aiStyle = 1;
+            projectile.aiStyle = 0;
             projectile.width = 10;
             projectile.height = 5;
             projectile.hostile = true;
             projectile.penetrate = 2;
             projectile.ranged = true;
-            projectile.tileCollide = true;
+            projectile.tileCollide = false;
         }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Arrow of Dark Cloud");
+        }
+
+        
+        public override void AI()
+        {
+            //Secret forbidden color unlocked: Green 3
+            Lighting.AddLight(projectile.Center, Color.SeaGreen.ToVector3() * 3);
+            projectile.velocity.Y += 0.05f;
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile);
+            return false;
         }
 
         #region Kill
@@ -53,16 +68,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             projectile.active = false;
         }
-        #endregion
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300, false); //jumping and flying is crippled
-           
-            if (Main.rand.Next(10) == 0)
-            {
-                Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1200, false); //jumping and flying is crippled
-            }
-        }
+        #endregion       
     }
 }

@@ -1,4 +1,10 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp {
 
@@ -138,6 +144,132 @@ namespace tsorcRevamp {
         public static readonly int Purple_11 = Item.buyPrice(platinum: 1, gold: 20, silver: 0, copper: 0);
 
 
+
+    }
+
+    public static class UsefulFunctions
+    {
+        
+        //Returns a vector pointing from a source point to a target point, at a speed.
+        //Intended for projectiles. Just give it the info, and it will give you a velocity vector for that projectile to fire it at that speed.
+        //Can be used for non-projectile things too though, such as making a weapon point at a target point, or an NPC dash toward a certain point.
+        //No more need to rewrite the exact same vector math 100000 times
+        public static Vector2 GenerateTargetingVector(Vector2 source, Vector2 target, float speed)
+        {
+            Vector2 diff = target - source;
+            float angle = diff.ToRotation();
+            Vector2 velocity = new Vector2(speed, 0);
+            velocity = velocity.RotatedBy(angle);
+            return velocity;
+        }
+
+        //Draws the projectile, but fully lit so that it's actually visible in the dark. Even works for animated ones! Isn't technology wonderful
+        //Just stick it in predraw, follow it up with "return false;", and let it do its thing
+        //If you're using a custom texture, feel free to specify it. If not, it will use the projectile's default texture.
+        public static void DrawSimpleLitProjectile(SpriteBatch spriteBatch, Projectile projectile, Texture2D texture = null)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+
+            if (texture == null)
+            {
+                texture = ModContent.GetTexture(projectile.modProjectile.Texture);
+            }
+
+            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int startY = frameHeight * projectile.frame;
+            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            Main.spriteBatch.Draw(texture,
+                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
+                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+        }    
+        
+        //Generates a ring of dust with various properties. Simple enough.
+        public static void DustRing(Vector2 center, float radius, int dustID, int dustCount = 5, float dustSpeed = 2)
+        {
+            for (int j = 0; j < dustCount; j++)
+            {
+                Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
+                Vector2 dustPos = center + dir;
+                Vector2 dustVel = new Vector2(dustSpeed, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                Dust.NewDustPerfect(dustPos, dustID, dustVel, 200).noGravity = true;
+            }
+        }
+
+        /**INCOMPLETE!!!
+         
+        //TODO:
+        //1) Maybe restructure this. Could maybe sync a long queue of randomly generated numbers instead? 
+        //Being able to check to validate the queues are all in sync *long* before any given value is used would make it far less vulnerable to desyncs
+        //But it would introduce whole new issues if the queue ran out, as well as take more network traffic to validate a whole queue instead of just a seed and tally...
+        //2) Add a check every few frames to ensure they're still all in sync, and figure out what is causing occasional desyncs (client tick lag?)
+        //3) Add a check so that if this is called in code that *only* runs on the client (like PreDraw or item Shoot) it doesn't desync
+        //Instead it must return the normal Main.rand. The client calling SyncedRand when the server does not will throw it out of sync.
+
+        //SyncedRand is a random number generator which is *already* synced.
+        //This existed in tConfig, but TML dropped it. It's *extremely* useful and makes worrying about MP desyncs a non-issue in many cases
+
+        /**Here's how it works: In tsorcRevampPlayer.SyncPlayer, upon anyone joining the server GenerateRandomSeed is called.
+        //The server picks a random seed, and sends it to all players.
+        //Whenever the function is called, the server and every client all roll a random value based off the same seed
+
+        
+
+        //The random generator. Initiated with a seed.
+        static Terraria.Utilities.UnifiedRandom SyncedRand;
+        
+        //Used to initiate the random number generator. Synced across all devices.
+        //Seed is normally an int, it's a byte here because packets use bytes and we don't need it to be secure.
+        public static byte seed;
+
+        //Increases every time the random number generator is used. Compared across devices to make sure none fall out of sync.
+        public static int tally = 0;
+
+        //The main important function here. Returns a synced rand, and also adds a tally while it does so. If single player, we don't need to sync anything and can just default to the normal Main.rand.
+        public static Terraria.Utilities.UnifiedRandom GetSyncedRand()
+        {
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                return Main.rand;
+            }
+            else
+            {
+                tally++;
+                return SyncedRand;
+            }
+        }        
+
+        //Called on the server, generates a seed and sends it to clients
+        public static void GenerateRandomSeed()
+        {
+            //Reset tally
+            tally = 0;
+            //Generate seed and start up a new random based on it
+            seed = (byte)Main.rand.Next();
+            SyncedRand = new Terraria.Utilities.UnifiedRandom(seed);
+            
+            NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Server sending seed: " + seed), Color.Blue);
+
+            //Create a new packet to send the seed to clients
+            ModPacket randPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+            randPacket.Write((byte)2);
+            randPacket.Write(seed);
+            randPacket.Send();            
+        }
+
+        //Called by the client in HandlePacket once it recieves the seed and current tally count, and instantiates the SyncedRand with it.
+        public static void RecieveRandPacket(byte recievedSeed, int tallyCount)
+        {   
+            seed = recievedSeed;
+            tally = 0;
+            Main.NewText("Client seed: " + seed);
+            SyncedRand = new Terraria.Utilities.UnifiedRandom(seed);
+        }
+        ***/
 
     }
 

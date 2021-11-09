@@ -5,19 +5,19 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles.Enemy
+namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
-    class EnemyDragoonLance : ModProjectile
+    class DarkCloudDragoonLance : ModProjectile
     {
         public override void SetDefaults()
         {
-            projectile.width = 19;
+            projectile.width = 14;
             projectile.height = 161;
-            projectile.aiStyle = 19;
-            projectile.timeLeft = 700;
-            projectile.penetrate = 12;
+            //projectile.aiStyle = 19;
+            //projectile.timeLeft = 700;
+            //projectile.penetrate = 12;
             projectile.hostile = true;
-            projectile.tileCollide = true;
+            projectile.tileCollide = false;
         }
 
         public override void SetStaticDefaults()
@@ -25,8 +25,25 @@ namespace tsorcRevamp.Projectiles.Enemy
             DisplayName.SetDefault("Dragoon Lance");
         }
 
-        #region Kill
-        public override void Kill(int timeLeft)
+		public override void AI()
+		{
+            Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3());
+            if(projectile.ai[0] > 0)
+            {
+                projectile.ai[0]--;
+                if(projectile.ai[0] == 0) 
+                {
+                    projectile.velocity = new Vector2(-1, -30);
+                }
+                else
+                {
+                    projectile.velocity = new Vector2(0, -1);
+                }
+            }
+		}
+
+		#region Kill
+		public override void Kill(int timeLeft)
         {
             if (!projectile.active)
             {
@@ -53,5 +70,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.active = false;
         }
         #endregion
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile);
+            return false;
+        }
     }
 }

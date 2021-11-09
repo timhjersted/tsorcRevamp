@@ -421,6 +421,7 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.WolfRing>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfArtorias>(), 4);
+            player.QuickSpawnItem(ModContent.ItemType<BossItems.DarkMirror>());
         }
     }
     public class DarkCloudBag : BossBag
@@ -439,7 +440,14 @@ namespace tsorcRevamp.Items.BossBags {
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Humanity>(), 3);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DuskCrownRing>());
+            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.ReflectionShift>());
+            }
+            else
+            {
+                player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DuskCrownRing>());
+            }
         }
     }
     public class HellkiteBag : BossBag

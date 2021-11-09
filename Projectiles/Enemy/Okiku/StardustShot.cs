@@ -57,7 +57,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            //Get the premultiplied, properly transparent texture
             Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot");
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;

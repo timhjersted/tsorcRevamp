@@ -144,26 +144,26 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ABYSMAL OOLACILE SORCERER
-            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.MagicMirror, true, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.MagicMirror, false, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
 
             //WITCHKING
-            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.MagicMirror, true, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.MagicMirror, false, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
             
             //BLIGHT
-            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, "The Blight surfaces from the ocean!", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, false, true, "The Blight surfaces from the ocean!", Color.Blue, false, SuperHardModeCustomCondition);
             //BlightEvent.SetCustomStats(50000, 30, 50);
 
             //CHAOS
-            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.MagicMirror, true, true, "Chaos has entered this dimension!", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.MagicMirror, false, true, "Chaos has entered this dimension!", Color.Red, false, SuperHardModeCustomCondition);
 
             //WYVERN MAGE 
-            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6342, 217), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, true, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6342, 217), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, false, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
           
             //DARK CLOUD
-            ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, false, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
 
             //ARTORIAS
-            ScriptedEvent ArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, true, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ArtoriasCustomAction);
+            ScriptedEvent ArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ArtoriasCustomAction);
             ArtoriasEvent.SetCustomStats(50000, 30, 50);
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
@@ -640,7 +640,7 @@ namespace tsorcRevamp
                     {
                         float distance = Vector2.DistanceSquared(player.position, InactiveEvents[i].centerpoint);
                         int dustPerTick = 20;
-                        float speed = 2;
+                        float speed = 2f;
                         if (!InactiveEvents[i].square)
                         {
                             //If the player is nearby, display some dust to make the region visible to them
@@ -650,11 +650,12 @@ namespace tsorcRevamp
                                 float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
                                 for (int j = 0; j < dustPerTick; j++)
                                 {
-                                    Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
-                                    Vector2 dustPos = InactiveEvents[i].centerpoint + dir * sqrtRadius;
+                                   
+                                    Vector2 dir = Main.rand.NextVector2CircularEdge(sqrtRadius, sqrtRadius);
+                                    Vector2 dustPos = InactiveEvents[i].centerpoint + dir;
                                     if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
                                     {
-                                        Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
+                                        Vector2 dustVel = new Vector2(speed, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
                                         Dust dustID = Dust.NewDustPerfect(dustPos, InactiveEvents[i].dustID, dustVel, 200);
                                         dustID.noGravity = true;
                                     }
@@ -925,6 +926,7 @@ namespace tsorcRevamp
         //Runs the event
         public void RunEvent(Player player)
         {
+
             //If this is its first time running, spawn the NPC's and display the text
             if (eventTimer == 0)
             {
@@ -949,6 +951,20 @@ namespace tsorcRevamp
             if (hasCustomAction)
             {               
                 if(CustomAction(player, this))
+                {
+                    EndEvent();
+                }
+            }
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                //If any player is alive, do nothing
+                if (Main.player[i].active)
+                {
+                    break;
+                }
+                //If we reach the end without hitting one, end the event.
+                if (i - 1 == Main.maxPlayers)
                 {
                     EndEvent();
                 }

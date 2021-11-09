@@ -1161,8 +1161,9 @@ namespace tsorcRevamp.NPCs
         ///Handles all targeting and despawning.
         ///</summary>         
         ///<param name="npcID">The ID of the NPC in question.</param>
-        public void TargetAndDespawn(int npcID)
+        public bool TargetAndDespawn(int npcID)
         {
+            
             //When despawning, we set timeLeft to 240. If that's been done, we don't need to check for players or target anyone anymore.
             if (despawnTime < 0)
             {
@@ -1238,7 +1239,14 @@ namespace tsorcRevamp.NPCs
                     Main.dust[dustID].noGravity = true;
                     despawnTime--;
                 }
+
+                //The frame before despawning, we return true to let the NPC's AI know it's about to get despawned. This allows it to do anything it needs to with that information (like re-actuating the pyramid)
+                if (despawnTime == 1)
+                {
+                    return true;
+                }
             }
+            return false;
         }
     }
 }

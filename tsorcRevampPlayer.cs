@@ -21,6 +21,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Audio;
 using tsorcRevamp.Projectiles.Pets;
 using static tsorcRevamp.TransparentTextureHandler;
+using Terraria.Localization;
 
 namespace tsorcRevamp
 {
@@ -141,6 +142,18 @@ namespace tsorcRevamp
         public int bossMagnetTimer;
         public bool bossMagnet;
 
+        public bool ShadowWeight;
+
+        public bool ReflectionShiftEnabled; //Does the player have it equipped?
+        public int ReflectionShiftKeypressTime = 0; //If they just pressed an arrow key, this is set to 15. It counts down to 0. If another arrow key is pressed when it is not zero, a dash initiates.
+        public Vector2 ReflectionShiftState = Vector2.Zero;
+        int[] keyPrimed = new int[4] { 0, 0, 0, 0 }; //Holds the state of each key
+
+        public static readonly int DashDown = 0;
+        public static readonly int DashUp = 1;
+        public static readonly int DashRight = 2;
+        public static readonly int DashLeft = 3;
+
         public UIItemSlot SoulSlot;
         public override void Initialize()
         {
@@ -219,11 +232,32 @@ namespace tsorcRevamp
         }
 
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+
+            //Sync soul slot
             ModPacket packet = mod.GetPacket();
-            packet.Write((byte)1);
+            packet.Write((byte)tsorcPacketID.SyncSoulSlot);
             packet.Write((byte)player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                Main.NewText("Client running!");
+            }
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Server running!"), Color.Blue);
+            }
+
+
+            /**
+            //For synced random. Called when a new player connects.
+            //The server (and only the server) generates a new random seed and sends it to all clients.
+            //Could probably get away with not re-seeding the generator every time, instead just syncing the tally and using it to bring new clients up to date. 
+            if (Main.netMode == NetmodeID.Server)
+            {
+                UsefulFunctions.GenerateRandomSeed();
+            }
+            **/
         }
 
         internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho) {
@@ -272,8 +306,6 @@ namespace tsorcRevamp
 
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
-
-
         }
 
         public override void ResetEffects() {
@@ -317,9 +349,11 @@ namespace tsorcRevamp
             ConsSoulChanceMult = 0;
             SoulSickle = false;
             Crippled = false;
-    }
+            ShadowWeight = false;
+            ReflectionShiftEnabled = false;
+        }
 
-    public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
+        public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
         {
 
             //This is going here, because unlike most hooks this one keeps running even when the game is paused via AutoPause
@@ -560,6 +594,28 @@ namespace tsorcRevamp
             {
 
                 player.gravControl = true;
+            }
+
+            if (ShadowWeight)
+            {
+                player.doubleJumpBlizzard = false;
+                player.doubleJumpFart = false;
+                player.doubleJumpSail = false;
+                player.doubleJumpSandstorm = false;
+                player.doubleJumpUnicorn = false;
+                player.canRocket = false;
+                player.rocketTime = 0;
+                player.jumpBoost = false;
+                player.wingTime = 0;
+                float speedCap = 12;
+                if(player.velocity.X > speedCap)
+                {
+                    player.velocity.X = speedCap;
+                }
+                if (player.velocity.X < -speedCap)
+                {
+                    player.velocity.X = -speedCap;
+                }
             }
 
             if (Crippled)
@@ -888,8 +944,39 @@ namespace tsorcRevamp
             #endregion
 
 
+            float shiftDistance = 7;
+            #region Reflection Shift
 
+            if (ReflectionShiftKeypressTime > 20)
+            {
+                player.immune = true;
+            }
 
+            if (ReflectionShiftState != Microsoft.Xna.Framework.Vector2.Zero)
+            {
+                //Initiate Dash
+                for (int i = 0; i < 30; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
+                    Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
+                    Dust.NewDustPerfect(player.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                }
+                if (Collision.CanHit(player.Center, 1, 1, player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1) || Collision.CanHitLine(player.Center, 1, 1, player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1))
+                {
+                    player.Center += ReflectionShiftState * shiftDistance * 16; //Teleport distance
+                }
+                
+                player.velocity = ReflectionShiftState * 20; //Dash speed
+                ReflectionShiftState = Vector2.Zero;                
+                
+                for (int i = 0; i < 30; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
+                    Vector2 velocity = new Vector2(5, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
+                    Dust.NewDustPerfect(player.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                }
+            }
+            #endregion
         }
 
         public override void PostUpdateRunSpeeds()
@@ -1473,7 +1560,28 @@ namespace tsorcRevamp
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
-        }
+            if (tsorcRevamp.reflectionShiftKey.JustPressed) { 
+                if (ReflectionShiftEnabled)
+                {
+                    if (player.controlUp)
+                    {
+                        ReflectionShiftState.Y = -1;
+                    }
+                    if (player.controlLeft)
+                    {
+                        ReflectionShiftState.X = -1;
+                    }
+                    if (player.controlRight)
+                    {
+                        ReflectionShiftState.X = 1;
+                    }
+                    if (player.controlDown)
+                    {
+                        ReflectionShiftState.Y = 1;
+                    }
+                }
+        }}
+        
 
         public override void PreUpdate()
         {
@@ -1551,9 +1659,6 @@ namespace tsorcRevamp
                 MiakodaNewBoostTimer = 0;
             }
 
-
-
-
             #region manashield
             if (manaShield > 0)
             {
@@ -1568,9 +1673,6 @@ namespace tsorcRevamp
                 player.buffImmune[BuffID.ManaRegeneration] = true;
             }
             #endregion manashield
-
-
-
 
             #region Abyss Shader
             bool hasCoA = false;
@@ -1597,8 +1699,94 @@ namespace tsorcRevamp
             }
 
             #endregion
-        }
 
+            #region Reflection Shift
+            if (ReflectionShiftEnabled)
+            {
+
+                int dashCooldown = 30;
+                if (ReflectionShiftKeypressTime > 0)
+                {
+                    ReflectionShiftKeypressTime--;
+                }
+                else
+                {
+                    //This would have looked so much nicer if controlUp, controlLeft, etc were all in an array like doubleTapCardinalTimer, but...
+                    if (player.controlUp && keyPrimed[DashUp] == 0)
+                    {
+                        keyPrimed[DashUp] = 1;
+                    }
+                    if (player.releaseUp && keyPrimed[DashUp] == 1)
+                    {
+                        keyPrimed[DashUp] = 2;
+                    }
+                    if (player.doubleTapCardinalTimer[DashUp] == 0)
+                    {
+                        keyPrimed[DashUp] = 0;
+                    }
+                    if (player.controlUp && player.doubleTapCardinalTimer[DashUp] < 15 && keyPrimed[DashUp] == 2)
+                    {
+                        ReflectionShiftKeypressTime = dashCooldown;
+                        ReflectionShiftState.Y = -1;
+                    }
+
+                    if (player.controlLeft && keyPrimed[DashLeft] == 0)
+                    {
+                        keyPrimed[DashLeft] = 1;
+                    }
+                    if (player.releaseLeft && keyPrimed[DashLeft] == 1)
+                    {
+                        keyPrimed[DashLeft] = 2;
+                    }
+                    if (player.doubleTapCardinalTimer[DashLeft] == 0)
+                    {
+                        keyPrimed[DashLeft] = 0;
+                    }
+                    if (player.controlLeft && player.doubleTapCardinalTimer[DashLeft] < 15 && keyPrimed[DashLeft] == 2)
+                    {
+                        ReflectionShiftKeypressTime = dashCooldown;
+                        ReflectionShiftState.X = -1;
+                    }
+
+                    if (player.controlRight && keyPrimed[DashRight] == 0)
+                    {
+                        keyPrimed[DashRight] = 1;
+                    }
+                    if (player.releaseRight && keyPrimed[DashRight] == 1)
+                    {
+                        keyPrimed[DashRight] = 2;
+                    }
+                    if (player.doubleTapCardinalTimer[DashRight] == 0)
+                    {
+                        keyPrimed[DashRight] = 0;
+                    }
+                    if (player.controlRight && player.doubleTapCardinalTimer[DashRight] < 15 && keyPrimed[DashRight] == 2)
+                    {
+                        ReflectionShiftKeypressTime = dashCooldown;
+                        ReflectionShiftState.X = 1;
+                    }
+
+                    if (player.controlDown && keyPrimed[DashDown] == 0)
+                    {
+                        keyPrimed[DashDown] = 1;
+                    }
+                    if (player.releaseDown && keyPrimed[DashDown] == 1)
+                    {
+                        keyPrimed[DashDown] = 2;
+                    }
+                    if (player.doubleTapCardinalTimer[DashDown] == 0)
+                    {
+                        keyPrimed[DashDown] = 0;
+                    }
+                    if (player.controlDown && player.doubleTapCardinalTimer[DashDown] < 15 && keyPrimed[DashDown] == 2)
+                    {
+                        ReflectionShiftKeypressTime = dashCooldown;
+                        ReflectionShiftState.Y = 1;
+                    }
+                }
+            }
+            #endregion
+        }
 
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
@@ -1688,6 +1876,7 @@ namespace tsorcRevamp
 
         public override void OnEnterWorld(Player player)
         {
+            
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());

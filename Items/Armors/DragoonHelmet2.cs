@@ -46,12 +46,17 @@ namespace tsorcRevamp.Items.Armors {
             player.manaCost -= 0.38f;
             player.lifeRegen += 6;
 
-            player.wings = 34; // looks like Jim's Wings
-            player.wingsLogic = 34;
+            //player.wings = 34; // looks like Jim's Wings
+            //player.wingsLogic = 34;
             player.wingTimeMax = 180;
 
         }
-        
+
+        public override bool WingUpdate(Player player, bool inUse)
+        {
+            return base.WingUpdate(player, inUse);
+        }
+
         public override void ArmorSetShadows (Player player)
         {
             player.armorEffectDrawShadow = true;

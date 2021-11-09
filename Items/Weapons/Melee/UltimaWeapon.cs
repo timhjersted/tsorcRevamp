@@ -10,6 +10,10 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nThe true form of your father's legendary sword revealed" +
                                 "\nDoes 150 damage when at full health, and 100 damage at 200 health, scaling with current HP");
         }
+
+        //If only it was this easy :/
+		//public override string Texture => TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
+
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
             item.damage = 50;
@@ -35,6 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
+
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
 

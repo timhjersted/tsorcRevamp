@@ -82,7 +82,8 @@ namespace tsorcRevamp {
             tag.Add("value", Slain.Values.ToList());
         }
 
-        public override void Load(TagCompound tag) {
+        public override void Load(TagCompound tag)
+        {
             LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
 
@@ -95,6 +96,16 @@ namespace tsorcRevamp {
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
+
+            //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                {
+                    NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
+                }
+
+            }
         }
 
         private void LoadSlain(TagCompound tag) {

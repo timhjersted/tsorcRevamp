@@ -6,15 +6,16 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles
+namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
-    class AntiMaterialRound : ModProjectile
+    class DarkAntiMatRound : ModProjectile
     {
         public override void SetDefaults()
         {
             projectile.width = 12;
             projectile.height = 12;
-            projectile.friendly = true;
+            projectile.friendly = false;
+			projectile.hostile = true;
             projectile.aiStyle = 0;
             projectile.ranged = true;
             projectile.tileCollide = false;
@@ -30,30 +31,8 @@ namespace tsorcRevamp.Projectiles
 
 		bool reposition = true;
 		float sinwaveCounter = -1.4f;
-		bool hitTile = false;
-		//How long in frames to wait before colliding with tiles after hitting one
-		int hitTileCounter = 2;
 		public override void AI()
-        {
-			int tileX = (int)(projectile.position.X / 16);
-			int tileY = (int)(projectile.position.Y / 16);
-			DelegateMethods.CutTiles(tileX, tileY);
-			if (!hitTile)
-			{
-				if (Main.tile[tileX, tileY].active() && Main.tileSolid[(int)Main.tile[tileX, tileY].type]) // tile exists and is solid
-				{
-					hitTile = true;
-					Main.PlaySound(4, (int)projectile.position.X, (int)projectile.position.Y, 43);
-				}
-			} else
-            {
-				hitTileCounter--;
-				if(hitTileCounter <= 0)
-                {
-					projectile.tileCollide = true;
-                }
-            }
-
+		{
 			if (reposition)
 			{
 				projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + 1.57f;
@@ -67,22 +46,7 @@ namespace tsorcRevamp.Projectiles
 			projectile.alpha -= 51;
 
 			for (int i = 0; i < 10; i++)
-			{
-				bool bulletHit = false;
-				Rectangle myBox = new Rectangle((int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height);
-				foreach (NPC targetNPC in Main.npc)
-				{
-					if (targetNPC.townNPC || bulletHit) { continue; }
-					Rectangle npcBox = new Rectangle((int)targetNPC.position.X, (int)targetNPC.position.Y, targetNPC.width, targetNPC.height);
-
-					if (myBox.Intersects(npcBox) && !bulletHit && targetNPC.life > 0 && !targetNPC.dontTakeDamage)
-					{//on collide
-						bulletHit = true;
-						npcBox = Rectangle.Empty;
-						break;
-					}
-					npcBox = Rectangle.Empty;
-				}
+			{			
 
 				//dust fx
 				if (i % 2 == 0)
@@ -125,25 +89,7 @@ namespace tsorcRevamp.Projectiles
 					Main.dust[sineBot].noGravity = true;
 					Main.dust[sineBot].velocity = new Vector2(0, 0);
 				}
-				sinwaveCounter += 0.2f;
-
-				if (bulletHit)
-				{
-					break;
-				}
-
-				Vector2 velo2 = Collision.TileCollision(projectile.position, projectile.velocity, projectile.width, projectile.height, false, false);
-				if (projectile.velocity != velo2)
-				{
-					projectile.position += velo2;
-					//projectile.velocity *= new Vector2(0.1f, 0.1f);
-
-                    if (projectile.tileCollide)
-					{
-						Main.PlaySound(4, (int)projectile.position.X, (int)projectile.position.Y, 43);
-						projectile.Kill();
-                    }
-				}
+				sinwaveCounter += 0.2f;				
 
 				projectile.position += projectile.velocity;
 			}
@@ -172,14 +118,6 @@ namespace tsorcRevamp.Projectiles
 			return false;
 		}
 
-
-		public override bool OnTileCollide(Vector2 oldVelocity)
-        {
-			Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
-			return true;
-        }
-
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			Main.PlaySound(4, (int)projectile.position.X, (int)projectile.position.Y, 43);
@@ -202,22 +140,5 @@ namespace tsorcRevamp.Projectiles
 			}
 			return base.PreKill(timeLeft);
         }
-
-		/**
-		// Automatically iterates through every tile the laser is overlapping to cut grass at all those locations.
-		public override void CutTiles()
-		{
-			// tilecut_0 is an unnamed decompiled variable which tells CutTiles how the tiles are being cut (in this case, via a projectile).
-			DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-			Utils.PerLinePoint cut = new Utils.PerLinePoint(DelegateMethods.CutTiles);
-			Vector2 beamStartPos = projectile.Center;
-			Vector2 beamEndPos = beamStartPos + projectile.velocity * BeamLength;
-
-			// PlotTileLine is a function which performs the specified action to all tiles along a drawn line, with a specified width.
-			// In this case, it is cutting all tiles which can be destroyed by projectiles, for example grass or pots.
-			Utils.
-			Utils.PlotTileLine(beamStartPos, beamEndPos, projectile.width * projectile.scale, cut);
-		}**/
-
 	}
 }

@@ -23,6 +23,7 @@ namespace tsorcRevamp {
     public class tsorcRevamp : Mod {
 
         public static ModHotKey toggleDragoonBoots;
+        public static ModHotKey reflectionShiftKey;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         public static List<int> KillAllowed;
@@ -44,6 +45,7 @@ namespace tsorcRevamp {
 
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
+            reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
@@ -57,6 +59,7 @@ namespace tsorcRevamp {
             _darkSoulCounterUIState = new UserInterface();
             if (!Main.dedServ) _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
 
+            
             ApplyMethodSwaps();
             PopulateArrays();
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
@@ -600,24 +603,48 @@ namespace tsorcRevamp {
             modPlayer.Draw(spriteBatch);
         }
 
+        
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) {
             int message = reader.ReadByte(); //(byte) 1;
-            byte player = reader.ReadByte(); //player.whoAmI;
-            tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
 
-            if (message == 1) {
+            //Sync Soul Slot
+            if (message == tsorcPacketID.SyncSoulSlot)
+            {
+                byte player = reader.ReadByte(); //player.whoAmI;
+                tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
                 modPlayer.SoulSlot.Item = ItemIO.Receive(reader);
-                if (Main.netMode == NetmodeID.Server) {
+                if (Main.netMode == NetmodeID.Server)
+                {
                     modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
                 }
             }
 
-            else {
+            /**
+            //For synced random
+            //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator
+            else if (message == tsorcPacketID.SyncRandom)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    byte seed = reader.ReadByte();
+                    Main.NewText("Client recieved seed:" + seed);
+                    UsefulFunctions.RecieveRandPacket(seed);
+                }
+            }**/
+
+            else
+            {
                 Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
             }
         }
 
+    }
+    public class tsorcPacketID
+    {
+        //Bytes because packets use bytes
+        public const byte SyncSoulSlot = 1;
+        public const byte SyncRandom = 2;
     }
 
     //config moved to separate file
@@ -899,7 +926,13 @@ namespace tsorcRevamp {
             BiohazardGlowmask,
             HealingElixirGlowmask,
             ShatteredMoonlightGlowmask,
-            GreySlashGlowmask
+            GreySlashGlowmask,
+            DarkDivineSpark,
+            UltimaWeapon,
+            UltimaWeaponGlowmask,
+            DarkUltimaWeapon,
+            DarkUltimaWeaponGlowmask,
+            ReflectionShift
 
         }          
         
@@ -930,10 +963,14 @@ namespace tsorcRevamp {
                 {TransparentTextureType.VirulentCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask")},
                 {TransparentTextureType.BiohazardGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask")},
                 {TransparentTextureType.HealingElixirGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Potions/HealingElixir_Glowmask")},
+                {TransparentTextureType.DarkDivineSpark, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark")},
                 {TransparentTextureType.ShatteredMoonlightGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask")},
-                {TransparentTextureType.GreySlashGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask")}
-
-
+                {TransparentTextureType.GreySlashGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask")},
+                {TransparentTextureType.UltimaWeapon, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponTransparent")},
+                {TransparentTextureType.UltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask")},
+                {TransparentTextureType.DarkUltimaWeapon, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon")},
+                {TransparentTextureType.DarkUltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask")},
+                {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")}
 
             };
 
