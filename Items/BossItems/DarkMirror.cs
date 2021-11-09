@@ -74,8 +74,6 @@ namespace tsorcRevamp.Items.BossItems {
                 }
                 else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4)
                 {
-
-                    NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
                     Main.PlaySound(SoundID.Item60);
 
                     //destroy grapples
