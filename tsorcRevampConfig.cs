@@ -7,13 +7,22 @@ namespace tsorcRevamp {
     public class tsorcRevampConfig : ModConfig {
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => true;
         public override ConfigScope Mode => ConfigScope.ServerSide;
-        [Header("Gameplay Changes")]
-        [Label("Adventure Mode")]
+        [Header("Adventure Mode")]
+        [Label("Adventure Mode: Main")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Adventure mode prevents breaking and placing most blocks. \nIt also enables some features intended for the custom map. \n\"If the game lets you break it or place it, it's allowed!\"\nLeave this enabled if you're playing with the custom map!")]
+        [Tooltip("Prevents breaking and placing most blocks. \nIt also enables some features intended for the custom map. \n\"If the game lets you break it or place it, it's allowed!\"\nLeave this enabled if you're playing with the custom map!")]
         [DefaultValue(false)]
         public bool AdventureMode { get; set; }
 
+        [Label("Adventure Mode: Recipes and Items")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Disables or modifies certain recipes and \ndrops that interfere with the custom map. \nRequires a reload.\nLeave this enabled if you're playing with the custom map!")]
+        [ReloadRequired]
+        [DefaultValue(false)]
+        public bool AdventureModeItems { get; set; }
+
+
+        [Header("Gameplay Changes")]
         [Label("Souls Drop on Death")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Drop all your Dark Souls when you die.\nIf \"Delete Dropped Souls on Death\" is enabled, \nyour Souls will drop after old Souls are deleted.\nDefaults to On")]
@@ -47,9 +56,7 @@ namespace tsorcRevamp {
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Revamp Miakoda giving you Navi flashbacks?\nThis slider controls Miakoda's volume.\nSet to 0 to disable Miakoda sounds.")]
         [DefaultValue(100)]
-        public uint MiakodaVolume;
-
-        
+        public uint MiakodaVolume { get; set; }
 
         [Label("Soul Counter X position")]
         [BackgroundColor(60, 140, 80, 192)]

@@ -547,7 +547,10 @@ namespace tsorcRevamp {
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();
-            RecipeHelper.EditRecipes();
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
+                RecipeHelper.EditRecipes(); 
+            }
         }
 
         public override void AddRecipeGroups() {

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.BossItems {
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {               
                 tooltips.Add(new TooltipLine(mod, "DarkMirrorAdventure",
                 "You look into the mirror and see your reflection looking back at you... \n" +
@@ -135,7 +135,7 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(ItemID.MagicMirror, 1);

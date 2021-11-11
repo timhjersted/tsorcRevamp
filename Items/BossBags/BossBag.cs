@@ -561,7 +561,7 @@ namespace tsorcRevamp.Items.BossBags {
                 if (Main.rand.Next(7) == 0) { player.QuickSpawnItem(ItemID.KingSlimeMask); }
                 if (Main.rand.Next(10) == 0) { player.QuickSpawnItem(ItemID.KingSlimeTrophy); }
                 if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimeGun); }
-                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) { //no hooks or saddles in adventure mode
+                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) { //no hooks or saddles in adventure mode
                     if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimeHook); }
                     if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimySaddle); }
                 }
@@ -571,7 +571,7 @@ namespace tsorcRevamp.Items.BossBags {
             if (context == "bossBag" && arg == ItemID.GolemBossBag)
             { 
                 //Picksaw drops from Attraidies who is Post-Golem now, and gates SuperHardMode content. We've gotta stop Golem from dropping it.
-                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                 {
                     if (Main.rand.Next(3) == 0) { player.QuickSpawnItem(ItemID.Picksaw); }
                 }

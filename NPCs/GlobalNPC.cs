@@ -264,7 +264,7 @@ namespace tsorcRevamp.NPCs
 
         public override bool PreNPCLoot(NPC npc)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 if (npc.type == NPCID.ChaosElemental)
                 {
