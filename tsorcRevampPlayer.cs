@@ -239,15 +239,6 @@ namespace tsorcRevamp
             packet.Write((byte)player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                Main.NewText("Client running!");
-            }
-            if (Main.netMode == NetmodeID.Server)
-            {
-                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Server running!"), Color.Blue);
-            }
-
 
             /**
             //For synced random. Called when a new player connects.

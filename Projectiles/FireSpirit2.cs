@@ -28,6 +28,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void AI() {
+            projectile.rotation += 0.05f;
             Vector2 arg_23A6_0 = new Vector2(projectile.position.X, projectile.position.Y - projectile.height / 2);
             int arg_23A6_1 = projectile.width;
             int arg_23A6_2 = projectile.height;
