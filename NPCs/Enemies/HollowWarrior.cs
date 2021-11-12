@@ -130,13 +130,13 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 npc.velocity *= (1f - braking_power); //breaking
             }
-            if (npc.velocity.X > 6f) //hard limit of 8f
+            if (npc.velocity.X > 5f) //hard limit of 8f
             {
-                npc.velocity.X = 6f;
+                npc.velocity.X = 5f;
             }
-            if (npc.velocity.X < -6f) //both directions
+            if (npc.velocity.X < -5f) //both directions
             {
-                npc.velocity.X = -6f;
+                npc.velocity.X = -5f;
             }
             else
             {
