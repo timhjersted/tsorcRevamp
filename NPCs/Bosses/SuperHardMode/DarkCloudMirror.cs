@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.GameContent.NetModules;
 using Terraria.ID;
@@ -54,8 +55,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             darkFlowDamage /= 2;
             antiMatDamage /= 2;
         }
-        
-        int attackModeTally = 0;
 
         public int MirrorAttackType
         {
@@ -80,9 +79,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         Vector2 nextWarpPoint = Vector2.Zero;
-        float warpRadius = 450;
         public override void AI()
-        {
+        {            
             Lighting.AddLight(npc.Center, Color.Blue.ToVector3() * 0.5f);
             UsefulFunctions.DustRing(npc.Center, 32, DustID.ShadowbeamStaff);
 
@@ -93,81 +91,62 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     AntiMatAttack();
                 }
-                AttackModeCounter++;
                 if (AttackModeCounter == AttackModeLimit + 10)
                 {
                     npc.active = false;
                 }
             }
-
             
             if (MirrorAttackType == DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
-                TeleportingSlashesAttack();
-            }            
-        }
-
-        //Randomly pick a new unused attack and reset attack variables
-       
+                TeleportingSlashes();
+            }
+            AttackModeCounter++;
+            
+        }       
 
         //These describe how the boss should move, and other things that should be done on every client to keep it deterministic
         #region Movements
         void AntiMatMove()
         {
-            //Line up an Anti-Mat with a targeting laser, cause a flash near the rifle scope, then a half(?) second later fire a bolt at immense speed at the player
-            //Requires dodging almost instantly after seeing the flash
-           
-            if (AttackModeCounter == 300)
+            if (AttackModeCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                attackModeTally++;
-                AttackModeCounter = -1;
-                if (attackModeTally == 3)
+                Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, npc.whoAmI);
+            }
+
+            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, npc.whoAmI);
+            if(laserList.Count > 0)
+            {
+                GenericLaser thisLaser = laserList[0];
+                if (!thisLaser.initialized)
                 {
-                    MirrorAttackType = -1;
+                    thisLaser.LaserOrigin = npc.Center;
+
+                    thisLaser.TelegraphTime = 99999;
+                    thisLaser.LaserLength = 4000;
+                    thisLaser.LaserColor = Color.Red;
+                    thisLaser.TargetingMode = 1;
+                    thisLaser.lightColor = Color.OrangeRed;
+                    thisLaser.TileCollide = false;
+                    thisLaser.CastLight = false;
+                    thisLaser.MaxCharge = 5;
+                    thisLaser.FiringDuration = (int)AttackModeLimit + 1;
+                    thisLaser.LaserVolume = 0;
                 }
+
+                Vector2 offset;                
+                offset = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
+                offset *= ((300 - AttackModeCounter) / 300);
+                offset = offset.RotatedBy(MathHelper.ToRadians(AttackModeCounter + (120)));
+                thisLaser.LaserTarget = Target.Center + offset;                
             }            
         }
         #endregion
 
         //These describe projectiles the boss should shoot, and other things that should *not* be done for every multiplayer client
         #region Attacks
-        GenericLaser laser;
         void AntiMatAttack()
-        {
-            if(AttackModeCounter == 0)
-            {
-                
-                laser = (GenericLaser)Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer).modProjectile;
-                laser.LaserOrigin = npc.Center;                    
-                laser.LaserTarget = Target.Center;
-
-                Vector2 offset = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 5).RotatedBy(MathHelper.ToRadians(90));
-                offset *= ((300 - AttackModeCounter) / 300) * (float)Math.Sin(MathHelper.ToRadians(AttackModeCounter));
-                laser.LaserTarget += offset;
-                    
-                laser.TelegraphTime = 99999;
-                laser.LaserLength = 4000;
-                laser.LaserColor = Color.Red;
-                laser.TargetingMode = 1;
-                laser.lightColor = Color.OrangeRed;
-                laser.TileCollide = false;
-                laser.CastLight = false;
-                laser.MaxCharge = 5;
-                laser.FiringDuration = (int)AttackModeLimit + 1;
-                laser.LaserVolume = 0;
-                
-            }
-            if (AttackModeCounter < AttackModeLimit)
-            {
-                Vector2 offset = new Vector2(0,0);
-                for (int i = 0; i < 3; i++)
-                {
-                    offset = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
-                    offset *= ((300 - AttackModeCounter) / 300);
-                    offset = offset.RotatedBy(MathHelper.ToRadians(AttackModeCounter + (120 * i)));
-                    laser.LaserTarget = Target.Center + offset;
-                }
-            }
+        {           
             if (AttackModeCounter == AttackModeLimit)
             {
                 Projectile.NewProjectile(npc.Center, UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
@@ -178,13 +157,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
 
         }
-        void TeleportingSlashesAttack()
+
+        void TeleportingSlashes()
         {
-            warpRadius = 750;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.aiStyle = 0;
-            npc.velocity.Y += 0.09f;
             npc.velocity.X *= 1.07f;
             if (Target.Center.X > npc.Center.X)
             {
@@ -193,41 +171,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 npc.direction = -1;
+            }           
+            if(AttackModeCounter == 0)
+            {
+                //nextWarpPoint = npc.Center;
+                //npc.Center = new Vector2(10, 10);
             }
 
-            if (AttackModeCounter == 0)
+            if (AttackModeCounter < 80)
             {
-                nextWarpPoint = Target.Center + Main.rand.NextVector2CircularEdge(warpRadius, warpRadius);
+                for (int i = 0; i < 50; i++)
+                {
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(30, 60), DustID.ShadowbeamStaff, Main.rand.NextVector2CircularEdge(3, 3));
+                }
+            }
+            else
+            {
+                npc.velocity.Y += 0.09f;
+            }
+
+            if (AttackModeCounter == 80)
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: npc.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
                 }
-            }
+                npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 17);
+            }           
 
-            if (AttackModeCounter % 80 == 0 && AttackModeCounter != 80)
-            {
-                if (nextWarpPoint != null)
-                {
-                    DarkCloudParticleEffect(-2);
-                    npc.Center = nextWarpPoint;
-                    DarkCloudParticleEffect(6);
-                    npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 17);
-                }
-
-                nextWarpPoint = Target.Center + Main.rand.NextVector2CircularEdge(warpRadius, warpRadius);
-            }
-
-            for (int i = 0; i < 50; i++)
-            {
-                Dust.NewDustPerfect(nextWarpPoint + Main.rand.NextVector2Circular(30, 60), DustID.ShadowbeamStaff, Main.rand.NextVector2CircularEdge(3, 3));
-            }
-
-
-            if (AttackModeCounter == 640)
+            if (AttackModeCounter == 240)
             {
                 npc.active = false;
             }
-            AttackModeCounter++;
         }
 
         void BulletPortalsAttack()
@@ -236,8 +211,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
-        
-
+       
         #region Teleport Functions
         //These functions make the boss move to various places (and mainly exist so I don't have to rewrite the same teleporting code 100 times...)
         void TeleportBehindPlayer()
@@ -287,20 +261,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            Texture2D texture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / Main.npcFrameCount[npc.type]);
-            Vector2 origin = sourceRectangle.Size() / 2f;
-            SpriteEffects spriteEffects = SpriteEffects.None;
-            if (npc.spriteDirection == 1)
+            if (AttackModeCounter >= 80 || MirrorAttackType != DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
-                spriteEffects = SpriteEffects.FlipHorizontally;
+                Texture2D texture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / Main.npcFrameCount[npc.type]);
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                SpriteEffects spriteEffects = SpriteEffects.None;
+                if (npc.spriteDirection == 1)
+                {
+                    spriteEffects = SpriteEffects.FlipHorizontally;
+                }
+                for (float i = TRAIL_LENGTH - 1; i >= 0; i--)
+                {
+                    Main.spriteBatch.Draw(texture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+
+                return true;
             }
-            for (float i = TRAIL_LENGTH - 1; i >= 0 ; i--)
+            else
             {
-                Main.spriteBatch.Draw(texture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                return false;
             }
-           
-            return true;
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)

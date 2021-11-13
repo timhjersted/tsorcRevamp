@@ -33,14 +33,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useAmmo = AmmoID.Bullet;
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                tooltips.Insert(4, new TooltipLine(mod, "", "Turns Musket balls into High velocity bullets"));
-            }
-
-        }
 
         public override Vector2? HoldoutOffset()
         {
@@ -66,15 +58,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
+                type = ModContent.ProjectileType<Projectiles.PhazonRound>();
+
                 Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 15f;
                 if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
                 {
                     position -= muzzleOffset;
-                }
-                if (type == ProjectileID.Bullet)
-                {
-                    type = ProjectileID.BulletHighVelocity;
-                }
+                }               
+                
                 for (int i = 0; i < ShotAmt; i++)
                 {
                     float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;

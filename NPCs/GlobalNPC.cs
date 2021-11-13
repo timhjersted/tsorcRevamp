@@ -36,6 +36,7 @@ namespace tsorcRevamp.NPCs
         public bool PolarisElectrocutedEffect = false;
         public bool CrescentMoonlight = false;
         public bool Soulstruck = false;
+        public bool PhazonCorruption = false;
 
 
         public override void ResetEffects(NPC npc)
@@ -52,6 +53,7 @@ namespace tsorcRevamp.NPCs
             PolarisElectrocutedEffect = false;
             CrescentMoonlight = false;
             Soulstruck = false;
+            PhazonCorruption = false;
         }
 
 
@@ -307,6 +309,21 @@ namespace tsorcRevamp.NPCs
                     int dust2 = Dust.NewDust(N.position, N.width / 2, N.height / 2, 58, (N.velocity.X * 0.2f), N.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
                 }
+            }
+
+            if (PhazonCorruption)
+            {
+                if (npc.lifeRegen > 0)
+                {
+                    npc.lifeRegen = 0;
+                }
+                npc.lifeRegen = -8;
+
+                int dust = Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
+                Main.dust[dust].noGravity = true;
+
+                int dust2 = Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.FireworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
+                Main.dust[dust2].noGravity = true;                
             }
 
             if (CrimsonBurn)
