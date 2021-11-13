@@ -935,7 +935,8 @@ namespace tsorcRevamp {
             UltimaWeaponGlowmask,
             DarkUltimaWeapon,
             DarkUltimaWeaponGlowmask,
-            ReflectionShift
+            ReflectionShift,
+            PhazonRound
 
         }          
         
@@ -973,7 +974,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.UltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask")},
                 {TransparentTextureType.DarkUltimaWeapon, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon")},
                 {TransparentTextureType.DarkUltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask")},
-                {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")}
+                {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")},
+                {TransparentTextureType.PhazonRound, ModContent.GetTexture("tsorcRevamp/Projectiles/PhazonRound")}
 
             };
 

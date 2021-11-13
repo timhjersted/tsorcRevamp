@@ -109,55 +109,58 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             {
                 npc.dontTakeDamage = false;
             }
-         
-            
-            
+
+
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int crystalVelocity = 16;
-                if (!firstCrystalSpawned && npc.life <= (2 * npc.lifeMax / 3))
+                if (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
                 {
-                    int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
-                    Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
-                    firstCrystalSpawned = true;
-                    if (Main.netMode == NetmodeID.SinglePlayer)
-                    {
-                        Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
-                    }
-                    else
-                    {
-                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon a Primordial Crystal..."), Color.Cyan);
-                    }
-                }
-
-                if (!secondCrystalSpawned && npc.life <= (npc.lifeMax / 3))
-                {
-                    int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
-                    Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
-                    secondCrystalSpawned = true; if (Main.netMode == NetmodeID.SinglePlayer)
-                    {
-                        Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
-                    }
-                    else
-                    {
-                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon a Primordial Crystal..."), Color.Cyan);
-                    }
-                }
-
-                if (!finalCrystalsSpawned && npc.life <= (npc.lifeMax / 6))
-                {
-                    for (int i = 0; i < 3; i++)
+                    int crystalVelocity = 16;
+                    if (!firstCrystalSpawned && npc.life <= (2 * npc.lifeMax / 3))
                     {
                         int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
                         Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
+                        firstCrystalSpawned = true;
+                        if (Main.netMode == NetmodeID.SinglePlayer)
+                        {
+                            Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                        }
+                        else
+                        {
+                            NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon a Primordial Crystal..."), Color.Cyan);
+                        }
                     }
-                    finalCrystalsSpawned = true; if (Main.netMode == NetmodeID.SinglePlayer)
+
+                    if (!secondCrystalSpawned && npc.life <= (npc.lifeMax / 3))
                     {
-                        Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                        int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                        Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
+                        secondCrystalSpawned = true; if (Main.netMode == NetmodeID.SinglePlayer)
+                        {
+                            Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                        }
+                        else
+                        {
+                            NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon a Primordial Crystal..."), Color.Cyan);
+                        }
                     }
-                    else
+
+                    if (!finalCrystalsSpawned && npc.life <= (npc.lifeMax / 6))
                     {
-                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon his final Primordial Crystals..."), Color.Cyan);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
+                            Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
+                        }
+                        finalCrystalsSpawned = true; if (Main.netMode == NetmodeID.SinglePlayer)
+                        {
+                            Main.NewText("Seath calls upon the Primordial Crystal...", Color.Cyan);
+                        }
+                        else
+                        {
+                            NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Seath calls upon his final Primordial Crystals..."), Color.Cyan);
+                        }
                     }
                 }
             }

@@ -43,6 +43,7 @@ namespace tsorcRevamp {
         public int PowerfulCurseLevel = 1;
         public bool DarkInferno = false;
         public bool CrimsonDrain = false;
+        public bool PhazonCorruption = false;
         public int count = 0;
 
         public bool Shockwave = false;
@@ -186,6 +187,7 @@ namespace tsorcRevamp {
             Crippled = false;
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
+            PhazonCorruption = false;
         }
 
         public override void PreUpdate() {
@@ -791,6 +793,24 @@ namespace tsorcRevamp {
                 }
             }
 
+            if (PhazonCorruption)
+            {
+                if (player.lifeRegen > 0)
+                {
+                    player.lifeRegen = 0;
+                }
+                player.lifeRegenTime = 0;
+                player.lifeRegen = -7;
+                for (int j = 0; j < 4; j++)
+                {
+                    int dust = Dust.NewDust(player.position, player.width / 2, player.height / 2, 29, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust].noGravity = true;
+
+                    int dust2 = Dust.NewDust(player.position, player.width / 2, player.height / 2, DustID.FireworkFountain_Blue, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    Main.dust[dust2].noGravity = true;
+                }
+            }
+
             if (SOADrain) {
                 if (player.lifeRegen > 0) {
                     player.lifeRegen = 0;
@@ -832,6 +852,7 @@ namespace tsorcRevamp {
                 }
             }
             DarkInferno = false;
+            PhazonCorruption = false;
             Falling = false;
             FracturingArmor = 1;
         }

@@ -2,12 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Enums;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
@@ -19,6 +21,9 @@ namespace tsorcRevamp.Projectiles {
 
         //Set to true if the laser originates from a projectile instead of an NPC
         public bool ProjectileSource = false;
+
+        //The name the laser will display if it kills the player
+        public string LaserName = "Laser";
 
         //The source position of the laser. If FOLLOW_SOURCE is set to true, this will be ignored.
         public Vector2 LaserOrigin = new Vector2(0, 0);
@@ -68,7 +73,7 @@ namespace tsorcRevamp.Projectiles {
         //Should it play a vanilla sound?
         public Terraria.Audio.LegacySoundStyle LaserSound = new Terraria.Audio.LegacySoundStyle(2, 60);
 
-        //Sound it play a custom sound? This overrides whatver LASER_SOUND is set to
+        //Should it play a custom sound? This overrides whatver LASER_SOUND is set to
         public string CustomSound = null;
 
         //What volume should it play the sound at?
@@ -98,6 +103,9 @@ namespace tsorcRevamp.Projectiles {
         //How long should those debuffs last?
         public List<int> DebuffTimers = new List<int>();
 
+        //Has it already been initialized on the client it's running on? If so, re-setting all its basic values is unnecessary.
+        public bool initialized = false;
+
         //How long (in frames) does it have to charge before firing?
         //If this is 0, the charge mechanic will simply be disabled
         public float MaxCharge = 120;
@@ -107,9 +115,26 @@ namespace tsorcRevamp.Projectiles {
         //How long should each "segment" of the laser be? This value should pretty much be fine
         private const float MOVE_DISTANCE = 20f;
 
-        public float Distance {
+        public float Distance = 0;
+        
+        /*{
             get => projectile.ai[0];
             set => projectile.ai[0] = value;
+        }*/
+
+        //Allows the projectile to be tagged with an ID upon creation, so that it can be identified across clients
+        //Projectile id's aren't synced, so we have to do it ourself like this
+        //Messing with this is only necessary if you need to change a laser *after* it has been created (ex: to make it move)
+        public float NetworkID
+        {
+            get => projectile.ai[0];
+            set => projectile.ai[0] = value;
+        }
+
+        private int HostIdentifier
+        {
+            get => (int)projectile.ai[1];
+            set => projectile.ai[1] = value;
         }
 
         public float Charge {
@@ -122,7 +147,7 @@ namespace tsorcRevamp.Projectiles {
         public int FiringTimeLeft = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser");
+            DisplayName.SetDefault("DefaultLaserName");
 
         }
         public override void SetDefaults() {
@@ -136,13 +161,64 @@ namespace tsorcRevamp.Projectiles {
             projectile.damage = 25;
             projectile.hide = true;
 
-            LaserOrigin = ProjectileSource ? Main.projectile[HostIndex].position : Main.npc[HostIndex].position;
+            LaserOrigin = ProjectileSource ? Main.projectile[HostIdentifier].position : Main.npc[HostIdentifier].position;
         }
 
-       
+        //Terraria doesn't sync projectile id's. We need to find it somehow.
+        //This lets us tag the ai[1] of laser projectiles with an id so it can be found later by clients.
+        //The downside is that a new entry here is required for each new "category" of laser we add.
+        //Kinda hacky. Class needs to be reworked conceptually.
+        public enum GenericLaserID
+        {
+            DarkDivineSpark = 0,
+            DarkDivineSparkTargeting = 1,
+            AntiMatTargeting = 2,
+            AttradiesDarkLaser = 3,
+            SolarDetonator = 4,
+            StardustLaser = 5,
+        }
 
-        //TODO: Modify hit player so that if a hit is going to kill, it instead uses p.Hurt() and its real laser name
+        //Gets all lasers with a certain ID, optionally only those which are owned by a certain NPC
+        public static List<GenericLaser> GetLasersByID(GenericLaserID targetID, int laserHostIdentifier = -1)
+        {
+            List<GenericLaser> LaserList = new List<GenericLaser>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>())
+                {
+                    GenericLaser currentLaser = (GenericLaser)Main.projectile[i].modProjectile;
+                    if (currentLaser != null)
+                    {                        
+                        if ((int)currentLaser.NetworkID == (int)targetID)
+                        {
+                            if (laserHostIdentifier == -1 || laserHostIdentifier == currentLaser.HostIdentifier)
+                            {
+                                LaserList.Add(currentLaser);
+                            }
+                        }                        
+                    }
+                }
+            }
+            return LaserList;
+        }
 
+        //TODO: Test this more.
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            string deathMessage;
+            if (ProjectileSource)
+            {
+                //??? What kind of index does ByOther want? Tile? Projectile? Why can't these just take a name...
+                deathMessage = Terraria.DataStructures.PlayerDeathReason.ByOther(projectile.whoAmI).GetDeathText(target.name).ToString();
+            }
+            else
+            {
+                //ByProjectile... doesn't work either. It's PVP only I think? Its first parameter "byplayerindex" specifies the index for the player who landed the final blow...
+                deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(target.whoAmI, projectile.whoAmI).GetDeathText(target.name).ToString();
+            }
+            deathMessage = deathMessage.Replace("DefaultLaserName", LaserName);
+            //target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), damage, 1);
+        }      
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
@@ -166,6 +242,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50) {
+
             float r = unit.ToRotation() + rotation;
             Rectangle bodyFrame = LaserTextureBody;
             bodyFrame.X = LaserTextureBody.Width * currentFrame;
@@ -234,17 +311,18 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
             dust = Dust.NewDust(endpoint, 30, 30, LaserDust, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
             Main.dust[dust].noGravity = true;            
-        }
-
-        private int HostIndex
-        {
-            get => (int)projectile.ai[1];
-            set => projectile.ai[1] = value;
-        }
+        }        
 
         public override void AI() {
             Vector2 origin = GetOrigin();
 
+            if (!ProjectileSource)
+            {
+                if (!Main.npc[HostIdentifier].active)
+                {
+                    projectile.active = false;
+                }
+            }
             
 
             projectile.position = origin + projectile.velocity * MOVE_DISTANCE;
@@ -441,11 +519,11 @@ namespace tsorcRevamp.Projectiles {
             {
                 if (ProjectileSource)
                 {
-                    return Main.projectile[HostIndex].position + LaserOffset;
+                    return Main.projectile[HostIdentifier].position + LaserOffset;
                 }
                 else
                 {
-                    return Main.npc[HostIndex].position + LaserOffset;
+                    return Main.npc[HostIdentifier].position + LaserOffset;
                 }
             }
             else
