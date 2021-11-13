@@ -1946,11 +1946,11 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief) {
 
                 if (Main.rand.Next(200) == 0) { // 0.5%
-                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"), 1, false, PrefixID.Damaged);
+                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"), 1, false, ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems ? PrefixID.Damaged : -1);
                 }
 
                 else if (Main.rand.Next(200) == 0) { // 0.5% 
-                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, PrefixID.Damaged);
+                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems ? PrefixID.Damaged : -1);
                 }
             }
             if (npc.type == NPCID.Plantera && !Main.expertMode)
