@@ -22,6 +22,18 @@ namespace tsorcRevamp.Items.Accessories {
             player.fireWalk = true;
             player.manaCost += 0.7f;
         }
+        public override bool CanEquipAccessory(Player player, int slot) {
+            foreach (Item i in player.armor) {
+                if (i.type == ModContent.ItemType<GazingShield>()
+                    || i.type == ModContent.ItemType<BeholderShield>()
+                    || i.type == ModContent.ItemType<BeholderShield2>()
+                    || i.type == ModContent.ItemType<EnchantedBeholderShield2>()) {
+                    return false;
+                }
+            }
+
+            return base.CanEquipAccessory(player, slot);
+        }
     }
 
     public class GazingShield : MeleeShield {
