@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
