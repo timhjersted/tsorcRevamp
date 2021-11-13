@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
-                tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Only the first shot consumes ammo\nPhazon rounds are extremely volitile"));
+                tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Only the first shot consumes ammo\nPhazon rounds are extremely volatile"));
             }
             if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
