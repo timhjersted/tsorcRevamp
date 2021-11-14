@@ -302,6 +302,20 @@ namespace tsorcRevamp
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
+            if (crit) {
+                if (item.melee) {
+                    DoMultiCrits(ref damage, player.meleeCrit);
+                }
+                if (item.magic) {
+                    DoMultiCrits(ref damage, player.magicCrit);
+                }
+                if (item.ranged) {
+                    DoMultiCrits(ref damage, player.rangedCrit);
+                }
+                if (item.thrown) {
+                    DoMultiCrits(ref damage, player.thrownCrit); //lol
+                }
+            }
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -314,6 +328,21 @@ namespace tsorcRevamp
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
             {
                 damage = (int)(damage * 0.55);
+            }
+
+            if (crit) {
+                if (proj.melee) {
+                    DoMultiCrits(ref damage, player.meleeCrit);
+                }
+                if (proj.magic) {
+                    DoMultiCrits(ref damage, player.magicCrit);
+                }
+                if (proj.ranged) {
+                    DoMultiCrits(ref damage, player.rangedCrit);
+                }
+                if (proj.thrown) {
+                    DoMultiCrits(ref damage, player.thrownCrit); //lol
+                }
             }
         }
 
@@ -678,6 +707,13 @@ namespace tsorcRevamp
             packet.Write((byte)player.whoAmI);
             ItemIO.Send(item, packet);
             packet.Send(toWho, fromWho);
+        }
+
+        public void DoMultiCrits(ref int damage, int critType) {
+            int critLevel = (int)(Math.Floor(critType / 100f));
+            if (Main.rand.Next(1, 101) <= critType - (100 * critLevel)) {
+                damage *= 1 + critLevel;
+            }
         }
     }
 }
