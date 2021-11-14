@@ -306,13 +306,13 @@ namespace tsorcRevamp
                 if (item.melee) {
                     DoMultiCrits(ref damage, player.meleeCrit);
                 }
-                if (item.magic) {
+                else if (item.magic) {
                     DoMultiCrits(ref damage, player.magicCrit);
                 }
-                if (item.ranged) {
+                else if (item.ranged) {
                     DoMultiCrits(ref damage, player.rangedCrit);
                 }
-                if (item.thrown) {
+                else if (item.thrown) {
                     DoMultiCrits(ref damage, player.thrownCrit); //lol
                 }
             }
@@ -334,13 +334,13 @@ namespace tsorcRevamp
                 if (proj.melee) {
                     DoMultiCrits(ref damage, player.meleeCrit);
                 }
-                if (proj.magic) {
+                else if (proj.magic) {
                     DoMultiCrits(ref damage, player.magicCrit);
                 }
-                if (proj.ranged) {
+                else if (proj.ranged) {
                     DoMultiCrits(ref damage, player.rangedCrit);
                 }
-                if (proj.thrown) {
+                else if (proj.thrown) {
                     DoMultiCrits(ref damage, player.thrownCrit); //lol
                 }
             }
@@ -711,8 +711,13 @@ namespace tsorcRevamp
 
         public void DoMultiCrits(ref int damage, int critType) {
             int critLevel = (int)(Math.Floor(critType / 100f));
+            if (critLevel > 1) {
+                for (int i = 1; i < critLevel; i++) {
+                    damage *= 2;
+                }
+            }
             if (Main.rand.Next(1, 101) <= critType - (100 * critLevel)) {
-                damage *= 1 + critLevel;
+                damage *= 2;
             }
         }
     }
