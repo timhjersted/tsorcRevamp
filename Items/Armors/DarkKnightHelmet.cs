@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("+15 defense whenm health falls below 80");
+            Tooltip.SetDefault("+15 defense when health falls below 80");
         }
         public override void SetDefaults()
         {

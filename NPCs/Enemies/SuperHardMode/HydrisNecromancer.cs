@@ -78,15 +78,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #endregion
 
 
-        public override void OnHitPlayer(Player player, int damage, bool crit)
-        {
-			if (Main.rand.Next(2) == 0)
-			{
-				player.AddBuff(BuffID.Frozen, 120, false);
-				//player.AddBuff(23, 180, false);
-			}
-		}
-
 
 
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)

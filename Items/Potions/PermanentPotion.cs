@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[0]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[0]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[0]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[0]) {
                 player.lavaImmune = true;
                 player.fireWalk = true;
                 player.buffImmune[BuffID.OnFire] = true;
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[1]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[1]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -88,7 +88,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[1]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[1]) {
                 player.lifeRegen += 4;
                 player.buffImmune[BuffID.Regeneration] = true;
             }
@@ -108,7 +108,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[2]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[2]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -119,7 +119,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[2]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[2]) {
                 player.moveSpeed += 0.25f;
                 player.buffImmune[BuffID.Swiftness] = true;
             }
@@ -138,7 +138,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[3]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[3]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -149,7 +149,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[3]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[3]) {
                 player.gills = true;
                 player.buffImmune[BuffID.Gills] = true;
             }
@@ -168,7 +168,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[4]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[4]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -179,7 +179,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[4]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[4]) {
                 player.statDefense += 8;
                 player.buffImmune[BuffID.Ironskin] = true;
             }
@@ -198,7 +198,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[5]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[5]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -209,7 +209,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[5]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[5]) {
                 if (player.GetModPlayer<tsorcRevampPlayer>().manaShield == 0) {
                     player.manaRegenBuff = true;
                 }
@@ -230,7 +230,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[6]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[6]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -241,7 +241,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[6]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[6]) {
                 player.magicDamage += 0.2f;
                 player.buffImmune[BuffID.MagicPower] = true;
             }
@@ -260,7 +260,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[7]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[7]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -271,7 +271,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[7]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[7]) {
                 player.slowFall = true;
                 player.buffImmune[BuffID.Featherfall] = true;
             }
@@ -290,7 +290,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[8]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[8]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -301,7 +301,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[8]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[8]) {
                 player.findTreasure = true;
                 player.buffImmune[BuffID.Spelunker] = true;
             }
@@ -320,7 +320,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[9]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[9]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -331,7 +331,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[9]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[9]) {
                 player.invis = true;
                 player.buffImmune[BuffID.Invisibility] = true;
             }
@@ -350,7 +350,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -361,7 +361,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10]) {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
                 player.buffImmune[BuffID.Shine] = true;
             }
@@ -380,7 +380,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[11]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[11]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -391,7 +391,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[11]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[11]) {
                 player.nightVision = true;
                 player.buffImmune[BuffID.NightOwl] = true;
             }
@@ -410,7 +410,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[12]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[12]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -421,7 +421,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[12]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[12]) {
                 player.enemySpawns = true;
                 player.buffImmune[BuffID.Battle] = true;
             }
@@ -440,7 +440,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[13]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[13]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -451,7 +451,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[13]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[13]) {
                 player.thorns += 1f;
                 player.buffImmune[BuffID.Thorns] = true;
             }
@@ -471,7 +471,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[14]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[14]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -482,7 +482,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[14]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[14]) {
                 player.waterWalk = true;
                 player.buffImmune[BuffID.WaterWalking] = true;
             }
@@ -502,7 +502,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[15]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[15]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -513,7 +513,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[15]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[15]) {
                 player.archery = true;
                 player.buffImmune[BuffID.Archery] = true;
             }
@@ -532,7 +532,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[16]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[16]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -543,7 +543,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[16]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[16]) {
                 player.detectCreature = true;
                 player.buffImmune[BuffID.Hunter] = true;
             }
@@ -562,7 +562,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[17]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[17]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -573,7 +573,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[17]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[17]) {
                 player.gravControl = true;
                 player.buffImmune[BuffID.Gravitation] = true;
             }
@@ -592,7 +592,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[18]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[18]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -603,7 +603,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[18]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[18]) {
                 player.statDefense -= 4;
                 player.meleeDamage += 0.1f;
                 player.meleeCrit += 2;
@@ -627,7 +627,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[19]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[19]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -638,7 +638,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[19]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[19]) {
                 player.meleeEnchant = 1;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueVenom] = true;
@@ -659,7 +659,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[20]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[20]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -670,7 +670,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[20]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[20]) {
                 player.meleeEnchant = 2;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueCursedFlames] = true;
@@ -692,7 +692,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[21]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[21]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -703,7 +703,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[21]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[21]) {
                 player.meleeEnchant = 3;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueFire] = true;
@@ -725,7 +725,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[22]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[22]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -736,7 +736,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[22]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[22]) {
                 player.meleeEnchant = 4;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueGold] = true;
@@ -758,7 +758,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[23]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[23]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -769,7 +769,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[23]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[23]) {
                 player.meleeEnchant = 5;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueIchor] = true;
@@ -791,7 +791,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[24]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[24]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -802,7 +802,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[24]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[24]) {
                 player.meleeEnchant = 6;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueNanites] = true;
@@ -824,7 +824,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[25]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[25]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -835,7 +835,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[25]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[25]) {
                 player.meleeEnchant = 7;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbueConfetti] = true;
@@ -857,7 +857,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[26]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[26]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -868,7 +868,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[26]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[26]) {
                 player.meleeEnchant = 8;
                 player.meleeDamage += 0.1f;
                 player.buffImmune[BuffID.WeaponImbuePoison] = true;
@@ -889,7 +889,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[27]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[27]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -900,7 +900,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[27]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[27]) {
                 player.pickSpeed -= 0.25f;
                 player.buffImmune[BuffID.Mining] = true;
             }
@@ -920,7 +920,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[28]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[28]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -931,7 +931,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[28]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[28]) {
                 player.lifeMagnet = true;
                 player.buffImmune[BuffID.Heartreach] = true;
             }
@@ -951,7 +951,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[29]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[29]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -962,7 +962,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[29]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[29]) {
                 player.calmed = true;
                 player.buffImmune[BuffID.Calm] = true;
             }
@@ -981,7 +981,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[30]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[30]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -992,7 +992,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[30]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[30]) {
                 player.tileSpeed += 0.25f;
                 player.wallSpeed += 0.25f;
                 player.blockRange++;
@@ -1013,7 +1013,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[31]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[31]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1024,7 +1024,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[31]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[31]) {
                 player.kbBuff = true;
                 player.buffImmune[BuffID.Titan] = true;
             }
@@ -1044,7 +1044,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[32]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[32]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1055,7 +1055,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[32]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[32]) {
                 player.accFlipper = true;
                 player.ignoreWater = true;
                 player.buffImmune[BuffID.Flipper] = true;
@@ -1076,7 +1076,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[33]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[33]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1087,7 +1087,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[33]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[33]) {
                 player.maxMinions++;
                 player.buffImmune[BuffID.Summoning] = true;
             }
@@ -1106,7 +1106,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[34]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[34]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1117,7 +1117,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[34]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[34]) {
                 player.dangerSense = true;
                 player.buffImmune[BuffID.Dangersense] = true;
             }
@@ -1137,7 +1137,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[35]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[35]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1148,7 +1148,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[35]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[35]) {
                 player.ammoPotion = true;
                 player.buffImmune[BuffID.AmmoReservation] = true;
             }
@@ -1168,7 +1168,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[36]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[36]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1179,7 +1179,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[36]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[36]) {
                 player.lifeForce = true;
                 player.statLifeMax2 += player.statLifeMax / 5 / 20 * 20; //why is this written like this? i will never understand vanilla terraria
                 player.buffImmune[BuffID.Lifeforce] = true;
@@ -1200,7 +1200,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[37]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[37]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1211,7 +1211,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[37]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[37]) {
                 player.endurance += 0.1f;
                 player.buffImmune[BuffID.Endurance] = true;
             }
@@ -1231,7 +1231,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[38]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[38]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1242,7 +1242,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[38]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[38]) {
                 player.magicCrit += 10;
                 player.meleeCrit += 10;
                 player.rangedCrit += 10;
@@ -1265,7 +1265,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[39]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[39]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1276,7 +1276,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[39]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[39]) {
                 player.buffImmune[BuffID.Inferno] = true;
                 player.inferno = true;
                 Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.65f, 0.4f, 0.1f);
@@ -1331,7 +1331,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[40]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[40]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1342,7 +1342,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[40]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[40]) {
                 player.allDamage += 0.1f;
                 player.buffImmune[BuffID.Wrath] = true;
             }
@@ -1362,7 +1362,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[41]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[41]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1373,7 +1373,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[41]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[41]) {
                 player.fishingSkill += 15;
                 player.buffImmune[BuffID.Fishing] = true;
             }
@@ -1393,7 +1393,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[42]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[42]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1404,7 +1404,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[42]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[42]) {
                 player.sonarPotion = true;
                 player.buffImmune[BuffID.Sonar] = true;
             }
@@ -1424,7 +1424,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[43]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[43]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1435,7 +1435,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[43]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[43]) {
                 player.cratePotion = true;
                 player.buffImmune[BuffID.Crate] = true;
             }
@@ -1455,7 +1455,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[44]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[44]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1466,7 +1466,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[44]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[44]) {
                 player.resistCold = true;
                 player.buffImmune[BuffID.Warmth] = true;
             }
@@ -1486,7 +1486,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[45]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[45]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1497,7 +1497,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[45]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[45]) {
                 player.statDefense += 13;
                 player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
             }
@@ -1517,7 +1517,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1528,7 +1528,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46]) {
                 player.statDefense += 8;
                 player.allDamage += 0.2f;
                 player.magicCrit += 5;
@@ -1555,7 +1555,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[47]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[47]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1566,7 +1566,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[47]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[47]) {
                 player.magicCrit += 5;
                 player.meleeCrit += 5;
                 player.rangedCrit += 5;
@@ -1588,7 +1588,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[48]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[48]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1599,7 +1599,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[48]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[48]) {
                 player.GetModPlayer<tsorcRevampPlayer>().CrimsonDrain = true;
                 player.buffImmune[ModContent.BuffType<CrimsonDrain>()] = true;
             }
@@ -1619,7 +1619,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[49]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[49]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1630,7 +1630,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[49]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[49]) {
                 player.allDamage += 0.2f;
                 player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
             }
@@ -1650,7 +1650,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[50]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[50]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1661,7 +1661,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[50]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[50]) {
                 player.GetModPlayer<tsorcRevampPlayer>().Shockwave = true;
                 player.buffImmune[ModContent.BuffType<Shockwave>()] = true;
             }
@@ -1681,7 +1681,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
@@ -1692,7 +1692,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
                 player.statDefense += 15;
                 player.allDamage += 0.15f;
                 player.meleeSpeed += 0.15f;
@@ -1721,7 +1721,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             return true;
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
-            if (Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[52]) {
+            if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[52]) {
                 Texture2D texture = Main.itemTexture[item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;

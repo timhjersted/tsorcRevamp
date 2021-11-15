@@ -33,7 +33,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             return base.SpawnChance(spawnInfo);
         }
-
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
         public override void AI() {
             if (!Main.npc[(int)npc.ai[1]].active) {
                 npc.life = 0;

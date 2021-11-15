@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             bannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
         }
 
+
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             Player p = spawnInfo.player;
             Point pTile = p.Center.ToTileCoordinates();

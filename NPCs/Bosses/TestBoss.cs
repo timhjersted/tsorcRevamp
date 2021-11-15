@@ -37,7 +37,13 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.lifeMax = Int32.MaxValue;
         }
 
-
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if(projectile.type == ModContent.ProjectileType<Projectiles.BlackFirelet>())
+            {
+                npc.active = false;
+            }
+        }
 
         public override void AI()
         {

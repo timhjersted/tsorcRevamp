@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.tileCollide = false;
             Main.projFrames[projectile.type] = 4;
             projectile.light = 1;
+            projectile.timeLeft = 150;
             //drawOffsetX = 50;
         }
 

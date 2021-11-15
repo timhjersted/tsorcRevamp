@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			npc.defense = 9999;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.lifeMax = 12000;
+			npc.lifeMax = 10000;
 			npc.scale = 1;
 			npc.knockBackResist = 0;
 			npc.noGravity = true;
@@ -72,6 +73,22 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
+			//Health stuff. This would go into OnHitByWhatever or ModifyHitByWhatever, but surprise: Those are fucky in multiplayer! Isn't learning fun.
+			if((npc.life % 1000) != 0 && npc.life > 1)
+            {
+				npc.life -= npc.life % 1000;
+				if(npc.life <= 0)
+                {
+					npc.life = 1;
+                }
+
+				TimeLock = false;
+				npc.ai[0] = 2;
+				Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+				npc.netUpdate = true;
+			}
+
 			if(attack == 0) {
 				if (secondaryCooldown > 0) {
 					secondaryCooldown--;
@@ -93,24 +110,33 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 					float distanceFactor = Vector2.Distance(vector8, Main.player[npc.target].position) / speed;
 					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) / distanceFactor;
 					float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) / distanceFactor;
-					Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 
+					if (Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+					}
 					if (extraProjs)
 					{
-						if (projRotate)
+						if (projRotate )
 						{
-							Projectile.NewProjectile(vector8.X, vector8.Y, speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y, -speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y, speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y, -speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								Projectile.NewProjectile(vector8.X, vector8.Y, speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y, -speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y, speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y, -speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							}
 							projRotate = false;
 						}
 						else
 						{
-							Projectile.NewProjectile(vector8.X, vector8.Y, speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y, -speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y, 0, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y, 0, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								Projectile.NewProjectile(vector8.X, vector8.Y, speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y, -speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y, 0, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y, 0, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							}
 							projRotate = true;
 						}
 						extraProjs = false;
@@ -125,17 +151,13 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             {				
 				if (projCooldown > 0 || secondaryCooldown > 0)
 				{					
-					float dustRadius = 250;
-					float dustSpeed = 12;
-					float angle = Main.rand.Next(0, 360);
-					Vector2 dustPos = new Vector2(npc.position.X + (dustRadius * (float)Math.Cos(angle)), npc.position.Y + (dustRadius * (float)Math.Sin(angle)));
-					float distanceFactor = dustRadius / dustSpeed;
-					float speedX = (npc.Center.X - dustPos.X) / distanceFactor;
-					float speedY = (npc.Center.Y - dustPos.Y) / distanceFactor;
-					int dust = Dust.NewDust(dustPos, 0, 0, DustID.Firework_Blue, speedX, speedY, DustID.FireworkFountain_Blue, new Color(), 1f);
-					Main.dust[dust].noGravity = true;
-
-
+					for (int j = 0; j < 5; j++)
+					{
+						Vector2 dir = Main.rand.NextVector2CircularEdge(250, 250);
+						Vector2 dustPos = npc.Center + dir;
+						Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(dustPos, npc.Center, 12);
+						Dust.NewDustPerfect(dustPos, DustID.Firework_Blue, dustVel, 200).noGravity = true;
+					}
 					projCooldown--;
 					secondaryCooldown--;
 				}
@@ -150,7 +172,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						//While it slows down, add some fun in
 						if (Main.rand.Next(2) == 0)
 						{
-							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								Projectile.NewProjectile(npc.Center.X, npc.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							}
 						}
 					}
 
@@ -163,22 +188,33 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) / distanceFactor;
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) / distanceFactor;
 
-						Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+						if (Main.netMode != NetmodeID.MultiplayerClient)
+						{
+							Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+						}
 						if (projRotate)
 						{
-							Projectile.NewProjectile(vector8.X - spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X + spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X - spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X + spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								Projectile.NewProjectile(vector8.X - spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X + spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X - spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X + spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							}
 							projRotate = false;
-						} else
-                        {
-							Projectile.NewProjectile(vector8.X - spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X + spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							Projectile.NewProjectile(vector8.X, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-							projRotate = true;
 						}
+						else
+						{
+							if (Main.netMode != NetmodeID.MultiplayerClient)
+							{
+								Projectile.NewProjectile(vector8.X - spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X + spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(vector8.X, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							}
+						projRotate = true;
+						}
+						
 
 						attackCounter++;
 						//Every 3 shots, pause for 4 seconds
@@ -199,8 +235,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						}
 					}
 				}
-
-
 			}
 			npc.ai[0]++;
 			npc.position += npc.velocity * 1.5f;
@@ -221,41 +255,15 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			}
 		}
 
-		public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
-		{
-			OnHit(crit);
-		}
-
-		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
-		{
-			OnHit(crit);
-		}
-
-		private void OnHit(bool crit)
-		{
-			if (crit)
-			{
-				npc.life -= 998;
-			}
-			else
-			{
-				npc.life -= 999;
-			}
-			if (npc.life <= 0)
-			{
-				NPCLoot();
-			}
-
-			TimeLock = false;
-			npc.ai[0] = 2;
-			Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
-		}
+		
+       
 		public override bool CheckActive()
 		{
 			return false;
 		}
-		public override void NPCLoot()
-		{
+
+        public override bool PreNPCLoot()
+        {
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 1"), 1f);
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 2"), 1f);
@@ -266,6 +274,16 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				Main.dust[dust].noGravity = true;
 			}
 
+			if (Main.player[npc.target].active)
+			{
+				npc.Center = Main.player[npc.target].Center;
+			}
+			return true;
+        }
+
+
+        public override void NPCLoot()
+		{		
 			Main.NewText("Serris falls...", Color.Cyan);
 
 			if (!(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || (NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) > 1))) {
