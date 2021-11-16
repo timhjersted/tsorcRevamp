@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.VanillaItems {
             SimpleModTooltip(mod, item, tooltips, ItemID.CobaltDrill, "Use this to gain entry to the Wyvern Mage's", "Fortress above the hallowed caverns to the east");
             SimpleModTooltip(mod, item, tooltips, ItemID.DivingHelmet, "Can be placed in an accessory slot or in your head slot.");
             SimpleModTooltip(mod, item, tooltips, ItemID.GoldHelmet, "Can be upgraded with Dark Souls");
-            SimpleModTooltip(mod, item, tooltips, ItemID.GrapplingHook, "Don't buy or craft this until you have discovered it in the jungle", "Can be upgraded with 1 Titan Glove and 15,000 Dark Souls");
+            SimpleModTooltip(mod, item, tooltips, ItemID.GrapplingHook, "Don't buy or craft this until you have discovered it in the jungle");
             SimpleModTooltip(mod, item, tooltips, ItemID.HerosHat, "Can be upgraded eventually with the flippers", "and diving helmet, when you acquire them");
             SimpleModTooltip(mod, item, tooltips, ItemID.ManaCrystal, "Can be used with 200 Dark Souls to create a Mana Bomb");
             SimpleModTooltip(mod, item, tooltips, ItemID.MechanicalEye, "Item is non-consumable.");
