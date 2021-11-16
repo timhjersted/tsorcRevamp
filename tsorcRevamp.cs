@@ -622,6 +622,24 @@ namespace tsorcRevamp {
                     modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
                 }
             }
+            else if(message == tsorcPacketID.SyncEventDust)
+            {
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
+                    
+                    int count = reader.ReadInt32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        Vector2 center = reader.ReadVector2();
+                        float radius = reader.ReadSingle();
+                        int dustID = reader.ReadInt32();
+                        bool square = reader.ReadBoolean();
+
+                        tsorcScriptedEvents.NetworkEvents.Add(new NetworkEvent(center, radius, dustID, square));
+                    }
+                }
+            }
 
             /**
             //For synced random
@@ -811,7 +829,8 @@ namespace tsorcRevamp {
     {
         //Bytes because packets use bytes
         public const byte SyncSoulSlot = 1;
-        public const byte SyncRandom = 2;
+        public const byte SyncEventDust = 2;
+        //public const byte SyncRandom = ;
     }
 
     //config moved to separate file

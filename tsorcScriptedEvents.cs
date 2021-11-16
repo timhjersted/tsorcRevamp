@@ -100,8 +100,9 @@ namespace tsorcRevamp
         public static List<ScriptedEvent> ActiveEvents;
         //Stores events that the player has triggered and are no longer active. Upon player death, these will be restored to InactiveEvents.
         public static List<ScriptedEvent> DisabledEvents;
-
-
+        //For multiplayer. The server sends clients a list of events, which it stores here. They are not run client-side, and exist only so dust can be drawn indicating their presence.
+        //Necessary because event conditions are dynamic. There's no way for clients to know if events have ended or not unless they run them as well, which would result in duplication.
+        public static List<NetworkEvent> NetworkEvents;
 
         //Each scripted event should have a definition here. I added some theoretical examples commented out
         //This name is what the event handler uses to save an event, and marks them as unique.
@@ -628,15 +629,24 @@ namespace tsorcRevamp
         //int tick = 0;
         //How many ticks (plus one) should the checks be spread out over?
         //int tickSpread = 20;
+        //Temporary list used to count the amount of *actual* events that need to be drawn
+        public static int DrawnEvents;
         public static void PlayerScriptedEventCheck(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                DrawnEvents = 0;
                 //Check if the player is in range of any inactive events
                 for (int i = 0; i < InactiveEvents.Count; i++)
                 {
                     if (InactiveEvents[i].condition())
                     {
+                        //Add the network event to the list of events that need to be drawn. These will be sent to the client once we're done here.
+                        if (InactiveEvents[i].visible)
+                        {
+                            DrawnEvents++;
+                        }
+
                         float distance = Vector2.DistanceSquared(player.position, InactiveEvents[i].centerpoint);
                         int dustPerTick = 20;
                         float speed = 2f;
@@ -740,17 +750,155 @@ namespace tsorcRevamp
                     }
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                //Send events that need to be drawn to the clients
+                if (Main.netMode == NetmodeID.Server && (NetworkEvents == null || NetworkEvents.Count != DrawnEvents || Main.time % 300 == 0))
                 {
-                    //Run any active events
-                    for (int i = 0; i < ActiveEvents.Count; i++)
+                    NetworkEvents = new List<NetworkEvent>();
+                    for (int i = 0; i < InactiveEvents.Count; i++)
                     {
-                           ActiveEvents[i].RunEvent(player);
+                        if (InactiveEvents[i].condition())
+                        {
+                            //Add the network event to the list of events that need to be drawn. These will be sent to the client once we're done here.
+                            if (InactiveEvents[i].visible)
+                            {
+                                NetworkEvents.Add(new NetworkEvent(InactiveEvents[i].centerpoint, InactiveEvents[i].radius, InactiveEvents[i].dustID, InactiveEvents[i].square));
+                            }
+                        }
+                    }
+
+                    SendDrawnEvents();
+                }
+
+                //Run any active events
+                for (int i = 0; i < ActiveEvents.Count; i++)
+                {
+                        ActiveEvents[i].RunEvent(player);
+                }                
+            }
+            else
+            {
+                //Check if the player is in range of any networked events
+                if (NetworkEvents != null)
+                {
+                    for (int i = 0; i < NetworkEvents.Count; i++)
+                    {
+
+                        float distance = Vector2.DistanceSquared(player.position, NetworkEvents[i].centerpoint);
+                        int dustPerTick = 20;
+                        float speed = 2f;
+                        if (!NetworkEvents[i].square)
+                        {
+                            //If the player is nearby, display some dust to make the region visible to them
+                            //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
+                            if (distance < 6000000)
+                            {
+                                float sqrtRadius = (float)Math.Sqrt(NetworkEvents[i].radius);
+                                for (int j = 0; j < dustPerTick; j++)
+                                {
+
+                                    Vector2 dir = Main.rand.NextVector2CircularEdge(sqrtRadius, sqrtRadius);
+                                    Vector2 dustPos = NetworkEvents[i].centerpoint + dir;
+                                    if (Collision.CanHit(NetworkEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                    {
+                                        Vector2 dustVel = new Vector2(speed, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                                        Dust dustID = Dust.NewDustPerfect(dustPos, NetworkEvents[i].dustID, dustVel, 200);
+                                        dustID.noGravity = true;
+                                    }
+                                }
+                            }
+                            if (distance < NetworkEvents[i].radius)
+                            {
+                                for (int j = 0; j < 100; j++)
+                                {
+                                    Dust.NewDustPerfect(NetworkEvents[i].centerpoint, NetworkEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                }
+                            }
+                        }
+                        //Do the same thing, but square
+                        else
+                        {
+                            float sqrtRadius = (float)Math.Sqrt(NetworkEvents[i].radius);
+                            if (distance < 6000000)
+                            {
+                                Vector2 dustPos;
+                                Vector2 dustVel;
+                                Dust dustID;
+                                for (int j = 0; j < dustPerTick; j++)
+                                {
+                                    int side = Main.rand.Next(0, 4);
+                                    if (side == 0)
+                                    {
+                                        dustPos = new Vector2(NetworkEvents[i].centerpoint.X + sqrtRadius, NetworkEvents[i].centerpoint.Y + Main.rand.NextFloat(-sqrtRadius, sqrtRadius));
+                                        if (Collision.CanHit(NetworkEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                        {
+                                            dustVel = new Vector2(0, speed);
+                                            dustID = Dust.NewDustPerfect(dustPos, NetworkEvents[i].dustID, dustVel, 200);
+                                            dustID.noGravity = true;
+                                        }
+                                    }
+                                    if (side == 1)
+                                    {
+                                        dustPos = new Vector2(NetworkEvents[i].centerpoint.X + Main.rand.NextFloat(-sqrtRadius, sqrtRadius), NetworkEvents[i].centerpoint.Y + sqrtRadius);
+                                        if (Collision.CanHit(NetworkEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                        {
+                                            dustVel = new Vector2(-speed, 0);
+                                            dustID = Dust.NewDustPerfect(dustPos, NetworkEvents[i].dustID, dustVel, 200);
+                                            dustID.noGravity = true;
+                                        }
+                                    }
+                                    if (side == 2)
+                                    {
+                                        dustPos = new Vector2(NetworkEvents[i].centerpoint.X - sqrtRadius, NetworkEvents[i].centerpoint.Y + Main.rand.NextFloat(-sqrtRadius, sqrtRadius));
+                                        if (Collision.CanHit(NetworkEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                        {
+                                            dustVel = new Vector2(0, -speed);
+                                            dustID = Dust.NewDustPerfect(dustPos, NetworkEvents[i].dustID, dustVel, 200);
+                                            dustID.noGravity = true;
+                                        }
+                                    }
+                                    if (side == 3)
+                                    {
+                                        dustPos = new Vector2(NetworkEvents[i].centerpoint.X + Main.rand.NextFloat(-sqrtRadius, sqrtRadius), NetworkEvents[i].centerpoint.Y - sqrtRadius);
+                                        if (Collision.CanHit(NetworkEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
+                                        {
+                                            dustVel = new Vector2(speed, 0);
+                                            dustID = Dust.NewDustPerfect(dustPos, NetworkEvents[i].dustID, dustVel, 200);
+                                            dustID.noGravity = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if ((Math.Abs(player.position.X - NetworkEvents[i].centerpoint.X) < sqrtRadius) && (Math.Abs(player.position.Y - NetworkEvents[i].centerpoint.Y) < sqrtRadius))
+                            {
+                                for (int j = 0; j < 100; j++)
+                                {
+                                    Dust.NewDustPerfect(NetworkEvents[i].centerpoint, NetworkEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
+                                }
+                            }
+                        }
+
                     }
                 }
             }
         }
 
+        public static void SendDrawnEvents()
+        {
+            ModPacket eventPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+            eventPacket.Write((byte)tsorcPacketID.SyncEventDust);
+            eventPacket.Write(NetworkEvents.Count);
+
+            foreach(NetworkEvent thisEvent in NetworkEvents)
+            {
+                eventPacket.WriteVector2(thisEvent.centerpoint);
+                eventPacket.Write(thisEvent.radius);
+                eventPacket.Write(thisEvent.dustID);
+                eventPacket.Write(thisEvent.square);
+            }
+
+            eventPacket.Send();
+        }
         public static void RefreshEvents()
         {
             foreach(ScriptedEvent currentEvent in DisabledEvents)
@@ -1090,6 +1238,27 @@ namespace tsorcRevamp
         public static bool DefaultCondition()
         {
             return true;
+        }
+    }
+
+    //Simpler class to store network events, since they only require a few points of data.
+    public class NetworkEvent
+    {
+        //What is the centerpoint of the region?
+        public Vector2 centerpoint;
+        //What is the radius in blocks it should check around that centerpoint?
+        public float radius;
+        //What type of dust should it spawn?
+        public int dustID;
+        //Is it checking if they're in a square range around a point, or a circular one?
+        public bool square;
+
+        public NetworkEvent(Vector2 position, float range, int dustType, bool squareRange)
+        {
+            centerpoint = position;
+            radius = range;
+            dustID = dustType;
+            square = squareRange;
         }
     }
 }
