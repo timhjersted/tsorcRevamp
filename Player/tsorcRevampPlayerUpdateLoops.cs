@@ -136,6 +136,7 @@ namespace tsorcRevamp {
         public int ReflectionShiftKeypressTime = 0; //If they just pressed an arrow key, this is set to 15. It counts down to 0. If another arrow key is pressed when it is not zero, a dash initiates.
         public Vector2 ReflectionShiftState = Vector2.Zero;
         int[] keyPrimed = new int[4] { 0, 0, 0, 0 }; //Holds the state of each key
+        public int FastFallTimer = 0;
 
         public static readonly int DashDown = 0;
         public static readonly int DashUp = 1;
@@ -725,7 +726,7 @@ namespace tsorcRevamp {
                 if (Collision.CanHit(player.Center, 1, 1, player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1) || Collision.CanHitLine(player.Center, 1, 1, player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1)) {
                     player.Center += ReflectionShiftState * shiftDistance * 16; //Teleport distance
                 }
-
+                FastFallTimer = 30;
                 player.velocity = ReflectionShiftState * 20; //Dash speed
                 ReflectionShiftState = Vector2.Zero;
 
@@ -774,6 +775,12 @@ namespace tsorcRevamp {
                 //The general form is ((player.moveSpeed * %theyshouldget) + (1 - %theyshouldget))
                 player.accRunSpeed = baseSpeed * ((player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
                 player.maxRunSpeed = baseSpeed * ((player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
+
+                if(FastFallTimer > 0)
+                {
+                    player.maxFallSpeed = 50;
+                    FastFallTimer--;
+                }
             }
         }
 

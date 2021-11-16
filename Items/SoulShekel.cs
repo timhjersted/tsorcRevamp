@@ -56,8 +56,18 @@ namespace tsorcRevamp.Items
 
         public override bool OnPickup(Player player)
         {
-            Main.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
-
+            bool openSlot = false;
+            for(int i = 0; i < Main.maxInventory; i++)
+            {
+                if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulShekel>()))
+                {
+                    openSlot = true;
+                }
+            }            
+            if (openSlot)
+            {
+                Main.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
+            }
             return true;
         }
 
