@@ -114,9 +114,9 @@ namespace tsorcRevamp
             BlightFight,
             DarkCloudPyramidFight,
             ArtoriasFight,
-            BlackKnightFight,
-            ExampleHarpySwarm,
-            ExampleNoNPCScriptEvent,
+            //BlackKnightFight,
+            //ExampleHarpySwarm,
+            //ExampleNoNPCScriptEvent,
             SpawnGoblin,
             AttraidiesTheSorrowEvent,
             TwinEoWFight,
@@ -164,13 +164,12 @@ namespace tsorcRevamp
 
             //ARTORIAS
             ScriptedEvent ArtoriasEvent = new ScriptedEvent(new Vector2(5344, 1692), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), DustID.GoldFlame, false, true, "Artorias, the Abysswalker arrives to tear you from this plane...", Color.Gold, false, TheAbyssCustomCondition, ArtoriasCustomAction);
-            ArtoriasEvent.SetCustomStats(50000, 30, 50);
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT
-            ScriptedEvent BlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
-            BlackKnightFight.SetCustomStats(1500, 10, 50);
-            BlackKnightFight.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
+            //ScriptedEvent BlackKnightFight = new ScriptedEvent(new Vector2(506, 867), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, false, true, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
+            //BlackKnightFight.SetCustomStats(1500, 10, 50);
+            //BlackKnightFight.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
 
             //ATTRAIDIES THE SORROW EVENT
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, false, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
@@ -188,16 +187,16 @@ namespace tsorcRevamp
             }
 
             //HARPY SWARM
-            List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
-            List<Vector2> HarpySwarmEnemyLocations = new List<Vector2>() { new Vector2(525, 837), new Vector2(545, 837), new Vector2(505, 837), new Vector2(525, 817), new Vector2(525, 857) };
-            ScriptedEvent ExampleHarpySwarm = new ScriptedEvent(new Vector2(525, 837), 50, HarpySwarmEnemyTypeList, HarpySwarmEnemyLocations, DustID.BlueFairy, false, true, "A Swarm of Harpies appears!", Color.Cyan);
-            ExampleHarpySwarm.SetCustomStats(50, 5, 30);
-            List<int> HarpyDropList = new List<int>() { ModContent.ItemType<Items.DarkSoul>(), ItemID.Feather };
-            List<int> HarpyDropCounts = new List<int>() { 50, 10 };
-            ExampleHarpySwarm.SetCustomDrops(HarpyDropList, HarpyDropCounts);
+            //List<int> HarpySwarmEnemyTypeList = new List<int>() { NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy, NPCID.Harpy };
+            //List<Vector2> HarpySwarmEnemyLocations = new List<Vector2>() { new Vector2(525, 837), new Vector2(545, 837), new Vector2(505, 837), new Vector2(525, 817), new Vector2(525, 857) };
+            //ScriptedEvent ExampleHarpySwarm = new ScriptedEvent(new Vector2(525, 837), 50, HarpySwarmEnemyTypeList, HarpySwarmEnemyLocations, DustID.BlueFairy, false, true, "A Swarm of Harpies appears!", Color.Cyan);
+            //ExampleHarpySwarm.SetCustomStats(50, 5, 30);
+            //List<int> HarpyDropList = new List<int>() { ModContent.ItemType<Items.DarkSoul>(), ItemID.Feather };
+            //List<int> HarpyDropCounts = new List<int>() { 50, 10 };
+            //ExampleHarpySwarm.SetCustomDrops(HarpyDropList, HarpyDropCounts);
 
             //EXAMPLE NO NPC SCRIPTED EVENT
-            ScriptedEvent ExampleNoNPCScriptEvent = new ScriptedEvent(new Vector2(456, 867), 60, default, DustID.GreenFairy, default, true, "The example scripted event has begun...", Color.Green, false, ExampleCondition, ExampleCustomAction);
+            //ScriptedEvent ExampleNoNPCScriptEvent = new ScriptedEvent(new Vector2(456, 867), 60, default, DustID.GreenFairy, default, true, "The example scripted event has begun...", Color.Green, false, ExampleCondition, ExampleCustomAction);
 
             //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
 
@@ -257,9 +256,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.BlightFight, BlightEvent},
                 {ScriptedEventType.DarkCloudPyramidFight, DarkCloudEvent},
                 {ScriptedEventType.ArtoriasFight, ArtoriasEvent},
-                {ScriptedEventType.BlackKnightFight, BlackKnightFight},
-                {ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
-                {ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
+                //{ScriptedEventType.BlackKnightFight, BlackKnightFight},
+                //{ScriptedEventType.ExampleHarpySwarm, ExampleHarpySwarm},
+                //{ScriptedEventType.ExampleNoNPCScriptEvent, ExampleNoNPCScriptEvent},
                 //{ScriptedEventType.Frogpocalypse2_TheFroggening, FrogpocalypseEvent}
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},

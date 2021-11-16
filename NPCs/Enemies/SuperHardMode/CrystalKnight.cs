@@ -730,7 +730,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 				}
 
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BlueTitanite>(), 1 + Main.rand.Next(1));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BlueTitanite>(), 3 + Main.rand.Next(2));
 			}
 		}
 		#endregion

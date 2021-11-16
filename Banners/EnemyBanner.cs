@@ -1536,21 +1536,6 @@ namespace tsorcRevamp.Banners {
             item.placeStyle = 68; //change when texture added
         }
     }
-    public class CrystalKnightIIBanner : EnemyBanner
-    {
-
-        public override string Texture => "tsorcRevamp/Banners/placeholder";
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Dark Crystal Knight Banner");
-            Tooltip.SetDefault("Nearby players get a bonus against: Dark Crystal Knight");
-        }
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            item.placeStyle = 69; //change when texture added
-        }
-    }
     public class DarkBloodKnightBanner : EnemyBanner
     {
 

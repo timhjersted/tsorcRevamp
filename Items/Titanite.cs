@@ -1,11 +1,12 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items {
     public abstract class Titanite : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("A rare and valuable ore.");
+            Tooltip.SetDefault("A rare and valuable ore");
         }
 
         public override void SetDefaults() {
@@ -24,6 +25,11 @@ namespace tsorcRevamp.Items {
         public override void SetDefaults() {
             base.SetDefaults();
         }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {            
+            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Ice cold to the touch"));
+        }
     }
 
     public class RedTitanite : Titanite {
@@ -34,6 +40,11 @@ namespace tsorcRevamp.Items {
         public override void SetDefaults() {
             base.SetDefaults();
         }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Glowing with heat"));
+        }
     }
 
     public class WhiteTitanite : Titanite {
@@ -43,6 +54,11 @@ namespace tsorcRevamp.Items {
 
         public override void SetDefaults() {
             base.SetDefaults();
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Forged into the strongest armaments"));
         }
     }
 }
