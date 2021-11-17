@@ -158,8 +158,8 @@ namespace tsorcRevamp
             {
                 if (Main.rand.Next(10) == 0)
                 {
-                    player.HealEffect(damage / 10);
-                    player.statLife += (damage / 10);
+                    player.HealEffect(10);
+                    player.statLife += (10);
 
                 }
             }

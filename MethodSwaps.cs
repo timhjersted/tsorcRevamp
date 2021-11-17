@@ -567,7 +567,20 @@ namespace tsorcRevamp {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (!(Main.EquipPage == 1) || Main.mapFullscreen)) {
                 NPC npc = new NPC();
                 npc.SetDefaults(type);
-                if (npc.townNPC) {
+                //Mechanic is hidden until any mech boss is killed
+                if (npc.type == NPCID.Mechanic && !NPC.downedMechBossAny)
+                {
+                    return 0;
+                }
+                //Goblin is hidden until the Jungle Wyvern is killed
+                else if (npc.type == NPCID.GoblinTinkerer && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()))
+                {
+                    return 0;
+                    
+                }
+                //Wizard is hidden until The Sorrow is killed
+                else if (npc.type == NPCID.Wizard && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+                {
                     return 0;
                 }
                 else {
