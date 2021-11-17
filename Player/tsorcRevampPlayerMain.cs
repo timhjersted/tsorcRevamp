@@ -711,13 +711,15 @@ namespace tsorcRevamp
 
         public void DoMultiCrits(ref int damage, int critType) {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            if (critLevel > 1) {
-                for (int i = 1; i < critLevel; i++) {
-                    damage *= 2;
+            if (critLevel != 0) {
+                if (critLevel > 1) {
+                    for (int i = 1; i < critLevel; i++) {
+                        damage *= 2;
+                    }
                 }
-            }
-            if (Main.rand.Next(1, 101) <= critType - (100 * critLevel)) {
-                damage *= 2;
+                if (Main.rand.Next(1, 101) <= critType - (100 * critLevel)) {
+                    damage *= 2;
+                } 
             }
         }
     }
