@@ -35,6 +35,12 @@ namespace tsorcRevamp {
                     }
                     Main.quickBG = 10;
                     self.FindSpawn();
+                    if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                        if (!Player.CheckSpawn(self.SpawnX, self.SpawnY)) {
+                            self.SpawnX = -1;
+                            self.SpawnY = -1;
+                        } 
+                    }
                     Main.maxQ = true;
                 }
                 if (Main.netMode == NetmodeID.MultiplayerClient && self.whoAmI == Main.myPlayer) {

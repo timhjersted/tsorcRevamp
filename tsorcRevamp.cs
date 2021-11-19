@@ -201,7 +201,7 @@ namespace tsorcRevamp {
                 73, //plants
                 74, //plants
                 78, //clay pot
-                79, //bed
+                //79, //bed
                 80, //cactus
                 81, //corals
                 82, //new herbs
@@ -361,7 +361,7 @@ namespace tsorcRevamp {
                 73, //plants
                 74, //plants
                 78, //clay pot
-                79, //bed
+                //79, //bed
                 81, //corals
                 82, //new herbs
                 83, //grown herbs
