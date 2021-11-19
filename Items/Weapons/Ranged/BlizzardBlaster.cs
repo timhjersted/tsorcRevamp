@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.shootSpeed = 10f; //unused
             item.value = Item.sellPrice(0, 1);
             item.rare = ItemRarityID.Orange;
-            item.UseSound = SoundID.Item98;
+            //item.UseSound = SoundID.Item98;
         }
 
         public override Vector2? HoldoutOffset() {
@@ -53,6 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                     BlizzardBlasterShot.target = targetList[j];
                 }
             }
+            Main.PlaySound(SoundID.Item98);
             return false;
         }
 
