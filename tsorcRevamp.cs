@@ -16,6 +16,7 @@ using System.IO;
 using Terraria.ModLoader.IO;
 using Terraria.Graphics.Shaders;
 using Terraria.Graphics.Effects;
+using ReLogic.Graphics;
 
 namespace tsorcRevamp {
 
@@ -78,6 +79,21 @@ namespace tsorcRevamp {
             }
         }
 
+        public override void PostDrawFullscreenMap(ref string mouseText) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                if (!NPC.downedMechBossAny || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) {
+                    string NPCHide1 = "Some NPC locations are not being shown";
+                    string NPCHide2 = "Explore the world to discover their locations";
+
+                    int textPos = 16;
+                    Main.spriteBatch.DrawString(Main.fontMouseText, NPCHide1, new Vector2(textPos + 2, textPos + 2), Color.Black); //need a drop shadow?
+                    Main.spriteBatch.DrawString(Main.fontMouseText, NPCHide1, new Vector2(textPos, textPos), Color.White);
+
+                    Main.spriteBatch.DrawString(Main.fontMouseText, NPCHide2, new Vector2(textPos + 2, (textPos * 2) + 2), Color.Black); //just draw the text twice!
+                    Main.spriteBatch.DrawString(Main.fontMouseText, NPCHide2, new Vector2(textPos, textPos * 2), Color.White);
+                }
+            }
+        }
 
         public override void UpdateUI(GameTime gameTime) {
             if (BonfireUIState.Visible) {
