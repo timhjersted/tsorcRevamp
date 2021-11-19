@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.knockBackResist = 1;
 			npc.defense = 4;
 			npc.lifeMax = 28;
-			if (!Main.dedServ) npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f);
+			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak");
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/SadSqueak");
 			npc.value = 0;
 			npc.buffImmune[BuffID.Confused] = true;

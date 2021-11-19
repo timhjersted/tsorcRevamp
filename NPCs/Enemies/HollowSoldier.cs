@@ -319,11 +319,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 ++npc.ai[3]; //Used for Basic Slash
             }
 
-            if (!shielding && !jumpSlashing)
+            if (/*!shielding && */!jumpSlashing)
             {
                 if (npc.ai[3] == 10 && npc.Distance(player.Center) < 50 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                 {
                     slashing = true;
+                    shielding = false;
                 }
 
                 if (slashing)
@@ -441,11 +442,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (!shielding && !slashing)
+            if (/*!shielding &&*/ !slashing)
             {
                 if (npc.ai[1] == 420 && npc.Distance(player.Center) < 140 && npc.Distance(player.Center) >= 50 && npc.velocity.Y == 0 && standing_on_solid_tile && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0)) //If timer is at 0 and player is within slash range
                 {
                     jumpSlashing = true;
+                    shielding = false;
                 }
 
                 if (jumpSlashing)
@@ -569,7 +571,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Texture2D shieldTexture = mod.GetTexture("NPCs/Enemies/HollowSoldier_Shield");
             SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 15, 0, shieldFrame);
-            if (shielding && npc.velocity.X == 0)
+            if (shielding && npc.velocity.X == 0 && !jumpSlashing && !slashing)
             {
                 if (npc.spriteDirection == 1)
                 {
@@ -586,6 +588,10 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (shielding)
             {
+                if (npc.ai[1] < 370)
+                {
+                    npc.ai[1] += 50; //Used for Jump-slash
+                }
                 if (npc.direction == 1)
                 {
                     if (player.position.X > npc.position.X)
@@ -616,7 +622,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X < npc.position.X) //if hit in the back
                 {
-                    damage = (int)(damage * 1.2f); //bonus damage
+                    damage = (int)(damage * 2f); //bonus damage
                     Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
                 }
             }
@@ -624,7 +630,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X > npc.position.X) //if hit in the back
                 {
-                    damage = (int)(damage * 1.2f); //bonus damage
+                    damage = (int)(damage * 2f); //bonus damage
                     Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
                 }
             }
@@ -635,79 +641,124 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player player = Main.player[npc.target];
-
-            if (shielding)
+            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
             {
-                if (npc.direction == 1) //if npc facing right
+                if (shielding)
                 {
-                    if (hitDirection == -1) //if proj moving toward npc front
+                    if (npc.direction == 1) //if npc facing right
                     {
-                        Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 30;
-                        knockback = 0;
-
-                        if (!projectile.melee)
+                        if (projectile.oldPosition.X > npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
-                            if (npc.ai[1] < 360)
+
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 30;
+                            knockback = 0.1f;
+                            if (npc.ai[1] < 350)
                             {
-                                npc.ai[1] += 60; //Used for Jump-slash
+                                npc.ai[1] += 50; //Used for Jump-slash
+                            }
+                            if (npc.ai[2] > 350)
+                            {
+                                npc.ai[2] -= 25;
                             }
                         }
 
-                        if (npc.ai[2] > 350)
+                        else if (hitDirection == -1 && (!projectile.melee || projectile.aiStyle == 19))
                         {
-                            npc.ai[2] -= 25; //Shield
-                        }
-                    }
-                }
-                else //if npc facing left
-                {
-                    if (hitDirection == 1) //if proj moving toward npc front
-                    {
-                        Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 30;
-                        knockback = 0;
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 30;
+                            knockback = 0f;
 
-                        if (!projectile.melee)
-                        {
-                            if (npc.ai[1] < 360)
+                            if (npc.ai[1] < 350)
                             {
                                 npc.ai[1] += 60; //Used for Jump-slash
                             }
-                        }
 
-                        if (npc.ai[2] > 350)
+
+                            if (npc.ai[2] > 350)
+                            {
+                                npc.ai[2] -= 25;
+                            }
+                        }
+                    }
+                    else //if npc facing left
+                    {
+                        if (projectile.oldPosition.X < npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
-                            npc.ai[2] -= 25;
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 30;
+                            knockback = 0.1f;
+                            if (npc.ai[1] < 350)
+                            {
+                                npc.ai[1] += 50; //Used for Jump-slash
+                            }
+                            if (npc.ai[2] > 350)
+                            {
+                                npc.ai[2] -= 25;
+                            }
+                        }
+                        else if (hitDirection == 1 && (!projectile.melee || projectile.aiStyle == 19))
+                        {
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 30;
+
+                            knockback = 0f;
+                            if (npc.ai[1] < 350)
+                            {
+                                npc.ai[1] += 60; //Used for Jump-slash
+                            }
+
+
+                            if (npc.ai[2] > 350)
+                            {
+                                npc.ai[2] -= 25;
+                            }
                         }
                     }
                 }
-            }
 
-            if (npc.direction == 1) //if enemy facing right
-            {
-                if (hitDirection == 1) //if hit in the back
+
+                if (npc.direction == 1) //if enemy facing right
                 {
-                    damage = (int)(damage * 1.2f); //bonus damage
-                    Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    if (projectile.oldPosition.X < npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if hit in the back
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                    else if (hitDirection == 1)
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                }
+                else //if enemy facing left
+                {
+                    if (projectile.oldPosition.X > npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if hit in the back
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                    else if (hitDirection == -1)
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                }
+
+                if (npc.Distance(player.Center) > 220 && !shielding)
+                {
+                    npc.ai[2] += 120;
+                }
+
+                if (npc.ai[1] < 340)
+                {
+                    npc.ai[1] += 10;
                 }
             }
-            else //if enemy facing left
-            {
-                if (hitDirection == -1) //if hit in the back
-                {
-                    damage = (int)(damage * 1.2f); //bonus damage
-                    Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
-                }
-            }
-
-            if (npc.Distance(player.Center) > 220 && !shielding)
-            {
-                npc.ai[2] += 120;
-            }
-
-            npc.ai[2] += 10;
-
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -732,7 +783,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 10 + Main.rand.Next(1, 6));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.IronskinPotion); }
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.EndurancePotion); }
@@ -854,13 +908,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            if (npc.velocity.X == 0 && npc.velocity.Y == 0 && shielding) //If not moving at all (shielding)
+            if (npc.velocity.X == 0 && npc.velocity.Y == 0 && shielding && !jumpSlashing && !slashing) //If not moving at all (shielding)
             {
                 npc.spriteDirection = npc.direction;
                 npc.frame.Y = 10 * frameHeight;
             }
 
-            if (shielding)
+            if (shielding && !jumpSlashing && npc.ai[1] <= 420)
             {
                 shieldFrame = shieldAnimTimer / 4; //Me smart, me figure out how to make loop AND simplify code at the same time!
 

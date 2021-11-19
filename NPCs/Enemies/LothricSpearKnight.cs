@@ -24,12 +24,12 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.knockBackResist = 0.1f;
             npc.aiStyle = -1;
             npc.damage = 40; 
-            npc.defense = 36;
+            npc.defense = 50;
             npc.height = 40;
             npc.width = 20;
-            npc.lifeMax = 700;
-            if (Main.hardMode) { npc.lifeMax = 1400; npc.defense = 50; }
-            npc.value = 3000;
+            npc.lifeMax = 750;
+            if (Main.hardMode) { npc.lifeMax = 1400; npc.defense = 60; }
+            npc.value = 3500;
             npc.noGravity = false;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
@@ -759,7 +759,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X < npc.position.X) //if hit in the back
                 {
-                    damage = (int)(damage * 1.2f); //bonus damage
+                    damage = (int)(damage * 2f); //bonus damage
                     Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
                 }
             }
@@ -767,7 +767,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X > npc.position.X) //if hit in the back
                 {
-                    damage = (int)(damage * 1.2f); //bonus damage
+                    damage = (int)(damage * 2f); //bonus damage
                     Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
                 }
             }
@@ -778,81 +778,124 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player player = Main.player[npc.target];
-
-            if (AI_State == State_Shielding || AI_State == State_Thrusting)
+            if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
             {
-                if (npc.direction == 1) //if npc facing right
+                if (AI_State == State_Shielding || AI_State == State_Thrusting)
                 {
-                    if (hitDirection == -1) //if proj moving toward npc front
+                    if (npc.direction == 1) //if npc facing right
                     {
-                        Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 80;
-                        knockback = 0;
-
-                        if (!projectile.melee)
+                        if (projectile.oldPosition.X > npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
+
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 80;
+                            knockback = 0f;
+                            if (AI_Timer_Attacking < 340)
+                            {
+                                AI_Timer_Attacking += 70; //Used for Jump-slash
+                            }
+                            if (AI_Timer_Shielding > 340)
+                            {
+                                AI_Timer_Shielding -= 35;
+                            }
+                        }
+
+                        else if (hitDirection == -1 && (!projectile.melee || projectile.aiStyle == 19))
+                        {
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 80;
+                            knockback = 0f;
+
                             if (AI_Timer_Attacking < 340)
                             {
                                 AI_Timer_Attacking += 80; //Used for Jump-slash
                             }
-                        }
-
-                        if (AI_Timer_Shielding > 340)
-                        {
-                            AI_Timer_Shielding -= 35; //Shield
+                            if (AI_Timer_Shielding > 340)
+                            {
+                                AI_Timer_Shielding -= 35;
+                            }
                         }
                     }
-                }
-                else //if npc facing left
-                {
-                    if (hitDirection == 1) //if proj moving toward npc front
-                    {
-                        Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 80;
-                        knockback = 0;
 
-                        if (!projectile.melee)
+                    else //if npc facing left
+                    {
+                        if (projectile.oldPosition.X < npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 80;
+                            knockback = 0f;
+                            if (AI_Timer_Attacking < 340)
+                            {
+                                AI_Timer_Attacking += 70; //Used for Jump-slash
+                            }
+                            if (AI_Timer_Shielding > 340)
+                            {
+                                AI_Timer_Shielding -= 35;
+                            }
+                        }
+                        else if (hitDirection == 1 && (!projectile.melee || projectile.aiStyle == 19))
+                        {
+                            Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
+                            damage -= 80;
+
+                            knockback = 0f;
                             if (AI_Timer_Attacking < 340)
                             {
                                 AI_Timer_Attacking += 80; //Used for Jump-slash
                             }
-                        }
-
-                        if (AI_Timer_Shielding > 340)
-                        {
-                            AI_Timer_Shielding -= 35;
+                            if (AI_Timer_Shielding > 340)
+                            {
+                                AI_Timer_Shielding -= 35;
+                            }
                         }
                     }
                 }
-            }
 
-            if (npc.direction == 1) //if enemy facing right
-            {
-                if (hitDirection == 1) //if hit in the back
-                {
-                    damage = (int)(damage * 1.2f); //bonus damage
-                    Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
-                }
-            }
-            else //if enemy facing left
-            {
-                if (hitDirection == -1) //if hit in the back
-                {
-                    damage = (int)(damage * 1.2f); //bonus damage
-                    Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
-                }
-            }
 
-            if (npc.Distance(player.Center) > 220 && AI_State != State_Shielding && AI_State != State_Thrusting)
-            {
-                AI_Timer_Shielding += 120;
-                if (AI_Timer_Shielding > 300)
+                if (npc.direction == 1) //if enemy facing right
                 {
-                    AI_Timer_Shielding = 300;
+                    if (projectile.oldPosition.X < npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if hit in the back
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                    else if (hitDirection == 1)
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                }
+                else //if enemy facing left
+                {
+                    if (projectile.oldPosition.X > npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if hit in the back
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                    else if (hitDirection == -1)
+                    {
+                        CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
+                        damage = (int)(damage * 2f); //bonus damage
+                        Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
+                    }
+                }
+
+                if (npc.Distance(player.Center) > 220 && AI_State != State_Shielding && AI_State != State_Thrusting)
+                {
+                    AI_Timer_Shielding += 120;
+                    if (AI_Timer_Shielding > 300)
+                    {
+                        AI_Timer_Shielding = 300;
+                    }
+                }
+                if (AI_Timer_Attacking < 400)
+                {
+                    AI_Timer_Attacking += 10;
                 }
             }
-            AI_Timer_Shielding += 10;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

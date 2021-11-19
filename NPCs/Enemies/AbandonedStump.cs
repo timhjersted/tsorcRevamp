@@ -288,6 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				|| item.type == mod.ItemType("ForgottenPoisonAxe") || item.type == mod.ItemType("ForgottenRuneAxe") || item.type == mod.ItemType("GigantAxe"))
 
 			{
+				CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
 				damage *= 2; //I never want to see or hear the word "axe" again in my life
 				if (damage < 20)
 				{
@@ -306,6 +307,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				 || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FierySickle") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("FieryZweihander") || item.type == mod.ItemType("ForgottenRisingSun") || item.type == mod.ItemType("MagmaTooth")
 				 || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == mod.ItemType("SunBlade"))
 			{
+				CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
 				damage *= 2;
 				if (damage < 20)
 				{
@@ -341,6 +343,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				projectile.type == mod.ProjectileType("BlackFire") || projectile.type == mod.ProjectileType("BlackFirelet") || projectile.type == mod.ProjectileType("CursedFlames") || projectile.type == mod.ProjectileType("CursedFlamelash") || projectile.type == mod.ProjectileType("DevilSickle") ||
 				(projectile.melee && player.meleeEnchant == 3))
             {
+				CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
 				damage *= 2;
 				if (damage < 20)
 				{

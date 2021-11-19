@@ -350,8 +350,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 /*spent more time making this list than the NPC iteself*/|| item.type == mod.ItemType("MythrilPoleWarAxe") || item.type == mod.ItemType("MythrilWarAxe") || item.type == mod.ItemType("OldAxe") || item.type == mod.ItemType("OldDoubleAxe") || item.type == mod.ItemType("OldHalberd")
                 || item.type == mod.ItemType("ReforgedOldAxe") || item.type == mod.ItemType("ReforgedOldDoubleAxe") || (item.type == mod.ItemType("ReforgedOldHalberd")) || item.type == mod.ItemType("ForgottenAxe") || item.type == mod.ItemType("ForgottenGreatAxe") || (item.type == mod.ItemType("CobaltHalberd")
                 || item.type == mod.ItemType("ForgottenPoisonAxe") || item.type == mod.ItemType("ForgottenRuneAxe") || item.type == mod.ItemType("GigantAxe")))
-            {
-                damage *= 2; //I never want to see or hear the word "axe" again in my life
+			{
+				CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+				damage *= 2; //I never want to see or hear the word "axe" again in my life
 				if (damage < 20)
 				{
 					damage = 20; //damage before defence
@@ -367,6 +368,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				 || item.type == mod.ItemType("FieryPoleWarAxe") || item.type == mod.ItemType("FierySickle") || item.type == mod.ItemType("FieryWarAxe") || item.type == mod.ItemType("FieryZweihander") || item.type == mod.ItemType("ForgottenRisingSun") || item.type == mod.ItemType("MagmaTooth")
 				 || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == mod.ItemType("SunBlade"))
             {
+				CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
 				damage *= 2;
 				if (damage < 20)
 				{
@@ -404,6 +406,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				(projectile.melee && player.meleeEnchant == 3))
 			{
 				damage *= 2;
+				CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
+
 				if (damage < 20)
 				{
 					damage = 20; //damage before defence
