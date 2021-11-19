@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 12;
-            projectile.melee = true;
+            //projectile.melee = true;
         }
 
         int difference;
