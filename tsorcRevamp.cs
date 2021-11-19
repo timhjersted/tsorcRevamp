@@ -331,6 +331,7 @@ namespace tsorcRevamp {
                 463, //defenders forge
                 TileID.Titanium,
                 TileID.Pumpkins, //the harvestable kind, not the block
+                TileID.BreakableIce
 
             };
 
@@ -923,6 +924,12 @@ namespace tsorcRevamp {
                 }
                 else return false; //disallow breaking tiles otherwise
             }
+
+            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            {
+                return false;
+            }
+
             return base.CanKillTile(x, y, type, ref blockDamaged); //use default value
         }
 
@@ -955,6 +962,12 @@ namespace tsorcRevamp {
                 }
                 return CanDestroy;
             }
+
+            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            {
+                return false;
+            }
+
             else return base.CanExplode(x, y, type);
 
         }
