@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items.Accessories {
                 if (ttindex != -1)
                 {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampDarkmoonCloak", "Halves the duration of Magic Imbue Cooldown"));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampDarkmoonCloak", "Magic Imbues no longer need to go on cooldown"));
                 }
             }
         }

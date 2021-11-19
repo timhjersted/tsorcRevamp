@@ -13,7 +13,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Crystal Magic Weapon");
             Tooltip.SetDefault("Imbues melee weapons with crystalline magic,\n" +
                                 "allowing for incredible magic damage scaling" +
-                                "\nLasts 20 seconds, 60 second cooldown" +
+                                "\nAdds 100% of bonus magic damage" +
+                                "\nPlus 1 damage for every 20 max mana over 100" +
+                                "\nLasts 1 minute, 2 minute cooldown" +
                                 "\nNot compatible with other weapon imbues");
 
         }
@@ -50,8 +52,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), 1200); //20s
-            player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), modPlayer.DarkmoonCloak ? 1800 : 3600);
+            player.AddBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>(), 3600); //60s
+
+            if (!modPlayer.DarkmoonCloak)
+            {
+                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 7200);
+            }
 
             return true;
         }

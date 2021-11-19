@@ -13,7 +13,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Magic Weapon");
             Tooltip.SetDefault("Imbues melee weapons with magic,\n" +
                                 "allowing for weak magic damage scaling" +
-                                "\nLasts 30 seconds, 60 second cooldown" +
+                                "\nAdds 50% of bonus magic damage" +
+                                "\nPlus 1 damage for every 60 max mana over 100" +
+                                "\nLasts 1 minute, 2 minute cooldown" +
                                 "\nNot compatible with other weapon imbues");
 
         }
@@ -50,11 +52,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            player.AddBuff(ModContent.BuffType<Buffs.MagicWeapon>(), 1800); //30s
+            player.AddBuff(ModContent.BuffType<Buffs.MagicWeapon>(), 3600); //60s
 
             if (!modPlayer.DarkmoonCloak)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 3600);
+                player.AddBuff(ModContent.BuffType<Buffs.MagicImbueCooldown>(), 7200);
             }
 
             return true;

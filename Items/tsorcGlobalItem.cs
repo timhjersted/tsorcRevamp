@@ -160,20 +160,31 @@ namespace tsorcRevamp.Items {
 		public override void ModifyWeaponDamage(Item item, Player player, ref float add, ref float mult, ref float flat)
 		{
 			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
 			if (item.melee)
 			{
 				if (modPlayer.MagicWeapon)
 				{
-					add += (player.magicDamage - player.magicDamageMult) * 0.5f /*- (player.meleeDamageMult * 0.05f)*/;
+					add += (player.magicDamage - player.magicDamageMult) * .5f /*- (player.meleeDamageMult * 0.05f)*/;
+					if (player.statManaMax2 >= 100)
+					{
+						flat += (player.statManaMax2 - 100) / 60;
+					}
 				}
 				if (modPlayer.GreatMagicWeapon)
 				{
 					add += (player.magicDamage - player.magicDamageMult) * .75f /*- (player.meleeDamageMult * 0.1f)*/;
+					if (player.statManaMax2 >= 100)
+					{
+						flat += (player.statManaMax2 - 100) / 40;
+					}
 				}
 				if (modPlayer.CrystalMagicWeapon)
 				{
 					add += (player.magicDamage - player.magicDamageMult) * 1f /*- (player.meleeDamageMult * 0.15f)*/; //scales same as melee damage bonus would
+					if (player.statManaMax2 >= 100)
+					{
+						flat += (player.statManaMax2 - 100) / 20;
+					}
 				}
 			}
 		}
