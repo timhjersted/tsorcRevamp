@@ -33,7 +33,24 @@ namespace tsorcRevamp.Tiles
 			Main.tileLavaDeath[Type] = false;
 			adjTiles = new int[] { TileID.Campfire };
 		}
-		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+        public override bool CanExplode(int i, int j)
+        {
+            return false;
+        }
+
+        public override bool CanKillTile(int i, int j, ref bool blockDamaged)
+        {
+			Player player = Main.LocalPlayer;
+
+			if (player.name == "Chroma TSORC test" || player.name == "Yournamehere") //feel free to add your players name, you can break it but has to be the top row of tiles for some reason
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+        public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
 			if (Main.tile[i, j].frameY >= 74)
 			{
@@ -402,8 +419,9 @@ namespace tsorcRevamp.Tiles
 			public override void SetStaticDefaults()
 			{
 				DisplayName.SetDefault("Dark Souls Bonfire");
-				Tooltip.SetDefault("Right-click to light" + //re-do once finalized
-				"\nYou probably shouldn't have this");
+				Tooltip.SetDefault("Right-click to light" +
+				"\nYou probably shouldn't have this" +
+				"\nCan only be placed by devs");
 			}
 
 			public override void SetDefaults()
@@ -411,6 +429,17 @@ namespace tsorcRevamp.Tiles
 				item.CloneDefaults(ItemID.Bookcase);
 				item.createTile = ModContent.TileType<BonfireCheckpoint>();
 				item.placeStyle = 0;
+			}
+
+			public override bool CanUseItem(Player player)
+			{
+				if (player.name == "Chroma TSORC test" || player.name == "Yournamehere") //feel free to add your players name
+				{
+					return true;
+				}
+
+				return false;
+
 			}
 		}
 	}
