@@ -639,6 +639,8 @@ namespace tsorcRevamp {
                     modPlayer.SendSingleItemPacket(1, modPlayer.SoulSlot.Item, -1, whoAmI);
                 }
             }
+
+            //Sync Event Dust
             else if(message == tsorcPacketID.SyncEventDust)
             {
                 if (Main.netMode != NetmodeID.Server)
@@ -657,6 +659,26 @@ namespace tsorcRevamp {
                     }
                 }
             }
+
+            //Sync time change
+            else if(message == tsorcPacketID.SyncTimeChange)
+            {
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    Main.dayTime = !Main.dayTime;
+                    Main.time = 0;
+
+                    if (Main.dayTime)
+                    {
+                        UsefulFunctions.ServerText("You shift time forward and a new day begins...", new Color(175, 75, 255));
+                    }
+                    else UsefulFunctions.ServerText("You shift time forward and a new night begins...", new Color(175, 75, 255));
+
+                    NetMessage.SendData(MessageID.WorldData);
+                }
+            }
+
+
 
             /**
             //For synced random
@@ -847,6 +869,7 @@ namespace tsorcRevamp {
         //Bytes because packets use bytes
         public const byte SyncSoulSlot = 1;
         public const byte SyncEventDust = 2;
+        public const byte SyncTimeChange = 3;
         //public const byte SyncRandom = ;
     }
 

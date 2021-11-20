@@ -29,24 +29,30 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player) { // i dont know why this works. dont touch it.
-            Main.dayTime = !Main.dayTime;
-            Main.time = 0;
-            if (Main.netMode == NetmodeID.SinglePlayer) {
-                if (Main.dayTime) {
+        public override bool UseItem(Player player) { // it doesn't, sorry :P
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                Main.dayTime = !Main.dayTime;
+                Main.time = 0; 
+                if (Main.dayTime)
+                {
                     Main.NewText("You shift time forward and a new day begins...", 175, 75, 255);
                 }
                 else Main.NewText("You shift time forward and a new night begins...", 175, 75, 255);
             }
-            if (Main.netMode == NetmodeID.Server) {
-                NetMessage.SendData(MessageID.WorldData);
+        
+            if (Main.netMode != NetmodeID.SinglePlayer && (player.whoAmI == Main.LocalPlayer.whoAmI))
+            {
+                ModPacket timePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                timePacket.Write(tsorcPacketID.SyncTimeChange);
+                timePacket.Send();
             }
             return true;
         }
-        public override void UpdateEquip(Player player) {
-            player.accWatch = 1;
 
+        public override void UpdateInventory(Player player)
+        {
+            player.accWatch = 3;
         }
-
     }
 }

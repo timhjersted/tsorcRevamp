@@ -200,6 +200,24 @@ namespace tsorcRevamp {
             }
         }
 
+        //Tired of retyping this
+        public static void ServerText(string text)
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Yellow);
+            }
+        }
+
+        //Yes, this has to be seperate. Can't use optional parameters because for some dumb reason XNA colors aren't a compile-time constant.
+        public static void ServerText(string text, Color color)
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+            }
+        }
+
         /**INCOMPLETE!!!
          
         //TODO:
