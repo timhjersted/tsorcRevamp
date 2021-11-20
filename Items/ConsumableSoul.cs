@@ -84,7 +84,26 @@ namespace tsorcRevamp.Items
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.25f).WithPitchVariance(.3f), player.position); // Plays sound.
-                player.QuickSpawnItem(mod.ItemType("DarkSoul"), 50); // Gives player souls.
+
+                //Temporary multiplayer debugging code:
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    Main.NewText("Player Index using item: " +  player.name + " player client running this code: " + Main.player[Main.myPlayer].name);
+                }
+
+                //Ensure the player on this computer (Main.player[Main.myPlayer]) is also the one using the item (player).
+                //I'm assuming that the bug is caused by this code is being run on every client, not just the client using the item, and as such each client is spawning one set of souls on the target player.
+                //If so, this should fix it.
+                if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
+                {
+                    player.QuickSpawnItem(mod.ItemType("DarkSoul"), 50); // Gives player souls.
+
+                    //More temp debug code:
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        Main.NewText("Player Index spawning souls: " + player.name + " player client running this code: " + Main.player[Main.myPlayer].name);
+                    }
+                }
 
                 for (int d = 0; d < 10; d++)
                 {
