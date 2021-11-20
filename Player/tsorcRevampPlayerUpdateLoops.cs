@@ -210,7 +210,10 @@ namespace tsorcRevamp {
             }
 
             if (!player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
-                BonfireUIState.Visible = false;
+                if (player.whoAmI == Main.LocalPlayer.whoAmI)
+                {
+                    BonfireUIState.Visible = false;
+                }
             }
 
             if (MiakodaFullHeal1) { //dust loop on player the instant they get healed
