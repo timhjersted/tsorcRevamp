@@ -9,6 +9,7 @@ using System;
 using System.Reflection;
 using ReLogic.Graphics;
 using System.IO;
+using System.Net;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -429,30 +430,48 @@ namespace tsorcRevamp {
         internal static void DownloadMapButton(On.Terraria.Main.orig_DrawMenu orig, Main self, GameTime gameTime) {
             orig(self, gameTime);
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            if (Main.menuMode == 16) {
-                string downloadText = "Want the Custom Map? Click here to install!";
+            tsorcRevamp thisMod = (tsorcRevamp)mod;
+            if (Main.mouseLeftRelease)
+            {
+                thisMod.UICooldown = false;
+            }
 
+            if (Main.menuMode == 16) {
+
+                string downloadText = "Want the Custom Map? Click here to install!";
+                Color downloadTextColor = Main.DiscoColor;
                 string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-                string fileName = "\\tsorcMusic.tmod";
+                string mapFileName = "\\tsorcBaseMap.wld";
                 string worldsFolder = Main.SavePath + "\\Worlds";
 
-                Vector2 textOrigin = Main.fontMouseText.MeasureString(downloadText);
+                if (File.Exists(worldsFolder + mapFileName))
+                {
+                    downloadText = "Custom map loaded! To play it, hit \"Back\" and select it!\n Or, click here to make another fresh copy of the map";
+                    downloadTextColor = Color.AliceBlue;
+                }
 
-                Vector2 position = new Vector2((Main.screenWidth / 2) - (textOrigin.X * 0.5f), 120 + (80 * 6));
-                Main.spriteBatch.Begin();
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, position, Color.White);
-                Main.spriteBatch.End();
-                Rectangle x = new Rectangle((int)position.X - 2, (int)position.Y - 2, (int)(textOrigin.X * 1.5f), (int)(textOrigin.Y * 1.5f));
-                if (Main.mouseX > position.X && Main.mouseX < position.X + textOrigin.X) {
-                    if (Main.mouseY > position.Y && Main.mouseY < position.Y + textOrigin.Y) {
-                        if (Main.mouseLeft) {
-                            if (File.Exists(dataDir + fileName)) {
-                                if (!File.Exists(worldsFolder + fileName)) {
 
-                                    FileInfo fileToCopy = new FileInfo(dataDir + fileName);
+
+                Vector2 downloadTextOrigin = Main.fontMouseText.MeasureString(downloadText);
+                float textScale = 2;
+                Vector2 downloadTextPosition = new Vector2((Main.screenWidth / 2) - (downloadTextOrigin.X * 0.5f * textScale), 120 + (80 * 6));
+
+                
+                if (Main.mouseX > downloadTextPosition.X && Main.mouseX < downloadTextPosition.X + (downloadTextOrigin.X * textScale)) {
+                    if (Main.mouseY > downloadTextPosition.Y && Main.mouseY < downloadTextPosition.Y + (downloadTextOrigin.Y * textScale)) {
+
+                        downloadTextColor = Color.Yellow;
+
+                        if (Main.mouseLeft && !thisMod.UICooldown) {
+                            thisMod.UICooldown = true;
+                            if (File.Exists(dataDir + mapFileName)) {
+                                if (!File.Exists(worldsFolder + mapFileName)) {
+
+                                    FileInfo fileToCopy = new FileInfo(dataDir + mapFileName);
                                     mod.Logger.Info("Attempting to copy world.");
-                                    try {
-                                        fileToCopy.CopyTo(worldsFolder + fileName, false);
+                                    try
+                                    {
+                                        fileToCopy.CopyTo(worldsFolder + mapFileName, false);
                                     }
                                     catch (System.Security.SecurityException e) {
                                         mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
@@ -462,15 +481,127 @@ namespace tsorcRevamp {
                                     }
                                 }
                                 else {
-                                    mod.Logger.Info("World already exists.");
-                                }
+                                    mod.Logger.Info("World already exists. Making renamed copy.");
+                                    FileInfo fileToCopy = new FileInfo(dataDir + mapFileName);
+                                    try
+                                    {
+                                        string newFileName;
+                                        bool validName = false;
+                                        int worldCount = 1;
+                                        do
+                                        {
+                                            newFileName = "\\tsorcBaseMap" + worldCount.ToString() + ".wld";
+                                            if(File.Exists(worldsFolder + newFileName))
+                                            {
+                                                worldCount++;
+                                                if (worldCount > 255)
+                                                {
+                                                    mod.Logger.Warn("World copy failed, too many copies.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                validName = true;
+                                            }
+                                        } while (!validName);
 
+                                        fileToCopy.CopyTo(worldsFolder + newFileName, false);
+                                    }
+                                    catch (System.Security.SecurityException e)
+                                    {
+                                        mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        mod.Logger.Warn("World copy failed ({0}).", e);
+                                    }
+                                }
                             }
                         }
-
                     }
                 }
+                Main.spriteBatch.Begin();
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                Main.spriteBatch.End();
+
+
+               
             }
+
+            if(Main.menuMode == 0)
+            {
+                string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
+
+                //Only display this if they have tsorcRevamp enabled and the music mod is not downloaded at all
+                if (!File.Exists(musicModDir))
+                {
+                    String musicText = "Click here to get the Story of Red Cloud music mod!";
+                    float musicTextScale = 2;
+                    Vector2 musicTextOrigin = Main.fontMouseText.MeasureString(musicText);
+                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2) - musicTextOrigin.X * 0.5f * musicTextScale, Main.screenHeight / 2.5f);
+                    Color musicTextColor = Main.DiscoColor;
+
+                    if (Main.mouseX > musicTextPosition.X && Main.mouseX < musicTextPosition.X + (musicTextOrigin.X * musicTextScale))
+                    {
+                        if (Main.mouseY > musicTextPosition.Y && Main.mouseY < musicTextPosition.Y + (musicTextOrigin.Y * musicTextScale))
+                        {
+
+                            musicTextColor = Color.Yellow;
+
+                            if (Main.mouseLeft)
+                            {
+
+                                mod.Logger.Info("Attempting to download music mod.");
+                                ServicePointManager.Expect100Continue = true;
+                                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                                string filePath = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
+
+
+                                if (!File.Exists(filePath))
+                                {
+                                    log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+                                    thisLogger.Info("Attempting to download music file.");
+                                    try
+                                    {
+                                        using (WebClient client = new WebClient())
+                                        {
+                                            client.DownloadFileAsync(new Uri("https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod"), filePath);
+                                        }
+                                    }
+                                    catch (WebException e)
+                                    {
+                                        thisLogger.Warn("Automatic music download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+                                    }
+
+                                    catch (Exception e)
+                                    {
+                                        thisLogger.Warn("Automatic world download failed ({0}).", e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Main.spriteBatch.Begin();
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                    Main.spriteBatch.End();
+                }               
+            }
+           
         }
 
     }

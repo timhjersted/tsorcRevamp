@@ -28,6 +28,7 @@ namespace tsorcRevamp {
         public static ModHotKey reflectionShiftKey;
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
+        internal bool UICooldown = false;
         public static List<int> KillAllowed;
         public static List<int> PlaceAllowed;
         public static List<int> Unbreakable;
@@ -906,6 +907,11 @@ namespace tsorcRevamp {
                     Logger.Warn("Automatic world download failed ({0}).", e);
                 }
             }
+        }
+
+        public void DownloadMusic()
+        {
+            
         }
 
     }
