@@ -17,6 +17,7 @@ using Terraria.ModLoader.IO;
 using Terraria.Graphics.Shaders;
 using Terraria.Graphics.Effects;
 using ReLogic.Graphics;
+using System.Net;
 
 namespace tsorcRevamp {
 
@@ -77,6 +78,9 @@ namespace tsorcRevamp {
                
                 EmeraldHeraldUserInterface = new UserInterface();
             }
+
+            DownloadMap();
+
         }
 
         public override void PostDrawFullscreenMap(ref string mouseText) {
@@ -863,6 +867,47 @@ namespace tsorcRevamp {
             }
         }
 
+        internal void DownloadMap() {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+            string filePath = dataDir + "\\tsorcMusic.tmod";
+
+            if (!Directory.Exists(dataDir)) {
+                Logger.Info("Directory " + dataDir + " not found. Creating directory.");
+                try {
+                    Directory.CreateDirectory(dataDir);
+                }
+                catch (UnauthorizedAccessException e) {
+                    Logger.Warn("Directory creation failed ({0}). Try again with administrator privileges?", e);
+                }
+                catch (Exception e) {
+                    Logger.Warn("Automatic world download failed ({0}).", e);
+                }
+            }
+
+            else {
+                Logger.Info("tsorcRevampData found.");
+            }
+
+            if (!File.Exists(filePath)) {
+                Logger.Info("Attempting to download world file.");
+                try {
+                    using (WebClient client = new WebClient()) {
+                        client.DownloadFileAsync(new Uri("https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod"), filePath);
+                    }
+                }
+                catch (WebException e) {
+                    Logger.Warn("Automatic world download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+                }
+
+                catch (Exception e) {
+                    Logger.Warn("Automatic world download failed ({0}).", e);
+                }
+            }
+        }
+
     }
     public class tsorcPacketID
     {
@@ -1130,7 +1175,7 @@ namespace tsorcRevamp {
             }
 
             base.NearbyEffects(i, j, type, closer);
-        }
+        } 
     }
 
     //tConfig played nice with partially transparent textures, tModloader doesn't. This class helps fix that

@@ -7,6 +7,8 @@ using Terraria.UI;
 using System.Collections.Generic;
 using System;
 using System.Reflection;
+using ReLogic.Graphics;
+using System.IO;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -23,6 +25,8 @@ namespace tsorcRevamp {
             On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
 
             On.Terraria.NPC.SpawnNPC += BossZenPatch;
+
+            On.Terraria.Main.DrawMenu += DownloadMapButton;
         }
 
         //allow spawns to be set outside a valid house (for bonfires)
@@ -422,7 +426,52 @@ namespace tsorcRevamp {
             }
         }
 
+        internal static void DownloadMapButton(On.Terraria.Main.orig_DrawMenu orig, Main self, GameTime gameTime) {
+            orig(self, gameTime);
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
+            if (Main.menuMode == 16) {
+                string downloadText = "Want the Custom Map? Click here to install!";
 
+                string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+                string fileName = "\\tsorcMusic.tmod";
+                string worldsFolder = Main.SavePath + "\\Worlds";
+
+                Vector2 textOrigin = Main.fontMouseText.MeasureString(downloadText);
+
+                Vector2 position = new Vector2((Main.screenWidth / 2) - (textOrigin.X * 0.5f), 120 + (80 * 6));
+                Main.spriteBatch.Begin();
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, position, Color.White);
+                Main.spriteBatch.End();
+                Rectangle x = new Rectangle((int)position.X - 2, (int)position.Y - 2, (int)(textOrigin.X * 1.5f), (int)(textOrigin.Y * 1.5f));
+                if (Main.mouseX > position.X && Main.mouseX < position.X + textOrigin.X) {
+                    if (Main.mouseY > position.Y && Main.mouseY < position.Y + textOrigin.Y) {
+                        if (Main.mouseLeft) {
+                            if (File.Exists(dataDir + fileName)) {
+                                if (!File.Exists(worldsFolder + fileName)) {
+
+                                    FileInfo fileToCopy = new FileInfo(dataDir + fileName);
+                                    mod.Logger.Info("Attempting to copy world.");
+                                    try {
+                                        fileToCopy.CopyTo(worldsFolder + fileName, false);
+                                    }
+                                    catch (System.Security.SecurityException e) {
+                                        mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                                    }
+                                    catch (Exception e) {
+                                        mod.Logger.Warn("World copy failed ({0}).", e);
+                                    }
+                                }
+                                else {
+                                    mod.Logger.Info("World already exists.");
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
 
     }
 }
