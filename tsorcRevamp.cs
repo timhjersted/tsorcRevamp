@@ -873,7 +873,7 @@ namespace tsorcRevamp {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-            string filePath = dataDir + "\\tsorcMusic.tmod";
+            string filePath = dataDir + "\\tsorcBaseMap.wld";
 
             if (!Directory.Exists(dataDir)) {
                 Logger.Info("Directory " + dataDir + " not found. Creating directory.");
@@ -896,7 +896,7 @@ namespace tsorcRevamp {
                 Logger.Info("Attempting to download world file.");
                 try {
                     using (WebClient client = new WebClient()) {
-                        client.DownloadFileAsync(new Uri("https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod"), filePath);
+                        client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), filePath);
                     }
                 }
                 catch (WebException e) {
@@ -908,12 +908,6 @@ namespace tsorcRevamp {
                 }
             }
         }
-
-        public void DownloadMusic()
-        {
-            
-        }
-
     }
     public class tsorcPacketID
     {

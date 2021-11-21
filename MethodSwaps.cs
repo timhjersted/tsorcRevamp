@@ -441,10 +441,12 @@ namespace tsorcRevamp {
                 string downloadText = "Want the Custom Map? Click here to install!";
                 Color downloadTextColor = Main.DiscoColor;
                 string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-                string mapFileName = "\\tsorcBaseMap.wld";
+
+                string baseMapFileName = "\\tsorcBaseMap.wld";
+                string userMapFileName = "\\TheStoryofRedCloud.wld";
                 string worldsFolder = Main.SavePath + "\\Worlds";
 
-                if (File.Exists(worldsFolder + mapFileName))
+                if (File.Exists(worldsFolder + userMapFileName))
                 {
                     downloadText = "Custom map loaded! To play it, hit \"Back\" and select it!\n Or, click here to make another fresh copy of the map";
                     downloadTextColor = Color.AliceBlue;
@@ -464,14 +466,14 @@ namespace tsorcRevamp {
 
                         if (Main.mouseLeft && !thisMod.UICooldown) {
                             thisMod.UICooldown = true;
-                            if (File.Exists(dataDir + mapFileName)) {
-                                if (!File.Exists(worldsFolder + mapFileName)) {
+                            if (File.Exists(dataDir + baseMapFileName)) {
+                                if (!File.Exists(worldsFolder + userMapFileName)) {
 
-                                    FileInfo fileToCopy = new FileInfo(dataDir + mapFileName);
+                                    FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
                                     mod.Logger.Info("Attempting to copy world.");
                                     try
                                     {
-                                        fileToCopy.CopyTo(worldsFolder + mapFileName, false);
+                                        fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
                                     }
                                     catch (System.Security.SecurityException e) {
                                         mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
@@ -482,7 +484,7 @@ namespace tsorcRevamp {
                                 }
                                 else {
                                     mod.Logger.Info("World already exists. Making renamed copy.");
-                                    FileInfo fileToCopy = new FileInfo(dataDir + mapFileName);
+                                    FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
                                     try
                                     {
                                         string newFileName;
@@ -490,7 +492,7 @@ namespace tsorcRevamp {
                                         int worldCount = 1;
                                         do
                                         {
-                                            newFileName = "\\tsorcBaseMap" + worldCount.ToString() + ".wld";
+                                            newFileName = "\\TheStoryOfRedCloud_" + worldCount.ToString() + ".wld";
                                             if(File.Exists(worldsFolder + newFileName))
                                             {
                                                 worldCount++;
@@ -538,7 +540,7 @@ namespace tsorcRevamp {
                     String musicText = "Click here to get the Story of Red Cloud music mod!";
                     float musicTextScale = 2;
                     Vector2 musicTextOrigin = Main.fontMouseText.MeasureString(musicText);
-                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2) - musicTextOrigin.X * 0.5f * musicTextScale, Main.screenHeight / 2.5f);
+                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2) - musicTextOrigin.X * 0.5f * musicTextScale, 70 + (80 * 6));
                     Color musicTextColor = Main.DiscoColor;
 
                     if (Main.mouseX > musicTextPosition.X && Main.mouseX < musicTextPosition.X + (musicTextOrigin.X * musicTextScale))
@@ -566,7 +568,7 @@ namespace tsorcRevamp {
                                     {
                                         using (WebClient client = new WebClient())
                                         {
-                                            client.DownloadFileAsync(new Uri("https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod"), filePath);
+                                            client.DownloadFileAsync(new Uri(VariousConstants.MUSIC_MOD_URL), filePath);
                                         }
                                     }
                                     catch (WebException e)
