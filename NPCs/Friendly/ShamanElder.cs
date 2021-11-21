@@ -50,7 +50,21 @@ namespace tsorcRevamp.NPCs.Friendly {
 			
 		}
 
-		public override string GetChat() {
+        public override void PostAI()
+        {
+			Vector2 shamanWarpPoint = new Vector2(108, 524.4f) * 16;
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				if(Vector2.Distance(npc.Center, shamanWarpPoint) > 200)
+				{
+					npc.Center = shamanWarpPoint;
+				}
+
+				npc.velocity.X = 0;
+			}
+		}
+
+        public override string GetChat() {
 			WeightedRandom<string> chat = new WeightedRandom<string>();
 			chat.Add("Man and animal once lived in harmony, until one day a particular tribe grew a sickness of the mind. This tribe, known as the Takers, came to dominate the world, exterminating all other ways of being...");
 			chat.Add("Arapaho once told me that all plants are our brothers and sisters. They talk to us and if we listen, we can hear them.");
@@ -104,8 +118,8 @@ namespace tsorcRevamp.NPCs.Friendly {
 					Main.npcChatText = "To craft the summoning item for each " +
 									"guardian, you will need to return to eight familiar places " +
 									"and collect a unique item from an enemy you will find there: " +
-									"[c/424bf5:The Western Ocean], [c/00ff00:The Underground], [c/b942f5:The Corruption], " +
-									"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/888888:The Underworld], and [c/42f2f5:The Eastern Ocean].";
+									"[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
+									"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
 					chatState = 2;
 					return;
 				}

@@ -103,6 +103,7 @@ namespace tsorcRevamp {
 
     public static class VariousConstants {
         public const int CUSTOM_MAP_WORLD_ID = 44874972;
+        public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod";
     }
 
     public static class PriceByRarity { 
