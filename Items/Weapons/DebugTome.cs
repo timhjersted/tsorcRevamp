@@ -41,7 +41,8 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 			
-			/*string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+			/*
+			string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
 			if (!Directory.Exists(dataDir))
             {
 				try
@@ -56,6 +57,21 @@ namespace tsorcRevamp.Items.Weapons {
 				}
             }
 
+			try
+			{
+				ServicePointManager.Expect100Continue = true;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				using (WebClient client = new WebClient())
+				{
+					client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), dataDir + "\\tsorcBaseMap038.wld");
+				}
+			}
+			catch (Exception e)
+			{
+				Main.NewText("Failed to download map!!", Color.Orange);
+				Main.NewText(e);
+			}
+
 			string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
 			try
 			{
@@ -65,7 +81,6 @@ namespace tsorcRevamp.Items.Weapons {
 				{
 					client.DownloadFileAsync(new Uri(VariousConstants.MUSIC_MOD_URL), musicModDir);
 				}
-
 			}
 			catch (Exception e) //https://imgur.com/a/YHrhvRY.png
 			{

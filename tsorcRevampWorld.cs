@@ -42,11 +42,13 @@ namespace tsorcRevamp {
             {
                 Main.NewText("Custom map detected. Adventure Mode enabled.", Color.GreenYellow);
                 ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
+                ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems = true;
                 if (!(Main.netMode == NetmodeID.MultiplayerClient)){
                     tsorcRevampWorld.CampfireToBonfire();
                 }
             }
-                tsorcScriptedEvents.InitializeScriptedEvents();
+
+            tsorcScriptedEvents.InitializeScriptedEvents();
         }
 
 		public override TagCompound Save() {
