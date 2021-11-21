@@ -37,16 +37,6 @@ namespace tsorcRevamp {
             SuperHardMode = false;
             TheEnd = false;
             Slain = new Dictionary<int, int>();
-            
-            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
-            {
-                Main.NewText("Custom map detected. Adventure Mode enabled.", Color.GreenYellow);
-                ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
-                ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems = true;
-                if (!(Main.netMode == NetmodeID.MultiplayerClient)){
-                    tsorcRevampWorld.CampfireToBonfire();
-                }
-            }
 
             tsorcScriptedEvents.InitializeScriptedEvents();
         }
@@ -100,13 +90,15 @@ namespace tsorcRevamp {
             TheEnd = worldStateList.Contains("TheEnd");
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                if (Main.tile[5810, 1670] != null)
                 {
-                    NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
+                    if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                    {
+                        NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
+                    }
                 }
-
             }
         }
 
@@ -164,7 +156,10 @@ namespace tsorcRevamp {
                         Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
                         WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
                         foreach (Item item in Main.item) {
-                            item.active = false; //delete ground items (in this case campfires)
+                            if (item.type == ItemID.Campfire)
+                            {
+                                item.active = false; //delete ground items (in this case campfires)
+                            }
                         }
                     }
                 } 
@@ -207,6 +202,11 @@ namespace tsorcRevamp {
                     }
                 }
             }
+        }
+
+        public static void AdventureModeCheck()
+        {
+
         }
 
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".

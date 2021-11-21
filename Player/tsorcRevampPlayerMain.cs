@@ -576,7 +576,41 @@ namespace tsorcRevamp
 
         public override void OnEnterWorld(Player player)
         {
-            
+            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
+            {
+                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                {
+                    Main.NewText("Custom map detected. Adventure Mode auto-enabled.", Color.GreenYellow);
+                    ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
+                }
+                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                {
+                    Main.NewText("Warning!! The setting 'Adventure Mode: Recipes and Items' is disabled!!", Color.OrangeRed);
+                    Main.NewText("To prevent issues with the custom map, please enable this setting and reload mods!", Color.OrangeRed);
+                }
+            }
+            else
+            {
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                {
+                    Main.NewText("Randomly-generated map detected. Adventure Mode auto-disabled.", Color.GreenYellow);
+                    ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
+                }
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                {
+                    Main.NewText("Warning!! The setting 'Adventure Mode: Recipes and Items' is enabled!!", Color.OrangeRed);
+                    Main.NewText("This is intended for the custom map. To prevent issues, please disable this setting and reload mods!", Color.OrangeRed);
+                }
+            }
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    tsorcRevampWorld.CampfireToBonfire();
+                }
+            }
+
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
