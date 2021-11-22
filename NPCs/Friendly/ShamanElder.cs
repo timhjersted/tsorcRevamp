@@ -52,16 +52,16 @@ namespace tsorcRevamp.NPCs.Friendly {
 
         public override void PostAI()
         {
-			Vector2 shamanWarpPoint = new Vector2(108, 524.4f) * 16;
-			if (tsorcRevampWorld.SuperHardMode)
-			{
-				if(Vector2.Distance(npc.Center, shamanWarpPoint) > 200)
-				{
-					npc.Center = shamanWarpPoint;
-				}
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                Vector2 shamanWarpPoint = new Vector2(108, 524.4f) * 16;
+                if (tsorcRevampWorld.SuperHardMode) {
+                    if (Vector2.Distance(npc.Center, shamanWarpPoint) > 200) {
+                        npc.Center = shamanWarpPoint;
+                    }
 
-				npc.velocity.X = 0;
-			}
+                    npc.velocity.X = 0;
+                } 
+            }
 		}
 
         public override string GetChat() {
