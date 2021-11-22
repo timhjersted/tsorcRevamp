@@ -8,9 +8,9 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("Ash-colored stone encasing a skull." +
                                 "\nSecret treasure of Arstor, the Earl of Carim." +
                                 "\nAbsorbs curse build-up and breaks curse, restoring your max HP to 500." +
-                                "\nIf Max HP is already at 500, the stone will heal 500 HP." +
+                                "\nCan not be used while potion sickness is active, and inflicts it." +
                                 "\nHumans are helpless against curses, and can only redirect their influence." +
-                                "\nThe Purging Stone does not dispel curses, but receives them as a surrogate. " +
+                                "\nThe Purging Stone does not dispel curses, but receives them as a surrogate." +
                                 "\nThe stone itself was once a person or some other being.");
         }
 
@@ -21,12 +21,12 @@ namespace tsorcRevamp.Items {
             item.useAnimation = 15;
             item.useTime = 15;
             item.maxStack = 10;
-            item.healLife = 400;
+            item.healLife = 500;
             item.consumable = true;
             item.scale = 1;
             item.UseSound = SoundID.Item4;
             item.rare = ItemRarityID.Pink;
-            item.value = 1000000;
+            item.value = PriceByRarity.Pink_5;
         }
 
         public override void AddRecipes() {
@@ -42,7 +42,15 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool CanUseItem(Player player) {
-            return (player.statLifeMax < 500) || player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()) || player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>());
+
+            if((player.statLifeMax < 500) || player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()) || player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>()))
+            {
+                if (!player.HasBuff(BuffID.PotionSickness))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override bool UseItem(Player player) {
@@ -51,6 +59,7 @@ namespace tsorcRevamp.Items {
             }
 
             player.statLife += 500;
+            player.AddBuff(BuffID.PotionSickness, 10800);
             player.HealEffect(500);
 
             int buffIndex = 0;

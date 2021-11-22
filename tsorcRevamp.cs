@@ -18,6 +18,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.Graphics.Effects;
 using ReLogic.Graphics;
 using System.Net;
+using System.Reflection;
 
 namespace tsorcRevamp {
 
@@ -42,6 +43,10 @@ namespace tsorcRevamp {
         private UserInterface _darkSoulCounterUIState;
         internal UserInterface EmeraldHeraldUserInterface;
 
+        public static FieldInfo AudioLockInfo;
+        public static FieldInfo ActiveSoundInstancesInfo;
+        public static FieldInfo AreSoundsPausedInfo;
+        public static FieldInfo TrackedSoundsInfo;
 
         public static Effect TheAbyssEffect;
         //public static Effect AttraidiesEffect;

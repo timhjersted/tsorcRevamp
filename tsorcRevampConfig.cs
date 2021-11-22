@@ -74,5 +74,18 @@ namespace tsorcRevamp {
         [Tooltip("The Y position of the Soul Counter.")]
         public int SoulCounterPosY { get; set; }
 
+
+        /*
+        [Label("Auto-Update Adventure Map")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Automatically download updates to the adventure map.\nAround 6MB, updates every few weeks.\nAdventure map updates will not affect existing worlds, only newly created ones.")]
+        [DefaultValue(true)]
+        public bool AutoUpdateMap { get; set; }
+
+        [Label("Auto-Update Music Mod")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Automatically download updates to the music mod.\nAround 100MB, updates every few months.")]
+        [DefaultValue(true)]
+        public bool AutoUpdateMusic { get; set; }*/
     }
 }
