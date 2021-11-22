@@ -2,14 +2,14 @@ The Story of Red Cloud's Dark Souls mod, transferred to tModLoader and filled wi
 
 The Story of Red Cloud is a massive Dark Souls-inspired adventure map built inside the world of Terraria. Your journey will span 17 dungeons spread across an expansive and inter-connected world, encompassing an estimated 15 to 30+ hr experience that will offer so much to do that many players enjoy more than one playthrough.
 
-If you would like to play the map you can find it and the companion soundtrack mod in the #announcements section of our Discord. See link below.
+If you would like to play the map, pick the "Install Custom Map" button once you reach the world creation options.
 
 TOP FEATURES
 *17 dungeons spread across a large open world filled with villages, forests, mountains, lakes, temples, deserts, and hidden paths
 *33 bosses (11 vanilla plus 22 mod bosses).
-*70+ new NPCS including 8 friendly NPCs.
+*100+ new NPCS including 8 friendly NPCs.
 *Custom Soundtrack with 32 songs (Dark Souls and Zelda fans will love it).
-*Over 400 new mod items, weapons, and armors compiled and remixed from two dozen of the best mods from the community
+*Over 600 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
 *Many hours of secret post-game content.
 *Dark Souls game mechanics.
 *A unique story.

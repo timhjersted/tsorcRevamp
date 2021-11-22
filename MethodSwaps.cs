@@ -32,7 +32,7 @@ namespace tsorcRevamp {
 
             On.Terraria.Main.DrawMenu += DownloadMapButton;
 
-            //On.Terraria.Main.UpdateAudio += UpdateAudioPatch;
+            On.Terraria.Main.UpdateAudio += UpdateAudioPatch;
         }        
 
         
@@ -878,7 +878,7 @@ namespace tsorcRevamp {
                 if (Main.musicError >= 100)
                 {
                     Main.musicError = 0;
-                    Main.musicVolume = 0f;
+                    //Main.musicVolume = 0f;
                 }
             }
             #endregion
