@@ -19,6 +19,7 @@ using Terraria.Graphics.Effects;
 using ReLogic.Graphics;
 using System.Net;
 using System.Reflection;
+using Mono.Cecil.Cil;
 
 namespace tsorcRevamp {
 
@@ -74,6 +75,7 @@ namespace tsorcRevamp {
 
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
+            IL.Terraria.Main.UpdateAudio += Music_Patch;
             if (!Main.dedServ) {
                 tsorcRevamp Instance = this;
                 TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
@@ -627,6 +629,38 @@ namespace tsorcRevamp {
                 return volume;
             });
         }
+
+        private void Music_Patch(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            if (!c.TryGotoNext(instr => instr.MatchLdcI4(6) && instr.Next.MatchStfld(typeof(Main).GetField("newMusic"))))
+            {
+                throw new Exception("Could not find instruction to patch (Music_Patch)");
+            }
+            c.Index++;
+            c.EmitDelegate<Func<int, int>>(MusicDelegate);
+        }
+
+        public int MusicDelegate(int defaultMusic)
+        {
+            Mod musicMod = ModLoader.GetMod("tsorcMusic");
+            if (musicMod != null)
+            {
+                if (ModContent.GetInstance<tsorcRevampConfig>().SafeMusicMode)
+                {
+                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/Boss1");
+                }
+                else
+                {
+                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/Night");
+                }
+            }
+            else
+            {
+                return defaultMusic;
+            }            
+        }
+
 
         public override void PostDrawInterface(SpriteBatch spriteBatch) {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();

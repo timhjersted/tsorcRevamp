@@ -52,6 +52,12 @@ namespace tsorcRevamp {
 
 
         [Header("Options")]
+        [Label("Youtube/Twitch-Safe Music Mode")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [Tooltip("Despite being fair-use, youtube, twitch, and other platforms might hit you with copyright strikes for certain pieces of music in this mod.\nThis setting replaces them with others that are less likely to be targeted.")]
+        [DefaultValue(false)]
+        public bool SafeMusicMode { get; set; }
+
         [Label("Miakoda Volume")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Revamp Miakoda giving you Navi flashbacks?\nThis slider controls Miakoda's volume.\nSet to 0 to disable Miakoda sounds.")]

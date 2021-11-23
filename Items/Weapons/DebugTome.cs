@@ -90,9 +90,31 @@ namespace tsorcRevamp.Items.Weapons {
 			return true;
 		}
 
+		//For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.
+		public override void UpdateInventory(Player player)
+		{
+			if (player.name == "MPTestDummy")
+			{
+				if (player.whoAmI == 0)
+				{
+					if (Main.player[1] != null && Main.player[1].active)
+					{
+						player.position = Main.player[1].position;
+						player.position.X += 300;
+					}
+				}
+				else
+				{
+					if (Main.player[0] != null && Main.player[0].active)
+					{
+						player.position = Main.player[0].position;
+						player.position.X += 300;
+					}
+				}
+			}
+        }
 
-
-		public override bool CanUseItem(Player player)
+        public override bool CanUseItem(Player player)
         {
 			if (player.name == "Zeodexic" || player.name.Contains("Sam") || player.name == "Chroma TSORC test")
 			{
