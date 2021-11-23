@@ -21,7 +21,6 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.StarCloak);
             recipe.AddIngredient(mod.GetItem("LightCloak"));
             recipe.AddIngredient(mod.GetItem("DarkCloak"));
             recipe.AddIngredient(mod.GetItem("DarkmoonCloak"));

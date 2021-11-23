@@ -101,6 +101,7 @@ namespace tsorcRevamp.Items.Weapons {
 					{
 						player.position = Main.player[1].position;
 						player.position.X += 300;
+						player.position.Y += 300;
 					}
 				}
 				else
@@ -109,6 +110,7 @@ namespace tsorcRevamp.Items.Weapons {
 					{
 						player.position = Main.player[0].position;
 						player.position.X += 300;
+						player.position.Y += 300;
 					}
 				}
 			}

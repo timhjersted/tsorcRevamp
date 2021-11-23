@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else {
                 Main.PlaySound(SoundID.Roar, -1, -1, 0);
-                NPC.NewNPC((int)Main.player[Main.myPlayer].position.X + 1000, (int)Main.player[Main.myPlayer].position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
-                NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - 1000, (int)Main.player[Main.myPlayer].position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
+                NPC.NewNPC((int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
+                NPC.NewNPC((int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
             }
             return true;
         }

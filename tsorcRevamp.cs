@@ -573,6 +573,18 @@ namespace tsorcRevamp {
             for (int i = 0; i < Main.moonTexture.Length; i++) {
                 Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
             }
+
+            /*
+            for (int m = 1; m < Main.maxMusic; m++)
+            {
+                if (Main.music[m] != null)
+                {
+                    if (Main.music[m].IsPlaying)
+                    {
+                        Main.music[m].Stop(Microsoft.Xna.Framework.Audio.AudioStopOptions.Immediate);
+                    }
+                }
+            }*/
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();
@@ -646,11 +658,11 @@ namespace tsorcRevamp {
             Mod musicMod = ModLoader.GetMod("tsorcMusic");
             if (musicMod != null)
             {
-                if (ModContent.GetInstance<tsorcRevampConfig>().SafeMusicMode)
+                /*if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMusic)
                 {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/Boss1");
+                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/OldTitle");
                 }
-                else
+                else*/
                 {
                     return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/Night");
                 }

@@ -438,14 +438,16 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     //Main.NewText(throwpower);
-
-                    if (!Main.hardMode)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(npc.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0f, Main.myPlayer);
-                    }
-                    else 
-                    {
-                        Projectile.NewProjectile(npc.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 25, 0f, Main.myPlayer);
+                        if (!Main.hardMode)
+                        {
+                            Projectile.NewProjectile(npc.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0f, Main.myPlayer);
+                        }
+                        else
+                        {
+                            Projectile.NewProjectile(npc.Center + new Vector2(0, -14), throwpower, ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 25, 0f, Main.myPlayer);
+                        }
                     }
                 }
 

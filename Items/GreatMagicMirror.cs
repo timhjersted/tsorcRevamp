@@ -81,6 +81,10 @@ namespace tsorcRevamp.Items {
             return base.CanUseItem(player);
         }
         public override void UseStyle(Player player) {
+            if(player != Main.LocalPlayer)
+            {
+                return;
+            }
 
             if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY)) {
                 if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)) {
@@ -147,6 +151,10 @@ namespace tsorcRevamp.Items {
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
+            if (player != Main.LocalPlayer)
+            {
+                return;
+            }
             player.moveSpeed -= 2f;
             player.statDefense -= player.statDefense;
             if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet) {

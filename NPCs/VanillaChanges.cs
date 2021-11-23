@@ -734,6 +734,16 @@ namespace tsorcRevamp.NPCs {
 
         #endregion
 
+        public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
+        {
+            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            {
+                npc.lifeMax = (int)(npc.lifeMax * (1 + (0.7 * (Main.ActivePlayersCount - 1))));
+            }
+
+            base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
+        }
+
         public override void AI(NPC npc) {
             if (npc.type == NPCID.BigRainZombie
                 || npc.type == NPCID.ZombieRaincoat

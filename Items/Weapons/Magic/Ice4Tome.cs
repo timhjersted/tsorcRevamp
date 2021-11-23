@@ -37,34 +37,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shoot = ModContent.ProjectileType<Projectiles.Ice4Ball>();
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool CanUseItem(Player player)
         {
-            item.mana = storeManaCost4;
-            //How many projectiles exist that are being channeled (controlled) by the player using this tome
-            int projCount = 0;
-
-            //Iterate through the projectile array
-            for (int i = 0; i < Main.projectile.Length; i++)
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Ice4Ball>()] < 5)
             {
-                //For each, check if it's modded. If so, check if it's the Ice4Ball. If so, check if it's owned by this player (to prevent other players projectiles counting against it)
-                if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice4Ball && (Main.projectile[i].owner == player.whoAmI))
-                {
-                    //Cast it to an Ice4Ball so we can check if it's currently being channeled
-                    if (((Projectiles.Ice4Ball)Main.projectile[i].modProjectile).isChanneled && Main.projectile[i].active)
-                    {
-                        //If so, then up the count
-                        projCount++;
-                    }
-                }
+                return true;
             }
-
-            //If there's 5, don't fire any more
-            if (projCount < 5) return true;
             else
             {
-                //This is how much mana it will use while channeling when it can not fire another projectile
-                //Setting this to 0 would make it consume no mana
-                item.mana = 1;
                 return false;
             }
         }

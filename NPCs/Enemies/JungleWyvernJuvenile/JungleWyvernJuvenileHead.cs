@@ -49,6 +49,10 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			float chance = 0f;
+            if (NPC.downedBoss3)
+            {
+				return 0;
+            }
 
 			if (!Main.hardMode && spawnInfo.player.ZoneDungeon && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 1)
 			{

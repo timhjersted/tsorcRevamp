@@ -52,11 +52,13 @@ namespace tsorcRevamp {
 
 
         [Header("Options")]
-        [Label("Youtube/Twitch-Safe Music Mode")]
+
+        /*
+        [Label("Legacy Music")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Despite being fair-use, youtube, twitch, and other platforms might hit you with copyright strikes for certain pieces of music in this mod.\nThis setting replaces them with others that are less likely to be targeted.")]
+        [Tooltip("Warning! This music was disabled to protect streamers and youtubers who were having copyright issues with it, despite being fair use. Enable it for the classic experience, but we do not advise streaming or recording while it is active.")]
         [DefaultValue(false)]
-        public bool SafeMusicMode { get; set; }
+        public bool LegacyMusic { get; set; }*/
 
         [Label("Miakoda Volume")]
         [BackgroundColor(60, 140, 80, 192)]

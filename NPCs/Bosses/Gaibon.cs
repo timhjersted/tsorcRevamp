@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 			npc.npcSlots = 30;
 			Main.npcFrameCount[npc.type] = 2;
-			npc.width = 100;
+			npc.width = 70;
 			npc.height = 70;
 			animationType = 62;
 			npc.aiStyle = 22;
@@ -52,37 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			//For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
 			//burningSphereDamage = (int)(burningSphereDamage / 2);
 		}
-
-		//Note: This whole region was all commented out in the original code. I'm not sure why, but i'll leave it that way for now.
-		//#region Spawn
-		//public bool SpawnNPC(int x,int y,int PID)
-		//{
-		//	  Player P = Main.player[PID]; //this shortens our code up from writing this line over and over.
-
-		//	  bool Sky = P.position.Y <= (Main.rockLayer * 4);
-		//	  bool Meteor = P.zoneMeteor;
-		//	  bool Jungle = P.zoneJungle;
-		//	  bool Dungeon = P.zoneDungeon;
-		//	  bool Corruption = P.zoneEvil;
-		//	  bool Hallow = P.zoneHoly;
-		//	  bool AboveEarth  = P.position.Y < Main.worldSurface;
-		//	  bool InBrownLayer = P.position.Y >= Main.worldSurface && P.position.Y < Main.rockLayer;
-		//	  bool InGrayLayer = P.position.Y >= Main.rockLayer && P.position.Y < (Main.maxTilesY - 200)*16;
-		//	  bool InHell = P.position.Y >= (Main.maxTilesY - 200)*16;
-		//	  bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX-100)*16;
-
-		//	  // these are all the regular stuff you get , now lets see......
-
-		//	for (int num36 = 0; num36 < 200; num36++)
-		//	{
-		//		if (Main.npc[num36].active && Main.npc[num36].type == Config.npcDefs.byName["Gaibon"].type)
-		//		{
-		//			return false;
-		//		}
-		//	}
-		//	  return false;
-		//}
-		//#endregion
+		
 
 		#region AI
 		NPCDespawnHandler despawnHandler;
@@ -96,6 +66,12 @@ namespace tsorcRevamp.NPCs.Bosses
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
+			//If super far away from the player, warp to them
+			if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 5000)
+            {
+				npc.Center = new Vector2(Main.player[npc.target].Center.X, Main.player[npc.target].Center.Y + 500);
+            }
 
 			//If Slogra is dead, we don't need to keep calling AnyNPCs.
 			if (!slograDead)
@@ -153,9 +129,9 @@ namespace tsorcRevamp.NPCs.Bosses
 				}
 			}
 
+			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (npc.ai[1] >= 10f)
 				{
 					if (Main.rand.Next(45) == 1)

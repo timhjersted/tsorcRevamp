@@ -125,6 +125,13 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             despawnHandler.TargetAndDespawn(npc.whoAmI);
 
+
+            //If super far away from the player, warp to them
+            if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 5000)
+            {
+                npc.Center = new Vector2(Main.player[npc.target].Center.X, Main.player[npc.target].Center.Y - 500);
+            }
+
             //If gaibon is dead, we don't need to keep calling AnyNPCs.
             if (!gaibonDead)
             {

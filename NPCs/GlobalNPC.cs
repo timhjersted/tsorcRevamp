@@ -1190,7 +1190,7 @@ namespace tsorcRevamp.NPCs
                     foreach (Player player in Main.player)
                     {
                         //For some reason, Main.player always has 255 entries. This ensures we're only pulling real players from it.
-                        if (player.name != "")
+                        if (player.active)
                         {
                             targetIDs[targetCount] = player.whoAmI;
                             targetAlive[targetCount] = true;
@@ -1210,11 +1210,11 @@ namespace tsorcRevamp.NPCs
                     for (int i = 0; i < targetCount; i++)
                     {
                         //For each of them, check if they're dead. If so, mark it down in targetAlive.
-                        if (Main.player[targetIDs[i]].dead)
+                        if (Main.player[targetIDs[i]].dead && targetAlive[i])
                         {
                             targetAlive[i] = false;
                         }
-                        else if (targetAlive[i])
+                        else if (targetAlive[i] && Main.player[targetIDs[i]].active)
                         {
                             //If it found a player that hasn't been killed yet, then don't despawn
                             viableTarget = true;
@@ -1224,6 +1224,7 @@ namespace tsorcRevamp.NPCs
                             {
                                 closestPlayerDistance = distance;
                                 Main.npc[npcID].target = targetIDs[i];
+
                             }
                         }
                     }
@@ -1232,7 +1233,14 @@ namespace tsorcRevamp.NPCs
                     {
                         if (despawnText != null)
                         {
-                            Main.NewText(despawnText, despawnTextColor);
+                            if (Main.netMode == NetmodeID.SinglePlayer)
+                            {
+                                Main.NewText(despawnText, despawnTextColor);
+                            }
+                            if (Main.netMode == NetmodeID.Server)
+                            {
+                                UsefulFunctions.ServerText(despawnText, despawnTextColor);
+                            }
                         }
                         despawnTime = 240;
                     }
