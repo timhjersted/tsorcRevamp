@@ -81,6 +81,11 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 				Main.dust[dust].noGravity = true;
 			}
 		}
+		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+		{
+			damage *= 2;
+			base.OnHitByItem(player, item, damage, knockback, crit);
+		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
 		{

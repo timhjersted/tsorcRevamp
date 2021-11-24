@@ -38,7 +38,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         int meteorDamage = 33;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
             breathDamage = (int)(breathDamage / 2);
             flameRainDamage = (int)(flameRainDamage / 2);

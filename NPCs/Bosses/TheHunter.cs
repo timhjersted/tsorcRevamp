@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void SetDefaults()
         {
             npc.aiStyle = -1;
-            npc.lifeMax = 22000;
+            npc.lifeMax = 30800;
             npc.damage = 95;
             npc.defense = 25;
             npc.knockBackResist = 0f;
@@ -47,7 +47,6 @@ namespace tsorcRevamp.NPCs.Bosses
         int sproutDamage = 35;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
             npc.damage = npc.damage / 2;
             npc.defense = npc.defense += 12;
             npc.lifeMax = 35000;

@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
             npc.defense = 40;
             npc.HitSound = SoundID.NPCHit7;
             npc.DeathSound = SoundID.NPCDeath8;
-            npc.lifeMax = 17000;
+            npc.lifeMax = 24000;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
@@ -44,11 +44,17 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 
 		}
 
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
+		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+		{
+			return false;
 		}
 
-		NPCDespawnHandler despawnHandler;
+		public int CursedFlamesDamage = 22;
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+		}
+
+        NPCDespawnHandler despawnHandler;
 		public override void AI() {
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
 
@@ -92,12 +98,17 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				juvenileSpawnTimer += Main.rand.Next(1, 3);
 			}
 
-			//Main.NewText(juvenileSpawnTimer);
+
 			if (juvenileSpawnTimer >= 1200 && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 2)
 			{
-				NPC.NewNPC((int)npc.position.X + Main.rand.Next(-20, 20), (int)npc.position.Y + Main.rand.Next(-20, 20), mod.NPCType("JungleWyvernJuvenileHead"));
-				juvenileSpawnTimer = 0;
-
+				if (Vector2.Distance(Main.player[npc.target].Center, npc.Center) > 500)
+				{
+					if (Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						NPC.NewNPC((int)npc.position.X + Main.rand.Next(-20, 20), (int)npc.position.Y + Main.rand.Next(-20, 20), mod.NPCType("JungleWyvernJuvenileHead"));
+					}
+					juvenileSpawnTimer = 0;
+				}
 			}
 
 			if (Main.rand.Next(120) == 0)
@@ -111,9 +122,14 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			{
 
 				float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-				int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, 22, 0f, Main.myPlayer); //cursed dragons breath
-				Main.projectile[num54].timeLeft = 25;
-				Main.projectile[num54].scale = 1f;
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					
+					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, CursedFlamesDamage, 0f, Main.myPlayer); //cursed dragons breath
+					Main.projectile[num54].timeLeft = 25;
+					Main.projectile[num54].scale = 1f;
+					
+				}
 				npc.netUpdate = true;
 
 
@@ -275,6 +291,13 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 		}
 
 		public override bool SpecialNPCLoot() {
+			for(int i = 0; i < Main.maxNPCs; i++)
+            {
+				if(Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>())
+                {
+					Main.npc[i].active = false;
+                }
+            }
 			int closestSegmentID = ClosestSegment(npc, ModContent.NPCType<JungleWyvernBody>(), ModContent.NPCType<JungleWyvernBody2>(), ModContent.NPCType<JungleWyvernBody3>(), ModContent.NPCType<JungleWyvernTail>());
 			npc.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 			return false;
@@ -286,6 +309,11 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 		public override void BossLoot(ref string name, ref int potionType)
 		{
 			potionType = ItemID.GreaterHealingPotion;
+		}
+		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+		{
+			damage *= 2;
+			base.OnHitByItem(player, item, damage, knockback, crit);
 		}
 		public override void NPCLoot() {
 

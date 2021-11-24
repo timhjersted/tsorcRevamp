@@ -68,6 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
 		#endregion
 
+		int selfDestructTimer = 5;
 		public override void AI()
 		{
 
@@ -131,6 +132,16 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, num122);
 					num119 = num122;
 				}
+			}
+
+			//The head likes to stick around in multiplayer after the body dies, and I can't figure out why. This "fixes" it for now, but i'm pretty sure this is a problem with many worms we'll have to come back to.
+			if (npc.ai[0] == 0f || !NPC.AnyNPCs(ModContent.NPCType<JungleWyvernJuvenileLegs>()) || !NPC.AnyNPCs(ModContent.NPCType<JungleWyvernJuvenileBody>()))
+			{
+				selfDestructTimer--;
+				if(selfDestructTimer <= 0)
+                {
+					npc.active = false;
+                }
 			}
 
 			if (Main.rand.Next(120) == 0)
@@ -312,6 +323,11 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			}
 		}
 
+		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+		{
+			damage *= 2;
+			base.OnHitByItem(player, item, damage, knockback, crit);
+		}
 		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
 		{
 			Vector2 origin = new Vector2(Main.npcTexture[npc.type].Width / 2, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type] / 2);

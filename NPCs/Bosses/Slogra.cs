@@ -49,7 +49,6 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             npc.damage = (int)(npc.damage * 1.3 / 2);
             npc.defense = npc.defense += 12;
-            npc.lifeMax = npc.lifeMax / 2;
             tridentDamage = (int)(tridentDamage / 2);
             //For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
             //burningSphereDamage = (int)(burningSphereDamage / 2);
@@ -125,6 +124,14 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             despawnHandler.TargetAndDespawn(npc.whoAmI);
 
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player thisPlayer = Main.player[i];
+                if(thisPlayer != null && thisPlayer.active)
+                {
+                    thisPlayer.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 300);
+                }
+            }
 
             //If super far away from the player, warp to them
             if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 5000)

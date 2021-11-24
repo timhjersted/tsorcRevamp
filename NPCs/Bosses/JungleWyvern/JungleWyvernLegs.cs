@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			npc.defense = 7;
 			npc.HitSound = SoundID.NPCHit7;
 			npc.DeathSound = SoundID.NPCDeath8;
-			npc.lifeMax = 15000;
+			npc.lifeMax = 24000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.value = 70000;
@@ -35,8 +35,15 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			DisplayName.SetDefault("Ancient Jungle Wyvern");
 		}
 
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+		{
+			return false;
+		}
+				
+		public int PoisonFlamesDamage = 45;
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+
 		}
 		public override void AI() {
 			npc.TargetClosest();
@@ -67,6 +74,11 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			}
 			int mainDust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y + 10), npc.width, npc.height, 62, 0, 0, 100, default, 1.0f);
 			Main.dust[mainDust].noGravity = true;
+		}
+		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+		{
+			damage *= 2;
+			base.OnHitByItem(player, item, damage, knockback, crit);
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor) {

@@ -12,6 +12,16 @@ namespace tsorcRevamp.NPCs {
         #region SetDefaults
 
         public override void SetDefaults(NPC npc) {
+
+            //Only mess with it if it's one of our bosses
+            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            {
+                //Bosses are 1.3x weaker in normal mode. This is reverted for expert in ScaleExpertStats
+                //Doing it like this means we can simply set npc.lifeMax to exactly value we want their expert mode health to be, saving us a headache.
+                //Rounded, because casting to an int truncates it which causes slight inaccuracies later on
+                npc.lifeMax = (int)Math.Round(npc.lifeMax / 1.3f);
+            }
+
             switch (npc.type) {
                 case (NPCID.AngryBones): {
                         npc.lifeMax = 145;
@@ -736,11 +746,22 @@ namespace tsorcRevamp.NPCs {
 
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
         {
+            //Only mess with it if it's one of our bosses
             if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
             {
-                npc.lifeMax = (int)(npc.lifeMax * (1 + (0.7 * (Main.ActivePlayersCount - 1))));
+                //These could've been simplified to one formula, but i'm leaving them like this so it's obvious what they're doing
+
+                //Revert normalmode boss health nerf
+                npc.lifeMax = (int)Math.Round(npc.lifeMax * 1.3f);
+
+                //Counter expert mode automatic scaling
+                npc.lifeMax = (int)Math.Round(npc.lifeMax / 2f);
+
+                //Add 70% to the boss's health per extra player
+                npc.lifeMax = (int)Math.Round(npc.lifeMax * (1f + (0.7f * ((float)bossLifeScale - 1f))));
             }
 
+            //Let npc's do the rest of their normal scaling, including things like projectile damage or defense
             base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
         }
 

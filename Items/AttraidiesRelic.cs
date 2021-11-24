@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items
         {
             if (!NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion")))
             {
-                NPC.SpawnOnPlayer(Main.myPlayer, mod.NPCType("AttraidiesIllusion"));
+                NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("AttraidiesIllusion"));
                 return true;
             }
             else

@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			npc.defense = 18;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
-			npc.lifeMax = 2000;
+			npc.lifeMax = 5000;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0f;
@@ -38,9 +38,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			DisplayName.SetDefault("Damned Soul");
 		}
 
+		public int ObscureShotDamage = 30;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
 		}
 
 		NPCDespawnHandler despawnHandler;
@@ -79,25 +79,25 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			{
 				if (npc.life > 1000)
 				{
-					if (Main.netMode != NetmodeID.Server)
+					if (Main.netMode == NetmodeID.Server)
 					{
 						float num39 = 0.5f;
 						Vector2 vector9 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
 						float rotation2 = (float)Math.Atan2(vector9.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector9.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
 						rotation2 += (float)(Main.rand.Next(-50, 50) / 100);
-						Projectile.NewProjectile(vector9.X, vector9.Y, (float)(Math.Cos(rotation2) * (double)num39 * -1.0), (float)(Math.Sin(rotation2) * (double)num39 * -1.0), ModContent.ProjectileType<ObscureShot>(), 30, 0f, Main.myPlayer);
+						Projectile.NewProjectile(vector9.X, vector9.Y, (float)(Math.Cos(rotation2) * (double)num39 * -1.0), (float)(Math.Sin(rotation2) * (double)num39 * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
 					}
 					npc.ai[3] = -200 - Main.rand.Next(200);
 				}
 				else
 				{
-					if (Main.netMode != NetmodeID.Server)
+					if (Main.netMode == NetmodeID.Server)
 					{
 						float num38 = 0.5f;
 						Vector2 vector8 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
 						float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector8.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
 						rotation += (float)(Main.rand.Next(-50, 50) / 100);
-						int num40 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num38 * -1.0), (float)(Math.Sin(rotation) * (double)num38 * -1.0), ModContent.ProjectileType<ObscureShot>(), 30, 0f, Main.myPlayer);
+						int num40 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num38 * -1.0), (float)(Math.Sin(rotation) * (double)num38 * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
 						Main.projectile[num40].scale = 3f;
 					}
 					npc.ai[3] = -50 - Main.rand.Next(50);

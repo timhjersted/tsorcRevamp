@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 			base.npc.boss = true;
 			base.npc.noGravity = true;
 			base.npc.noTileCollide = true;
-			base.npc.lifeMax = 4000;
+			base.npc.lifeMax = 12600;
 			base.npc.HitSound = SoundID.NPCHit7;
 			base.npc.DeathSound = SoundID.NPCDeath8;
 			base.npc.knockBackResist = 0f;
@@ -37,7 +37,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 		}
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			base.npc.lifeMax = (int)((float)base.npc.lifeMax * 0.7f * bossLifeScale);
 		}
 
 		public override void AI()

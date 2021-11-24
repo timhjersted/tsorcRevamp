@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories
     public class ManaShield : ModItem
     {
 
-        public static int manaCost = 60;
+        public static int manaCost = 80;
         public static int regenDelay = 900;
         public static float damageResistance = 0.40f;
         public static float damagePenalty = 0.25f;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
-            recipe.AddIngredient(ItemID.SoulofSight, 5);
+            recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 50);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

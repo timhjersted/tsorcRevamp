@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 			npc.defense = 0;
 			npc.HitSound = SoundID.NPCHit4;
 			npc.DeathSound = SoundID.NPCDeath10;
-			npc.lifeMax = 35000;
+			npc.lifeMax = 91000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.behindTiles = true;
@@ -41,7 +41,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 			return false;
 		}
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
 		}
 		public override void AI() {
 

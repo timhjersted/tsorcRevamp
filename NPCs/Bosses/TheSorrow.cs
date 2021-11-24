@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void SetDefaults() {
             npc.aiStyle = -1;
-            npc.lifeMax = 19000;
+            npc.lifeMax = 26600;
             npc.damage = 95;
             npc.defense = 20;
             npc.knockBackResist = 0f;
@@ -47,7 +47,6 @@ namespace tsorcRevamp.NPCs.Bosses
         int waterTrailsDamage = 45;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax += (int)(npc.lifeMax * 0.7f * numPlayers);
             npc.damage = npc.damage / 2;
             npc.defense = npc.defense += 12;
             npc.lifeMax = 28000;

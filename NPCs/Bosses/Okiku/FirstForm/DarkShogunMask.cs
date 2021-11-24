@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
             npc.defDamage = 20;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 9000;
+            npc.lifeMax = 15000;
             npc.boss = true;
             npc.noTileCollide = true;
             npc.noGravity = true;
@@ -44,7 +44,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
             DisplayName.SetDefault("Mindflayer King");
         }
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
         }
         public override void FindFrame(int frameHeight) {
 

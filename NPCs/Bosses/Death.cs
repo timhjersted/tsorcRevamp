@@ -12,7 +12,6 @@ namespace tsorcRevamp.NPCs.Bosses
     {
         public override void SetDefaults()
         {
-
             Main.npcFrameCount[npc.type] = 6;
             npc.npcSlots = 10;
             npc.aiStyle = 0;
@@ -22,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.defense = 45;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath6;
-            npc.lifeMax = 25000;
+            npc.lifeMax = 35000;
             npc.friendly = false;
             npc.boss = true;
             npc.noTileCollide = true;
@@ -43,7 +42,6 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             npc.damage = (int)(npc.damage * 1.3 / 2);
             npc.defense = npc.defense += 12;
-            npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
             shadowShotDamage = (int)(shadowShotDamage * 1.3 / 2);
         }
 

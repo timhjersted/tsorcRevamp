@@ -48,7 +48,6 @@ namespace tsorcRevamp.NPCs.Bosses
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
 			npc.defense = npc.defense += 12;
-			npc.lifeMax = npc.lifeMax / 2;
 			//For some reason, its contact damage doesn't get doubled due to expert mode either apparently?
 			//burningSphereDamage = (int)(burningSphereDamage / 2);
 		}
@@ -66,6 +65,15 @@ namespace tsorcRevamp.NPCs.Bosses
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
+
+			for (int i = 0; i < Main.maxPlayers; i++)
+			{
+				Player thisPlayer = Main.player[i];
+				if (thisPlayer != null && thisPlayer.active)
+				{
+					thisPlayer.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 300);
+				}
+			}
 
 			//If super far away from the player, warp to them
 			if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 5000)
@@ -136,7 +144,8 @@ namespace tsorcRevamp.NPCs.Bosses
 				{
 					if (Main.rand.Next(45) == 1)
 					{
-						int spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.BurningSphere, 0);
+						Vector2 randomSpawn = Main.rand.NextVector2CircularEdge(200, 200);
+						int spawned = NPC.NewNPC((int)(npc.position.X + randomSpawn.X), (int)(npc.position.Y + randomSpawn.Y), NPCID.BurningSphere, 0);
 						Main.npc[spawned].damage = burningSphereDamage;
 						Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2));
 						if (Main.netMode == NetmodeID.Server)

@@ -49,7 +49,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             npc.damage = (int)(npc.damage * 1.3 / 2);
             npc.defense = npc.defense += 12;
-            npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
             frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
             //crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
         }

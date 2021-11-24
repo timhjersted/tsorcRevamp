@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             npc.width = 28;
             npc.timeLeft = 22500;
             music = 12;
-            npc.lifeMax = 40000;
+            npc.lifeMax = 80000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath14;
             npc.noGravity = false;
@@ -47,7 +47,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         public int DarkLaserDamage = 100;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-            npc.lifeMax = (int)(npc.lifeMax * bossLifeScale);
             ShadowOrbDamage = ShadowOrbDamage / 2;
             CrystalShardsDamage = CrystalShardsDamage / 2;
             DeathBallDamage = DeathBallDamage / 2;

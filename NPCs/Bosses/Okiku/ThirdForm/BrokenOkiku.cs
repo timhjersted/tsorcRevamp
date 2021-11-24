@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.defense = 30;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath6;
-            npc.lifeMax = 11000;
+            npc.lifeMax = 15400;
             npc.timeLeft = 22500;
             npc.friendly = false;
             npc.boss = true;
@@ -45,7 +45,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
         }
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-            npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
         }
         public void Teleport(float X, float Y) {
             int dustDeath;

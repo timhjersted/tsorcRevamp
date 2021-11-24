@@ -55,7 +55,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
 			npc.defense = npc.defense += 12;
-			npc.lifeMax = npc.lifeMax / 2;
 			distortionDamage = distortionDamage / 2;
 		}
 

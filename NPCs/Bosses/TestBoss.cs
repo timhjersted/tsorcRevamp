@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = Int32.MaxValue;
+            npc.lifeMax = Int32.MaxValue / 10;
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)

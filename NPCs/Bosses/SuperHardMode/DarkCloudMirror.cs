@@ -49,7 +49,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int antiMatDamage = 200;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax /= 2;
             npc.damage /= 2;
             divineSparkDamage /= 2;
             darkFlowDamage /= 2;

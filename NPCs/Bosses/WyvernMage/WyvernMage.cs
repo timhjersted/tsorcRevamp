@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             npc.defense = 20;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
-            npc.lifeMax = 13000;
+            npc.lifeMax = 18200;
             npc.timeLeft = 22500;
             npc.friendly = false;
             npc.noTileCollide = false;
@@ -47,8 +47,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         int lightningDamage = 70;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = (int)((float)npc.lifeMax * 0.7f * bossLifeScale);
-            npc.lifeMax = (int)(npc.lifeMax * 1.3 / 2);
             frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
             lightningDamage = (int)(lightningDamage * 1.3 / 2);
         }

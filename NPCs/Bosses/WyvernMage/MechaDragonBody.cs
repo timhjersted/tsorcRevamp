@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 			npc.defense = 23;
 			npc.HitSound = SoundID.NPCHit4;
 			npc.DeathSound = SoundID.NPCDeath10;
-			npc.lifeMax = 35000;
+			npc.lifeMax = 91000;
 			npc.boss = true;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -43,7 +43,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
 			CrystalFireDamage = CrystalFireDamage / 2;
 		}
 

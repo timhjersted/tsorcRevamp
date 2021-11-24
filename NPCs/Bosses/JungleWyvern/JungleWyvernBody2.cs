@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			npc.defense = 20;
 			npc.HitSound = SoundID.NPCHit7;
 			npc.DeathSound = SoundID.NPCDeath8;
-			npc.lifeMax = 15000;
+			npc.lifeMax = 24000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.value = 70000;
@@ -36,11 +36,16 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Ancient Jungle Wyvern");
 		}
-
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
-			npc.lifeMax = (int)(npc.lifeMax * 0.7f * bossLifeScale);
+		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+		{
+			return false;
 		}
 
+		public int PoisonFlamesDamage = 45;
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+
+		}
 		public override void AI() {
 			if (Timer == -1000) {
 				Timer = -Main.rand.Next(800);
@@ -81,9 +86,20 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				Vector2 vector8 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
 				float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector8.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
 				rotation += (float)(Main.rand.Next(-50, 50) / 100);
-				Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), 45, 0f, Main.myPlayer); //enemy cursed flamess
-				Timer = -1200 - Main.rand.Next(1200);
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					if (Vector2.Distance(Main.player[npc.target].Center, npc.Center) > 500)
+					{
+						Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), PoisonFlamesDamage, 0f, Main.myPlayer); //enemy cursed flamess
+					}
+				}
+				Timer = -800 - Main.rand.Next(800);
 			}
+		}
+		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+		{
+			damage *= 2;
+			base.OnHitByItem(player, item, damage, knockback, crit);
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor) {

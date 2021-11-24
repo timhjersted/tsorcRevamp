@@ -71,7 +71,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = 300000;
             npc.damage = 200;
         }
 
@@ -1750,7 +1749,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 240)
             {
                 npc.velocity = Vector2.Zero;
-                npc.lifeMax = 1000000;
+                npc.lifeMax = 1000000 * Main.ActivePlayersCount;
                 npc.life = npc.lifeMax;
                 changingPhases = false;
                 npc.dontTakeDamage = false;

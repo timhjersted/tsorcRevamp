@@ -12,7 +12,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.height = 16;
             projectile.alpha = 150;
             projectile.aiStyle = 8;
-            projectile.timeLeft = 200;
+            projectile.timeLeft = 500;
             projectile.damage = 46;
             projectile.light = 0.8f;
             projectile.penetrate = 1;

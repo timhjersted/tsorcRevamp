@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			npc.defense = 157;
 			npc.height = 44;
 			npc.timeLeft = 22500;
-			npc.lifeMax = 56800;
+			npc.lifeMax = 256800;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
 			npc.boss = true;
@@ -43,7 +43,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
 			darkBeadDamage = (int)(darkBeadDamage / 2);
 			darkOrbDamage = (int)(darkOrbDamage / 2);

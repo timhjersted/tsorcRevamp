@@ -38,7 +38,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage * 1.3 / 2);
             npc.defense = npc.defense += 12;
         }
 

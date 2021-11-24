@@ -36,7 +36,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         int fireDamage = 50;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
             fireDamage = (int)(fireDamage / 2);
         }
