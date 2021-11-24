@@ -272,7 +272,7 @@ namespace tsorcRevamp {
             #region Abyss Shader
             bool hasCoA = false;
 
-            if (Main.netMode != NetmodeID.Server) {
+            if (player.whoAmI == Main.myPlayer) {
 
                 //does the player have a covenant of artorias
                 for (int i = 3; i < (8 + player.extraAccessorySlots); i++) {

@@ -183,6 +183,10 @@ namespace tsorcRevamp {
                 Main.moonPhase = 0;
                 Main.dayTime = false;
                 Main.time = 16240.0;
+                if (Main.GlobalTime % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer) {
+                    //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
+                    NetMessage.SendData(MessageID.WorldData);
+                }
             }
             if (!Main.dedServ) {
                 if (SuperHardMode) {
