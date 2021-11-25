@@ -222,12 +222,12 @@ namespace tsorcRevamp {
                 if (Main.netMode == 0)
                 {
                     Main.NewText("The portal from The Abyss has closed!", c);
-                    Main.NewText("The world has been healed. You have inherited the fire of this world! ", c);
+                    Main.NewText("The world has been healed. Attraidies' sway over the world has finally ended!", c);
                 }
                 else if (Main.netMode == 2)
                 {
                     NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The portal from The Abyss has closed!"), c);
-                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The world has been healed. You have inherited the fire of this world!..."), c);
+                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The world has been healed. Attraidies' sway over the world has finally ended!"), c);
                 }
             }
             else
