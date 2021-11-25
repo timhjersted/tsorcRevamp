@@ -53,11 +53,39 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.CobaltPickaxe);
             RecipeRemover(ItemID.MythrilDrill);
             RecipeRemover(ItemID.MythrilPickaxe);
+            RecipeRemover(ItemID.MoltenPickaxe);
+
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
             RecipeRemover(ItemID.WebRopeCoil);
             RecipeRemover(ItemID.SilkRopeCoil);
+
+            RecipeRemover(ItemID.DemonWings);
+            RecipeRemover(ItemID.FairyWings);
+            RecipeRemover(ItemID.HarpyWings);
+            RecipeRemover(ItemID.ButterflyWings);
+            RecipeRemover(ItemID.BoneWings);
+            RecipeRemover(ItemID.FlameWings);
+            RecipeRemover(ItemID.FrozenWings);
+            RecipeRemover(ItemID.BatWings);
+            RecipeRemover(ItemID.BeeWings);
+            RecipeRemover(ItemID.TatteredFairyWings);
+            RecipeRemover(ItemID.SpookyWings);
+            RecipeRemover(ItemID.GhostWings);
+            RecipeRemover(ItemID.BeetleWings);
+            RecipeRemover(ItemID.WingsSolar);
+            RecipeRemover(ItemID.WingsNebula);
+            RecipeRemover(ItemID.WingsStardust);
+            RecipeRemover(ItemID.WingsVortex);
+
+            RecipeRemover(ItemID.LargeAmber);
+            RecipeRemover(ItemID.LargeAmethyst);
+            RecipeRemover(ItemID.LargeDiamond);
+            RecipeRemover(ItemID.LargeEmerald);
+            RecipeRemover(ItemID.LargeRuby);
+            RecipeRemover(ItemID.LargeSapphire);
+            RecipeRemover(ItemID.LargeTopaz);
 
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);
