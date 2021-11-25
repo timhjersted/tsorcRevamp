@@ -783,9 +783,15 @@ namespace tsorcRevamp.NPCs
                  * the array *must* be 2 less than the total length of the worm or it will not work
         */
 
+
+        //ai[0] = ID of piece behind it
+        //ai[1] = ID of piece ahead of it
+        //ai[2] = 
+        //ai[3] = ID of worm head
         #region AIWorm
         public static void AIWorm(NPC npc, int headType, int[] bodyTypes, int tailType, int wormLength = 3, float partDistanceAddon = 0f, float maxSpeed = 8f, float gravityResist = 0.07f, bool fly = false, bool split = false, bool ignoreTiles = false, bool spawnTileDust = true, bool soundEffects = true)
         {
+            //Flip sprite so it's always facing the right way
             if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
             {
                 npc.spriteDirection = 1;
@@ -795,88 +801,124 @@ namespace tsorcRevamp.NPCs
                 npc.spriteDirection = -1;
             }
 
+            //If it splits, ignore the health of the head and keep its own healthbar
+            //If it doesn't, set its real health to the health of the head
             if (split)
             {
                 npc.realLife = -1;
             }
-            else
-            if (npc.ai[3] > 0f) { npc.realLife = (int)npc.ai[3]; }
-            if (Main.netMode != 1)
+            else if (npc.ai[3] > 0f) { 
+                npc.realLife = (int)npc.ai[3];
+            }
+
+            //Don't do *any* spawning if we're a multiplayer client
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                //spawn pieces (flying)
-                if (fly && npc.type == headType && npc.ai[0] == 0f)
+                //And the piece behind it does not exist
+                if (npc.ai[0] == 0f)
                 {
-                    npc.ai[3] = (float)npc.whoAmI;
-                    npc.realLife = npc.whoAmI;
-                    int npcID = npc.whoAmI;
-
-                    for (int m = 0; m < wormLength - 1; m++)
+                    //If we're a head and flying type, spawn the rest of the worm
+                    if (fly && npc.type == headType)
                     {
-                        int npcType = (m == wormLength - 2 ? tailType : bodyTypes[m]);
+                        //Set its the head's head id, actual health, and ID to itself
+                        npc.ai[3] = (float)npc.whoAmI;
+                        npc.realLife = npc.whoAmI;
 
-                        int newnpcID = NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), npcType, npc.whoAmI);
-                        Main.npc[newnpcID].ai[3] = (float)npc.whoAmI;
-                        Main.npc[newnpcID].realLife = npc.whoAmI;
-                        Main.npc[newnpcID].ai[1] = (float)npcID;
-                        Main.npc[npcID].ai[0] = (float)newnpcID;
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newnpcID);
-                        npcID = newnpcID;
+                        //Store the head's index in npcID. This will get updated as we go through each piece.
+                        int npcID = npc.whoAmI;
+
+                        //Spawn the rest of the worm. For each piece...
+                        for (int m = 0; m < wormLength - 1; m++)
+                        {
+                            //If we're the last piece, make the worm type the tail. If not, make it the body type corrosponding to its position on the list
+                            int npcType = (m == wormLength - 2 ? tailType : bodyTypes[m]);
+
+                            //Spawn the npc
+                            int newnpcID = NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), npcType, npc.whoAmI);
+
+                            //Set the new piece's Head ID to the head
+                            Main.npc[newnpcID].ai[3] = (float)npc.whoAmI;
+
+                            //Set its real health to the head's
+                            Main.npc[newnpcID].realLife = npc.whoAmI;
+
+                            //Set its "previous piece id" to the id of the previous spawned piece
+                            Main.npc[newnpcID].ai[1] = (float)npcID;
+
+                            //Set the previous piece's "next piece id" to the id of the newly spawned piece
+                            Main.npc[npcID].ai[0] = (float)newnpcID;
+
+                            //Ask the server to sync it right away (might be triggering the net spam limit and causing the issues!!)
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newnpcID);
+
+                            //Store the current piece's ID in npcID, so that the next piece can use it
+                            npcID = newnpcID;
+                        }
+                        //Immediately update
+                        npc.netUpdate = true;
                     }
-                    npc.netUpdate = true;
-                }
-                else //spawn pieces
-                if ((npc.type == headType || (npc.type != headType && npc.type != tailType)) && npc.ai[0] == 0f)
-                {
-                    if (npc.type == headType)
+                    //If we're a grounded type and not the tail, just spawn the piece behind itself
+                    else if (npc.type != tailType)
                     {
+                        if (npc.type == headType)
+                        {
+                            if (!split)
+                            {
+                                npc.ai[3] = (float)npc.whoAmI;
+                                npc.realLife = npc.whoAmI;
+                            }
+                            npc.ai[2] = (float)(wormLength - 2);
+                            int nextPiece = (bodyTypes.Length == 0 ? tailType : bodyTypes[0]);
+                            npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), nextPiece, npc.whoAmI);
+                        }
+                        else
+                        if ((npc.type != headType && npc.type != tailType) && npc.ai[2] > 0f)
+                        {
+                            npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), bodyTypes[wormLength - 3 - (int)npc.ai[2]], npc.whoAmI);
+                        }
+                        else
+                        {
+                            npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), tailType, npc.whoAmI);
+                        }
                         if (!split)
                         {
-                            npc.ai[3] = (float)npc.whoAmI;
-                            npc.realLife = npc.whoAmI;
+                            Main.npc[(int)npc.ai[0]].ai[3] = npc.ai[3];
+                            Main.npc[(int)npc.ai[0]].realLife = npc.realLife;
                         }
-                        npc.ai[2] = (float)(wormLength - 2);
-                        int nextPiece = (bodyTypes.Length == 0 ? tailType : bodyTypes[0]);
-                        npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), nextPiece, npc.whoAmI);
+                        Main.npc[(int)npc.ai[0]].ai[1] = (float)npc.whoAmI;
+                        Main.npc[(int)npc.ai[0]].ai[2] = npc.ai[2] - 1f;
+                        npc.netUpdate = true;
                     }
-                    else
-                    if ((npc.type != headType && npc.type != tailType) && npc.ai[2] > 0f)
-                    {
-                        npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), bodyTypes[wormLength - 3 - (int)npc.ai[2]], npc.whoAmI);
-                    }
-                    else
-                    {
-                        npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), tailType, npc.whoAmI);
-                    }
-                    if (!split)
-                    {
-                        Main.npc[(int)npc.ai[0]].ai[3] = npc.ai[3];
-                        Main.npc[(int)npc.ai[0]].realLife = npc.realLife;
-                    }
-                    Main.npc[(int)npc.ai[0]].ai[1] = (float)npc.whoAmI;
-                    Main.npc[(int)npc.ai[0]].ai[2] = npc.ai[2] - 1f;
-                    npc.netUpdate = true;
                 }
+
                 //if npc can split, check if pieces are dead and if so split.
                 if (split)
                 {
+                    //If the piece in front and behind it are dead, then die too
                     if (!Main.npc[(int)npc.ai[1]].active && !Main.npc[(int)npc.ai[0]].active)
                     {
                         npc.life = 0;
                         npc.HitEffect(0, 10.0);
                         npc.active = false;
                     }
+
+                    //If it's a head and the piece behind it dies, then die
                     if (npc.type == headType && !Main.npc[(int)npc.ai[0]].active)
                     {
                         npc.life = 0;
                         npc.HitEffect(0, 10.0);
                         npc.active = false;
                     }
+
+                    //If it's a tail and the piece in front of it dies, then die
                     if (npc.type == tailType && !Main.npc[(int)npc.ai[1]].active)
                     {
                         npc.life = 0;
                         npc.HitEffect(0, 10.0);
                         npc.active = false;
                     }
+
+                    //If the piece isn't a head or tail, and the piece in front of it dies, then become a head
                     if ((npc.type != headType && npc.type != tailType) && !Main.npc[(int)npc.ai[1]].active)
                     {
                         npc.type = headType;
@@ -889,8 +931,9 @@ namespace tsorcRevamp.NPCs
                         npc.netUpdate = true;
                         npc.whoAmI = npcID;
                     }
-                    else
-                    if ((npc.type != headType && npc.type != tailType) && !Main.npc[(int)npc.ai[0]].active)
+
+                    //If the piece isn't a head or tail, and the piece behind it dies, then become a head
+                    else if ((npc.type != headType && npc.type != tailType) && !Main.npc[(int)npc.ai[0]].active)
                     {
                         npc.type = tailType;
                         int npcID = npc.whoAmI;
@@ -903,8 +946,11 @@ namespace tsorcRevamp.NPCs
                         npc.whoAmI = npcID;
                     }
                 }
+
+                //If it can't split, die if it is incomplete 
                 else
                 {
+                    //If it's not a head and the piece in front of it is dead (or the wrong aiStyle, just in-case a new npc took its slot) then die
                     if (npc.type != headType && (!Main.npc[(int)npc.ai[1]].active || Main.npc[(int)npc.ai[1]].aiStyle != npc.aiStyle))
                     {
                         npc.life = 0;
@@ -912,6 +958,8 @@ namespace tsorcRevamp.NPCs
 
                         npc.active = false;
                     }
+
+                    //If it's not a tail and the piece behind it is dead then die
                     if (npc.type != tailType && (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].aiStyle != npc.aiStyle))
                     {
                         npc.life = 0;

@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InHell && Main.rand.Next(500) == 1) return 1;
 
-            if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<TheHunter>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HellkiteDragonHead>()) && !Main.dayTime && Main.rand.Next(200) == 1)
+            if (tsorcRevampWorld.SuperHardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<TheHunter>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HellkiteDragonHead>()) && !Main.dayTime && Main.rand.Next(200) == 1)
 
             {
                 Main.NewText("The village is under attack!", 175, 75, 255);
