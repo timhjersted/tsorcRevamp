@@ -44,8 +44,8 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         }
 
         bool OptionSpawned = false;
-        int frozenSawDamage = 30;
-        int lightningDamage = 70;
+        int frozenSawDamage = 45;
+        int lightningDamage = 65;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
@@ -149,7 +149,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             }
 
             //Every so often, teleport. Happens every 200 frames if the wyvern is alive, 120 if not
-            if ((TeleportTimer >= 200 && NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>())) || (TeleportTimer >= 120 && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>())))
+            if (TeleportTimer >= 260)
             {
                 WyvernMageTeleport();
             }
@@ -257,7 +257,29 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             if (nextWarpPoint != null)
             {
-                npc.Center = Main.player[npc.target].Center + nextWarpPoint;
+                //Check if the player has line of sight to the warp point. If not, rotate it by 90 degrees and try again. After 4 checks, give up.
+                //Lazy way to do this, but it's deterministic and works for 99% of cases so it works.
+                //We can't check collision when we pre-select the warp point, because it moves the npc relative to the player and the player might move in the meantime
+                if (Collision.CanHit(Main.player[npc.target].Center + nextWarpPoint, 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(Main.player[npc.target].Center + nextWarpPoint, 1, 1, Main.player[npc.target].Center, 1, 1))
+                {
+                    npc.Center = Main.player[npc.target].Center + nextWarpPoint;
+                }
+                else if (Collision.CanHit(Main.player[npc.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(90)), 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(Main.player[npc.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(90)), 1, 1, Main.player[npc.target].Center, 1, 1))
+                {
+                    npc.Center = Main.player[npc.target].Center + (nextWarpPoint.RotatedBy(MathHelper.ToRadians(90)));
+                }
+                else if (Collision.CanHit(Main.player[npc.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(270)), 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(Main.player[npc.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(270)), 1, 1, Main.player[npc.target].Center, 1, 1))
+                {
+                    npc.Center = Main.player[npc.target].Center + (nextWarpPoint.RotatedBy(MathHelper.ToRadians(270)));
+                }
+                else if (Collision.CanHit(Main.player[npc.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(180)), 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(Main.player[npc.target].Center + nextWarpPoint.RotatedBy(MathHelper.ToRadians(180)), 1, 1, Main.player[npc.target].Center, 1, 1))
+                {
+                    npc.Center = Main.player[npc.target].Center + (nextWarpPoint.RotatedBy(MathHelper.ToRadians(180)));
+                }
+                else
+                {
+                    npc.Center = Main.player[npc.target].Center + nextWarpPoint;
+                }
             }
 
             npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 13);
@@ -273,6 +295,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             nextWarpPoint = Main.rand.NextVector2CircularEdge(640, 640);
             npc.netUpdate = true;
+        }
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            damage *= 2;
         }
         public override void FindFrame(int currentFrame)
         {

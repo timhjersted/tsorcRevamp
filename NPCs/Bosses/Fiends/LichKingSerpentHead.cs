@@ -33,13 +33,20 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.behindTiles = true;
 			npc.value = 40000;
 			despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
+
+			bodyTypes = new int[43];
+			int bodyID = ModContent.NPCType<LichKingSerpentBody>();
+			for(int i = 0; i < 43; i++)
+            {
+				bodyTypes[i] = bodyID;
+			}
 		}
+		int[] bodyTypes;
 
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Lich King Serpent");
 		}
-		bool TailSpawned = false;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
@@ -51,29 +58,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			if (!TailSpawned)
-			{
-				int Previous = npc.whoAmI;
-				for (int num36 = 0; num36 < 44; num36++)
-				{
-					int lol = 0;
-					if (num36 >= 0 && num36 < 43)
-					{
-						lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.width / 2), ModContent.NPCType<LichKingSerpentBody>(), npc.whoAmI);
-					}
-					else
-					{
-						lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.width / 2), ModContent.NPCType<LichKingSerpentTail>(), npc.whoAmI);
-					}
-					Main.npc[lol].realLife = npc.whoAmI;
-					Main.npc[lol].ai[2] = (float)npc.whoAmI;
-					Main.npc[lol].ai[1] = (float)Previous;
-					Main.npc[Previous].ai[0] = (float)lol;
-					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, lol, 0f, 0f, 0f, 0);
-					Previous = lol;
-				}
-				TailSpawned = true;
-			}
+
+			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<LichKingSerpentHead>(), bodyTypes, ModContent.NPCType<LichKingSerpentTail>(), 45, .8f, 22, 0.25f, false, false, false, true, true);
 		}
 
 		private static int ClosestSegment(NPC head, params int[] segmentIDs)

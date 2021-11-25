@@ -786,8 +786,9 @@ namespace tsorcRevamp.NPCs
 
         //ai[0] = ID of piece behind it
         //ai[1] = ID of piece ahead of it
-        //ai[2] = 
+        //ai[2] = Relates to length of worms
         //ai[3] = ID of worm head
+        //npc.localAI[0] = place in the queue to sync itself, used to spread the syncing out
         #region AIWorm
         public static void AIWorm(NPC npc, int headType, int[] bodyTypes, int tailType, int wormLength = 3, float partDistanceAddon = 0f, float maxSpeed = 8f, float gravityResist = 0.07f, bool fly = false, bool split = false, bool ignoreTiles = false, bool spawnTileDust = true, bool soundEffects = true)
         {
@@ -814,6 +815,17 @@ namespace tsorcRevamp.NPCs
             //Don't do *any* spawning if we're a multiplayer client
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                //Tick down the sync counter, and if it hits 1 then sync them.
+                if(npc.localAI[0] == 1 && npc.localAI[0] > 0)
+                {
+                    npc.netUpdate = true;
+                    npc.localAI[0] = -1;
+                }
+                else
+                {
+                    npc.localAI[0]--;
+                }
+
                 //And the piece behind it does not exist
                 if (npc.ai[0] == 0f)
                 {
@@ -848,8 +860,11 @@ namespace tsorcRevamp.NPCs
                             //Set the previous piece's "next piece id" to the id of the newly spawned piece
                             Main.npc[npcID].ai[0] = (float)newnpcID;
 
+                            //Set their localAI to a number that grows as each segment is spawned
+                            Main.npc[npcID].localAI[0] = 2 + (m * 2);
+
                             //Ask the server to sync it right away (might be triggering the net spam limit and causing the issues!!)
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newnpcID);
+                            //NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newnpcID);
 
                             //Store the current piece's ID in npcID, so that the next piece can use it
                             npcID = newnpcID;

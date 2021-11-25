@@ -64,11 +64,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             despawnHandler.TargetAndDespawn(npc.whoAmI);
             if (OptionSpawned == false)
             {
-                OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
-                if (Main.netMode == NetmodeID.Server && OptionId < 200)
+                if (Main.netMode == NetmodeID.MultiplayerClient)
                 {
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
-                }
+                    OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
+                }   
                 Main.npc[OptionId].velocity.Y = -10;
                 OptionSpawned = true;
             }

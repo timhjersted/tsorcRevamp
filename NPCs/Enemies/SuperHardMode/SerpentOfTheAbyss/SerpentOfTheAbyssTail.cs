@@ -23,12 +23,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             npc.DeathSound = SoundID.NPCDeath1;
             npc.lavaImmune = true;
             npc.knockBackResist = 0;
-            npc.lifeMax = 600;
+            npc.lifeMax = 60000000;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.behindTiles = true;
-            npc.value = 500;
+            npc.value = 500; 
+            
+            bodyTypes = new int[33];
+            int bodyID = ModContent.NPCType<SerpentOfTheAbyssBody>();
+            for (int i = 0; i < 33; i++)
+            {
+                bodyTypes[i] = bodyID;
+            }
         }
+        int[] bodyTypes;
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
@@ -36,11 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
         }
 
         public override void AI() {
-            if (!Main.npc[(int)npc.ai[1]].active) {
-                npc.life = 0;
-                npc.HitEffect(0, 10.0);
-                npc.active = false;
-            }
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SerpentOfTheAbyssHead>(), bodyTypes, ModContent.NPCType<SerpentOfTheAbyssTail>(), 35, .8f, 17, 0.25f, false, false, false, true, true);
         }
     }
 }

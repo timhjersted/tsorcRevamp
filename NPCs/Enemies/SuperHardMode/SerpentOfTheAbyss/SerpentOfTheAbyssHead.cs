@@ -36,8 +36,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             npc.value = 37500;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
-        }
 
+            bodyTypes = new int[33];
+            int bodyID = ModContent.NPCType<SerpentOfTheAbyssBody>();
+            for (int i = 0; i < 33; i++)
+            {
+                bodyTypes[i] = bodyID;
+            }
+        }
+        int[] bodyTypes;
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             Player p = spawnInfo.player;
@@ -57,45 +64,27 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
         }
 
         public override void AI() {
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[0] == 0f) {
-                npc.ai[2] = npc.whoAmI;
-                npc.realLife = npc.whoAmI;
-                int whoAmI = npc.whoAmI;
-                for (int i = 0; i < 44; i++) {
-                    int npcType = ModContent.NPCType<SerpentOfTheAbyssBody>();
-                    switch (i) {
-                        case 43:
-                            npcType = ModContent.NPCType<SerpentOfTheAbyssTail>();
-                            break;
-                    }
-                    int bodyPart = NPC.NewNPC((int)(npc.position.X + npc.width / 2), (int)(npc.position.Y + (float)npc.height), npcType, npc.whoAmI);
-                    Main.npc[bodyPart].ai[2] = npc.whoAmI;
-                    Main.npc[bodyPart].realLife = npc.whoAmI;
-                    Main.npc[bodyPart].ai[1] = whoAmI;
-                    Main.npc[whoAmI].ai[0] = bodyPart;
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, bodyPart);
-                    whoAmI = bodyPart;
-                }
-            }
+
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SerpentOfTheAbyssHead>(), bodyTypes, ModContent.NPCType<SerpentOfTheAbyssTail>(), 35, .8f, 17, 0.25f, false, false, false, true, true);
+
+
             Player nT = Main.player[npc.target];
 
-            //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))           
-            //		{
             if (Main.rand.Next(90) == 0) {
                 breath = true;
                 Main.PlaySound(SoundID.Item, -1, -1, 20);
                 npc.netUpdate = true;
             }
-            //}
 
 
             if (breath) {
 
                 float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-                int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y + (20f * npc.direction), npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), 40, 0f, Main.myPlayer); //cursed dragons breath
-                Main.projectile[num54].timeLeft = 50;
-                npc.netUpdate = true;
-
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y + (20f * npc.direction), npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), 40, 0f, Main.myPlayer); //cursed dragons breath
+                    Main.projectile[num54].timeLeft = 50;
+                }
 
                 breathCD--;
 
@@ -106,22 +95,25 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 Main.PlaySound(SoundID.Item, -1, -1, 20);
             }
             if (Main.rand.Next(940) == 0) {
-                npc.netUpdate = true;
                 for (int pcy = 0; pcy < 10; pcy++) {
-                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), 47, 2f, Main.myPlayer); //9.9f was 14.9f
-                    Main.PlaySound(SoundID.Item, -1, -1, 20);
-
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), 47, 2f, Main.myPlayer); //9.9f was 14.9f
+                    }
                 }
+                Main.PlaySound(SoundID.Item, -1, -1, 20);
             }
             if (Main.rand.Next(2760) == 0) {
-                npc.netUpdate = true;
-                for (int pcy = 0; pcy < 10; pcy++) {
-                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), 50, 2f, Main.myPlayer); //dragon meteor
-                    Main.PlaySound(SoundID.Item, -1, -1, 20);
+                for (int pcy = 0; pcy < 10; pcy++)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), 50, 2f, Main.myPlayer); //dragon meteor
+                    } 
                 }
+                Main.PlaySound(SoundID.Item, -1, -1, 20);
             }
             if (Main.rand.Next(60) == 0) {
-                npc.netUpdate = true;
                 int d = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
                 Main.dust[d].noGravity = true;
             }

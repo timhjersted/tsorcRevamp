@@ -17,11 +17,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 			npc.height = 45;
 			npc.knockBackResist = 0f;
 			npc.timeLeft = 750;
-			npc.damage = 47;
+			npc.damage = 70;
 			npc.defense = 23;
 			npc.HitSound = SoundID.NPCHit4;
 			npc.DeathSound = SoundID.NPCDeath10;
-			npc.lifeMax = 91000;
+			npc.lifeMax = 91000000;
 			npc.boss = true;
 			npc.noGravity = true;
 			npc.noTileCollide = true;

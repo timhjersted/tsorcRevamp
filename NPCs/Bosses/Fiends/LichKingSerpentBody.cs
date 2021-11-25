@@ -24,12 +24,20 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             npc.DeathSound = SoundID.NPCDeath5;
             npc.lavaImmune = true;
             npc.knockBackResist = 0;
-            npc.lifeMax = 15000;
+            npc.lifeMax = 60000000;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.behindTiles = true;
-            npc.value = 460;
+            npc.value = 460; 
+            
+            bodyTypes = new int[43];
+            int bodyID = ModContent.NPCType<LichKingSerpentBody>();
+            for (int i = 0; i < 43; i++)
+            {
+                bodyTypes[i] = bodyID;
+            }
         }
+        int[] bodyTypes;
 
         public override void SetStaticDefaults()
         {
@@ -50,16 +58,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         
         public override void AI()
         {
-            if (!Main.npc[(int)npc.ai[1]].active)
-            {
-                npc.life = 0;
-                npc.HitEffect(0, 10.0);
-                NPCLoot();
-                npc.active = false;
-            }
-           //npc.AI(true);
-        }
 
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<LichKingSerpentHead>(), bodyTypes, ModContent.NPCType<LichKingSerpentTail>(), 45, .8f, 22, 0.25f, false, false, false, true, true);
+        }
+        public override bool CheckActive()
+        {
+            return false;
+        }
 
         public override void NPCLoot()
         {

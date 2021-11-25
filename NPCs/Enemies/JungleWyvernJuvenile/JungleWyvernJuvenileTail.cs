@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			npc.defense = 0;
 			npc.HitSound = SoundID.NPCHit7;
 			npc.DeathSound = SoundID.NPCDeath8;
-			npc.lifeMax = 1500;
+			npc.lifeMax = 60000000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.value = 1500;

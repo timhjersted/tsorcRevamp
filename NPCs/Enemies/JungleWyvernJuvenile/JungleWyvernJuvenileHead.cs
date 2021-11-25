@@ -71,7 +71,6 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		int selfDestructTimer = 5;
 		public override void AI()
 		{
-
 			if (!Main.npc[(int)npc.ai[1]].active)
 			{
 				npc.life = 0;
@@ -129,42 +128,38 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 					Main.npc[num122].realLife = npc.whoAmI;
 					Main.npc[num122].ai[1] = num119;
 					Main.npc[num119].ai[0] = num122;
-					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, num122);
 					num119 = num122;
 				}
 			}
 
-			//The head likes to stick around in multiplayer after the body dies, and I can't figure out why. This "fixes" it for now, but i'm pretty sure this is a problem with many worms we'll have to come back to.
+			//The head liked to stick around in multiplayer after the body dies. Just in-case removing the netupdate didn't fix it, i'm leaving this in as a fail-safe.
 			if (npc.ai[0] == 0f || !NPC.AnyNPCs(ModContent.NPCType<JungleWyvernJuvenileLegs>()) || !NPC.AnyNPCs(ModContent.NPCType<JungleWyvernJuvenileBody>()))
 			{
 				selfDestructTimer--;
-				if(selfDestructTimer <= 0)
-                {
+				if (selfDestructTimer <= 0)
+				{
 					npc.active = false;
-                }
+				}
 			}
 
 			if (Main.rand.Next(120) == 0)
 			{
 				breath = true;
 				Main.PlaySound(SoundID.Item, -1, -1, 20);
-				npc.netUpdate = true;
 			}
-			//}
 
 
 			if (breath)
 			{
-
-				float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-				int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, 22, 0f, Main.myPlayer); //cursed dragons breath
-				Main.projectile[num54].timeLeft = 15;
-				Main.projectile[num54].scale = .8f;
-				npc.netUpdate = true;
-
-
+				if (Main.netMode == NetmodeID.MultiplayerClient)
+				{
+					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, 22, 0f, Main.myPlayer); //cursed dragons breath
+					
+					//These won't work in multiplayer (projectile id's, timeleft, scale, etc are not synced), but it's not that big a deal
+					Main.projectile[num54].timeLeft = 15;
+					Main.projectile[num54].scale = .8f;
+				}
 				breathCD--;
-
 			}
 			if (breathCD <= 0)
 			{
