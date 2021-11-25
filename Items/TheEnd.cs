@@ -5,12 +5,12 @@ namespace tsorcRevamp.Items {
     class TheEnd : ModItem {
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("As the remains of the Mindflayer King lay before you, you look up and out to the horizon." +
-                               "\nYou can feel the darkness starting to subside, but your heart is not at peace." +
-                               "\nAttraidies was known for his games. Even in death you suspect his sway over the world has not ended." +
+            Tooltip.SetDefault("As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon." +
+                               "\nYou feel relieved, but notice your heart is still not at peace. Attraidies was known for his games." +
+                               "\nEven in death you suspect his sway over the world has not ended." +
                                "\nYou remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself..." +
-                               "\nLooking down, you notice this Chaos relic burning in the ashes. You pick it up. Could it be the end?" +
-                               "\nOne last congratulations on beating the game! I hope you enjoyed it! - Tim Hjersted and the Revamp Team");
+                               "\nLooking down, you notice a Picksaw lying in the ashes, still hot to the touch..." +
+                               "\nCongratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team");
         }
 
         public override void SetDefaults() {
