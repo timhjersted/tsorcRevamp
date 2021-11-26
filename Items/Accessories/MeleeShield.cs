@@ -43,10 +43,15 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            tooltips.Add(new TooltipLine(mod, "",
-                "Plus 20 defense and 4% melee damage" + 
-                "\nReduces Ranged and Magic Damage by 85%. +50% mana cost" + 
-                "\n-10% move speed"));
+            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
+            int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+            if (ttindex != -1) {// if we find one
+                                //insert the extra tooltip line
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "",
+                "Plus 40 defense and 6% melee damage" +
+                "\nReduces Ranged and Magic Damage by 150%. +70% mana cost" +
+                "\n-15% move speed"));
+            }
         }
 
         public override void SetDefaults() {
@@ -85,10 +90,15 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            tooltips.Add(new TooltipLine(mod, "",
+            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
+            int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+            if (ttindex != -1) {// if we find one
+                                //insert the extra tooltip line
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "",
                 "Plus 40 defense and 6% melee damage" +
                 "\nReduces Ranged and Magic Damage by 150%. +70% mana cost" +
                 "\n-15% move speed"));
+            }
         }
         public override void SetDefaults() {
             base.SetDefaults();
@@ -124,10 +134,15 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            tooltips.Add(new TooltipLine(mod, "",
+            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
+            int ttindex = tooltips.FindLastIndex(t => t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+            if (ttindex != -1) {// if we find one
+                                //insert the extra tooltip line
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "",
                 "Plus immunity to On Fire, 60 defense, and 6% melee damage" +
                 "\nReduces Ranged and Magic Damage by 150%. +70% mana cost" +
                 "\n-15% move speed"));
+            }
         }
         public override void SetDefaults() {
             base.SetDefaults();
