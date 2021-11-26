@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 		{
 			DisplayName.SetDefault("Serris");
 		}
-		int distortionDamage = 40;
+		int distortionDamage = 90;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
@@ -80,14 +80,24 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 			if (Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 1800 || Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 3200)
             {
-
 				float angle = Main.rand.Next(0, 360); 
 				npc.position.X = Main.player[npc.target].position. X + (100 * (float)Math.Cos(angle) * 16);
 				npc.position.Y = Main.player[npc.target].position.Y + (100 * (float)Math.Sin(angle) * 16);
-
 			}
 
-			//tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SerrisHead>(), bodyTypes, ModContent.NPCType<SerrisTail>(), 16, -1f, 12f, 0.6f, true, false, true); //3f was 6f
+			if ((npc.life % 1000) != 0 && npc.life > 1)
+			{
+				npc.life -= npc.life % 1000;
+				if (npc.life <= 0)
+				{
+					npc.life = 1;
+				}
+
+				timeLock = false;
+				npc.ai[0] = 2;
+				Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+				npc.netUpdate = true;
+			}
 
 			if (npc.velocity.X < 0f)
 			{
@@ -192,35 +202,6 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 		}
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
-        {
-			OnHit(crit);
-        }
-
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
-        {
-			OnHit(crit);
-		}
-
-		private void OnHit(bool crit)
-        {
-			if (crit)
-			{
-				npc.life -= 998;
-			}
-            else
-            {
-				npc.life -= 999;
-			}
-			
-			if(npc.life <= 0)
-            {
-				NPCLoot();
-            }
-			timeLock = false;
-			npc.ai[0] = 2;
-			Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
-		}
 		public override bool CheckActive()
 		{
 			return false;

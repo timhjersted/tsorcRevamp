@@ -51,7 +51,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			DisplayName.SetDefault("Serris-X");
 		}
 
-		int plasmaOrbDamage = 70;
+		int plasmaOrbDamage = 100;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
