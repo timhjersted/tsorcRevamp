@@ -78,6 +78,7 @@ namespace tsorcRevamp.Items {
                 recipe.AddIngredient(ItemID.GravitationPotion, 20);
                 recipe.AddIngredient(ItemID.SoulofFlight, 1);
                 recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
+                recipe.AddTile(TileID.DemonAltar);
                 recipe.SetResult(ModContent.ItemType<PermanentGravitationPotion>());
                 recipe.AddRecipe();
 
@@ -86,6 +87,7 @@ namespace tsorcRevamp.Items {
                 recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
                 recipe.AddIngredient(ItemID.SoulofLight, 1);
                 recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);
+                recipe.AddTile(TileID.DemonAltar);
                 recipe.SetResult(ModContent.ItemType<PermanentObsidianSkinPotion>());
                 recipe.AddRecipe();
                 #endregion 

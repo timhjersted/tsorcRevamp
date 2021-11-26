@@ -570,14 +570,14 @@ namespace tsorcRevamp {
                 if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                     for (int l = 0; l < 200; l++) {
                         NPC nPC = Main.npc[l];
-                        if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 200) {
+                        if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 240) {
                             nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
                         }
                     }
 
                     Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
                     for (int j = 1; j < 30; j++) {
-                        var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 125) : 125)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
+                        var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 150) : 150)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
                         Main.dust[x].noGravity = true;
                     }
                 }
