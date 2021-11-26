@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of blazing fury\n" +
                                "You don't know what it's for, but you're sure it's important.\n" +
                                "After defeating The Rage, Miakoda tells you about the Wyvern Mage that lives high atop the mountain above these caverns - \n" +
-                               "an ally of Attraidies. \"If he is helping the Mindflayer King, he could know where Elizabeth is.\"");
+                               "an ally of Attraidies. \"If he is helping the Mindflayer King, he could know where Asha is.\"");
         }
     }
 
