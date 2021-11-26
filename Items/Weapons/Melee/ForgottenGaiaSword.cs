@@ -38,11 +38,25 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
+        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        {
+            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                {
+                    NetMessage.SendData(MessageID.AddNPCBuff, number: target.whoAmI, number2: ModContent.BuffType<Buffs.DispelShadow>(), number3: 36000);
+                    ModPacket shadowPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                    shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
+                    shadowPacket.Write(target.whoAmI);
+                    shadowPacket.Send();
+                }
+            }
+        }
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) { 
                 damage *= 3;
-                target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
             }
         }
     }

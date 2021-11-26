@@ -7,6 +7,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Items.Armors;
 using tsorcRevamp.Items.Accessories;
 using static tsorcRevamp.SpawnHelper;
+using System.IO;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.height = 45;
             npc.width = 30;
             npc.damage = 100;
-            npc.defense = 3050;
+            npc.defense = 0;
             npc.lifeMax = 25000;
             npc.scale = 1.05f;
             npc.HitSound = SoundID.NPCHit4;
@@ -40,7 +41,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);
         }
 
-        int blackBreathDamage = 43;
+        int blackBreathDamage = 43; 
+        bool defenseBroken = false;
+
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -56,12 +59,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
-            if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>())) {
-                damage += (0.5 * npc.defense);
-            }
-            return base.StrikeNPC(ref damage, defense, ref knockback, hitDirection, ref crit);
-        }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             Player p = spawnInfo.player;
@@ -101,6 +98,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(npc.whoAmI);
+            if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
+            {
+                defenseBroken = true;
+            }
+
             bool flag2 = false;
             int num5 = 60;
             bool flag3 = true;
@@ -370,6 +372,50 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
         #endregion
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
+            {
+                defenseBroken = true;
+            }
+            if (defenseBroken)
+            {
+                writer.Write(true);
+            }
+            else
+            {
+                writer.Write(false);
+            }
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            bool recievedBrokenDef = reader.ReadBoolean();
+            if (recievedBrokenDef == true)
+            {
+                defenseBroken = true;
+                npc.defense = 0;
+            }
+        }
+
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (item.type == ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
+            {
+                defenseBroken = true;
+            }
+            if (!defenseBroken)
+            {
+                damage = 1;
+            }
+        }
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (!defenseBroken)
+            {
+                damage = 1;
+            }
+        }
 
         public override void HitEffect(int hitDirection, double damage) {
             if (npc.life <= 0) {

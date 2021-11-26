@@ -734,6 +734,12 @@ namespace tsorcRevamp {
                 }
             }
 
+            else if(message == tsorcPacketID.DispelShadow)
+            {
+                int npcID = reader.ReadInt32();
+                Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
+            }
+
 
 
             /**
@@ -966,6 +972,7 @@ namespace tsorcRevamp {
         public const byte SyncSoulSlot = 1;
         public const byte SyncEventDust = 2;
         public const byte SyncTimeChange = 3;
+        public const byte DispelShadow = 4;
         //public const byte SyncRandom = ;
     }
 

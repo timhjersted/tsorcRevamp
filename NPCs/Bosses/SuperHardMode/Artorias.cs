@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SetDefaults() {
             npc.knockBackResist = 0;
             npc.damage = 200;
-            npc.defense = 65535;
+            npc.defense = 0;
             npc.height = 40;
             npc.width = 30;
             npc.lifeMax = 150000;
@@ -42,12 +43,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		//This attack does damage equal to 25% of your max health no matter what, so its damage stat is irrelevant and only listed for readability.
 		public int gravityBallDamage = 0;
 
-		public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
-			if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>())) {
-				damage += (0.5 * npc.defense);
-			}
-			return base.StrikeNPC(ref damage, defense, ref knockback, hitDirection, ref crit);
-		}
+		bool defenseBroken = false;
+		
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
@@ -84,6 +81,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
+			if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
+			{
+				defenseBroken = true;
+			}
+
 			int num58;
 			int num59;
 
@@ -351,7 +353,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							speedX *= 0;
 							speedY *= 0;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightPillarBall>();
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightPillarDamage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightPillarDamage, 0f, Main.myPlayer, npc.direction);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -567,7 +569,53 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 			}
 		}
-		public override bool CheckActive()
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
+            {
+				defenseBroken = true;
+            }
+			if (defenseBroken)
+			{
+				writer.Write(true);
+			}
+			else
+			{
+				writer.Write(false);
+			}
+		}
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+			bool recievedBrokenDef = reader.ReadBoolean();
+			if (recievedBrokenDef == true)
+			{
+				defenseBroken = true;
+				npc.defense = 0;
+			}
+		}
+		public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+		{
+			if (item.type == ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>() || item.type == ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>())
+			{
+				defenseBroken = true;
+			}
+			if (!defenseBroken)
+			{
+				damage = 1;
+			}
+		}
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (!defenseBroken)
+            {
+				damage = 1;
+            }
+        }
+
+
+        public override bool CheckActive()
 		{
 			return false;
 		}

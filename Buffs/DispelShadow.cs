@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
@@ -8,7 +9,6 @@ namespace tsorcRevamp.Buffs {
             texture = "tsorcRevamp/Buffs/CurseBuildup"; //enemy only buff, so it doesnt need a real icon
             return base.Autoload(ref name, ref texture);
         }
-
 
         public override void SetDefaults() {
             DisplayName.SetDefault("Dispel Shadow");
