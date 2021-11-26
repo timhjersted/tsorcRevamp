@@ -71,11 +71,5 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return true;
             }
         }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            if (!LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "RevampBarrierBuff1", "Mana cost reduced to 130, from 150"));
-            }
-        }
     }
 }
