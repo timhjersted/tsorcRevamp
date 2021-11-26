@@ -31,6 +31,15 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+
+            ModRecipe recipe2 = new ModRecipe(mod);
+            recipe2.AddIngredient(ModContent.ItemType<ImprovedCloudInABalloon>(), 1);
+            recipe2.AddIngredient(ItemID.AngelWings, 1);
+            recipe2.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
+            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.SetResult(this, 1);
+            recipe2.AddRecipe();
         }
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
                             ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend) {
@@ -53,7 +62,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.canRocket = true;
             player.iceSkate = true;
             player.jumpSpeedBoost = 1.3f;
-            player.wingTimeMax = 12000;
+            player.wingTimeMax = 180;
 
             bool restricted = false;
             for (int i = 3; i <= 8; i++) {

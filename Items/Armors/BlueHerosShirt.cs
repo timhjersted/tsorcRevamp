@@ -34,6 +34,33 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+
+            ModRecipe recipe2 = new ModRecipe(mod);
+            recipe2.AddIngredient(ItemID.HerosShirt, 1);
+            recipe2.AddIngredient(ItemID.DivingGear, 1);
+            recipe2.AddIngredient(ItemID.MythrilBar, 3);
+            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.SetResult(this, 1);
+            recipe2.AddRecipe();
+
+            ModRecipe recipe3 = new ModRecipe(mod);
+            recipe3.AddIngredient(ItemID.HerosShirt, 1);
+            recipe3.AddIngredient(ItemID.JellyfishDivingGear, 1);
+            recipe3.AddIngredient(ItemID.MythrilBar, 3);
+            recipe3.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe3.AddTile(TileID.DemonAltar);
+            recipe3.SetResult(this, 1);
+            recipe3.AddRecipe();
+
+            ModRecipe recipe4 = new ModRecipe(mod);
+            recipe4.AddIngredient(ItemID.HerosShirt, 1);
+            recipe4.AddIngredient(ItemID.ArcticDivingGear, 1);
+            recipe4.AddIngredient(ItemID.MythrilBar, 3);
+            recipe4.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe4.AddTile(TileID.DemonAltar);
+            recipe4.SetResult(this, 1);
+            recipe4.AddRecipe();
         }
     }
 }

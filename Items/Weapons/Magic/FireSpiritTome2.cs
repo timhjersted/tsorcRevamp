@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useAnimation = 5;
             item.useTime = 5;
             item.maxStack = 1;
-            item.damage = 40;
+            item.damage = 30;
             item.knockBack = 8;
             item.autoReuse = true;
             item.scale = 1.3f;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("FireSpiritTome"), 1);
-            recipe.AddIngredient(ItemID.AdamantiteBar, 5);
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 45000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

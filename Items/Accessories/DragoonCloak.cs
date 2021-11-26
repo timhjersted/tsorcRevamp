@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories {
     public class DragoonCloak : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak." +
-                                 "\nThese effects are, however, significantly weaker");
+                                 "\nThese effects are, however, slightly weaker");
         }
 
         public override void SetDefaults() {
@@ -46,14 +46,11 @@ namespace tsorcRevamp.Items.Accessories {
                 player.lifeRegen += 6;
                 player.statDefense += 8;
                 player.manaRegenBuff = true;
-                player.starCloak = true;
                 player.magicCrit += 3;
                 player.magicDamage += .05f;
 
-
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;
-
             }
         }
     }

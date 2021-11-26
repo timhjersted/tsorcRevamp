@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -77,6 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses
             return 0;
         }
 
+        float nextWarpAngle = 0;
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -99,19 +101,21 @@ namespace tsorcRevamp.NPCs.Bosses
                 Main.dust[dust].noGravity = true;
             }
 
-            if (Main.netMode != 2)
+            
+            if (npc.ai[0] >= 12 && npc.ai[2] < 5)
             {
-                if (npc.ai[0] >= 12 && npc.ai[2] < 5)
+                float speed = 0.5f;
+                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
+                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float num48 = 0.5f;
-                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, shadowShotDamage, 0f, 0);
-                    npc.ai[0] = 0;
-                    npc.ai[2]++;
+                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -1), type, shadowShotDamage, 0f, Main.myPlayer);
                 }
+                npc.ai[0] = 0;
+                npc.ai[2]++;
             }
+            
 
             if (npc.ai[1] >= 40)
             {
@@ -122,27 +126,24 @@ namespace tsorcRevamp.NPCs.Bosses
             if ((npc.ai[1] >= 150 && npc.life > 2000) || (npc.ai[1] >= 100 && npc.life <= 2000))
             {
                 Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
-                for (int num36 = 0; num36 < 10; num36++)
+                for (int i = 0; i < 10; i++)
                 {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
-                //if (Main.netMode != 1)
-                //{
-                npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
-                //}
+
                 npc.ai[2] = 0;
-                npc.ai[1] = 0;
-                
+                npc.ai[1] = 0;                
                
-                npc.position.X = Main.player[npc.target].position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
-                npc.position.Y = Main.player[npc.target].position.Y + (float)((600 * Math.Sin(npc.ai[3])) * -1);
+                npc.position.X = Main.player[npc.target].position.X + (float)((600 * Math.Cos(nextWarpAngle)) * -1);
+                npc.position.Y = Main.player[npc.target].position.Y + (float)((600 * Math.Sin(nextWarpAngle)) * -1);
                 Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                 float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                 npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
                 npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
-                
+                nextWarpAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
+                npc.netUpdate = true;
             }
 
             if (npc.velocity.X > 0)
@@ -150,10 +151,15 @@ namespace tsorcRevamp.NPCs.Bosses
                 npc.spriteDirection = 1;
             }
             else npc.spriteDirection = -1;
-
-            //npc.netUpdate = true;
         }
-
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(nextWarpAngle);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            nextWarpAngle = reader.ReadSingle();
+        }
         public override void FindFrame(int currentFrame)
         {
             int num = 1;

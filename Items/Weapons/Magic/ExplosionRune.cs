@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.height = 28;
             item.knockBack = 4;
             item.rare = ItemRarityID.Orange;
-            item.shootSpeed = 11;
+            item.shootSpeed = 16;
             item.autoReuse = true;
             item.magic = true;
             item.noMelee = true;
@@ -30,6 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ItemID.Fireblossom, 30);
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
