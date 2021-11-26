@@ -48,9 +48,9 @@ namespace tsorcRevamp.Items.Accessories {
             if (ttindex != -1) {// if we find one
                                 //insert the extra tooltip line
                 tooltips.Insert(ttindex + 1, new TooltipLine(mod, "",
-                "Plus 40 defense and 6% melee damage" +
-                "\nReduces Ranged and Magic Damage by 150%. +70% mana cost" +
-                "\n-15% move speed"));
+                "Plus 20 defense and 4% melee damage" +
+                "\nReduces Ranged and Magic Damage by 85%. +50% mana cost" +
+                "\n-10% move speed"));
             }
         }
 
