@@ -10,8 +10,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
     {
         public override void SetDefaults()
         {
-            npc.netAlways = true;
-            npc.npcSlots = 10;
             npc.width = 32;
             npc.height = 32;
             drawOffsetY = 60;
@@ -26,6 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             music = 12;
             npc.noGravity = true;
             npc.noTileCollide = true;
+            npc.behindTiles = true;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -61,20 +60,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             {
                 npc.dontTakeDamage = false;
             }
-            npc.noTileCollide = true;
-            npc.noGravity = true;
-            npc.behindTiles = true;
+
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>() };
             tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 17, 6f, 10f, 0.17f, true, false);
-
-            //this makes the head always stay in the same position even when it flips upside down
-            //if (npc.velocity.X < 0f){ npc.spriteDirection = -1; } else  //both -1 is correct for looking right with no flipping, or 1 and -1 with flipping
-            //if (npc.velocity.X > 0f){ npc.spriteDirection = 1; }
-
-            if (!Main.npc[(int)npc.ai[1]].active)
-            { 
-                npc.active = false;
-            }
         }
         public override bool CheckActive()
         {

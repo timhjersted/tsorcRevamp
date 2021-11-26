@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.damage = 130;
+            item.damage = 110;
             item.height = 58;
             item.knockBack = 4;
             item.noMelee = true;
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.channel = true;
             item.autoReuse = true;
             item.scale = 0.9f;
-            item.shootSpeed = 14;
+            item.shootSpeed = 34;
             item.useAnimation = 15;
             item.UseSound = SoundID.Item5;
             item.useStyle = ItemUseStyleID.HoldingOut;

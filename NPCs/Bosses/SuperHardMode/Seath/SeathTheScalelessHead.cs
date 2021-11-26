@@ -12,8 +12,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
     {
         public override void SetDefaults()
         {
-            npc.netAlways = true;
-            npc.npcSlots = 101;
             npc.width = 32;
             npc.height = 32;
             drawOffsetY = 60;
@@ -29,6 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.boss = true;
             npc.noGravity = true;
             npc.noTileCollide = true;
+            npc.behindTiles = true;
             npc.value = 500000;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
@@ -109,8 +108,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 npc.dontTakeDamage = false;
             }
 
-
-
+            //Crystal spawning
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
@@ -164,7 +162,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
             }
 
-
             Player nT = Main.player[npc.target];
             if (Main.rand.Next(255) == 0)
             {
@@ -173,10 +170,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
             if (breath)
             {
-
-                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                }
                 Main.PlaySound(2, -1, -1, 20);
-                npc.netUpdate = true; //new
                 breathCD--;
 
             }
@@ -190,20 +188,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 800 + Main.rand.Next(1600), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>(), frozenTearDamage, 2f, Main.myPlayer); //10.1f was 14.9f is speed
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile((float)nT.position.X - 800 + Main.rand.Next(1600), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>(), frozenTearDamage, 2f, Main.myPlayer); //10.1f was 14.9f is speed
+                    }
                     Main.PlaySound(2, -1, -1, 20);
-                    npc.netUpdate = true; //new
-
                 }
             }
             if (Main.rand.Next(1560) == 0)
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
-                    Main.PlaySound(2, -1, -1, 20);
-                    npc.netUpdate = true; //new
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile((float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
+                    } 
                 }
+                Main.PlaySound(2, -1, -1, 20);
             }
             if (Main.rand.Next(2) == 0)
             {
@@ -211,34 +212,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 Main.dust[d].noGravity = true;
             }
 
-            npc.boss = true;
-            npc.noTileCollide = true;
-            npc.noGravity = true;
-            npc.behindTiles = true;
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 17, 6f, 10f, 0.17f, true, false, true, false, false);
-
-
-            //this makes the head always stay in the same position even when it flips upside down
-            //if (npc.velocity.X < 0f){ npc.spriteDirection = 1; } else  //both -1 is correct for looking right with no flipping, or 1 and -1 with flipping
-            //if (npc.velocity.X > 0f){ npc.spriteDirection = -1; }
-
-
-           
-
-
-
-            //new
-            //if (!Main.npc[(int)npc.ai[1]].active) 
-            //{
-            //	npc.life = 0;
-            //	npc.HitEffect(0, 10.0);
-            //	NPCLoot();
-            //	npc.active = false;
-            //}
-
+            tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 17, 6f, 10f, 0.17f, true, false, true, false, false);            
         }
         #endregion
+
         public override bool CheckActive()
         {
             return false;
@@ -248,6 +226,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             potionType = ItemID.SuperHealingPotion;
         }
 
+        //Make it take damage as if its whole body was one entity
+        //Whenever any of its parts takes a hit, it sets all other living parts to be immune for 10 frames
+        //Does *not* apply to true melee attacks! 100% intentional, easy to change by calling SetImmune in OnHitByItem too if necessary
         public static void SetImmune(Projectile projectile, NPC hitNPC)
         {
             for (int i = 0; i < Main.maxNPCs; i++)

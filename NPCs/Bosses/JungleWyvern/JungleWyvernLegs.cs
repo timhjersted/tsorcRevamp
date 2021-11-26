@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			npc.defense = 7;
 			npc.HitSound = SoundID.NPCHit7;
 			npc.DeathSound = SoundID.NPCDeath8;
-			npc.lifeMax = 24000;
+			npc.lifeMax = 91000000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.value = 70000;

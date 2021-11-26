@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -24,6 +25,18 @@ namespace tsorcRevamp.Items {
             {
 				item.maxStack = 2000;
             }
+			if(item.type == ItemID.NebulaArcanum || item.type == ItemID.NebulaBlaze)
+            {
+				item.damage = (int)Math.Round(0.7f * item.damage);
+            }
+			if (item.type == ItemID.VortexBeater || item.type == ItemID.Phantasm)
+			{
+				item.damage = (int)Math.Round(0.7f * item.damage);
+			}
+			if (item.type == ItemID.DayBreak || item.type == ItemID.SolarEruption)
+			{
+				item.damage = (int)Math.Round(0.5f * item.damage);
+			}
 			else base.SetDefaults(item);
 		}
 

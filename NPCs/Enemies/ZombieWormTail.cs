@@ -26,13 +26,22 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.DeathSound = SoundID.NPCDeath5;
 			npc.lavaImmune = true;
 			npc.knockBackResist = 0;
-			npc.lifeMax = 600;
+			npc.lifeMax = 91000000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.behindTiles = true;
 			npc.value = 500;
 			npc.buffImmune[BuffID.Confused] = true;
+
+			bodyTypes = new int[13];
+			int bodyID = ModContent.NPCType<ZombieWormBody>();
+			for (int i = 0; i < 13; i++)
+			{
+				bodyTypes[i] = bodyID;
+			}
 		}
+		int[] bodyTypes;
+
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
@@ -47,14 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			if (!Main.npc[(int)npc.ai[1]].active)
-			{
-				npc.life = 0;
-				npc.HitEffect(0, 10.0);
-				npc.active = false;
-				Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Worm Gore 3"), 1f);
-			}
+			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
 		}
 	}
 }

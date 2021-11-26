@@ -33,7 +33,14 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = true;
+			bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(),
+				ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>() };
+
 		}
+		public static int[] bodyTypes;
 
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Wyvern Mage Disciple");
@@ -51,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 		public override void AI() {
 
 			//Generic Worm Part Code:
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<MechaDragonHead>(), MechaDragonHead.bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false);
+			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<MechaDragonHead>(), bodyTypes, ModContent.NPCType<MechaDragonTail>(), 23, -1f, 12f, 0.13f, true, false);
 
 			//Code unique to this body part:
 			Timer++;

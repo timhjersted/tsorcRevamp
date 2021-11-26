@@ -13,23 +13,33 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 
 		public override void SetDefaults()
 		{
-			base.npc.width = 32;
-			base.npc.height = 32;
-			base.npc.aiStyle = 6;
-			base.npc.damage = 30;
-			base.npc.defense = 20;
-			base.npc.boss = true;
-			base.npc.noGravity = true;
-			base.npc.noTileCollide = true;
-			base.npc.lifeMax = 12600;
-			base.npc.HitSound = SoundID.NPCHit7;
-			base.npc.DeathSound = SoundID.NPCDeath8;
-			base.npc.knockBackResist = 0f;
-			Main.npcFrameCount[base.npc.type] = 1;
-			base.npc.netAlways = true;
-			base.npc.dontCountMe = true;
+			npc.width = 22;
+			npc.height = 22;
+			npc.aiStyle = 6;
+			npc.damage = 80;
+			npc.defense = 20;
+			npc.boss = true;
+			npc.noGravity = true;
+			npc.noTileCollide = true;
+			npc.lifeMax = 91000000;
+			npc.HitSound = SoundID.NPCHit1;
+			npc.DeathSound = SoundID.NPCDeath8;
+			npc.knockBackResist = 0f;
+			drawOffsetY = 50;
+			npc.dontCountMe = true;
+			bodyTypes = new int[] {
+			ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
+			ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
+			ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(),
+			ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(),
+			ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
+			ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody2>(), ModContent.NPCType<ShadowDragonBody3>()
+			};
 		}
+		public static int[] bodyTypes;
 
+
+		int ObscureSawDamage = 45;
 		public override void SetStaticDefaults()
 		{
 			base.DisplayName.SetDefault("Shadow Dragon");
@@ -40,58 +50,36 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 		}
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
+			ObscureSawDamage = ObscureSawDamage / 2;
 		}
-
-		public override void AI()
+        
+        public override void AI()
 		{
-			if (this.Timer == -1000)
-			{
-				this.Timer = -Main.rand.Next(800);
-			}
-			base.npc.TargetClosest();
-			this.Timer++;
-			if (!Main.npc[(int)base.npc.ai[1]].active)
-			{
-				base.npc.life = 0;
-				base.npc.HitEffect();
-				base.npc.active = false;
-			}
-			if (base.npc.position.X > Main.npc[(int)base.npc.ai[1]].position.X)
-			{
-				base.npc.spriteDirection = 1;
-			}
-			if (base.npc.position.X < Main.npc[(int)base.npc.ai[1]].position.X)
-			{
-				base.npc.spriteDirection = -1;
-			}
+			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<ShadowDragonHead>(), bodyTypes, ModContent.NPCType<ShadowDragonTail>(), 25, 0.8f, 16f, 0.33f, true, false, true, false, false);
+
 			if (Main.rand.Next(3) == 0)
 			{
 				int dust = Dust.NewDust(new Vector2(base.npc.position.X, base.npc.position.Y), base.npc.width, base.npc.height, 62, 0f, 0f, 100, Color.White, 2f);
 				Main.dust[dust].noGravity = true;
 			}
-			if (this.Timer >= 0 && Main.netMode != 2)
-			{
-				float num48 = 1f;
-				Vector2 vector8 = new Vector2(base.npc.position.X + (float)(base.npc.width / 2), base.npc.position.Y + (float)(base.npc.height / 2));
-				float rotation = (float)Math.Atan2(vector8.Y - (Main.player[base.npc.target].position.Y + (float)Main.player[base.npc.target].height * 0.5f), vector8.X - (Main.player[base.npc.target].position.X + (float)Main.player[base.npc.target].width * 0.5f));
-				rotation += (float)(Main.rand.Next(-50, 50) / 100);
-				Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), base.mod.GetProjectile("ObscureSaw").projectile.type, 45, 0f, Main.myPlayer);
-				this.Timer = -300 - Main.rand.Next(300);
-			}
-		}
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
-		{
-			Vector2 origin = new Vector2(Main.npcTexture[base.npc.type].Width / 2, Main.npcTexture[base.npc.type].Height / Main.npcFrameCount[base.npc.type] / 2);
-			Color alpha = Color.White;
-			SpriteEffects effects = SpriteEffects.None;
-			if (base.npc.spriteDirection == 1)
+			if (Timer == -1000)
 			{
-				effects = SpriteEffects.FlipHorizontally;
+				Timer = -Main.rand.Next(800);
 			}
-			spriteBatch.Draw(Main.npcTexture[base.npc.type], new Vector2(base.npc.position.X - Main.screenPosition.X + (float)(base.npc.width / 2) - (float)Main.npcTexture[base.npc.type].Width * base.npc.scale / 2f + origin.X * base.npc.scale, base.npc.position.Y - Main.screenPosition.Y + (float)base.npc.height - (float)Main.npcTexture[base.npc.type].Height * base.npc.scale / (float)Main.npcFrameCount[base.npc.type] + 4f + origin.Y * base.npc.scale + 56f), base.npc.frame, alpha, base.npc.rotation, origin, base.npc.scale, effects, 0f);
-			base.npc.alpha = 255;
-			return true;
+			Timer++;
+			if (Timer >= 0)
+			{
+				float speed = 1f;
+				Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
+				float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + Main.player[npc.target].height * 0.5f), vector8.X - (Main.player[npc.target].position.X + Main.player[npc.target].width * 0.5f));
+				rotation += (Main.rand.Next(-50, 50) / 100);
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * speed * -1.0), (float)(Math.Sin(rotation) * speed * -1.0), mod.GetProjectile("ObscureSaw").projectile.type, ObscureSawDamage, 0f, Main.myPlayer);
+				}
+				Timer = -300 - Main.rand.Next(300);
+			}
 		}
 	}
 }

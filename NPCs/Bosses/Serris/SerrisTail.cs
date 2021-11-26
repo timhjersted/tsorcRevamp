@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			npc.dontTakeDamage = true;
 			npc.lavaImmune = true;
 			npc.knockBackResist = 0;
-			npc.lifeMax = 600;
+			npc.lifeMax = 91000000;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
 			npc.behindTiles = true;

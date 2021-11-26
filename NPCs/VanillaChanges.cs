@@ -2006,5 +2006,17 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedSolar = true;
             #endregion
         }
+
+        public override bool CheckActive(NPC npc)
+        {
+            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            {
+                return false;
+            }
+            else
+            {
+                return base.CheckActive(npc);
+            }
+        }
     }
 }

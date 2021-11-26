@@ -35,7 +35,15 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 4000;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
+
+			bodyTypes = new int[13];
+			int bodyID = ModContent.NPCType<ZombieWormBody>();
+			for (int i = 0; i < 13; i++)
+			{
+				bodyTypes[i] = bodyID;
+			}
 		}
+		int[] bodyTypes;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
@@ -43,8 +51,6 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.damage = (int)(npc.damage / 2);
 			npc.defense = (int)(npc.defense * (2 / 3));
 		}
-
-		bool TailSpawned = false;
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
@@ -73,29 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			if (!TailSpawned)
-			{
-				int Previous = npc.whoAmI;
-				for (int num36 = 0; num36 < 14; num36++)
-				{
-					int lol = 0;
-					if (num36 >= 0 && num36 < 13)
-					{
-						lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ZombieWormBody>(), npc.whoAmI);
-					}
-					else
-					{
-						lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ZombieWormTail>(), npc.whoAmI);
-					}
-					Main.npc[lol].realLife = npc.whoAmI;
-					Main.npc[lol].ai[2] = (float)npc.whoAmI;
-					Main.npc[lol].ai[1] = (float)Previous;
-					Main.npc[Previous].ai[0] = (float)lol;
-					NetMessage.SendData(23, -1, -1, null, lol, 0f, 0f, 0f, 0);
-					Previous = lol;
-				}
-				TailSpawned = true;
-			}
+			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
 		}
 
 		private static int ClosestSegment(NPC head, params int[] segmentIDs)

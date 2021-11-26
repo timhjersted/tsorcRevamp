@@ -11,9 +11,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 	[AutoloadBossHead]
 	class MechaDragonHead : ModNPC {
 
-		//Bit of a long boi, but it still works.
-		public static int[] bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>() };
-
 		public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wyvern Mage Disciple");
         }
@@ -40,7 +37,15 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
 			despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
-		}
+
+            bodyTypes = new int[] { ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), 
+				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), 
+				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), 
+				ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonBody>(), 
+				ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>() };
+
+        }
+        public static int[] bodyTypes;
 
 		/**public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
 		{

@@ -11,7 +11,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 	{
 		public override void SetDefaults()
 		{
-
 			Main.npcFrameCount[npc.type] = 1;
 			animationType = 10;
 			npc.netAlways = true;
@@ -33,6 +32,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.behindTiles = true;
 			npc.value = 40000;
 			despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
+			drawOffsetY = 15;
+			
 
 			bodyTypes = new int[43];
 			int bodyID = ModContent.NPCType<LichKingSerpentBody>();

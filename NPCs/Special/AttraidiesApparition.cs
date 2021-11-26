@@ -35,8 +35,7 @@ namespace tsorcRevamp.NPCs.Special
         public override void AI()
         {
             Lighting.AddLight(npc.Center, 1f, 0.75f, 1f);
-            Projectile.NewProjectile(npc.Center, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0);
-
+            
             int dust1 = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 180, Color.Blue, 1f);
             Main.dust[dust1].noGravity = true;
 
@@ -72,7 +71,9 @@ namespace tsorcRevamp.NPCs.Special
                 npc.direction = -1;
             }
             else
+            {
                 npc.direction = 1;
+            }
 
             npc.spriteDirection = npc.direction;
             npc.ai[1] += 1f;
@@ -95,12 +96,19 @@ namespace tsorcRevamp.NPCs.Special
 
             // Event duration & The Sorrow Spawning
 
-            var lifetime = npc.ai[2];
+            int lifetime = (int)npc.ai[2];
             ++npc.ai[2];
 
             if (lifetime == 1)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh").WithVolume(1.1f), npc.Center);
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh").WithVolume(1.1f), npc.Center);
+                }
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(npc.Center, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0, Main.myPlayer, 1);
+                }
             }
 
             if (lifetime > 100 && lifetime < 250)
@@ -132,7 +140,7 @@ namespace tsorcRevamp.NPCs.Special
 
             if (lifetime > 450)
             {
-                for (int num36 = 0; num36 < 50; num36++)
+                for (int i = 0; i < 50; i++)
                 {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
@@ -147,7 +155,10 @@ namespace tsorcRevamp.NPCs.Special
                     Main.dust[dust].noGravity = true;
                 }
 
-                NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Bosses.TheSorrow>());
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Bosses.TheSorrow>());
+                }
                 npc.active = false;
 
             }

@@ -10,8 +10,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
     {
         public override void SetDefaults()
         {
-            npc.netAlways = true;
-            npc.npcSlots = 2;
             npc.width = 32;
             npc.height = 32;
             drawOffsetY = 60;
@@ -26,6 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             music = 12;
             npc.noGravity = true;
             npc.noTileCollide = true;
+            npc.behindTiles = true;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -61,16 +60,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             {
                 npc.dontTakeDamage = false;
             }
-            npc.noTileCollide = true;
-            npc.noGravity = true;
-            npc.behindTiles = true;
+
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>() };
             tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 17, 6f, 10f, 0.17f, true, false);
-
-            if (!Main.npc[(int)npc.ai[1]].active)
-            {
-                npc.active = false;
-            }
         }
 
         public override bool CheckActive()

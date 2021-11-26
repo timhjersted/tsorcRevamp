@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Casts a bolt of lightning from your bow, doing massive damage over time. ");
         }
         public override void SetDefaults() {
-            item.damage = 160;
+            item.damage = 140;
             item.height = 58;
             item.knockBack = 4;
             item.autoReuse = true;
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
             item.rare = ItemRarityID.LightRed;
             item.mana = 100;
-            item.shootSpeed = 13; ;
+            item.shootSpeed = 33;
             item.useAnimation = 40;
             item.UseSound = SoundID.Item5;
             item.useTime = 40;

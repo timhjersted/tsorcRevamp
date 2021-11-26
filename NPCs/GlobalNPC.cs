@@ -792,16 +792,29 @@ namespace tsorcRevamp.NPCs
         #region AIWorm
         public static void AIWorm(NPC npc, int headType, int[] bodyTypes, int tailType, int wormLength = 3, float partDistanceAddon = 0f, float maxSpeed = 8f, float gravityResist = 0.07f, bool fly = false, bool split = false, bool ignoreTiles = false, bool spawnTileDust = true, bool soundEffects = true)
         {
-            //Flip sprite so it's always facing the right way
-            if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X)
+            //Flip sprite so it's always facing the right way            
+            if (npc.type == headType)
             {
-                npc.spriteDirection = 1;
+                if (npc.velocity.X < 0f || Math.Abs(npc.velocity.X) < 0.1f)
+                {
+                    npc.spriteDirection = 1;
+                }
+                else if (npc.velocity.X > 0f)
+                {
+                    npc.spriteDirection = -1;
+                }
             }
-            if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
+            else
             {
-                npc.spriteDirection = -1;
+                if (npc.position.X > Main.npc[(int)npc.ai[1]].position.X || Math.Abs(npc.position.X - Main.npc[(int)npc.ai[1]].position.X) < 0.1f)
+                {
+                    npc.spriteDirection = 1;
+                }
+                if (npc.position.X < Main.npc[(int)npc.ai[1]].position.X)
+                {
+                    npc.spriteDirection = -1;
+                }
             }
-
             //If it splits, ignore the health of the head and keep its own healthbar
             //If it doesn't, set its real health to the health of the head
             if (split)
@@ -1045,13 +1058,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (canMove2) { canMove = true; }
             }
-            if (fly)
-            {
-                if (npc.velocity.X < 0f) { npc.spriteDirection = 1; }
-                else
-                if (npc.velocity.X > 0f) { npc.spriteDirection = -1; }
-
-            }
+            
 
 
             Vector2 npcCenter = npc.Center;
@@ -1065,22 +1072,17 @@ namespace tsorcRevamp.NPCs
             {
                 
                 npcCenter = npc.Center;
-                playerCenterX = Main.npc[(int)npc.ai[1]].Center.X - npcCenter.X;
-                playerCenterY = Main.npc[(int)npc.ai[1]].Center.Y - npcCenter.Y;
+                float offsetX = Main.npc[(int)npc.ai[1]].Center.X - npcCenter.X;
+                float offsetY = Main.npc[(int)npc.ai[1]].Center.Y - npcCenter.Y;
                 
-                npc.rotation = (float)Math.Atan2((double)playerCenterY, (double)playerCenterX) + 1.57f;
-                dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
+                npc.rotation = (float)Math.Atan2((double)offsetY, (double)offsetX) + 1.57f;
+                dist = (float)Math.Sqrt((double)(offsetX * offsetX + offsetY * offsetY));
                 dist = (dist - (float)npc.width - (float)partDistanceAddon) / dist;
-                playerCenterX *= dist;
-                playerCenterY *= dist;
+                offsetX *= dist;
+                offsetY *= dist;
                 npc.velocity = default(Vector2);
-                npc.position.X = npc.position.X + playerCenterX;
-                npc.position.Y = npc.position.Y + playerCenterY;
-                if (fly)
-                {
-                    if (playerCenterX < 0f) { npc.spriteDirection = 1; return; } //comment these two lines out to make dargon not flip
-                    if (playerCenterX > 0f) { npc.spriteDirection = -1; return; } //
-                }
+                npc.position.X = npc.position.X + offsetX;
+                npc.position.Y = npc.position.Y + offsetY;                
             }
             else
             {

@@ -1,4 +1,6 @@
-﻿using Terraria.ID;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
@@ -25,6 +27,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.value = 14000;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.IceSpirit4>();
+        }
+
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+            Vector2 projVel = new Vector2(speedX, speedY);
+            projVel = projVel.RotatedBy(MathHelper.ToRadians(Main.rand.Next(-7, 7)));
+            speedX = projVel.X;
+            speedY = projVel.Y;
+            return true;
         }
 
         public override void AddRecipes() {

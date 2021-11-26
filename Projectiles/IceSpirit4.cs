@@ -16,12 +16,12 @@ namespace tsorcRevamp.Projectiles {
             projectile.tileCollide = false;
             projectile.damage = 60;
             projectile.friendly = true;
-            projectile.penetrate = 3;
+            projectile.penetrate = 2;
             projectile.magic = true;
         }
 
         public override void AI() {
-            int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 10), projectile.width, projectile.height, 27, 0, 0, 100, default, 1.0f);
+            int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 27, 0, 0, 100, default, 1.0f);
             Main.dust[dust].noGravity = true;
 
             if (projectile.timeLeft <= 140) {

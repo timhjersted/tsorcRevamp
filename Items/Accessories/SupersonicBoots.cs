@@ -49,7 +49,6 @@ namespace tsorcRevamp.Items.Accessories {
             player.noKnockback = true;
             player.moveSpeed += 0.2f;
             player.rocketBoots = 2;
-            player.iceSkate = true;
 
             bool restricted = false;
             for (int i = 3; i <= 8; i++) {
