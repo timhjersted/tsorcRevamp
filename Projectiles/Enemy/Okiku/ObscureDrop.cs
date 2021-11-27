@@ -34,16 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 }
             }
 
-            if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;
-
-            if (projectile.timeLeft == 170)
-            {
-                for (int i = 0; i < 2; i++)
-                {
-                    Projectile ObscureDropSplits = Main.projectile[Projectile.NewProjectile(projectile.position.X, projectile.position.Y, Main.rand.Next(-100, 100) / 10, projectile.velocity.Y, ModContent.ProjectileType<ObscureDrop>(), 40, 0f, Main.myPlayer)];
-                    ObscureDropSplits.timeLeft = 169;
-                }
-            }
+            if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;           
 
             return true;
         }

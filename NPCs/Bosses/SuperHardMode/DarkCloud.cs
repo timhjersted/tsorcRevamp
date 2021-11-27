@@ -182,10 +182,48 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //These are split up to keep the code readable.
             else
             {
-                CurrentMove.Move();
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {                   
-                    CurrentMove.Attack();
+                if (CurrentMove != null)
+                {
+                    CurrentMove.Move();
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        CurrentMove.Attack();
+                    }
+                }
+                else
+                {
+                    CurrentMove  = new DarkCloudMove(DragoonLanceMove, DragoonLanceAttack, DarkCloudAttackID.DragoonLance, "Dragoon Lance");
+                    if(Main.netMode == NetmodeID.Server)
+                    {
+                        //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
+                        //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
+                        //More importantly, it will also lets us know for sure what is happening.
+                        UsefulFunctions.ServerText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
+                        UsefulFunctions.ServerText("Relevant data: nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
+                        if (ActiveMoveList != null)
+                        {
+                            UsefulFunctions.ServerText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
+                        }
+                        else
+                        {
+                            UsefulFunctions.ServerText("ActiveMoveList :" + "NULL!", Color.Red);
+                        }
+                    }
+                    if (Main.netMode == NetmodeID.SinglePlayer)
+                    {
+                        //This shouldn't happen. It's never happened during testing. The same *was* supposed to be true of the above too, though. I'm adding it just in-case.
+                        Main.NewText("tsorcRevamp ERROR: Dark Cloud Move not set! Please report this!!", Color.Red);
+                        Main.NewText("Relevant data: nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
+                        if (ActiveMoveList != null)
+                        {
+                            Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
+                        }
+                        else
+                        {
+                            Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
+                        }
+
+                    }
                 }
                 AttackModeCounter++;
             }
