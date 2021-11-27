@@ -154,14 +154,20 @@ namespace tsorcRevamp.Projectiles.Pets {
                 }
             }
 
-            if (Main.player[projectile.owner].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                projectile.alpha += 1;
-            }
+                if (Main.player[i] != null && Main.player[i].active)
+                {
+                    if (Main.player[i].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+                    {
+                        projectile.alpha += 1;
+                    }
 
-            if ((Main.player[projectile.owner].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
-            {
-                projectile.alpha -= 2;
+                    if ((Main.player[i].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
+                    {
+                        projectile.alpha -= 2;
+                    }
+                }
             }
 
             if (projectile.alpha == 255)
@@ -216,14 +222,22 @@ namespace tsorcRevamp.Projectiles.Pets {
                 }
             }
 
-            if (Main.player[projectile.owner].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                projectile.alpha += 1;
-            }
+                if (Main.player[i] != null && Main.player[i].active)
+                {
+                    if (Main.player[i].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+                    {
 
-            if ((Main.player[projectile.owner].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
-            {
-                projectile.alpha -= 2;
+                        projectile.alpha += 1;
+
+                    }
+
+                    if ((Main.player[i].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
+                    {
+                        projectile.alpha -= 2;
+                    }
+                }
             }
 
             if (projectile.alpha == 255)
