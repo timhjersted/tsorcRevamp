@@ -40,14 +40,30 @@ namespace tsorcRevamp.Items.BossItems {
         }
         public override bool CanUseItem(Player player) //this has to go in CanUseItem. If used in UseItem, it prints text  every frame the item is "in use", leading to text spam
         {
-            if (!Main.dayTime)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                return true;
+                if (!Main.dayTime && player.ZoneJungle && player.ZoneRockLayerHeight) //to ensure it is used in the right place
+                {
+                    return true;
+                }
+                else
+                {
+                    Main.NewText("This item can only be used in the ancient temple ruins at night...", 220, 180, 180);
+                    return false;
+                }
             }
-            else
+
+            else //if not adventure mode
             {
-                Main.NewText("This item can only be used at night...", 220, 180, 180);
-                return false;
+                if (!Main.dayTime)
+                {
+                    return true;
+                }
+                else
+                {
+                    Main.NewText("This item can only be used at night...", 220, 180, 180);
+                    return false;
+                }
             }
         }
         public override void AddRecipes() {
