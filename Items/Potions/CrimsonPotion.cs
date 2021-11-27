@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Potions {
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 tooltips.Insert(3, new TooltipLine(mod, "RevampCrimsonDrain1", "Enemies within a ten tile radius are inflicted with"));
-                tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "Crimson Burn, which drains 8 life per second, 16 in hard mode."));
+                tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "Crimson Burn, which quickly drains life"));
             }
             else {
                 tooltips.Insert(3, new TooltipLine(mod, "", "Enemies within a ten tile radius take damage"));
