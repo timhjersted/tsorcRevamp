@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.setBonus = "Harmonizes you with fire and water, plus a 14% boost to all stats";
-            player.lavaImmune = true;
+            player.lavaRose = true;
             player.fireWalk = true;
             player.accFlipper = true;
             player.accDivingHelm = true;
@@ -62,7 +62,6 @@ namespace tsorcRevamp.Items.Armors
             {
                 player.lifeRegen += 2;
                 player.detectCreature = true;
-
             }
         }
 

@@ -686,7 +686,8 @@ namespace tsorcRevamp.Items.BossBags {
                 }
                 if (arg == ItemID.PlanteraBossBag)
                 {
-                    player.QuickSpawnItem(ModContent.ItemType<CrestOfLife>());
+                    player.QuickSpawnItem(ModContent.ItemType<CrestOfLife>()); 
+                    player.QuickSpawnItem(ModContent.ItemType<SoulOfLife>(), 3);
                     SoulsOnFirstBag(NPCID.Plantera, player);
                 }
                 if (arg == ItemID.FishronBossBag) {

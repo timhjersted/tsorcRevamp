@@ -232,5 +232,18 @@ namespace tsorcRevamp.Items {
             Lighting.AddLight(item.Center, 0.85f, 0f, 0f);
         }
     }
+    public class SoulOfLife : Soul
+    {
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+            DisplayName.SetDefault("Soul of Life");
+            Tooltip.SetDefault("The essence of growth, deeply connected to the Earth.");
+        }
 
+        public override void PostUpdate()
+        {
+            Lighting.AddLight(item.Center, Color.Green.ToVector3());
+        }
+    }
 }

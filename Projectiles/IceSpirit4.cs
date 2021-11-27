@@ -24,29 +24,26 @@ namespace tsorcRevamp.Projectiles {
             int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 27, 0, 0, 100, default, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            if (projectile.timeLeft <= 140) {
-                projectile.scale = 0.5f;
-                projectile.damage = 70;
-            }
-            if (projectile.timeLeft <= 110) {
+           
+            if (projectile.timeLeft == 110) {
                 projectile.scale = 0.6f;
-                projectile.damage = 75;
+                projectile.damage = (int)(projectile.damage * 1.05f);
             }
-            if (projectile.timeLeft <= 90) {
+            if (projectile.timeLeft == 90) {
                 projectile.scale = 0.8f;
-                projectile.damage = 78;
+                projectile.damage = (int)(projectile.damage * 1.05f);
             }
-            if (projectile.timeLeft <= 70) {
+            if (projectile.timeLeft == 70) {
                 projectile.scale = 1f;
-                projectile.damage = 80;
+                projectile.damage = (int)(projectile.damage * 1.05f);
             }
-            if (projectile.timeLeft <= 50) {
+            if (projectile.timeLeft == 50) {
                 projectile.scale = 1.2f;
-                projectile.damage = 85;
+                projectile.damage = (int)(projectile.damage * 1.05f);
             }
-            if (projectile.timeLeft <= 40) {
+            if (projectile.timeLeft == 40) {
                 projectile.scale = 1.4f;
-                projectile.damage = 95;
+                projectile.damage = (int)(projectile.damage * 1.05f);
             }
 
             projectile.ai[0] += 1f;

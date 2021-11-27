@@ -24,8 +24,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			npc.damage = 40;
 			npc.defense = 18;
 			npc.noGravity = true;
+			npc.boss = true;
 			npc.noTileCollide = true;
-			npc.lifeMax = 5000;
+			npc.lifeMax = 20000;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.knockBackResist = 0f;
@@ -63,11 +64,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			}
 			int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 62, 0f, 0f, 100, Color.White);
 			Main.dust[dust].noGravity = true;
-			for (int num37 = 0; num37 < 200; num37++)
+			for (int i = 0; i < 200; i++)
 			{
-				if (Main.npc[num37].active && Main.npc[num37].realLife == npc.whoAmI)
+				if (Main.npc[i].active && Main.npc[i].realLife == npc.whoAmI)
 				{
-					Main.npc[num37].life = npc.life;
+					Main.npc[i].life = npc.life;
 				}
 			}
 			if (Main.npc[(int)npc.ai[1]].life <= 1000)
@@ -79,26 +80,26 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			{
 				if (npc.life > 1000)
 				{
-					if (Main.netMode == NetmodeID.Server)
+					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						float num39 = 0.5f;
-						Vector2 vector9 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
-						float rotation2 = (float)Math.Atan2(vector9.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector9.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
+						float speed = 0.5f;
+						Vector2 position = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
+						float rotation2 = (float)Math.Atan2(position.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), position.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
 						rotation2 += (float)(Main.rand.Next(-50, 50) / 100);
-						Projectile.NewProjectile(vector9.X, vector9.Y, (float)(Math.Cos(rotation2) * (double)num39 * -1.0), (float)(Math.Sin(rotation2) * (double)num39 * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(position.X, position.Y, (float)(Math.Cos(rotation2) * (double)speed * -1.0), (float)(Math.Sin(rotation2) * (double)speed * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
 					}
 					npc.ai[3] = -200 - Main.rand.Next(200);
 				}
 				else
 				{
-					if (Main.netMode == NetmodeID.Server)
+					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						float num38 = 0.5f;
-						Vector2 vector8 = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
-						float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), vector8.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
+						float speed = 0.5f;
+						Vector2 position = new Vector2(npc.position.X + (float)(npc.width / 2), npc.position.Y + (float)(npc.height / 2));
+						float rotation = (float)Math.Atan2(position.Y - (Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f), position.X - (Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f));
 						rotation += (float)(Main.rand.Next(-50, 50) / 100);
-						int num40 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num38 * -1.0), (float)(Math.Sin(rotation) * (double)num38 * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
-						Main.projectile[num40].scale = 3f;
+						int projectile = Projectile.NewProjectile(position.X, position.Y, (float)(Math.Cos(rotation) * (double)speed * -1.0), (float)(Math.Sin(rotation) * (double)speed * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
+						Main.projectile[projectile].scale = 3f;
 					}
 					npc.ai[3] = -50 - Main.rand.Next(50);
 				}
@@ -114,11 +115,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 			}
 			npc.life = npc.lifeMax;
 			TimerHeal = 0;
-			for (int num36 = 0; num36 < 200; num36++)
+			for (int i = 0; i < 200; i++)
 			{
-				if (Main.npc[num36].active && Main.npc[num36].realLife == npc.whoAmI)
+				if (Main.npc[i].active && Main.npc[i].realLife == npc.whoAmI)
 				{
-					Main.npc[num36].life = 2000;
+					Main.npc[i].life = 2000;
 				}
 			}
 		}

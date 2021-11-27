@@ -18,7 +18,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.damage = 80;
             projectile.penetrate = 2;
             projectile.tileCollide = false;
-            projectile.ranged = true;    
+            projectile.ranged = true;
+            projectile.timeLeft = 600;
         }
 
         public override bool PreKill(int timeLeft)

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,21 +47,24 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             DisplayName.SetDefault("Attraidies");
         }
 
+        public int ObscureDropDamage = 128;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
         }
+
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
             if (damage > npc.life || damage * 2 > npc.life) {
                 crit = false;
                 damage = npc.life - 50;
             }
         }
+
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit) {
             if (damage > npc.life || damage * 2 > npc.life) {
                 crit = false;
                 damage = npc.life - 50;
             }
         }
-
+        int nextRandPosX = 0;
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
@@ -77,10 +81,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            for (int num36 = 0; num36 < 10; num36++) {
-                if (Main.player[npc.target].buffType[num36] == 18) {
-                    Main.player[npc.target].buffType[num36] = 0;
-                    Main.player[npc.target].buffTime[num36] = 0;
+            for (int i = 0; i < 10; i++) {
+                if (Main.player[npc.target].buffType[i] == 18) {
+                    Main.player[npc.target].buffType[i] = 0;
+                    Main.player[npc.target].buffTime[i] = 0;
                     if (Main.netMode != NetmodeID.Server && Main.myPlayer == npc.target) {
                         Main.NewText("What a horrible night to have your Gravitation buff dispelled...", 150, 150, 150);
                     }
@@ -89,11 +93,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             }
 
             if (OptionSpawned == false) {
-                OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
-                if (Main.netMode == NetmodeID.Server && OptionId < 200) {
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
+                    Main.npc[OptionId].velocity.Y = -10;
                 }
-                Main.npc[OptionId].velocity.Y = -10;
                 OptionSpawned = true;
             }
 
@@ -121,12 +125,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                         TimerRain++;
                         if (TimerRain >= 2)
                         {
-                            Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
-                            Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(-120, 120) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 64, 0f, Main.myPlayer);
-
-                            if (Main.rand.Next(4) == 0)
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(Main.rand.Next(-160, -120), Main.rand.Next(120, 160)) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), 64, 0f, Main.myPlayer);
+                                Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
+
+                                Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(-120, 120) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
+
+                                if (Main.rand.Next(4) == 0)
+                                {
+                                    Projectile.NewProjectile(vector8.X, vector8.Y, Main.rand.Next(Main.rand.Next(-160, -120), Main.rand.Next(120, 160)) / 10, -7, ModContent.ProjectileType<ObscureDrop>(), ObscureDropDamage, 0f, Main.myPlayer);
+                                }
                             }
 
                             TimerRain = 0;
@@ -145,13 +153,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 if (TimerSpawn >= 780) 
                 {
                     ChannellingDragon = false;
-                    OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
-                    Main.npc[OptionId].velocity.Y = -10;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ShadowDragonHead>(), npc.whoAmI);
+                        Main.npc[OptionId].velocity.Y = -10;
+                    }
                     TimerSpawn = 0;
                 }
                 if (TimerSpawn == 1) //teleport above player right after dragon is killed
                 {
-                    int randPosX = Main.rand.Next(-250, 250);
+                    int randPosX = nextRandPosX;
+                    nextRandPosX = Main.rand.Next(-250, 250);
+                    npc.netUpdate = true;
                     //Main.NewText(randPosX);
 
                     npc.position.X = Main.player[npc.target].position.X + randPosX;
@@ -188,12 +201,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 Gore.NewGore(vector8, goreVel, mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
                 Gore.NewGore(vector8, goreVel, mod.GetGoreSlot("Gores/Mindflayer Gore 2"), 1f);
 
-                for (int num36 = 0; num36 < 50; num36++) {
+                for (int i = 0; i < 50; i++) {
                     int dustDeath = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 4f);
                     Main.dust[dustDeath].noGravity = true;
                 }
                 Main.npc[OptionId].life = 0;
-                NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ThirdForm.Okiku>(), 0);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<ThirdForm.Okiku>(), 0);
+                }
                 npc.active = false;
 
                 Main.NewText("??????????????????? A booming laughter echoes all around you!", 175, 75, 255);
@@ -204,6 +220,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         public override bool CheckActive()
         {
             return false;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(nextRandPosX);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            nextRandPosX = reader.ReadInt32();
         }
 
         public override void BossLoot(ref string name, ref int potionType)

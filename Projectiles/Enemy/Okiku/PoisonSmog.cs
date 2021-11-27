@@ -14,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 			projectile.height = 16;
 			projectile.hostile = true;
 			projectile.tileCollide = false;
-			projectile.timeLeft = 1500;
+			projectile.timeLeft = 600;
         }
         public override void AI() {
 			projectile.rotation += 0.1f;

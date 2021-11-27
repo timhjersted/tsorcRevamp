@@ -16,6 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 			projectile.hostile = true;
 			projectile.tileCollide = false;
 			projectile.light = 1;
+			projectile.timeLeft = 600;
         }
 
         public override void AI() {

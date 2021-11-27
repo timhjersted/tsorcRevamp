@@ -54,6 +54,7 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.MythrilDrill);
             RecipeRemover(ItemID.MythrilPickaxe);
             RecipeRemover(ItemID.MoltenPickaxe);
+            RecipeRemover(ItemID.Sandgun);
 
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.RopeCoil);
@@ -86,6 +87,10 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.LargeRuby);
             RecipeRemover(ItemID.LargeSapphire);
             RecipeRemover(ItemID.LargeTopaz);
+
+            RecipeRemover(ItemID.MechanicalEye);
+            RecipeRemover(ItemID.MechanicalSkull);
+            RecipeRemover(ItemID.MechanicalWorm);
 
             RecipeIngredientAdder(ItemID.IvyWhip, ItemID.SoulofNight, 6);
             RecipeIngredientAdder(ItemID.GrapplingHook, ItemID.SoulofNight, 6);

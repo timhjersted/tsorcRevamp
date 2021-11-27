@@ -1988,6 +1988,7 @@ namespace tsorcRevamp.NPCs {
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<SoulOfLife>(), 6);                
             }
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {

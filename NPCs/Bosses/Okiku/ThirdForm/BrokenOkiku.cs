@@ -102,12 +102,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 genericTimer2++;
                 npc.velocity.Y = -15;
                 if (genericTimer2 == 10) {
-                    int num54 = 0;
+                    if(Main.netMode != NetmodeID.MultiplayerClient)
                     if (left) {
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
                     }
                     else {
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 62, 0f, Main.myPlayer);
                     }
                     genericTimer2 = 0;
                 }
