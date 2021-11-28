@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("GaeBolg"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 80000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 70000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();
