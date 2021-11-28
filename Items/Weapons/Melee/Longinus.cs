@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Gungnir, 1);
+            recipe.AddIngredient(ItemID.ChlorophytePartisan, 1);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 3);
             recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 160000);
