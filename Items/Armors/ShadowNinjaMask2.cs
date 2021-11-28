@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Armors {
 
         public override string Texture => "tsorcRevamp/Items/Armors/ShadowNinjaMask";
         public override void SetStaticDefaults() {
-            DisplayName.SetDefault("Shadow Ninja Armor II");
+            DisplayName.SetDefault("Shadow Ninja Mask II");
             Tooltip.SetDefault("Set bonus grants +30% to all damage, 100 mana, +30% Melee Speed, +30 Rapid Life Regen, +30% Crit" +
                 "\n+12 special abilities of the Ninja." +
                 "\nThese include: Firewalk, No fall damage, No knockback, rapid pick speed, waterwalk," +
