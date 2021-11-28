@@ -21,8 +21,8 @@ namespace tsorcRevamp.Projectiles {
 			projectile.melee = true;
 			projectile.tileCollide = false;
 			projectile.hide = true;
-			//projectile.usesLocalNPCImmunity = true;
-			//projectile.localNPCHitCooldown = 5;
+			projectile.usesLocalNPCImmunity = true;
+			projectile.localNPCHitCooldown = -1;
 			projectile.scale = 1.1f;
 			
 		}
