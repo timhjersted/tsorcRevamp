@@ -44,7 +44,7 @@ namespace tsorcRevamp {
                     }
                     Main.quickBG = 10;
                     self.FindSpawn();
-                    if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                    if (!SpawnCheck(self)) {
                         if (!Player.CheckSpawn(self.SpawnX, self.SpawnY)) {
                             self.SpawnX = -1;
                             self.SpawnY = -1;
@@ -142,6 +142,30 @@ namespace tsorcRevamp {
             }
         }
 
+        //Checks if a bed or bonfire is within 10 blocks of a player
+        internal static bool SpawnCheck(Player self)
+        {
+
+            for (int i = -10; i < 10; i++) {
+                for (int j = -10; j < 10; j++)
+                {
+                    if (i + self.SpawnX > 0 && j + self.SpawnY > 0)
+                    {
+                        if (Main.tile[i + (int)(self.SpawnX / 16), j + (int)(self.SpawnY / 16)] != null) { 
+                        Tile thisTile = Main.tile[i + self.SpawnX , j + self.SpawnY];
+                            if (thisTile.active())
+                            {
+                                if (thisTile.type == TileID.Beds || thisTile.type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
         //stop moon lord from spawning after pillars are killed (adventure mode only)
         internal static void StopMoonLord(On.Terraria.WorldGen.orig_UpdateLunarApocalypse orig) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
