@@ -164,7 +164,7 @@ namespace tsorcRevamp.Items.BossBags {
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>());
         }
     }
     public class MarilithBag : BossBag
