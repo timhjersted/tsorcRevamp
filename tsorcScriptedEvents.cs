@@ -147,16 +147,16 @@ namespace tsorcRevamp
         {
             Player player = Main.LocalPlayer;
             //MARILITH 
-            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(832, 1244), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.FireFiendMarilith>(), DustID.Shadowflame, false, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.FireFiendMarilith>(), DustID.Shadowflame, false, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
 
             //KRAKEN
             ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.WaterFiendKraken>(), DustID.MagicMirror, false, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
             
             //GWYN
-            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.Shadowflame, false, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.Shadowflame, false, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
 
             //ABYSMAL OOLACILE SORCERER
-            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, false, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, false, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
 
             //WITCHKING
             ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.RedTorch, false, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
@@ -169,7 +169,7 @@ namespace tsorcRevamp
             ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.GoldFlame, false, true, "Chaos has entered this dimension!", Color.Red, false, SuperHardModeCustomCondition);
 
             //WYVERN MAGE 
-            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, false, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, false, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
           
             //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, false, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
