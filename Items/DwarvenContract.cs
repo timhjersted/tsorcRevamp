@@ -21,8 +21,7 @@ namespace tsorcRevamp.Items {
             item.useStyle = ItemUseStyleID.HoldingUp;
         }
         public override bool UseItem(Player player) {
-            NPC.SpawnOnPlayer(Main.myPlayer, NPCID.PartyBunny); //placeholder
-            //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Friendly.DwarvenGuard>());
+            NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Friendly.DwarvenGuard>());
             return true;
         }
     }
