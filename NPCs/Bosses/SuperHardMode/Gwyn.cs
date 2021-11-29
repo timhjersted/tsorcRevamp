@@ -825,21 +825,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			#endregion
 
 
-			if (!Main.bloodMoon)
-			{
-				if (npc.timeLeft > 5)
-				{
-					Main.NewText("You have broken the Covenant of The Abyss...");
-					for (int i = 0; i < 60; i++)
-					{
-						int dustID = Dust.NewDust(npc.position, npc.width, npc.height, 65, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
-						Main.dust[dustID].noGravity = true;
-					}
-					npc.active = false;
-					return;
-				}
-
-			}
+			//if (!Main.bloodMoon)
+			//{
+			//	if (npc.timeLeft > 5)
+			//	{
+			//		Main.NewText("You have broken the Covenant of The Abyss...");
+			//		for (int i = 0; i < 60; i++)
+			//		{
+			//			int dustID = Dust.NewDust(npc.position, npc.width, npc.height, 65, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f);
+			//			Main.dust[dustID].noGravity = true;
+			//		}
+			//		npc.active = false;
+			//		return;
+			//	}
+			//
+			//}
 		}
 		public override bool CheckActive()
 		{
