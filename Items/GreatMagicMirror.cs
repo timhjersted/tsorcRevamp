@@ -89,6 +89,8 @@ namespace tsorcRevamp.Items {
             if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY)) {
                 if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)) {
                     player.velocity = Vector2.Zero;
+                    player.fallStart = (int)player.Center.Y;
+                    player.position.Y -= 0.4f;
                 }
                 if (Main.rand.NextBool() && player.itemTime != 0) { //ambient dust during use
 
