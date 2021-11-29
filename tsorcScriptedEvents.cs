@@ -108,6 +108,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            KrakenFight,
             GwynFight,
             AbysmalOolacileSorcererFight,
             WitchkingFight,
@@ -144,6 +145,9 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
+            //WATER FIEND
+            ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.WaterFiendKraken>(), DustID.MagicMirror, false, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
+            
             //GWYN
             ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.Shadowflame, false, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
 
@@ -253,6 +257,7 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
+                {ScriptedEventType.KrakenFight, KrakenEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
                 {ScriptedEventType.AbysmalOolacileSorcererFight, AbysmalOolacileSorcererEvent},
                 {ScriptedEventType.WitchkingFight, WitchkingEvent},
