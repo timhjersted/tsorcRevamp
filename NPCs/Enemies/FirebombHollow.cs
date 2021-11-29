@@ -40,12 +40,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight) return chance = 0.1f;
 
-            if (Main.expertMode && Main.bloodMoon) return chance = 0.05f;
+            if (Main.expertMode && Main.bloodMoon) return chance = 0.06f;
 
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.04f;
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.05f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.05f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.08f;
 
-            if ((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.03f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime) return chance = 0.06f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime) return chance = 0.09f;
+
+
+            if ((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.04f;
 
             return chance;
         }
@@ -173,7 +177,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 AI_Universal_Timer++;
             }
 
-            if (AI_Universal_Timer >= 60 && AI_Universal_Timer <= 70)
+            /*if (AI_Universal_Timer >= 60 && AI_Universal_Timer <= 70)
             {
                 if (npc.direction == 1)
                 {
@@ -210,7 +214,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     dust2.fadeIn = .3f;
                     dust2.velocity += npc.velocity;
                 }
-            }
+            }*/
 
 
             #endregion
@@ -392,6 +396,18 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 AI_State_Timer_1++;
 
+                if (AI_State_Timer_1 < 0)
+                {
+                    if (npc.velocity.X > 2f) //hard limit of 6f
+                    {
+                        npc.velocity.X = 2f;
+                    }
+                    if (npc.velocity.X < -2f) //both directions
+                    {
+                        npc.velocity.X = -2f;
+                    }
+                }
+
                 if (AI_State_Timer_1 <= 10)
                 {
                     if (npc.direction == 1 && npc.velocity.Y > 0.5f) { npc.velocity.X -= 0.15f; }
@@ -464,10 +480,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (AI_State == State_Firebombing && AI_State_Timer_1 < 35)
             {
-                AI_State_Timer_1 = 0;
+                AI_State_Timer_1 = -30;
             }
         }
 
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (AI_State == State_Firebombing && AI_State_Timer_1 < 35)
+            {
+                AI_State_Timer_1 = 0;
+            }
+        }
 
         #endregion
 

@@ -514,14 +514,10 @@ namespace tsorcRevamp.NPCs
                 shop.item[nextSlot].shopCustomPrice = 5;
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
-
-                if (Main.rand.Next(2) == 0)
-                {
-                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
-                    shop.item[nextSlot].shopCustomPrice = 2000;
-                    shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-                    nextSlot++;
-                }
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<EternalCrystal>());
+                shop.item[nextSlot].shopCustomPrice = 2000;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                nextSlot++;
             }
             if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {

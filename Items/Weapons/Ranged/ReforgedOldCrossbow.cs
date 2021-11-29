@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.maxStack = 1;
             item.ranged = true;
             item.scale = 1;
-            item.crit = 6;
+            item.crit = 16;
             item.useAnimation = 45;
             item.useTime = 45;
             item.rare = ItemRarityID.White;

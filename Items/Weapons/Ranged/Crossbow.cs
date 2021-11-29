@@ -5,7 +5,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
     class Crossbow : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Uses Bolts as ammo. 10 are crafted with" +
+            Tooltip.SetDefault("High crit rate" +
+                                "\nUses Bolts as ammo. 10 are crafted with" +
                                 "\none wood and two Dark Souls at a Demon Altar" +
                                  "\nBolts pierce once");
         }
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.damage = 16;
             item.height = 28;
             item.knockBack = 4;
-            item.crit = 6;
+            item.crit = 16;
             item.noMelee = true;
             item.ranged = true;
             item.shoot = ProjectileID.PurificationPowder;

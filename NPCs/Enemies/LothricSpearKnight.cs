@@ -20,6 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetDefaults()
         {
+            npc.timeLeft = 60;
             npc.npcSlots = 15;
             npc.knockBackResist = 0.1f;
             npc.aiStyle = -1;
@@ -901,16 +902,16 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (tsorcRevampWorld.SuperHardMode) return 0.02f;
+            if (tsorcRevampWorld.SuperHardMode) return 0.03f;
 
-            if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.02f;
+            if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && NPC.downedBoss3) return chance = 0.02f;
 
-            if (Main.expertMode && Main.bloodMoon && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.02f;
+            if (Main.expertMode && Main.bloodMoon && NPC.downedBoss3) return chance = 0.02f;
 
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.005f;
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.015f;
+            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.005f;
+            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.015f;
 
-            if (NPC.downedBoss2 || NPC.downedBoss3) return chance = 0.002f;
+            if (NPC.downedBoss3) return chance = 0.003f;
 
             return chance;
         }
@@ -923,7 +924,11 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ItemID.Heart);
+            Item.NewItem(npc.getRect(), ItemID.Heart);
 
+            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
+            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1, false, -1);
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
             if (Main.rand.Next(5) == 0) { Item.NewItem(npc.getRect(), ItemID.LifeforcePotion); }
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.EndurancePotion); }

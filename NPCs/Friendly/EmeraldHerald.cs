@@ -165,10 +165,14 @@ namespace tsorcRevamp.NPCs.Friendly
 				}
 				if (chatState == 8)
 				{
-						Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
-						Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-						chatState = 0;
-						return;
+					Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
+					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+					if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+						Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);
+					}
+					chatState = 0;
+					return;
 				}
 			}
 		}

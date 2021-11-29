@@ -66,10 +66,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (spawnInfo.player.townNPCs > 0f || Main.hardMode || spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneMeteor) chance = 0f;
 			if (spawnInfo.player.ZoneOverworldHeight || spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight)
 			{
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.0356f;
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.04f;
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && Main.dayTime) return 0.0434f;
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.0625f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.0456f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.05f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && Main.dayTime) return 0.0534f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.0725f;
 			}
 
 			return chance;
