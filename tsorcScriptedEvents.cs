@@ -108,6 +108,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            SerrisFight,
             MarilithFight,
             KrakenFight,
             GwynFight,
@@ -146,11 +147,14 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
+            //SERRIS 
+            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.Shadowflame, false, true, "Serris has been enraged!", Color.Blue, false);
+
             //MARILITH 
-            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.FireFiendMarilith>(), DustID.Shadowflame, false, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>(), DustID.Shadowflame, false, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
 
             //KRAKEN
-            ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.WaterFiendKraken>(), DustID.MagicMirror, false, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
+            ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), DustID.MagicMirror, false, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
             
             //GWYN
             ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.Shadowflame, false, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
@@ -262,6 +266,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.SerrisFight, SerrisEvent},
                 {ScriptedEventType.MarilithFight, MarilithEvent},
                 {ScriptedEventType.KrakenFight, KrakenEvent},
                 {ScriptedEventType.GwynFight, GwynEvent},
