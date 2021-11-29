@@ -40,6 +40,13 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             projectile.velocity = target;
             projectile.velocity += (2.2f * ((initialDistance - distance)/initialDistance) * target.RotatedBy(MathHelper.ToRadians(90)));
 
+            //Only spawn dust that will actually be onscreen
+            if (Vector2.Distance(projectile.Center, Main.player[Main.myPlayer].Center) < 1000)
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(8, 8);
+                Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
+                Dust.NewDustPerfect(projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
+            }
 
             if (distance < 120)
             {
@@ -49,15 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Vector2.Distance(projectile.Center, Main.player[Main.myPlayer].Center) < 2000)
-            {
-                //for (int i = 0; i < 1; i++)
-                //{
-                    Vector2 offset = Main.rand.NextVector2CircularEdge(8, 8);
-                    Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                    Dust.NewDustPerfect(projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
-                //}
-            }
+            
             return false;
         }
 

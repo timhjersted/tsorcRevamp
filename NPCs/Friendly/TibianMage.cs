@@ -150,6 +150,13 @@ namespace tsorcRevamp.NPCs.Friendly
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
 				nextSlot++;
 			}
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ForgottenIceBowScroll>());
+				nextSlot++;
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ForgottenThunderBowScroll>());
+				nextSlot++;
+			}
 		}
 
 		public override void HitEffect(int hitDirection, double damage)
