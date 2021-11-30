@@ -200,6 +200,12 @@ namespace tsorcRevamp.NPCs {
                         break;
                     }
 
+                case (NPCID.DukeFishron):
+                    {
+                        npc.value = 250000;
+                        break;
+                    }
+                    
                 case (NPCID.DungeonSlime): {
                         npc.value = 250;
                         break;
@@ -499,7 +505,7 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.SkeletronPrime): {
                         npc.value = 250000;
                         npc.defense = 40;
-                        npc.damage = 90;
+                        npc.damage = 100;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.CursedInferno] = true;
                         break;
@@ -552,14 +558,14 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.TheDestroyerBody): {
                         npc.scale = 1.25f;
-                        //npc.damage = 55; //legacy: 60, vanilla: 55
+                        npc.damage = 60; //legacy: 60, vanilla: 55
                         npc.defense = 55; //legacy: 55, vanilla: 30
                         break;
                     }
 
                 case (NPCID.TheDestroyerTail): {
                         npc.scale = 1.25f;
-                        npc.damage = 68; //legacy: 80, vanilla: 40
+                        npc.damage = 80; //legacy: 80, vanilla: 40
                         break;
                     }
 
