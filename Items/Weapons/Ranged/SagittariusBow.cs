@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
                 item.channel = true;
 
-                item.damage = 415;
+                item.damage = 477;
                 item.width = 14;
                 item.height = 28;
                 item.useTime = 60;
@@ -58,14 +58,25 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ArtemisBow"), 1);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 70);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 25);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 40);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 250000);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (LegacyMode) {
+                recipe.AddIngredient(mod.GetItem("ArtemisBow"), 1);
+                recipe.AddIngredient(mod.GetItem("CursedSoul"), 70);
+                recipe.AddIngredient(mod.GetItem("BlueTitanite"), 25);
+                recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 40);
+                recipe.AddIngredient(mod.GetItem("DarkSoul"), 250000);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe(); 
+            }
+
+            else {
+                recipe.AddIngredient(mod.GetItem("ArtemisBow"), 1);
+                recipe.AddIngredient(mod.GetItem("BlueTitanite"), 5);
+                recipe.AddIngredient(mod.GetItem("DarkSoul"), 90000);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe(); 
+            }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {

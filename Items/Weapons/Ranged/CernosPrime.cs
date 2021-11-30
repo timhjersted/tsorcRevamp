@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
             item.channel = true;
 
-            item.damage = 666; //not a meme, actually balanced 
+            item.damage = 722; 
             item.width = 24;
             item.height = 48;
             item.useTime = 48; 
