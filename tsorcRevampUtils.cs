@@ -202,12 +202,17 @@ namespace tsorcRevamp {
             }
         }
 
-        //Tired of retyping this
+        //Broadcasts a message, because the line to do so is a bit long
+        //Runs a NewText in singleplayer so that this can be used as a general "just display a line of text exactly once to everyone"
         public static void ServerText(string text)
         {
             if (Main.netMode == NetmodeID.Server)
             {
                 NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Yellow);
+            }
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                Main.NewText(text);
             }
         }
 
@@ -218,7 +223,27 @@ namespace tsorcRevamp {
             {
                 NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
             }
+            if(Main.netMode == NetmodeID.SinglePlayer)
+            {
+                Main.NewText(text, color);
+            }
         }
+
+        //Gets the first npc of a given type. Basically NPC.AnyNPC, except it actually returns what it finds.
+        //Uses nullable ints, aka "int?". Will return null if it can't find one.
+        public static int? GetFirstNPC(int type)
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == type)
+                {
+                    return i;
+                }
+            }
+            
+            return null;            
+        }
+
 
         /**INCOMPLETE!!!
          
