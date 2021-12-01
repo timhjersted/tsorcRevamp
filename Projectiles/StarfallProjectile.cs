@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class StarfallProjectile : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 16;
-            projectile.height = 16;
+            projectile.width = 22;
+            projectile.height = 24;
             projectile.friendly = true;
             projectile.tileCollide = false;
             projectile.magic = true;
@@ -30,8 +30,9 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void Kill(int timeLeft) {
+            Main.PlaySound(SoundID.Item10, projectile.Center);
             for (int i = 0; i < 4; i++) {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width * 4, projectile.height * 4, 92, 0, 0, 50, default, 1.2f);
+                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width * 2, projectile.height * 2, 92, 0, 0, 50, default, 1.2f);
                 Main.dust[dust].noGravity = true;
             }
         }

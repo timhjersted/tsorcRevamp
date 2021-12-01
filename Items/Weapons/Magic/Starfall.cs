@@ -7,9 +7,13 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     class Starfall : ModItem {
         bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
+
+        public override string Texture => LegacyMode ? "tsorcRevamp/Items/Weapons/Magic/Starfall_Legacy" : "tsorcRevamp/Items/Weapons/Magic/Starfall";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Pulls a shooting star out of space and brings it crashing down to earth." +
-                                "\nOnly the most powerful mages will be capable of casting this spell.");
+            string tooltip = "Summon a rain of homing stars\n'Your very own meteor shower'";
+            if (LegacyMode) tooltip = "Pulls a shooting star out of space and brings it crashing down to earth." +
+                                "\nOnly the most powerful mages will be capable of casting this spell.";
+            Tooltip.SetDefault(tooltip);
         }
         public override void SetDefaults() {
             item.width = 28;
@@ -18,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
             item.knockBack = 6;
             item.scale = 0.9f;
-            item.UseSound = SoundID.Item4;
+            
             item.rare = ItemRarityID.LightRed;
             item.shootSpeed = 10;
             item.noMelee = true;
@@ -26,6 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
 
             if (LegacyMode) {
+                item.UseSound = SoundID.Item4;
                 item.mana = 800;
                 item.damage = 1100;
                 item.useAnimation = 60;
@@ -34,6 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             }
 
             else {
+                item.UseSound = SoundID.Item25;
                 item.mana = 14;
                 item.damage = 76;
                 item.useAnimation = item.useTime = 15;
