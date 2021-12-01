@@ -245,6 +245,49 @@ namespace tsorcRevamp {
         }
 
 
+        ///<summary> 
+        ///Call in a projectile's AI to allow the projectile to home on enemies
+        ///</summary>         
+        ///<param name="projectile">The current projectile</param>
+        ///<param name="homingRadius">The homing radius</param>
+        ///<param name="topSpeed">The projectile's maximum velocity</param>
+        ///<param name="rotateTowards">Should the projectile maintain topSpeed speed and rotate towards targets, instead of standard homing?</param>
+        ///<param name="homingStrength">The homing strength coefficient. Unused if rotateTowards.</param>
+        ///<param name="needsLineOfSight">Does the projectile need line of sight to home on a target?</param>
+        public static void HomeOnEnemy(Projectile projectile, float homingRadius, float topSpeed, bool rotateTowards = false, float homingStrength = 1f, bool needsLineOfSight = false) {
+            if (!projectile.active || !projectile.friendly) return;
+            const int BASE_STRENGTH = 30;
+
+            Vector2 targetLocation = Vector2.UnitY;
+            bool foundTarget = false;
+
+            for (int i = 0; i < 200; i++) {
+                if (!Main.npc[i].active) return;
+                float toNPCEdge = (Main.npc[i].width / 2) + (Main.npc[i].height / 2); //make homing on larger targets more consistent
+
+                //WithinRange is just faster Distance (skips sqrt)
+                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1))) {
+                    targetLocation = Main.npc[i].Center;
+                    foundTarget = true;
+                    break;
+                }
+            }
+
+            if (foundTarget) {
+                Vector2 homingDirection = Vector2.Normalize(targetLocation - projectile.Center);
+                projectile.velocity = (projectile.velocity * (BASE_STRENGTH / homingStrength) + homingDirection * topSpeed) / ((BASE_STRENGTH / homingStrength) + 1);
+            }
+            if (rotateTowards) {
+                if (projectile.velocity.Length() < topSpeed) {
+                    projectile.velocity *= topSpeed / projectile.velocity.Length();
+                }
+            }
+            if (projectile.velocity.Length() > topSpeed) {
+                projectile.velocity *= topSpeed / projectile.velocity.Length();
+            }
+        }
+
+
         /**INCOMPLETE!!!
          
         //TODO:

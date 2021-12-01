@@ -107,34 +107,8 @@ namespace tsorcRevamp.Projectiles
 					AdjustMagnitude(ref projectile.velocity);
 					projectile.localAI[0] = 1f;
 				}
-				Vector2 move = Vector2.Zero;
-				float distance = 120f; // distance from enemy to begin homing
-				bool target = false;
-				for (int k = 0; k < 200; k++)
-				{
-					if (Main.npc[k].active && !Main.npc[k].dontTakeDamage && !Main.npc[k].friendly && Main.npc[k].lifeMax > 5)
-					{
-						Vector2 newMove = Main.npc[k].Center - projectile.Center;
-						float distanceTo = (float)Math.Sqrt(newMove.X * newMove.X + newMove.Y * newMove.Y);
-						if (distanceTo < distance)
-						{
-							move = newMove;
-							distance = distanceTo;
-							target = true;
-						}
-					}
-				}
-				if (target)
-				{
-					AdjustMagnitude(ref move);
-					projectile.velocity = (20 * projectile.velocity + move) / 11f; //homing power, higher is less homing
-					AdjustMagnitude(ref projectile.velocity);
-				}
-				if (projectile.alpha <= 70)
-				{
-					//int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, ModContent.DustType<SpectreDust>());
-					//Main.dust[dust].velocity /= 2f;
-				}
+				
+				UsefulFunctions.HomeOnEnemy(projectile, 120, 5.5f, true);
 			}
 		}
 
