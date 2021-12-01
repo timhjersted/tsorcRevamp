@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.BossItems {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Lost Scroll of Gwyn");
             Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
-                "You must enter The Abyss with the Covenant of Artorias equipped to summon Lord Gwyn.  \n" +
+                //"You must enter The Abyss with the Covenant of Artorias equipped to summon Lord Gwyn.  \n" +
                 "Upon the scroll it reads: \"Once living, now Undead, and a fitting heir to father Gwyn thou art, \n" +
                 "And beseech thee. Succeed Lord Gwyn, and inheriteth the Fire of our world. \n" +
                 "Thou shall endeth this eternal twilight, and avert further Undead sacrifices.\"\n" +
@@ -32,9 +32,9 @@ namespace tsorcRevamp.Items.BossItems {
             {
                 return false;
             }
-            if (!Main.bloodMoon) {
-                Main.NewText("Lord Gwyn ignores your call... you must enter The Abyss to summon the Lord of Cinder!", 175, 75, 255);
-            }
+            //if (!Main.bloodMoon) {
+            //    Main.NewText("Lord Gwyn ignores your call... you must enter The Abyss to summon the Lord of Cinder!", 175, 75, 255);
+            //}
             else {
                 Main.NewText("Defeat me, and you shall inherit the fire of this world... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>());
