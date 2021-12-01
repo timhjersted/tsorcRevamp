@@ -1,14 +1,14 @@
-The Story of Red Cloud's Dark Souls mod, transferred to tModLoader and filled with new features. Currently in beta! 
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria, using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough. It is currently in beta.
 
-The Story of Red Cloud is a massive Dark Souls-inspired adventure map built inside the world of Terraria. Your journey will span 17 dungeons spread across an expansive and inter-connected world, encompassing an estimated 15 to 30+ hr experience that will offer so much to do that many players enjoy more than one playthrough.
+- To load the custom map, click the "Install Custom Map" button once you reach the world creation options.
 
-If you would like to play the map, pick the "Install Custom Map" button once you reach the world creation options.
+- To download the companion Music Mod, click the text prompt you'll see on TML's main menu. Then click Mods and Enable the Music Mod. The Recipe Browser mod is also recommended.
 
 TOP FEATURES
 *17 dungeons spread across a large open world filled with villages, forests, mountains, lakes, temples, deserts, and hidden paths
 *33 bosses (11 vanilla plus 22 mod bosses).
 *100+ new NPCS including 8 friendly NPCs.
-*Custom Soundtrack with 32 songs (Dark Souls and Zelda fans will love it).
+*Companion Soundtrack with 32 songs (Dark Souls and Zelda fans will love it).
 *Over 600 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
 *Many hours of secret post-game content.
 *Dark Souls game mechanics.
@@ -16,8 +16,31 @@ TOP FEATURES
 *A strong emphasis on visual immersion and a logical connection between areas similar to Dark Soul's world layout.
 *Map created entirely from scratch using Tedit, down to individual tree placements and hill curves.
 
+-----
 This is a beta release meant for testing. It does not represent the final version of the mod. 
-This release includes (approximately) all of the items, enemies and bosses from the original mod, in as close to their original state as possible. There are also some NPCs and several new additions.
+This release includes all of the items, enemies and bosses from the original mod, plus a growing number of new additions.
 
-Please share you feedback and suggestions under #any-suggestions or #bug-reports. Post map related feedback to #map-suggestions-bugs.
+The Mod's Homepage links to our Discord. Please share your feedback and suggestions under #any-suggestions or #bug-reports. Post map related feedback to #map-suggestions-bugs.
+
+The changelogs can be found under #mod-changelog and #map-changelog.
+
+TSORC holds many secrets. If you have questions, post them to #map-questions or #mod-questions.
+
+
+
+GAME MANUAL:
+--------------------------------------------
+*Create a new character named Red Cloud.
+
+*Adventure Mode should stay checked in the TSORC mod config options to play with the custom map.
+
+*Read signs in the order you come to them.
+
+*Read all item tool-tips for hints and game clues, especially mod items.
+
+*Don't move vanilla NPC's like the Wizard, Mechanic or Goblin Tinkerer until you've found them in game. Modded NPCs may be moved.
+
+*On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
+
+*Want to play multiplayer? Just turn off the two souls related options in the TSORC mod config. We're still ironing out the bugs, but we'd appreciate your help with testing. The map supports up to 3 players. Class diversity recommended.
 
