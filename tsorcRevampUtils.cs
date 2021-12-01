@@ -262,7 +262,7 @@ namespace tsorcRevamp {
             bool foundTarget = false;
 
             for (int i = 0; i < 200; i++) {
-                if (!Main.npc[i].active) return;
+                if (!Main.npc[i].active) continue;
                 float toNPCEdge = (Main.npc[i].width / 2) + (Main.npc[i].height / 2); //make homing on larger targets more consistent
 
                 //WithinRange is just faster Distance (skips sqrt)
