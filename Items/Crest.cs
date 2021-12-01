@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items {
             DisplayName.SetDefault("Crest of Water");
             Tooltip.SetDefault("A shard of crystallized water\n" +
                                "A second piece. Are these artifacts part of a puzzle?\n" +
-                               "This shard contains a riddle: \"Beneath the burning hot sun,\n" +
-                               "heading against the western winds, a violet glow illuminates the path.\"");
+                               "This shard contains a riddle: \"Beneath the Burning hot sun,\n" +
+                               "sheltered from the blistering Western Winds, a Violet Glow illuminates the path.\"");
         }
     }
     public class CrestOfEarth : Crest {
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of pure minerals\n" +
                                "One of eight\n" +
                                "This one contains a riddle: \n" +
-                               "\"The Twin Peaks of Arazium. Twins from birth. Guardians of the Sky.\"");
+                               "\"Atop the Twin Peaks of Arazium, we gaze at Sky Above, and the Great Chasm Below. We are the Eyes of the Ancient One.\"");
         }
     }
 
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Items {
             DisplayName.SetDefault("Crest of Corruption");
             Tooltip.SetDefault("A shard of glowing demonite, oozing with phazon\n" +
                                "One of eight. On the underside it says simply:\n" +
-                               "\"Below familiar waters, you will find me.\"");
+                               "\"Below a Broken, Familiar Bridge, you will find me.\"");
         }
     }
 
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items {
             DisplayName.SetDefault("Crest of Sky");
             Tooltip.SetDefault("Half of a shard of oxygenated carbonate\n" +
                                "Combined with the second half, this makes one of eight. On its side it contains a clue:\n" +
-                               "\"Beneath the Burning Sun, Below the Purple Light, an Alternate Path opens the way.\"");
+                               "\"Beneath the Burning Sun, Below the Purple Light, a Chlorophyte Gate opens the way.\"");
         }
     }
 
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of burning hot steel\n" +
                                "One of eight.\n" +
                                "A riddle is etched into the metal: \n" +
-                               "\"Above the machine's throne, below the Dryad's cove: A verdant realm lies lost to time.\"");
+                               "\"Above the Machine's Throne, Below the Dryad's Cove: A Locked Door guards an Ancient Pyramid, long ago forgotten.\"");
         }
     }
     public class CrestOfLife : Crest
@@ -105,7 +105,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A shard of woven vine, stronger than iron\n" +
                                "One of eight.\n" +
                                "Threaded between its strands, another riddle: \n" +
-                               "\"You've found the key. But where is the lock?");
+                               "\"You've found the Key. But where is the Lock?");
         }
     }
     public class CrestOfStone : Crest
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items {
                               "One of eight. Could this be the last one? \n" +
                                "\"When I fit all the pieces together, there's still something missing.\"\n" +
                                "This crest contains a riddle: \n" +
-                               "\"Towering heights. The Eye of Attraidies looks to the sky above. He is near.\"");
+                               "\"Towering Heights, Far to the West. The Eye of Attraidies looks to the Sky Above. He is near.\"");
         }
     }
 }
