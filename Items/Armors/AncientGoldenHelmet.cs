@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("It is the famous Helmet of the Stars. \n7% melee speed\nSet bonus boosts all critical hits by 6%, +5% melee and ranged damage, +40 mana \nCan be upgraded with 4000 Dark Souls and 8 Stinger.");
+            Tooltip.SetDefault("It is the famous Helmet of the Stars. \n7% melee speed\nSet bonus boosts all critical hits by 6%, +5% melee and ranged damage, +40 mana.");
         }
 
         public override void SetDefaults()

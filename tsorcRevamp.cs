@@ -751,8 +751,21 @@ namespace tsorcRevamp {
             else if (message == tsorcPacketID.DropSouls)
             {
                 Vector2 position = reader.ReadVector2();
-                int count = reader.ReadInt32();
-                Item.NewItem(position, ModContent.ItemType<Items.DarkSoul>(), count);
+                int count = reader.ReadInt32(); 
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    UsefulFunctions.ServerText("Dropping " + count + "souls");
+                    //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
+                    while (count > 32000)
+                    {                        
+                        //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
+                        Item.NewItem(position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
+                        count -= 32000;                        
+                    }
+
+                    Item.NewItem(position, ModContent.ItemType<Items.DarkSoul>(), count);
+                    //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
+                }
             }
 
 

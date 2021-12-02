@@ -837,8 +837,8 @@ namespace tsorcRevamp {
 
         public override void UpdateDead()
         {
-            if (player.whoAmI == Main.myPlayer && Main.netMode != NetmodeID.MultiplayerClient) {
-                if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
+            if (player.whoAmI == Main.myPlayer) {
+                if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath && Main.netMode == NetmodeID.SinglePlayer)
                 {
                     souldroptimer++;
                     if (souldroptimer == 5 && souldroplooptimer < 13)
@@ -860,6 +860,7 @@ namespace tsorcRevamp {
                                     soulPacket.WriteVector2(player.Center);
                                     soulPacket.Write(item.stack);
                                     soulPacket.Send();
+                                    item.stack = 0;
                                 }
                                 souldroplooptimer++;
                                 souldroptimer = 0;
@@ -876,18 +877,20 @@ namespace tsorcRevamp {
                                     SoulSlot.Item.TurnToAir();
                                 }
                                 else
-                                {                                    
+                                {
                                     ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                                     soulPacket.Write(tsorcPacketID.DropSouls);
                                     soulPacket.WriteVector2(player.Center);
                                     soulPacket.Write(SoulSlot.Item.stack);
-                                    soulPacket.Send();                                    
+                                    soulPacket.Send();
+                                    SoulSlot.Item.TurnToAir();
                                 }
                             }
-                            else
+                            else if (Main.netMode == NetmodeID.SinglePlayer)
                             {
                                 Item.NewItem(player.Center, SoulSlot.Item.type, 0);
                             }
+                            
                             souldroplooptimer++;
                             souldroptimer = 0;
                         }
