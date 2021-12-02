@@ -568,6 +568,7 @@ namespace tsorcRevamp {
 
         public override void Unload() {
             toggleDragoonBoots = null;
+            reflectionShiftKey = null;
             KillAllowed = null;
             PlaceAllowed = null;
             Unbreakable = null;
@@ -580,7 +581,7 @@ namespace tsorcRevamp {
             for (int i = 0; i < Main.moonTexture.Length; i++) {
                 Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
             }
-
+            DarkSoulCounterUIState.ConfigInstance = null;
             /*
             for (int m = 1; m < Main.maxMusic; m++)
             {
@@ -1044,9 +1045,10 @@ namespace tsorcRevamp {
         public bool MapDownload()
         {
             string filePath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcBaseMap.wld";
-            Logger.Info("Deleting outdated world template.");
+            
             if (File.Exists(filePath))
             {
+                Logger.Info("Deleting outdated world template.");
                 File.Delete(filePath);
             }
             Logger.Info("Attempting to download updated world template.");
