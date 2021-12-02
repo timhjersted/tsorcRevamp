@@ -21,7 +21,6 @@ using System.Net;
 using System.Reflection;
 using Mono.Cecil.Cil;
 using System.ComponentModel;
-using Newtonsoft.Json.Linq;
 
 namespace tsorcRevamp {
 
@@ -57,6 +56,7 @@ namespace tsorcRevamp {
         public static bool MusicNeedsUpdate = false;
         public static bool justUpdatedMusic = false;
         public static bool ReloadNeeded = false;
+        public static bool SpecialReloadNeeded = false;
         public static bool DownloadingMusic = false;
         public static float MusicDownloadProgress = 0;
 
@@ -940,19 +940,14 @@ namespace tsorcRevamp {
             string changelogPath = dataDir + "\\tsorcChangelog.txt"; //Downloaded changelog from the github
             string curVersionPath = dataDir + "\\tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
             string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
-            string musicFinalPath = Main.SavePath + "\\Mods\\tsorcMusic.tmod"; //Where the music mod should be moved to upon reload
-            string configPath = Main.SavePath + "\\Mods\\enabled.json"; //Where the config dedicing what mods to load is
 
             //Check if the data directory exists, if not then create it
             if (!Directory.Exists(dataDir)) {
                 CreateDataDirectory();
             }
-            else {
-                Logger.Info("tsorcRevampData found.");
-            }
 
             //If it finds a music mod in the data folder, do the second phase of loading it
-            if (File.Exists(musicTempPath) && File.Exists(configPath))
+            if (File.Exists(musicTempPath))
             {
                 InstallMusicMod();
             }
@@ -1015,7 +1010,6 @@ namespace tsorcRevamp {
                     //If the music one is less, then flag it as needing an update so the UI can display that to the user
                     if (File.Exists(curVersionPath))
                     {
-
                         string[] curVersionFile = File.ReadAllLines(curVersionPath);
 
                         if (Int32.Parse(curVersionFile[0]) < Int32.Parse(mapString))
@@ -1076,6 +1070,7 @@ namespace tsorcRevamp {
             }
             return false;
         }
+
         public static void MusicDownload()
         {
             ServicePointManager.Expect100Continue = true;
@@ -1185,10 +1180,10 @@ namespace tsorcRevamp {
                 }
             }
 
-            //If so, disable it and require a reload.
+            //If so, do not move it. Instead enable a special flag to prompt a reload once the initial load finishes (can't do it here while we're mid-load, or an error would occur)
             if (musicLoaded)
-            {
-                DisableMusicAndReload();
+            {                
+                SpecialReloadNeeded = true;
             }
 
             //If not, then it's safe to delete the old one and move the new one in
@@ -1207,10 +1202,6 @@ namespace tsorcRevamp {
             }
         }
 
-        public static void MusicReload()
-        {
-        }
-
         //Uses reflection to disable the music mod and force a reload
         public static void DisableMusicAndReload()
         {
@@ -1220,8 +1211,8 @@ namespace tsorcRevamp {
         }
 
 
-        //Adds the music mod to the enabled config
-        public static void InstallMusicModSecondPhase()
+        //Adds the music mod to the enabled config and forces a reload
+        public static void EnableMusicAndReload()
         {
             object[] modParam = new object[1] { "tsorcMusic" };
             typeof(ModLoader).GetMethod("EnableMod", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, modParam);

@@ -563,7 +563,13 @@ namespace tsorcRevamp {
                 //Do *not* want to initiate a second reload in the middle of the first.
                 if (tsorcRevamp.ReloadNeeded)
                 {
-                    tsorcRevamp.InstallMusicModSecondPhase();
+                    tsorcRevamp.EnableMusicAndReload();
+                }
+                if (tsorcRevamp.SpecialReloadNeeded)
+                {
+                    object[] modParam = new object[1] { "tsorcMusic" };
+                    typeof(ModLoader).GetMethod("DisableMod", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, modParam);
+                    typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });
                 }
 
                 //Only display this if necessary
