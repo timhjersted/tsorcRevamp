@@ -24,12 +24,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.height = 45;
             npc.width = 30;
             npc.damage = 100;
-            npc.defense = 0;
-            npc.lifeMax = 25000;
+            npc.defense = 10;
+            npc.lifeMax = 100000;
             npc.scale = 1.05f;
             npc.HitSound = SoundID.NPCHit4;
             npc.DeathSound = SoundID.NPCDeath6;
-            npc.value = 150000;
+            npc.value = 350000;
             npc.knockBackResist = 0.001f;
             npc.boss = true;
             npc.buffImmune[BuffID.Poisoned] = true;
@@ -317,7 +317,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region Projectiles
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
             if (customAi1 >= 10f) {
-                if ((customspawn1 < 2) && Main.rand.Next(900) == 1) {
+                if ((customspawn1 < 12) && Main.rand.Next(1200) == 1) {
                     int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
