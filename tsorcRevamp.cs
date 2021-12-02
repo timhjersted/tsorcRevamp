@@ -748,6 +748,12 @@ namespace tsorcRevamp {
                 Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
             }
 
+            else if (message == tsorcPacketID.DropSouls)
+            {
+                Vector2 position = reader.ReadVector2();
+                int count = reader.ReadInt32();
+                Item.NewItem(position, ModContent.ItemType<Items.DarkSoul>(), count);
+            }
 
 
             /**
@@ -1234,7 +1240,7 @@ namespace tsorcRevamp {
         public const byte SyncEventDust = 2;
         public const byte SyncTimeChange = 3;
         public const byte DispelShadow = 4;
-        //public const byte SyncRandom = ;
+        public const byte DropSouls = 5;
     }
 
     //config moved to separate file

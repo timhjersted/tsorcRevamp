@@ -40,53 +40,8 @@ namespace tsorcRevamp.Items.Weapons {
 		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
-			
-			/*
-			string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-			if (!Directory.Exists(dataDir))
-            {
-				try
-				{
-					Main.NewText("Creating directory " + dataDir);
-					Directory.CreateDirectory(dataDir);
-				}
-				catch (Exception e)
-				{
-					Main.NewText("Failed to create directory " + dataDir + "!!", Color.Orange);
-					Main.NewText(e);
-				}
-            }
 
-			try
-			{
-				ServicePointManager.Expect100Continue = true;
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-				using (WebClient client = new WebClient())
-				{
-					client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), dataDir + "\\tsorcBaseMap038.wld");
-				}
-			}
-			catch (Exception e)
-			{
-				Main.NewText("Failed to download map!!", Color.Orange);
-				Main.NewText(e);
-			}
-
-			string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
-			try
-			{
-				ServicePointManager.Expect100Continue = true;
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-				using (WebClient client = new WebClient())
-				{
-					client.DownloadFileAsync(new Uri(VariousConstants.MUSIC_MOD_URL), musicModDir);
-				}
-			}
-			catch (Exception e) //https://imgur.com/a/YHrhvRY.png
-			{
-				Main.NewText("Failed to download music mod!!", Color.Orange);
-				Main.NewText(e);
-			}*/
+			UsefulFunctions.NewItemInstanced(player.Center, player.Size, ModContent.ItemType<Items.DarkSoul>(), 5);
 			return true;
 		}
 

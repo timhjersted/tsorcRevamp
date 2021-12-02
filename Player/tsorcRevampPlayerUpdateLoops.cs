@@ -835,36 +835,71 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void UpdateDead() {
-            if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath) {
-                souldroptimer++;
-                if (souldroptimer == 5 && souldroplooptimer < 13) {
-                    foreach (Item item in player.inventory) { //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
-                        if (item.type == ModContent.ItemType<DarkSoul>() /*&& Main.netMode != NetmodeID.MultiplayerClient*/) { //could this be dropping double though? Test with Zeo
-                            Item.NewItem(player.Center, item.type, item.stack);
+        public override void UpdateDead()
+        {
+            if (player.whoAmI == Main.myPlayer && Main.netMode != NetmodeID.MultiplayerClient) {
+                if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
+                {
+                    souldroptimer++;
+                    if (souldroptimer == 5 && souldroplooptimer < 13)
+                    {
+                        foreach (Item item in player.inventory)
+                        { 
+                            //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
+                            if (item.type == ModContent.ItemType<DarkSoul>())
+                            {
+                                if (Main.netMode == NetmodeID.SinglePlayer)
+                                {
+                                    Item.NewItem(player.Center, item.type, item.stack);
+                                    item.stack = 0;
+                                }
+                                else
+                                {
+                                    ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                    soulPacket.Write(tsorcPacketID.DropSouls);
+                                    soulPacket.WriteVector2(player.Center);
+                                    soulPacket.Write(item.stack);
+                                    soulPacket.Send();
+                                }
+                                souldroplooptimer++;
+                                souldroptimer = 0;
+                            }
+                        }
+
+                        if (SoulSlot.Item.stack > 0)
+                        {
+                            if (souldroplooptimer == 12)
+                            {
+                                if (Main.netMode == NetmodeID.SinglePlayer)
+                                {
+                                    Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
+                                    SoulSlot.Item.TurnToAir();
+                                }
+                                else
+                                {                                    
+                                    ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                                    soulPacket.Write(tsorcPacketID.DropSouls);
+                                    soulPacket.WriteVector2(player.Center);
+                                    soulPacket.Write(SoulSlot.Item.stack);
+                                    soulPacket.Send();                                    
+                                }
+                            }
+                            else
+                            {
+                                Item.NewItem(player.Center, SoulSlot.Item.type, 0);
+                            }
                             souldroplooptimer++;
                             souldroptimer = 0;
-                            item.stack = 0;
                         }
-                    }
-
-                    if (SoulSlot.Item.stack > 0) {
-                        if (souldroplooptimer == 12) {
-                            Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
-                            SoulSlot.Item.TurnToAir();
-                        }
-                        else {
-                            Item.NewItem(player.Center, SoulSlot.Item.type, 0);
-                        }
-                        souldroplooptimer++;
-                        souldroptimer = 0;
                     }
                 }
+                
+
+                DarkInferno = false;
+                PhazonCorruption = false;
+                Falling = false;
+                FracturingArmor = 1;
             }
-            DarkInferno = false;
-            PhazonCorruption = false;
-            Falling = false;
-            FracturingArmor = 1;
         }
 
         public override void PostUpdate() {

@@ -27,6 +27,7 @@ namespace tsorcRevamp.UI
 
 		public override void OnInitialize()
 		{
+			ConfigInstance = ModContent.GetInstance<tsorcRevampConfig>();
 			// Create a UIElement for all the elements to sit on top of, this simplifies the numbers as nested elements can be positioned relative to the top left corner of this element. 
 			// UIElement is invisible and has no padding. You can use a UIPanel if you wish for a background.
 			area = new UIElement();
