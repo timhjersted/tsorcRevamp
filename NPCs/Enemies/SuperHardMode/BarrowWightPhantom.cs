@@ -21,11 +21,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.width = 58;
 			npc.height = 48;
 			npc.aiStyle = 22;
-			npc.damage = 90;
+			npc.damage = 100;
 			npc.defense = 15;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 100;
+			npc.lifeMax = 1200;
 			npc.knockBackResist = 0;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -371,7 +371,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			{
 
 				player.AddBuff(36, 150, false); //broken armor
-				player.AddBuff(10, 300, false); //invisible
+				//player.AddBuff(10, 300, false); //invisible
 				player.AddBuff(23, 180, false); //cursed
 
 			}

@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         public override void OnHitPlayer(Player target, int damage, bool crit) {
             if (Main.rand.Next(2) == 0) {
                 target.AddBuff(BuffID.BrokenArmor, 1800);
-                target.AddBuff(BuffID.Invisibility, 3600);
+                //target.AddBuff(BuffID.Invisibility, 3600);
                 target.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000);
             }
         }

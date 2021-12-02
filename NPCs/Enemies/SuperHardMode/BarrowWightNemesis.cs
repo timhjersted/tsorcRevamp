@@ -438,7 +438,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			{
 
 				player.AddBuff(BuffID.BrokenArmor, 1800, false); //broken armor
-				player.AddBuff(BuffID.Invisibility, 3600, false); //invisible
+				//player.AddBuff(BuffID.Invisibility, 3600, false); //invisible
 				player.AddBuff(BuffID.Cursed, 300, false); //cursed
 				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 life after several hits
 				player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-20 life after several hits
