@@ -785,9 +785,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
 
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
