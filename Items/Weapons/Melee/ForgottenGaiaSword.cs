@@ -28,16 +28,17 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
 
 
-        public override void AddRecipes() {
+        /*public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.FallenStar, 120);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 120000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
-        }
+        }*/  
+
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
             if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
