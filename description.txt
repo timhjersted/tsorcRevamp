@@ -42,5 +42,5 @@ GAME MANUAL:
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*Want to play multiplayer? Just turn off the two souls related options in the TSORC mod config. We're still ironing out the bugs, but we'd appreciate your help with testing. The map supports up to 3 players. Class diversity recommended.
+*Multiplayer is currently being beta-tested and is not yet in a polished state. If you'd like to try it out and help with testing, post any issues you find under #bug-reports. Thanks. The map supports up to 3 players. Class diversity recommended.
 
