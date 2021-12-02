@@ -554,86 +554,58 @@ namespace tsorcRevamp {
                 Main.spriteBatch.Begin();
                 DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                 Main.spriteBatch.End();
-
-
-               
             }
 
             if(Main.menuMode == 0)
             {
                 string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
-
-                //Only display this if they have tsorcRevamp enabled and the music mod is not downloaded at all
-                if (!File.Exists(musicModDir))
+                //This goes here so that it runs *after* the first reload has finished and the game has transitioned back to the main menu.
+                //Do *not* want to initiate a second reload in the middle of the first.
+                if (tsorcRevamp.ReloadNeeded)
                 {
-                    String musicText = "Click here to get the Story of Red Cloud music mod!";
+                    tsorcRevamp.InstallMusicModSecondPhase();
+                }
+
+                //Only display this if necessary
+                else if (!File.Exists(musicModDir) || tsorcRevamp.MusicNeedsUpdate)
+                {
+                    String musicText = "";
+                    if (tsorcRevamp.DownloadingMusic)
+                    {
+                        musicText = "Download in progress: " + (int)tsorcRevamp.MusicDownloadProgress + "%";
+                    }
+                    else if (!File.Exists(musicModDir))
+                    {
+                        musicText = "Click here to get the Story of Red Cloud music mod!";
+                    }
+                    else if (tsorcRevamp.MusicNeedsUpdate)
+                    {
+                        musicText = "Music mod update available, click here to download!";
+                    }
+                   
                     float musicTextScale = 2;
                     Vector2 musicTextOrigin = Main.fontMouseText.MeasureString(musicText);
                     Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2) - musicTextOrigin.X * 0.5f * musicTextScale, 70 + (80 * 6));
                     Color musicTextColor = Main.DiscoColor;
 
-                    if (Main.mouseX > musicTextPosition.X && Main.mouseX < musicTextPosition.X + (musicTextOrigin.X * musicTextScale))
+                    if ((Main.mouseX > musicTextPosition.X && Main.mouseX < musicTextPosition.X + (musicTextOrigin.X * musicTextScale)) && !tsorcRevamp.DownloadingMusic)
                     {
                         if (Main.mouseY > musicTextPosition.Y && Main.mouseY < musicTextPosition.Y + (musicTextOrigin.Y * musicTextScale))
                         {
-
                             musicTextColor = Color.Yellow;
 
                             if (Main.mouseLeft)
-                            {
-
-                                mod.Logger.Info("Attempting to download music mod.");
-                                ServicePointManager.Expect100Continue = true;
-                                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                                string filePath = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
-
-
-                                if (!File.Exists(filePath))
-                                {
-                                    log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
-                                    thisLogger.Info("Attempting to download music file.");
-                                    try
-                                    {
-                                        using (WebClient client = new WebClient())
-                                        {
-                                            client.DownloadFileAsync(new Uri(VariousConstants.MUSIC_MOD_URL), filePath);
-                                        }
-                                    }
-                                    catch (WebException e)
-                                    {
-                                        thisLogger.Warn("Automatic music download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
-                                    }
-
-                                    catch (Exception e)
-                                    {
-                                        thisLogger.Warn("Automatic world download failed ({0}).", e);
-                                    }
-                                }
+                            {                                
+                                tsorcRevamp.MusicDownload();                                
                             }
                         }
                     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+         
                     Main.spriteBatch.Begin();
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }               
-            }
-           
+            }           
         }
-
     }
 }

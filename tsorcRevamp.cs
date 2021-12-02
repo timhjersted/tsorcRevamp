@@ -20,6 +20,8 @@ using ReLogic.Graphics;
 using System.Net;
 using System.Reflection;
 using Mono.Cecil.Cil;
+using System.ComponentModel;
+using Newtonsoft.Json.Linq;
 
 namespace tsorcRevamp {
 
@@ -51,6 +53,12 @@ namespace tsorcRevamp {
 
         public static Effect TheAbyssEffect;
         //public static Effect AttraidiesEffect;
+
+        public static bool MusicNeedsUpdate = false;
+        public static bool justUpdatedMusic = false;
+        public static bool ReloadNeeded = false;
+        public static bool DownloadingMusic = false;
+        public static float MusicDownloadProgress = 0;
 
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
@@ -87,8 +95,7 @@ namespace tsorcRevamp {
                 EmeraldHeraldUserInterface = new UserInterface();
             }
 
-            DownloadMap();
-
+            UpdateCheck();
         }
 
         public override void PostDrawFullscreenMap(ref string mouseText) {
@@ -925,47 +932,308 @@ namespace tsorcRevamp {
             }
         }
 
-        internal void DownloadMap() {
+        internal void UpdateCheck() {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-            string filePath = dataDir + "\\tsorcBaseMap.wld";
+            string changelogPath = dataDir + "\\tsorcChangelog.txt"; //Downloaded changelog from the github
+            string curVersionPath = dataDir + "\\tsorcCurrentVer.txt"; //Stored file recording current map and music mod versions
+            string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string musicFinalPath = Main.SavePath + "\\Mods\\tsorcMusic.tmod"; //Where the music mod should be moved to upon reload
+            string configPath = Main.SavePath + "\\Mods\\enabled.json"; //Where the config dedicing what mods to load is
 
+            //Check if the data directory exists, if not then create it
             if (!Directory.Exists(dataDir)) {
-                Logger.Info("Directory " + dataDir + " not found. Creating directory.");
-                try {
-                    Directory.CreateDirectory(dataDir);
-                }
-                catch (UnauthorizedAccessException e) {
-                    Logger.Warn("Directory creation failed ({0}). Try again with administrator privileges?", e);
-                }
-                catch (Exception e) {
-                    Logger.Warn("Automatic world download failed ({0}).", e);
-                }
+                CreateDataDirectory();
             }
-
             else {
                 Logger.Info("tsorcRevampData found.");
             }
 
-            if (!File.Exists(filePath)) {
-                Logger.Info("Attempting to download world file.");
-                try {
-                    using (WebClient client = new WebClient()) {
-                        client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), filePath);
+            //If it finds a music mod in the data folder, do the second phase of loading it
+            if (File.Exists(musicTempPath) && File.Exists(configPath))
+            {
+                InstallMusicMod();
+            }
+
+            //Download the changelog. *Not* async, because the next function requires it (and it's extremely small).
+            //Could rewrite this to work async later if impact on load time isn't neglicable. Something something premature optimization.
+            ChangelogDownload();
+
+            //If it exists, read from it. If not, put a warning in the log that it failed to download.
+            if (File.Exists(changelogPath))
+            {
+                string mapString = "";
+                string musicString = "";
+
+                //Pull the version numbers from the file
+                using (StreamReader reader = File.OpenText(changelogPath))
+                {
+                    string currentString = "";
+
+                    while ((currentString = reader.ReadLine()) != null)
+                    {
+                        if (currentString.Contains("MAP ") && mapString == "")
+                        {
+                            mapString = currentString;
+                        }
+                        if (currentString.Contains("MUSIC ") && musicString == "")
+                        {
+                            musicString = currentString;
+                        }
+                        if(mapString != "" && musicString != "")
+                        {
+                            break;
+                        }
                     }
                 }
-                catch (WebException e) {
-                    Logger.Warn("Automatic world download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+                if (mapString == "" || musicString == "")
+                {
+                    Logger.Warn("WARNING: Failed to read version data from downloaded changelog! This will prevent the mod from downloading the map, music mod, or updates!");
                 }
+                else
+                {
+                    //Simplify them
+                    mapString = mapString.TrimStart("MAP ".ToCharArray());
+                    musicString = musicString.TrimStart("MUSIC ".ToCharArray());
+                    mapString = mapString.Replace(".", "");
+                    musicString = musicString.Replace(".", "");
 
-                catch (Exception e) {
-                    Logger.Warn("Automatic world download failed ({0}).", e);
+                    //If no stored version file exists, create it with version 000000
+                    if (!File.Exists(curVersionPath))
+                    {
+                        using (StreamWriter versionFile = new StreamWriter(curVersionPath))
+                        {
+                            versionFile.WriteLine("000000");
+                            versionFile.WriteLine("000000");
+                        }
+                    }
+
+                    //Ensure that it now does exist and read the first line for the map version.
+                    //If it's less than the current map string, download the new one and update the stored version.
+                    //If the music one is less, then flag it as needing an update so the UI can display that to the user
+                    if (File.Exists(curVersionPath))
+                    {
+
+                        string[] curVersionFile = File.ReadAllLines(curVersionPath);
+
+                        if (Int32.Parse(curVersionFile[0]) < Int32.Parse(mapString))
+                        {
+                            if (MapDownload())
+                            {
+                                curVersionFile[0] = mapString;
+                            }
+                        }
+                        if (Int32.Parse(curVersionFile[1]) < Int32.Parse(musicString))
+                        {
+                            if (justUpdatedMusic)
+                            {
+                                curVersionFile[1] = musicString;
+                            }
+                            else
+                            {
+                                MusicNeedsUpdate = true; //Not setting music current version just yet, that happens once the file is *actually* downloaded
+                            }
+                        }
+                        File.WriteAllLines(curVersionPath, curVersionFile);
+                    }
                 }
             }
+            else
+            {
+                Logger.Warn("Failed to download or read changelog.");
+            }
+        }
+
+        //Returns true if download successful
+        public bool MapDownload()
+        {
+            string filePath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcBaseMap.wld";
+            Logger.Info("Deleting outdated world template.");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            Logger.Info("Attempting to download updated world template.");
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), filePath);
+                }
+
+                return true;
+            }
+            catch (WebException e)
+            {
+                Logger.Warn("Automatic world download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+            }
+
+            catch (Exception e)
+            {
+                Logger.Warn("Automatic world download failed ({0}).", e);
+            }
+            return false;
+        }
+        public static void MusicDownload()
+        {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+            string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
+            
+            thisLogger.Info("Attempting to download music file.");
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadProgressChanged += MusicDownloadProgressChanged;
+                    client.DownloadFileCompleted += MusicDownloadCompleted;                    
+                    client.DownloadFileAsync(new Uri(VariousConstants.MUSIC_MOD_URL), musicTempPath);
+                    
+                    DownloadingMusic = true;
+                }
+            }
+            catch (WebException e)
+            {
+                thisLogger.Warn("Automatic music download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+            }
+            catch (Exception e)
+            {
+                thisLogger.Warn("Automatic world download failed ({0}).", e);
+            }
+        }
+
+        public void ChangelogDownload()
+        {            
+            string changelogPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcChangelog.txt";
+
+            Logger.Info("Attempting to download changelog.");
+            if (File.Exists(changelogPath))
+            {
+                File.Delete(changelogPath);
+            }
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadFile(new Uri(VariousConstants.CHANGELOG_URL), changelogPath);
+                }
+            }
+            catch (WebException e)
+            {
+                Logger.Warn("Automatic changelog download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
+            }
+
+            catch (Exception e)
+            {
+                Logger.Warn("Automatic changelog download failed ({0}).", e);
+            }
+        }
+
+        public void CreateDataDirectory()
+        {
+            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+            Logger.Info("Directory " + dataDir + " not found. Creating directory.");
+            try
+            {
+                Directory.CreateDirectory(dataDir);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Logger.Warn("Directory creation failed ({0}). Try again with administrator privileges?", e);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn("Automatic world download failed ({0}).", e);
+            }
+        }
+
+        public static void MusicDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs downloadEvent)
+        {
+            MusicDownloadProgress = downloadEvent.ProgressPercentage;
+        }
+
+        public static void MusicDownloadCompleted(object sender, AsyncCompletedEventArgs downloadEvent)
+        {           
+            MusicDownloadProgress = 0;
+            DownloadingMusic = false;
+            DisableMusicAndReload();
+        }
+
+        //Performs the tasks necessary to replace the old music mod file with the newly downloaded one
+        public static void InstallMusicMod()
+        {
+            string musicTempPath = Main.SavePath + "\\Mod Configs\\tsorcRevampData" + "\\tsorcMusic.tmod"; //Where the music mod is downloaded to
+            string musicFinalPath = Main.SavePath + "\\Mods\\tsorcMusic.tmod"; //Where the music mod should be moved to upon reload
+            string configPath = Main.SavePath + "\\Mods\\enabled.json"; //Where the config dedicing what mods to load is
+
+            //First, check if the music mod is still enabled
+            bool musicLoaded = false;
+            using (StreamReader reader = File.OpenText(configPath))
+            {
+                string currentString = "";
+
+                while ((currentString = reader.ReadLine()) != null)
+                {
+                    if (currentString.Contains("tsorcMusic"))
+                    {
+                        musicLoaded = true;
+                        break;
+                    }
+                }
+            }
+
+            //If so, disable it and require a reload.
+            if (musicLoaded)
+            {
+                DisableMusicAndReload();
+            }
+
+            //If not, then it's safe to delete the old one and move the new one in
+            //Also, it flags music as updated so that the stored version file gets updated later
+            //One more reload is required for enabling to take effect
+            else
+            {
+                if (File.Exists(musicFinalPath))
+                {
+                    File.Delete(musicFinalPath);
+                }
+
+                File.Move(musicTempPath, musicFinalPath);
+                justUpdatedMusic = true;
+                ReloadNeeded = true;
+            }
+        }
+
+        public static void MusicReload()
+        {
+        }
+
+        //Uses reflection to disable the music mod and force a reload
+        public static void DisableMusicAndReload()
+        {
+            object[] modParam = new object[1] { "tsorcMusic" };
+            typeof(ModLoader).GetMethod("DisableMod", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, modParam);
+            typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });            
+        }
+
+
+        //Adds the music mod to the enabled config
+        public static void InstallMusicModSecondPhase()
+        {
+            object[] modParam = new object[1] { "tsorcMusic" };
+            typeof(ModLoader).GetMethod("EnableMod", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, modParam);
+            typeof(ModLoader).GetMethod("Reload", BindingFlags.NonPublic | BindingFlags.Static).Invoke(default, new object[] { });
+            ReloadNeeded = false;
+            MusicNeedsUpdate = false;
         }
     }
+
+    
+   
+
     public class tsorcPacketID
     {
         //Bytes because packets use bytes
