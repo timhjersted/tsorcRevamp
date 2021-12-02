@@ -614,6 +614,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X < npc.position.X) //if hit in the back
                 {
+                    CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                     damage = (int)(damage * 2f); //bonus damage
                     Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
                 }
@@ -622,6 +623,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (player.position.X > npc.position.X) //if hit in the back
                 {
+                    CombatText.NewText(new Rectangle((int)npc.Center.X, (int)npc.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                     damage = (int)(damage * 2f); //bonus damage
                     Main.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play fleshy sound
                 }
