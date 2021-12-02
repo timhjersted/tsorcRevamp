@@ -210,6 +210,7 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.FairyInABottle>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>(), 1); 
         }
     }
     
