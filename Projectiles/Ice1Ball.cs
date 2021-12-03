@@ -19,6 +19,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.width = 12;
+            projectile.timeLeft = 300;
 
 
             //Iterate through the projectile array

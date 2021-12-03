@@ -20,6 +20,7 @@ namespace tsorcRevamp.Projectiles {
             projectile.scale = 1;
             projectile.tileCollide = true;
             projectile.width = 16;
+            projectile.timeLeft = 300;
 
             //Iterate through the projectile array
             for (int i = 0; i < Main.projectile.Length; i++)

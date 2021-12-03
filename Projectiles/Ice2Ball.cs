@@ -17,9 +17,10 @@ namespace tsorcRevamp.Projectiles {
             projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.width = 16;
+            projectile.timeLeft = 300;
 
-			//Iterate through the projectile array
-			for (int i = 0; i < Main.projectile.Length; i++)
+            //Iterate through the projectile array
+            for (int i = 0; i < Main.projectile.Length; i++)
 			{
 				//For each, check if it's modded. If so, check if it's the Ice2Ball.
 				if (Main.projectile[i].modProjectile != null && Main.projectile[i].modProjectile is Projectiles.Ice2Ball)
