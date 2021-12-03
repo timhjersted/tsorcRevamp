@@ -16,17 +16,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			animationType = 29;
 			npc.aiStyle = 0;
 			npc.damage = 96;
-			npc.defense = 157;
+			npc.defense = 127;
 			npc.height = 44;
 			npc.timeLeft = 22500;
-			npc.lifeMax = 256800;
+			npc.lifeMax = 156800;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
 			npc.boss = true;
 			npc.noGravity = false;
 			npc.noTileCollide = false;
 			npc.lavaImmune = true;
-			npc.value = 370000;
+			npc.value = 430000;
 			npc.width = 28;
 			npc.knockBackResist = 0.1f;
 			npc.buffImmune[BuffID.Poisoned] = true;
@@ -37,9 +37,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		}
 
 
-		int darkBeadDamage = 41;
-		int darkOrbDamage = 64;
-		int seekerDamage = 49;
+		int darkBeadDamage = 81;
+		int darkOrbDamage = 94;
+		int seekerDamage = 69;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
@@ -72,9 +72,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 			// these are all the regular stuff you get , now lets see......
 
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.Next(100) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.Next(200) == 1) return 1;
 
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && InBrownLayer && Main.rand.Next(100) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && InBrownLayer && Main.rand.Next(500) == 1) return 1;
 
 			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Witchking>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AbysmalOolacileSorcerer>()) && AboveEarth && Main.rand.Next(50) == 1) return 1;
 
@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				if (customAi5 >= 10f)
 				{
 
-					if ((customspawn1 < 30) && Main.rand.Next(130) == 1)
+					if ((customspawn1 < 200) && Main.rand.Next(130) == 1)
 					{
 						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
 						Main.npc[Spawned].velocity.Y = -8;
@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
 						}
 					}
-					if ((customspawn2 < 1) && Main.rand.Next(3500) == 1)
+					if ((customspawn2 < 2) && Main.rand.Next(3000) == 1)
 					{
 						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
 						Main.npc[Spawned].velocity.Y = -8;
@@ -185,7 +185,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			{
 
 
-				if (npc.ai[0] >= 12 && npc.ai[2] < 5) //2 was 12
+				if (npc.ai[0] >= 12 && npc.ai[2] < 5) //2 was 12 - 7 was 5
 
 				{
 					float num48 = 7f;
@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkBeadDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 550;
 						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-						customAi5 = 1f;
+						//customAi5 = 1f;
 						npc.ai[0] = 0;
 						npc.ai[2]++;
 					}
