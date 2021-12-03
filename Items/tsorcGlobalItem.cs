@@ -71,7 +71,8 @@ namespace tsorcRevamp.Items {
 
                 }
             }
-			
+			//force a recipe recalculation so you cant craft things without enough souls
+			Recipe.FindRecipes();
 			base.OnCraft(item, recipe);
         }
         public override void HoldItem(Item item, Player player)
