@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.width = 30;
             npc.damage = 100;
             npc.defense = 10;
-            npc.lifeMax = 100000;
+            npc.lifeMax = 60000;
             npc.scale = 1.05f;
             npc.HitSound = SoundID.NPCHit4;
             npc.DeathSound = SoundID.NPCDeath6;
@@ -317,11 +317,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region Projectiles
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
             if (customAi1 >= 10f) {
-                if ((customspawn1 < 12) && Main.rand.Next(1200) == 1) {
+                if ((customspawn1 < 24) && Main.rand.Next(1000) == 1) { //was 2 and 900
                     int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                    npc.ai[0] = 20 - Main.rand.Next(80);
+                    npc.ai[0] = 20 - Main.rand.Next(180); //was 80
                     customspawn1 += 1f;
                     if (Main.netMode != NetmodeID.MultiplayerClient) {
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
@@ -331,7 +331,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
                 if (Main.rand.Next(65) == 1) {
-                    float num48 = 8f;
+                    float num48 = 8f; //was 8f
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                     float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                     float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -342,7 +342,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         speedY *= num51;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.BlackBreath>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
-                        Main.projectile[num54].timeLeft = 20;
+                        Main.projectile[num54].timeLeft = 40;
                         Main.projectile[num54].aiStyle = 1;
                         Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
                         customAi1 = 1f;
