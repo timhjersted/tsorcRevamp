@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.width = 58;
             npc.height = 48;
             npc.aiStyle = 22;
-            npc.damage = 58;
+            npc.damage = 30;
             npc.defense = 15;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath6;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-
+            
             Player p = spawnInfo.player;
             int playerXTile = (int)(p.Bottom.X + 8f) / 16;
             if (p.townNPCs > 0f || p.ZoneMeteor) return 0;
@@ -42,6 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneDungeon) return 0.033f;
             if (tsorcRevampWorld.SuperHardMode && oSky(p)) return 0.025f;
             if (tsorcRevampWorld.SuperHardMode && p.ZoneDungeon) return 0.008f;
+            
             return 0;
         }
 
@@ -67,12 +68,12 @@ namespace tsorcRevamp.NPCs.Enemies {
                     npc.netUpdate = true;
                 }
                 if (chargeDamageFlag == true) {
-                    npc.damage = 115;
+                    npc.damage = 55;
                     chargeDamage++;
                 }
                 if (chargeDamage >= 115) {
                     chargeDamageFlag = false;
-                    npc.damage = 115;
+                    npc.damage = 55;
                     chargeDamage = 0;
                 }
 

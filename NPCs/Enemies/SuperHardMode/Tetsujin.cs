@@ -380,30 +380,30 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void FindFrame(int frameHeight)
         {
-			int frameSize = 1;
 			if (!Main.dedServ)
 			{
-				frameSize = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
-			}
-			if (npc.velocity.X < 0)
-			{
-				npc.spriteDirection = -1;
-			}
-			else
-			{
-				npc.spriteDirection = 1;
-			}
+				int frameSize = 1;
+				frameSize = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]; 
+				if (npc.velocity.X < 0)
+				{
+					npc.spriteDirection = -1;
+				}
+				else
+				{
+					npc.spriteDirection = 1;
+				}
 
-			npc.frameCounter++;
-			if (npc.frameCounter >= 12.0)
-			{
-				npc.frame.Y = npc.frame.Y + frameSize;
-				npc.frameCounter = 0.0;
-			}
-			if (npc.frame.Y >= Main.npcTexture[npc.type].Height)
-			{
-				npc.frame.Y = 0;
-			}
+				npc.frameCounter++;
+				if (npc.frameCounter >= 12.0)
+				{
+					npc.frame.Y = npc.frame.Y + frameSize;
+					npc.frameCounter = 0.0;
+				}
+				if (npc.frame.Y >= Main.npcTexture[npc.type].Height)
+				{
+					npc.frame.Y = 0;
+				}
+			}			
         }
         #region Debuffs
         public override void OnHitPlayer(Player player, int target, bool crit) 

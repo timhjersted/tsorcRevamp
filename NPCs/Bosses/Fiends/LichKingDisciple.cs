@@ -64,11 +64,11 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             despawnHandler.TargetAndDespawn(npc.whoAmI);
             if (OptionSpawned == false)
             {
-                if (Main.netMode == NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
+                    Main.npc[OptionId].velocity.Y = -10;
                 }   
-                Main.npc[OptionId].velocity.Y = -10;
                 OptionSpawned = true;
             }
 
@@ -88,15 +88,15 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 Main.dust[dust].noGravity = true;
             }
 
-            if (Main.netMode != NetmodeID.Server)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (npc.ai[0] >= 5 && npc.ai[2] < 3)
                 {
-                    float num48 = 2f;
-                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+
                     int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>();
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, frozenSawDamage, 0f, Main.myPlayer);
+                    Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 2);
+                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVelocity.X, projectileVelocity.Y, type, frozenSawDamage, 0f, Main.myPlayer);
+
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                     npc.ai[0] = 0;
                     npc.ai[2]++;

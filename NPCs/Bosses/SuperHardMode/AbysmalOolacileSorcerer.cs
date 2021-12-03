@@ -49,8 +49,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			seekerDamage = (int)(seekerDamage / 2);
 		}
 
+		public float DarkBeadShotTimer
+		{
+			get => npc.ai[0];
+			set => npc.ai[0] = value;
+		}
+		public float TeleportTimer
+		{
+			get => npc.ai[1];
+			set => npc.ai[1] = value;
+		}
+		public float DarkBeadShotCounter
+		{
+			get => npc.ai[2];
+			set => npc.ai[2] = value;
+		}
+		public float SecondAttackCounter
+		{
+			get => npc.ai[3];
+			set => npc.ai[3] = value;
+		}
 
-		float customAi5;
+		float NPCSpawningTimer;
 		float customspawn1;
 		float customspawn2;
 		float customspawn3;
@@ -90,149 +110,123 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			#region check if standing on a solid tile
-			// warning: this section contains a return statement
-			if (npc.velocity.Y == 0f) // no jump/fall
-			{
-				int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-				int x_left_edge = (int)npc.position.X / 16;
-				int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
-				for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-				{
-					if (Main.tile[l, y_below_feet] == null) // null tile means ??
-						return;
 
-					if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
-					{
-						break; // one is enough so stop checking
-					}
-				} // END traverse blocks under feet
-			} // END no jump/fall
-			#endregion
+			DarkBeadShotTimer++;
+			TeleportTimer++;
+			SecondAttackCounter++;
 
-
-
-			npc.netUpdate = false;
-			npc.ai[0]++; // Timer Scythe
-			npc.ai[1]++; // Timer Teleport
-						 // npc.ai[2]++; // Shots
-
-			if (npc.life > 900)
+			if (npc.life > npc.lifeMax / 4)
 			{
 				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 210, Color.Black, 2f);
 				Main.dust[dust].noGravity = true;
 			}
-			else if (npc.life <= 900)
+			else
 			{
 				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 140, Color.Black, 3f);
 				Main.dust[dust].noGravity = true;
 			}
 
-
-
-			if (Main.netMode != 1)
+			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				customAi5 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (customAi5 >= 10f)
-				{
-
-					if ((customspawn1 < 200) && Main.rand.Next(130) == 1)
-					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
-						Main.npc[Spawned].velocity.Y = -8;
-						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-						//npc.ai[5] = 20-Main.rand.Next(80);
-						customspawn1 += 1f;
-						if (Main.netMode == 2)
-						{
-							NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-						}
-					}
-					if ((customspawn2 < 2) && Main.rand.Next(3000) == 1)
-					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
-						Main.npc[Spawned].velocity.Y = -8;
-						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-						//npc.ai[5] = 20-Main.rand.Next(80);
-						customspawn2 += 1f;
-						if (Main.netMode == 2)
-						{
-							NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-						}
-					}
-
-
-
-					if ((customspawn3 < 1) && Main.rand.Next(2050) == 1)
-					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
-						Main.npc[Spawned].velocity.Y = -8;
-						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-						//npc.ai[5] = 20-Main.rand.Next(80);
-						customspawn3 += 1f;
-						if (Main.netMode == 2)
-						{
-							NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
-						}
-					}
-				}
-
+				SpawnNPCs();
+				FireProjectiles();
 			}
 
-
-
-			if (Main.netMode != 2)
-			{
-
-
-				if (npc.ai[0] >= 12 && npc.ai[2] < 5) //2 was 12 - 7 was 5
-
-				{
-					float num48 = 7f;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-					float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-					if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-					{
-						float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-						num51 = num48 / num51;
-						speedX *= num51;
-						speedY *= num51;
-						int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>();//44;//0x37; //14;
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkBeadDamage, 0f, Main.myPlayer);
-						Main.projectile[num54].timeLeft = 550;
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-						//customAi5 = 1f;
-						npc.ai[0] = 0;
-						npc.ai[2]++;
-					}
-					npc.netUpdate = true;
-				}
-			}
-
-			if (npc.ai[1] >= 20) //20 was 35 for longer move time
+			if (TeleportTimer >= 20) //How long it should float after teleporting before coming to a stop
 			{
 				npc.velocity.X *= 0.27f;
 				npc.velocity.Y *= 0.17f;
 			}
 
-			if ((npc.ai[1] >= 200 && npc.life > 300) || (npc.ai[1] >= 120 && npc.life <= 300))
+			OolacileTeleport();
+		}
+
+		public void SpawnNPCs()
+        {
+			NPCSpawningTimer += (Main.rand.Next(2, 5) * 0.1f);
+			if (NPCSpawningTimer >= 10f)
+			{
+				if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 200) && Main.rand.Next(130) == 1)
+				{
+					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
+					Main.npc[Spawned].velocity.Y = -8;
+					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+					if (Main.netMode == 2)
+					{
+						NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+						
+					}
+				}
+				if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.Next(3000) == 1)
+				{
+					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
+					Main.npc[Spawned].velocity.Y = -8;
+					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+					customspawn2 += 1f;
+					if (Main.netMode == 2)
+					{
+						NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+					}
+				}
+				if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1) && Main.rand.Next(2050) == 1)
+				{
+					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
+					Main.npc[Spawned].velocity.Y = -8;
+					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
+					customspawn3 += 1f;
+					if (Main.netMode == 2)
+					{
+						NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
+					}
+				}
+			}
+		}
+
+		public void FireProjectiles()
+        {
+			if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
+			{
+				Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 7);
+				Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
+				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+				DarkBeadShotTimer = 0;
+				DarkBeadShotCounter++;
+			}
+
+			if (SecondAttackCounter >= 60) //how often the crystal attack can happen in frames per second
+			{
+				if (Main.rand.Next(20) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+				{
+					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 2);
+					projVelocity.Y -= 520;
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 25);
+					NPCSpawningTimer = 1f;
+					SecondAttackCounter = 0;
+				}
+
+				if (Main.rand.Next(16) == 1)
+				{
+					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					NPCSpawningTimer = 1f;
+				}
+			}
+		}
+
+		public void OolacileTeleport()
+		{
+			if ((TeleportTimer >= 200 && npc.life > npc.lifeMax / 4) || (TeleportTimer >= 120 && npc.life <= npc.lifeMax / 4))
 			{
 				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
-				for (int num36 = 0; num36 < 10; num36++)
+				for (int i = 0; i < 10; i++)
 				{
 					int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 27, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);
 					Main.dust[dust].noGravity = true;
 				}
-				npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
-				npc.ai[2] = 0;
-				npc.ai[1] = 0;
-				
-
-
-
-				//end of W1k's Death code
-
+				DarkBeadShotCounter = 0;
+				TeleportTimer = 0;
 
 				//region teleportation - can't believe I got this to work.. yayyyyy :D lol
 
@@ -242,13 +236,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				int y_blockpos = (int)npc.position.Y / 16; // corner not center
 				int tp_radius = 30; // radius around target(upper left corner) in blocks to teleport into
 				int tp_counter = 0;
-				bool flag7 = false;
+				bool endLoop = false;
 				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 9000000f)
 				{ // far away from target; 4000 pixels = 250 blocks
 					tp_counter = 100;
-					flag7 = false; // always telleport was true for no teleport
+					endLoop = false; // always telleport was true for no teleport
 				}
-				while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
+				while (!endLoop) // loop always ran full 100 time before I added "flag7 = true" below
 				{
 					if (tp_counter >= 100) // run 100 times
 						break; //return;
@@ -269,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 							if (safe_to_stand && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
 							{ //  3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-								// safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && // removed safe enviornment && solid below feet
+							  // safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && // removed safe enviornment && solid below feet
 
 								npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
 								npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet			
@@ -278,110 +272,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 								npc.velocity.X = (float)(Math.Cos(rotation) * 1) * -1;
 								npc.velocity.Y = (float)(Math.Sin(rotation) * 1) * -1;
 
-
-
-
-
-
-
 								npc.netUpdate = true;
 
 								//npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-								flag7 = true; // end the loop (after testing every lower point :/)
-								npc.ai[1] = 0;
+								endLoop = true; // end the loop (after testing every lower point :/)
+								TeleportTimer = 0;
 							}
 						} // END over 17 blocks distant from player...
 					} // END traverse y down to edge of radius
 				} // END try 100 times
-
-
-			}
-
-
-
-			//beginning of Omnir's Ultima Weapon projectile code
-
-
-			npc.ai[3]++;
-
-			if (npc.ai[3] >= 60) //how often the crystal attack can happen in frames per second
-			{
-				if (Main.rand.Next(20) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
-				{
-					float num48 = 2f;
-					Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 520 + (npc.height / 2));
-					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-					float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-					if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-					{
-						float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-						num51 = num48 / num51;
-						speedX *= num51;
-						speedY *= num51;
-						int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>();//44;//0x37; //14;
-						int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, darkOrbDamage, 0f, Main.myPlayer);
-						Main.projectile[num54].timeLeft = 600;
-						Main.projectile[num54].aiStyle = 4;
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 25);
-						customAi5 = 1f;
-						npc.ai[3] = 0; ;
-					}
-
-					npc.netUpdate = true;
-
-
-				}
-
-
-				if (Main.rand.Next(46) == 1)
-				{
-					float num48 = 8f;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-					float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-					if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-					{
-						float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-						num51 = num48 / num51;
-						speedX *= num51;
-						speedY *= num51;
-						int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>();//44;//0x37; //14;
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, seekerDamage, 0f, Main.myPlayer);
-						Main.projectile[num54].timeLeft = 750;
-						//Main.projectile[num54].aiStyle=1;
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-						customAi5 = 1f;
-						npc.ai[1] = 1f;
-					}
-					npc.netUpdate = true;
-				}
-
-
-
-
-
-
-				//if (Main.rand.Next(805)==0) //1 in 805 chance boss will summon an NPC
-				//		  {
-				//	int Random = Main.rand.Next(80);
-				//	int Paraspawn = 0;
-				//if (Random == 0) Paraspawn = NPC.NewNPC((int) Main.player[this.npc.target].position.X-636-this.npc.width/2, (int) Main.player[this.npc.target].position.Y-16-this.npc.width/2, "ParaspriteSpawner", 0);
-				//Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-				//npc.active = true;
-
-				//	}
-
-
-
-
-
-			}
-
-			npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
-			if (npc.ai[3] >= 800) //800 was 600
-			{
-				if (npc.ai[1] == 0) npc.ai[1] = 1;
-				else npc.ai[1] = 0;
 			}
 		}
 
@@ -396,7 +295,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		}
 		public override void FindFrame(int currentFrame)
 		{
-
 			if ((npc.velocity.X > -9 && npc.velocity.X < 9) && (npc.velocity.Y > -9 && npc.velocity.Y < 9))
 			{
 				npc.frameCounter = 0;

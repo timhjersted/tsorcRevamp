@@ -67,12 +67,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 			if (OptionSpawned == false)
 			{
-				OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingDisciple>(), npc.whoAmI);
-				if (Main.netMode == NetmodeID.Server && OptionId < 200)
+				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
+					OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingDisciple>(), npc.whoAmI);
+					Main.npc[OptionId].velocity.Y = -10;
+
 					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
 				}
-				Main.npc[OptionId].velocity.Y = -10;
 				OptionSpawned = true;
 			}
 

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.scale = 2f;
 			projectile.tileCollide = false;
 			projectile.width = 34;
-			projectile.timeLeft = 1500;
+			projectile.timeLeft = 600;
 			Main.projFrames[projectile.type] = 4;
 			projectile.light = 1;
 		}
