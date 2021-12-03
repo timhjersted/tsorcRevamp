@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.defense = 15;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 1200;
+			npc.lifeMax = 1000;
 			npc.knockBackResist = 0;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -364,15 +364,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		public override void OnHitPlayer(Player player, int target, bool crit) 
 		{
 				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 life after several hits
-				player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
+				//player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits	
 			
 
 			if (Main.rand.Next(4) == 0)
 			{
 
 				player.AddBuff(36, 150, false); //broken armor
-				//player.AddBuff(10, 300, false); //invisible
-				player.AddBuff(23, 180, false); //cursed
+				player.AddBuff(BuffID.Chilled, 600, false); //Chilled
+				player.AddBuff(BuffID.Frostburn, 600, false); //Frostburn
 
 			}
 

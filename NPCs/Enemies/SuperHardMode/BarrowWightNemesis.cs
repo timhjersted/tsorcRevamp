@@ -437,11 +437,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			if (Main.rand.Next(2) == 0)
 			{
 
-				player.AddBuff(BuffID.BrokenArmor, 1800, false); //broken armor
-				//player.AddBuff(BuffID.Invisibility, 3600, false); //invisible
-				player.AddBuff(BuffID.Cursed, 300, false); //cursed
+				player.AddBuff(BuffID.BrokenArmor, 600, false); //broken armor
+				player.AddBuff(BuffID.Frostburn, 600, false); //Frostburn
+				player.AddBuff(BuffID.Chilled, 600, false); //Chilled
 				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 life after several hits
-				player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-20 life after several hits
+				player.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false); //-100 life after several hits
 			}
 
 			//	if (Main.rand.Next(8) == 0 && player.statLifeMax > 20) 
