@@ -127,6 +127,7 @@ namespace tsorcRevamp.Items {
                     player.gravDir = 1;
                     player.velocity.X = 0f;
                     player.velocity.Y = 0f;
+                    player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
                     player.fallStart = (int)player.Center.Y;
 
                     for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (destination)

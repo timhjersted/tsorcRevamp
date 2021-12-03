@@ -7,7 +7,8 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override string Texture => "tsorcRevamp/Items/Accessories/PoisonbloodRing";
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("The Ring of Clarity prevents confusion, gravitation disorientation, bleeding, and poisoning. \n+4 HP Regeneration");
+            string defString = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "" : " and 12 defense";
+            Tooltip.SetDefault("The Ring of Clarity prevents confusion, gravitation disorientation, bleeding, and poisoning. \n+4 HP Regeneration" + defString);
         }
         public override void SetDefaults() {
             item.width = 24;
@@ -37,6 +38,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.buffImmune[BuffID.Poisoned] = true;
 
             player.lifeRegen += 4;
+            player.statDefense += ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? 0 : 12;
         }
     }
 }
