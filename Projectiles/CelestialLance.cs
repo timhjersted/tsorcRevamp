@@ -39,10 +39,11 @@ namespace tsorcRevamp.Projectiles {
             if (Main.rand.Next(2) == 0) {
                 if (!hasHealed)
                 {
-                    pOwner.statLife += 30;
-                    pOwner.HealEffect(30, true);
-                    hasHealed = true;
-                }
+					int healAmount = 20;
+					pOwner.statLife += healAmount;
+					pOwner.HealEffect(healAmount, true);
+					hasHealed = true;
+				}
 
             }
 

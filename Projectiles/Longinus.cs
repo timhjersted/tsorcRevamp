@@ -44,8 +44,9 @@ namespace tsorcRevamp.Projectiles
             {
                 if (!hasHealed)
                 {
-                    pOwner.statLife += 30;
-                    pOwner.HealEffect(((int)projectile.Right.X + (int) projectile.Left.X), true);
+                    int healAmount = 20;
+                    pOwner.statLife += healAmount;
+                    pOwner.HealEffect(healAmount, true);
                     hasHealed = true;
                 }
 
