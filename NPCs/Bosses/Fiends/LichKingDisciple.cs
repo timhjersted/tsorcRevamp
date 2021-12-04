@@ -40,20 +40,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             DisplayName.SetDefault("Lich King Disciple");
         }
 
-        //In expert, these numbers will get multiplied by 4 by the game: x2 because of expert mode, and x2 because projectile damage is always doubled
-        int frozenSawDamage = 100;
-        //int crazedPurpleCrushDamage = 27; Projectile is disabled because it made the fight far too messy
+        int frozenSawDamage = 75;
 
-        //We can override this even further on a per-NPC basis here
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.damage = (int)(npc.damage * 1.3 / 2);
             npc.defense = npc.defense += 12;
-            frozenSawDamage = (int)(frozenSawDamage * 1.3 / 2);
-            //crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
         }
-
-
 
         #region AI
         NPCDespawnHandler despawnHandler;
@@ -66,13 +59,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
+                    OptionId = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), npc.whoAmI);
                     Main.npc[OptionId].velocity.Y = -10;
                 }   
                 OptionSpawned = true;
             }
 
-            npc.netUpdate = false;
             npc.ai[0]++; // Timer Scythe
             npc.ai[1]++; // Timer Teleport
                             // npc.ai[2]++; // Shots
@@ -92,10 +84,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (npc.ai[0] >= 5 && npc.ai[2] < 3)
                 {
-
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>();
                     Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 2);
-                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVelocity.X, projectileVelocity.Y, type, frozenSawDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
 
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                     npc.ai[0] = 0;
@@ -117,88 +107,32 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;
                 }
-                npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
-                npc.ai[2] = 0;
+
                 npc.ai[1] = 0;
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
+                npc.ai[2] = 0;
+                
+                Player Pt = Main.player[npc.target];
+                npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
+                npc.position.Y = Pt.position.Y - 65 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
+                npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
+
+                float MinDIST = 300f;
+                float MaxDIST = 600f;
+                Vector2 Diff = npc.position - Pt.position;
+                if (Diff.Length() > MaxDIST)
                 {
-                    npc.TargetClosest(true);
-                }                
-                else
-                {
-                    Player Pt = Main.player[npc.target];
-                    Vector2 NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
-                    Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
-                    npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
-                    npc.position.Y = Pt.position.Y - 65 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
-
-                    float MinDIST = 300f;
-                    float MaxDIST = 600f;
-                    Vector2 Diff = npc.position - Pt.position;
-                    if (Diff.Length() > MaxDIST)
-                    {
-                        Diff *= MaxDIST / Diff.Length();
-                    }
-                    if (Diff.Length() < MinDIST)
-                    {
-                        Diff *= MinDIST / Diff.Length();
-                    }
-                    npc.position = Pt.position + Diff;
-
-                    NC = npc.position + new Vector2(npc.width / 2, npc.height / 2);
-
-                    float rotation = (float)Math.Atan2(NC.Y - PtC.Y, NC.X - PtC.X);
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 12) * -1;
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 12) * -1;
-
-
+                    Diff *= MaxDIST / Diff.Length();
                 }
+                if (Diff.Length() < MinDIST)
+                {
+                    Diff *= MinDIST / Diff.Length();
+                }
+                npc.position = Pt.position + Diff;
+
+                npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Pt.Center, 12);           
             }
 
-            //end of W1k's Death code
-
-            //beginning of Omnir's Ultima Weapon projectile code
-
-            npc.ai[3]++;
-            /** In the original mod, this attack would just never happen at all. With some editing it does, but... it adds so much projectile spam to the fight that i'm leaving it disabled for now.
-            if (npc.ai[3] >= 100) //how often the crystal attack can happen in frames per second
-            {
-                if (Main.rand.Next(2) == 0 && !(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)) //1 in 2 chance boss will use attack when it flies down on top of you
-                {
-                    float num48 = 5f;
-                    Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 470 + (npc.height / 2));
-                    float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                    float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                    float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                    num51 = num48 / num51;
-                    speedX *= num51;
-                    speedY *= num51;
-                    int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-                    int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f);
-                    Main.projectile[num54].timeLeft = 1750;
-                    //Main.projectile[num54].aiStyle = 4;
-                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
-                    npc.ai[3] = 0;
-                }
-
-                if (Main.rand.Next(15) == 0) //1 in 20 chance boss will summon an NPC
-                {
-                    int Random = Main.rand.Next(80);
-                    int Paraspawn = 0;
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.IlluminantBat, 0);
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.IlluminantBat, 0);
-                    Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                    npc.active = true;
-
-                }
-            }**/
-
-            npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
-            if (npc.ai[3] >= 800)
-            {
-                if (npc.ai[1] == 0) npc.ai[1] = 1;
-                else npc.ai[1] = 0;
-            }
+            //end of W1k's Death code            
         }
         #endregion
 

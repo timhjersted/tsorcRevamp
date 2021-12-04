@@ -14,6 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.width = 16;
+            projectile.timeLeft = 600;
         }
 
         public override void AI()

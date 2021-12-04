@@ -71,9 +71,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		}
 
 		float NPCSpawningTimer;
-		float customspawn1;
-		float customspawn2;
-		float customspawn3;
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -111,9 +108,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
 
-			DarkBeadShotTimer++;
-			TeleportTimer++;
-			SecondAttackCounter++;
+			DarkBeadShotTimer++; //Counts up each tick. Used to space out shots
+			TeleportTimer++; //When this hits 200 (120 if low health) the boss teleports
+			SecondAttackCounter++; //When this hits 60 the boss has will begin randomly deciding whether to fire extra projectiles.
 
 			if (npc.life > npc.lifeMax / 4)
 			{
@@ -162,7 +159,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
 					Main.npc[Spawned].velocity.Y = -8;
 					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-					customspawn2 += 1f;
 					if (Main.netMode == 2)
 					{
 						NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
@@ -173,7 +169,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
 					Main.npc[Spawned].velocity.Y = -8;
 					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-					customspawn3 += 1f;
 					if (Main.netMode == 2)
 					{
 						NetMessage.SendData(23, -1, -1, null, Spawned, 0f, 0f, 0f, 0);
@@ -193,9 +188,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				DarkBeadShotCounter++;
 			}
 
-			if (SecondAttackCounter >= 60) //how often the crystal attack can happen in frames per second
+			if (SecondAttackCounter >= 60)
 			{
-				if (Main.rand.Next(20) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
+				if (Main.rand.Next(20) == 0)
 				{
 					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 2);
 					projVelocity.Y -= 520;
