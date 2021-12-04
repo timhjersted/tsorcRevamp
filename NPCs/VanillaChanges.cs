@@ -1835,6 +1835,19 @@ namespace tsorcRevamp.NPCs {
 
         #endregion
 
+        public override void PostAI(NPC npc) {
+            if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye) {
+                if (Main.netMode == NetmodeID.SinglePlayer) {
+                    if (Main.player[0].dead) {
+                        //Main.NewText("geeet dunked on");
+                        npc.life = 0;
+                        npc.HitEffect();
+                        npc.active = false; 
+                    }
+                }
+            }
+        }
+
         public override bool CheckDead(NPC npc) {
             if (npc.type == NPCID.LavaSlime) {
                 try {
