@@ -17,6 +17,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.aiStyle = 0;
         }
         public override void AI() {
+            if (projectile.ai[0] != 0)
+            {
+                projectile.timeLeft = (int)projectile.ai[0];
+                projectile.ai[0] = 0;
+            }
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
                 Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);

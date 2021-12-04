@@ -43,97 +43,54 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Fire Fiend Marilith");
 		}
 
-		int lightningDamage = 75;
-		int antiMatterBlastDamage = 150;
-		int crazedPurpleCrushDamage = 110;
+		int lightningDamage = 90;
+		int antiMatterBlastDamage = 65;
+		int crazedPurpleCrushDamage = 80;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
 			npc.defense = npc.defense += 12;
-			lightningDamage = (int)(lightningDamage * 1.3 / 2);
-			antiMatterBlastDamage = (int)(antiMatterBlastDamage * 1.3 / 2);
-			crazedPurpleCrushDamage = (int)(crazedPurpleCrushDamage * 1.3 / 2);
 		}
 
 		#region AI
 		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			bool flag25 = false;
-			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-			if (npc.ai[1] >= 10f)
+		
+			if (npc.ai[1] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				if ((Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) || !(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
-				{
-					if (Main.rand.Next(70) == 1)
-					{
-						float num48 = 9f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 21);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 21);
-
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 60;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(220) == 1)
-					{
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2((npc.position.X + ((((npc.width + 50) * 5f) * (npc.direction * 2)) / 20f) + 130), npc.position.Y + (npc.height - 75));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 21);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 21);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							//(int) (14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 150;
-							//Main.projectile[num54].aiStyle = 9;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(20) == 1)
-					{
-						float num48 = 11f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 50) / 100;
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 50) / 100;
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							//(int) (14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 150;
-							//Main.projectile[num54].aiStyle = 19;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
+				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+				if (Main.rand.Next(70) == 1)
+				{						
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 15);
+					projVector += Main.rand.NextVector2Circular(5, 5);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer, Main.rand.Next(30, 180));
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					npc.ai[1] = 1f;
 				}
+				if (Main.rand.Next(220) == 1)
+				{						
+					Vector2 startVector = new Vector2((npc.position.X + ((((npc.width + 50) * 5f) * (npc.direction * 2)) / 20f) + 130), npc.position.Y + (npc.height - 75));
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(startVector, Main.player[npc.target].Center, 8);
+					projVector += Main.rand.NextVector2Circular(7, 7);
+					projVector += Main.player[npc.target].velocity / 2;
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), antiMatterBlastDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					npc.ai[1] = 1f;						
+				}
+				if (Main.rand.Next(20) == 1)
+				{						
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
+					projVector += Main.rand.NextVector2Circular(3, 3);
+					projVector += Main.player[npc.target].velocity / 2;
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), crazedPurpleCrushDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					npc.ai[1] = 1f;						
+				}				
 			}
+
 			if (npc.justHit)
 			{
 				npc.ai[2] = 0f;

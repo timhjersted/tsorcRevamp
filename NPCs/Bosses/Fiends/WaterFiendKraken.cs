@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 90000;
+			npc.lifeMax = 200000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -43,20 +43,17 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Water Fiend Kraken");
 		}
 
-		int cursedFlamesDamage = 110;
-		int plasmaOrbDamage = 150;
-		int hypnoticDisruptorDamage = 85;
+		public float ChargeTimer = 0;
+		
+		int cursedFlamesDamage = 45;
+		int plasmaOrbDamage = 75;
+		int hypnoticDisruptorDamage = 35;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage * 1.3 / 2);
 			npc.defense = npc.defense += 12;
-			cursedFlamesDamage = (int)(cursedFlamesDamage * 1.3 / 2);
-			plasmaOrbDamage = (int)(plasmaOrbDamage * 1.3 / 2);
-			hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage * 1.3 / 2);
 		}
 
-
-		int chargeDamage = 0;
 		bool chargeDamageFlag = false;
 		NPCDespawnHandler despawnHandler;
 
@@ -66,120 +63,61 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
 
 			bool flag25 = false;
-			npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-			if (npc.ai[1] >= 10f)
+			ChargeTimer++;
+			if (ChargeTimer >= 800)
 			{
-				npc.TargetClosest(true);
-				if (Main.rand.Next(650) == 1)
-				{
-					chargeDamageFlag = true;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-					npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
-					npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
-					npc.ai[1] = 1f;
-					npc.netUpdate = true;
-				}
-				if (chargeDamageFlag == true)
-				{
-					npc.damage = 90;
-					chargeDamage++;
-				}
-				if (chargeDamage >= 50)
-				{
-					chargeDamageFlag = false;
-					npc.damage = 60;
-					chargeDamage = 0;
-				}
-				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) || !(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
-				{
-					if (Main.rand.Next(15) == 1)
-					{
-						float num48 = 10f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;//(14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, cursedFlamesDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 1600;
-							Main.projectile[num54].aiStyle = 8;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(200) == 1)
-					{
-						float num48 = 10f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X);// + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y);// + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;//(int) (14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, plasmaOrbDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 1500;
-							//Main.projectile[num54].aiStyle = 4;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-
-
-
-						}
-						npc.netUpdate = true;
-					}
-
-
-
-
-
-					if (Main.rand.Next(40) == 0) //1 in 20 chance boss will summon an NPC
-					{
-						int Random = Main.rand.Next(80);
-						int Paraspawn = 0;
-						if (Random == 5) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 216 - this.npc.width / 2, ModContent.NPCType<Enemies.Parasprite>(), 0);
-						if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
-						if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y + 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
-						Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-						npc.active = true;
-
-					}
-
-
-
-					if (Main.rand.Next(750) == 1)
-					{
-						float num48 = 5f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;//(int) (14f * npc.scale);
-							int type = ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, hypnoticDisruptorDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 1020;
-							Main.projectile[num54].aiStyle = 4;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-				}
+				int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
+				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
 			}
+			if (ChargeTimer >= 900)
+			{				
+				chargeDamageFlag = true;
+				npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 14);
+				ChargeTimer = 1f;
+				npc.netUpdate = true;				
+			}
+			if (chargeDamageFlag == true)
+			{
+				npc.damage = 90;
+			}
+			if (Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 20)
+			{
+				chargeDamageFlag = false;
+				npc.damage = 65;
+			}
+
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				if (Main.rand.Next(50) == 1)
+				{						
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
+					projVector += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+				}
+				if (Main.rand.Next(120) == 1 && !chargeDamageFlag)
+				{						
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 15);
+					projVector += (Main.player[npc.target].velocity / 2);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+				}
+				if (Main.rand.Next(200) == 1)
+				{
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
+					projVector += Main.rand.NextVector2Circular(10, 10);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+				}
+
+				if (Main.rand.Next(900) == 0)
+				{
+					NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
+					NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y + 216 - this.npc.width / 2, NPCID.CursedHammer, 0);						
+				}					
+			}
+			
+
 			if (npc.justHit)
 			{
 				npc.ai[2] = 0f;
@@ -226,7 +164,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					npc.ai[1] = npc.position.Y;
 					npc.ai[2] = 0f;
 				}
-				npc.TargetClosest(true);
 			}
 			else
 			{

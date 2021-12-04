@@ -14,10 +14,10 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.height = 16;
             projectile.alpha = 150;
             projectile.aiStyle = 8;
-            projectile.timeLeft = 3600;
+            projectile.timeLeft = 600;
             projectile.damage = 70;
             projectile.light = 0.8f;
-            projectile.penetrate = 2;
+            projectile.penetrate = 1;
             projectile.tileCollide = true;
             projectile.hostile = true;
             aiType = 96;
