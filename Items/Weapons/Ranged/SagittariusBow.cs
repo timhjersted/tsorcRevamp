@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
                 item.channel = true;
 
-                item.damage = 477;
+                item.damage = 548;
                 item.width = 14;
                 item.height = 28;
                 item.useTime = 60;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 item.rare = ItemRarityID.LightPurple;
                 item.UseSound = SoundID.Item7;
 
-                item.shootSpeed = 20f;
+                item.shootSpeed = 21f;
             }
         }
 

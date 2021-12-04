@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
             item.channel = true;
 
-            item.damage = 722; 
+            item.damage = 795; 
             item.width = 24;
             item.height = 48;
             item.useTime = 48; 
@@ -43,9 +43,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ModContent.ItemType<SagittariusBow>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 25);
+            recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 15);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

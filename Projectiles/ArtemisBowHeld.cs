@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles {
                 //update character visuals while aiming
                 {
                     Vector2 aimVector = Vector2.Normalize(Main.MouseWorld - playerHandPos);
-                    aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.3f)); //taken straight from RedLaserBeam, thanks past me!
+                    aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.6f)); //taken straight from RedLaserBeam, thanks past me!
                     aimVector *= 24;
                     if (aimVector != projectile.velocity) {
                         projectile.netUpdate = true; //update the bow visually to other players when we change aim
