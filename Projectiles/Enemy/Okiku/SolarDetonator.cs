@@ -134,6 +134,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             return true;
         }
 
+        static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/SolarDetonator");
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -142,7 +143,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/SolarDetonator");
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

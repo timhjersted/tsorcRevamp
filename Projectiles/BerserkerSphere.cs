@@ -9,7 +9,6 @@ namespace tsorcRevamp.Projectiles {
 
     public class BerserkerSphere : ModProjectile {
 
-        private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Berserker Sphere");
@@ -149,12 +148,12 @@ namespace tsorcRevamp.Projectiles {
 
             return false;
         }
-
+        private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
+        static Texture2D chainTexture = ModContent.GetTexture(ChainTexturePath);
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {
             var player = Main.player[projectile.owner];
 
             Vector2 mountedCenter = player.MountedCenter;
-            Texture2D chainTexture = ModContent.GetTexture(ChainTexturePath);
 
             var drawPosition = projectile.Center;
             var remainingVectorToPlayer = mountedCenter - drawPosition;

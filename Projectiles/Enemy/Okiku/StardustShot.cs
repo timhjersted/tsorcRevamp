@@ -48,8 +48,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             }
 
             projectile.velocity.X *= .95f;
-            projectile.velocity.Y *= .95f;            
+            projectile.velocity.Y *= .95f;
         }
+        static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot");
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -57,7 +58,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot");
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

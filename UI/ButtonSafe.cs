@@ -10,9 +10,10 @@ namespace tsorcRevamp.UI
     {
         //Color color = new Color(50, 255, 153);
 
+        static Texture2D texture = ModContent.GetTexture("tsorcRevamp/UI/ButtonSafe");
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(ModContent.GetTexture("tsorcRevamp/UI/ButtonSafe"), new Vector2(Main.screenWidth + 90, Main.screenHeight - 20) / 2f, default);
+            spriteBatch.Draw(texture, new Vector2(Main.screenWidth + 90, Main.screenHeight - 20) / 2f, default);
         }
     }
 }

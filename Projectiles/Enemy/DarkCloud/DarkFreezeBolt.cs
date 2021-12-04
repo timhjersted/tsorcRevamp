@@ -74,9 +74,10 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud {
             return false;
         }
 
+        static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile);
+            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile, ref texture);
             return false;
         }
     }

@@ -35,8 +35,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 projectile.velocity.Y *= 1.02f;
             }
         }
-        
+
         //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
+        static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -45,7 +46,6 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

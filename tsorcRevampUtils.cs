@@ -174,8 +174,8 @@ namespace tsorcRevamp {
         ///</summary>         
         ///<param name="spriteBatch">The currently open SpriteBatch</param>
         ///<param name="projectile">The projectile to be drawn</param>
-        ///<param name="texture">The texture to be drawn. Defaults to the projectile's texture.</param>
-        public static void DrawSimpleLitProjectile(SpriteBatch spriteBatch, Projectile projectile, Texture2D texture = null)
+        ///<param name="texture">An empty static Texture2D variable that this function can use to cache the projectile's texture.</param>
+        public static void DrawSimpleLitProjectile(SpriteBatch spriteBatch, Projectile projectile, ref Texture2D texture)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
@@ -183,7 +183,7 @@ namespace tsorcRevamp {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
 
-            if (texture == null)
+            if(texture == null)
             {
                 texture = ModContent.GetTexture(projectile.modProjectile.Texture);
             }

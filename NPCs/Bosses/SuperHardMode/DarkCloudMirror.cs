@@ -258,12 +258,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (AttackModeCounter >= 80 || MirrorAttackType != DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
-                Texture2D texture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
-                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / Main.npcFrameCount[npc.type]);
+                Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[npc.type]);
                 Vector2 origin = sourceRectangle.Size() / 2f;
                 SpriteEffects spriteEffects = SpriteEffects.None;
                 if (npc.spriteDirection == 1)
@@ -272,7 +272,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 for (float i = TRAIL_LENGTH - 1; i >= 0; i--)
                 {
-                    Main.spriteBatch.Draw(texture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(darkCloudTexture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
 
                 return true;
@@ -293,6 +293,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         #region Draw Functions
 
+        static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             float targetPoint = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation();
@@ -304,11 +305,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             
 
-            Texture2D texture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle sourceRectangle = new Rectangle(0, 0, antimatTexture.Width, antimatTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
             SpriteEffects theseEffects = (npc.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
+            Main.spriteBatch.Draw(antimatTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
         }
         #endregion
 

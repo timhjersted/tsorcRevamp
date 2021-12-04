@@ -193,53 +193,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 else
                 {
                     CurrentMove  = new DarkCloudMove(DragoonLanceMove, DragoonLanceAttack, DarkCloudAttackID.DragoonLance, "Dragoon Lance");
-                    if(Main.netMode == NetmodeID.Server)
-                    {
-                        //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
-                        //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
-                        //More importantly, it will also lets us know for sure what is happening.
-                        UsefulFunctions.ServerText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
-                        UsefulFunctions.ServerText("Relevant data: Netmode: Server nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
-                        if (ActiveMoveList != null)
-                        {
-                            UsefulFunctions.ServerText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
-                        }
-                        else
-                        {
-                            UsefulFunctions.ServerText("ActiveMoveList :" + "NULL!", Color.Red);
-                        }
-                    }
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
-                    {
-                        //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
-                        //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
-                        //More importantly, it will also lets us know for sure what is happening.
-                        Main.NewText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
-                        Main.NewText("Relevant data: Netmode: Client nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
-                        if (ActiveMoveList != null)
-                        {
-                            Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
-                        }
-                        else
-                        {
-                            Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
-                        }
-                    }
-                    if (Main.netMode == NetmodeID.SinglePlayer)
-                    {
-                        //This shouldn't happen. It's never happened during testing. The same *was* supposed to be true of the above too, though. I'm adding it just in-case.
-                        Main.NewText("tsorcRevamp ERROR: Dark Cloud Move not set! Please report this!!", Color.Red);
-                        Main.NewText("Relevant data: nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
-                        if (ActiveMoveList != null)
-                        {
-                            Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
-                        }
-                        else
-                        {
-                            Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
-                        }
-
-                    }
+                    CurrentMoveDebug();
                 }
                 AttackModeCounter++;
             }
@@ -250,6 +204,57 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }        
 
+        //Temp function for until I can solve this once and for all.
+        void CurrentMoveDebug()
+        {
+            if (Main.netMode == NetmodeID.Server)
+            {
+                //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
+                //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
+                //More importantly, it will also lets us know for sure what is happening.
+                UsefulFunctions.ServerText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
+                UsefulFunctions.ServerText("Relevant data: Netmode: Server nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
+                if (ActiveMoveList != null)
+                {
+                    UsefulFunctions.ServerText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
+                }
+                else
+                {
+                    UsefulFunctions.ServerText("ActiveMoveList :" + "NULL!", Color.Red);
+                }
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
+                //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
+                //More importantly, it will also lets us know for sure what is happening.
+                Main.NewText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
+                Main.NewText("Relevant data: Netmode: Client nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
+                if (ActiveMoveList != null)
+                {
+                    Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
+                }
+                else
+                {
+                    Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
+                }
+            }
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                //This shouldn't happen. It's never happened during testing. The same *was* supposed to be true of the above too, though. I'm adding it just in-case.
+                Main.NewText("tsorcRevamp ERROR: Dark Cloud Move not set! Please report this!!", Color.Red);
+                Main.NewText("Relevant data: nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
+                if (ActiveMoveList != null)
+                {
+                    Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
+                }
+                else
+                {
+                    Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
+                }
+
+            }
+        }
         //Randomly pick a new unused attack and reset attack variables
         void ChangeAttacks()
         {           
@@ -271,6 +276,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Main.NewText("Move failed to set! NextAttackMode " + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
                     }
                 }
+                if(CurrentMove == null)
+                {
+                    CurrentMoveDebug();
+                }
+
                 //If there's no moves left in the list, refill it   
                 if (ActiveMoveList.Count == 0)
                 {      
@@ -1819,7 +1829,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InitializeMoves();
                 if (testAttack == -1)
                 {
-                    ChangeAttacks();
+                    ChangeAttacks(); 
+                    if (CurrentMove == null)
+                    {
+                        CurrentMoveDebug();
+                    }
                 }
                 else
                 {
@@ -1956,10 +1970,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            Texture2D texture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / Main.npcFrameCount[npc.type]);
+            Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[npc.type]);
             Vector2 origin = sourceRectangle.Size() / 2f;
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
@@ -1968,7 +1982,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             for (float i = TRAIL_LENGTH - 1; i >= 0 ; i--)
             {
-                Main.spriteBatch.Draw(texture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(darkCloudTexture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
             }
            
             return true;
@@ -1983,6 +1997,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         #region Draw Functions
+        static Texture2D darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
         public void DivineSparkDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             float targetPoint;
@@ -2014,12 +2029,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
             //targetPoint = initialTargetRotation;
-            Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle sourceRectangle = new Rectangle(0, 0, darkSparkTexture.Width, darkSparkTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(darkSparkTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, SpriteEffects.None, 0f);
         }
 
+        static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             float targetPoint = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation();
@@ -2031,13 +2046,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             
 
-            Texture2D texture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle sourceRectangle = new Rectangle(0, 0, antimatTexture.Width, antimatTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
             SpriteEffects theseEffects = (npc.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
+            Main.spriteBatch.Draw(antimatTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
         }
 
+        static Texture2D cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
         public void ArrowRainDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             float targetPoint = arrowRainTargetingVector.ToRotation();
@@ -2049,12 +2064,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-
-            Texture2D texture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Rectangle sourceRectangle = new Rectangle(0, 0, cernosTexture.Width, cernosTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
             SpriteEffects theseEffects = (npc.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
+            Main.spriteBatch.Draw(cernosTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
         }
         #endregion
 

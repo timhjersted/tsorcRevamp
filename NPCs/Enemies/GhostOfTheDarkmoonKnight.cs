@@ -566,6 +566,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             #endregion
         }
         #endregion
+
+        static Texture2D darkKnightGlow = ModContent.GetTexture("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor) {
 
             int spriteWidth = npc.frame.Width; //use same number as ini frameCount
@@ -589,7 +591,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 //draw 3 levels of trail
                 int alphaVal = 255 - (1 * i);
                 Color modifiedColour = new Color((int)(alphaVal), (int)(alphaVal), (int)(alphaVal), alphaVal);
-                spriteBatch.Draw(ModContent.GetTexture("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow"),
+                spriteBatch.Draw(darkKnightGlow,
                     new Rectangle((int)(offsetX), (int)(offsetY), spriteWidth, spriteHeight),
                     new Rectangle(0, npc.frame.Height * frame, spriteWidth, spriteHeight),
                     modifiedColour,

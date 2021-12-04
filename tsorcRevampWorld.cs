@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Input;
 using Terraria.GameContent.NetModules;
 using Terraria.Localization;
 using System.IO;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -165,8 +166,17 @@ namespace tsorcRevamp {
                 } 
             }
         }
+        Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
+        Texture2D SHMSun2 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun2");
+        Texture2D SHMSun3 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
+        Texture2D SHMMoon = ModContent.GetTexture("tsorcRevamp/Textures/SHMMoon");
+        Texture2D VanillaSun1 = ModContent.GetTexture("Terraria/Sun");
+        Texture2D VanillaSun2 = ModContent.GetTexture("Terraria/Sun2");
+        Texture2D VanillaSun3 = ModContent.GetTexture("Terraria/Sun3");
+        List<Texture2D> VanillaMoonTextures;
 
         public override void PostUpdate() {
+            
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 CampfireToBonfire();
             bool charm = false;
@@ -191,18 +201,26 @@ namespace tsorcRevamp {
             if (!Main.dedServ) {
                 if (SuperHardMode) {
                     for (int i = 0; i < Main.moonTexture.Length; i++) {
-                        Main.moonTexture[i] = mod.GetTexture("Textures/SHMMoon");
+                        Main.moonTexture[i] = SHMMoon;
                     }
-                    Main.sunTexture = mod.GetTexture("Textures/SHMSun1");
-                    Main.sun2Texture = mod.GetTexture("Textures/SHMSun2");
-                    Main.sun3Texture = mod.GetTexture("Textures/SHMSun1");
+                    Main.sunTexture = SHMSun1;
+                    Main.sun2Texture = SHMSun2;
+                    Main.sun3Texture = SHMSun3;
                 }
                 if (TheEnd) { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
-                    Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
-                    Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
-                    Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
+                    Main.sunTexture = VanillaSun1;
+                    Main.sun2Texture = VanillaSun2;
+                    Main.sun3Texture = VanillaSun3;
+                    if (VanillaMoonTextures == null)
+                    {
+                        VanillaMoonTextures = new List<Texture2D>();
+                        for (int i = 0; i < Main.moonTexture.Length; i++)
+                        {
+                            VanillaMoonTextures.Add(ModContent.GetTexture("Terraria/Moon_" + i));
+                        }
+                    }
                     for (int i = 0; i < Main.moonTexture.Length; i++) {
-                        Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+                        Main.moonTexture[i] = VanillaMoonTextures[i];
                     }
                 }
             }

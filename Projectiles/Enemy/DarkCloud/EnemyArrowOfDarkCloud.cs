@@ -33,9 +33,10 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
+        static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile);
+            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile, ref texture);
             return false;
         }
 
