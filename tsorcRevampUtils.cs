@@ -311,6 +311,7 @@ namespace tsorcRevamp {
             }
         }
 
+
         ///<summary> 
         ///Spawns a client-side instanced item similar to treasure bags. Safe to use in single-player, where it simply drops the item normally.
         ///</summary>         

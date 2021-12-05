@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-	class EnemySpellGreatFireballBall : ModProjectile
+	class EnemySpellGreatFireballBall  : ModProjectile
 	{
 
 		public override void SetStaticDefaults()
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.timeLeft = 0;
 			{
 				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-				if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnemySpellGreatFireball>(), 150, 6f, projectile.owner);
+				if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnemySpellGreatFireball>(), projectile.damage, 6f, projectile.owner);
 				Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
 				int arg_1394_1 = projectile.width;
 				int arg_1394_2 = projectile.height;

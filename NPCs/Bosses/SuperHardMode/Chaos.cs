@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			npc.defense = 80;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lifeMax = 80000;
+			npc.lifeMax = 800000;
 			npc.knockBackResist = 0;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -36,7 +36,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 		}
 
-
 		int fireBreathDamage = 48;
 		int iceStormDamage = 53;
 		int greatFireballDamage = 49;
@@ -50,336 +49,45 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage / 2);
-			fireBreathDamage = (int)(fireBreathDamage / 2);
-			iceStormDamage = (int)(iceStormDamage / 2);
-			greatFireballDamage = (int)(greatFireballDamage / 2);
-			blazeBallDamage = (int)(blazeBallDamage / 2);
-			purpleCrushDamage = (int)(purpleCrushDamage / 2);
-			meteorDamage = (int)(meteorDamage / 2);
-			tornadoDamage = (int)(tornadoDamage / 2);
-			obscureSeekerDamage = (int)(obscureSeekerDamage / 2);
-			crystalFireDamage = (int)(crystalFireDamage / 2);
-			fireTrailsDamage = (int)(fireTrailsDamage / 2);
 		}
 
-		//float customAi1;
-		int choasHealed = 0;
-		//float customspawn1 = 0;
-		int chargeDamage = 0;
+		int chaosHealed = 0;
 		bool chargeDamageFlag = false;
 		int holdTimer = 0;
+
+		int chargeTimer = 0;
 
 		#region AI
 		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			holdTimer--;
-			if (holdTimer < 0)
+			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0f);
+
+			if (holdTimer > 0)
 			{
-				holdTimer = 0;
+				holdTimer--;
 			}
-			if (Main.netMode != 1)
+			if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 1000)
 			{
-				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (npc.ai[1] >= 10f)
+				npc.defense = 9999;
+				if (holdTimer <= 0)
 				{
-					if (((npc.position.X > Main.player[npc.target].position.X && (npc.position.X - Main.player[npc.target].position.X >= 1000))
-					|| (npc.position.X < Main.player[npc.target].position.X && (Main.player[npc.target].position.X - npc.position.X >= 1000))
-					|| (npc.position.Y > Main.player[npc.target].position.Y && (npc.position.Y - Main.player[npc.target].position.Y >= 1000))
-					|| (npc.position.Y < Main.player[npc.target].position.Y && (Main.player[npc.target].position.Y - npc.position.Y >= 1000))))
-					{
-						npc.defense = 9999;
-						if (holdTimer <= 0)
-						{
-							Main.NewText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
-							holdTimer = 200;
-						}
-					}
-					else
-					{
-						npc.defense = 80;
-					}
-					if (Main.rand.Next(180) == 1)
-					{
-						chargeDamageFlag = true;
-
-						//npc.netUpdate=true;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-						npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
-						npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
-						npc.ai[1] = 1f;
-						npc.netUpdate = true;
-					}
-					if (chargeDamageFlag == true)
-					{
-						npc.damage = 120;
-						chargeDamage++;
-					}
-					if (chargeDamage >= 81)
-					{
-						chargeDamageFlag = false;
-						npc.damage = 80;
-						chargeDamage = 0;
-					}
-					//npc.netUpdate=true; 
-
-
-					if (Main.rand.Next(90) == 1)
-					{
-						float num48 = 9f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.FireBreath>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireBreathDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 550;
-							Main.projectile[num54].aiStyle = 23;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							//customAi1 = 1f;
-						}
-						npc.netUpdate = true;
-					}
-
-
-					if (Main.rand.Next(500) == 1)
-					{
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 0;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(500) == 1)
-					{
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, greatFireballDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 70;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(1000) == 1)
-					{
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blazeBallDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 0;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(1200) == 1)
-					{
-						float num48 = 11f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, purpleCrushDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 700;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-
-					if (Main.rand.Next(205) == 1)
-					{
-						Projectile.NewProjectile(
-						(float)Main.player[npc.target].position.X - 100 + Main.rand.Next(300),
-						(float)Main.player[npc.target].position.Y - 530.0f,
-						(float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f);
-					}
-
-					if (Main.rand.Next(500) == 1)
-					{
-						float num48 = 15f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellTornado>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, tornadoDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 900;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(220) == 1)
-					{
-						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, obscureSeekerDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 450;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(50) == 1)
-					{
-						float num48 = 1f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y - 300 + (npc.height / 2));
-						float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-						rotation += Main.rand.Next(-50, 50) / 100;
-						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
-
-
-
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-						npc.ai[1] = 1f;
-					}
-					npc.netUpdate = true;
+					Main.NewText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
+					holdTimer = 200;
 				}
-				if (Main.rand.Next(7) == 1)
+				else
 				{
-					if (Main.rand.Next(5) == 1)
-					{
-						float num48 = 16f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-						{
-							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-							num51 = num48 / num51;
-							speedX *= num51;
-							speedY *= num51;
-							int type = ModContent.ProjectileType<Projectiles.Enemy.FireTrails>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireTrailsDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 700;
-							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
-						}
-						npc.netUpdate = true;
-					}
-					if (npc.life <= 10000)
-					{
-						if (choasHealed == 0)
-						{
-							if (Main.rand.Next(2) == 1)
-							{
-								npc.life += 40000;
-								if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-								float num48 = 8f;
-								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-								float speedX = 0;
-								float speedY = 0;
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= 0;
-								speedY *= 0;
-								int damage = 0;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 0;
-								Main.projectile[num54].aiStyle = 1;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 4);
-								npc.ai[1] = 1f;
-								npc.netUpdate = true;
-								choasHealed += 1;
-							}
-						}
-					}
-					if (npc.life <= 6000)
-					{
-						if (choasHealed >= 1 && choasHealed <= 3)
-						{
-							if (Main.rand.Next(500) == 1)
-							{
-								npc.life += 15000;
-								if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-								float num48 = 8f;
-								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-								float speedX = 0;
-								float speedY = 0;
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= 0;
-								speedY *= 0;
-								int damage = 0;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 0;
-								Main.projectile[num54].aiStyle = 1;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 4);
-								npc.ai[1] = 1f;
-								npc.netUpdate = true;
-								choasHealed += 1;
-							}
-						}
-					}
+					npc.defense = 80;
 				}
 			}
+
+			ClientSideAttacks();
+			if (Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				NonClientAttacks();
+			}
+
 			if (npc.justHit)
 			{
 				npc.ai[2] = 0f;
@@ -464,8 +172,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					npc.velocity.X = -1f;
 				}
-
-				npc.netUpdate = true;
 			}
 			if (npc.collideY)
 			{
@@ -478,8 +184,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					npc.velocity.Y = -1f;
 				}
-
-				npc.netUpdate = true;
 			}
 			float num270 = 2.5f;
 			if (npc.direction == -1 && npc.velocity.X > -num270)
@@ -500,8 +204,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					npc.velocity.X = -num270;
 				}
-
-				npc.netUpdate = true;
 			}
 			else
 			{
@@ -523,7 +225,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					{
 						npc.velocity.X = num270;
 					}
-					npc.netUpdate = true;
 				}
 			}
 			if (npc.directionY == -1 && (double)npc.velocity.Y > -2.5)
@@ -544,8 +245,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					npc.velocity.Y = -2.5f;
 				}
-
-				npc.netUpdate = true;
 			}
 			else
 			{
@@ -567,14 +266,143 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					{
 						npc.velocity.Y = 2.5f;
 					}
-					npc.netUpdate = true;
 				}
-			}			
-			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0f);
-			return;
+			}
 		}
 		#endregion
 
+
+		//Projectile spawning code must not run for every single multiplayer client
+		void NonClientAttacks()
+        {
+			npc.ai[1] += 0.35f;
+			if (npc.ai[1] >= 10f)
+			{
+				if (Main.rand.Next(90) == 1)
+				{					
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 9);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(500) == 1)
+				{					
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(500) == 1)
+				{
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(1000) == 1)
+				{
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(300) == 1)
+				{					
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+
+				if (Main.rand.Next(205) == 1)
+				{
+					Projectile.NewProjectile(Main.player[npc.target].position.X - 100 + Main.rand.Next(300), Main.player[npc.target].position.Y - 530.0f,(float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f, Main.myPlayer);
+				}
+
+				if (Main.rand.Next(1200) == 1)
+				{					
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 4);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellTornado>(), tornadoDamage, 0f, Main.myPlayer, npc.target);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(220) == 1)
+				{					
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(50) == 1)
+				{					
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+				if (Main.rand.Next(120) == 1)
+				{
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
+					projTarget += Main.rand.NextVector2Circular(3, 3);
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					npc.ai[1] = 1f;
+				}
+			}			
+		}
+
+		//Healing and dashing code must be deterministic and must run on every client
+		void ClientSideAttacks()
+        {
+			chargeTimer++;
+			if (chargeTimer >= 480)
+			{
+				chargeTimer = 0;
+				chargeDamageFlag = true;
+				npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 14) + Main.player[npc.target].velocity;
+			}
+			if (chargeDamageFlag == true)
+			{
+				npc.damage = 120;
+			}
+			if (Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 20)
+			{
+				chargeDamageFlag = false;
+				npc.damage = 80;
+			}
+			
+			if (npc.life <= npc.lifeMax / 3)
+			{				
+				if (chaosHealed >= 1 && chaosHealed <= 3)
+				{
+					if (Main.rand.Next(500) == 1)
+					{
+						if (chaosHealed == 0)
+						{
+							UsefulFunctions.ServerText("Chaos has begun to heal itself...", Color.Yellow);
+						}
+						else
+                        {
+							UsefulFunctions.ServerText("Chaos continues to heal itself...", Color.Yellow);
+						}
+						npc.life += npc.lifeMax / 6;
+						if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 4);
+						npc.netUpdate = true;
+						chaosHealed += 1;
+					}
+				}
+			}
+		}
 		#region Frames
 		public override void FindFrame(int currentFrame)
 		{
