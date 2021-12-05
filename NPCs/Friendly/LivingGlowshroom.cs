@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Friendly
 			npc.knockBackResist = 1;
 			npc.defense = 4;
 			npc.lifeMax = 28;
-			npc.HitSound = mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak");
-			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/SadSqueak");
+			npc.HitSound = SoundID.NPCHit1;
+			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 0;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.noGravity = false;
@@ -109,13 +109,13 @@ namespace tsorcRevamp.NPCs.Friendly
 					if (npc.direction == -1) //right-facing bump
 					{
 						npc.velocity += new Vector2(-1f, 0);
-						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						//if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
 						npc.netUpdate = true;
 					}
 					if (npc.direction == 1) //left-facing bump
 					{
 						npc.velocity += new Vector2(1f, 0);
-						if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						//if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
 						npc.netUpdate = true;
 					}
 				}
