@@ -6,6 +6,7 @@ using Terraria.GameContent.NetModules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.Fiends;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -94,6 +95,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
+
+			bool tooEarly = !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<EarthFiendLich>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<FireFiendMarilith>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<WaterFiendKraken>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Blight>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Chaos>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<GhostWyvernMage.WyvernMageShadow>());
+			if (tooEarly) {
+				deathBallDamage = 10000;
+				phantomSeekerDamage = 10000;
+				armageddonBallDamage = 10000;
+				holdBallDamage = 10000;
+				fireballBallDamage = 10000;
+				blazeBallDamage = 10000;
+				blackBreathDamage = 10000;
+				purpleCrushDamage = 10000;
+				fireBreathDamage = 10000;
+				iceStormDamage = 10000;
+				gravityBallDamage = 10000;
+				npc.damage = 10000;
+			}
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
 
 			int num58;
