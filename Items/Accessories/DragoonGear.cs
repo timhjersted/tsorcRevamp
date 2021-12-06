@@ -37,9 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.noFallDmg = true;
-            if (((player.gravDir == 1f) && (player.velocity.Y > 0)) || ((player.gravDir == -1f) && (player.velocity.Y < 0))) {
-                player.meleeDamage *= 2;
-            }
+            player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;
         }
 

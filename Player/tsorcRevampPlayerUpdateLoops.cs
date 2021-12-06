@@ -35,6 +35,7 @@ namespace tsorcRevamp {
 
         public bool DragoonBoots = false;
         public bool DragoonBootsEnable = false;
+        public bool DragoonHorn = false;
 
         public bool GemBox = false;
         public bool ConditionOverload = true;
@@ -203,11 +204,6 @@ namespace tsorcRevamp {
                 tsorcScriptedEvents.PlayerScriptedEventCheck(this.player);
             }
             MiakodaEffectsTimer++;
-
-            if (DragoonBoots && DragoonBootsEnable) { //lets do this the smart way
-                Player.jumpSpeed += 10f;
-
-            }
 
             if (!player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
                 if (player.whoAmI == Main.LocalPlayer.whoAmI)
@@ -740,6 +736,14 @@ namespace tsorcRevamp {
                 }
             }
             #endregion
+
+            if (DragoonBoots && DragoonBootsEnable) {
+                //Player.jumpSpeed += 10f; why
+                player.jumpSpeedBoost += 10f;
+            }
+            if (DragoonHorn && (((player.gravDir == 1f) && (player.velocity.Y > 0)) || ((player.gravDir == -1f) && (player.velocity.Y < 0)))) {
+                player.meleeDamage *= 2;
+            }
         }
 
         public override void PostUpdateRunSpeeds() {

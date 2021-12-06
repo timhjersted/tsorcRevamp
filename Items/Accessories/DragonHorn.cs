@@ -18,10 +18,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            //works in normal gravity and gravity potion
-            if (((player.gravDir == 1f) && (player.velocity.Y > 0)) || ((player.gravDir == -1f) && (player.velocity.Y < 0))) {
-                player.meleeDamage *= 2;
-            }
+            player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
         }
 
     }
