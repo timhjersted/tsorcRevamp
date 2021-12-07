@@ -145,13 +145,13 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			if (Main.rand.Next(120) == 0)
 			{
 				breath = true;
-				Main.PlaySound(SoundID.Item, -1, -1, 20);
+				Main.PlaySound(SoundID.Item, npc.position, 20);
 			}
 
 
 			if (breath)
 			{
-				if (Main.netMode == NetmodeID.MultiplayerClient)
+				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, 22, 0f, Main.myPlayer); //cursed dragons breath
 					
@@ -165,7 +165,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			{
 				breath = false;
 				breathCD = 100;
-				Main.PlaySound(SoundID.Item, -1, -1, 20);
+				Main.PlaySound(SoundID.Item, npc.position, 20);
 			}
 
 			if (npc.velocity.X < 0f)

@@ -151,7 +151,7 @@ namespace tsorcRevamp {
             DragonStone = false;
             SoulReaper = 5;
             DragoonBoots = false;
-            player.eocDash = 0;
+            //player.eocDash = 0;
             player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
             DuskCrownRing = false;

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items
         {
             item.width = 14;
             item.height = 22;
-            item.maxStack = 9999;
+            item.maxStack = 99999;
             item.value = 0;
             item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items
         public override bool OnPickup(Player player)
         {
             bool openSlot = false;
-            for(int i = 0; i < Main.maxInventory; i++)
+            for(int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
             {
                 if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulShekel>()))
                 {
