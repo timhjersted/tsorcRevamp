@@ -102,22 +102,21 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void Kill(int timeLeft) {
-            if (!projectile.active) {
-                return;
-            }
-            projectile.timeLeft = 0;
-            {
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-                for (int num40 = 0; num40 < 20; num40++) {
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
-                    Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), 25, 5f, projectile.owner);
+           
+            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -2), projectile.position.Y + (float)(projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), projectile.damage, 5f, projectile.owner);
+
+
+            for (int num40 = 0; num40 < 20; num40++) {
                     Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
                     int arg_1394_1 = projectile.width;
                     int arg_1394_2 = projectile.height;
@@ -139,13 +138,7 @@ namespace tsorcRevamp.Projectiles {
                     int arg_1422_6 = 100;
                     Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, default, 1f);
                 }
-            }
-            if (projectile.owner == Main.myPlayer) {
-                if (Main.netMode != NetmodeID.SinglePlayer) {
-                    NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, projectile.identity, (float)projectile.owner, 0f, 0f, 0);
-                }
-            }
-            projectile.active = false;
+            
         }
     }
 }

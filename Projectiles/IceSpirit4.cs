@@ -27,23 +27,23 @@ namespace tsorcRevamp.Projectiles {
            
             if (projectile.timeLeft == 110) {
                 projectile.scale = 0.6f;
-                projectile.damage = (int)(projectile.damage * 1.05f);
+                projectile.damage = (int)(projectile.damage * 1.1f);
             }
             if (projectile.timeLeft == 90) {
                 projectile.scale = 0.8f;
-                projectile.damage = (int)(projectile.damage * 1.05f);
+                projectile.damage = (int)(projectile.damage * 1.1f);
             }
             if (projectile.timeLeft == 70) {
                 projectile.scale = 1f;
-                projectile.damage = (int)(projectile.damage * 1.05f);
+                projectile.damage = (int)(projectile.damage * 1.1f);
             }
             if (projectile.timeLeft == 50) {
                 projectile.scale = 1.2f;
-                projectile.damage = (int)(projectile.damage * 1.05f);
+                projectile.damage = (int)(projectile.damage * 1.1f);
             }
             if (projectile.timeLeft == 40) {
                 projectile.scale = 1.4f;
-                projectile.damage = (int)(projectile.damage * 1.05f);
+                projectile.damage = (int)(projectile.damage * 1.1f);
             }
 
             projectile.ai[0] += 1f;
