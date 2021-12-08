@@ -42,6 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 100);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 40);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);
