@@ -642,7 +642,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.WolfRing>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
+				//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>(), 4);
 			}

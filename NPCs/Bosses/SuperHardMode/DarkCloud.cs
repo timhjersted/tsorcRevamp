@@ -600,10 +600,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //4) Either way this laser is a moving one, so move its current target according to the formula and play its unique sound.
                 if (counterClockwise)
                 {
+                    DarkDivineSparkBeam.LaserOrigin = npc.Center;
                     DarkDivineSparkBeam.LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
                 }
                 else
                 {
+                    DarkDivineSparkBeam.LaserOrigin = npc.Center;
                     DarkDivineSparkBeam.LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
                 }
                 if (Main.time % 8 == 0)

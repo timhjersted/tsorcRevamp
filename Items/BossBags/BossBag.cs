@@ -424,7 +424,7 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 5000);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.WolfRing>());
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
+            //player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfArtorias>(), 4);
             player.QuickSpawnItem(ModContent.ItemType<BossItems.DarkMirror>());
         }

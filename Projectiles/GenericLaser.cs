@@ -459,7 +459,6 @@ namespace tsorcRevamp.Projectiles {
             diff.Normalize();
             projectile.velocity = diff;
             projectile.direction = LaserTarget.X > origin.X ? 1 : -1;
-            projectile.netUpdate = true;
         }
 
         private void CastLights() {
