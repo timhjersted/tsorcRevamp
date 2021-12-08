@@ -104,11 +104,10 @@ namespace tsorcRevamp.NPCs.Friendly {
             {
 				if (chatState == 0)
 				{
-					Main.npcChatText = "To close the seal to the Abyss and ignite the Kiln of the" +
-									"\nFirst Flame, you must defeat the 6 lords of The Abyss:" +
-									"\n[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], [c/fcff00:Chaos], and" +
+					Main.npcChatText = "To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:" +
+									"\n[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], [c/fcff00:Chaos], and" +
 									"\n[c/18ffe2:Seath the Scaleless]. With a lord soul from each of these" +
-									"\nbeings you will be able to summon the final guardian - " +
+									"\nbeings you will be able to summon the final lord - " +
 									"\n[c/ff6618:Gwyn, Lord of Cinder].";
 					chatState = 1;
 					return;
@@ -116,7 +115,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 				if (chatState == 1)
 				{
 					Main.npcChatText = "To craft the summoning item for each " +
-									"guardian, you will need to return to eight familiar places " +
+									"lord, you will need to return to eight familiar places " +
 									"and collect a unique item from an enemy you will find there: " +
 									"[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
 									"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
@@ -125,10 +124,10 @@ namespace tsorcRevamp.NPCs.Friendly {
 				}
 				if (chatState == 2)
 				{
-					Main.npcChatText = "Defeating [c/ffbf00:Artorias] and claiming his ring should be your priority. " +
-								"Without it I fear you may stand little chance against these terrors... " +
+					Main.npcChatText = "Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge." +
+								//"Without it I fear you may stand little chance against these terrors... " +
 								"\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
-								"\nHe will appear out of the Abyss at night, and more often deeper underground, especially in dungeons." +
+								"\nHe will sometimes appear at night, and more often deeper underground, especially in dungeons." +
 								"\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
 					chatState = 3;
 					return;
@@ -137,8 +136,8 @@ namespace tsorcRevamp.NPCs.Friendly {
 
 				if (chatState == 3)
 				{
-					Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells." +
-								"\nHowever, certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
+					Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that" +
+								"\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
 								"\nSuch a blade may just be strong enough to shatter their protection...";
 
 					chatState = 0;
@@ -221,7 +220,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 				if (!p.active) {
 					continue;
 				}
-				if (p.statManaMax2 > 160) { //is this the best idea? not everyone is going to mindlessly eat every mana crystal they find
+				if (p.statManaMax2 > 80) { //is this the best idea? not everyone is going to mindlessly eat every mana crystal they find - was 160, lowered to 80, should probably switch to max life though
 					return true;
 				}
 			}
