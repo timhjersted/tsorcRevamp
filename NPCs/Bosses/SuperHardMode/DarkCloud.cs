@@ -1857,7 +1857,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 180)
             {
                 DarkCloudParticleEffect(12, 90);
-                //wingAnimationState = spread open
             }
             if (phaseChangeCounter < 210)
             {
@@ -1882,7 +1881,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 240)
             {
                 npc.velocity = Vector2.Zero;
-                npc.lifeMax = 1000000 * Main.ActivePlayersCount;
+                npc.lifeMax = 500000 * Main.ActivePlayersCount;
                 npc.life = npc.lifeMax;
                 changingPhases = false;
                 npc.dontTakeDamage = false;
