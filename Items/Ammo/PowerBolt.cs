@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Ammo {
             item.consumable = true;
             item.ranged = true;
             item.ammo = mod.ItemType("Bolt");
-            item.damage = 20;
+            item.damage = 40;
             item.height = 28;
             item.knockBack = 3f;
             item.maxStack = 2000;

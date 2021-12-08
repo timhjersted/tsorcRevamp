@@ -148,19 +148,31 @@ namespace tsorcRevamp.NPCs.Friendly {
 
 		public override void SetupShop(Chest shop, ref int nextSlot) {
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<WandOfDarkness>());
+			shop.item[nextSlot].shopCustomPrice = 120;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<WandOfFire>());
+			shop.item[nextSlot].shopCustomPrice = 550;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<CosmicWatch>());
+			shop.item[nextSlot].shopCustomPrice = 250;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
-			shop.item[nextSlot].SetDefaults(ItemID.Gel);
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.GelCrate>());
+			shop.item[nextSlot].shopCustomPrice = 8;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
             if (Main.hardMode) {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<CovetousSilverSerpentRing>());
-                nextSlot++; 
+				shop.item[nextSlot].shopCustomPrice = 3500; //17.5k DS, 20k to craft
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+				nextSlot++; 
             }
 			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/) {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<CovenantOfArtorias>());
+				shop.item[nextSlot].shopCustomPrice = 13500;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			}
 		}
 

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles {
         public override void SetDefaults() {
             projectile.aiStyle = 2;
             projectile.friendly = true;
-            projectile.ranged = true;
+            projectile.melee = true;
             projectile.tileCollide = true;
             projectile.height = 22;
             projectile.penetrate = 1;

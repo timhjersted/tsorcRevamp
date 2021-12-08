@@ -118,6 +118,22 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 
+			if (NPC.downedBoss1) //EoC
+			{
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.ThrowingKnifeCrate>());
+				shop.item[nextSlot].shopCustomPrice = 10;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+				nextSlot++;
+			}
+
+			if (NPC.downedBoss2) //EoW/BoC(?)
+			{
+				shop.item[nextSlot].SetDefaults(ItemID.VilePowder);
+				shop.item[nextSlot].shopCustomPrice = 1;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+				nextSlot++;
+			}
+
 			if (NPC.downedMechBoss1) //The Destroyer
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Throwing.BlackFirebomb>());
@@ -129,7 +145,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Okiku.FinalForm.Attraidies>()) || tsorcRevampWorld.SuperHardMode /*just in case*/)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.PurgingStone>());
-				shop.item[nextSlot].shopCustomPrice = 9999;
+				shop.item[nextSlot].shopCustomPrice = 10000;
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}
@@ -196,7 +212,7 @@ namespace tsorcRevamp.NPCs.Friendly
 					continue;
 				}
 
-				if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 50) >= 50)
+				if (NPC.downedBoss1 || NPC.downedBoss2 || NPC.downedBoss3 || player.CountItem(type, 50) >= 150)
 				{
 					return true;
 				}

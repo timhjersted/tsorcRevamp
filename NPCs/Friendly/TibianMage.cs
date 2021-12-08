@@ -96,65 +96,105 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetupShop(Chest shop, ref int nextSlot)
 		{
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfDarkness>());
+			shop.item[nextSlot].shopCustomPrice = 120;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.FarronDart>());
-				shop.item[nextSlot].shopCustomPrice = 15000;
+				shop.item[nextSlot].shopCustomPrice = 120;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId; 
 				nextSlot++;
 			}
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
+			shop.item[nextSlot].shopCustomPrice = 250;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedMageHat>());
+			shop.item[nextSlot].shopCustomPrice = 120;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedMageTunic>());
+			shop.item[nextSlot].shopCustomPrice = 200;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Armors.RedMagePants>());
+			shop.item[nextSlot].shopCustomPrice = 120;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
-			shop.item[nextSlot].SetDefaults(ItemID.Gel);
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.GelCrate>());
+			shop.item[nextSlot].shopCustomPrice = 8;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ItemID.SpellTome);
+			shop.item[nextSlot].shopCustomPrice = 400;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
 			{
 				shop.item[nextSlot].SetDefaults(ItemID.MagicMirror);
-				shop.item[nextSlot].shopCustomPrice = 30000;
+				shop.item[nextSlot].shopCustomPrice = 300;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId; 
 				nextSlot++;
 			}
 			if (NPC.downedBoss1)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>());
+				shop.item[nextSlot].shopCustomPrice = 550;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ItemID.PiggyBank);
+				shop.item[nextSlot].shopCustomPrice = 100;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenIceRod>());
+				shop.item[nextSlot].shopCustomPrice = 600;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenThunderRod>());
+				shop.item[nextSlot].shopCustomPrice = 600;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}
 			if (Main.hardMode)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.FlameStrikeScroll>());
+				shop.item[nextSlot].shopCustomPrice = 2000;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.EnergyStrikeScroll>());
+				shop.item[nextSlot].shopCustomPrice = 2000;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.DeathStrikeScroll>());
+				shop.item[nextSlot].shopCustomPrice = 1500;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
+				shop.item[nextSlot].shopCustomPrice = 3500;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.ManaBomb>());
+				shop.item[nextSlot].shopCustomPrice = 300;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}
 			if (NPC.downedMechBoss1) //mechboss 1 is the destroyer, 2 is the twins, 3 is skelleprime
             {
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
+				shop.item[nextSlot].shopCustomPrice = 8000;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}
 			if (tsorcRevampWorld.SuperHardMode)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ForgottenIceBowScroll>());
+				shop.item[nextSlot].shopCustomPrice = 5000;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ForgottenThunderBowScroll>());
+				shop.item[nextSlot].shopCustomPrice = 5000;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}
 		}

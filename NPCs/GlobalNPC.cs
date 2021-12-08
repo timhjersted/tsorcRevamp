@@ -522,11 +522,13 @@ namespace tsorcRevamp.NPCs
             if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
-                shop.item[nextSlot].shopCustomPrice = 100000;
+                shop.item[nextSlot].shopCustomPrice = 800;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
 
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<ToxicCatalyzer>());
-                shop.item[nextSlot].shopCustomPrice = 100000;
+                shop.item[nextSlot].shopCustomPrice = 800;
+                shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
         }

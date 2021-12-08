@@ -167,6 +167,8 @@ namespace tsorcRevamp.NPCs.Friendly
 				{
 					Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
+
 					if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
 						Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);
