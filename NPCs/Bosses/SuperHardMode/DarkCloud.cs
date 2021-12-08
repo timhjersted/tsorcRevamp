@@ -94,7 +94,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         readonly int testAttack = -1;
         bool firstPhase = true;
         bool changingPhases = false;
-        bool setup = false;
 
         //The next warp point in the current attack. It gets calculated before it's used so it has time to get synced first
         Vector2 nextWarpPoint;
@@ -157,12 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 npc.netUpdate = true;
             }
 
-            if (!setup)
-            {                
-                InitializeMoves();                
-                NextAttackMode = ActiveMoveList[Main.rand.Next(ActiveMoveList.Count - 1)].ID;
-                setup = true;
-            }
+           
             //If it's the first phase
             if (firstPhase)
             {
@@ -288,7 +282,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }                
 
                 //Pick the next attack mode from the ones that remain, and store it in ai[0] (NextAttackMode) so it can sync
-                NextAttackMode = ActiveMoveList[Main.rand.Next(ActiveMoveList.Count - 1)].ID;
+                NextAttackMode = ActiveMoveList[Main.rand.Next(ActiveMoveList.Count)].ID;
             }
             else
             {
@@ -1831,11 +1825,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 InitializeMoves();
                 if (testAttack == -1)
                 {
-                    ChangeAttacks(); 
-                    if (CurrentMove == null)
-                    {
-                        CurrentMoveDebug();
-                    }
+                    NextAttackMode = ActiveMoveList[Main.rand.Next(ActiveMoveList.Count)].ID;
+                    ChangeAttacks();
                 }
                 else
                 {
@@ -2158,6 +2149,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
             Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
             Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 4f);
+
+            //Clean up projectiles
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>() || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>())
+                {
+                    Main.projectile[i].Kill();
+                }
+            }
+            
 
             if (Main.expertMode)
             {
