@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.BossItems {
             DisplayName.SetDefault("Lost Scroll of Gwyn");
             Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
                 //"You must enter The Abyss with the Covenant of Artorias equipped to summon Lord Gwyn.  \n" +
-                "Upon the scroll it reads: \"Once living, now Undead, and a fitting heir to father Gwyn thou art, \n" +
-                "And beseech thee. Succeed Lord Gwyn, and inheriteth the Fire of our world. \n" +
-                "Thou shall endeth this eternal twilight, and avert further Undead sacrifices.\"\n" +
+                //"Upon the scroll it reads: \"Once living, now Undead, and a fitting heir to father Gwyn thou art, \n" +
+                //"And beseech thee. Succeed Lord Gwyn, and inheriteth the Fire of our world. \n" +
+                //"Thou shall endeth this eternal twilight, and avert further Undead sacrifices.\"\n" +
                 "Only the true warrior of the age will survive this fight. ");
         }
 
