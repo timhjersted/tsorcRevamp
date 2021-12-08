@@ -102,45 +102,95 @@ namespace tsorcRevamp.NPCs.Friendly {
 				return;
 			} else
             {
-				if (chatState == 0)
+				if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
 				{
-					Main.npcChatText = "To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:" +
-									"\n[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], [c/fcff00:Chaos], and" +
-									"\n[c/18ffe2:Seath the Scaleless]. With a lord soul from each of these" +
-									"\nbeings you will be able to summon the final lord - " +
-									"\n[c/ff6618:Gwyn, Lord of Cinder].";
-					chatState = 1;
-					return;
-				}
-				if (chatState == 1)
-				{
-					Main.npcChatText = "To craft the summoning item for each " +
-									"lord, you will need to return to eight familiar places " +
-									"and collect a unique item from an enemy you will find there: " +
-									"[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
-									"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
-					chatState = 2;
-					return;
-				}
-				if (chatState == 2)
-				{
-					Main.npcChatText = "Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge." +
-								//"Without it I fear you may stand little chance against these terrors... " +
-								"\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
-								"\nHe will sometimes appear at night, and more often deeper underground, especially in dungeons." +
-								"\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
-					chatState = 3;
-					return;
-				}
+					//This chain of chat messages is for adventure mode!
+					if (chatState == 0)
+					{
+						Main.npcChatText = "To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:" +
+										"\n[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], " +
+										"\n[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless]." +
+										"\nWith a lord soul from each of these" +
+										"\nbeings you will be able to summon the final lord - " +
+										"\n[c/ff6618:Gwyn, Lord of Cinder].";
+						chatState = 1;
+						return;
+					}
+					if (chatState == 1)
+					{
+						Main.npcChatText = "To craft the summoning item for each " +
+										"lord, you will need to return to eight familiar places " +
+										"and collect a unique item from an enemy you will find there: " +
+										"[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
+										"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
+						chatState = 2;
+						return;
+					}
+					if (chatState == 2)
+					{
+						Main.npcChatText = "Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge." +
+									//"Without it I fear you may stand little chance against these terrors... " +
+									"\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
+									"\nHe will sometimes appear at night, and more often deeper\nunderground, especially in dungeons." +
+									"\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
+						chatState = 3;
+						return;
+					}
 
 
-				if (chatState == 3)
-				{
-					Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that" +
-								"\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
-								"\nSuch a blade may just be strong enough to shatter their protection...";
+					if (chatState == 3)
+					{
+						Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that" +
+									"\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
+									"\nSuch a blade may just be strong enough to shatter their protection...";
 
-					chatState = 0;
+						chatState = 0;
+					}
+				}
+				else
+                {
+					//This chain of chat messages is for sandbox mode!
+					if (chatState == 0)
+					{
+						Main.npcChatText = "To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:" +
+										"\n[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], " +
+										"\n[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless]." +
+										"\nWith a lord soul from each of these" +
+										"\nbeings you will be able to summon the final lord - " +
+										"\n[c/ff6618:Gwyn, Lord of Cinder].";
+						chatState = 1;
+						return;
+					}
+					if (chatState == 1)
+					{
+						Main.npcChatText = "To craft the summoning item for each " +
+										"lord, you will need to return to eight familiar places " +
+										"and collect a unique item from an enemy you will find there: " +
+										"[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
+										"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
+						chatState = 2;
+						return;
+					}
+					if (chatState == 2)
+					{
+						Main.npcChatText = "Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge." +
+									//"Without it I fear you may stand little chance against these terrors... " +
+									"\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
+									"\nHe will sometimes appear at night, and more often deeper\nunderground, especially in dungeons." +
+									"\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
+						chatState = 3;
+						return;
+					}
+
+
+					if (chatState == 3)
+					{
+						Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that" +
+									"\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
+									"\nSuch a blade may just be strong enough to shatter their protection...";
+
+						chatState = 0;
+					}
 				}
 			}
 		}

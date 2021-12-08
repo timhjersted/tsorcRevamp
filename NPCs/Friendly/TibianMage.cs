@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.DeathStrikeScroll>());
-				shop.item[nextSlot].shopCustomPrice = 1500;
+				shop.item[nextSlot].shopCustomPrice = 3000;
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
@@ -176,6 +176,13 @@ namespace tsorcRevamp.NPCs.Friendly
 				nextSlot++;
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.ManaBomb>());
 				shop.item[nextSlot].shopCustomPrice = 300;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+				nextSlot++;
+			}
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            {
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>());
+				shop.item[nextSlot].shopCustomPrice = 3500;
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}
