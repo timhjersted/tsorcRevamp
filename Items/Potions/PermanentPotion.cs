@@ -1482,6 +1482,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         
         public override bool UseItem(Player player) {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.PermanentBuffToggles[49] = true;
+            modPlayer.PermanentBuffToggles[51] = true;
+            modPlayer.PermanentBuffToggles[46] = true;
             modPlayer.PermanentBuffToggles[45] = !modPlayer.PermanentBuffToggles[45]; //toggle
             return true;
         }
@@ -1497,9 +1500,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[45]) {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (!modPlayer.PermanentBuffToggles[45]) {
+                modPlayer.PermanentBuffToggles[49] = true;
+                modPlayer.PermanentBuffToggles[51] = true;
+                modPlayer.PermanentBuffToggles[46] = true;
                 player.statDefense += 13;
                 player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
+                player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
+                player.buffImmune[ModContent.BuffType<Strength>()] = true;
+                player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
             }
         }
     }
@@ -1512,7 +1522,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         
         public override bool UseItem(Player player) {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.PermanentBuffToggles[49] = true;
+            modPlayer.PermanentBuffToggles[51] = true;
+            modPlayer.PermanentBuffToggles[45] = true;
             modPlayer.PermanentBuffToggles[46] = !modPlayer.PermanentBuffToggles[46]; //toggle
             return true;
         }
@@ -1528,15 +1541,24 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[46]) {
-                player.statDefense += 8;
-                player.allDamage += 0.2f;
-                player.magicCrit += 5;
-                player.meleeCrit += 5;
-                player.rangedCrit += 5;
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            
+            if (!modPlayer.PermanentBuffToggles[46]) {
+                modPlayer.PermanentBuffToggles[49] = true;
+                modPlayer.PermanentBuffToggles[51] = true;
+                modPlayer.PermanentBuffToggles[45] = true;
+                player.statDefense += 17;
+                player.allDamage += 0.3f;
+                player.magicCrit += 6;
+                player.meleeCrit += 6;
+                player.rangedCrit += 6;
                 player.meleeSpeed += 0.2f;
                 player.pickSpeed += 0.2f;
-                player.thorns += 1f;
+                player.thorns += 2f;
+                player.enemySpawns = true;
+                player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
+                player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
+                player.buffImmune[ModContent.BuffType<Strength>()] = true;
                 player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
             }
         }
@@ -1614,7 +1636,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         
         public override bool UseItem(Player player) {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>(); 
+            modPlayer.PermanentBuffToggles[46] = true;
+            modPlayer.PermanentBuffToggles[51] = true;
+            modPlayer.PermanentBuffToggles[45] = true;
             modPlayer.PermanentBuffToggles[49] = !modPlayer.PermanentBuffToggles[49]; //toggle
             return true;
         }
@@ -1630,9 +1655,16 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[49]) {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (!modPlayer.PermanentBuffToggles[49]) {
+                modPlayer.PermanentBuffToggles[46] = true;
+                modPlayer.PermanentBuffToggles[51] = true;
+                modPlayer.PermanentBuffToggles[45] = true;
                 player.allDamage += 0.2f;
+                player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
                 player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
+                player.buffImmune[ModContent.BuffType<Strength>()] = true;
+                player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
             }
         }
     }
@@ -1677,8 +1709,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         
         public override bool UseItem(Player player) {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.PermanentBuffToggles[46] = true;
+            modPlayer.PermanentBuffToggles[49] = true;
+            modPlayer.PermanentBuffToggles[45] = true;
             modPlayer.PermanentBuffToggles[51] = !modPlayer.PermanentBuffToggles[51]; //toggle
-            return true;
+            return true;            
         }
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
             if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
@@ -1692,7 +1727,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[51]) {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (!modPlayer.PermanentBuffToggles[51])
+            {
+                modPlayer.PermanentBuffToggles[46] = true;
+                modPlayer.PermanentBuffToggles[49] = true;
+                modPlayer.PermanentBuffToggles[45] = true;
                 player.statDefense += 15;
                 player.allDamage += 0.15f;
                 player.meleeSpeed += 0.15f;
@@ -1700,7 +1740,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 player.magicCrit += 2;
                 player.meleeCrit += 2;
                 player.rangedCrit += 2;
+                player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
+                player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
                 player.buffImmune[ModContent.BuffType<Strength>()] = true;
+                player.buffImmune[ModContent.BuffType<Battlefront>()] = true;
             }
         }
     }

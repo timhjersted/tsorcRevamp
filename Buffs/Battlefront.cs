@@ -10,15 +10,16 @@ namespace tsorcRevamp.Buffs {
             Main.buffNoTimeDisplay[Type] = false;
         }
 
-        public override void Update(Player player, ref int buffIndex) {
-            player.statDefense += 8;
-            player.allDamage += 0.2f;
-            player.magicCrit += 5;
-            player.meleeCrit += 5;
-            player.rangedCrit += 5;
+        public override void Update(Player player, ref int buffIndex)
+        {
+            player.statDefense += 17;
+            player.allDamage += 0.3f;
+            player.magicCrit += 6;
+            player.meleeCrit += 6;
+            player.rangedCrit += 6;
             player.meleeSpeed += 0.2f;
             player.pickSpeed += 0.2f;
-            player.thorns += 1f;
+            player.thorns += 2f;
             player.enemySpawns = true;
         }
     }

@@ -1,12 +1,13 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions {
     public class StrengthPotion : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Increases damage by 15%, critical strike chance " +
-                             "\nby 2%, defense by 15, and swing speed by 15%.");
-
+                             "\nby 2%, defense by 15, and swing speed by 15%." +
+                             "\nDoes not stack with Demon Drug, Armor Drug, or Battlefront Potions.");
         }
 
         public override void SetDefaults() {
@@ -24,6 +25,20 @@ namespace tsorcRevamp.Items.Potions {
             item.buffType = ModContent.BuffType<Buffs.Strength>();
             item.buffTime = 36000;
         }
+        public override bool UseItem(Player player)
+        {
+            int currentBuff = 0;
+            foreach (int buffType in player.buffType)
+            {
+                if (buffType == ModContent.BuffType<Buffs.Battlefront>() || buffType == ModContent.BuffType<Buffs.DemonDrug>() || buffType == ModContent.BuffType<Buffs.ArmorDrug>())
+                {
+                    player.DelBuff(currentBuff);
+                }
+                currentBuff++;
+            }
+            return true;
+        }
+
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.BottledWater, 1);

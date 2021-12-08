@@ -1,7 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 using System.Collections.Generic;
-
+using Terraria;
 
 namespace tsorcRevamp.Items.Potions {
     public class DemonDrugPotion : ModItem {
@@ -30,13 +30,29 @@ namespace tsorcRevamp.Items.Potions {
             {
                 tooltips.Insert(3, new TooltipLine(mod, "RevampCrimsonDrain1", "Increases damage by 20% for 3 minutes"));
                 tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "However, also lowers defence by 20"));
+                tooltips.Insert(5, new TooltipLine(mod, "RevampCrimsonDrain3", "Does not stack with Armor Drug, Strength, or Battlefront Potions."));
             }
             else
             {
                 tooltips.Insert(3, new TooltipLine(mod, "", "Increases damage by 20% for 3 minutes."));
+                tooltips.Insert(4, new TooltipLine(mod, "", "Does not stack with Armor Drug, Strength, or Battlefront Potions."));
             }
 
         }
+        public override bool UseItem(Player player)
+        {
+            int currentBuff = 0;
+            foreach (int buffType in player.buffType)
+            {
+                if (buffType == ModContent.BuffType<Buffs.Strength>() || buffType == ModContent.BuffType<Buffs.Battlefront>() || buffType == ModContent.BuffType<Buffs.ArmorDrug>())
+                {
+                    player.DelBuff(currentBuff);
+                }
+                currentBuff++;
+            }
+            return true;
+        }
+
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.BottledWater, 1);
