@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool InBrownLayer = P.ZoneDirtLayerHeight;
 			bool InGrayLayer = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
+			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 			// P.townNPCs > 0f // is no town NPCs nearby
 
 			if (Main.hardMode && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(30) == 1) return 1;

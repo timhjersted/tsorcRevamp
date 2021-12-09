@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             Player p = spawnInfo.player;
-            if (tsorcRevampWorld.SuperHardMode && p.position.X > Main.maxTilesX * 0.7f) {
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.spawnTileX > Main.maxTilesX * 0.7f) {
                 if (p.ZoneDirtLayerHeight) {
                     if (!Main.dayTime) { return 0.2f; }
                     else return 0.067f;

@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             float chance = 0;
             var p = spawnInfo.player;
             bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHoly && !p.ZoneMeteor && !p.ZoneDungeon;
-            bool surface = nospecialbiome && !p.ZoneSkyHeight && (p.position.Y <= Main.worldSurface);
+            bool surface = nospecialbiome && !p.ZoneSkyHeight && (spawnInfo.spawnTileY <= Main.worldSurface);
 
             if (Main.hardMode && Main.bloodMoon && !tsorcRevampWorld.SuperHardMode && surface) {
                 chance = (1f / 38500f);

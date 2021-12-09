@@ -64,7 +64,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player p = spawnInfo.player;
             if (tsorcRevampWorld.SuperHardMode) {
                 if (!Main.dayTime && !Main.bloodMoon) { //normal night
-                    if (p.position.Y < Main.worldSurface) { return 0.00125f; }
+                    if (spawnInfo.spawnTileY < Main.worldSurface) { return 0.00125f; }
                     else if (p.ZoneDirtLayerHeight) { return 0.001667f; }
                     else if (p.ZoneRockLayerHeight) { return 0.00125f; }
                     else if (p.ZoneDungeon) { return 0.005f; }
@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         return 0.066f;
                     }
 
-                    else if (p.position.Y < Main.worldSurface) { return 0.01f; } //bloodmoon, surface
+                    else if (spawnInfo.spawnTileY < Main.worldSurface) { return 0.01f; } //bloodmoon, surface
 
                 }
 

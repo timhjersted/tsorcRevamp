@@ -73,13 +73,13 @@ namespace tsorcRevamp.NPCs.Enemies
 		{ 
 			Player p = spawnInfo.player;
 			
-			bool oSky = (p.position.Y < (Main.maxTilesY * 0.1f));
-			bool oSurface = (p.position.Y >= (Main.maxTilesY * 0.1f) && p.position.Y < (Main.maxTilesY * 0.2f));
-			bool oUnderSurface = (p.position.Y >= (Main.maxTilesY * 0.2f) && p.position.Y < (Main.maxTilesY * 0.3f));
-			bool oUnderground = (p.position.Y >= (Main.maxTilesY * 0.3f) && p.position.Y < (Main.maxTilesY * 0.4f));
-			bool oCavern = (p.position.Y >= (Main.maxTilesY * 0.4f) && p.position.Y < (Main.maxTilesY * 0.6f));
-			bool oMagmaCavern = (p.position.Y >= (Main.maxTilesY * 0.6f) && p.position.Y < (Main.maxTilesY * 0.8f));
-			bool oUnderworld = (p.position.Y >= (Main.maxTilesY * 0.8f));
+			bool oSky = (spawnInfo.spawnTileY < (Main.maxTilesY * 0.1f));
+			bool oSurface = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.1f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.2f));
+			bool oUnderSurface = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.2f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.3f));
+			bool oUnderground = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.3f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.4f));
+			bool oCavern = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.4f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.6f));
+			bool oMagmaCavern = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.6f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.8f));
+			bool oUnderworld = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.8f));
 			if (p.ZoneDungeon || p.ZoneMeteor) return 0;
 			//if (Main.hardMode && oUnderworld && Main.rand.Next(1000)==1) return true;
 			//if (Main.hardMode && Main.bloodMoon && oUnderworld && Main.rand.Next(100)==1) return true;
@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (!Main.dayTime && !Main.hardMode && !tsorcRevampWorld.SuperHardMode)
 				{
 					if (Main.rand.Next(21000) == 1) return 1;
-					else if ((p.position.X < Main.maxTilesX * 0.35f || p.position.X > Main.maxTilesX * 0.75f) && Main.rand.Next(10000) == 1) return 1;
+					else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.35f || spawnInfo.spawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(10000) == 1) return 1;
 					return 0;
 				}
 
@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (hunterDowned && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.Next(100) == 1) return 1;
 					if (hunterDowned && Main.rand.Next(2000) == 1) return 1;
 					if (hunterDowned && !Main.dayTime && Main.rand.Next(1000) == 1) return 1;
-					else if ((p.position.X < Main.maxTilesX * 0.25f || p.position.X > Main.maxTilesX * 0.75f) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(500) == 1) return 1;
+					else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.25f || spawnInfo.spawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(500) == 1) return 1;
 					return 0;
 				}
 				return 0;

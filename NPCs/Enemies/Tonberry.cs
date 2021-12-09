@@ -57,7 +57,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool InBrownLayer = P.ZoneDirtLayerHeight;
 			bool InGrayLayer = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
+			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 
 			// these are all the regular stuff you get , now lets see......
 

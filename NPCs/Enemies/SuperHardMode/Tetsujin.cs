@@ -53,20 +53,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
 
-			bool Sky = P.position.Y <= (Main.rockLayer * 4);
+			bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
 			bool Meteor = P.ZoneMeteor;
 			bool Jungle = P.ZoneJungle;
 			bool Dungeon = P.ZoneDungeon;
 			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
 			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = P.position.Y < Main.worldSurface;
-			bool InBrownLayer = P.position.Y >= Main.worldSurface && P.position.Y < Main.rockLayer;
-			bool InGrayLayer = P.position.Y >= Main.rockLayer && P.position.Y < (Main.maxTilesY - 200) * 16;
-			bool InHell = P.position.Y >= (Main.maxTilesY - 200) * 16;
-			bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
-			bool SevenToNine = P.position.X > Main.maxTilesX * 0.7f && P.position.X < Main.maxTilesX * 0.9f; //Seven to nine/tenths wide (the right side of the map but not the very edge)
-			bool ThreeToSeven = P.position.X > Main.maxTilesX * 0.3f && P.position.X < Main.maxTilesX * 0.7f; //Between three and seven tenths wide (the middle of the map)
-			bool BeforeThreeAfterSeven = P.position.X < Main.maxTilesX * 0.3f || P.position.X > Main.maxTilesX * 0.7f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
+			bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
+			bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
+			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
+			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
+			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+			bool SevenToNine = spawnInfo.spawnTileX > Main.maxTilesX * 0.7f && spawnInfo.spawnTileX < Main.maxTilesX * 0.9f; //Seven to nine/tenths wide (the right side of the map but not the very edge)
+			bool ThreeToSeven = spawnInfo.spawnTileX > Main.maxTilesX * 0.3f && spawnInfo.spawnTileX < Main.maxTilesX * 0.7f; //Between three and seven tenths wide (the middle of the map)
+			bool BeforeThreeAfterSeven = spawnInfo.spawnTileX < Main.maxTilesX * 0.3f || spawnInfo.spawnTileX > Main.maxTilesX * 0.7f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
 																													   // these are all the regular stuff you get , now lets see......
 
 			//if (Meteor && tsorcRevampWorld.SuperHardMode && Main.rand.Next(30)==1) return true;

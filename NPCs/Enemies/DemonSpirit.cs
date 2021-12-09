@@ -62,15 +62,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 			
 			bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHoly && !p.ZoneMeteor && !p.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-			bool sky = nospecialbiome && ((double)p.position.Y < Main.worldSurface * 0.44999998807907104);
-			bool surface = nospecialbiome && !sky && (p.position.Y <= Main.worldSurface);
-			bool underground = nospecialbiome && !surface && (p.position.Y <= Main.rockLayer);
+			bool sky = nospecialbiome && ((double)spawnInfo.spawnTileY < Main.worldSurface * 0.44999998807907104);
+			bool surface = nospecialbiome && !sky && (spawnInfo.spawnTileY <= Main.worldSurface);
+			bool underground = nospecialbiome && !surface && (spawnInfo.spawnTileY <= Main.rockLayer);
 			bool underworld = (p.ZoneUnderworldHeight);
 			
-			bool cavern = nospecialbiome && (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25);
-			bool undergroundJungle = (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25) && p.ZoneJungle;
-			bool undergroundEvil = (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
-			bool undergroundHoly = (p.position.Y >= Main.rockLayer) && (p.position.Y <= Main.rockLayer * 25) && p.ZoneHoly;
+			bool cavern = nospecialbiome && (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25);
+			bool undergroundJungle = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
+			bool undergroundEvil = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
+			bool undergroundHoly = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && p.ZoneHoly;
 						
 			if (underworld && Main.rand.Next(45) == 0) return 1;
 			else if (underworld && Main.hardMode && Main.rand.Next(1000) == 0) return 1;

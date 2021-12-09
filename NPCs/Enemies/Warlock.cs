@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool oUnderground = P.ZoneDirtLayerHeight;
 			bool oCavern = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
+			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 			// P.townNPCs > 0f // is no town NPCs nearby
 
 			if (spawnInfo.player.townNPCs > 0f || spawnInfo.player.ZoneMeteor) return 0;

@@ -69,19 +69,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player P = spawnInfo.player;
-            bool Sky = P.position.Y <= (Main.rockLayer * 4);
+            bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
             bool Hallow = P.ZoneHoly;
-            bool AboveEarth = P.position.Y < Main.worldSurface;
-            bool InBrownLayer = P.position.Y >= Main.worldSurface && P.position.Y < Main.rockLayer;
-            bool InGrayLayer = P.position.Y >= Main.rockLayer && P.position.Y < (Main.maxTilesY - 200) * 16;
-            bool InHell = P.position.Y >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
-            bool BeforeThreeAfterSeven = (P.position.X < Main.maxTilesX * 0.3f) || (P.position.X > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
-            bool BeforeThree = P.position.X < Main.maxTilesX * 0.3f;
+            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
+            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
+            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
+            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+            bool BeforeThreeAfterSeven = (spawnInfo.spawnTileX < Main.maxTilesX * 0.3f) || (spawnInfo.spawnTileX > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
+            bool BeforeThree = spawnInfo.spawnTileX < Main.maxTilesX * 0.3f;
             // these are all the regular stuff you get , now lets see......
 
             if (tsorcRevampWorld.SuperHardMode && !BeforeThree && Main.bloodMoon && AboveEarth && Main.rand.Next(1000) == 1) return 1;

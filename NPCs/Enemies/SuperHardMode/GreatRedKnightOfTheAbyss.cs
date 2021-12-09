@@ -60,12 +60,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
             bool Hallow = P.ZoneHoly;
-            bool AboveEarth = P.position.Y < Main.worldSurface;
-            bool InBrownLayer = P.position.Y >= Main.worldSurface && P.position.Y < Main.rockLayer;
-            bool InGrayLayer = P.position.Y >= Main.rockLayer && P.position.Y < (Main.maxTilesY - 200) * 16;
-            bool InHell = P.position.Y >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
-            bool BeforeFourAfterSix = P.position.X < Main.maxTilesX * 0.4f || P.position.X > Main.maxTilesX * 0.6f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
+            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
+            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
+            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
+            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+            bool BeforeFourAfterSix = spawnInfo.spawnTileX < Main.maxTilesX * 0.4f || spawnInfo.spawnTileX > Main.maxTilesX * 0.6f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
 
             // these are all the regular stuff you get , now lets see......
 

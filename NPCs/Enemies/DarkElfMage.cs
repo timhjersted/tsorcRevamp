@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
 
-			bool Sky = P.position.Y <= (Main.rockLayer * 4);
+			bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
 			bool Meteor = P.ZoneMeteor;
 			bool Jungle = P.ZoneJungle;
 			bool Dungeon = P.ZoneDungeon;
@@ -66,8 +66,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool InBrownLayer = P.ZoneDirtLayerHeight;
 			bool InGrayLayer = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
-			bool FrozenOcean = P.position.X > (Main.maxTilesX - 100) * 16;
+			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 
 			// these are all the regular stuff you get , now lets see......
 			if (spawnInfo.player.townNPCs > 0f) return 0;

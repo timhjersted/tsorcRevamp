@@ -57,20 +57,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
 			bool Hallow = P.ZoneHoly;
-			bool oMagmaCavern = (P.position.Y >= (Main.maxTilesY * 0.6f) && P.position.Y < (Main.maxTilesY * 0.8f));
-			bool oUnderworld = (P.position.Y >= (Main.maxTilesY * 0.8f));
+			bool oMagmaCavern = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.6f) && spawnInfo.spawnTileY < (Main.maxTilesY * 0.8f));
+			bool oUnderworld = (spawnInfo.spawnTileY >= (Main.maxTilesY * 0.8f));
 
 			if (tsorcRevampWorld.SuperHardMode && (P.ZoneDirtLayerHeight || P.ZoneRockLayerHeight || oMagmaCavern))
 			{
 				if (Hallow && Main.rand.Next(20) == 1) return 1;
 				if (Hallow && Main.bloodMoon && Main.rand.Next(6) == 1) return 1;
-				if ((P.position.X < Main.maxTilesX * 0.35f || P.position.X > Main.maxTilesX * 0.75f) && Main.rand.Next(10) == 1) return 1;
+				if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.35f || spawnInfo.spawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(10) == 1) return 1;
 				return 0;
 			}
 			else if (tsorcRevampWorld.SuperHardMode && oUnderworld)
 			{
 				if (Main.rand.Next(70) == 1) return 1;
-				if ((P.position.X < Main.maxTilesX * 0.35f || P.position.X > Main.maxTilesX * 0.75f) && Main.rand.Next(30) == 1) return 1;
+				if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.35f || spawnInfo.spawnTileX > Main.maxTilesX * 0.75f) && Main.rand.Next(30) == 1) return 1;
 				return 0;
 			}
 			return 0;

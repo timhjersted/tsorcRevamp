@@ -68,49 +68,50 @@ namespace tsorcRevamp.NPCs.Bosses
         int bReset = 50;//increasing this will increase how long an NPC "gives up" before coming back to try again.
 
         #region Spawn
-        public bool SpawnNPC(int x, int y, int PID)
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player P = Main.player[PID]; //this shortens our code up from writing this line over and over.
+            Player P = spawnInfo.player;
 
-            bool Sky = P.position.Y <= (Main.rockLayer * 4);
+            bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
             bool Meteor = P.ZoneMeteor;
             bool Jungle = P.ZoneJungle;
             bool Dungeon = P.ZoneDungeon;
             bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
             bool Hallow = P.ZoneHoly;
-            bool AboveEarth = P.position.Y < Main.worldSurface;
-            bool InBrownLayer = P.position.Y >= Main.worldSurface && P.position.Y < Main.rockLayer;
-            bool InGrayLayer = P.position.Y >= Main.rockLayer && P.position.Y < (Main.maxTilesY - 200) * 16;
-            bool InHell = P.position.Y >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = P.position.X < 3600 || P.position.X > (Main.maxTilesX - 100) * 16;
+            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
+            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
+            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
+            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
+            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 
             // these are all the regular stuff you get , now lets see......
-
-            for (int num36 = 0; num36 < 200; num36++)
+            //this doesn't really work, only one spawns 90% of the time in an enraged state
+            /*for (int num36 = 0; num36 < 200; num36++)
             {
                 if (Main.npc[num36].active && Main.npc[num36].type == ModContent.NPCType<Bosses.Slogra>())
                 {
-                    return false;
+                    return 0;
                 }
             }
 
             if (Jungle && !Main.dayTime && !tsorcRevampWorld.SuperHardMode && !Main.hardMode && AboveEarth && Main.rand.Next(6000) == 1)
 
             {
-                Main.NewText("Slogra and Gaibon have emerged from the depths!", 175, 75, 255);
-                //NPC.SpawnOnPlayer(PID, "Gaibon");
-                return true;
+                Main.NewText("Slogra had emerged from the depths!", 175, 75, 255);
+                //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                return 1;
             }
 
-            if (Meteor && !Main.hardMode && !tsorcRevampWorld.SuperHardMode && !Main.dayTime && InBrownLayer && Main.rand.Next(3000) == 1)
+            if (Meteor && !Main.hardMode && !tsorcRevampWorld.SuperHardMode && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(3000) == 1)
 
             {
-                Main.NewText("Slogra and Gaibon have emerged from the depths!", 175, 75, 255);
-                //NPC.SpawnOnPlayer(PID, "Gaibon");
-                return true;
-            }
+                Main.NewText("Slogra has emerged from the depths!", 175, 75, 255);
+                //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                //NPC.NewNPC((int)P.position.X + 400, (int)P.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                return 1;
+            }*/
 
-            return false;
+            return 0;
         }
         #endregion
 
