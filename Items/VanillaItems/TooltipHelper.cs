@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.VanillaItems {
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
-            //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage);  don't do this. flask of fire's tooltip goes at a specific index, not the end
+            //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
             SimpleModTooltip(mod, item, tooltips, ItemID.AdamantiteBreastplate, "Set can be upgraded in 3 ways, with 4000 Dark Souls for each piece");
             SimpleModTooltip(mod, item, tooltips, ItemID.AdamantiteDrill, "Use this to open the Adamantite gates in the", "Corruption Temple to the west of the village");
             SimpleModTooltip(mod, item, tooltips, ItemID.AngelWings, "You will discover these in time...", "Can be upgraded with 1 Supersonic Boots, 1 Cloud in a Balloon, and 7000 Dark Souls");
@@ -52,7 +52,10 @@ namespace tsorcRevamp.Items.VanillaItems {
             SimpleModTooltip(mod, item, tooltips, ItemID.GreenWrench, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.YellowWrench, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.MulticolorWrench, "Do not use this!");
-            
+            SimpleModTooltip(mod, item, tooltips, ItemID.CopperAxe, "All axes do 2x damage to woody enemies");
+
+
+
         }
     }
 }

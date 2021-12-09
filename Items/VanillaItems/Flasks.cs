@@ -18,6 +18,10 @@ namespace tsorcRevamp.Items.VanillaItems {
                 ) {
                 tooltips.Insert(3, new TooltipLine(mod, "", "Adds 10% melee damage"));
             }
+            if (item.type == ItemID.FlaskofFire)
+            {
+                tooltips.Insert(4, new TooltipLine(mod, "", "All fire damage does 2x damage to woody enemies"));
+            }
         }
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
