@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useAnimation = 5;
             item.useTime = 5;
             item.maxStack = 1;
-            item.damage = 77;
+            item.damage = 130;
             item.autoReuse = true;
             item.scale = (float)1;
             item.UseSound = SoundID.Item34;

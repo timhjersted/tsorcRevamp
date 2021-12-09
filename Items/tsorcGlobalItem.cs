@@ -25,10 +25,14 @@ namespace tsorcRevamp.Items {
             {
 				item.maxStack = 2000;
             }
-			if(item.type == ItemID.NebulaArcanum || item.type == ItemID.NebulaBlaze)
+			if(item.type == ItemID.NebulaBlaze)
             {
 				item.damage = (int)Math.Round(0.7f * item.damage);
             }
+			if (item.type == ItemID.NebulaArcanum)
+			{
+				item.damage = (int)Math.Round(0.5f * item.damage);
+			}
 			if (item.type == ItemID.VortexBeater || item.type == ItemID.Phantasm)
 			{
 				item.damage = (int)Math.Round(0.7f * item.damage);
