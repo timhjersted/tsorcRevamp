@@ -922,5 +922,24 @@ namespace tsorcRevamp {
                 }
             }
         }
+        
+        public override void UpdateBiomes() {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                if (Main.dungeonTiles >= 200 && player.Center.Y > Main.worldSurface * 16.0) {
+                    int playerTileX = (int)player.Center.X / 16;
+                    int playerTileY = (int)player.Center.Y / 16;
+                    for (int i = -10; i < 11; i++) {
+                        for (int j = 0; j < 2; j++) {
+                            int cross = (2 * j) - 1;
+                            //check in an x shape instead of checking the entire region, since checking 100 tiles every frame is a little silly
+                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].wall] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].wall]) {
+                                player.ZoneDungeon = true;
+
+                            }
+                        }
+                    }
+                } 
+            }
+        }
     }
 }

@@ -59,6 +59,7 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);
+            RecipeRemover(ItemID.WebRope);
             RecipeRemover(ItemID.WebRopeCoil);
             RecipeRemover(ItemID.SilkRopeCoil);
 

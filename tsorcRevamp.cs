@@ -6,12 +6,11 @@ using Terraria.ModLoader;
 using tsorcRevamp.Items;
 using Terraria.UI;
 using Terraria.GameContent.UI;
-using System.Collections;
 using tsorcRevamp.UI;
 using System;
 using Microsoft.Xna.Framework.Graphics;
-using MonoMod.Cil;
 using static tsorcRevamp.MethodSwaps;
+using static tsorcRevamp.ILEdits;
 using System.IO;
 using Terraria.ModLoader.IO;
 using Terraria.Graphics.Shaders;
@@ -19,7 +18,6 @@ using Terraria.Graphics.Effects;
 using ReLogic.Graphics;
 using System.Net;
 using System.Reflection;
-using Mono.Cecil.Cil;
 using System.ComponentModel;
 
 namespace tsorcRevamp {
@@ -60,6 +58,8 @@ namespace tsorcRevamp {
         public static bool DownloadingMusic = false;
         public static float MusicDownloadProgress = 0;
 
+        internal static bool[] CustomDungeonWalls = new bool[231];
+
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
             reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
@@ -78,12 +78,11 @@ namespace tsorcRevamp {
 
             
             ApplyMethodSwaps();
+            ApplyILs();
             PopulateArrays();
             if(!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
 
-            IL.Terraria.Player.Update += Player_Update;
-            IL.Terraria.Player.Update += Chest_Patch;
-            IL.Terraria.Main.UpdateAudio += Music_Patch;
+
             if (!Main.dedServ) {
                 tsorcRevamp Instance = this;
                 TheAbyssEffect = Instance.GetEffect("Effects/ScreenFilters/TheAbyssShader");
@@ -564,6 +563,16 @@ namespace tsorcRevamp {
 
             #endregion
             //--------
+            #region CustomDungeonTiles list
+            for (int i = 0; i < 231; i++) {
+                CustomDungeonWalls[i] = false;
+            }
+            CustomDungeonWalls[0] = true; //no wall
+            CustomDungeonWalls[34] = true; //sandstone brick wall
+            CustomDungeonWalls[63] = true; //flower wall
+            CustomDungeonWalls[65] = true; //grass wall
+            CustomDungeonWalls[71] = true; //ice wall
+            #endregion
         }
 
         public override void Unload() {
@@ -593,6 +602,8 @@ namespace tsorcRevamp {
                     }
                 }
             }*/
+            UnloadILs();
+            CustomDungeonWalls = null;
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();
@@ -614,73 +625,6 @@ namespace tsorcRevamp {
                 Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
             }
         }
-
-        private void Player_Update(ILContext il) {
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before,
-                                    i => i.MatchLdfld("Terraria.Player", "statManaMax2"),
-                                    i => i.MatchLdcI4(400))) {
-                Logger.Fatal("Could not find instruction to patch (Player_Update)");
-                return;
-            }
-
-            cursor.Next.Next.Operand = int.MaxValue;
-        }
-
-        private void Chest_Patch(ILContext il) {
-            ILCursor c = new ILCursor(il);
-
-            if (!c.TryGotoNext(instr => instr.MatchLdcR4(1f) && instr.Next.Next.Next.Next.Next.Next.MatchStfld(typeof(Player).GetField("chest")))) {
-                throw new Exception("Could not find instruction to patch (Chest_Patch)");
-            }
-
-            c.FindNext(out ILCursor[] cursors, instr => instr.MatchLdcR4(1f));
-            c = cursors[0];
-
-            c.Index++;
-            c.EmitDelegate<Func<float, float>>((volume) => {
-                if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().chestBankOpen
-                || Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().chestPiggyOpen) {
-                    // Return 0 volume if one is open so the sound is silent
-                    return 0f;
-                }
-
-                return volume;
-            });
-        }
-
-        private void Music_Patch(ILContext il)
-        {
-            ILCursor c = new ILCursor(il);
-            if (!c.TryGotoNext(instr => instr.MatchLdcI4(6) && instr.Next.MatchStfld(typeof(Main).GetField("newMusic"))))
-            {
-                throw new Exception("Could not find instruction to patch (Music_Patch)");
-            }
-            c.Index++;
-            c.EmitDelegate<Func<int, int>>(MusicDelegate);
-        }
-
-        public int MusicDelegate(int defaultMusic)
-        {
-            Mod musicMod = ModLoader.GetMod("tsorcMusic");
-            if (musicMod != null)
-            {
-                /*if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMusic)
-                {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/OldTitle");
-                }
-                else*/
-                {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/Night");
-                }
-            }
-            else
-            {
-                return defaultMusic;
-            }            
-        }
-
 
         public override void PostDrawInterface(SpriteBatch spriteBatch) {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
