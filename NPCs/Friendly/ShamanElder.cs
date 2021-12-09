@@ -107,32 +107,33 @@ namespace tsorcRevamp.NPCs.Friendly {
 					//This chain of chat messages is for adventure mode!
 					if (chatState == 0)
 					{
-						Main.npcChatText = "To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:" +
-										"\n[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], " +
-										"\n[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless]." +
-										"\nWith a lord soul from each of these" +
-										"\nbeings you will be able to summon the final lord - " +
-										"\n[c/ff6618:Gwyn, Lord of Cinder].";
+						Main.npcChatText = "Red, it is as I feared. By killing Attraidies, a portal from the Abyss was opened, unleashing even more oppressive forces upon the world." +
+							            "\nThe ancenstors tell me that the portal can be closed, but you must first defeat the 3 Elemental Fiends: one of Water, one of Earth and one of Fire." + 
+							            "\nYou must also defeat 5 more guardians of the Abyss:" +
+										"\n[c/ffbf00:Artorias], [c/fcff00:Chaos], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless]." +
+										"\nMy heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength" +
+										"\nto face the final guardian. To the ancenstors, he was known as [c/ff6618:Gwyn, Lord of Cinder]. ";
+										
 						chatState = 1;
 						return;
 					}
 					if (chatState == 1)
 					{
-						Main.npcChatText = "To craft the summoning item for each " +
-										"lord, you will need to return to eight familiar places " +
-										"and collect a unique item from an enemy you will find there: " +
-										"[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption], " +
-										"\n[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].";
+						Main.npcChatText = "Gwyn's old tome is buried somewhere beneath the Western sea, but he will surely kill you" +
+										"\nif you have not yet gathered the strength obtained from the other guardians of the Abyss." +
+										"\nHave you seen the Lihzahrd Gates scattered across this world? They will lead you towards your goal." +
+										"\nI would start with the one deep inside the Great Chasm, which leads to the Old One's Tree." +
+										"\nThere is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.";
 						chatState = 2;
 						return;
 					}
 					if (chatState == 2)
 					{
-						Main.npcChatText = "Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge." +
-									//"Without it I fear you may stand little chance against these terrors... " +
-									"\nTo find him, you must seek out the [c/383838:Witchking] and restore the strange ring he drops." +
-									"\nHe will sometimes appear at night, and more often deeper\nunderground, especially in dungeons." +
-									"\nThe most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.";
+						Main.npcChatText = "There is one thing you should know about [c/ffbf00:Artorias], and another dark being that now stalks these lands," +
+									"\nknown as the [c/383838:Witchking]." +
+									"\nBoth The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, making them practically invincible, but I have heard that" +
+									"\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic." +
+									"\nSuch a blade may just be strong enough to shatter their protection...";
 						chatState = 3;
 						return;
 					}
@@ -140,9 +141,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 
 					if (chatState == 3)
 					{
-						Main.npcChatText = "Both The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, but I have heard that" +
-									"\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic. " +
-									"\nSuch a blade may just be strong enough to shatter their protection...";
+						Main.npcChatText = "Good luck, Red.";
 
 						chatState = 0;
 					}
@@ -270,7 +269,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 				if (!p.active) {
 					continue;
 				}
-				if (p.statManaMax2 > 80) { //is this the best idea? not everyone is going to mindlessly eat every mana crystal they find - was 160, lowered to 80, should probably switch to max life though
+				if (p.statManaMax2 > 60) { //is this the best idea? not everyone is going to mindlessly eat every mana crystal they find - was 160, lowered to 80, should probably switch to max life though
 					return true;
 				}
 			}
