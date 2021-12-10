@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            item.damage = 35;
+            item.damage = 42;
             item.ranged = true;
             item.crit = 4;
             item.width = 44;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useAnimation = 20;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
-            item.knockBack = 3.5f;
+            item.knockBack = 4f;
             item.value = 25000;
             item.scale = 0.7f;
             item.rare = ItemRarityID.Orange;
@@ -37,8 +37,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(null, "Blaster");
-            recipe.AddIngredient(ItemID.HellstoneBar, 8);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 7500);
+            recipe.AddIngredient(ItemID.HellstoneBar, 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

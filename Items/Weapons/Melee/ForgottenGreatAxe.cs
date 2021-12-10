@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetDefaults() {
             item.rare = ItemRarityID.Green;
-            item.damage = 26;
+            item.damage = 28;
             item.height = 36;
             item.knockBack = 7;
             item.autoReuse = true;
@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("ForgottenAxe"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

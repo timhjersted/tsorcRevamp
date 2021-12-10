@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.damage = LegacyMode ? 9 : 11;
+            item.damage = LegacyMode ? 9 : 12;
             item.height = 10;
             item.knockBack = 0f;
             item.autoReuse = true;

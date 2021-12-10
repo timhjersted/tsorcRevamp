@@ -5,7 +5,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldTwoHandedSword : ModItem {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldTwoHandedSword";
         public override void SetDefaults() {
-            item.damage = 22; //it's post EoC
+            item.damage = 25; //it's post EoC
             item.width = 50;
             item.height = 50;
             item.knockBack = 5;

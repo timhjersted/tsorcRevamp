@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("You hear an evil whispering from inside.\n+3% magic crit");
+            Tooltip.SetDefault("You hear an evil whispering from inside.\n+40 mana");
         }
 
         public override void SetDefaults()
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.magicCrit += 3;
+            player.statManaMax2 += 40;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)

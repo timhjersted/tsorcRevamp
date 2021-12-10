@@ -1,19 +1,21 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Magic {
     class Muramassa : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("A sword crafted for magic users" +
-                                "\nCan be upgraded with 25,000 Dark Souls & 3 Souls of Light");
+                               "\nDeals +1 damage for every 20 mana the user has over 200" +
+                               "\nCan be upgraded with 25,000 Dark Souls & 3 Souls of Light");
         }
 
         public override void SetDefaults() {
             item.width = 48;
             item.height = 48;
-            item.useAnimation = 11;
-            item.useTime = 11;
-            item.damage = 27;
+            item.useAnimation = 18;
+            item.useTime = 18;
+            item.damage = 12;
             item.knockBack = 3;
             item.autoReuse = true;
             item.useTurn = true;
@@ -21,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.rare = ItemRarityID.Green;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.value = 27000;
-            item.melee = true;
+            item.magic = true;
             item.mana = 5;
             item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             item.shootSpeed = 11f;
@@ -34,6 +36,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+        }
+
+        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+        {
+            if (player.statManaMax2 >= 200)
+            {
+                flat += (player.statManaMax2 - 200) / 20;
+            }
         }
     }
 }

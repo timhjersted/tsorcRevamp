@@ -38,7 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.aiStyle = -1;
             npc.damage = 40;
             npc.defense = 26;
-            npc.height = 40;
+            npc.height = 44;
             npc.width = 20;
             npc.lifeMax = 750;
             if (Main.hardMode) { npc.lifeMax = 1400; npc.defense = 40; }
@@ -434,7 +434,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (npc.direction == 1) //Large eye dust to warn player that a jump-slash is ready...
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 9, npc.position.Y + 1), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 1.5f)];
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 9, npc.position.Y), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 1.5f)];
                     //dust2.velocity *= 0f;
                     dust2.noGravity = true;
                     dust2.fadeIn = .3f;
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 else
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 3, npc.position.Y + 1), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 1.5f)];
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 3, npc.position.Y), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 1.5f)];
                     //dust2.velocity *= 0f;
                     dust2.noGravity = true;
                     dust2.fadeIn = .3f;
@@ -456,7 +456,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (npc.direction == 1) //Small eye dust to warn player that a jump-slash is ready...
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 9, npc.position.Y + 1), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 0.8f)];
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 9, npc.position.Y), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 0.8f)];
                     //dust2.velocity *= 0f;
                     dust2.noGravity = true;
                     dust2.fadeIn = .3f;
@@ -465,7 +465,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 else
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 3, npc.position.Y + 1), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 0.8f)];
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X + 3, npc.position.Y), 4, 4, 183, npc.velocity.X, npc.velocity.Y, 180, default(Color), 0.8f)];
                     //dust2.velocity *= 0f;
                     dust2.noGravity = true;
                     dust2.fadeIn = .3f;

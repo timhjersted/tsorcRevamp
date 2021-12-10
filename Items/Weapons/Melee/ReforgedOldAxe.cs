@@ -5,7 +5,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldAxe : ModItem {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldAxe";
         public override void SetDefaults() {
-            item.damage = 11;
+            item.damage = 12;
             item.width = 36;
             item.height = 30;
             item.knockBack = 6;

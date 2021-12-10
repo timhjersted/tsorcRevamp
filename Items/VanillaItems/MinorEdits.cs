@@ -13,6 +13,18 @@ namespace tsorcRevamp.Items.VanillaItems {
             if (item.type == ItemID.DivingHelmet) {
                 item.accessory = true;
             }
+            if (item.type == ItemID.NightsEdge)
+            {
+                item.autoReuse = true;
+                item.useAnimation = 21;
+                item.useTime = 21;
+            }
+            if (item.type == ItemID.FieryGreatsword)
+            {
+                item.useAnimation = 30;
+                item.useTime = 30;
+                item.damage = 40;
+            }
         }
 
         public override bool CanUseItem(Item item, Player player)

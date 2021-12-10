@@ -12,13 +12,26 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useAnimation = 30;
             item.useTime = 30;
-            item.damage = 36;
+            item.damage = 46;
             item.knockBack = 7;
-            item.scale = 1.3f;
+            item.scale = 1f;
             item.UseSound = SoundID.Item1;
             item.rare = ItemRarityID.Orange;
             item.value = 27000;
             item.melee = true;
+            item.autoReuse = true;
+        }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+
+            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.BoneBlade>());
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
         }
     }
 }

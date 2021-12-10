@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useAnimation = 36;
             item.useTime = 36;
-            item.damage = 36;
+            item.damage = 38;
             item.knockBack = 5.5f;
             item.mana = 9;
             item.UseSound = SoundID.Item8;

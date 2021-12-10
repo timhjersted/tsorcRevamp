@@ -1006,10 +1006,12 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 400);
 			Item.NewItem(npc.getRect(), mod.ItemType("EternalCrystal")); //always drops 1
-			Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
 
-
-			if (Main.rand.NextFloat() >= 0.4f) // 60% chance
+			if (Main.rand.NextFloat() >= 0.2f) // 80% chance
+			{
+				Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
+			}
+			if (Main.rand.NextFloat() >= 0.2f) // 80% chance
 			{
 				Item.NewItem(npc.getRect(), mod.ItemType("SoulSiphonPotion"));
 			}

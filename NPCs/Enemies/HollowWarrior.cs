@@ -489,7 +489,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             Projectile.NewProjectile(npc.Center + new Vector2(-20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.SmallWeaponSlash>(), 13, 5, Main.myPlayer, npc.whoAmI, 0);
                         }
                     }
-                    if (npc.ai[1] > 470 && npc.ai[1] < 489)
+                    if (npc.ai[1] > 470 && npc.ai[1] < 510)
                     {
                         if (npc.direction == 1)
                         {
@@ -509,7 +509,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             }
                         }
                     }
-                    if (npc.ai[1] >= 489) //If timer is 69
+                    if (npc.ai[1] >= 510) //If timer is 510
                     {
                         jumpSlashing = false;
                         npc.ai[1] = 0; //Reset timer
@@ -901,7 +901,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     npc.frame.Y = 15 * frameHeight;
                 }
-                else if (npc.ai[1] < 489)
+                else if (npc.ai[1] < 510)
                 {
                     npc.frame.Y = 16 * frameHeight;
                 }
