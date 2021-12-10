@@ -193,6 +193,7 @@ namespace tsorcRevamp {
         }
 
         public override void PreUpdate() {
+            SetDirection(true);
             //Main.NewText(darkSoulQuantity);
 
             darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
@@ -921,8 +922,36 @@ namespace tsorcRevamp {
                     buffIndex++;
                 }
             }
+            SetDirection();
+
+            if (!player.mount.Active) {
+                player.fullRotation = rotation * player.gravDir;
+            }
+
+            rotation = 0f;
+            rotationOffsetScale = 1f;
+            if (forcedItemRotation.HasValue) {
+                player.itemRotation = forcedItemRotation.Value;
+
+                forcedItemRotation = null;
+            }
+            
+
+            TryForceFrame(ref player.headFrame, ref forcedHeadFrame);
+            TryForceFrame(ref player.bodyFrame, ref forcedBodyFrame);
+            TryForceFrame(ref player.legFrame, ref forcedLegFrame);
         }
-        
+
+        void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {
+            if (newFrame.HasValue) {
+                frame = ToRectangle(newFrame.Value);
+
+                newFrame = null;
+            }
+        }
+        public static Rectangle ToRectangle(PlayerFrames frame) {
+            return new Rectangle(0, (int)frame * 56, 40, 56);
+        }
         public override void UpdateBiomes() {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 if (Main.dungeonTiles >= 200 && player.Center.Y > Main.worldSurface * 16.0) {

@@ -117,6 +117,25 @@ namespace tsorcRevamp
             SoulSlot.Item = soulSlotSouls.Clone();
         }
 
+        public void SetDirection() => SetDirection(false);
+
+        private void SetDirection(bool resetForcedDirection) {
+            if (!Main.dedServ && Main.gameMenu) {
+                player.direction = 1;
+
+                return;
+            }
+
+            if (!player.pulley && (!player.mount.Active || player.mount.AllowDirectionChange) && (player.itemAnimation <= 1)) {
+                if (forcedDirection != 0) {
+                    player.direction = forcedDirection;
+
+                    if (resetForcedDirection) {
+                        forcedDirection = 0;
+                    }
+                }
+            }
+        }
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 

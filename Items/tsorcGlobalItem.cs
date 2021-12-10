@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items {
 		public static List<int> potionList;
 		public static List<int> ammoList;
 
+		public override bool CanUseItem(Item item, Player player) => !player.GetModPlayer<tsorcRevampPlayer>().isDodging;
 		public override void SetDefaults(Item item)
 		{
 			populatePotions();
