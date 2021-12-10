@@ -59,7 +59,7 @@ namespace tsorcRevamp {
         public static float MusicDownloadProgress = 0;
         public static ModHotKey DodgerollKey;
 
-        internal static bool[] CustomDungeonWalls = new bool[231];
+        internal static bool[] CustomDungeonWalls;
 
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
@@ -566,6 +566,7 @@ namespace tsorcRevamp {
             #endregion
             //--------
             #region CustomDungeonTiles list
+            CustomDungeonWalls = new bool[231];
             for (int i = 0; i < 231; i++) {
                 CustomDungeonWalls[i] = false;
             }

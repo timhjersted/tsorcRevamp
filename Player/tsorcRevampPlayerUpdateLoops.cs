@@ -930,7 +930,6 @@ namespace tsorcRevamp {
             }
 
             rotation = 0f;
-            rotationOffsetScale = 1f;
             if (forcedItemRotation.HasValue) {
                 player.itemRotation = forcedItemRotation.Value;
 

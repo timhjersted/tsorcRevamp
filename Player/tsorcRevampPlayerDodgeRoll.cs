@@ -61,7 +61,6 @@ namespace tsorcRevamp {
 		public bool forceDodgeroll;
 		public bool noDodge;
 		public float rotation;
-		public float rotationOffsetScale;
 		public float? forcedItemRotation;
 		public PlayerFrames? forcedHeadFrame;
 		public PlayerFrames? forcedBodyFrame;
