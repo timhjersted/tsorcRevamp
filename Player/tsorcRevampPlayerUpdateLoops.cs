@@ -193,6 +193,7 @@ namespace tsorcRevamp {
         }
 
         public override void PreUpdate() {
+            player.fullRotationOrigin = new Vector2(11, 22);
             SetDirection(true);
             //Main.NewText(darkSoulQuantity);
 

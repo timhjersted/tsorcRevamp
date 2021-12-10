@@ -206,7 +206,6 @@ namespace tsorcRevamp {
 				: Math.Max(-MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, -MathHelper.TwoPi, dodgeTime / (DodgeTimeMax * 1f)));
 			  //Progress the dodgeroll
 			dodgeTime += 1f / 60f;
-			Main.NewText("" + rotation);
 			if (dodgeTime >= DodgeTimeMax) {
 				isDodging = false;
 				player.eocDash = 0;
