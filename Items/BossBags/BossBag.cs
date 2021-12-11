@@ -448,6 +448,7 @@ namespace tsorcRevamp.Items.BossBags {
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
             {
                 player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.ReflectionShift>());
+                player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>());
             }
             else
             {
