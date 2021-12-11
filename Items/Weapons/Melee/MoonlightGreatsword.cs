@@ -18,10 +18,10 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
             item.damage = 250;
-            item.height = 76;
-            item.width = 76;
+            item.height = 72;
+            item.width = 72;
             item.knockBack = 14f;
-            item.melee = true;
+            item.magic = true;
             item.autoReuse = true;
             item.useAnimation = 27;
             item.useTime = 27;
@@ -48,18 +48,22 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if (Main.rand.Next(5) == 0)
+            if (Main.rand.Next(2) == 0)
             {
-                item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
-                item.shootSpeed = 10f;
-            }
+                //item.shoot = ModContent.ProjectileType<Projectiles.Crescent>();
+                //item.shootSpeed = 10f;
                 return true;
+
+            }
+            return false;
         }
 
+        public override bool OnlyShootOnSwing => true;
 
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {
-            int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 15, player.velocity.X * 0.2f + player.direction * 3, player.velocity.Y * 0.2f, 100, default, 1.0f);
+            int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 89, player.velocity.X, player.velocity.Y, 100, default, .8f);
+            //Main.dust[dust].velocity *= 0;
             Main.dust[dust].noGravity = true;
         }
     }
