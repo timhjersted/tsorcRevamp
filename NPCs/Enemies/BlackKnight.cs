@@ -17,13 +17,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.height = 40;
 			npc.width = 20;
 			npc.damage = 95;
-			npc.defense = 31;
-			npc.lifeMax = 3000;
+			npc.defense = 21;
+			npc.lifeMax = 900;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.lavaImmune = true;
 			npc.value = 5000;
-			npc.knockBackResist = 0.1f;
+			npc.knockBackResist = 0.15f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
 		}
@@ -39,8 +39,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		float customAi1;
 
-		int drownTimerMax = 2000;
-		int drownTimer = 2000;
+		int drownTimerMax = 5000;
+		int drownTimer = 5000;
 		int drowningRisk = 1200;
 
 		int boredTimer = 0;
@@ -52,8 +52,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			if (!spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime && Main.rand.Next(700) == 1) return 1;
-			if (Main.hardMode && spawnInfo.player.ZoneMeteor && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.ZoneDirtLayerHeight && Main.rand.Next(150) == 1) return 1;
-			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneDungeon && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.ZoneRockLayerHeight && Main.rand.Next(200) == 1) return 1;
+			if (!Main.hardMode && spawnInfo.player.ZoneMeteor && Main.rand.Next(500) == 1) return 1;
+			if (Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(200) == 1) return 1;
 			if (Main.hardMode && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !spawnInfo.player.ZoneBeach && !Main.dayTime && Main.rand.Next(400) == 1) return 1;
 			if (Main.hardMode && spawnInfo.player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.Next(60) == 1) return 1;
 			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.bloodMoon && Main.rand.Next(10) == 1) return 1;
@@ -103,14 +103,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			float hop_speed = 3; // how fast hops can accelerate vertically; usually 3 (2xSpd is 4 for Hvy Skel & Werewolf so they're noticably capped)
 
 			// is_archer & clown bombs only
-			int shot_rate = 70;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
+			int shot_rate = 60;  //  rate at which archers/bombers fire; 70 for skeleton archer, 180 for goblin archer, 450 for clown; atm must be an even # or won't fire at shot_rate/2
 			//int fuse_time = 300;  //  fuse time on bombs, 300 for clown bombs
 			int projectile_damage = 35;  //  projectile dmg: 35 for Skeleton Archer, 11 for Goblin Archer
 			int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellMeteor>(); // projectile id: 82(Flaming Arrow) for Skeleton Archer, 81(Wooden Arrow) for Goblin Archer, 75(Happy Bomb) for Clown
 			float projectile_velocity = 11; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
 
 			// can_pass_doors only
-			float door_break_pow = 2; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
+			float door_break_pow = 10; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
 			bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
 			// Omnirs creature sorts
@@ -320,9 +320,9 @@ namespace tsorcRevamp.NPCs.Enemies
 					npc.TargetClosest(true);
 					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 					{
-						if (Main.rand.Next(40) == 1)
+						if (Main.rand.Next(180) == 1)
 						{
-							float num48 = 11f;
+							float num48 = 6f; //was 11
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
