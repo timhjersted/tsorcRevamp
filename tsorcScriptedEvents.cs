@@ -108,6 +108,10 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            SeathFight,
+            WyvernMageFight,
+            GaibonFight,
+            SlograFight,
             SerrisFight,
             MarilithFight,
             KrakenFight,
@@ -147,6 +151,18 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
+            //SEATH THE SCALELESS
+            ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.ShadowbeamStaff, true, true, "Seath the Scaleless rises!", Color.Blue, false);
+
+            //WYVERN MAGE 
+            ScriptedEvent WyvernMageEvent = new ScriptedEvent(new Vector2(7192, 364), 40, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), DustID.MagicMirror, true, true, "The Wyvern Mage has appeared to defend its fortress!", Color.Blue, false);
+
+            //GAIBON  
+            ScriptedEvent GaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, ModContent.NPCType<NPCs.Bosses.Gaibon>(), DustID.Shadowflame, true, true, "...", Color.Purple, false);
+
+            //SLOGRA
+            ScriptedEvent SlograEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, ModContent.NPCType<NPCs.Bosses.Slogra>(), DustID.Shadowflame, true, true, "Slogra and Gaibon have risen from the depths!", Color.Purple, false);
+
             //SERRIS 
             ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.Shadowflame, true, true, "Serris has been enraged!", Color.Blue, false);
 
@@ -172,7 +188,7 @@ namespace tsorcRevamp
             //CHAOS
             ScriptedEvent ChaosEvent = new ScriptedEvent(new Vector2(6415, 1888), 50, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>(), DustID.GoldFlame, true, true, "Chaos has entered this dimension!", Color.Red, false, SuperHardModeCustomCondition);
 
-            //WYVERN MAGE 
+            //WYVERN MAGE SHADOW-SHM
             ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, true, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
           
             //DARK CLOUD
@@ -191,7 +207,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, false, false, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, true, false, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
@@ -266,6 +282,10 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.SeathFight, SeathEvent},
+                {ScriptedEventType.WyvernMageFight, WyvernMageEvent},
+                {ScriptedEventType.GaibonFight, GaibonEvent},
+                {ScriptedEventType.SlograFight, SlograEvent},
                 {ScriptedEventType.SerrisFight, SerrisEvent},
                 {ScriptedEventType.MarilithFight, MarilithEvent},
                 {ScriptedEventType.KrakenFight, KrakenEvent},
