@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.value = 500000;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
+            npc.buffImmune[BuffID.OnFire] = false;
             npc.buffImmune[BuffID.CursedInferno] = true;
             bossBag = ModContent.ItemType<Items.BossBags.SeathBag>();
             despawnHandler = new NPCDespawnHandler("Seath consumes your soul...", Color.Cyan, DustID.BlueFairy);
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (Main.rand.Next(255) == 0)
             {
                 breath = true;
-                Main.PlaySound(15, -1, -1, 0);
+               // Main.PlaySound(15, -1, -1, 0); This roar sound got very annoying
             }
             if (breath)
             {
