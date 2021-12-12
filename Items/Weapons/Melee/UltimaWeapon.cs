@@ -53,12 +53,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
             }
 
-
             spriteBatch.Draw(baseTexture, position, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), drawColor, 0, origin, scale, SpriteEffects.None, 0.1f);
-            if (!Main.dayTime)
-            {
-                spriteBatch.Draw(glowTexture, position, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, 0, origin, scale, SpriteEffects.None, 0.1f);
-            }
+            spriteBatch.Draw(glowTexture, position, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, 0, origin, scale, SpriteEffects.None, 0.1f);            
 
             return false;
         }
@@ -73,11 +69,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             {
                 baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
             }
-            spriteBatch.Draw(baseTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
-            if (!Main.dayTime)
-            {
-                spriteBatch.Draw(glowTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
-            }
+
+            spriteBatch.Draw(baseTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);            
+            spriteBatch.Draw(glowTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);            
 
             return false;
         }
