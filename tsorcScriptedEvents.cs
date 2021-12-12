@@ -108,6 +108,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            JungleWyvernFight,
             SeathFight,
             WyvernMageFight,
             GaibonFight,
@@ -151,6 +152,10 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
+
+            //JUNGLE WYVERN
+            ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.Shadowflame, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
+
             //SEATH THE SCALELESS
             ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.ShadowbeamStaff, true, true, "Seath the Scaleless rises!", Color.Blue, false);
 
@@ -281,7 +286,7 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
-
+                {ScriptedEventType.JungleWyvernFight, JungleWyvernEvent},
                 {ScriptedEventType.SeathFight, SeathEvent},
                 {ScriptedEventType.WyvernMageFight, WyvernMageEvent},
                 {ScriptedEventType.GaibonFight, GaibonEvent},
