@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,14 +13,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nDoes 150 damage when at full health, and 100 damage at 200 health, scaling with current HP");
         }
 
-        //If only it was this easy :/
-		//public override string Texture => TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
-
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
             item.damage = 50;
-            item.height = 50;
-            item.width = 50;
+            item.height = 64;
+            item.width = 64;
             item.knockBack = 14f;
             item.melee = true;
             item.autoReuse = true;
@@ -40,6 +39,48 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddRecipe();
         }
 
+        Texture2D glowTexture;
+        Texture2D baseTexture;
+
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            if(glowTexture == null)
+            {
+                glowTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
+            }
+            if (baseTexture == null)
+            {
+                baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
+            }
+
+
+            spriteBatch.Draw(baseTexture, position, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), drawColor, 0, origin, scale, SpriteEffects.None, 0.1f);
+            if (!Main.dayTime)
+            {
+                spriteBatch.Draw(glowTexture, position, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, 0, origin, scale, SpriteEffects.None, 0.1f);
+            }
+
+            return false;
+        }
+
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            if (glowTexture == null)
+            {
+                glowTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
+            }
+            if (baseTexture == null)
+            {
+                baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
+            }
+            spriteBatch.Draw(baseTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
+            if (!Main.dayTime)
+            {
+                spriteBatch.Draw(glowTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
+            }
+
+            return false;
+        }
 
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
 

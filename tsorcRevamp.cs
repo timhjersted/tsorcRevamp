@@ -1502,7 +1502,9 @@ namespace tsorcRevamp {
             DarkUltimaWeapon,
             DarkUltimaWeaponGlowmask,
             ReflectionShift,
-            PhazonRound
+            PhazonRound,
+            MoonlightGreatsword,
+            MoonlightGreatswordGlowmask
 
         }          
         
@@ -1541,8 +1543,9 @@ namespace tsorcRevamp {
                 {TransparentTextureType.DarkUltimaWeapon, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon")},
                 {TransparentTextureType.DarkUltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask")},
                 {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")},
-                {TransparentTextureType.PhazonRound, ModContent.GetTexture("tsorcRevamp/Projectiles/PhazonRound")}
-
+                {TransparentTextureType.PhazonRound, ModContent.GetTexture("tsorcRevamp/Projectiles/PhazonRound")},
+                {TransparentTextureType.MoonlightGreatsword, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword")},
+                {TransparentTextureType.MoonlightGreatswordGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")}
             };
 
             //Runs each entry through the XNA's premultiplication function

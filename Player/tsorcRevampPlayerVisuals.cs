@@ -122,7 +122,14 @@ namespace tsorcRevamp {
                     if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.Biohazard>()) {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BiohazardGlowmask];
                     }
-
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>() && !Main.dayTime)
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatswordGlowmask];
+                    }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.UltimaWeapon>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
+                    }
                     //If it's not on the list, don't bother.
                     if (texture != null) {
                         #region animation
@@ -152,8 +159,17 @@ namespace tsorcRevamp {
                         //Set the origin based on the offset point
                         Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
 
-                        //Shift everything if the player is facing the other way
-                        if (drawPlayer.direction == -1) {
+
+
+                        if (modPlayer.player.HeldItem.useStyle == ItemUseStyleID.SwingThrow)
+                        {
+                            drawPos -= new Vector2(modPlayer.player.HeldItem.width / 2, modPlayer.player.HeldItem.height / 2);
+                            origin.Y = modPlayer.player.HeldItem.height;
+                        }
+
+                        // Shift everything if the player is facing the other way
+                        if (drawPlayer.direction == -1)
+                        {
                             origin.X = texture.Width + originOffset.X;
                         }
 
