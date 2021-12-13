@@ -13,6 +13,7 @@ using System.Net;
 using Microsoft.Xna.Framework.Audio;
 using ReLogic.Utilities;
 using Terraria.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -31,7 +32,9 @@ namespace tsorcRevamp {
             On.Terraria.NPC.SpawnNPC += BossZenPatch;
 
             On.Terraria.Main.DrawMenu += DownloadMapButton;
-        }        
+
+            On.Terraria.Main.DrawPlayer += StaminaBar;
+        }
 
 
         //allow spawns to be set outside a valid house (for bonfires)
@@ -612,6 +615,32 @@ namespace tsorcRevamp {
                     Main.spriteBatch.End();
                 }               
             }           
+        }
+
+        internal static void StaminaBar(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow) {
+            orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
+            int staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+            int staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+            float staminaPercentage = (float)staminaCurrent / staminaMax;
+            if (staminaPercentage < 1f) {
+                float abovePlayer = 45f; //how far above the player should the bar be?
+                Texture2D barFill = ModContent.GetTexture("tsorcRevamp/Textures/StaminaBar_full");
+                Texture2D barEmpty = ModContent.GetTexture("tsorcRevamp/Textures/StaminaBar_empty");
+
+                //this is the position on the screen. it should remain relatively constant unless the window is resized
+                Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+                //Main.NewText("" + barOrigin.X + ", " + barOrigin.Y);
+
+                Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
+
+                //empty bar has detailing, so offset the filled bar's destination
+                int padding = 5;
+                //scale the width by the stam percentage
+                Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
+
+                Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
+                Main.spriteBatch.Draw(barFill, fillDestination, Color.White); 
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ namespace tsorcRevamp {
         public static bool DownloadingMusic = false;
         public static float MusicDownloadProgress = 0;
         public static ModHotKey DodgerollKey;
+        public static ModHotKey SwordflipKey;
 
         internal static bool[] CustomDungeonWalls;
 
@@ -65,6 +66,7 @@ namespace tsorcRevamp {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
             reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
             DodgerollKey = RegisterHotKey("Dodge Roll", "LeftAlt");
+            SwordflipKey = RegisterHotKey("Sword Flip", "P"); //TODO change this
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
@@ -608,6 +610,7 @@ namespace tsorcRevamp {
             UnloadILs();
             CustomDungeonWalls = null;
             DodgerollKey = null;
+            SwordflipKey = null;
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();

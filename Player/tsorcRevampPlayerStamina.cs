@@ -61,18 +61,22 @@ namespace tsorcRevamp
 		private void UpdateResource()
 		{
 
-			Main.NewText("Stamina: " + staminaResourceCurrent);
+			//Main.NewText("Stamina: " + staminaResourceCurrent);
 
 
 			// For our resource lets make it regen slowly over time to keep it simple, let's use exampleResourceRegenTimer to count up to whatever value we want, then increase currentResource.
 			staminaResourceRegenTimer++; //Increase it by 60 per second, or 1 per tick.
 
-			// A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
-			if (staminaResourceRegenTimer > 3 * staminaResourceRegenRate)
-			{
-				staminaResourceCurrent += 1;
-				staminaResourceRegenTimer = 0;
-			}
+            // A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
+            if (player.whoAmI == Main.myPlayer) {
+				//no stamina regen during a roll, for balance?
+                if (!player.GetModPlayer<tsorcRevampPlayer>().isDodging) {
+                    if (staminaResourceRegenTimer > 3 * staminaResourceRegenRate) {
+                        staminaResourceCurrent += 1;
+                        staminaResourceRegenTimer = 0;
+                    }  
+                }
+            }
 
 			// Limit exampleResourceCurrent from going over the limit imposed by exampleResourceMax.
 			staminaResourceCurrent = Utils.Clamp(staminaResourceCurrent, 0, staminaResourceMax2);

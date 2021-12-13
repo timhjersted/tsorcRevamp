@@ -67,9 +67,6 @@ namespace tsorcRevamp {
 		public PlayerFrames? forcedLegFrame;
 		public int forcedDirection;
 
-		//CanX
-		public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot) => !isDodging;
-		public override bool CanBeHitByProjectile(Projectile proj) => !isDodging;
 		public override bool PreItemCheck() {
 			UpdateDodging();
 			UpdateSwordflip();
@@ -117,7 +114,6 @@ namespace tsorcRevamp {
 
 			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30) {
 				QueueDodgeroll(0.25f, (sbyte)KeyDirection(player));
-				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
 			}
 
 			if (!forceDodgeroll) {
@@ -149,6 +145,8 @@ namespace tsorcRevamp {
 			player.eocHit = 1;
 
 			isDodging = true;
+			//only subtract stamina on a successful roll
+			player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
 			player.immune = true;
 			player.immuneTime = 15;
 			dodgeStartRot = player.GetModPlayer<tsorcRevampPlayer>().rotation;
