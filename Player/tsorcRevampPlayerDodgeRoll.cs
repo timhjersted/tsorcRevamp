@@ -47,7 +47,7 @@ namespace tsorcRevamp {
 	}
 	public partial class tsorcRevampPlayer : ModPlayer {
 		public static float DodgeTimeMax => 0.37f;
-		public static uint DodgeDefaultCooldown => 90;
+		public static uint DodgeDefaultCooldown => 30;
 
 		public Timer dodgeCooldown;
 		public sbyte dodgeDirection;
@@ -72,6 +72,7 @@ namespace tsorcRevamp {
 		public override bool CanBeHitByProjectile(Projectile proj) => !isDodging;
 		public override bool PreItemCheck() {
 			UpdateDodging();
+			UpdateSwordflip();
 
 			//Stop umbrella and other things from working
 			if (isDodging && player.HeldItem.type == ItemID.Umbrella) {
@@ -114,8 +115,9 @@ namespace tsorcRevamp {
 		private bool TryStartDodgeroll() {
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
-			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface) {
+			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30) {
 				QueueDodgeroll(0.25f, (sbyte)KeyDirection(player));
+				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
 			}
 
 			if (!forceDodgeroll) {
@@ -191,6 +193,7 @@ namespace tsorcRevamp {
 				if (Math.Abs(player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(player.velocity.X)) {
 					player.velocity.X = newVelX;
 				}
+
 			}
 
 			player.pulley = false;
