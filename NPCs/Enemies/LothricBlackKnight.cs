@@ -10,6 +10,8 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class LothricBlackKnight : ModNPC //Don't look at the code, it's muy malo. Look at Lothric Spear Knight for a better example code management-wise
     {
+        public override string Texture => "tsorcRevamp/NPCs/Enemies/LothricKnight"; // Here we're grabbing the original texture used by Lothric Knight, to save us needing another spritesheet taking up space (albeit very little)
+
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         //AI 
@@ -17,7 +19,9 @@ namespace tsorcRevamp.NPCs.Enemies
         bool jumpSlashing = false;
         bool shielding = false;
         bool stabbing = false;
-
+        bool enrage = false;
+        bool hasEnraged = false;
+        int enrageTimer;
 
         //Anim
         int shieldFrame;
@@ -36,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.npcSlots = 20;
             npc.knockBackResist = 0.15f;
             npc.aiStyle = -1;
-            npc.damage = 80;
+            npc.damage = 65;
             npc.defense = 15;
             npc.height = 44;
             npc.width = 20;
@@ -53,7 +57,6 @@ namespace tsorcRevamp.NPCs.Enemies
             /*banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
         }
-
 
         public override void HitEffect(int hitDirection, double damage)
         {
@@ -79,20 +82,67 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+
             Player player = Main.player[npc.target];
 
             if (npc.Distance(player.Center) < 600)
             {
-                player.ZonePeaceCandle = true;
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
             }
 
+            var projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>();
+            var projStab = ModContent.ProjectileType<Projectiles.Enemy.Spearhead>();
             int lifePercentage = (npc.life * 100) / npc.lifeMax;
             float acceleration = 0.02f;
             //float top_speed = (lifePercentage * 0.02f) + .2f; //good calculation to remember for decreasing speed the lower the enemy HP%
             float top_speed = (lifePercentage * -0.02f) + 2.5f; //good calculation to remember for increasing speed the lower the enemy HP%
             float braking_power = 0.1f; //Breaking power to slow down after moving above top_speed
-            //Main.NewText(Math.Abs(npc.velocity.X));
+                                        //Main.NewText(Math.Abs(npc.velocity.X));
+
+            int damage = npc.damage / 4;
+
+            if (npc.life < npc.lifeMax / 2)
+            {
+                top_speed *= 1.5f;
+                damage = (int)(1.1f * damage);
+                projSlash = ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlashCrimson>();
+                projStab = ModContent.ProjectileType<Projectiles.Enemy.SpearheadCrimson>();
+
+                if (!hasEnraged)
+                {
+                    enrage = true;
+                }
+            }
+
+
+
+            if (enrage)
+            {
+                enrageTimer++;
+
+                if (enrageTimer <= 120)
+                {
+                    for (int d = 0; d < 2; d++)
+                    {
+                        int dust = Dust.NewDust(new Vector2(npc.position.X - 10, npc.position.Y - 15), npc.width + 20, npc.height + 20, 60, 0, 0, 30, default(Color), Main.rand.NextFloat(1f, 1.5f));
+                        Main.dust[dust].noGravity = true;
+                    }
+                }
+
+                for (int d = 0; d < 2; d++)
+                {
+                    int dust = Dust.NewDust(new Vector2(npc.position.X - 10, npc.position.Y - 15), npc.width + 20, npc.height + 20, 60, 0, 0, 30, default(Color), Main.rand.NextFloat(.8f, 1.2f));
+                    Main.dust[dust].noGravity = true;
+                }
+
+                if (enrageTimer > 180)
+                {
+
+                    hasEnraged = true;
+                    enrage = false;
+                }
+            }
+
 
             #region target/face player, respond to boredom
 
@@ -337,10 +387,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
             //Basic Slash Attack
+
+
             //Main.NewText(npc.ai[1]);
             //Main.NewText(npc.ai[2]);
             //Main.NewText(npc.ai[3]);
-            // Main.NewText(top_speed);
+            //Main.NewText(top_speed);
             //Main.NewText(Math.Abs(npc.velocity.X));
 
             if (npc.ai[3] < 10)
@@ -389,11 +441,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(20, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
                             }
 
                         }
@@ -402,12 +454,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
                             }
                         }
                     }
@@ -526,12 +578,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (npc.direction == 1)
                         {
-                            Projectile.NewProjectile(npc.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 30, 5, Main.myPlayer, npc.whoAmI, 0);
+                            Projectile.NewProjectile(npc.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, npc.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(npc.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 30, 5, Main.myPlayer, npc.whoAmI, 0);
+                            Projectile.NewProjectile(npc.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, npc.whoAmI, 0);
                         }
                     }
                     if (npc.ai[1] > 470 && npc.ai[1] < 489)
@@ -603,14 +655,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (npc.direction == 1)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 32, 5, Main.myPlayer, npc.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, npc.whoAmI, 0)];
                             npc.velocity.X += 10.5f;
                             npc.velocity.Y -= 2f;
                         }
 
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(-44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 32, 5, Main.myPlayer, npc.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, npc.whoAmI, 0)];
                             npc.velocity.X -= 10.5f;
                             npc.velocity.Y -= 2f;
                         }
@@ -680,6 +732,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
+            int shieldPower = npc.defense * 3;
+
+            if (npc.life < npc.lifeMax / 2)
+            {
+                shieldPower = npc.defense * 4;
+            }
+
             if (shielding)
             {
                 if (npc.direction == 1)
@@ -687,7 +746,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X > npc.position.X)
                     {
                         Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 50;
+                        damage -= shieldPower;
                         if (npc.ai[2] > 340)
                         {
                             npc.ai[2] -= 35;
@@ -699,7 +758,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X < npc.position.X)
                     {
                         Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 50;
+                        damage -= shieldPower;
                         if (npc.ai[2] > 340)
                         {
                             npc.ai[2] -= 35;
@@ -733,6 +792,14 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player player = Main.player[npc.target];
+
+            int shieldPower = npc.defense * 3;
+
+            if (npc.life < npc.lifeMax / 2)
+            {
+                shieldPower = npc.defense * 4;
+            }
+
             if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
             {
                 if (shielding)
@@ -743,7 +810,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
 
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
                             knockback = 0f;
                             if (npc.ai[1] < 340)
                             {
@@ -758,7 +825,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (hitDirection == -1 && (!projectile.melee || projectile.aiStyle == 19))
                         {
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
                             knockback = 0f;
 
                             if (npc.ai[1] < 340)
@@ -778,7 +845,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (projectile.oldPosition.X < npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
                             knockback = 0f;
                             if (npc.ai[1] < 340)
                             {
@@ -792,7 +859,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (hitDirection == 1 && (!projectile.melee || projectile.aiStyle == 19))
                         {
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
 
                             knockback = 0f;
                             if (npc.ai[1] < 340)
@@ -867,18 +934,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
             Item.NewItem(npc.getRect(), ItemID.Heart);
             Item.NewItem(npc.getRect(), ItemID.Heart);
 
 
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenKotetsu>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
+            //if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenKotetsu>(), 1, false, -1);
+            //if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.RagePotion); }
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.WrathPotion); }
@@ -886,13 +953,43 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #region Drawing and Animation
 
-        public override void DrawEffects(ref Color drawColor)
+        public override void DrawEffects(ref Color drawColor) //This allows us to draw dusts or modify the color of the npc. The .NET Framework has it's own colours, there are lots and the easiest way to see them is online or by testing your code
         {
-            /*Color color = Color.DimGray;
-            drawColor = color;*/
+
+            //If you want an enemy to be black, use DimGray, as Black will make it appear as a black silhouette
+            //drawColor = Color.DimGray;
+
+            //However... When you tint an NPC a colour, the tint "glows", and therefore the enemy will glow in the dark. You can blend the colour with 'normal lighting colour' like this:
+            drawColor = new Color(drawColor.ToVector3() * Color.DimGray.ToVector3());
+
+            //You can change the blend ratio to make it add more of one colour or the other. In this case we're adding 50% more of the 'normal lighting colour', so it's not as dark.
+            //drawColor = new Color((drawColor.ToVector3() * 1.5f) * Color.DimGray.ToVector3());
+
+
+            /* Useful explanation someone gave me on the above code:
+
+             @ChromaEquinox | Red Cloud Revamp just to explain what that code does
+                let's say that we had a colour (R: 255, G: 128, B: 0)
+                and the new color is (R: 64, G: 255, B: 255)
+
+                the first color gets converted to a vector whose values are (X: 1, Y: 0.5, Z: 0)
+                the second colour gets converted to a vector whose values are (X: 0.25, Y: 1, Z: 1)
+
+                multiplying the two together results in (X: 0.25, Y: 0.5, Z: 0)
+
+                converting it back to a color gives you (R: 64, G: 128, B: 0)
+             
+             */
+
+
+            //If you want an enemy to be red, use red/crimson, and multiply the colour by a value between 0 and 1 to give transparency. 0 being totally transparent. Doing it like this makes the sprite "glow".
+            //drawColor = Color.Crimson * 0.8f;
+
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw for trails
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw allows you to draw things behind/under the NPC, in this case we're using it for trails
         {
+            //I don't define a texture, because we'll be using the base texture (see line 909, int the first argument of the draw function we use Main.npcTexture[npc.type])
             Vector2 drawOrigin = new Vector2(npc.position.X, npc.position.Y);
             SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; //Flip texture depending on spriteDirection
             if ((npc.velocity.X > 5f || npc.velocity.X < -5f) && stabbing)
@@ -904,25 +1001,55 @@ namespace tsorcRevamp.NPCs.Enemies
                     spriteBatch.Draw(Main.npcTexture[npc.type], drawPos, new Rectangle(npc.frame.X, npc.frame.Y, 74, 56), color, npc.rotation, new Vector2(npc.position.X + 26, npc.position.Y + 12), npc.scale, effects, 0f); //Vector2 Origin made 0 sense in this case
                 }
             }
-            return true;
+            return true; //returning true in PreDraw means "Yes, draw the base texture of the npc"
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw allows you to draw things in front of the NPC, in this case I'm drawing an animated shield texture while the NPC is shielding
         {
-            Texture2D shieldTexture = mod.GetTexture("NPCs/Enemies/LothricKnight_Shield");
-            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Texture2D CrimsonEquipment = mod.GetTexture("NPCs/Enemies/LothricKnight_CrimsonEquipment");
+            Texture2D shieldTexture = mod.GetTexture("NPCs/Enemies/LothricKnight_Shield"); //In this case we do define another texture, in this case our shield
             Rectangle myrectangle = shieldTexture.Frame(1, 15, 0, shieldFrame);
-            if (shielding && npc.velocity.X == 0 && !jumpSlashing && !slashing && !stabbing)
+            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (npc.life < npc.lifeMax / 2)
             {
                 if (npc.spriteDirection == 1)
                 {
-                    spriteBatch.Draw(shieldTexture, npc.Center - Main.screenPosition, myrectangle, lightColor, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
+                    spriteBatch.Draw(CrimsonEquipment, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 74, 56), Color.Crimson * 0.8f, npc.rotation, new Vector2(32, 32), npc.scale, effects, 0f);
                 }
                 else
                 {
-                    spriteBatch.Draw(shieldTexture, npc.Center - Main.screenPosition, myrectangle, lightColor, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
+                    spriteBatch.Draw(CrimsonEquipment, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 74, 56), Color.Crimson * 0.8f, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
                 }
             }
+
+
+            if (shielding && npc.velocity.X == 0 && !jumpSlashing && !slashing && !stabbing)
+            {
+                if (npc.life < npc.lifeMax / 2)
+                {
+                    if (npc.spriteDirection == 1)
+                    {
+                        spriteBatch.Draw(shieldTexture, npc.Center - Main.screenPosition, myrectangle, Color.Crimson * 0.8f, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(shieldTexture, npc.Center - Main.screenPosition, myrectangle, Color.Crimson * 0.8f, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
+                    }
+                }
+                else
+                {
+                    if (npc.spriteDirection == 1)
+                    {
+                        spriteBatch.Draw(shieldTexture, npc.Center - Main.screenPosition, myrectangle, lightColor, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(shieldTexture, npc.Center - Main.screenPosition, myrectangle, lightColor, npc.rotation, new Vector2(43, 32), npc.scale, effects, 0f);
+                    }
+                }
+            }
+
+
         }
 
         public override void FindFrame(int frameHeight)
