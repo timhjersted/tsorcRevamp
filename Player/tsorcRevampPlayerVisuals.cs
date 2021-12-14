@@ -152,7 +152,14 @@ namespace tsorcRevamp {
                         Vector2 drawPos = drawInfo.itemLocation - Main.screenPosition;
                         Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
                         Vector2 originOffset = new Vector2(0, textureMidpoint);
-                        ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
+                        if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+                        {
+                            ItemLoader.HoldoutOffset(1, drawPlayer.HeldItem.type, ref originOffset);
+                        }
+                        else
+                        {
+                            ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
+                        }
                         holdOffset.Y = originOffset.Y;
                         drawPos += holdOffset;
 

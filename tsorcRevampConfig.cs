@@ -83,6 +83,29 @@ namespace tsorcRevamp {
         public int SoulCounterPosY { get; set; }
 
 
+        [Header("[EXPERIMENTAL!]")]
+
+        [Label("Disable Gravity Potion Screen Flip")]
+        [BackgroundColor(200, 80, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [ReloadRequired]
+        [DefaultValue(false)]
+        [Tooltip("The screen no longer flips when gravity does." +
+            "\nExperimental because it still has many issues that have not been polished out yet." +
+            "\nNotice: We don't officially support any other content mods. However, know that this setting may interfere with them in minor ways." +
+            "\nPossible side effects include them drawing visuals in the wrong spot, or weapons aiming wrong.")]
+        public bool GravityFix { get; set; }
+
+        [Label("Disable Inverted Gravity Aim")]
+        [BackgroundColor(200, 80, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [ReloadRequired]
+        [DefaultValue(false)]
+        [Tooltip("Flipping gravity no longer inverts your aim." +
+            "\nExperimental: Unfinished, not all weapons are supported yet." +
+            "\nAlso may be removed as an option entirely, as it might make things way too easy.")]
+        public bool GravityNormalAim { get; set; }
+
         /*
         [Label("Auto-Update Adventure Map")]
         [BackgroundColor(60, 140, 80, 192)]
