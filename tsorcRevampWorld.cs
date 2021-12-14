@@ -150,20 +150,68 @@ namespace tsorcRevamp {
         }
 
         public static void CampfireToBonfire() {
+            Mod mod = ModContent.GetInstance<tsorcRevamp>();
             for (int x = 0; x < Main.maxTilesX - 2; x++) {
                 for (int y = 0; y < Main.maxTilesY - 2; y++) {
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
-                        WorldGen.KillTile(x, y, false, false, true);
-                        Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
-                        WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
-                        foreach (Item item in Main.item) {
-                            if (item.type == ItemID.Campfire)
-                            {
-                                item.active = false; //delete ground items (in this case campfires)
+
+                        //kill the space above the campfire, to remove vines and such
+                        for (int q = 0; q < 3; q++) {
+                            for (int w = -2; w < 2; w++) {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);  
                             }
+                        }
+                        Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
+                        //WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>();
+                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        {
+                            if (x+1 < 5 || x + 1 > Main.maxTilesX - 5 || y + 1 < 5 || y + 1 > Main.maxTilesY - 5) {
+                                return;
+                            }
+                            bool flag = true;
+                            for (int i = x + 1 - 1; i < x + 1 + 2; i++) {
+                                for (int j = y + 1 - 3; j < y + 1 + 1; j++) {
+                                    if (Main.tile[i, j] == null) {
+                                        Main.tile[i, j] = new Tile();
+                                    }
+                                    if (Main.tile[i, j].active()) {
+                                        flag = false;
+                                    }
+                                }
+                                if (Main.tile[i, y + 1 + 1] == null) {
+                                    Main.tile[i, y + 1 + 1] = new Tile();
+                                }
+                            }
+                            if (flag) {
+                                int num = style * 54;
+                                for (int k = -3; k <= 0; k++) {
+                                    short frameY = (short)((3 + k) * 18);
+                                    Main.tile[x + 1 - 1, y + 1 + k].active(active: true);
+                                    Main.tile[x + 1 - 1, y + 1 + k].frameY = frameY;
+                                    Main.tile[x + 1 - 1, y + 1 + k].frameX = (short)num;
+                                    Main.tile[x + 1 - 1, y + 1 + k].type = type;
+                                    Main.tile[x + 1, y + 1 + k].active(active: true);
+                                    Main.tile[x + 1, y + 1 + k].frameY = frameY;
+                                    Main.tile[x + 1, y + 1 + k].frameX = (short)(num + 18);
+                                    Main.tile[x + 1, y + 1 + k].type = type;
+                                    Main.tile[x + 1 + 1, y + 1 + k].active(active: true);
+                                    Main.tile[x + 1 + 1, y + 1 + k].frameY = frameY;
+                                    Main.tile[x + 1 + 1, y + 1 + k].frameX = (short)(num + 36);
+                                    Main.tile[x + 1 + 1, y + 1 + k].type = type;
+                                }
+                            }
+
                         }
                     }
                 } 
+            }
+            for (int i = 0; i < 400; i++) {
+                if (Main.item[i].type == ItemID.Campfire && Main.item[i].active) {
+                    Main.item[i].active = false; //delete ground items (in this case campfires)
+                }
             }
         }
         Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");

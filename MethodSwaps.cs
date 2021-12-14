@@ -555,7 +555,8 @@ namespace tsorcRevamp {
                     }
                 }
                 Main.spriteBatch.Begin();
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, new Vector2(downloadTextPosition.X+2, downloadTextPosition.Y+2), Color.Black, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
                 Main.spriteBatch.End();
             }
 
@@ -611,6 +612,7 @@ namespace tsorcRevamp {
                     }
          
                     Main.spriteBatch.Begin();
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }               
