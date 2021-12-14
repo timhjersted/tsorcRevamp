@@ -152,26 +152,26 @@ namespace tsorcRevamp {
                         Vector2 drawPos = drawInfo.itemLocation - Main.screenPosition;
                         Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
                         Vector2 originOffset = new Vector2(0, textureMidpoint);
-                        if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
-                        {
-                            ItemLoader.HoldoutOffset(1, drawPlayer.HeldItem.type, ref originOffset);
-                        }
-                        else
-                        {
-                            ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
-                        }
+                        ItemLoader.HoldoutOffset(1, drawPlayer.HeldItem.type, ref originOffset);
+
                         holdOffset.Y = originOffset.Y;
                         drawPos += holdOffset;
+                        
 
                         //Set the origin based on the offset point
                         Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
 
-
-
+                        //Sword support
                         if (modPlayer.player.HeldItem.useStyle == ItemUseStyleID.SwingThrow)
                         {
                             drawPos -= new Vector2(modPlayer.player.HeldItem.width / 2, modPlayer.player.HeldItem.height / 2);
                             origin.Y = modPlayer.player.HeldItem.height;
+
+                            //Reversed grav fix support
+                            if (drawPlayer.gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+                            {
+                                origin.Y = 0;
+                            }
                         }
 
                         // Shift everything if the player is facing the other way
@@ -179,6 +179,9 @@ namespace tsorcRevamp {
                         {
                             origin.X = texture.Width + originOffset.X;
                         }
+
+                        Dust d = Dust.NewDustPerfect(drawPos * 16, DustID.MagicMirror);
+                        Dust.NewDustPerfect((drawPos + origin) * 16, DustID.MagicMirror);
 
                         DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.player.HeldItem.scale, drawInfo.spriteEffects, 3);
                         Main.playerDrawData.Add(data);

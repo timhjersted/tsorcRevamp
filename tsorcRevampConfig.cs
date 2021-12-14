@@ -91,12 +91,12 @@ namespace tsorcRevamp {
         [ReloadRequired]
         [DefaultValue(false)]
         [Tooltip("The screen no longer flips when gravity does." +
+            "\nFlipping gravity will invert your aim instead of the whole screen, a less disorienting effect." +
             "\nExperimental because it still has many issues that have not been polished out yet." +
-            "\nNotice: We don't officially support any other content mods. However, know that this setting may interfere with them in minor ways." +
-            "\nPossible side effects include them drawing visuals in the wrong spot, or weapons aiming wrong.")]
+            "\nNotice: Some other mods may draw visuals in the wrong spot while gravity is flipped.")]
         public bool GravityFix { get; set; }
 
-        [Label("Disable Inverted Gravity Aim")]
+        /*[Label("Disable Inverted Gravity Aim")]
         [BackgroundColor(200, 80, 80, 192)]
         [SliderColor(224, 165, 56, 128)]
         [ReloadRequired]
@@ -104,7 +104,7 @@ namespace tsorcRevamp {
         [Tooltip("Flipping gravity no longer inverts your aim." +
             "\nExperimental: Unfinished, not all weapons are supported yet." +
             "\nAlso may be removed as an option entirely, as it might make things way too easy.")]
-        public bool GravityNormalAim { get; set; }
+        public bool GravityNormalAim { get; set; }*/
 
         /*
         [Label("Auto-Update Adventure Map")]

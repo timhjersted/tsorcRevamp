@@ -18,10 +18,10 @@ namespace tsorcRevamp {
                 IL.Terraria.Main.DoDraw += Gravity_Screenflip_Patch;
                 IL.Terraria.Main.DoDraw += Gravity_Rasterizer_Patch;
             }
-            if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix && ModContent.GetInstance<tsorcRevampConfig>().GravityNormalAim)
+            /*if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix && ModContent.GetInstance<tsorcRevampConfig>().GravityNormalAim)
             {
                 IL.Terraria.Player.ItemCheck += Gravity_Aim_Patch;
-            }
+            }*/
             //IL.Terraria.Main.DrawPlayer_DrawAllLayers += Rotate_Patch;
         }
 
@@ -145,9 +145,9 @@ namespace tsorcRevamp {
             Main.NewText("Hello! I am running!!");
         }
 
-        /* Patches a different part of the shoot method {if(shoot == 17)}, for controlling dirt balls from the dirt rot. Probably works, but not a priority so it's still untested.
+        /* Patches a different part of the shoot method {if(shoot == 17)}, for controlling dirt balls from the dirt rod. Probably works, but not a priority so it's still untested.
          * This is a good example of one of the innumerable silly things we may or may not actually need to patch for this
-        internal static void Gravity_Aim_Patch_2(ILContext il)
+        internal static void Dirt_Rod_Aim_Patch_2(ILContext il)
         {            
             ILCursor c = new ILCursor(il);
             //There are like 50 sequences just like this in the player file, so this one was annoying to pin down the location of

@@ -62,38 +62,82 @@ namespace tsorcRevamp.Projectiles {
         {
             Vector2 origin = Main.player[projectile.owner].Center;
             origin.X -= 5 * Main.player[projectile.owner].direction;
-            origin.Y -= 15;
-
-            if (Main.player[projectile.owner].itemRotation < 0)
+            if (Main.player[projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
-                //If aiming in the upper right quadrant
-                if (Main.player[projectile.owner].direction == 1)
+                origin.Y += 15;
+            }
+            else
+            {
+                origin.Y -= 15;
+            }
+            if (Main.player[projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+            {
+                if (Main.player[projectile.owner].itemRotation < 0)
                 {
-                    origin.X -= 10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                    origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    //If aiming in the upper right quadrant
+                    if (Main.player[projectile.owner].direction == 1)
+                    {
+                        origin.X += 8 + -8 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        //origin.Y += 0 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
+                    //Bottom left
+                    else
+                    {
+                        origin.X -= -10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.Y -= 10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
                 }
-                //Bottom left
                 else
                 {
-                    origin.X -= 5 + -10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                    origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    //Bottom right
+                    if (Main.player[projectile.owner].direction == 1)
+                    {
+                        origin.X += 0 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.Y -= 15 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
+                    //Upper left
+                    else
+                    {
+                        origin.X -= 5 + -5 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        //origin.Y += 15 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
                 }
             }
             else
             {
-                //Bottom right
-                if (Main.player[projectile.owner].direction == 1)
+                if (Main.player[projectile.owner].itemRotation < 0)
                 {
-                    origin.X += 6 + -11 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                    origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    //If aiming in the upper right quadrant
+                    if (Main.player[projectile.owner].direction == 1)
+                    {
+                        origin.X -= 10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
+                    //Bottom left
+                    else
+                    {
+                        origin.X -= 5 + -10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
                 }
-                //Upper left
                 else
                 {
-                    origin.X += 10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
-                    origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    //Bottom right
+                    if (Main.player[projectile.owner].direction == 1)
+                    {
+                        origin.X += 6 + -11 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
+                    //Upper left
+                    else
+                    {
+                        origin.X += 10 * (float)Math.Cos(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                    }
                 }
             }
+
+
             return origin;
         }
 
