@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items {
 				item.damage = (int)Math.Round(0.5f * item.damage);
 			}
 
-			if (item.damage >= 1)
+			if (item.damage >= 1 && !item.channel)
 			{
 				item.autoReuse = true;
 			}
