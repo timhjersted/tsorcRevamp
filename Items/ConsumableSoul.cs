@@ -80,16 +80,11 @@ namespace tsorcRevamp.Items
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
             }
 
-            else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.25f).WithPitchVariance(.3f), player.position); // Plays sound.
-
-               
-
-                //Ensure the player on this computer (Main.player[Main.myPlayer]) is also the one using the item (player).
-                //I'm assuming that the bug is caused by this code is being run on every client, not just the client using the item, and as such each client is spawning one set of souls on the target player.
-                //If so, this should fix it.
+                
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(mod.ItemType("DarkSoul"), 50); // Gives player souls.
@@ -124,7 +119,7 @@ namespace tsorcRevamp.Items
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
             }
 
-            else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f), player.position); // Plays sound.
@@ -168,7 +163,7 @@ namespace tsorcRevamp.Items
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
             }
 
-            else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.5f).WithPitchVariance(.3f), player.position); // Plays sound.
@@ -227,7 +222,7 @@ namespace tsorcRevamp.Items
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
             }
 
-            else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.75f).WithPitchVariance(.3f), player.position); // Plays sound.
@@ -312,7 +307,7 @@ namespace tsorcRevamp.Items
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
             }
 
-            else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
@@ -408,7 +403,7 @@ namespace tsorcRevamp.Items
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
             }
 
-            else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Main.PlaySound(SoundID.NPCDeath52.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
