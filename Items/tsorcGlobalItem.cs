@@ -16,8 +16,15 @@ namespace tsorcRevamp.Items {
 		public override bool CanUseItem(Item item, Player player) => !player.GetModPlayer<tsorcRevampPlayer>().isDodging;
 		public override void SetDefaults(Item item)
 		{
-			populatePotions();
-			populateAmmo();
+			base.SetDefaults(item);
+			if (potionList == null)
+			{
+				populatePotions();
+			}
+			if(ammoList == null)
+			{
+				populateAmmo();
+			}
 			if (potionList.Contains(item.type))
 			{
 				item.maxStack = 60;
@@ -42,7 +49,11 @@ namespace tsorcRevamp.Items {
 			{
 				item.damage = (int)Math.Round(0.5f * item.damage);
 			}
-			else base.SetDefaults(item);
+
+			if (item.damage >= 1)
+			{
+				item.autoReuse = true;
+			}
 		}
 
         public override void GrabRange(Item item, Player player, ref int grabRange) {
@@ -50,6 +61,18 @@ namespace tsorcRevamp.Items {
 				grabRange *= 20;
             }
 
+        }
+
+        public override bool Shoot(Item item, Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+			for(int i = 0; i < Main.maxProjectiles; i++)
+            {
+				if(Main.projectile[i].aiStyle == 19 && Main.projectile[i].owner == player.whoAmI)
+                {
+					Main.projectile[i].Kill();
+                }
+            }
+			return true;
         }
 
         public override bool GrabStyle(Item item, Player player) { 

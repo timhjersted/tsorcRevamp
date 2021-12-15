@@ -92,6 +92,7 @@ namespace tsorcRevamp {
             "\nSome mods may draw visuals or fire projectiles at the wrong spot while gravity is flipped.")]
         public bool GravityFix { get; set; }
         
+        
 
         /*
         [Label("Auto-Update Adventure Map")]

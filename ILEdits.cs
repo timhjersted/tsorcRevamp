@@ -15,6 +15,7 @@ namespace tsorcRevamp {
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
             IL.Terraria.Main.UpdateAudio += Music_Patch;
+            IL.Terraria.Main.UpdateAudio += Music_Autodisable_Patch;
 
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
@@ -107,7 +108,23 @@ namespace tsorcRevamp {
                 return defaultMusic;
             }
         }
-        
+
+        internal static void Music_Autodisable_Patch(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            if (!c.TryGotoNext(instr => instr.MatchLdsfld<Main>("musicError") && instr.Next.MatchLdcI4(100)))
+            {
+                throw new Exception("Could not find instruction to patch (Music_Patch)");
+            }
+            c.Index++;
+            c.EmitDelegate<Func<int, int>>(MusicDisableDelegate);
+        }
+
+        internal static int MusicDisableDelegate(int oldValue)
+        {
+            return 0;
+        }
+
         internal static void Gravity_Screenflip_Patch(ILContext il)
         {
             ILCursor c = new ILCursor(il);
