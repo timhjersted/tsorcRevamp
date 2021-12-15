@@ -1,7 +1,9 @@
 ﻿using MonoMod.Cil;
+using MonoMod.RuntimeDetour.HookGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
@@ -13,11 +15,26 @@ namespace tsorcRevamp {
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
             IL.Terraria.Main.UpdateAudio += Music_Patch;
+
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
                 IL.Terraria.Main.DoDraw += Gravity_Screenflip_Patch;
                 IL.Terraria.Main.DoDraw += Gravity_Rasterizer_Patch;
+                IL.Terraria.Main.DoDraw += Gravity_CombatText_Patch;
+                IL.Terraria.Main.DrawNPCChatBubble += Gravity_Generic_Patch;
+                IL.Terraria.Main.DrawNPCHouse += Gravity_Generic_Patch;
+                IL.Terraria.Main.DrawInterface_14_EntityHealthBars += Gravity_Generic_Patch;
+                IL.Terraria.Main.DrawMouseOver += Gravity_Generic_Patch;
+                IL.Terraria.Main.DrawInterface_19_SignTileBubble += Gravity_Generic_Patch;
+                IL.Terraria.Main.DrawHealthBar += Gravity_Generic_Patch;
+                IL.Terraria.Player.QuickGrapple += Gravity_Generic_Patch;
+                IL.Terraria.GameContent.UI.EmoteBubble.Draw += Gravity_Generic_Patch;
                 IL.Terraria.Player.Update += Gravity_TileAim_Patch;
+                IL.Terraria.CombatText.NewText_Rectangle_Color_string_bool_bool += Gravity_Generic_Patch;
+                IL.Terraria.Player.ItemCheck += Gravity_Aim_Patch;
+
+                //Screw it, i'll make my own hook
+                HookEndpointManager.Modify(typeof(Main).GetProperty("MouseWorld").GetGetMethod(), new ILContext.Manipulator(Gravity_Generic_Patch));
             }
 
             //IL.Terraria.Main.DrawPlayer_DrawAllLayers += Rotate_Patch;
@@ -136,15 +153,17 @@ namespace tsorcRevamp {
             c.EmitDelegate<Func<float, float>>(GravDir_Replace_Delegate);
         }
 
-
-
-        //Stick this into a section of code you are trying to *avoid* running to let you know for sure if it still is (if so you messed up skipping it, if not you edited the wrong section)
-        internal static void DebugDelegate()
+        internal static void Gravity_CombatText_Patch(ILContext il)
         {
-            Main.NewText("Hello! I am running!!");
+            ILCursor c = new ILCursor(il);
+            if (!c.TryGotoNext(instr => instr.MatchLdfld<Player>("gravDir") && instr.Next.MatchLdcR4(-1) && instr.Next.Next.Next.MatchLdsfld<Main>("combatText") && instr.Next.Next.Next.Next.Next.MatchLdelemRef()))
+            {
+                throw new Exception("Could not find instruction to patch (Gravity_CombatText_Patch)");
+            }
+            c.Index += 1;
+            c.EmitDelegate<Func<float, float>>(GravDir_Replace_Delegate);
         }
 
-        /*
         internal static void Gravity_Aim_Patch(ILContext il)
         {
             ILCursor c = new ILCursor(il);
@@ -155,12 +174,30 @@ namespace tsorcRevamp {
             }
             c.Index += 7;
             c.EmitDelegate<Func<float, float>>(GravDir_Replace_Delegate);
-        }*/
+        }
+
+        //Can be used to patch any function where gravDir is used only once.
+        internal static void Gravity_Generic_Patch(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            if (!c.TryGotoNext(instr => instr.MatchLdfld<Player>("gravDir")))
+            {
+                throw new Exception("Could not find instruction to patch (Gravity_Generic_Patch)");
+            }
+            c.Index += 1;
+            c.EmitDelegate<Func<float, float>>(GravDir_Replace_Delegate);
+        }
 
         //Goes right after the current gravDir is loaded onto the stack. Eats that value, then places "1" on the stack. Useful to make code run as if the gravDir is 1.
         internal static float GravDir_Replace_Delegate(float oldValue)
         {
             return 1;
+        }
+
+        //Stick this into a section of code you are trying to *avoid* running to let you know for sure if it still is (if so you messed up skipping it, if not you edited the wrong section)
+        internal static void DebugDelegate()
+        {
+            Main.NewText("Hello! I am running!!");
         }
 
         /*
