@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || player.HasBuff(BuffID.PeaceCandle))
             {
                 maxSpawns = 0;
             }
