@@ -2197,14 +2197,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #endregion
 
         #region Pyramid
-        public static int[,] Lanterns = new int[8, 2] { { 5825, 1715 }, { 5832, 1715 }, { 5825, 1732 }, { 5832, 1732 }, { 5825, 1749 }, { 5832, 1749 }, { 5822, 1767 }, { 5834, 1767 } };
+        public static int[,] Lanterns = new int[9, 2] { { 5824, 1715 }, { 5833, 1715 }, { 5824, 1732 }, { 5833, 1732 }, { 5824, 1749 }, { 5833, 1749 }, { 5824, 1766 }, { 5832, 1766 }, { 5828, 1766 } };
         public static int[,] Bulbs = new int[6, 2] { { 5821, 1686 }, { 5823, 1684 }, { 5826, 1682 }, { 5829, 1682 }, { 5832, 1684 }, { 5834, 1686 } };
+        public static int[,] HarpyStatues = new int[2, 2] { { 5824, 1764 }, { 5831, 1764 } };
         public static void ActuatePyramid()
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
 
                 //Destroy Lanterns (doing it like this prevents tiles from doing annoying things like dropping an item or spawning a boss)
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].type == TileID.HangingLanterns)
                     {
@@ -2227,6 +2228,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                         //WorldGen.PlaceTile(Bulbs[i, 0], Bulbs[i, 1], TileID.Meteorite);
                     }
+                }
+
+                //Harpy statues
+                for(int i = 0; i < 2; i++)
+                {
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1]] = new Tile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 1] = new Tile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 2] = new Tile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1]] = new Tile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 1] = new Tile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 2] = new Tile();
                 }
 
                 //Base of the pyramid
@@ -2291,10 +2303,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                //Making the steps on the right
-
-
-
+                //And the harpy statues
+                for (int i = 0; i < 2; i++)
+                {
+                    WorldGen.Place2xX(HarpyStatues[i, 0], HarpyStatues[i, 1], TileID.Statues, 70);
+                }
             }
         }
         #endregion
