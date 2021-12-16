@@ -185,10 +185,10 @@ namespace tsorcRevamp
 
         public override void SetupStartInventory(IList<Item> items, bool mediumcoreDeath)
         {
-            startingItemsList = new List<int>()
-            {
-                ModContent.ItemType<Items.Darksign>(),
-            };
+            Item item = new Item();
+            item.SetDefaults(ModContent.ItemType<Darksign>());
+            items.Add(item); 
+            
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
