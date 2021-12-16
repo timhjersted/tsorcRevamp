@@ -48,8 +48,8 @@ namespace tsorcRevamp.Items.BossBags {
                     Slain[ModContent.NPCType<Gaibon>()] = 1;
                 }
             }
-            if (Main.rand.Next(9) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-            if (Main.rand.Next(9) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), (int)((700 + Main.rand.Next(300)) * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
         }
     }

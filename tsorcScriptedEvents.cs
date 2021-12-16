@@ -111,8 +111,7 @@ namespace tsorcRevamp
             JungleWyvernFight,
             SeathFight,
             WyvernMageFight,
-            GaibonFight,
-            SlograFight,
+            SlograAndGaibonFight,
             SerrisFight,
             MarilithFight,
             KrakenFight,
@@ -166,7 +165,7 @@ namespace tsorcRevamp
             ScriptedEvent GaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, ModContent.NPCType<NPCs.Bosses.Gaibon>(), DustID.Shadowflame, true, true, "...", Color.Purple, false);
 
             //SLOGRA
-            ScriptedEvent SlograEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, ModContent.NPCType<NPCs.Bosses.Slogra>(), DustID.Shadowflame, true, true, "Slogra and Gaibon have risen from the depths!", Color.Purple, false);
+            ScriptedEvent SlograAndGaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, default, DustID.Shadowflame, false, true, "Slogra and Gaibon have risen from the depths!", Color.Purple, false, SlograGaibonCondition, SlograAndGaibonCustomAction);
 
             //SERRIS 
             ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.Shadowflame, true, true, "Serris has been enraged!", Color.Blue, false);
@@ -289,8 +288,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.JungleWyvernFight, JungleWyvernEvent},
                 {ScriptedEventType.SeathFight, SeathEvent},
                 {ScriptedEventType.WyvernMageFight, WyvernMageEvent},
-                {ScriptedEventType.GaibonFight, GaibonEvent},
-                {ScriptedEventType.SlograFight, SlograEvent},
+                {ScriptedEventType.SlograAndGaibonFight, SlograAndGaibonEvent},
                 {ScriptedEventType.SerrisFight, SerrisEvent},
                 {ScriptedEventType.MarilithFight, MarilithEvent},
                 {ScriptedEventType.KrakenFight, KrakenEvent},
@@ -421,6 +419,14 @@ namespace tsorcRevamp
             return !NPC.AnyNPCs(NPCID.GoblinTinkerer);
         }
 
+        public static bool SlograGaibonCondition()
+        {
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Slogra>()) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Gaibon>()))
+            {
+                return false;
+            }
+            return true;
+        }
         public static bool AttraidiesTheSorrowCondition()
         {
             if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
@@ -512,6 +518,14 @@ namespace tsorcRevamp
         {
             NPC.NewNPC(3183 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
             NPC.NewNPC(3330 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
+            return true;
+        }
+
+        //Slogra And Gaibon Action
+        public static bool SlograAndGaibonCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            NPC.NewNPC((int)player.Center.X + 100, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Slogra>());
+            NPC.NewNPC((int)player.Center.X - 100, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
             return true;
         }
 
