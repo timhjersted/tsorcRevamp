@@ -639,6 +639,12 @@ namespace tsorcRevamp.NPCs {
                         npc.damage = 30;
                         break;
                     }
+                case (NPCID.WallofFlesh):
+                    {
+                        npc.damage = 100;
+                        npc.lifeMax = 20000;
+                        break;
+                    }
 
                 case (NPCID.Werewolf): {
                         npc.defense = 40;
@@ -2027,6 +2033,26 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedStardust = true;
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedSolar = true;
             #endregion
+        }
+
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye || npc.type == NPCID.TheHungry || npc.type == NPCID.TheHungryII)
+            {
+                damage *= 2;
+            }
+        }
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye || npc.type == NPCID.TheHungry || npc.type == NPCID.TheHungryII)
+            {
+                //Spears
+                if (projectile.aiStyle == 19 && projectile.melee == true)
+                {
+                    damage *= 2;
+                }
+            }            
         }
 
         public override bool CheckActive(NPC npc)

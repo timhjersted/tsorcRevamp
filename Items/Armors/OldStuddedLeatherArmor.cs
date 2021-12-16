@@ -9,14 +9,14 @@ namespace tsorcRevamp.Items.Armors
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Set bonus gives +10% Ranged Damage, +10 Move Speed, +6% Ranged Crit");
+            Tooltip.SetDefault("Set bonus gives +7% Ranged Damage, +10 Move Speed, +5% Ranged Crit");
         }
 
         public override void SetDefaults()
         {
             item.width = 18;
             item.height = 18;
-            item.defense = 5;
+            item.defense = 3;
             item.value = 1150;
             item.rare = ItemRarityID.White;
         }

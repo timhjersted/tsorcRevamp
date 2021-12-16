@@ -12,8 +12,8 @@ namespace tsorcRevamp.Projectiles {
 		bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
 		public override void SetDefaults() {
-			projectile.width = LegacyMode ? 45 : 25;
-			projectile.height = LegacyMode ? 45 : 25;
+			projectile.width = 45;
+			projectile.height = 45;
 			projectile.aiStyle = 19;
 			projectile.penetrate = 4;
 			projectile.timeLeft = 3600;

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Armors
         {
             item.width = 20;
             item.height = 26;
-            item.defense = 4;
+            item.defense = 3;
             item.value = 900;
             item.rare = ItemRarityID.White;
         }
@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.rangedDamage += 0.1f;
-            player.rangedCrit += 6;
+            player.rangedDamage += 0.07f;
+            player.rangedCrit += 5;
             player.moveSpeed += 0.1f;
         }
 

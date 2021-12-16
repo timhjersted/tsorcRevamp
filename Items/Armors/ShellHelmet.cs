@@ -10,14 +10,14 @@ namespace tsorcRevamp.Items.Armors {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Armor made from the shell of a legenadry creature." +
                 "\nSet bonus: Archery skill and +19% ranged crit activates when health falls below 160" +
-                "\n+11% ranged crit otherwise");
+                "\n+5% ranged crit otherwise");
         }
         public override void SetDefaults() {
             item.width = 18;
             item.height = 12;
             item.value = 35000;
             item.rare = ItemRarityID.Orange;
-            item.defense = 5;
+            item.defense = 3;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -34,8 +34,7 @@ namespace tsorcRevamp.Items.Armors {
             }
 
             else {
-                player.rangedCrit += 11;
-
+                player.rangedCrit += 5;
             }
         }
 
