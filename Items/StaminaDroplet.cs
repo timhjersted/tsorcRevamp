@@ -23,17 +23,18 @@ namespace tsorcRevamp.Items
 
         public override bool OnPickup(Player player)
         {
+            if (player.whoAmI == Main.myPlayer) /*i dont know if this is necessary but better safe than sorry*/ {
+                tsorcRevampStaminaPlayer stamPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                float amount = stamPlayer.staminaResourceMax2 / 2;
+                stamPlayer.staminaResourceCurrent += amount;
 
-            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent += player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 / 2;
-
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
-            {
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
-            }
-
-            for (int i = 0; i < 15; i++)
-            {
-                Dust.NewDust(player.position, player.height, player.width, 107, 0, 0, 100, default, Main.rand.NextFloat(.7f, 1.2f));
+                if (stamPlayer.staminaResourceCurrent > stamPlayer.staminaResourceMax2) {
+                    stamPlayer.staminaResourceCurrent = stamPlayer.staminaResourceMax2;
+                }
+                CombatText.NewText(player.getRect(), Color.YellowGreen, (int)amount);
+                for (int i = 0; i < 15; i++) {
+                    Dust.NewDust(player.position, player.height, player.width, 107, 0, 0, 100, default, Main.rand.NextFloat(.7f, 1.2f));
+                } 
             }
 
             return false;
