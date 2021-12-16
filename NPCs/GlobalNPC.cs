@@ -76,7 +76,9 @@ namespace tsorcRevamp.NPCs
         //vanilla npc changes moved to separate file
 
         public override void NPCLoot(NPC npc)
-        {            
+        {
+            Player player1 = Main.LocalPlayer;
+
             if (npc.boss)
             {
                 foreach (Player player in Main.player)
@@ -87,6 +89,18 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            if (player1.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player1.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            {
+                if (Main.rand.Next(2) == 0)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                }
+
+                if (Main.rand.Next(12) == 0)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                }
+            }
 
             #region Dark Souls & Consumable Souls Drops
 

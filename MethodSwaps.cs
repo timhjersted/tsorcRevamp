@@ -621,8 +621,8 @@ namespace tsorcRevamp {
 
         internal static void StaminaBar(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow) {
             orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
-            int staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
-            int staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+            float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+            float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
             float staminaPercentage = (float)staminaCurrent / staminaMax;
             if (staminaPercentage < 1f) {
                 float abovePlayer = 45f; //how far above the player should the bar be?

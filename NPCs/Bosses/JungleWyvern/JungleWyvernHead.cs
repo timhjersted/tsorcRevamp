@@ -323,6 +323,8 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			}
 			else
 			{
+
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.ChloranthyRing>(), 1, false, -1);
 				Item.NewItem(npc.getRect(), ItemID.Sapphire, Main.rand.Next(2, 10));
 				Item.NewItem(npc.getRect(), ItemID.Ruby, Main.rand.Next(2, 10));
 				Item.NewItem(npc.getRect(), ItemID.Topaz, Main.rand.Next(2, 10));
@@ -336,6 +338,8 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
 				{ //If the boss has not yet been killed
 					Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
+					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>());
+
 				}
 			}
 		}

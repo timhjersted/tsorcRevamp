@@ -13,7 +13,26 @@ namespace tsorcRevamp.Items {
 		public static List<int> potionList;
 		public static List<int> ammoList;
 
-		public override bool CanUseItem(Item item, Player player) => !player.GetModPlayer<tsorcRevampPlayer>().isDodging;
+		public override bool CanUseItem(Item item, Player player)
+        {
+			if (player.GetModPlayer<tsorcRevampPlayer>().isDodging)
+            {
+				return false;
+            }
+
+			if (item.damage > 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && !item.melee)
+            {
+				return false;
+            }
+
+			if (item.damage > 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.melee)
+			{
+				return false;
+			}
+
+			return true;
+
+        }
 		public override void SetDefaults(Item item)
 		{
 			base.SetDefaults(item);
@@ -115,7 +134,42 @@ namespace tsorcRevamp.Items {
 				player.lifeRegen += 1;
             }
 		}
-		public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
+
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
+        {
+			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Refreshing")))
+			{
+				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.02f;
+			}
+
+			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Revitalizing")))
+			{
+				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.04f;
+			}
+		}
+
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Refreshing")))
+			{
+				TooltipLine line = new TooltipLine(mod, "Refreshing", "+2% stamina recovery speed")
+				{
+					isModifier = true
+				};
+				tooltips.Add(line);
+			}
+
+			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Revitalizing")))
+			{
+				TooltipLine line = new TooltipLine(mod, "Revitalizing", "+4% stamina recovery speed")
+				{
+					isModifier = true
+				};
+				tooltips.Add(line);
+			}
+		}
+
+        public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
 			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
 			if (modPlayer.MiakodaCrescentBoost) {
@@ -228,6 +282,11 @@ namespace tsorcRevamp.Items {
 						flat += (player.statManaMax2 - 100) / 20;
 					}
 				}
+			}
+
+			if (modPlayer.BearerOfTheCurse && item.pick != 0)
+			{
+				mult *= 0.5f;
 			}
 		}
 

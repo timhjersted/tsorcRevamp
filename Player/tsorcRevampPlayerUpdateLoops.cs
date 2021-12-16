@@ -144,6 +144,8 @@ namespace tsorcRevamp {
         public static readonly int DashRight = 2;
         public static readonly int DashLeft = 3;
 
+        public bool BearerOfTheCurse;
+
         public UIItemSlot SoulSlot;
 
         public override void ResetEffects() {
@@ -940,6 +942,12 @@ namespace tsorcRevamp {
             TryForceFrame(ref player.headFrame, ref forcedHeadFrame);
             TryForceFrame(ref player.bodyFrame, ref forcedBodyFrame);
             TryForceFrame(ref player.legFrame, ref forcedLegFrame);
+
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                player.allDamage += 0.2f;
+            }
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {

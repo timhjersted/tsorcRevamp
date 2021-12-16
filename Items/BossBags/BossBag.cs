@@ -67,6 +67,7 @@ namespace tsorcRevamp.Items.BossBags {
                     Slain[BossBagNPC] = 1;
                 }
             }
+            player.QuickSpawnItem(ModContent.ItemType<Accessories.ChloranthyRing>());
             player.QuickSpawnItem(ItemID.Sapphire, Main.rand.Next(2, 10));
             player.QuickSpawnItem(ItemID.Ruby, Main.rand.Next(2, 10));
             player.QuickSpawnItem(ItemID.Topaz, Main.rand.Next(2, 10));

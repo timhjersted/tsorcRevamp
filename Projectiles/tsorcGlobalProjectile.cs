@@ -78,6 +78,22 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
             }
+
+            if (projectile.owner == Main.myPlayer && (projectile.aiStyle == 99 || projectile.aiStyle == 15 || projectile.type == ModContent.ProjectileType<Projectiles.SilverBall>() 
+                || projectile.type == ModContent.ProjectileType<Projectiles.MythrilBall>() || projectile.type == ModContent.ProjectileType<AdamantiteBall>() 
+                || projectile.type == ModContent.ProjectileType<Projectiles.HeavenBall>()) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+            {
+                //projectile.Kill();
+
+                if (projectile.aiStyle == 99)
+                {
+                    projectile.ai[0] = -1; //return yoyo smoothly, dont just kill it. This took me ages to find :(
+                }
+                else
+                {
+                    projectile.ai[1] = 1; //return flail smoothly, dont just kill it
+                }
+            }
             return true;
         }
         public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit) {

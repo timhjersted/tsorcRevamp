@@ -118,7 +118,6 @@ namespace tsorcRevamp
 			if (isLocal && wantsSwordflipTimer <= 0f && tsorcRevamp.SwordflipKey.JustPressed && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
 			{
 				QueueSwordflip(0.25f, (sbyte)KeyDirection(player));
-				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 40;
 			}
 
 			if (!forceSwordflip)
@@ -156,6 +155,7 @@ namespace tsorcRevamp
 			player.eocHit = 1;
 
 			isSwordflipping = true;
+			player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 40;
 			player.immune = true;
 			player.immuneTime = 15;
 			swordflipStartRot = player.GetModPlayer<tsorcRevampPlayer>().rotation;

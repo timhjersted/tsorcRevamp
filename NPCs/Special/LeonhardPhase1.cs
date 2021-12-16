@@ -523,6 +523,8 @@ namespace tsorcRevamp.NPCs.Special
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1);
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
+
 
                 }
 

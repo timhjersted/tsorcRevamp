@@ -76,9 +76,82 @@ namespace tsorcRevamp {
 				return false;
 			}
 
+			Item item = player.HeldItem;
+
+			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			{
+				// Stamina drain for most (hopefully) swords and spears
+				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .8f);
+				}
+
+				// Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.
+				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick != 0 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .2f);
+				}
+
+				// Stamina drain for flails and yoyos
+				if (item.damage >= 1 && item.useStyle == ItemUseStyleID.HoldingOut && item.melee && player.itemAnimation != 0
+					&& (item.type != ItemID.Spear && item.type != ItemID.Trident && item.type != ItemID.TheRottedFork && item.type != ItemID.Swordfish && item.type != ItemID.DarkLance
+					&& item.type != ItemID.CobaltNaginata && item.type != ItemID.PalladiumPike && item.type != ItemID.MythrilHalberd && item.type != ItemID.OrichalcumHalberd
+					&& item.type != ItemID.AdamantiteGlaive && item.type != ItemID.TitaniumTrident && item.type != ItemID.Gungnir && item.type != ItemID.ChlorophytePartisan
+					&& /*item.type != ItemID.MonkStaffT1 &&*/ item.type != ItemID.MonkStaffT2 && /*item.type != ItemID.MonkStaffT3 &&*/ item.type != ItemID.MushroomSpear
+					&& item.type != ItemID.ObsidianSwordfish && item.type != ItemID.NorthPole && item.type != ModContent.ItemType<Items.Weapons.Melee.CopperSpear>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.IronSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.SilverSpear>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.GoldSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientDragonLance>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.AncientBloodLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.CelestialLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.DragoonLance>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenRadiantLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.SupremeDragoonLance>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.OldHalberd>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.ReforgedOldHalberd>()
+					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPolearm>()))
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.6f; // Drain .6 stamina/tick
+				}
+
+				// Ranged
+				if (item.damage >= 1 && item.ranged && player.itemAnimation == player.itemAnimationMax - 1)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+				}
+
+				// Magic & Throwing
+				if (item.damage >= 1 && (item.magic || item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+				}
+
+				// Summoner
+				if (item.damage >= 1 && item.summon && player.itemAnimation == player.itemAnimationMax - 1)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 1f);
+				}
+
+				// Classless? Just in case? 
+				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 0.8f);
+				}
+			}
+
 			return true;
 		}
-		public void QueueDodgeroll(float wantTime, sbyte direction, bool force = false) {
+
+        public override void PostItemCheck()
+        {
+			Item item = player.HeldItem;
+
+			/*if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			{
+				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .75f) + 2; // The +2 is to balance out incredibly fast things being too efficient
+			}*/
+
+			base.PostItemCheck();
+        }
+        public void QueueDodgeroll(float wantTime, sbyte direction, bool force = false) {
 			wantsDodgerollTimer = wantTime;
 			wantedDodgerollDir = direction;
 

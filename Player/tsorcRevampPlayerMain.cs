@@ -19,6 +19,10 @@ namespace tsorcRevamp
 {
     public partial class tsorcRevampPlayer : ModPlayer
     {
+
+        public static List<int> startingItemsList;
+
+
         public override void Initialize()
         {
             PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
@@ -92,6 +96,7 @@ namespace tsorcRevamp
             {"gotPickaxe", gotPickaxe},
             {"FirstEncounter", FirstEncounter},
             {"ReceivedGift", ReceivedGift},
+            {"BearerOfTheCurse", BearerOfTheCurse},
 
 
             {"soulSlot", ItemIO.Save(SoulSlot.Item) }
@@ -112,6 +117,7 @@ namespace tsorcRevamp
             gotPickaxe = tag.GetBool("gotPickaxe");
             FirstEncounter = tag.GetBool("FirstEncounter");
             ReceivedGift = tag.GetBool("ReceivedGift");
+            BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
 
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
@@ -169,6 +175,20 @@ namespace tsorcRevamp
         {
             Projectile.NewProjectile(player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, player.whoAmI);
             Main.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
+
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.statLifeMax > 200)
+            {
+                player.statLifeMax -= 20;
+            }
+        }
+
+        public override void SetupStartInventory(IList<Item> items, bool mediumcoreDeath)
+        {
+            startingItemsList = new List<int>()
+            {
+                ModContent.ItemType<Items.Darksign>(),
+            };
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
@@ -712,6 +732,10 @@ namespace tsorcRevamp
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
                 multiplier += 0.4f;
+            }
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                multiplier += 0.2f;
             }
             return multiplier;
         }
