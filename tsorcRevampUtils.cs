@@ -343,5 +343,18 @@ namespace tsorcRevamp {
                 Main.item[dummyItemIndex].active = false;
             }
         }
+
+        ///<summary> 
+        ///Ends the previous spritebatch, and starts a new one that you can apply shaders to.
+        ///Call it before drawing the thing you're trying to shade.
+        ///Call it again *after* drawing the thing you're trying to shade to let the game return to the normal drawing mode.
+        ///Thanks for the tip W1K!
+        ///</summary>         
+        ///<param name="spriteBatch">The spritebatch to operate on</param>
+        public static void RestartSpritebatch(ref SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+        }
     }
 }

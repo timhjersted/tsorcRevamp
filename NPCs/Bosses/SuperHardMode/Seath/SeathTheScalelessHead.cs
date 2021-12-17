@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -270,6 +274,37 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 }
                 //npc.netUpdate = true;
             }
+        }
+
+        public static Texture2D texture;
+        public static void SeathInvulnerableEffect(NPC npc, SpriteBatch spriteBatch, ref Texture2D texture, float scale = 1.5f)
+        {            
+            if (texture == null)
+            {
+                texture = ModContent.GetTexture(npc.modNPC.Texture);
+            }
+            if (npc.dontTakeDamage)
+            {
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);                
+                SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+                Vector2 origin = sourceRectangle.Size() / 2f;
+                spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.SkyBlue * 0.5f, npc.rotation, origin, scale, effects, 0f);
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+            }
+
+        }
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            SeathInvulnerableEffect(npc, spriteBatch, ref texture, 1.1f);
+            return true;
+        }
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            SeathTheScalelessHead.SeathInvulnerableEffect(npc, spriteBatch, ref texture, 1.1f);
         }
     }
 }
