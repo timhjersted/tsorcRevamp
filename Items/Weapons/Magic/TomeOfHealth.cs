@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override bool CanUseItem(Player player) {
-            return !(player.HasBuff(BuffID.PotionSickness));
+            return (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
         }
         public override bool UseItem(Player player) {
             player.statLife += 220;

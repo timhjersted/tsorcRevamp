@@ -145,6 +145,10 @@ namespace tsorcRevamp {
         public static readonly int DashLeft = 3;
 
         public bool BearerOfTheCurse;
+        public bool LifegemHealing;
+        public bool RadiantLifegemHealing;
+        int healingTimer = 0;
+
 
         public UIItemSlot SoulSlot;
 
@@ -192,6 +196,8 @@ namespace tsorcRevamp {
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
             PhazonCorruption = false;
+            LifegemHealing = false;
+            RadiantLifegemHealing = false;
         }
 
         public override void PreUpdate() {
@@ -362,6 +368,7 @@ namespace tsorcRevamp {
                 }
             }
             #endregion
+
         }
 
         public override void PreUpdateBuffs() {
@@ -391,6 +398,37 @@ namespace tsorcRevamp {
                 player.noKnockback = true;
             }
 
+            #region Lifegem Healing
+
+
+            if (LifegemHealing) // 120 hp over 12 seconds
+            {
+                healingTimer++;
+
+                if (healingTimer == 6)
+                {
+                    player.statLife += 1;
+                    healingTimer = 0;
+                }
+            }
+
+            if (RadiantLifegemHealing) // 200 hp over 13.33 seconds
+            {
+                healingTimer++;
+
+                if (healingTimer == 4)
+                {
+                    player.statLife += 1;
+                    healingTimer = 0;
+                }
+            }
+
+            if (!RadiantLifegemHealing && !LifegemHealing)
+            {
+                healingTimer = 0;
+            }
+
+            #endregion
 
         }
 
@@ -947,6 +985,11 @@ namespace tsorcRevamp {
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 player.allDamage += 0.2f;
+
+                if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+                {
+                    player.lifeRegen /= 2;
+                }
             }
         }
 

@@ -789,10 +789,12 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
 
+            if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.CobaltShield, 1, false, -1);
-            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.IronskinPotion); }
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.EndurancePotion); }
         }

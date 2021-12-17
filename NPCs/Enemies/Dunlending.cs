@@ -212,7 +212,17 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
         public override void NPCLoot() {
             Item.NewItem(npc.getRect(), ItemID.Torch, 1);
-            Item.NewItem(npc.getRect(), ItemID.HealingPotion, Main.rand.Next(20) == 0 ? 6 : 1); // 1/5 chance of 6, else 1
+            Player player = Main.player[npc.target];
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(3) == 0)
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(20) == 0 ? 3 : 1); // 1/5 chance of 3, else 1
+            }
+            else
+            {
+                Item.NewItem(npc.getRect(), ItemID.HealingPotion, Main.rand.Next(20) == 0 ? 6 : 1); // 1/5 chance of 6, else 1
+            }
+
             if (Main.rand.NextFloat() < 0.6f) { //60%
                 Item.NewItem(npc.getRect(), ItemID.ShinePotion, Main.rand.Next(1, 3));
             }

@@ -17,10 +17,12 @@ namespace tsorcRevamp.Items
             Tooltip.SetDefault("Consume to become the [c/6d8827:Bearer of the Curse]" +
                                "\nPlaying as the [c/6d8827:Bearer of the Curse] has the following effects:" +
                                "\nYou deal +20% damage, recieve +20% more souls and your stamina recovers much faster" +
-                               "\nHowever, each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
-                               "\nAdditionally, using weapons drains stamina" +
+                               "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
+                               "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
+                               "\nAdditionally, instant-heal items won't heal you" +
+                               "\nSeek out the Emerald Herald, perhaps she has something for you..." +
                                "\n[c/ca1e00:Currently toggleable and non-consumable]" +
-                               "\n[c/ca1e00:Experimental; use at own risk.]" +
+                               "\n[c/ca1e00:Experimental mode in alpha; use at own risk]" +
                                "\nIf you find any bugs please report on our [c/7e61ab:Discord] server");
 
             ItemID.Sets.ItemNoGravity[item.type] = true; // Makes item float in world.
@@ -71,7 +73,6 @@ namespace tsorcRevamp.Items
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax += 5;
                 Main.NewText("You have become Bearer of the Curse", 200, 60, 40);
 
             }
@@ -81,9 +82,9 @@ namespace tsorcRevamp.Items
                 Main.NewText("The curse has been lifted", 200, 60, 40);
 
             }
-            Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
-            Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);
-            Main.NewText("Stamina: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
+            //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
+            //Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);
+            //Main.NewText("Stamina: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
             return true;
         }
         public override void UseStyle(Player player)

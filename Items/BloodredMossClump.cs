@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items {
                 buffIndex++;
             }
 
-            if (!player.HasBuff(BuffID.PotionSickness))
+            if (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 player.statLife += 20;
                 if (player.statLife > player.statLifeMax2)

@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items {
 
         public override bool UseItem(Player player) {
             if (player.statLifeMax < 500) {
-                player.statLifeMax = 500;
+                player.statLifeMax = 500; //BOTC can still heal from this, they're expensive and have a long CD
             }
 
             player.statLife += 500;

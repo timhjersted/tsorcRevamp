@@ -64,11 +64,22 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
+            Player player = Main.player[npc.target];
+
             Item.NewItem(npc.getRect(), ItemID.Heart, 1);
             Item.NewItem(npc.getRect(), ItemID.Heart, 1);
             Item.NewItem(npc.getRect(), ItemID.Heart, 1);
             Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
-            Item.NewItem(npc.getRect(), ItemID.HealingPotion, 2);
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            }
+            else
+            {
+                Item.NewItem(npc.getRect(), ItemID.HealingPotion, 2);
+            }
+
 
             if (Main.rand.NextFloat() <= .20f)
             {

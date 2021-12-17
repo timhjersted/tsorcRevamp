@@ -32,6 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void NPCLoot()
 		{
+			Player player = Main.player[npc.target];
+
 			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
 			if (Main.rand.Next(50) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.CursedSkull>());
 			//if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.TibalMask>()); TO-DO
@@ -43,7 +45,16 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(12) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
 			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
 			Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.HealingPotion, Main.rand.Next(3, 5));
+
+			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(1, 4));
+			}
+			else
+			{
+				Item.NewItem(npc.getRect(), ItemID.HealingPotion, Main.rand.Next(3, 5));
+			}
+
 			if (Main.rand.Next(25) == 0) Item.NewItem(npc.getRect(), ItemID.GillsPotion);
 			if (Main.rand.Next(25) == 0) Item.NewItem(npc.getRect(), ItemID.HunterPotion);
 			if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion, Main.rand.Next(1, 3));

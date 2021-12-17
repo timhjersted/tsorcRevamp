@@ -370,7 +370,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
+            Player player = Main.player[npc.target];
+
             Item.NewItem(npc.getRect(), mod.ItemType("HealingElixir"));
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .8f))
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            }
+            else
+            {
+                Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 2);
+            }
 
             if (Main.rand.NextFloat() <= .05f && ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) //drops wand of frost in legacy mode
             {
@@ -391,10 +402,6 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextFloat() <= .4f)
             {
                 Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
-            }
-            if (Main.rand.NextFloat() <= .1f)
-            {
-                Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 2);
             }
             if (Main.rand.NextFloat() <= .01f)
             {

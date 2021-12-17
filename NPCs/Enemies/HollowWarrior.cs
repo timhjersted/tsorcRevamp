@@ -786,6 +786,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 3));
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 
             if (Main.rand.Next(10) == 0)
             { //10%

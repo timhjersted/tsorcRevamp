@@ -27,8 +27,9 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool UseItem(Player player) {
+
             player.statLifeMax += 20;
-            player.statLife += 20;
+            player.statLife += 20; //BOTC can still heal from this, as you can in DS
             if (Main.myPlayer == player.whoAmI) {
                 player.HealEffect(20, true);
             }

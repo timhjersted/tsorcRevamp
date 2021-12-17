@@ -9,9 +9,9 @@ namespace tsorcRevamp.Items.Potions
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Heals 65 HP and applies 30 seconds of Potion Sickness.\n"
-                + "Potion sickness is only 15 seconds with the Philosopher's Stone effect.\n"
-                + "Gives Well Fed buff for 5 minutes.");
+            Tooltip.SetDefault("Heals 65 HP and applies 30 seconds of Potion Sickness\n"
+                + "Potion sickness is only 15 seconds with the Philosopher's Stone effect\n"
+                + "Gives Well Fed buff for 5 minutes");
         }
 
         public override void SetDefaults()
@@ -40,13 +40,16 @@ namespace tsorcRevamp.Items.Potions
 
         public override bool UseItem(Player player)
         {
-            player.statLife += 65;
-            if (player.statLife > player.statLifeMax2)
+            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.statLife = player.statLifeMax2;
+                player.statLife += 65;
+                if (player.statLife > player.statLifeMax2)
+                {
+                    player.statLife = player.statLifeMax2;
+                }
+                player.HealEffect(65, true);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? 900 : 1800);
             }
-            player.HealEffect(65, true);
-            player.AddBuff(BuffID.PotionSickness, player.pStone ? 900 : 1800);
             player.AddBuff(BuffID.WellFed, 18000); //5 min
             return true;
         }

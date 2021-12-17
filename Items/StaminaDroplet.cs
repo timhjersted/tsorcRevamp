@@ -26,6 +26,15 @@ namespace tsorcRevamp.Items
             if (player.whoAmI == Main.myPlayer) /*i dont know if this is necessary but better safe than sorry*/ {
                 tsorcRevampStaminaPlayer stamPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 float amount = stamPlayer.staminaResourceMax2 / 2;
+
+                Main.PlaySound(SoundID.Drip, -1, -1, 0, 0.3f);
+
+
+                if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    amount /= 2;
+                }
+
                 stamPlayer.staminaResourceCurrent += amount;
 
                 if (stamPlayer.staminaResourceCurrent > stamPlayer.staminaResourceMax2) {
@@ -43,7 +52,7 @@ namespace tsorcRevamp.Items
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, item.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(7, 9), item.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), item.scale, SpriteEffects.None, 0f);
 
             return false;
         }

@@ -320,9 +320,21 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void NPCLoot()
 		{
+			Player player = Main.player[npc.target];
+
 			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
 			if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 2);
-			if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 3);
+
+			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			{
+				if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+				if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+			}
+			else
+			{
+				if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 3);
+			}
+
 			if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, 1);
 			Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
 			if (Main.rand.Next(100) < 5) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>());

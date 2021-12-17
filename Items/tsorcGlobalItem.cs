@@ -30,10 +30,17 @@ namespace tsorcRevamp.Items {
 				return false;
 			}
 
+			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.healLife > 0)
+			{
+				return false;
+			}
+
+
 			return true;
 
         }
-		public override void SetDefaults(Item item)
+
+        public override void SetDefaults(Item item)
 		{
 			base.SetDefaults(item);
 			if (potionList == null)
