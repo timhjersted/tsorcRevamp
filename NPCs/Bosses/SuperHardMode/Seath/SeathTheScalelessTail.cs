@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -72,7 +73,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         {
             SeathTheScalelessHead.SetImmune(projectile, npc);
         }
-
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            SeathTheScalelessHead.SeathInvulnerableEffect(npc, spriteBatch, ref texture, 1.1f);
+            return true;
+        }
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            SeathTheScalelessHead.SeathInvulnerableEffect(npc, spriteBatch, ref texture, 1.2f);
+        }
         public override void NPCLoot()
         {
             if (npc.life <= 0)

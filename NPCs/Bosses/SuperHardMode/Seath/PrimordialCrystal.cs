@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             npc.netAlways = true;
             npc.width = 64;
             npc.height = 64;
-            drawOffsetY = 60;
+            drawOffsetY = 7;
             npc.aiStyle = 0;
             npc.knockBackResist = 0;
             npc.timeLeft = 22500;
@@ -37,64 +37,65 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         {
         }
 
+        int? seathID;
         public override void AI()
         {
             npc.rotation += 0.02f;
-            npc.velocity *= 0.95f;           
+            npc.velocity *= 0.95f;
 
-            for (int i = 0; i < 10; i++)
-            {
-                int dustRadius = 80;
-                int dustSpeed = 8;
-                Vector2 dustOffset = Main.rand.NextVector2CircularEdge(1, 1);
-                Vector2 dustVel;
-                if (Main.rand.NextBool())
-                {
-                    dustVel = dustOffset.RotatedBy(MathHelper.ToRadians(90));
-                }
-                else
-                {
-                    dustVel = dustOffset.RotatedBy(MathHelper.ToRadians(-90));
-                }
-                Dust.NewDustPerfect(npc.Center + (dustOffset * dustRadius), 234, dustVel * dustSpeed, 250, Color.White, 1.0f).noGravity = true;
+            UsefulFunctions.DustRing(npc.Center, 50, DustID.MagicMirror);
 
-                dustVel = new Vector2(dustSpeed, 0);
-                dustVel = dustVel.RotatedBy(MathHelper.ToRadians(Main.rand.NextFloat(45)) + npc.rotation);
-                if (Main.rand.NextBool())
-                {
-                    dustVel = dustVel.RotatedBy(MathHelper.ToRadians(180));
-                }
-                Dust.NewDustPerfect(npc.Center, 226, dustVel, 250, Color.White, .5f).noGravity = true;                
+            if (seathID == null || !Main.npc[seathID.Value].active) {
+                seathID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             }
-
-            for(int i = 0; i < 2; i++)
+            else
             {
-                Vector2 dustVel = (Main.npc[(int)npc.ai[0]].Center - npc.position);
-                float length = dustVel.Length();
-                float angle = dustVel.ToRotation();
-                dustVel = new Vector2(length / 8, 0).RotatedBy(angle);
-                Dust.NewDustPerfect(npc.Center, 67, dustVel.RotatedByRandom(MathHelper.ToRadians(4)), 250, Color.White, 2f).noGravity = true;
-                Dust.NewDustPerfect(npc.Center, 68, dustVel.RotatedByRandom(MathHelper.ToRadians(8)), 250, Color.White, 2f).noGravity = true;
-                Dust.NewDustPerfect(npc.Center, 234, dustVel.RotatedByRandom(MathHelper.ToRadians(12)), 250, Color.White, 2f).noGravity = true;
-            }
+                Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.npc[seathID.Value].Center, 24);
+                dustVel = dustVel.RotatedByRandom(MathHelper.ToRadians(12));
+                Dust.NewDustDirect(npc.position, npc.width, npc.height, 67, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
+                Dust.NewDustDirect(npc.position, npc.width, npc.height, 68, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
+                Dust.NewDustDirect(npc.position, npc.width, npc.height, 234, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
+            }            
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            return false;
+            return true;
         }
 
         public override void NPCLoot()
         {
             for (int i = 0; i < 50; i++)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(10, 10);
                 int dust;
-                vel = Main.rand.NextVector2Circular(20, 20);
+                Vector2 vel = Main.rand.NextVector2Circular(20, 20);
                 dust = Dust.NewDust(npc.Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
                 Main.dust[dust].noGravity = true;
                 dust = Dust.NewDust(npc.Center, 30, 30, 226, vel.X, vel.Y, 200, default, 3f);
                 Main.dust[dust].noGravity = true;
+            }
+
+            for(int i = 0; i < Main.maxNPCs; i++)
+            {
+                if(Main.npc[i].type == ModContent.NPCType<SeathTheScalelessHead>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody2>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody3>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessLegs>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessTail>())
+                {
+                    if (Main.npc[i].active){
+                        int dustCount = 15;
+                        if (NPC.CountNPCS(ModContent.NPCType<PrimordialCrystal>()) > 1)
+                        {
+                            dustCount = 2;
+                        }
+                        for (int j = 0; j < dustCount; j++)
+                        {
+                            int dust;
+                            Vector2 vel = Main.rand.NextVector2Circular(20, 20);
+                            dust = Dust.NewDust(Main.npc[i].Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
+                            Main.dust[dust].noGravity = true;
+                            dust = Dust.NewDust(Main.npc[i].Center, 30, 30, 226, vel.X, vel.Y, 200, default, 3f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                    }
+                }
             }
         }
 
