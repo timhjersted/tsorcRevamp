@@ -45,7 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-		float customAi1;
 		int drownTimerMax = 2000;
 		int drownTimer = 2000;
 		int drowningRisk = 1200;
@@ -171,8 +170,6 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
 			}
-
-			Main.NewText(npc.ai[1]);
 
 			//Turn and walk away if hitting a wall
 			if (npc.position.X == npc.oldPosition.X)
