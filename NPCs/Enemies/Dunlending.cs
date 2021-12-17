@@ -192,6 +192,13 @@ namespace tsorcRevamp.NPCs.Enemies {
             var p = spawnInfo.player;
 
             float chance = 0;
+
+            if (spawnInfo.invasion)
+            {
+                chance = 0;
+                return chance;
+            }
+
             if (p.ZoneOverworldHeight) {
                 if (Main.dayTime) chance = 0.067f;
                 else chance = 0.125f;

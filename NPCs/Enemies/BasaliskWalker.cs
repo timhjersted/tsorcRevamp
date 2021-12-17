@@ -70,6 +70,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 			// P.townNPCs > 0f // is no town NPCs nearby
 
+			if (spawnInfo.invasion)
+			{
+				return 0;
+			}
+
 			if (!Main.hardMode && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(20) == 1) return 1;
 
 			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && Main.rand.Next(24) == 1) return 1;

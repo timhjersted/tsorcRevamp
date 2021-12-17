@@ -36,6 +36,12 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			float chance = 0;
 
+			if (spawnInfo.invasion)
+			{
+				chance = 0;
+				return chance;
+			}
+
 			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.None && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor))
 			{
 				return 0.35f;

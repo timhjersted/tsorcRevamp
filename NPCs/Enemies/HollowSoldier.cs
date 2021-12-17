@@ -766,6 +766,13 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
+
+            if (spawnInfo.invasion)
+            {
+                chance = 0;
+                return chance;
+            }
+
             if (tsorcRevampWorld.SuperHardMode) return 0.05f;
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
