@@ -79,7 +79,22 @@ namespace tsorcRevamp.Tiles
 
 			if (Main.tile[i, j].frameY >= 74 && distance <= 80f && !player.dead)
 			{
-				player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 10);
+				player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 30);
+			}
+
+			if (player.whoAmI == Main.myPlayer && distance > 120f && distance < 300f)
+            {
+				int buffIndex = 0;
+
+				foreach (int buffType in player.buffType)
+				{
+
+					if (buffType == ModContent.BuffType<Buffs.Bonfire>())
+					{
+						player.buffTime[buffIndex] = 0;
+					}
+					buffIndex++;
+				}
 			}
 		}
 
