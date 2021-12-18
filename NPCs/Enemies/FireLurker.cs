@@ -11,7 +11,7 @@ using System;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	public class OmnirsFireDevil : ModNPC
+	public class FireLurker : ModNPC
 	{
         float customAi1;
         float customspawn1;
@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int drowningRisk = 1200;
 
         float npcAcSPD = 0.6f; //How fast they accelerate.
-        float npcSPD = 2.5f; //Max speed
+        float npcSPD = 2.2f; //Max speed was 2.5
 
         float npcEnrAcSPD = .70f; //How fast they accelerate when enraged.
         float npcEnrSPD = 4.0f; //Max speed when enraged
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.DeathSound = SoundID.NPCDeath5;
             npc.value = 350f;
 			npc.npcSlots = 20;
-			npc.knockBackResist = 0.1f;
+			npc.knockBackResist = 1f;
 			Main.npcFrameCount[npc.type] = 15;
 			animationType = 21;
 			npc.lavaImmune = true;
@@ -78,13 +78,15 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 return 0f;
             }
-            if (oUnderworld && !Main.hardMode)
+           /* if (oUnderworld && !Main.hardMode)
             {
-                if (x < Main.maxTilesX * 0.25f && Main.rand.Next(10) == 1) return 1f;
+                if (x < Main.maxTilesX * 0.25f && Main.rand.Next(5) == 1) return 1f;
+                else if (Main.rand.Next(45) == 1) return 1f;
                 else if (Main.bloodMoon && Main.rand.Next(15) == 1) return 1f;
                 return 0f;
             }
             return 0f;
+            */
         }
         //Spawns in the Lower Cavern into the Underworld. Does not spawn in Hardmode.
         public void teleport(bool pre)
@@ -121,9 +123,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 npc,
                 ref npc.ai,
                 false,      // immobile		Whether or not this NPC should move while its teleporting.
-                20,         // tpRadius		Radius around the player where the NPC will try to move.
-                13,         // distToPlayer	Minimum distance to keep from the player as the NPC teleports.
-                60,         // tpInterval	How often the NPC will try to teleport, tied to npc.ai[3].
+                30,         // tpRadius		Radius around the player where the NPC will try to move. - Was 20
+                23,         // distToPlayer	Minimum distance to keep from the player as the NPC teleports. - Was 13
+                10,         // tpInterval	How often the NPC will try to teleport, tied to npc.ai[3]. - Was 60
                 true,       // aerial		Whether or not an NPC will try to move to an airborne position.
                 teleport    // tpEffect		The effect that the NPC will create as it moves.
             );
@@ -132,15 +134,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 npc,
                 ref npc.ai,
                 false,      // nocturnal  	If true, flees when it is daytime.
-                true,       // focused 		If true, npc wont get interrupted when hit or confused.
-                60,         // boredom 		The amount of ticks until the npc gets 'bored' following a target.
-                2,          // knockPower 	0 == do not interact with doors, attempt to open the doors by this value, negative numbers will break instead
+                false,       // focused 		If true, npc wont get interrupted when hit or confused.
+                5,         // boredom 		The amount of ticks until the npc gets 'bored' following a target.
+                50,          // knockPower 	0 == do not interact with doors, attempt to open the doors by this value, negative numbers will break instead, was 2
                 accel,      // accel 		The rate velocity X increases by when moving.
                 topSpeed,   // topSpeed 	the maximum velocity on the X axis.
                 2,          // leapReq 		-1 npc wont jump over gaps, more than 0 npc will leap at players
-                5,          // leapSpeed	The max tiles it can jump across and over, horizontally. 
-                9,          // leapHeight 	The max tiles it can jump across and over, vertically. 
-                100,        // leapRangeX 	The distance from a player before the npc initiates leap, horizontally. 
+                6,          // leapSpeed	The max tiles it can jump across and over, horizontally. 
+                7,          // leapHeight 	The max tiles it can jump across and over, vertically. 
+                200,        // leapRangeX 	The distance from a player before the npc initiates leap, horizontally. 
                 50,         // leapRangeY 	The distance from a player before the npc initiates leap, vertically. 
                 0,          // shotType 	If higher than 0, allows an npc to fire a projectile, archer style.
                 40,         // shotRate 	The rate of fire of the projectile, if there is one.
@@ -169,7 +171,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (Main.rand.Next(200) == 1)
                         {
 
-                            float num48 = 8f;
+                            float num48 = 4f; //was 8
                             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                             float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                             float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -180,10 +182,10 @@ namespace tsorcRevamp.NPCs.Enemies
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int damage = 10;
-                                int type = mod.ProjectileType("OmnirsEnemySpellGreatFireballBall");
+                                int damage = 40;
+                                int type = mod.ProjectileType("CrystalFire");
                                 int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 300;
+                                Main.projectile[num54].timeLeft = 100;
                                 Main.projectile[num54].aiStyle = 1;
                                 customAi1 = 1f;
                             }
@@ -191,7 +193,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                         if (Main.rand.Next(1000) == 1)
                         {
-                            float num48 = 8f;
+                            float num48 = 2f;
                             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                             float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                             float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -202,8 +204,8 @@ namespace tsorcRevamp.NPCs.Enemies
                                 num51 = num48 / num51;
                                 speedX *= num51;
                                 speedY *= num51;
-                                int damage = 30;
-                                int type = mod.ProjectileType("OmnirsEnemySpellExplosionBall");
+                                int damage = 40;
+                                int type = mod.ProjectileType("CrystalFire");
                                 int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, 0, 0, type, damage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 100;
                                 Main.projectile[num54].aiStyle = 1;
@@ -299,11 +301,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/OmnirsFireDevilGore1"), 1f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/OmnirsFireDevilGore2"), 1f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/OmnirsFireDevilGore3"), 1f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/OmnirsFireDevilGore2"), 1f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/OmnirsFireDevilGore3"), 1f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/FireLurkerGore1"), 1f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/FireLurkerGore2"), 1f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/FireLurkerGore3"), 1f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/FireLurkerGore2"), 1f);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/FireLurkerGore3"), 1f);
             //if (Main.rand.Next(2) == 0)
             //{
             //    Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("OmnirsExplosionRune"),Main.rand.Next(1, 5));

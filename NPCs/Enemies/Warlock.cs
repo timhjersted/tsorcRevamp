@@ -13,14 +13,14 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Main.npcFrameCount[npc.type] = 15;
 			animationType = 21;
-			npc.knockBackResist = 0.1f;
+			npc.knockBackResist = 0.2f;
 			npc.aiStyle = 3;
 			npc.damage = 65;
 			npc.npcSlots = 10;
 			npc.defense = 5;
 			npc.height = 40;
 			npc.width = 20;
-			npc.lifeMax = 3500;
+			npc.lifeMax = 2600;
 			npc.scale = 1.1f;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 
 			}
-			if (Main.hardMode && (oCavern || oUnderground))
+			if (Main.hardMode && (oCavern || oUnderground || Jungle))
 			{
 				if (Main.rand.Next(180) == 1) return 1;
 				else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.3f || spawnInfo.spawnTileX > Main.maxTilesX * 0.7f) && Main.rand.Next(150) == 1)

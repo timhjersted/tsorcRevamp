@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             target.AddBuff(22, 18000, false);
             target.AddBuff(30, 600, false);
-            target.AddBuff(23, 180, false);
+            //target.AddBuff(23, 180, false); //curse
             target.AddBuff(32, 600, false);
             base.OnHitPlayer(target, damage, crit);
         }
