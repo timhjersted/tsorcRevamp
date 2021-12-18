@@ -36,11 +36,12 @@ namespace tsorcRevamp.NPCs.Enemies
         bool tooBig = false;
         bool lavaJumping = true;
         bool thruWalls = false;
-
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Fire Lurker");
+        }
         public override void SetDefaults()
 		{
-			//npc.name = "Fire Lurker";
-			npc.displayName = "Fire Lurker";
 			npc.width = 20;
 			npc.height = 40;
 			npc.damage = 65;
@@ -59,11 +60,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.CursedInferno] = false;
 			npc.buffImmune[BuffID.OnFire] = true;
-		}
-        public override float CanSpawn(NPCSpawnInfo)
+        }
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            int x = s.spawnTileX;
-            int y = s.spawnTileY;
+            int x = spawnInfo.spawnTileX;
+            int y = spawnInfo.spawnTileY;
             bool oSky = (y < (Main.maxTilesY * 0.1f));
             bool oSurface = (y >= (Main.maxTilesY * 0.1f) && y < (Main.maxTilesY * 0.2f));
             bool oUnderSurface = (y >= (Main.maxTilesY * 0.2f) && y < (Main.maxTilesY * 0.3f));
@@ -72,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool oMagmaCavern = (y >= (Main.maxTilesY * 0.6f) && y < (Main.maxTilesY * 0.8f));
             bool oUnderworld = (y >= (Main.maxTilesY * 0.8f));
             int tile = (int)Main.tile[x, y].type;
-            Player p = s.player;
+            Player p = spawnInfo.player;
             if (Main.pumpkinMoon || Main.snowMoon || Main.hardMode || p.ZoneDungeon || p.ZoneMeteor)
             {
                 return 0f;
@@ -115,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Main.dust[dustID].noGravity = true;
                 Main.dust[dustID].velocity.Y--;
             }
-            MNPC.teleporterAI
+            PortedAIs.teleporterAI
             (
                 npc,
                 ref npc.ai,
@@ -126,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 true,       // aerial		Whether or not an NPC will try to move to an airborne position.
                 teleport    // tpEffect		The effect that the NPC will create as it moves.
             );
-            MNPC.fighterAI
+            PortedAIs.fighterAI
             (
                 npc,
                 ref npc.ai,
