@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && /*!spawnInfo.water &&*/ (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.MudUnsafe)
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("AbandonedStump")) < 2 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && /*!spawnInfo.water &&*/ ((Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 5].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 8].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 12].wall == WallID.None) || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.MudUnsafe)
 				&& !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor)//all this is to prevent the npc spawning in really odd looking places
 				&& Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY].type == TileID.Grass && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY].halfBrick() && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY].rightSlope()//make sure block to left and right are jungle grass
 				&& Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.Grass && Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].type != TileID.Dirt && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].halfBrick() && !Main.tile[spawnInfo.spawnTileX + 1, spawnInfo.spawnTileY - 1].leftSlope()

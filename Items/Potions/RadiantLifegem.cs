@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override bool CanUseItem(Player player)
         {
-            if (player.HasBuff(BuffID.PotionSickness) || player.HasBuff(ModContent.BuffType<Buffs.LifegemHealing>()) || player.HasBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>()) || !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) // If you have the buff or are not BOTC, you can't use
+            if (player.HasBuff(BuffID.PotionSickness))
             {
                 return false;
             }

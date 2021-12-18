@@ -37,13 +37,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (!Main.hardMode && spawnInfo.player.ZoneDungeon)
+			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.35f; //what the hell? this is so high
-			}
-			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneJungle && spawnInfo.player.ZoneRockLayerHeight)
-			{
-				return 0.15f;
+				return 0.2f;
 			}
 			else if (Main.hardMode && spawnInfo.player.ZoneDungeon)
 			{

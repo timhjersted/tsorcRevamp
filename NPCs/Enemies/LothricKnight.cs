@@ -17,6 +17,9 @@ namespace tsorcRevamp.NPCs.Enemies
         bool jumpSlashing = false;
         bool shielding = false;
         bool stabbing = false;
+        bool enrage = false;
+        bool hasEnraged = false;
+        int enrageTimer;
 
 
         //Anim
@@ -36,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.npcSlots = 15;
             npc.knockBackResist = 0.15f;
             npc.aiStyle = -1;
-            npc.damage = 40;
+            npc.damage = 43;
             npc.defense = 26;
             npc.height = 44;
             npc.width = 20;
@@ -83,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (npc.Distance(player.Center) < 600)
             {
-                player.ZonePeaceCandle = true;
+                //player.ZonePeaceCandle = true;
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
             }
 
@@ -92,7 +95,12 @@ namespace tsorcRevamp.NPCs.Enemies
             //float top_speed = (lifePercentage * 0.02f) + .2f; //good calculation to remember for decreasing speed the lower the enemy HP%
             float top_speed = (lifePercentage * -0.02f) + 2.5f; //good calculation to remember for increasing speed the lower the enemy HP%
             float braking_power = 0.1f; //Breaking power to slow down after moving above top_speed
-            //Main.NewText(Math.Abs(npc.velocity.X));
+                                        //Main.NewText(Math.Abs(npc.velocity.X));
+
+
+            int damage = npc.damage / 4;
+
+
 
             #region target/face player, respond to boredom
 
@@ -389,11 +397,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(20, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(20, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(20, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
                             }
 
                         }
@@ -402,12 +410,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -66), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 25, 5, Main.myPlayer, npc.whoAmI, 0);
+                                Projectile.NewProjectile(npc.Center + new Vector2(-2, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(damage * 1.2f), 5, Main.myPlayer, npc.whoAmI, 0);
                             }
                         }
                     }
@@ -526,12 +534,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (npc.direction == 1)
                         {
-                            Projectile.NewProjectile(npc.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 30, 5, Main.myPlayer, npc.whoAmI, 0);
+                            Projectile.NewProjectile(npc.Center + new Vector2(24, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(damage * 1.4f), 5, Main.myPlayer, npc.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(npc.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 30, 5, Main.myPlayer, npc.whoAmI, 0);
+                            Projectile.NewProjectile(npc.Center + new Vector2(-8, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), (int)(damage * 1.4f), 5, Main.myPlayer, npc.whoAmI, 0);
                         }
                     }
                     if (npc.ai[1] > 470 && npc.ai[1] < 489)
@@ -603,14 +611,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (npc.direction == 1)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 32, 5, Main.myPlayer, npc.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), (int)(damage * 1.5f), 5, Main.myPlayer, npc.whoAmI, 0)];
                             npc.velocity.X += 10.5f;
                             npc.velocity.Y -= 2f;
                         }
 
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(-44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 32, 5, Main.myPlayer, npc.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(-44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), (int)(damage * 1.5f), 5, Main.myPlayer, npc.whoAmI, 0)];
                             npc.velocity.X -= 10.5f;
                             npc.velocity.Y -= 2f;
                         }
@@ -680,6 +688,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
         {
+            int shieldPower = npc.defense * 2;
+
             if (shielding)
             {
                 if (npc.direction == 1)
@@ -687,7 +697,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X > npc.position.X)
                     {
                         Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 50;
+                        damage -= shieldPower;
                         if (npc.ai[2] > 340)
                         {
                             npc.ai[2] -= 35;
@@ -699,7 +709,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (player.position.X < npc.position.X)
                     {
                         Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                        damage -= 50;
+                        damage -= shieldPower;
                         if (npc.ai[2] > 340)
                         {
                             npc.ai[2] -= 35;
@@ -733,6 +743,9 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             Player player = Main.player[npc.target];
+
+            int shieldPower = npc.defense * 3;
+
             if (projectile.type != ModContent.ProjectileType<Items.Weapons.Ranged.BlizzardBlasterShot>())
             {
                 if (shielding)
@@ -743,7 +756,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
 
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
                             knockback = 0f;
                             if (npc.ai[1] < 340)
                             {
@@ -758,7 +771,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (hitDirection == -1 && (!projectile.melee || projectile.aiStyle == 19))
                         {
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
                             knockback = 0f;
 
                             if (npc.ai[1] < 340)
@@ -778,7 +791,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (projectile.oldPosition.X < npc.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
                             knockback = 0f;
                             if (npc.ai[1] < 340)
                             {
@@ -792,7 +805,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         else if (hitDirection == 1 && (!projectile.melee || projectile.aiStyle == 19))
                         {
                             Main.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), npc.position); //Play metal tink sound
-                            damage -= 50;
+                            damage -= shieldPower;
 
                             knockback = 0f;
                             if (npc.ai[1] < 340)

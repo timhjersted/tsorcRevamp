@@ -140,6 +140,7 @@ namespace tsorcRevamp
             ShadowMageAmbush1,
             BridgeAmbush1,
             LothricAmbush1,
+            LothricAmbush2,
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -270,7 +271,7 @@ namespace tsorcRevamp
             List<int> ShadowMageAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ShadowMage>() };
             List<Vector2> ShadowMageAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4029, 1429), new Vector2(4074, 1399) };
             ScriptedEvent ShadowMageAmbush1 = new ScriptedEvent(new Vector2(4060, 1418), 10, ShadowMageAmbush1EnemyTypeList, ShadowMageAmbush1EnemyLocations, DustID.CursedTorch, false, false, "Ambush!", Color.Red, false, PreSkeletronCustomCondition, null);
-            ShadowMageAmbush1.SetCustomStats(null, 18, null);
+            ShadowMageAmbush1.SetCustomStats(700, 18, null); // Lowers the mage's HP, and raises the soldiers
 
             //BRIDGE AMBUSH 1 - ON BRIDGE POST EOW
             List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.TibianAmazon>(), NPCID.Piranha, NPCID.Piranha, NPCID.Piranha };
@@ -281,6 +282,14 @@ namespace tsorcRevamp
             List<int> LothricAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>(), ModContent.NPCType<NPCs.Enemies.LothricSpearKnight>() };
             List<Vector2> LothricAmbush1EnemyLocations = new List<Vector2>() { new Vector2(5148, 1757), new Vector2(5197, 1757) };
             ScriptedEvent LothricAmbush1 = new ScriptedEvent(new Vector2(5173, 1750), 6, LothricAmbush1EnemyTypeList, LothricAmbush1EnemyLocations, DustID.DungeonWater, false, false, "Ambush!", Color.Red, false, PreMechCustomCondition, null);
+
+            //LOTHRIC AMBUSH 2 - IN ROOM BEFORE TRIPLE ENCHANTED SWORDS, UNDER EARTH TEMPLE ENTRANCE
+            List<int> LothricAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>() };
+            List<Vector2> LothricAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4596, 946) };
+            ScriptedEvent LothricAmbush2 = new ScriptedEvent(new Vector2(4566, 930), 6, LothricAmbush2EnemyTypeList, LothricAmbush2EnemyLocations, DustID.DungeonWater, true, false, "Ambush!", Color.Red, false, PreMechCustomCondition, null);
+            LothricAmbush2.SetCustomStats(null, null, 70); // Lower damage than normal
+            //LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
+
 
 
             //Every enum and ScriptedEvent has to get paired up here
@@ -317,6 +326,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.ShadowMageAmbush1, ShadowMageAmbush1},
                 {ScriptedEventType.BridgeAmbush1, BridgeAmbush1},
                 {ScriptedEventType.LothricAmbush1, LothricAmbush1},
+                {ScriptedEventType.LothricAmbush2, LothricAmbush2},
 
 
 

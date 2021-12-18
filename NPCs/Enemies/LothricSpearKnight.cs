@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (npc.Distance(player.Center) < 600)
             {
-                player.ZonePeaceCandle = true;
+                //player.ZonePeaceCandle = true;
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
             }
 

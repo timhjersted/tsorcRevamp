@@ -50,8 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			if (!Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(5) == 0) return 1;
-			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneJungle && spawnInfo.player.ZoneRockLayerHeight)
+
+			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon)
 			{
 				return 0.12f;
 			}

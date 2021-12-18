@@ -8,14 +8,14 @@ namespace tsorcRevamp.Buffs
         public override void SetDefaults()
         {
             DisplayName.SetDefault("Wall");
-            Description.SetDefault(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "Defense is increased by 50!" : "Defense increased by 50, but damage reduced by 20% and speed reduced by 15%!");
+            Description.SetDefault(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "Defense is increased by 25!" : "Defense increased by 25, but damage reduced by 20% and speed reduced by 15%!");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.statDefense += 50;
+            player.statDefense += 25;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 player.allDamageMult -= 0.2f;
                 player.moveSpeed *= 0.85f;

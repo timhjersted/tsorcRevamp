@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				return chance;
 			}
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 2].wall == WallID.None && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor))
+			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 5].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 8].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 12].wall == WallID.None) && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor))
 			{
 				return 0.35f;
 			}

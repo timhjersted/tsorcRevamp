@@ -185,7 +185,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			Player player = Main.player[npc.target];
 
-			if (npc.ai[1] == 51 && npc.Distance(player.Center) > 900)
+			if (npc.ai[1] == 51 && npc.Distance(player.Center) > 1100)
 			{
 				npc.ai[1] = 0;
 			}

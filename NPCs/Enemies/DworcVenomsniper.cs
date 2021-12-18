@@ -60,7 +60,11 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (!Main.hardMode && spawnInfo.player.ZoneJungle && spawnInfo.player.ZoneOverworldHeight)
+			if (spawnInfo.player.ZoneDungeon)
+			{
+				return 0f;
+			}
+			else if (!Main.hardMode && spawnInfo.player.ZoneJungle && spawnInfo.player.ZoneOverworldHeight)
 			{
 				return 0.1f;
 			}

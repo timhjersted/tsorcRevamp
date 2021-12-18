@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>());
-			shop.item[nextSlot].shopCustomPrice = 7;
+			shop.item[nextSlot].shopCustomPrice = 5;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.HealingElixir>());

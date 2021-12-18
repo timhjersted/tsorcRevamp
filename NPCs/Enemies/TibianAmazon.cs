@@ -72,8 +72,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (spawnInfo.player.townNPCs > 0f || Main.hardMode || spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneMeteor) chance = 0f;
 			if (spawnInfo.player.ZoneOverworldHeight || spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight)
 			{
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.0456f;
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.05f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.05f;
+				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.055f;
 				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && Main.dayTime) return 0.0534f;
 				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.0725f;
 			}
@@ -191,7 +191,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			Player player = Main.player[npc.target];
 
-			if (npc.ai[1] == 51 && npc.Distance(player.Center) > 900)
+			if (npc.ai[1] == 51 && npc.Distance(player.Center) > 1100)
             {
 				npc.ai[1] = 0;
 			}

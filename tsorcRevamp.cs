@@ -832,7 +832,7 @@ namespace tsorcRevamp {
                     (Func<bool>)(() => tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>())), // Downed variable (the one keeping track the boss has been defeated once)
                     ModContent.ItemType<Items.BossItems.JungleFeather>(),
                     0,
-                    new List<int> { ModContent.ItemType<Items.BossBags.JungleWyvernBag>(), ItemID.Sapphire, ItemID.Ruby, ItemID.Topaz, ItemID.Diamond, ItemID.Emerald, ItemID.Amethyst, ItemID.NecroHelmet, ItemID.NecroBreastplate, ItemID.NecroGreaves }, // List containing all the loot to show in the bestiary
+                    new List<int> { ModContent.ItemType<Items.BossBags.JungleWyvernBag>(), ModContent.ItemType<Items.Accessories.ChloranthyRing>(), ItemID.Sapphire, ItemID.Ruby, ItemID.Topaz, ItemID.Diamond, ItemID.Emerald, ItemID.Amethyst, ItemID.NecroHelmet, ItemID.NecroBreastplate, ItemID.NecroGreaves }, // List containing all the loot to show in the bestiary
                     $"Found in the depths of the Forgotten City.", // Guide to fight the boss
                     "", // Despawning Message
                     "tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/JungleWyvern");
