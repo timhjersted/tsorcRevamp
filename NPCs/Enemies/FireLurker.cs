@@ -78,15 +78,15 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 return 0f;
             }
-           /* if (oUnderworld && !Main.hardMode)
+           if (oUnderworld && !Main.hardMode)
             {
-                if (x < Main.maxTilesX * 0.25f && Main.rand.Next(5) == 1) return 1f;
-                else if (Main.rand.Next(45) == 1) return 1f;
-                else if (Main.bloodMoon && Main.rand.Next(15) == 1) return 1f;
+                if (x < Main.maxTilesX * 0.25f && Main.rand.Next(500) == 1) return 1f;
+                else if (Main.rand.Next(4500) == 1) return 1f;
+                else if (Main.bloodMoon && Main.rand.Next(1500) == 1) return 1f;
                 return 0f;
             }
             return 0f;
-            */
+            
         }
         //Spawns in the Lower Cavern into the Underworld. Does not spawn in Hardmode.
         public void teleport(bool pre)
