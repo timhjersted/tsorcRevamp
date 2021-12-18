@@ -44,11 +44,6 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 
 		}
 
-		public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
-		{
-			return false;
-		}
-
 		public int CursedFlamesDamage = 22;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
