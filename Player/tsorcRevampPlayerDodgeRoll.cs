@@ -233,7 +233,12 @@ namespace tsorcRevamp {
 				forceDodgeroll = false;
 			}
 			else if (Main.netMode != NetmodeID.SinglePlayer) {
-				//MultiplayerSystem.SendPacket(new PlayerDodgerollPacket(player));
+				ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+				rollPacket.Write((byte)tsorcPacketID.SyncPlayerDodgeroll);
+				rollPacket.Write((byte)player.whoAmI);
+				rollPacket.Write(wantedDodgerollDir);
+				rollPacket.WriteVector2(player.velocity);
+				rollPacket.Send();
 			}
 
 			return true;

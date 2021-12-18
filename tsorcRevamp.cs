@@ -719,7 +719,14 @@ namespace tsorcRevamp {
                 }
             }
 
-
+            else if (message == tsorcPacketID.SyncPlayerDodgeroll) {
+                byte who = reader.ReadByte();
+                Player player = Main.player[who];
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                modPlayer.forceDodgeroll = true;
+                modPlayer.wantedDodgerollDir = reader.ReadSByte();
+                player.velocity = reader.ReadVector2();
+            }
             /**
             //For synced random
             //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator
@@ -1205,6 +1212,7 @@ namespace tsorcRevamp {
         public const byte SyncTimeChange = 3;
         public const byte DispelShadow = 4;
         public const byte DropSouls = 5;
+        public const byte SyncPlayerDodgeroll = 6;
     }
 
     //config moved to separate file
