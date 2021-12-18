@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 
 			}
-			if (Main.hardMode && (oCavern || oUnderground || oJungle))
+			if (Main.hardMode && (oCavern || oUnderground))
 			{
 				if (Main.rand.Next(180) == 1) return 1;
 				else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.3f || spawnInfo.spawnTileX > Main.maxTilesX * 0.7f) && Main.rand.Next(150) == 1)
