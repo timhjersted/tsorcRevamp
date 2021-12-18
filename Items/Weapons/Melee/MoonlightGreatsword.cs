@@ -7,51 +7,45 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class MoonlightGreatsword : ModItem {
 
-        //public override string Texture => TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatsword];
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("The Moonlight Greatsword" +
-                                "\nThe sword of legend..." +
-                                "\n...");
+            Tooltip.SetDefault("The Moonlight Greatsword, the sword of legend..." +
+                                "\nGlows and gains magic damage scaling at night" +
+                                "\nLaunches glimmering waves of moonlight");
         }
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
             item.damage = 250;
             item.height = 72;
             item.width = 72;
-            item.knockBack = 14f;
-            item.magic = true;
+            item.knockBack = 12f;
+            item.melee = true;
             item.autoReuse = true;
             item.useAnimation = 27;
             item.useTime = 27;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.value = 1000000;
-            item.shoot = ModContent.ProjectileType<Projectiles.Crescent>();
-            item.shootSpeed = 10f;
+            item.shoot = ModContent.ProjectileType<Projectiles.MLGSCrescent>();
+            item.shootSpeed = 2f; //Yes it looks slow but it gets *1.2f each tick in it's AI. My attempt at making the sword look like it's not spawning in the player.
         }
 
 
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            
 
-            if (Main.rand.Next(2) == 0)
+            if (!Main.dayTime)
             {
-                if (!Main.dayTime)
-                {
-                    damage = (int)(damage * player.magicDamage);
-                }
-                return true;
+                damage = (int)(damage * player.magicDamage);
             }
-            else
-            {
-                return false;
-            }
+
+            return true;
+
         }
 
         public override bool OnlyShootOnSwing => true;
+
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
             if (!Main.dayTime)
@@ -102,7 +96,6 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void MeleeEffects(Player player, Rectangle hitbox)
         {
             int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 89, player.velocity.X, player.velocity.Y, 100, default, .8f);
-            //Main.dust[dust].velocity *= 0;
             Main.dust[dust].noGravity = true;
         }
     }

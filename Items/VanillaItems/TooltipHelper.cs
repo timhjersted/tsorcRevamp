@@ -20,6 +20,21 @@ namespace tsorcRevamp.Items.VanillaItems {
             }
         }
 
+        public static void SimpleGlobalModTooltip(Mod mod, List<TooltipLine> tooltips, string TipToAdd1, string TipToAdd2 = null) //Same but not linked to a specific item.
+        {
+            int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria"); //find the last tooltip line
+            if (ttindex != -1)
+            {// if we find one
+             //insert the extra tooltip line
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", TipToAdd1));
+                if (TipToAdd2 != null)
+                {
+                    tooltips.Insert(ttindex + 2, new TooltipLine(mod, "", TipToAdd2));
+                }
+            }
+
+        }
+
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
@@ -53,6 +68,19 @@ namespace tsorcRevamp.Items.VanillaItems {
             SimpleModTooltip(mod, item, tooltips, ItemID.YellowWrench, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.MulticolorWrench, "Do not use this!");
             SimpleModTooltip(mod, item, tooltips, ItemID.CopperAxe, "All axes do 2x damage to woody enemies");
+            SimpleModTooltip(mod, item, tooltips, ItemID.DemonBow, "Can be upgraded with 4000 Dark Souls and 10 Shadow Scales");
+            SimpleModTooltip(mod, item, tooltips, ItemID.Diamond, "Vital ingredient in the crafting of a very powerful potion");
+            SimpleModTooltip(mod, item, tooltips, ItemID.IronOre, "Perhaps you can use these for making special arrows..?");
+            SimpleModTooltip(mod, item, tooltips, ItemID.FeralClaws, "Can be upgraded with 3000 Dark Souls, an Aglet and an Anklet of the Wind");
+            SimpleModTooltip(mod, item, tooltips, ItemID.Revolver, "Can be upgraded with 6000 Dark Souls and 10 Souls of Light or Dark");
+
+
+            Player player = Main.LocalPlayer;
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer && item.healLife > 0)
+            {
+                SimpleGlobalModTooltip(mod, tooltips, "Doesn't heal the [c/6d8827:Bearer of the Curse]");
+            }
 
 
 

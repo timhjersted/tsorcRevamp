@@ -22,5 +22,16 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.SilverBall>();
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.SilverBar, 1);
+            recipe.AddIngredient(ItemID.Chain, 2);
+            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 100);
+            recipe.AddTile(TileID.Anvils);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
+        }
     }
 }

@@ -8,13 +8,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.autoReuse = true;
             item.useTurn = true;
             item.rare = ItemRarityID.Blue;
-            item.damage = 25;
+            item.damage = 24;
             item.height = 34;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.knockBack = 4;
             item.melee = true;
-            item.useAnimation = 21;
-            item.useTime = 21;
+            item.useAnimation = 22;
+            item.useTime = 22;
             item.UseSound = SoundID.Item1;
             item.value = 100000;
             item.width = 34;

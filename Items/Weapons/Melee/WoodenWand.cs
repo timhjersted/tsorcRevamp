@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class WoodenWand : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("An unenchanted wooden wand. \nCan be upgraded many different ways.");
+            Tooltip.SetDefault("An unenchanted wooden wand \nCan be upgraded many different ways");
         }
 
         public override void SetDefaults() {
@@ -15,7 +15,16 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useTime = 25;
             item.damage = 8;
             item.melee = true;
-            item.value = 1000;
+            item.value = 100;
+            item.knockBack = 3.5f;
+        }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.Wood, 5);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
     }
 }

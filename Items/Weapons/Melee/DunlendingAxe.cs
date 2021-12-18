@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
                 ) {
-                damage *= 2;
+                damage *= 4; // *2 > *4, lets make it actually useful shall we
             }
             if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>()) {
                 damage *= 6;
