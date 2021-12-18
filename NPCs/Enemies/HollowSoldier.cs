@@ -773,6 +773,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 return chance;
             }
 
+            if (spawnInfo.player.townNPCs > 1f) return 0f;
+
             if (tsorcRevampWorld.SuperHardMode) return 0.05f;
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;

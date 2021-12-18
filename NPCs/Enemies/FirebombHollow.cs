@@ -42,6 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 chance = 0;
                 return chance;
             }
+            if (spawnInfo.player.townNPCs > 1f) return 0f;
 
             if (tsorcRevampWorld.SuperHardMode) return 0.005f;
 

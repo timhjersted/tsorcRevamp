@@ -199,6 +199,9 @@ namespace tsorcRevamp.NPCs.Enemies {
                 return chance;
             }
 
+            if (spawnInfo.player.townNPCs > 1f) return 0f;
+
+
             if (p.ZoneOverworldHeight) {
                 if (Main.dayTime) chance = 0.067f;
                 else chance = 0.125f;
