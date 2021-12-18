@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					
-					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ProjectileID.CursedFlameHostile, CursedFlamesDamage, 0f, Main.myPlayer); //cursed dragons breath
+					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), CursedFlamesDamage, 0f, Main.myPlayer); //cursed dragons breath
 					Main.projectile[num54].timeLeft = 25;
 					Main.projectile[num54].scale = 1f;
 					
