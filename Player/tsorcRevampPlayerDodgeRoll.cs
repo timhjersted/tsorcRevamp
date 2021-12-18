@@ -235,6 +235,7 @@ namespace tsorcRevamp {
 			else if (Main.netMode != NetmodeID.SinglePlayer) {
 				ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
 				rollPacket.Write((byte)tsorcPacketID.SyncPlayerDodgeroll);
+				rollPacket.Write(false);
 				rollPacket.Write((byte)player.whoAmI);
 				rollPacket.Write(wantedDodgerollDir);
 				rollPacket.WriteVector2(player.velocity);

@@ -656,12 +656,12 @@ namespace tsorcRevamp {
             }
 
             //Sync Event Dust
-            else if(message == tsorcPacketID.SyncEventDust)
+            else if (message == tsorcPacketID.SyncEventDust)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
                     tsorcScriptedEvents.NetworkEvents = new List<NetworkEvent>();
-                    
+
                     int count = reader.ReadInt32();
                     for (int i = 0; i < count; i++)
                     {
@@ -676,7 +676,7 @@ namespace tsorcRevamp {
             }
 
             //Sync time change
-            else if(message == tsorcPacketID.SyncTimeChange)
+            else if (message == tsorcPacketID.SyncTimeChange)
             {
                 if (Main.netMode == NetmodeID.Server)
                 {
@@ -693,7 +693,7 @@ namespace tsorcRevamp {
                 }
             }
 
-            else if(message == tsorcPacketID.DispelShadow)
+            else if (message == tsorcPacketID.DispelShadow)
             {
                 int npcID = reader.ReadInt32();
                 Main.npc[npcID].AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
@@ -702,16 +702,16 @@ namespace tsorcRevamp {
             else if (message == tsorcPacketID.DropSouls)
             {
                 Vector2 position = reader.ReadVector2();
-                int count = reader.ReadInt32(); 
+                int count = reader.ReadInt32();
                 if (Main.netMode == NetmodeID.Server)
                 {
                     UsefulFunctions.ServerText("Dropping " + count + "souls");
                     //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
                     while (count > 32000)
-                    {                        
+                    {
                         //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
                         Item.NewItem(position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
-                        count -= 32000;                        
+                        count -= 32000;
                     }
 
                     Item.NewItem(position, ModContent.ItemType<Items.DarkSoul>(), count);
@@ -719,14 +719,46 @@ namespace tsorcRevamp {
                 }
             }
 
-            else if (message == tsorcPacketID.SyncPlayerDodgeroll) {
+            else if (message == tsorcPacketID.SyncPlayerDodgeroll)
+            {
+                //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
+                bool bounced = reader.ReadBoolean();
                 byte who = reader.ReadByte();
-                Player player = Main.player[who];
-                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                modPlayer.forceDodgeroll = true;
-                modPlayer.wantedDodgerollDir = reader.ReadSByte();
-                player.velocity = reader.ReadVector2();
+
+                //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
+                if (Main.netMode == NetmodeID.MultiplayerClient || !bounced)
+                {
+                    //Sync everything
+                    Player player = Main.player[who];
+                    tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    modPlayer.forceDodgeroll = true;
+                    modPlayer.wantedDodgerollDir = reader.ReadSByte();
+                    player.velocity = reader.ReadVector2();
+                    
+                    //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
+                    if(Main.netMode == NetmodeID.Server)
+                    {
+                        ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
+                        rollPacket.Write(true);
+                        rollPacket.Write((byte)player.whoAmI);
+                        rollPacket.Write(modPlayer.wantedDodgerollDir);
+                        rollPacket.WriteVector2(player.velocity);
+
+                        //Iterate through all active clients and send it specifically to them
+                        for(int i = 0; i < Main.maxPlayers; i++)
+                        {
+                            if(Main.player[i].active && i != player.whoAmI)
+                            {
+                                rollPacket.Send(i);
+                            }
+                        }
+                    }
+                }                
             }
+
+
+
             /**
             //For synced random
             //Recieves the seed from the server, and passes it off to UsefulFunctions.RecieveRandPacket which uses it to instantiate the new random generator
