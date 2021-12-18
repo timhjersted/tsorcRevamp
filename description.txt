@@ -1,26 +1,28 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria, using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough. It is currently in beta.
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough. It is currently in beta.
 
 - To load the custom map, click the "Install Custom Map" button once you reach the world creation options.
 
 - To download the companion Music Mod, click the text prompt you'll see on TML's main menu. Then click Mods and Enable the Music Mod. The Recipe Browser mod is also recommended.
+
 
 TOP FEATURES
 *17 dungeons spread across a large open world filled with villages, forests, mountains, lakes, temples, deserts, and hidden paths
 *33 bosses (11 vanilla plus 22 mod bosses).
 *100+ new NPCS including 8 friendly NPCs.
 *Companion Soundtrack with 32 songs (Dark Souls and Zelda fans will love it).
-*Over 600 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
+*Over 700 new mod items, weapons, and armors, both original and remixed from two dozen of the best classic mods from the community
 *Many hours of secret post-game content.
 *Dark Souls game mechanics.
-*A unique story.
-*A strong emphasis on visual immersion and a logical connection between areas similar to Dark Soul's world layout.
-*Map created entirely from scratch using Tedit, down to individual tree placements and hill curves.
 
------
+
+PROJECT STATUS
 This is a beta release meant for testing. It does not represent the final version of the mod. 
-This release includes all of the items, enemies and bosses from the original mod, plus a growing number of new additions.
+It includes all of the items, enemies and bosses from the original mod, plus a growing number of new additions. Development is focused on revamping enemies, game balance, and new content.
 
-The Mod's Homepage links to our Discord. Please share your feedback and suggestions under #any-suggestions or #bug-reports. Post map related feedback to #map-suggestions-bugs.
+The Mod's Homepage links to our Discord. 
+
+Please share your feedback and suggestions under #any-suggestions or #bug-reports. 
+Post map related feedback to #map-suggestions-bugs.
 
 The changelogs can be found under #mod-changelog and #map-changelog.
 
@@ -38,9 +40,11 @@ GAME MANUAL:
 
 *Read all item tool-tips for hints and game clues, especially mod items.
 
-*Don't move vanilla NPC's like the Wizard, Mechanic or Goblin Tinkerer until you've found them in game. Modded NPCs may be moved.
+*Don't move vanilla NPCs like the Wizard, Mechanic or Goblin Tinkerer until you've found them in game. Modded NPCs may be moved.
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
+
+*New dodge roll action can be bound to any key in the mod's config options
 
 *Multiplayer is currently being beta-tested and is not yet in a polished state. If you'd like to try it out and help with testing, post any issues you find under #bug-reports. Thanks. The map supports up to 3 players. Class diversity recommended.
 
