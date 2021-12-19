@@ -81,9 +81,17 @@ namespace tsorcRevamp {
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
 				// Stamina drain for most (hopefully) swords and spears
-				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0)
+				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
+					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
 				{
 					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .8f);
+				}
+
+				// Stamina drain for boomerangs
+				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
+					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * 1.2f);
 				}
 
 				// Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.

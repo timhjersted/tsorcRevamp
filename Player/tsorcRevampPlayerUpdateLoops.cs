@@ -430,6 +430,10 @@ namespace tsorcRevamp {
 
             #endregion
 
+            if (player.HasBuff(BuffID.WellFed))
+            {
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
+            }
         }
 
         public override void PostUpdateEquips() {
@@ -443,6 +447,11 @@ namespace tsorcRevamp {
             if (((underground && player.ZoneHoly && !Ocean && !player.ZoneDungeon /*&& !player.ZoneOverworldHeight*/) || player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
 
                 player.gravControl = true;
+            }
+
+            if (player.position.X == player.oldPosition.X)
+            {
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.5f;
             }
 
             if (ShadowWeight) {
@@ -991,6 +1000,7 @@ namespace tsorcRevamp {
                     player.lifeRegen /= 2;
                 }
             }
+
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {
