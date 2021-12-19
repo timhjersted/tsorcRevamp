@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class Celestriad : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("All spells cost 1 mana to cast");
+            Tooltip.SetDefault("All spells are free to cast");
         }
 
         public override void SetDefaults() {
