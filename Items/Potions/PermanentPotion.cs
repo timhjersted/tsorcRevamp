@@ -1818,9 +1818,17 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         {
             if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[53])
             {
-                player.AddBuff(BuffID.WellFed, 1);
-                //player.wellFed = true; This literally just doesn't work for some reason?
-                //player.buffImmune[BuffID.WellFed] = true;
+                player.wellFed = true;
+                player.statDefense += 2;
+                player.meleeCrit += 2;
+                player.rangedCrit += 2;
+                player.magicCrit += 2;
+                player.meleeSpeed += 0.05f;
+                player.allDamage += 0.05f;
+                player.minionKB += 0.5f;
+                player.moveSpeed += 0.20f;
+
+                player.buffImmune[BuffID.WellFed] = true;
             }
         }
     }
