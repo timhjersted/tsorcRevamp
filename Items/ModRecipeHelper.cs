@@ -71,6 +71,7 @@ namespace tsorcRevamp.Items {
                 PermaPotionRecipeC(mod, ItemID.NightOwlPotion, ModContent.ItemType<PermanentNightOwlPotion>());
                 PermaPotionRecipeC(mod, ItemID.ThornsPotion, ModContent.ItemType<PermanentThornsPotion>());
                 PermaPotionRecipeC(mod, ItemID.WarmthPotion, ModContent.ItemType<PermanentWarmthPotion>());
+                PermaPotionRecipeC(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentSoup>());
                 #endregion
                 #region special perma recipes
                 ModRecipe recipe = new ModRecipe(mod);

@@ -25,7 +25,7 @@ namespace tsorcRevamp
 
         public override void Initialize()
         {
-            PermanentBuffToggles = new bool[53]; //todo dont forget to increment this if you add buffs to the dictionary
+            PermanentBuffToggles = new bool[54]; //todo dont forget to increment this if you add buffs to the dictionary
             DamageDir = new Dictionary<int, float> {
                 { 48, 4 }, //spike
                 { 76, 4 }, //hellstone
