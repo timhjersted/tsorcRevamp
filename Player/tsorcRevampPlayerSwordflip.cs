@@ -115,7 +115,8 @@ namespace tsorcRevamp
 		{
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
-			if (isLocal && wantsSwordflipTimer <= 0f && tsorcRevamp.SwordflipKey.JustPressed && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
+			//TODO re-enable sword flip once it's fixed
+			if (isLocal && wantsSwordflipTimer <= 0f && /*tsorcRevamp.SwordflipKey.JustPressed*/ false && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
 			{
 				QueueSwordflip(0.25f, (sbyte)KeyDirection(player));
 			}
