@@ -265,7 +265,7 @@ namespace tsorcRevamp {
 			}
 			//Apply velocity
 			if (dodgeTime < DodgeTimeMax * 0.5f) {
-				float newVelX = (onGround ? 6f : 4f) * dodgeDirection;
+				float newVelX = (onGround ? 7.5f : 5f) * dodgeDirection;
 
 				if (Math.Abs(player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(player.velocity.X)) {
 					player.velocity.X = newVelX;
