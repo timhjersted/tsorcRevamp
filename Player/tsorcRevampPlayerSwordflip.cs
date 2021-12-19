@@ -25,6 +25,20 @@ namespace tsorcRevamp
 		public static implicit operator SwordflipTimer(int value) => new SwordflipTimer() { Value = (uint)value };
 	}
 
+	internal class SwordFlipHitboxes : GlobalItem {
+        public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox) {
+			tsorcRevampPlayer sfPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+			if (sfPlayer.isSwordflipping) {
+				if (sfPlayer.swordflipTime >= tsorcRevampPlayer.SwordflipTimeMax * 0.3f && sfPlayer.swordflipTime <= tsorcRevampPlayer.SwordflipTimeMax * 0.7f) {
+					hitbox.Y += (hitbox.Height + player.getRect().Height);
+				}
+				
+            }
+            base.UseItemHitbox(item, player, ref hitbox, ref noHitbox);
+        }
+    }
+
 	/*public enum PlayerFrames //we already have these in tsorcRevampPlayerDodgeRoll
 	{
 		Idle,
