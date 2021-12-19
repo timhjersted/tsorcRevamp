@@ -116,7 +116,7 @@ namespace tsorcRevamp
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
 			//TODO re-enable sword flip once it's fixed
-			if (isLocal && wantsSwordflipTimer <= 0f && /*tsorcRevamp.SwordflipKey.JustPressed*/ false && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
+			if (isLocal && wantsSwordflipTimer <= 0f && tsorcRevamp.SwordflipKey.JustPressed && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
 			{
 				QueueSwordflip(0.25f, (sbyte)KeyDirection(player));
 			}
@@ -229,7 +229,7 @@ namespace tsorcRevamp
 
 			//Progress the dodgeroll
 			swordflipTime += 1f / 60f;
-
+			bool noMelee = false;
 			/*if (swordflipTime == 1)
 			{
 				player.itemAnimation = player.itemAnimationMax;
@@ -251,6 +251,7 @@ namespace tsorcRevamp
 			if (swordflipTime >= SwordflipTimeMax)
 			{
 				player.itemAnimation = player.itemAnimationMax;
+				noMelee = item.noMelee;
 				item.noMelee = true;
 				item.useAnimation = (int)(28);
 			}
@@ -262,6 +263,7 @@ namespace tsorcRevamp
 			{
 				isSwordflipping = false;
 				player.eocDash = 0;
+				item.noMelee = noMelee;
 
 				//forceSyncControls = true;
 			}
