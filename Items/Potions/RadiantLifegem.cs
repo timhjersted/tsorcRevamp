@@ -29,8 +29,8 @@ namespace tsorcRevamp.Items.Potions
             item.height = 30;
             item.maxStack = 99;
             item.value = 10000;
-            item.useAnimation = 120;
-            item.useTime = 120;
+            item.useAnimation = 90;
+            item.useTime = 90;
             item.useTurn = true;
             item.rare = ItemRarityID.Orange;
 
