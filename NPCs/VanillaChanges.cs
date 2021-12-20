@@ -1873,6 +1873,7 @@ namespace tsorcRevamp.NPCs {
             }
             return base.CheckDead(npc);
         }
+
         public override void NPCLoot(NPC npc) {
             #region Loot Changes
 
@@ -1934,6 +1935,11 @@ namespace tsorcRevamp.NPCs {
 
             if (npc.netID == NPCID.GreenSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
+            }
+
+            if (npc.netID == NPCID.RedSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            {
+                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 2);
             }
 
             if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow) && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
@@ -2026,6 +2032,8 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
             }
+
+
             #endregion
             #region Pillar ModWorld bools
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedVortex = true;

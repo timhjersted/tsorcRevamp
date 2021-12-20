@@ -794,9 +794,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 2 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
 
             if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
