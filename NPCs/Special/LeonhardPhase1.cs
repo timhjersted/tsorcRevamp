@@ -12,6 +12,7 @@ namespace tsorcRevamp.NPCs.Special
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         NPCDespawnHandler despawnHandler;
+        public int ThisNPC => ModContent.NPCType<NPCs.Special.LeonhardPhase1>();
 
         public override void SetStaticDefaults()
         {
@@ -23,6 +24,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetDefaults()
         {
+            npc.npcSlots = 200;
             npc.knockBackResist = 0.3f;
             npc.aiStyle = -1;
             npc.height = 40;
@@ -525,6 +527,31 @@ namespace tsorcRevamp.NPCs.Special
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
 
+                    /*var Slain = tsorcRevampWorld.Slain;
+                    int playerQuantity = 0;
+
+                    for (int i = 0; i < Main.maxPlayers; i++)
+                    {
+                        Player thisPlayer = Main.player[i];
+                        if (thisPlayer != null && thisPlayer.active)
+                        {
+                            playerQuantity++;
+                        }
+                    }
+
+                    if (Slain.ContainsKey(ThisNPC))
+                    {
+                        if (Slain[ThisNPC] == 0)
+                        {
+                            player.QuickSpawnItem(ModContent.ItemType<Items.StaminaVessel>(), playerQuantity);
+                            Slain[ThisNPC] = 1;
+                        }
+                    }
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
+                    }*/
 
                 }
 

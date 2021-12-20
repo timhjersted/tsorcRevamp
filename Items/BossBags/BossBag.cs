@@ -43,6 +43,7 @@ namespace tsorcRevamp.Items.BossBags {
                 {
                     //Slogra and Gaibon being a pair means it has to work a little different
                     //In normal mode, each of them drops half the souls. This ensures the full amount drops in expert mode instead.
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), (int)((7000) * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                     Slain[BossBagNPC] = 1;
                     Slain[ModContent.NPCType<Gaibon>()] = 1;
@@ -63,6 +64,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
@@ -159,6 +161,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
@@ -182,6 +185,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
@@ -202,6 +206,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
@@ -225,6 +230,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), (int)(50000 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                     //VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
@@ -267,6 +273,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
@@ -555,6 +562,20 @@ namespace tsorcRevamp.Items.BossBags {
             }
         }
 
+        public static void SoulsAndStaminaVesselOnFirstBag(int EnemyID, Player player)
+        {
+            var Slain = tsorcRevampWorld.Slain;
+            if (Slain.ContainsKey(EnemyID))
+            {
+                if (Slain[EnemyID] == 0)
+                {
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
+                    AddBossBagSouls(EnemyID, player);
+                    Slain[EnemyID] = 1;
+                }
+            }
+        }
+
         public override bool PreOpenVanillaBag(string context, Player player, int arg) {
             
             if (context == "bossBag" && arg == ItemID.KingSlimeBossBag) { //re-implement king slime bag to stop blacklisted items from dropping in adventure mode
@@ -572,7 +593,7 @@ namespace tsorcRevamp.Items.BossBags {
                     if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimeHook); }
                     if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(ItemID.SlimySaddle); }
                 }
-                SoulsOnFirstBag(NPCID.KingSlime, player);
+                SoulsAndStaminaVesselOnFirstBag(NPCID.KingSlime, player);
                 return false;
             }
             if (context == "bossBag" && arg == ItemID.GolemBossBag)
@@ -632,21 +653,28 @@ namespace tsorcRevamp.Items.BossBags {
         public override void OpenVanillaBag(string context, Player player, int arg) {
             var Slain = tsorcRevampWorld.Slain;
             if (context == "bossBag") {
-                if (arg == ItemID.EyeOfCthulhuBossBag) {
+                if (arg == ItemID.EyeOfCthulhuBossBag && !player.ZoneJungle) {
                     player.QuickSpawnItem(ItemID.HermesBoots);
                     player.QuickSpawnItem(ItemID.HerosHat);
                     player.QuickSpawnItem(ItemID.HerosPants);
                     player.QuickSpawnItem(ItemID.HerosShirt);
                     SoulsOnFirstBag(NPCID.EyeofCthulhu, player);
                 }
+                if (arg == ItemID.EyeOfCthulhuBossBag && player.ZoneJungle) { //If you open your first EoC bag in the jungle, get a stamina vessel as well.
+                    player.QuickSpawnItem(ItemID.HermesBoots);                //Hopefully people won't kill Earth Temple EoC then take the bag to the jungle to open it lol
+                    player.QuickSpawnItem(ItemID.HerosHat);
+                    player.QuickSpawnItem(ItemID.HerosPants);
+                    player.QuickSpawnItem(ItemID.HerosShirt);
+                    SoulsAndStaminaVesselOnFirstBag(NPCID.EyeofCthulhu, player);
+                }
                 if (arg == ItemID.EaterOfWorldsBossBag) {
                     SoulsOnFirstBag(NPCID.EyeofCthulhu, player);
                 }
                 if (arg == ItemID.BrainOfCthulhuBossBag) {
-                    SoulsOnFirstBag(NPCID.BrainofCthulhu, player);
+                    SoulsAndStaminaVesselOnFirstBag(NPCID.BrainofCthulhu, player);
                 }
                 if (arg == ItemID.QueenBeeBossBag) {
-                    SoulsOnFirstBag(NPCID.QueenBee, player);
+                    SoulsAndStaminaVesselOnFirstBag(NPCID.QueenBee, player);
                 }
                 if (arg == ItemID.WallOfFleshBossBag) {
                     SoulsOnFirstBag(NPCID.WallofFlesh, player);
@@ -698,7 +726,7 @@ namespace tsorcRevamp.Items.BossBags {
                     SoulsOnFirstBag(NPCID.Plantera, player);
                 }
                 if (arg == ItemID.FishronBossBag) {
-                    SoulsOnFirstBag(NPCID.DukeFishron, player);
+                    SoulsAndStaminaVesselOnFirstBag(NPCID.DukeFishron, player);
                 }
                 if (arg == ItemID.MoonLordBossBag) {
                     if (Slain.ContainsKey(NPCID.MoonLordCore)) {
