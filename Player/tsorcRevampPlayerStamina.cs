@@ -57,6 +57,11 @@ namespace tsorcRevamp
 			staminaResourceCurrent = staminaResourceMax;
 		}
 
+        public override void OnRespawn(Player player)
+        {
+			staminaResourceCurrent = staminaResourceMax;
+		}
+
 		public override void ResetEffects()
 		{
 			ResetVariables();

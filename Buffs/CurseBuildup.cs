@@ -15,16 +15,13 @@ namespace tsorcRevamp.Buffs {
             tip = "When the counter reaches 100, something bad happens. Curse buildup is at " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
         }
         public override void Update(Player player, ref int buffIndex) {
-            if ((99 < player.GetModPlayer<tsorcRevampPlayer>().CurseLevel && player.GetModPlayer<tsorcRevampPlayer>().CurseLevel < 109) && player.statLifeMax > 100) { //if curse is between 30 and 39 inclusive, and the player has max hp to lose
+            if ((100 <= player.GetModPlayer<tsorcRevampPlayer>().CurseLevel) && player.statLifeMax > 100) { //if curse is 100 or above, and the player has max hp to lose
                 player.statLifeMax -= 20;
                 Main.NewText("You have been cursed! -20 HP!");
-                player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 110; //set it to 40. dont curse the player twice for one curse event.
-            }
-            if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel > 150) {
+                player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 0; //Reset it to 0
                 Main.NewText("You feel invincible!");
                 player.AddBuff(ModContent.BuffType<Invincible>(), 600, false);
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
-                player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 0;
             }
         }
 

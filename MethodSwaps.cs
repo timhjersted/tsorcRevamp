@@ -631,7 +631,7 @@ namespace tsorcRevamp {
                 float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
                 float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
                 float staminaPercentage = (float)staminaCurrent / staminaMax;
-                if (staminaPercentage < 1f)
+                if (staminaPercentage < 1f && !drawPlayer.dead)
                 {
                     float abovePlayer = 45f; //how far above the player should the bar be?
                     Texture2D barFill = ModContent.GetTexture("tsorcRevamp/Textures/StaminaBar_full");
@@ -690,40 +690,31 @@ namespace tsorcRevamp {
                 float cursePercentage = (float)curseCurrent / curseMax;
                 cursePercentage = Utils.Clamp(cursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-                Main.NewText(cursePercentage);
+                //Main.NewText(cursePercentage);
 
                 float powerfulCurseMax = 500;
                 float powerfulCursePercentage = (float)powerfulCurseCurrent / powerfulCurseMax;
                 powerfulCursePercentage = Utils.Clamp(powerfulCursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
-                cursePercentage = 0.6f;
-                if (cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
+
+                if ((cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) && !drawPlayer.dead) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
                 {
                     float abovePlayer = 82f; //how far above the player should the bar be?
                     Texture2D meterFull = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_full");
-                    Texture2D powerfulMeterFill = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_powerfulFull");
+                    Texture2D powerfulMeterFull = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_powerfulFull");
                     Texture2D meterEmpty = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_empty");
 
 
                     //this is the position on the screen. it should remain relatively constant unless the window is resized
-                    Point barOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
-                    Point fillBarOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+                    Point barOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint(); //As they are all the same size, they can use the same origin
 
                     Rectangle barDestination = new Rectangle(barOrigin.X, barOrigin.Y, meterEmpty.Width, meterEmpty.Height);
-                    Rectangle fillBarDestination = new Rectangle(fillBarOrigin.X, fillBarOrigin.Y + (int)(meterFull.Height * (1 -cursePercentage)), meterEmpty.Width, (int)(meterFull.Height));
+                    Rectangle fullBarDestination = new Rectangle(barOrigin.X, barOrigin.Y + (int)(meterFull.Height * (1 - cursePercentage)), meterEmpty.Width, (int)(meterFull.Height));
+                    Rectangle powerfulFullBarDestination = new Rectangle(barOrigin.X, barOrigin.Y + (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), meterEmpty.Width, (int)(powerfulMeterFull.Height));
 
 
                     Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
-                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fillBarDestination, Color.White); //change 50 to cursePercentage
-
-                    //int bottom = fillDestination.Bottom;
-                    //int top = fillDestination.Top;
-                    //int steps = (int)((top - bottom) * cursePercentage);
-                    //Main.spriteBatch.Draw(meterFill, new Rectangle(fillBarOrigin.X, fillBarOrigin.Y, meterFill.Width, (int)(1 * cursePercentage)), Color.White);
-
-                    /*for (int i = 0; i < steps; i += 1)
-                    {
-                        Main.spriteBatch.Draw(meterFill, new Rectangle(fillBarOrigin.X, fillBarOrigin.Y, fillDestination.Width, 0 + steps), Color.White);
-                    }*/
+                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fullBarDestination, Color.White); 
+                    Main.spriteBatch.Draw(Crop(powerfulMeterFull, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height)), powerfulFullBarDestination, Color.White); 
                 }
             }
         }

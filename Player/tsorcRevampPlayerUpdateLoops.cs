@@ -387,12 +387,15 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void PostUpdateBuffs() {
-            if (MiakodaCrescentBoost) {
+        public override void PostUpdateBuffs()
+        {
+            if (MiakodaCrescentBoost)
+            {
                 player.allDamageMult += 0.07f;
             }
 
-            if (MiakodaNewBoost) {
+            if (MiakodaNewBoost)
+            {
                 player.moveSpeed += 0.9f;
                 player.endurance = .5f;
                 player.noKnockback = true;
@@ -442,6 +445,16 @@ namespace tsorcRevamp {
                     CombatText.NewText(player.Hitbox, CombatText.DamagedFriendly, 999999999, true);
                 }
                 player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(player.name + " was consumed by The Wall."), 999999999, 1);
+            }
+
+            if (!player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()))
+            {
+                CurseLevel = 1; //Not sure why 1 is the default
+            }
+
+            if (!player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>()))
+            {
+                PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }
         }
 
