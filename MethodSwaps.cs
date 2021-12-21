@@ -626,7 +626,7 @@ namespace tsorcRevamp {
         {
             orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
 
-            if (drawPlayer.whoAmI == Main.myPlayer)
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
                 float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
                 float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
@@ -657,23 +657,22 @@ namespace tsorcRevamp {
         static Texture2D Crop(Texture2D image, Rectangle source)
         {
             Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
+
             Color[] imageData = new Color[image.Width * image.Height];
             Color[] cropData = new Color[source.Width * source.Height];
 
             image.GetData<Color>(imageData);
-            //croppedImage.GetData(imageData);
 
             int index = 0;
 
-            for (int y = source.Y; y < source.Y + source.Height; y++)
+            for (int y = source.Y; y < source.Height; y++)
             {
-                for (int x = source.X; x < source.X + source.Width; x++)
+                for (int x = source.X; x < source.Width; x++)
                 {
                     cropData[index] = imageData[y * image.Width + x];
                     index++;
                 }
             }
-
             croppedImage.SetData<Color>(cropData);
             return croppedImage;
         }
@@ -682,7 +681,7 @@ namespace tsorcRevamp {
         {
             orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
 
-            if (drawPlayer.whoAmI == Main.myPlayer)
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
                 float curseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
                 float powerfulCurseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
@@ -696,7 +695,7 @@ namespace tsorcRevamp {
                 float powerfulCurseMax = 500;
                 float powerfulCursePercentage = (float)powerfulCurseCurrent / powerfulCurseMax;
                 powerfulCursePercentage = Utils.Clamp(powerfulCursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
-
+                cursePercentage = 0.6f;
                 if (cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
                 {
                     float abovePlayer = 82f; //how far above the player should the bar be?
@@ -710,11 +709,11 @@ namespace tsorcRevamp {
                     Point fillBarOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
 
                     Rectangle barDestination = new Rectangle(barOrigin.X, barOrigin.Y, meterEmpty.Width, meterEmpty.Height);
-                    Rectangle fillBarDestination = new Rectangle(fillBarOrigin.X, fillBarOrigin.Y, meterEmpty.Width, meterEmpty.Height);
+                    Rectangle fillBarDestination = new Rectangle(fillBarOrigin.X, fillBarOrigin.Y + (int)(meterFull.Height * (1 -cursePercentage)), meterEmpty.Width, (int)(meterFull.Height));
 
 
                     Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
-                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, 0, meterFull.Width, (int)(1 * 50))), fillBarDestination, Color.White); //change 50 to cursePercentage
+                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fillBarDestination, Color.White); //change 50 to cursePercentage
 
                     //int bottom = fillDestination.Bottom;
                     //int top = fillDestination.Top;
