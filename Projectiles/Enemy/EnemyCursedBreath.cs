@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.timeLeft = 50;
 			projectile.friendly = false;
 			projectile.light = 0.8f;
-			projectile.penetrate = 4;
+			projectile.penetrate = 2; //was 4, was causing curse buildup way too fast
 			projectile.tileCollide = true;
 			aiType = 96;
 			projectile.magic = true;
@@ -40,11 +40,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
-			//Vanilla Debuffs cut in half to counter expert mode doubling them
-			target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false);
-			target.AddBuff(39, 150, false); //cursed flames
-			target.AddBuff(30, 1800, false); //bleeding
-			target.AddBuff(33, 1800, false); //week
+			
+
+			if (Main.rand.Next(12) == 0)
+			{
+				//Vanilla Debuffs cut in half to counter expert mode doubling them
+				target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false);
+				
+			}
+
+			if (Main.rand.Next(6) == 0)
+			{
+				target.AddBuff(39, 150, false); //cursed flames
+				target.AddBuff(30, 1800, false); //bleeding
+				target.AddBuff(33, 1800, false); //weak
+			}
 		}
 	}
 }

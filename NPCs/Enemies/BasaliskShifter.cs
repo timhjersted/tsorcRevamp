@@ -13,13 +13,13 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Main.npcFrameCount[npc.type] = 12;
 			animationType = 28;
-			npc.knockBackResist = 0.01f;
+			npc.knockBackResist = 0.03f;
 			npc.aiStyle = 3;
 			npc.damage = 70;
 			npc.defense = 20;
 			npc.height = 54;
 			npc.width = 54;
-			npc.lifeMax = 870;
+			npc.lifeMax = 570; //was 870
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
 			npc.value = 2700;
@@ -81,24 +81,31 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
 			// P.townNPCs > 0f // is no town NPCs nearby
 
-			if (Main.hardMode && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(30) == 1) return 1;
+			//SPAWNS IN HM JUNGLE AT NIGHT ABOVE GROUND AFTER THE RAGE IS DEFEATED
+			if (Main.hardMode && Jungle && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(30) == 1) return 1;
 
-			if (Main.hardMode && Meteor && !Main.dayTime && AboveEarth && Main.rand.Next(12) == 1) return 1;
+			//SPAWNS IN HM METEOR UNDERGROUND AT NIGHT
+			if (Main.hardMode && Meteor && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(10) == 1) return 1;
 
-			if (Main.hardMode && Meteor && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(16) == 1) return 1;
+			if (Main.hardMode && Meteor && Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(20) == 1) return 1;
 
-			if (Main.hardMode && Meteor && Main.dayTime && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(30) == 1) return 1;
+			//NO LONGER SPAWNS IN CORRUPTION
+			//if (Main.hardMode && Corruption && !Main.dayTime && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(50) == 1) return 1;
 
+			//if (Main.hardMode && Corruption && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(23) == 1) return 1;
+
+			//if (Main.hardMode && Corruption && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(36) == 1) return 1;
+
+			//SPAWNS IN DUNGEON AT NIGHT RARELY
 			if (Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(40) == 1) return 1;
 
-			if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && InHell && Main.rand.Next(10) == 1) return 1;
+			//SPAWNS IN HM HALLOW AFTER THE RAGE IS DEFEATED
+			if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Hallow && Main.rand.Next(20) == 1) return 1;
 
+			//SPAWNS RARELY IN HM JUNGLE UNDERGROUND
 			if (Main.hardMode && Jungle && !Corruption && InGrayLayer && Main.rand.Next(70) == 1) return 1;
-
-			if (Main.hardMode && Corruption && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(23) == 1) return 1;
-
-			if (Main.hardMode && Corruption && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(36) == 1) return 1;
-
+			
+			//BLOODMOON HIGH SPAWN IN METEOR OR JUNGLE
 			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && (Meteor || Jungle) && !Dungeon && !Corruption && (AboveEarth || InBrownLayer || InGrayLayer) && Main.bloodMoon && Main.rand.Next(5) == 1) return 1;
 
 			return 0;
@@ -1150,12 +1157,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(2) == 0)
 			{
 				player.AddBuff(37, 10800, false); //horrified
-				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 30
+				player.AddBuff(20, 600, false); //poisoned
+
 			}
-			if (Main.rand.Next(4) == 0)
+			if (Main.rand.Next(8) == 0)
 			{
 				player.AddBuff(36, 600, false); //broken armor
 				player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
+				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
 			}
 		}
 		#endregion

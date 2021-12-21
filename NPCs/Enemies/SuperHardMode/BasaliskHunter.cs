@@ -14,16 +14,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.npcSlots = 1;
             Main.npcFrameCount[npc.type] = 12;
             animationType = 28;
-            npc.knockBackResist = 0.01f;
+            npc.knockBackResist = 0.02f;
             npc.aiStyle = 3;
             npc.damage = 95;
-            npc.defense = 105;
+            npc.defense = 50; //was 105
             npc.height = 54;
             npc.width = 54;
-            npc.lifeMax = 17000;
+            npc.lifeMax = 3000; //was 17000
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
-            npc.value = 10620;
+            npc.value = 5620;
             npc.lavaImmune = true;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.BasaliskHunterBanner>();
@@ -35,8 +35,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int meteorDamage = 17;
         int cursedBreathDamage = 25;
         int darkExplosionDamage = 35;
-        int disruptDamage = 45;
-        int bioSpitDamage = 40;
+        int disruptDamage = 65;
+        int bioSpitDamage = 50;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -86,13 +86,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (tsorcRevampWorld.SuperHardMode && Meteor && !Dungeon && !Corruption && !Jungle && (InBrownLayer || InGrayLayer) && Main.rand.Next(10) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Corruption && Main.rand.Next(10) == 1) return 1;
+            //if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Corruption && Main.rand.Next(10) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Jungle && (Corruption || Meteor) && Main.bloodMoon && (InBrownLayer || InGrayLayer || AboveEarth) && Main.rand.Next(4) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && Jungle && !Corruption && Main.bloodMoon && (InBrownLayer || InGrayLayer || AboveEarth) && Main.rand.Next(6) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && Corruption && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(8) == 1) return 1;
+            //if (tsorcRevampWorld.SuperHardMode && Corruption && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(8) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && AboveEarth && !Main.dayTime && Main.rand.Next(20) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && AboveEarth && !Ocean && !Corruption && !Main.dayTime && Main.rand.Next(30) == 1) return 1;
 
             return 0;
         }
@@ -1233,15 +1233,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (Main.rand.Next(2) == 0)
             {
-                player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 36000, false); //-20 HP curse
+                player.AddBuff(37, 10800, false); //horrified
+                player.AddBuff(20, 1200, false); //poisoned
+
             }
-
-            if (Main.rand.Next(4) == 0)
+            if (Main.rand.Next(6) == 0)
             {
-
                 player.AddBuff(36, 600, false); //broken armor
-                player.AddBuff(23, 300, false); //cursed
-
+                player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
+                player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
             }
 
 

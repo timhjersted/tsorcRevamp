@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs {
             tip = "When the counter reaches 500, something terrible happens. Curse buildup is at " + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
         }
         public override void Update(Player player, ref int buffIndex) {
-            if ((500 <= player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel && player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel <= 513) && player.statLifeMax > 100) { //if curse is between 500 and 513 inclusive, and the player has max hp to lose
+            if ((499 <= player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel && player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel <= 513) && player.statLifeMax > 100) { //if curse is between 500 and 513 inclusive, and the player has max hp to lose
                 player.statLifeMax -= 100;
                 Main.NewText("You have been cursed! -100 HP!");
                 player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 514; //set it to just above bounds. dont curse the player twice for one curse event.
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Buffs {
         }
 
         public override bool ReApply(Player player, int time, int buffIndex) {
-            player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += Main.rand.Next(6, 14);
+            player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel += Main.rand.Next(4, 10); //was 6, 14
             return true;
         }
     }

@@ -9,36 +9,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	class BasaliskWalker : ModNPC
 	{
-		public override void SetDefaults()
-		{
-			npc.npcSlots = 2;
-			Main.npcFrameCount[npc.type] = 12;
-			animationType = 28;
-			npc.knockBackResist = 0.3f;
-			npc.aiStyle = 3;
-			npc.damage = 50;
-			npc.defense = 8;
-			npc.height = 54;
-			npc.width = 54;
-			npc.lifeMax = 280;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath5;
-			npc.value = 2000;
-			npc.lavaImmune = true;
-			banner = npc.type;
-			bannerItem = ModContent.ItemType<Banners.BasaliskWalkerBanner>();
-
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[24] = true;
-		}
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
-		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
-			meteorDamage = (int)(meteorDamage / 2);
-			hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
-			bioSpitDamage = (int)(bioSpitDamage / 2);
-		}
 
 		float customAi1;
 		int drownTimerMax = 2000;
@@ -51,8 +21,57 @@ namespace tsorcRevamp.NPCs.Enemies
 		int chargeDamage = 0;
 		bool chargeDamageFlag = false;
 		int meteorDamage = 17;
-		int hypnoticDisruptorDamage = 15;
-		int bioSpitDamage = 10;
+		int hypnoticDisruptorDamage = 20; //was 15
+		int bioSpitDamage = 15; //was 10
+
+
+		public override void SetDefaults()
+		{
+			npc.npcSlots = 2;
+			Main.npcFrameCount[npc.type] = 12;
+			animationType = 28;
+			npc.knockBackResist = 0.3f;
+			npc.aiStyle = 3;
+			npc.damage = 50;
+			npc.defense = 8;
+			npc.height = 54;
+			npc.width = 54;
+			npc.lifeMax = 180; //was 280
+
+			if (Main.hardMode)
+			{
+				npc.lifeMax = 380;
+				npc.defense = 20;
+				npc.value = 2200;
+				npc.damage = 60;
+				hypnoticDisruptorDamage = 45;
+				bioSpitDamage = 30;
+			}
+
+			npc.HitSound = SoundID.NPCHit1;
+			npc.DeathSound = SoundID.NPCDeath5;
+			npc.value = 1000; //was 2000
+			npc.lavaImmune = true;
+			banner = npc.type;
+			bannerItem = ModContent.ItemType<Banners.BasaliskWalkerBanner>();
+
+			npc.buffImmune[BuffID.Confused] = true;
+			npc.buffImmune[24] = true;
+		}
+
+
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			meteorDamage = (int)(meteorDamage / 2);
+			hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
+			bioSpitDamage = (int)(bioSpitDamage / 2);
+		}
+		
+	
+
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -75,23 +94,25 @@ namespace tsorcRevamp.NPCs.Enemies
 				return 0;
 			}
 
-			if (!Main.hardMode && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(20) == 1) return 1;
+			if (!Main.hardMode && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(24) == 1) return 1;
 
-			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && Main.rand.Next(24) == 1) return 1;
+			if (!Main.hardMode && Jungle && !Corruption && !Main.dayTime && AboveEarth && Main.rand.Next(20) == 1) return 1;
 
-			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(16) == 1) return 1;
+			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(15) == 1) return 1;
 
-			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && Main.dayTime && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(60) == 1) return 1;
+			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && Main.dayTime && InGrayLayer && Main.rand.Next(35) == 1) return 1; //was 60
 
-			if (!Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(40) == 1) return 1;
+			//if (!Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(40) == 1) return 1;
 
-			if (!Main.hardMode && InHell && Main.rand.Next(15) == 1) return 1;
+			//if (!Main.hardMode && InHell && Main.rand.Next(15) == 1) return 1;
 
-			if (!Main.hardMode && Jungle && !Corruption && InGrayLayer && Main.rand.Next(200) == 1) return 1;
+			if (!Main.hardMode && Jungle && !Corruption && InGrayLayer && Main.rand.Next(120) == 1) return 1; //was 200
 
-			if (!Main.hardMode && Corruption && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(850) == 1) return 1;
+			if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(100) == 1) return 1; //was 850
 
-			if (!Main.hardMode && (Meteor || Jungle) && !Dungeon && !Corruption && (AboveEarth || InBrownLayer || InGrayLayer) && Main.bloodMoon && Main.rand.Next(15) == 1) return 1;
+			if (Main.hardMode && !Main.dayTime && (Meteor || Jungle) && !Dungeon && !Corruption && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(25) == 1) return 1;
+
+			if (Main.hardMode && Main.dayTime && (Meteor || Jungle) && !Dungeon && !Corruption && (InBrownLayer || InGrayLayer) && Main.rand.Next(55) == 1) return 1;
 
 			return 0;
 		}
@@ -1110,14 +1131,15 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			if (Main.rand.Next(2) == 0)
 			{
-				player.AddBuff(37, 10800, false); //horrified
-				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 30
+				//player.AddBuff(37, 10800, false); //horrified
+				player.AddBuff(20, 300, false); //poisoned
+				
 			}
 
 			if (Main.rand.Next(10) == 0)
 			{
 				player.AddBuff(36, 600, false); //broken armor
-				player.AddBuff(23, 180, false); //cursed
+				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
 			}
 		}
 		#endregion
@@ -1139,8 +1161,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
 			if (Main.rand.Next(100) < 30) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
-			if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>());
-			if (Main.rand.Next(100) < 5) Item.NewItem(npc.getRect(), ItemID.BattlePotion);
+			//if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>());
+			//if (Main.rand.Next(100) < 5) Item.NewItem(npc.getRect(), ItemID.BattlePotion);
 		}
 	}
 }

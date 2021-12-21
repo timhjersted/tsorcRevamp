@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.height = 24;
 			projectile.light = 1;
 			projectile.magic = true;
-			projectile.penetrate = 8;
+			projectile.penetrate = 1; //was 8
 			projectile.tileCollide = true;
 			projectile.width = 24;
 			projectile.timeLeft = 70;

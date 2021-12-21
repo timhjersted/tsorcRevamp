@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					if (Main.rand.Next(80) == 1) //was 30
 					{
-						float num48 = 4f; //was 8
+						float num48 = 6f; //was 8
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 					if (Main.rand.Next(90) == 1)
 					{
-						float num48 = 2f;
+						float num48 = 6f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 50) / 100;
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 50) / 100;
