@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.VanillaItems {
         //this method adds potentially multiple tooltip lines to the end of an item's tooltip stack 
         public static void SimpleModTooltip(Mod mod, Item item, List<TooltipLine> tooltips, int ItemID, string TipToAdd1, string TipToAdd2 = null) { 
             if (item.type == ItemID) {
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria"); //find the last tooltip line
+                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
                     tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", TipToAdd1));

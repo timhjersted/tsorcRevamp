@@ -69,7 +69,7 @@ namespace tsorcRevamp {
 
 		public override bool PreItemCheck() {
 			UpdateDodging();
-			UpdateSwordflip();
+			//UpdateSwordflip();
 
 			//Stop umbrella and other things from working
 			if (isDodging && player.HeldItem.type == ItemID.Umbrella) {
