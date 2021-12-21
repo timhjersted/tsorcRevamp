@@ -642,7 +642,7 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.WallofFlesh):
                     {
                         npc.damage = 100;
-                        npc.lifeMax = 20000;
+                        npc.lifeMax = 15000;
                         break;
                     }
 
