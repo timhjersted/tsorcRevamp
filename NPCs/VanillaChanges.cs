@@ -1845,7 +1845,10 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye) {
                 if (Main.netMode == NetmodeID.SinglePlayer) {
                     if (Main.player[0].dead) {
-                        //Main.NewText("geeet dunked on");
+                        if (npc.type == NPCID.WallofFlesh)
+                        {
+                            Main.NewText("The Wall's rage is satisfied...", Color.OrangeRed);
+                        }
                         npc.life = 0;
                         npc.HitEffect();
                         npc.active = false; 
