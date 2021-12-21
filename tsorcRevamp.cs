@@ -938,8 +938,10 @@ namespace tsorcRevamp {
 
                 //stuff
 
-                #endregion
+
             }
+
+            #endregion
         }
 
         internal void UpdateCheck() {

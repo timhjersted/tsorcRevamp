@@ -3,11 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using System;
+
 
 namespace tsorcRevamp.Items.Potions
 {
     class Lifegem : ModItem
     {
+
         public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
@@ -27,8 +30,8 @@ namespace tsorcRevamp.Items.Potions
             item.height = 18;
             item.maxStack = 99;
             item.value = 1000;
-            item.useAnimation = 120;
-            item.useTime = 120;
+            item.useAnimation = 90;
+            item.useTime = 90;
             item.useTurn = true;
             item.rare = ItemRarityID.Blue;
 
@@ -53,6 +56,8 @@ namespace tsorcRevamp.Items.Potions
 
                 player.velocity.X = slowdownX;
                 player.velocity.Y = slowdownY;
+
+
             }
         }
 

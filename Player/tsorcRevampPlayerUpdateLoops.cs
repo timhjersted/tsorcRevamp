@@ -434,6 +434,15 @@ namespace tsorcRevamp {
             {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
             }
+
+            if (player.HasBuff(BuffID.TheTongue))
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    CombatText.NewText(player.Hitbox, CombatText.DamagedFriendly, 999999999, true);
+                }
+                player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(player.name + " was consumed by The Wall."), 999999999, 1);
+            }
         }
 
         public override void PostUpdateEquips() {

@@ -77,8 +77,6 @@ namespace tsorcRevamp.NPCs
 
         public override void NPCLoot(NPC npc)
         {
-            Player player1 = Main.LocalPlayer;
-
             if (npc.boss)
             {
                 foreach (Player player in Main.player)
@@ -86,19 +84,6 @@ namespace tsorcRevamp.NPCs
                     if (!player.active) { continue; }
                     player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true; ;
                     player.GetModPlayer<tsorcRevampPlayer>().bossMagnetTimer = 300; //5 seconds of increased grab range, check GlobalItem::GrabStyle and GrabRange
-                }
-            }
-
-            if (player1.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player1.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
-            {
-                if (Main.rand.Next(2) == 0)
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
-                }
-
-                if (Main.rand.Next(12) == 0)
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
             }
 
@@ -242,8 +227,6 @@ namespace tsorcRevamp.NPCs
 
         }
 
-
-
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             if (Main.player[projectile.owner].GetModPlayer<tsorcRevampPlayer>().ConditionOverload)
@@ -280,6 +263,8 @@ namespace tsorcRevamp.NPCs
 
         public override bool PreNPCLoot(NPC npc)
         {
+            Player player = Main.LocalPlayer;
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 if (npc.type == NPCID.ChaosElemental)
@@ -296,6 +281,20 @@ namespace tsorcRevamp.NPCs
                     NPCLoader.blockLoot.Add(ItemID.Picksaw); //Goodnight sweet prince
                 }
             }
+
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            {
+                if (Main.rand.Next(2) == 0)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                }
+
+                if (Main.rand.Next(12) == 0)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                }
+            }
+
             return base.PreNPCLoot(npc);
         }
 

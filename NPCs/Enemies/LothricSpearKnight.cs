@@ -923,12 +923,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 3 + Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
             if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             Item.NewItem(npc.getRect(), ItemID.Heart);
             Item.NewItem(npc.getRect(), ItemID.Heart);
