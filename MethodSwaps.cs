@@ -34,6 +34,9 @@ namespace tsorcRevamp {
             On.Terraria.Main.DrawMenu += DownloadMapButton;
 
             On.Terraria.Main.DrawPlayer += StaminaBar;
+
+            On.Terraria.Main.DrawPlayer += CurseMeter;
+
         }
 
 
@@ -647,6 +650,81 @@ namespace tsorcRevamp {
 
                     Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
                     Main.spriteBatch.Draw(barFill, fillDestination, Color.White);
+                }
+            }
+        }
+
+        static Texture2D Crop(Texture2D image, Rectangle source)
+        {
+            Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
+            Color[] imageData = new Color[image.Width * image.Height];
+            Color[] cropData = new Color[source.Width * source.Height];
+
+            image.GetData<Color>(imageData);
+            //croppedImage.GetData(imageData);
+
+            int index = 0;
+
+            for (int y = source.Y; y < source.Y + source.Height; y++)
+            {
+                for (int x = source.X; x < source.X + source.Width; x++)
+                {
+                    cropData[index] = imageData[y * image.Width + x];
+                    index++;
+                }
+            }
+
+            croppedImage.SetData<Color>(cropData);
+            return croppedImage;
+        }
+
+        internal static void CurseMeter(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow)
+        {
+            orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
+
+            if (drawPlayer.whoAmI == Main.myPlayer)
+            {
+                float curseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
+                float powerfulCurseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
+
+                float curseMax = 100;
+                float cursePercentage = (float)curseCurrent / curseMax;
+                cursePercentage = Utils.Clamp(cursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                Main.NewText(cursePercentage);
+
+                float powerfulCurseMax = 500;
+                float powerfulCursePercentage = (float)powerfulCurseCurrent / powerfulCurseMax;
+                powerfulCursePercentage = Utils.Clamp(powerfulCursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                if (cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
+                {
+                    float abovePlayer = 82f; //how far above the player should the bar be?
+                    Texture2D meterFull = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_full");
+                    Texture2D powerfulMeterFill = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_powerfulFull");
+                    Texture2D meterEmpty = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_empty");
+
+
+                    //this is the position on the screen. it should remain relatively constant unless the window is resized
+                    Point barOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+                    Point fillBarOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+
+                    Rectangle barDestination = new Rectangle(barOrigin.X, barOrigin.Y, meterEmpty.Width, meterEmpty.Height);
+                    Rectangle fillBarDestination = new Rectangle(fillBarOrigin.X, fillBarOrigin.Y, meterEmpty.Width, meterEmpty.Height);
+
+
+                    Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
+                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, 0, meterFull.Width, (int)(1 * 50))), fillBarDestination, Color.White); //change 50 to cursePercentage
+
+                    //int bottom = fillDestination.Bottom;
+                    //int top = fillDestination.Top;
+                    //int steps = (int)((top - bottom) * cursePercentage);
+                    //Main.spriteBatch.Draw(meterFill, new Rectangle(fillBarOrigin.X, fillBarOrigin.Y, meterFill.Width, (int)(1 * cursePercentage)), Color.White);
+
+                    /*for (int i = 0; i < steps; i += 1)
+                    {
+                        Main.spriteBatch.Draw(meterFill, new Rectangle(fillBarOrigin.X, fillBarOrigin.Y, fillDestination.Width, 0 + steps), Color.White);
+                    }*/
                 }
             }
         }
