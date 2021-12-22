@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.Lifegem>());
-			shop.item[nextSlot].shopCustomPrice = 5;
+			shop.item[nextSlot].shopCustomPrice = 10;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>());
@@ -94,6 +94,10 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.HealingElixir>());
+			shop.item[nextSlot].shopCustomPrice = 30;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+			nextSlot++;
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.GreenBlossom>());
 			shop.item[nextSlot].shopCustomPrice = 30;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
@@ -141,7 +145,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			if (Main.hardMode)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Potions.RadiantLifegem>());
-				shop.item[nextSlot].shopCustomPrice = 30;
+				shop.item[nextSlot].shopCustomPrice = 40;
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
 			}

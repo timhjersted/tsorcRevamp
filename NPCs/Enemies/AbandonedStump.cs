@@ -378,7 +378,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 			Item.NewItem(npc.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
+			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
+			if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
+
 		}
 	}
 }

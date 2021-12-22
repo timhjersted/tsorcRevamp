@@ -131,6 +131,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 Item.NewItem(npc.getRect(), ItemID.Wood);
             }
 
+            if (Main.rand.Next(8) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+
         }
     }
 }
