@@ -20,13 +20,13 @@ namespace tsorcRevamp.Buffs {
                 Main.NewText("You have been cursed! -20 HP!");
                 player.GetModPlayer<tsorcRevampPlayer>().CurseLevel = 0; //Reset it to 0
                 Main.NewText("You feel invincible!");
-                player.AddBuff(ModContent.BuffType<Invincible>(), 600, false);
+                player.AddBuff(ModContent.BuffType<Invincible>(), 480, false); // 8 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 3600, false);
             }
         }
 
         public override bool ReApply(Player player, int time, int buffIndex) {
-            player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += Main.rand.Next(2, 5); //was 4, 9
+            player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += Main.rand.Next(22, 36); //22-35, aka 3-4 hits before curse proc (projectiles now also inflict a bit of buildup; +5 in the case of bio spit from basalisks)
             return true;
         }
     }

@@ -1136,11 +1136,14 @@ namespace tsorcRevamp.NPCs.Enemies
 				
 			}
 
+			player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+			player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
+
 			if (Main.rand.Next(10) == 0)
 			{
 				player.AddBuff(36, 600, false); //broken armor
-				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
 			}
+
 		}
 		#endregion
 
