@@ -2035,6 +2035,14 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
             }
+            if (npc.type == NPCID.Snatcher || npc.type == NPCID.ManEater || npc.type == NPCID.AngryTrapper)
+            {
+                if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+            }
+            if (npc.type == NPCID.HornetLeafy || npc.type == NPCID.BigHornetLeafy || npc.type == NPCID.LittleHornetLeafy)
+            {
+                if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+            }
 
 
             #endregion

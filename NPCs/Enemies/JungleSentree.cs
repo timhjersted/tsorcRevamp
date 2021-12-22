@@ -446,7 +446,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Item.NewItem(npc.getRect(), ItemID.RichMahogany, Main.rand.Next(3, 5));
 			Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"), Main.rand.Next(1, 3));
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
+			if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
+			if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
+
 		}
 	}
 }

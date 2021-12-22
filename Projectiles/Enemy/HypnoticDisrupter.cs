@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
 			int buffLengthMod = 1;
-			if (Main.expertMode)
+			if (!Main.expertMode) //surely that was the wrong way round
 			{
 				buffLengthMod = 2;
 			}

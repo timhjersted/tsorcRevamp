@@ -34,8 +34,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.aiStyle = 3;
 			npc.damage = 50;
 			npc.defense = 8;
-			npc.height = 54;
-			npc.width = 54;
+			npc.height = 50;
+			npc.width = 24;
 			npc.lifeMax = 180; //was 280
 
 			if (Main.hardMode)
@@ -1101,16 +1101,16 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				else
 				{
-					npc.frameCounter += (double)(Math.Abs(npc.velocity.X) * 2f);
-					npc.frameCounter += 1.0;
-					if (npc.frameCounter > 6.0)
+					npc.frameCounter += (double)(Math.Abs(npc.velocity.X) * .2f);
+					//npc.frameCounter += 1.0;
+					if (npc.frameCounter > 10)
 					{
 						npc.frame.Y = npc.frame.Y + num;
-						npc.frameCounter = 0.0;
+						npc.frameCounter = 0;
 					}
 					if (npc.frame.Y / num >= Main.npcFrameCount[npc.type])
 					{
-						npc.frame.Y = num * 2;
+						npc.frame.Y = num * 1;
 					}
 				}
 			}
