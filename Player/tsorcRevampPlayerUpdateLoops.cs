@@ -42,6 +42,9 @@ namespace tsorcRevamp {
 
         public int CurseLevel = 1;
         public int PowerfulCurseLevel = 1;
+        public int curseDecayTimer = 0;
+        public int powerfulCurseDecayTimer = 0;
+
         public bool DarkInferno = false;
         public bool CrimsonDrain = false;
         public bool PhazonCorruption = false;
@@ -1023,6 +1026,27 @@ namespace tsorcRevamp {
                 }
             }
 
+            if (CurseLevel > 0)
+            {
+                curseDecayTimer++;
+
+                if (curseDecayTimer >= 60)
+                {
+                    CurseLevel--;
+                    curseDecayTimer = 0;
+                }
+            }
+
+            if (PowerfulCurseLevel > 0)
+            {
+                powerfulCurseDecayTimer++;
+
+                if (powerfulCurseDecayTimer >= 30)
+                {
+                    PowerfulCurseLevel--;
+                    powerfulCurseDecayTimer = 0;
+                }
+            }
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {
