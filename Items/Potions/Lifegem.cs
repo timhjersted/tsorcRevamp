@@ -113,10 +113,18 @@ namespace tsorcRevamp.Items.Potions
                 }
 
                 player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), 720);
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 2400);
+                //player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 2400);
 
-                if (item.stack == 1) item.TurnToAir();
-                else item.stack--;
+                //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
+                //{
+                    if (item.stack == 1) item.TurnToAir();
+                    else item.stack--;
+                //}
+                //else
+                //{
+                    if (Main.mouseItem.stack == 1) Main.mouseItem.TurnToAir();
+                    else Main.mouseItem.stack--;
+                //}
             }
         }
 

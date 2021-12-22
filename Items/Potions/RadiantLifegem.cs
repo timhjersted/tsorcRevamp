@@ -110,10 +110,13 @@ namespace tsorcRevamp.Items.Potions
                 }
 
                 player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), 800); //just over 13 seconds
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 2400);
+                //player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 2400);
 
                 if (item.stack == 1) item.TurnToAir();
                 else item.stack--;
+
+                if (Main.mouseItem.stack == 1) Main.mouseItem.TurnToAir();
+                else Main.mouseItem.stack--;
             }
         }
 

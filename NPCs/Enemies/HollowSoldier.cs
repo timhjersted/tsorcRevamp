@@ -794,12 +794,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void NPCLoot()
         {
+            Player player = Main.player[npc.target];
+
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
 
             if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(2) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.CobaltShield, 1, false, -1);
