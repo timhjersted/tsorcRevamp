@@ -26,8 +26,18 @@ namespace tsorcRevamp.Items.Potions {
             item.buffTime = 600; // 10 seconds = 30HP healed every 10 seconds, but can be used in parallel with heals that cause potion sickness.
         }
 
+        public override bool CanUseItem(Player player)
+        {
+            if (player.HasBuff(ModContent.BuffType<Buffs.HealingElixirCooldown>()))
+            {
+                return false;
+            }
+
+            return base.CanUseItem(player);
+        }
         public override bool UseItem(Player player)
         {
+            player.AddBuff(ModContent.BuffType<Buffs.HealingElixirCooldown>(), 1200); //20s
             int buffIndex = 0;
 
             foreach (int buffType in player.buffType)

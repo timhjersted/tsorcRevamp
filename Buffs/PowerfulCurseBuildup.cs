@@ -28,7 +28,7 @@ namespace tsorcRevamp.Buffs {
 
                 for (int i = 0; i < 50; i++)
                 {
-                    int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2.5f, 2.5f), 200, Color.Violet, Main.rand.NextFloat(1f, 2.5f));
+                    int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2.5f, 2.5f), 200, Color.Violet, Main.rand.NextFloat(2f, 5f));
                     Main.dust[dust2].noGravity = true;
                 }
             }
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Buffs {
 
             for (int i = 0; i < 8; i++)
             {
-                int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, 0, 0, 200, Color.Violet, Main.rand.NextFloat(1f, 2.5f));
+                int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, 0, 0, 200, Color.Violet, Main.rand.NextFloat(2f, 3f));
                 Main.dust[dust2].noGravity = true;
             }
 

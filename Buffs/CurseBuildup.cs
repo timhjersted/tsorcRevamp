@@ -26,7 +26,7 @@ namespace tsorcRevamp.Buffs {
 
                 for (int i = 0; i < 30; i++)
                 {
-                    int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 200, Color.Pink, Main.rand.NextFloat(1f, 5f));
+                    int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 200, Color.Pink, Main.rand.NextFloat(2f, 5f));
                     Main.dust[dust2].noGravity = true;
                 }
             }
@@ -35,9 +35,9 @@ namespace tsorcRevamp.Buffs {
         public override bool ReApply(Player player, int time, int buffIndex) {
             player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += Main.rand.Next(22, 36); //22-35, aka 3-4 hits before curse proc (projectiles now also inflict a bit of buildup; +5 in the case of bio spit from basalisks)
             
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 10; i++)
             {
-                int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, 0, 0, 200, Color.Pink, Main.rand.NextFloat(0.8f, 1.5f));
+                int dust2 = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, 0, 0, 200, Color.Pink, Main.rand.NextFloat(2f, 3f));
                 Main.dust[dust2].noGravity = true;
             }
 
