@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using static tsorcRevamp.SpawnHelper;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -11,13 +12,13 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Undead Caster");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
+            //Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
         }
 
         public override void SetDefaults()
         {
             npc.CloneDefaults(NPCID.GoblinSorcerer);
-            animationType = NPCID.GoblinSorcerer;
+            Main.npcFrameCount[npc.type] = 2;
             aiType = NPCID.GoblinSorcerer;
             npc.lifeMax = 30;
             npc.damage = 15;
@@ -104,6 +105,35 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.NextFloat() <= .1f)
             {
                 Item.NewItem(npc.getRect(), ItemID.SpellTome);
+            }
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D glowTexture = mod.GetTexture("NPCs/Enemies/UndeadCaster_Glow");
+            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            if (npc.spriteDirection == 1)
+            {
+                spriteBatch.Draw(glowTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 50, 68), lightColor, npc.rotation, new Vector2(25, 42), npc.scale, effects, 0f);
+            }
+            else
+            {
+                spriteBatch.Draw(glowTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 50, 68), lightColor, npc.rotation, new Vector2(25, 42), npc.scale, effects, 0f);
+            }
+
+        }
+
+        public override void FindFrame(int frameHeight)
+        {
+
+            if (npc.ai[1] > 0f)
+            {
+                npc.frame.Y = 1 * frameHeight;
+            }
+            else
+            {
+                npc.frame.Y = 0 * frameHeight;
             }
         }
     }
