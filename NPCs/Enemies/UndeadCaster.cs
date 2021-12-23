@@ -45,6 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             return chance;
         }
+
         public override void HitEffect(int hitDirection, double damage)
         {
             if (npc.life <= 0)
@@ -126,6 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void FindFrame(int frameHeight)
         {
+            npc.spriteDirection = npc.direction;
 
             if (npc.ai[1] > 0f)
             {
