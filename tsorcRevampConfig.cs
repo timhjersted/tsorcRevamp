@@ -82,6 +82,21 @@ namespace tsorcRevamp {
         [Tooltip("The Y position of the Soul Counter.")]
         public int SoulCounterPosY { get; set; }
 
+        [Label("Estus Flask X position")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 3840)]
+        [DefaultValue(94)]
+        [Tooltip("The X position of the Estus Flask.")]
+        public int EstusFlaskPosX { get; set; }
+
+        [Label("Estus Flask Y position")]
+        [BackgroundColor(60, 140, 80, 192)]
+        [SliderColor(224, 165, 56, 128)]
+        [Range(0, 2160)]
+        [DefaultValue(144)]
+        [Tooltip("The Y position of the Estus Flask.")]
+        public int EstusFlaskPosY { get; set; }
 
         [Label("Disable Gravitation Effect Screen Flip")]
         [BackgroundColor(200, 80, 80, 192)]

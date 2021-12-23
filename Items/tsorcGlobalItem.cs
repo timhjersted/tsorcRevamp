@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items {
 
 		public override bool CanUseItem(Item item, Player player)
         {
-			if (player.GetModPlayer<tsorcRevampPlayer>().isDodging)
+			if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
             {
 				return false;
             }

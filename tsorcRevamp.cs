@@ -42,6 +42,9 @@ namespace tsorcRevamp {
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         private UserInterface _darkSoulCounterUIState;
         internal UserInterface EmeraldHeraldUserInterface;
+        internal EstusFlaskUIState EstusFlaskUIState;
+        private UserInterface _estusFlaskUIState;
+
 
         public static FieldInfo AudioLockInfo;
         public static FieldInfo ActiveSoundInstancesInfo;
@@ -59,6 +62,7 @@ namespace tsorcRevamp {
         public static float MusicDownloadProgress = 0;
         public static ModHotKey DodgerollKey;
         //public static ModHotKey SwordflipKey;
+        public static ModHotKey DrinkEstusKey;
 
         internal static bool[] CustomDungeonWalls;
 
@@ -67,6 +71,7 @@ namespace tsorcRevamp {
             reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
             DodgerollKey = RegisterHotKey("Dodge Roll", "LeftAlt");
             //SwordflipKey = RegisterHotKey("Sword Flip", "P"); //TODO change this
+            DrinkEstusKey = RegisterHotKey("Drink Estus", "H");
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
@@ -80,7 +85,11 @@ namespace tsorcRevamp {
             _darkSoulCounterUIState = new UserInterface();
             if (!Main.dedServ) _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
 
-            
+            EstusFlaskUIState = new EstusFlaskUIState();
+            //if (!Main.dedServ) EstusFlaskUIState.Activate();
+            _estusFlaskUIState = new UserInterface();
+            if (!Main.dedServ) _estusFlaskUIState.SetState(EstusFlaskUIState);
+
             ApplyMethodSwaps();
             ApplyILs();
             PopulateArrays();
@@ -127,6 +136,11 @@ namespace tsorcRevamp {
             }
 
             EmeraldHeraldUserInterface?.Update(gameTime);
+
+            if (EstusFlaskUIState.Visible)
+            {
+                _estusFlaskUIState?.Update(gameTime);
+            }
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
@@ -164,6 +178,19 @@ namespace tsorcRevamp {
                     "tsorcRevamp: Emerald Herald UI",
                     delegate {
                         EmeraldHeraldUserInterface.Draw(Main.spriteBatch, new GameTime());
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
+            int resourceBarIndex2 = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
+            if (resourceBarIndex2 != -1)
+            {
+                layers.Insert(resourceBarIndex2, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Estus Flask UI",
+                    delegate {
+                        _estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
                         return true;
                     },
                     InterfaceScaleType.UI)
@@ -611,6 +638,7 @@ namespace tsorcRevamp {
             CustomDungeonWalls = null;
             DodgerollKey = null;
             //SwordflipKey = null;
+            DrinkEstusKey = null;
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();

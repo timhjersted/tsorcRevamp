@@ -37,6 +37,8 @@ namespace tsorcRevamp {
 
             On.Terraria.Main.DrawPlayer += CurseMeter;
 
+            //On.Terraria.Main.DrawPlayer += DrawEstusFlask;
+
         }
 
 
@@ -654,7 +656,7 @@ namespace tsorcRevamp {
             }
         }
 
-        static Texture2D Crop(Texture2D image, Rectangle source)
+        public static Texture2D Crop(Texture2D image, Rectangle source)
         {
             Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
 
@@ -718,5 +720,44 @@ namespace tsorcRevamp {
                 }
             }
         }
+
+
+        /*internal static void DrawEstusFlask(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow)
+        {
+            orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
+
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
+            {
+                int chargesCurrent = drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesCurrent;
+
+                int chargesMax = drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax;
+                float chargesPercentage = (float)chargesCurrent / chargesMax;
+                chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                //Main.NewText(chargesPercentage);
+
+                if (drawPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && drawPlayer.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
+                {
+                    Vector2 screenPos = new Vector2(Main.screenWidth - 106, Main.screenHeight - 150);
+                    Texture2D textureFull = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_full");
+                    Texture2D textureEmpty = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_empty");
+                    Texture2D textureCharges = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_charges");
+
+                    //this is the position on the screen. it should remain relatively constant unless the window is resized
+                    Point textureOrigin = screenPos.ToPoint(); //As they are all the same size, they can use the same origin
+                    int chargesFrame = textureEmpty.Height / 7;
+
+                    Rectangle emptyDestination = new Rectangle(textureOrigin.X, textureOrigin.Y, textureEmpty.Width, textureEmpty.Height);
+                    Rectangle chargesDestination = new Rectangle(textureOrigin.X, textureOrigin.Y, textureEmpty.Width, textureEmpty.Height);
+                    Rectangle fullDestination = new Rectangle(textureOrigin.X, textureOrigin.Y + (int)(textureFull.Height * (1 - chargesPercentage)), textureEmpty.Width, (int)(textureFull.Height));
+
+
+                    Main.spriteBatch.Draw(textureEmpty, emptyDestination, Color.White);
+                    Main.spriteBatch.Draw(textureCharges, chargesDestination, Color.White);
+                    Main.spriteBatch.Draw(Crop(textureFull, new Rectangle(0, (int)(textureFull.Height * (1 - chargesPercentage)), textureFull.Width, textureFull.Height)), fullDestination, Color.White);
+
+                }
+            }
+        }*/
     }
 }
