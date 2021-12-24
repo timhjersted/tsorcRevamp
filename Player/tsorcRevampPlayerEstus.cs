@@ -158,7 +158,7 @@ namespace tsorcRevamp
 			{
 				estusHealingTimer++; //Advance the timer
 
-				Main.NewText(estusHealthPerTick);
+				//Main.NewText(estusHealthPerTick);
 
 				if (estusHealingTimer <= estusHealingTimerMax && player.statLife < player.statLifeMax2) //If the timer is less or equal to timer max and player hp is not at max
 				{

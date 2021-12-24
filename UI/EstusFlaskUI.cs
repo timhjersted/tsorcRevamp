@@ -17,11 +17,7 @@ namespace tsorcRevamp.UI
 		// Once this is all set up make sure to go and do the required stuff for most UI's in the Mod class.
 		private UIText chargesCurrent;
 		private UIElement area;
-		private UIImage estusFlask_empty;
-		private UIImage estusFlask_full;
-
 		public static bool Visible = true;
-		int initialTextPosX = 133; //was 60
 
 		public static tsorcRevampConfig ConfigInstance = ModContent.GetInstance<tsorcRevampConfig>();
 		public static Vector2 DrawPos = new Vector2(ConfigInstance.EstusFlaskPosX, ConfigInstance.EstusFlaskPosY);
@@ -36,18 +32,6 @@ namespace tsorcRevamp.UI
 			area.Width.Set(160, 0f); // We will be placing the following 2 UIElements within this 182x60 area.
 			area.Height.Set(40, 0f);
 
-			estusFlask_empty = new UIImage(ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_empty"));
-			estusFlask_empty.Left.Set(10, 0f);
-			estusFlask_empty.Top.Set(0, 0f);
-			estusFlask_empty.Width.Set(64, 0f);
-			estusFlask_empty.Height.Set(76, 0f);
-
-			/*estusFlask_full = new UIImage(ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_full"));
-			estusFlask_full.Left.Set(0, 0f);
-			estusFlask_full.Top.Set(0, 0f);
-			estusFlask_full.Width.Set(64, 0f);
-			estusFlask_full.Height.Set(76, 0f);*/
-
 			chargesCurrent = new UIText("0", 0.5f, true); // text to show stat
 			chargesCurrent.Width.Set(20, 0f);
 			chargesCurrent.Height.Set(30, 0f);
@@ -55,7 +39,6 @@ namespace tsorcRevamp.UI
 			chargesCurrent.Left.Set(0, 0f);
 
 			area.Append(chargesCurrent);
-			area.Append(estusFlask_empty);
 			//area.Append(estusFlask_full);
 
 			Append(area);
@@ -69,13 +52,6 @@ namespace tsorcRevamp.UI
 				return;
 			}
 
-			base.Draw(spriteBatch);
-		}
-
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
-			base.DrawSelf(spriteBatch);
-
 			Player player = Main.LocalPlayer;
 			var estusPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
 
@@ -87,24 +63,19 @@ namespace tsorcRevamp.UI
 				float chargesPercentage = (float)chargesCurrent / chargesMax;
 				chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-				//Main.NewText(chargesPercentage);
-
 				Texture2D textureFull = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_full");
-				//Texture2D textureEmpty = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_empty");
-				//Texture2D textureCharges = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_charges");
-				Rectangle hitbox = estusFlask_empty.GetInnerDimensions().ToRectangle();
+				Texture2D textureEmpty = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_empty");
 
-				//Rectangle emptyDestination = new Rectangle(textureOrigin.X, textureOrigin.Y, textureEmpty.Width, textureEmpty.Height);
-				//Rectangle chargesDestination = new Rectangle(textureOrigin.X, textureOrigin.Y, textureEmpty.Width, textureEmpty.Height);
-				//Rectangle fullDestination = new Rectangle(0, 0, textureFull.Height, textureFull.Height);
+				int cropAmount = (int)(textureFull.Height * (1 - chargesPercentage));
+				Texture2D croppedTextureFull = MethodSwaps.Crop(textureFull, new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height));
+				Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX, Main.screenHeight - ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
 
-
-				//Main.spriteBatch.Draw(textureEmpty, emptyDestination, Color.White);
-				//Main.spriteBatch.Draw(textureCharges, chargesDestination, Color.White);
-				Main.spriteBatch.Draw(MethodSwaps.Crop(textureFull, new Rectangle(0, (int)(textureFull.Height * (1 - chargesPercentage)), textureFull.Width, textureFull.Height)), new Rectangle(ConfigInstance.EstusFlaskPosX, ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
-
+				//the cropped texture is shorter, so its Y position needs to be offset by the height difference
+				Main.spriteBatch.Draw(croppedTextureFull, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX, Main.screenHeight + cropAmount - ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
 			}
+			base.Draw(spriteBatch);
 		}
+
 		public override void Update(GameTime gameTime)
 		{
 			if (!(Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ReceivedGift))
@@ -125,7 +96,7 @@ namespace tsorcRevamp.UI
 			var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
 			// Setting the text per tick to update and show our resource values.
 			chargesCurrent.SetText($"{modPlayer.estusChargesCurrent}");
-			base.Update(gameTime);
+
 		}
 	}
 }
