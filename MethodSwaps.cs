@@ -156,13 +156,16 @@ namespace tsorcRevamp {
                 {
                     if (i + self.SpawnX > 0 && j + self.SpawnY > 0)
                     {
-                        if (Main.tile[i + (int)(self.SpawnX / 16), j + (int)(self.SpawnY / 16)] != null) { 
-                        Tile thisTile = Main.tile[i + self.SpawnX , j + self.SpawnY];
-                            if (thisTile.active())
+                        if(Main.tile.GetUpperBound(0) > self.SpawnX && Main.tile.GetUpperBound(1) > self.SpawnY) { 
+                            if (Main.tile[i + self.SpawnX, j + self.SpawnY] != null)
                             {
-                                if (thisTile.type == TileID.Beds || thisTile.type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+                                Tile thisTile = Main.tile[i + self.SpawnX, j + self.SpawnY];
+                                if (thisTile.active())
                                 {
-                                    return true;
+                                    if (thisTile.type == TileID.Beds || thisTile.type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+                                    {
+                                        return true;
+                                    }
                                 }
                             }
                         }
