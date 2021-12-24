@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
@@ -355,6 +356,30 @@ namespace tsorcRevamp {
         {
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+        }
+        ///<summary> 
+        ///Compares the angle of two vectors. Returns the absolute value of the difference between their angles.
+        ///Tip: I hate XNA so fucking much
+        ///</summary>         
+        ///<param name="firstVector">The first vector to be compared</param>
+        ///<param name="secondVector">The second vector to be compared</param>
+        public static double CompareAngles(Vector2 firstVector, Vector2 secondVector)
+        {
+            double a1 = firstVector.ToRotation();
+            if(a1 < 0)
+            {
+                a1 = MathHelper.TwoPi + a1;
+            }
+
+            double a2 = secondVector.ToRotation();
+            if (a2 < 0)
+            {
+                a2 = MathHelper.TwoPi + a2;
+            }
+
+            double c = a2 - a1;
+
+            return Math.Abs(c);
         }
     }
 }

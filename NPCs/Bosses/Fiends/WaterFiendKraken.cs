@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,14 +13,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 	{
 		public override void SetDefaults()
 		{
-			npc.scale = 1;
-			npc.npcSlots = 1;
 			Main.npcFrameCount[npc.type] = 8;
-			npc.width = 150;
-			npc.height = 260;
-			npc.damage = 65;
+			npc.width = 120;
+			npc.height = 190;
+			drawOffsetY = 50;
+			npc.damage = trueContactDamage;
 			npc.defense = 35;
-			npc.aiStyle = 22;
+			npc.aiStyle = -1;
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
@@ -36,6 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.KrakenBag>();
 			despawnHandler = new NPCDespawnHandler("Water Fiend Kraken submerges into the depths...", Color.DeepSkyBlue, 180);
+			InitializeMoves();
 		}
 
 		public override void SetStaticDefaults()
@@ -43,60 +45,126 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Water Fiend Kraken");
 		}
 
-		public float ChargeTimer = 0;
-		
+
 		int cursedFlamesDamage = 45;
 		int plasmaOrbDamage = 75;
 		int hypnoticDisruptorDamage = 35;
-		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		int trueContactDamage = 185;
+		int chargeContactDamage = 240;
+
+		float[] wraithAI = new float[4];
+
+		//If this is set to anything but -1, the boss will *only* use that attack ID
+		readonly int testAttack = -1;
+		KrakenMove CurrentMove
+        {
+			get => MoveList[MoveIndex];
+        }
+
+		List<KrakenMove> MoveList;
+
+		//Controls what move is currently being performed
+		public int MoveIndex
 		{
-			npc.damage = (int)(npc.damage * 1.3 / 2);
-			npc.defense = npc.defense += 12;
+			get => (int)npc.ai[0];
+			set => npc.ai[0] = value;
 		}
 
-		bool chargeDamageFlag = false;
+		//Used by moves to keep track of how long they've been going for
+		public int MoveCounter
+		{
+			get => (int)npc.ai[1];
+			set => npc.ai[1] = value;
+		}
+
+		public Player Target
+        {
+			get => Main.player[npc.target];
+        }
+
+		bool charging = false;
 		NPCDespawnHandler despawnHandler;
 
 		#region AI
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
+			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
+			if (testAttack != -1)
+            {
+				//MoveIndex = testAttack;
+            }
+			if(MoveList == null)
+            {
+				InitializeMoves();
+            }
+			if(MoveIndex >= MoveList.Count)
+            {
+				//MoveIndex = 0;
+            }
 
-			bool flag25 = false;
+			//CurrentMove.Move();
+			CursedFireSpam();
+		}
+
+		Vector2 chargeVelocity = new Vector2(0, 0);
+		float ChargeTimer = 0;
+		private void CursedFireSpam()
+        {
 			ChargeTimer++;
-			if (ChargeTimer >= 800)
+			if (ChargeTimer >= 500)
 			{
 				int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
 				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
 			}
-			if (ChargeTimer >= 900)
-			{				
-				chargeDamageFlag = true;
-				npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 14);
-				ChargeTimer = 1f;
-				npc.netUpdate = true;				
+			if (ChargeTimer == 600)
+            {
+				chargeVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 19);
+				charging = true;
 			}
-			if (chargeDamageFlag == true)
+			if (charging)
 			{
-				npc.damage = 90;
-			}
-			if (Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 20)
-			{
-				chargeDamageFlag = false;
-				npc.damage = 65;
+				npc.velocity = chargeVelocity;
+				npc.damage = chargeContactDamage;
+
+				//Check if it's passed the player by at least 500 units while charging, and if so stop
+				if (Vector2.Distance(npc.Center, Target.Center) > 500)
+				{
+					Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+					double angleDiff = UsefulFunctions.CompareAngles(npc.velocity, vectorDiff);
+
+					if (angleDiff > MathHelper.Pi / 2)
+					{
+						charging = false;
+						npc.damage = trueContactDamage;
+						ChargeTimer = 0;
+						MoveCounter++;
+					}
+				}
 			}
 
-			if (Main.netMode != NetmodeID.MultiplayerClient)
+			//Most of its movement is done here
+			if (!charging)
+			{
+				FloatOminouslyTowardPlayer();
+			}
+			if(MoveCounter >= 3)
+            {
+				NextAttack();
+            }
+
+            #region Projectiles and NPCs
+            if (Main.netMode != NetmodeID.MultiplayerClient && !charging)
 			{
 				if (Main.rand.Next(50) == 1)
-				{						
+				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
 					projVector += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
 					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
 				}
-				if (Main.rand.Next(120) == 1 && !chargeDamageFlag)
-				{						
+				if (Main.rand.Next(120) == 1)
+				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 15);
 					projVector += (Main.player[npc.target].velocity / 2);
 					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
@@ -113,227 +181,103 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				if (Main.rand.Next(900) == 0)
 				{
 					NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
-					NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y + 216 - this.npc.width / 2, NPCID.CursedHammer, 0);						
-				}					
-			}
-			
-
-			if (npc.justHit)
-			{
-				npc.ai[2] = 0f;
-			}
-			if (npc.ai[2] >= 0f)
-			{
-				int num258 = 16;
-				bool flag26 = false;
-				bool flag27 = false;
-				if (npc.position.X > npc.ai[0] - (float)num258 && npc.position.X < npc.ai[0] + (float)num258)
-				{
-					flag26 = true;
+					NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y + 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
 				}
-				else
-				{
-					if ((npc.velocity.X < 0f && npc.direction > 0) || (npc.velocity.X > 0f && npc.direction < 0))
-					{
-						flag26 = true;
-					}
-				}
-				num258 += 24;
-				if (npc.position.Y > npc.ai[1] - (float)num258 && npc.position.Y < npc.ai[1] + (float)num258)
-				{
-					flag27 = true;
-				}
-				if (flag26 && flag27)
-				{
-					npc.ai[2] += 1f;
-					if (npc.ai[2] >= 30f && num258 == 16)
-					{
-						flag25 = true;
-					}
-					if (npc.ai[2] >= 60f)
-					{
-						npc.ai[2] = -200f;
-						npc.direction *= -1;
-						npc.velocity.X = npc.velocity.X * -1f;
-						npc.collideX = false;
-					}
-				}
-				else
-				{
-					npc.ai[0] = npc.position.X;
-					npc.ai[1] = npc.position.Y;
-					npc.ai[2] = 0f;
-				}
-			}
-			else
-			{
-				npc.ai[2] += 1f;
-				if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
-				{
-					npc.direction = -1;
-				}
-				else
-				{
-					npc.direction = 1;
-				}
-			}
-			int num259 = (int)((npc.position.X + (float)(npc.width / 2)) / 16f) + npc.direction * 2;
-			int num260 = (int)((npc.position.Y + (float)npc.height) / 16f);
-			bool flag28 = true;
-			//bool flag29; //What is this? It doesn't seem to do anything, so i'm commenting it out.
-			int num261 = 3;
-			for (int num269 = num260; num269 < num260 + num261; num269++)
-			{
-				if (Main.tile[num259, num269] == null)
-				{
-					Main.tile[num259, num269] = new Tile();
-				}
-				if ((Main.tile[num259, num269].active() && Main.tileSolid[(int)Main.tile[num259, num269].type]) || Main.tile[num259, num269].liquid > 0)
-				{
-				//	if (num269 <= num260 + 1)
-				//	{
-				//		flag29 = true;
-				//	}
-					flag28 = false;
-					break;
-				}
-			}
-			if (flag25)
-			{
-			//	flag29 = false;
-				flag28 = true;
-			}
-			if (flag28)
-			{
-				npc.velocity.Y = npc.velocity.Y + 0.1f;
-				if (npc.velocity.Y > 3f)
-				{
-					npc.velocity.Y = 3f;
-				}
-			}
-			else
-			{
-				if (npc.directionY < 0 && npc.velocity.Y > 0f)
-				{
-					npc.velocity.Y = npc.velocity.Y - 0.1f;
-				}
-				if (npc.velocity.Y < -4f)
-				{
-					npc.velocity.Y = -4f;
-				}
-			}
-			if (npc.collideX)
-			{
-				npc.velocity.X = npc.oldVelocity.X * -0.4f;
-				if (npc.direction == -1 && npc.velocity.X > 0f && npc.velocity.X < 1f)
-				{
-					npc.velocity.X = 1f;
-				}
-				if (npc.direction == 1 && npc.velocity.X < 0f && npc.velocity.X > -1f)
-				{
-					npc.velocity.X = -1f;
-				}
-			}
-			if (npc.collideY)
-			{
-				npc.velocity.Y = npc.oldVelocity.Y * -0.25f;
-				if (npc.velocity.Y > 0f && npc.velocity.Y < 1f)
-				{
-					npc.velocity.Y = 1f;
-				}
-				if (npc.velocity.Y < 0f && npc.velocity.Y > -1f)
-				{
-					npc.velocity.Y = -1f;
-				}
-			}
-			float num270 = 2f;
-			if (npc.direction == -1 && npc.velocity.X > -num270)
-			{
-				npc.velocity.X = npc.velocity.X - 0.1f;
-				if (npc.velocity.X > num270)
-				{
-					npc.velocity.X = npc.velocity.X - 0.1f;
-				}
-				else
-				{
-					if (npc.velocity.X > 0f)
-					{
-						npc.velocity.X = npc.velocity.X + 0.05f;
-					}
-				}
-				if (npc.velocity.X < -num270)
-				{
-					npc.velocity.X = -num270;
-				}
-			}
-			else
-			{
-				if (npc.direction == 1 && npc.velocity.X < num270)
-				{
-					npc.velocity.X = npc.velocity.X + 0.1f;
-					if (npc.velocity.X < -num270)
-					{
-						npc.velocity.X = npc.velocity.X + 0.1f;
-					}
-					else
-					{
-						if (npc.velocity.X < 0f)
-						{
-							npc.velocity.X = npc.velocity.X - 0.05f;
-						}
-					}
-					if (npc.velocity.X > num270)
-					{
-						npc.velocity.X = num270;
-					}
-				}
-			}
-			if (npc.directionY == -1 && (double)npc.velocity.Y > -1.5)
-			{
-				npc.velocity.Y = npc.velocity.Y - 0.04f;
-				if ((double)npc.velocity.Y > 1.5)
-				{
-					npc.velocity.Y = npc.velocity.Y - 0.05f;
-				}
-				else
-				{
-					if (npc.velocity.Y > 0f)
-					{
-						npc.velocity.Y = npc.velocity.Y + 0.03f;
-					}
-				}
-				if ((double)npc.velocity.Y < -1.5)
-				{
-					npc.velocity.Y = -1.5f;
-				}
-			}
-			else
-			{
-				if (npc.directionY == 1 && (double)npc.velocity.Y < 1.5)
-				{
-					npc.velocity.Y = npc.velocity.Y + 0.04f;
-					if ((double)npc.velocity.Y < -1.5)
-					{
-						npc.velocity.Y = npc.velocity.Y + 0.05f;
-					}
-					else
-					{
-						if (npc.velocity.Y < 0f)
-						{
-							npc.velocity.Y = npc.velocity.Y - 0.03f;
-						}
-					}
-					if ((double)npc.velocity.Y > 1.5)
-					{
-						npc.velocity.Y = 1.5f;
-					}
-				}
-			}
-			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
+			}            
 		}
+        #endregion
+
+        private void FloatOminouslyTowardPlayer()
+        {
+			Vector2 krakenMaxSpeed = new Vector2(3, 4);
+			float krakenAccelerationX = 0.05f;
+			float krakenAccelerationY = 0.05f;
+
+			if(npc.Center.X < Target.Center.X)
+			{
+				npc.velocity.X += krakenAccelerationX;
+			}
+			else
+			{
+				npc.velocity.X -= krakenAccelerationX;
+			}
+
+			//This is the part that makes it bob up and down as it moves
+			//If it's moving up
+			if(npc.velocity.Y < 0)
+			{
+				//And it's not more than 120 units above the player
+				if(Target.Center.Y - npc.Center.Y <= 120)
+                {
+					//Keep moving up
+					npc.velocity.Y -= krakenAccelerationY;
+                }
+				//If we are more than 120 units above the player, start accelerating down
+				else
+				{
+					npc.velocity.Y += krakenAccelerationY;
+				}
+			}
+			else
+			{
+				//Do the same thing, but reversed if it's moving down. Could probably simplify this, but this format makes it clear what it's doing.
+				if (Target.Center.Y - npc.Center.Y <= -120)
+				{
+					npc.velocity.Y -= krakenAccelerationY;
+				}
+				else
+				{
+					npc.velocity.Y += krakenAccelerationY;
+				}
+			}
+
+			npc.velocity = Vector2.Clamp(npc.velocity, -krakenMaxSpeed, krakenMaxSpeed);
+		}
+
+
+		private void NextAttack()
+        {
+			MoveIndex++;
+			if(MoveIndex > MoveList.Count)
+            {
+				MoveIndex = 0;
+            }
+
+			MoveCounter = 0;
+        }
+		private void InitializeMoves(List<int> validMoves = null)
+		{
+			MoveList = new List<KrakenMove> {
+				new KrakenMove(CursedFireSpam, KrakenAttackID.CursedFireSpam, "Cursed Fire"),
+                };
+		}
+
+		private class KrakenAttackID
+		{
+			public const short CursedFireSpam = 0;
+
+		}
+		private class KrakenMove
+		{
+			public Action Move;
+			public int ID;
+			public Action<SpriteBatch, Color> Draw;
+			public string Name;
+
+			public KrakenMove(Action MoveAction, int MoveID, string AttackName, Action<SpriteBatch, Color> DrawAction = null)
+			{
+				Move = MoveAction;
+				ID = MoveID;
+				Draw = DrawAction;
+				Name = AttackName;
+			}
+		}
+
 		#endregion
 
-		#region Frames
+
+
+
 		public override void FindFrame(int currentFrame)
 		{
 			int num = 1;
@@ -360,16 +304,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			{
 				npc.frame.Y = 0;
 			}
-			if (npc.ai[3] == 0)
-			{
-				npc.alpha = 0;
-			}
-			else
-			{
-				npc.alpha = 200;
-			}
 		}
-		#endregion
 		public override bool CheckActive()
 		{
 			return false;
