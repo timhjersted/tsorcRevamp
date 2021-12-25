@@ -24,7 +24,7 @@ namespace tsorcRevamp
 		public const int DefaultEstusChargesMax = 3; //How many charges the player starts with
 		public int estusChargesMax; //The max amount of charges the player has
 		//public int estusChargesMax2; //The temporary amount of charges left
-		public const int DefaultEstusHealthGain = 80; //How much 1 charge heals to begin with
+		public const int DefaultEstusHealthGain = 60; //How much 1 charge heals to begin with
 		public int estusHealthGain; //The amount of health restored per charge
 
 
@@ -54,7 +54,7 @@ namespace tsorcRevamp
 
 			estusChargesMax = tag.GetInt("estusChargesMax");
 			estusChargesCurrent = tag.GetInt("estusChargesCurrent");
-			//estusHealthGain = tag.GetInt("estusHealthGain");
+			estusHealthGain = tag.GetInt("estusHealthGain");
 
 		}
 
@@ -72,9 +72,26 @@ namespace tsorcRevamp
 
 		public override void PostUpdateBuffs()
 		{
-			if (player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200])) //When the player visits a bonfire, restore charges
+			if (player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) 
+				&& estusChargesCurrent != estusChargesMax && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift) //When the player visits a bonfire, restore charges
 			{
 				estusChargesCurrent = estusChargesMax;
+				Main.PlaySound(SoundID.Item20.WithVolume(0.8f), player.position);
+
+				for (int i = 0; i <= 15; i++)
+				{
+					int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
+					Main.dust[z].noGravity = true;
+					Main.dust[z].velocity *= 2.75f;
+					Main.dust[z].fadeIn = 1.3f;
+					Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+					vectorother.Normalize();
+					vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
+					Main.dust[z].velocity = vectorother;
+					vectorother.Normalize();
+					vectorother *= 25f;
+					Main.dust[z].position = player.Center - vectorother;
+				}
 			}
 		}
 		public override void PostUpdateMiscEffects()
@@ -90,7 +107,7 @@ namespace tsorcRevamp
 
 
 			// Limit estusChargesCurrent from going over the limit imposed by estusChargesMax
-			estusChargesCurrent = Utils.Clamp(estusChargesCurrent, 0, estusChargesMax);
+			//estusChargesCurrent = Utils.Clamp(estusChargesCurrent, 0, estusChargesMax);
 
 		}
 
@@ -110,7 +127,9 @@ namespace tsorcRevamp
 		{
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
-			if (isLocal && tsorcRevamp.DrinkEstusKey.JustPressed && !player.mouseInterface && estusChargesCurrent > 0 && player.itemAnimation == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
+			if (isLocal && tsorcRevamp.DrinkEstusKey.JustPressed && !player.mouseInterface && estusChargesCurrent > 0 && player.itemAnimation == 0 
+				&& player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift 
+				&& !player.GetModPlayer<tsorcRevampPlayer>().isDodging && player.statLife != player.statLifeMax2)
 			{
 				isDrinking = true;
 				estusDrinkTimer = 0;
@@ -131,29 +150,47 @@ namespace tsorcRevamp
 			estusDrinkTimer += 1f / 60f;
 
 			//Force player body frame to be Use3, this includes the players arm (drinking position)
-			if (estusDrinkTimer >= estusDrinkTimerMax * 0.4f) //Once finished drinking:
+			if (estusDrinkTimer >= estusDrinkTimerMax * 0.4f)
 			{
-				player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use3;
+				player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
 			}
 
 			//Slow player for whole duration of action
 			player.velocity.X *= 0.9f;
 			player.velocity.Y *= 0.9f;
+			player.eocHit = 0;
 
 			if (estusDrinkTimer >= estusDrinkTimerMax) //Once finished drinking:
             {
+				Main.PlaySound(SoundID.Item20.WithVolume(0.5f), player.position);
+				Main.PlaySound(SoundID.Item3, player.position);
+
+				for (int i = 0; i <= 15; i++)
+				{
+					int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
+					Main.dust[z].noGravity = true;
+					Main.dust[z].velocity *= 2.75f;
+					Main.dust[z].fadeIn = 1.3f;
+					Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+					vectorother.Normalize();
+					vectorother *= (float)Main.rand.Next(80, 95) * 0.043f;
+					Main.dust[z].velocity = vectorother;
+					vectorother.Normalize();
+					vectorother *= 25f;
+					Main.dust[z].position = player.Center - vectorother;
+				}
+
 				isDrinking = false; //No longer drinking
 				estusChargesCurrent--; //Remove a charge
 				estusDrinkTimer = 0; //Set the timer back to 0
 				player.HealEffect(estusHealthGain); //Show green heal text equal to health gain
 				isEstusHealing = true; //Commence healing process
+				//kplayer.eocDash = 0;
 			}
 		}
 
         public override void PostUpdate()
         {
-			estusChargesMax = 3;
-
 			if (isEstusHealing) //Is the player healing from estus?
 			{
 				estusHealingTimer++; //Advance the timer

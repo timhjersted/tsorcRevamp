@@ -19,10 +19,11 @@ namespace tsorcRevamp.Items
                                "\nYou deal +20% damage, recieve +20% more souls and your stamina recovers much faster" +
                                "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
                                "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
-                               "\nAdditionally, instant-heal items won't heal you" +
+                               "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
+                               "\ntake you to the village. Additionally, instant-heal items won't heal you" +
                                "\nSeek out the Emerald Herald, perhaps she has something for you..." +
                                "\n[c/ca1e00:Currently toggleable and non-consumable]" +
-                               "\n[c/ca1e00:Experimental mode in alpha; use at own risk]" +
+                               "\n[c/ca1e00:Experimental mode in alpha]" +
                                "\nIf you find any bugs please report on our [c/7e61ab:Discord] server");
 
             ItemID.Sets.ItemNoGravity[item.type] = true; // Makes item float in world.
@@ -48,7 +49,6 @@ namespace tsorcRevamp.Items
         public override void PostUpdate()
         {
             Lighting.AddLight(item.Center, 0.7f, 0.4f, 0.1f);
-
             if (Main.rand.Next(8) == 0)
             {
                 Dust dust = Main.dust[Dust.NewDust(item.position, item.width, item.height, 6, 0f, -5f, 50, default, Main.rand.NextFloat(1f, 1.5f))];
@@ -70,17 +70,20 @@ namespace tsorcRevamp.Items
         public override bool UseItem(Player player) // Won't consume item without this
         {
             //Main.NewText("What has been done cannot be undone", 200, 60, 40);
-            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (player.whoAmI == Main.LocalPlayer.whoAmI)
             {
-                player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
-                Main.NewText("You have become Bearer of the Curse", 200, 60, 40);
+                if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                {
+                    player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
+                    Main.NewText("You have become Bearer of the Curse", 200, 60, 40);
 
-            }
-            else
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = false;
-                Main.NewText("The curse has been lifted", 200, 60, 40);
+                }
+                else
+                {
+                    player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = false;
+                    Main.NewText("The curse has been lifted", 200, 60, 40);
 
+                }
             }
             //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
             //Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);
@@ -113,7 +116,7 @@ namespace tsorcRevamp.Items
             else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Main.PlaySound(SoundID.NPCDeath52.WithVolume(.75f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Main.PlaySound(SoundID.Item20.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     //player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.

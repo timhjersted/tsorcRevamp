@@ -694,6 +694,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
         public override void NPCLoot() {
 
+
+            Player player = Main.player[npc.target];
             //if (Main.netMode != NetmodeID.Server && Filters.Scene["tsorcRevamp:AttraidiesShader"].IsActive())
             //{
             //    Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
@@ -726,6 +728,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
                 Item.NewItem(npc.getRect(), ItemID.Picksaw);
+                if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
             }
 
             if (!tsorcRevampWorld.SuperHardMode) {

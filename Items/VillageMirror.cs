@@ -79,63 +79,80 @@ namespace tsorcRevamp.Items {
             return base.CanUseItem(player);
         }
         public override void UseStyle(Player player) {
-                if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY)) {
-                    if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)) {
-                        player.velocity = Vector2.Zero;
-                        player.gravDir = 1; 
-                        player.fallStart = (int)player.Center.Y;
-                        player.position.Y -= 0.4f;
-                    }
-                if (Main.rand.NextBool() && player.itemTime != 0) { //ambient dust during use
+            if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY))
+            {
+                if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+                {
+                    player.velocity = Vector2.Zero;
+                    player.gravDir = 1;
+                    player.fallStart = (int)player.Center.Y;
+                    player.position.Y -= 0.4f;
+                }
+                if (Main.rand.NextBool() && player.itemTime != 0)
+                { //ambient dust during use
 
-                        // position, width, height, type, speed.X, speed.Y, alpha, color, scale
-                        Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f + (float)(4 - (item.useAnimation/(item.useAnimation - player.itemTime))));
-                    }
+                    // position, width, height, type, speed.X, speed.Y, alpha, color, scale
+                    Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f + (float)(4 - (item.useAnimation / (item.useAnimation - player.itemTime))));
+                }
 
-                    if (player.itemTime == 0) {
-                        Main.NewText("Picking up where you left off...", 255, 240, 20);
-                        player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
-                    }
-                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? 2 : 4)) {
+                if (player.itemTime == 0)
+                {
+                    Main.NewText("Picking up where you left off...", 255, 240, 20);
+                    player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                }
+                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? 2 : 4))
+                {
                     Main.PlaySound(SoundID.Item60);
 
 
-                        for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (source)
-                            Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f, 150, default(Color), 1.5f);
+                    for (int dusts = 0; dusts < 70; dusts++)
+                    { //dusts on tp (source)
+                        Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f, 150, default(Color), 1.5f);
+                    }
+
+                    //destroy grapples
+                    player.grappling[0] = -1;
+                    player.grapCount = 0;
+                    for (int p = 0; p < 1000; p++)
+                    {
+                        if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7)
+                        {
+                            Main.projectile[p].Kill();
                         }
+                    }
 
-                        //destroy grapples
-                        player.grappling[0] = -1;
-                        player.grapCount = 0;
-                        for (int p = 0; p < 1000; p++) {
-                            if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7) {
-                                Main.projectile[p].Kill();
-                            }
-                        }
-
-
-                    
+                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                    {
+                        player.position.X = (float)(4182 * 16) - (float)((float)player.width / 2.0);
+                        player.position.Y = (float)(714 * 16) - (float)player.height;
+                    }
+                    else
+                    {
                         player.position.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
                         player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
-                        player.gravDir = 1;
-                        player.velocity.X = 0f;
-                        player.velocity.Y = 0f;
-                        player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
-                        player.fallStart = (int)player.Center.Y;
-
-                        for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (destination)
-                            Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);
-                        }
-
                     }
+                    player.gravDir = 1;
+                    player.velocity.X = 0f;
+                    player.velocity.Y = 0f;
+                    player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
+                    player.fallStart = (int)player.Center.Y;
+
+                    for (int dusts = 0; dusts < 70; dusts++)
+                    { //dusts on tp (destination)
+                        Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);
+                    }
+
                 }
-                else {
-                    Main.NewText("Your warp location is broken! Please file a bug report!", 255, 240, 20);
-                }
+            }
+            else
+            {
+                Main.NewText("Your warp location is broken! Please file a bug report!", 255, 240, 20);
+            }
 
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            Player player = Main.LocalPlayer;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
@@ -143,6 +160,9 @@ namespace tsorcRevamp.Items {
                     //insert the extra tooltip line
                     tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is greatly increased and you cannot move during the channel."));
                     tooltips.Insert(ttindex + 2, new TooltipLine(mod, "RevampMirrorNerf2", "Cannot be used while in combat."));
+                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
+                        tooltips.Insert(ttindex + 3, new TooltipLine(mod, "BotCNerfedVillageMirror", "Will always take the [c/6d8827:Bearer of the Curse] to the center of the village"));
+                    }
                 }
             }
         }

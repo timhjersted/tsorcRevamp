@@ -114,8 +114,10 @@ namespace tsorcRevamp.Tiles
 		}
 
 		int bonfireEffectTimer = 0;
+		int boneDustEffectTimer = 0;
 
-		public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+
+        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 		{
 			Tile tile = Main.tile[i, j];
 			Player player = Main.LocalPlayer;
@@ -132,7 +134,7 @@ namespace tsorcRevamp.Tiles
 				short frameX = tile.frameX;
 				short frameY = tile.frameY;
 
-				if (tile.frameY >= 74 && player.velocity.X == 0 && player.velocity.Y == 0 && player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f)
+				if (tile.frameY >= 74 && /*player.velocity.X == 0 && player.velocity.Y == 0 &&*/ player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f)
 				{
 					int style = frameY / 74; 
 
@@ -144,6 +146,50 @@ namespace tsorcRevamp.Tiles
 							bonfireEffectTimer++;
 							//Main.NewText("bonfireEffectTimer is at " + bonfireEffectTimer);
 						}
+
+
+
+						if (player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f && player.HeldItem.type == ModContent.ItemType<Items.SublimeBoneDust>() && player.itemTime != 0)
+						{
+							boneDustEffectTimer++;
+							if (boneDustEffectTimer == 1)
+							{
+
+								Main.PlaySound(SoundID.Item20, new Vector2(i * 16 + 25, j * 16 + 32));
+
+								for (int q = 0; q < 30; q++)
+								{
+									int z = Dust.NewDust(new Vector2(i * 16 + 25, j * 16 + 32), 40, 56, 270, 0f, 0f, 120, default(Color), 1f);
+									Main.dust[z].noGravity = true;
+									Main.dust[z].velocity *= 2.75f;
+									Main.dust[z].fadeIn = 1.3f;
+									Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+									vectorother.Normalize();
+									vectorother *= (float)Main.rand.Next(50, 100) * 0.2f;
+									Main.dust[z].velocity = vectorother;
+									vectorother.Normalize();
+									vectorother *= 10f;
+									Main.dust[z].position = new Vector2(i * 16 + 25, j * 16 + 32) - vectorother;
+								}
+
+								for (int q = 0; q < 30; q++)
+								{
+									int z = Dust.NewDust(new Vector2(i * 16 + 25, j * 16 + 32), 40, 56, 270, 0f, 0f, 120, default(Color), 1f);
+									Main.dust[z].noGravity = true;
+									Main.dust[z].velocity *= 2.75f;
+									Main.dust[z].fadeIn = 1.3f;
+									Vector2 vectorother = new Vector2((float)Main.rand.Next(-100, 101), (float)Main.rand.Next(-100, 101));
+									vectorother.Normalize();
+									vectorother *= (float)Main.rand.Next(50, 100) * 0.12f;
+									Main.dust[z].velocity = vectorother;
+									vectorother.Normalize();
+									vectorother *= 30f;
+									Main.dust[z].position = new Vector2(i * 16 + 25, j * 16 + 32) - vectorother;
+								}
+							}
+						}
+                        else { boneDustEffectTimer = 0; }
+
 
 						int dustChoice = -1;
 						if (style >= 1)

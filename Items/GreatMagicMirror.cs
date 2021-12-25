@@ -65,6 +65,10 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool CanUseItem(Player player) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
+                Main.NewText("The Curse prevents you from using this!", Color.OrangeRed);
+                return false;
+            }
 
             if (player.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
                 return false;
@@ -143,6 +147,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            Player player = Main.LocalPlayer;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
@@ -150,6 +155,9 @@ namespace tsorcRevamp.Items {
                     //insert the extra tooltip line
                     tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is greatly increased and you cannot move during the channel."));
                     tooltips.Insert(ttindex + 2, new TooltipLine(mod, "RevampMirrorNerf2", "Cannot be used while in combat."));
+                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
+                        tooltips.Insert(ttindex + 3, new TooltipLine(mod, "BotCNoGreaterMM", "[c/ca1e00:The curse prevents you from using this!]"));
+                    }
                 }
             }
         }

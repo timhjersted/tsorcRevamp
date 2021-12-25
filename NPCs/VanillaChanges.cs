@@ -1880,6 +1880,8 @@ namespace tsorcRevamp.NPCs {
         public override void NPCLoot(NPC npc) {
             #region Loot Changes
 
+            Player player = Main.player[npc.target];
+
             if (npc.type == NPCID.BigStinger) {
                 Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
             }
@@ -1924,12 +1926,14 @@ namespace tsorcRevamp.NPCs {
                 if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>());
                 if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
                 if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
                 Item.NewItem(npc.getRect(), ItemID.AngelWings, 1, false, -1);
                 Item.NewItem(npc.getRect(), ItemID.AngelWings, 1, false, -1);
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronPrime) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
@@ -1956,6 +1960,13 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ItemID.HerosShirt);
                 Item.NewItem(npc.getRect(), ItemID.HerosPants);
                 Item.NewItem(npc.getRect(), ItemID.HermesBoots, 1, false, -1);
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+
+            }
+
+            if (npc.type == NPCID.WallofFlesh && !Main.expertMode)
+            {
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.WallofFlesh) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
             }
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.Next(50) == 0 && !Main.expertMode) {

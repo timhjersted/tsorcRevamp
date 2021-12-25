@@ -1577,7 +1577,8 @@ namespace tsorcRevamp {
             ReflectionShift,
             PhazonRound,
             MoonlightGreatsword,
-            MoonlightGreatswordGlowmask
+            MoonlightGreatswordGlowmask,
+            EstusFlask
 
         }          
         
@@ -1618,7 +1619,9 @@ namespace tsorcRevamp {
                 {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")},
                 {TransparentTextureType.PhazonRound, ModContent.GetTexture("tsorcRevamp/Projectiles/PhazonRound")},
                 {TransparentTextureType.MoonlightGreatsword, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword")},
-                {TransparentTextureType.MoonlightGreatswordGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")}
+                {TransparentTextureType.MoonlightGreatswordGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")},
+                {TransparentTextureType.EstusFlask, ModContent.GetTexture("tsorcRevamp/Textures/EstusFlask_drinking")},
+
             };
 
             //Runs each entry through the XNA's premultiplication function

@@ -55,19 +55,26 @@ namespace tsorcRevamp.NPCs.Friendly
 
 			else
 			{
-				if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
-                {
-					chat.Add("Listen to everything I have to say and I may give you a reward.", 4);
+				if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5)
+				{
+					chat.Add("Is that a shard you've found? Here, let me see it." + "\nSo that I may help you. To see light, to see hope… However faint it might be…");
 				}
-				if (!tsorcRevampWorld.SuperHardMode)
-                {
-					chat.Add("Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid.");
+				else
+				{
+					if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
+					{
+						chat.Add("Listen to everything I have to say and I may give you a reward.", 4);
+					}
+					if (!tsorcRevampWorld.SuperHardMode)
+					{
+						chat.Add("Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid.");
+					}
+					chat.Add("Forge your souls in the flames of sacred altars and make their power your own.");
+					chat.Add("If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it.");
+					chat.Add("I hope you have a keen eye, for this is a land brimming with secrets...");
+					chat.Add("The near-constant use of potions will prove vital on your journey, especially when attempting to retrieve lost souls.");
+					chat.Add("Bearer... Seek... Seek... Lest...", 0.05); // Easter egg. A classic DS2 meme. Rare dialogue.
 				}
-				chat.Add("Forge your souls in the flames of sacred altars and make their power your own.");
-				chat.Add("If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it.");
-				chat.Add("I hope you have a keen eye, for this is a land brimming with secrets...");
-				chat.Add("The near-constant use of potions will prove vital on your journey, especially when attempting to retrieve lost souls.");
-				chat.Add("Bearer... Seek... Seek... Lest...", 0.05); // Easter egg. A classic DS2 meme. Rare dialogue.
 			}
 			
 			return chat;
@@ -77,16 +84,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void SetChatButtons(ref string button, ref string button2)
 		{
+			Player player = Main.LocalPlayer;
+
 			button = "Bless";
 
-			if (chatState == 0 || chatState == 1 || chatState == 2 || chatState == 3 || chatState == 4 || chatState == 5 || chatState == 6 || chatState == 7)
-			{
-				button2 = "Seek knowledge...";
-			}
-			if (chatState == 8)
-            {
-				button2 = "Recieve gift";
-            }
+			if (chatState == 0 || chatState == 1 || chatState == 2 || chatState == 3 || chatState == 4 || chatState == 5 || chatState == 6 || chatState == 7) { button2 = "Seek knowledge..."; }
+			if (chatState == 8 || chatState == 9) { button2 = "Recieve gift"; }
+			if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5) { button2 = "Give Shard"; }
 
 		}
 
@@ -104,6 +108,21 @@ namespace tsorcRevamp.NPCs.Friendly
 			}
             else
             {
+				if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5)
+				{
+					Main.PlaySound(SoundID.Item37); // Reforge/Anvil sound
+					Main.npcChatText = $"If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden.";
+					int ShardItemIndex = Main.LocalPlayer.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
+
+					if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5) 
+					{ 
+						Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
+						if (Main.LocalPlayer.inventory[ShardItemIndex].stack == 1) { Main.LocalPlayer.inventory[ShardItemIndex].TurnToAir(); }
+						else Main.LocalPlayer.inventory[ShardItemIndex].stack--;
+						Main.NewText("Estus Flask size increased! Max charges:" + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
+					}
+					return;
+				}
 				if (chatState == 0) //if you click while in state 0 (greeting)
 				{
 					Main.npcChatText = "A pickaxe or sticky bomb can be used to break blocks that are 1 width wide. Stone gates need switches to open. If in doubt, give it a whack."; //show this text
@@ -153,8 +172,8 @@ namespace tsorcRevamp.NPCs.Friendly
 					if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
 					{
 						Main.npcChatText = "Take this with you. May it ease your journey.";
-						player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
-						chatState = 8;
+						if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) { chatState = 9; }
+						else { chatState = 8; }
 					}
 					else 
 					{
@@ -166,15 +185,28 @@ namespace tsorcRevamp.NPCs.Friendly
 				if (chatState == 8)
 				{
 					Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
+					player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
-					if (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-					{
-						Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.Lifegem>(), 10);
-					}
 
 					if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
+						Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);
+					}
+					chatState = 0;
+					return;
+				}
+				if (chatState == 9)
+				{
+					Main.npcChatText = "Bearer of the Curse, the Estus Flask will no doubt prove" + "\nto be invaluable on your journey. Farewell.";
+					player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
+					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
+					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.Lifegem>(), 10);
+					Main.NewText("Estus Flask acquired! Don't forget to assign it a hotkey in Controls > Mod Controls. The Estus Flask is a reusable healing item that can be refilled at bonfires", Color.OrangeRed);
+
+					if (Main.netMode == NetmodeID.MultiplayerClient)
+					{
 						Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);
 					}
 					chatState = 0;

@@ -36,7 +36,13 @@ namespace tsorcRevamp {
             if (layers.Contains(PlayerLayer.HeldItem)) {
                 layers.Insert(layers.IndexOf(PlayerLayer.HeldItem) + 1, tsorcRevampGlowmasks);
             }
+            if (layers.Contains(PlayerLayer.HeldItem))
+            {
+                layers.Insert(layers.IndexOf(PlayerLayer.HeldItem) + 1, tsorcRevampEstusFlask);
+            }
             layers.Add(tsorcRevampManaShield);
+
+
         }
         public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo) {
             base.ModifyDrawInfo(ref drawInfo);
@@ -233,6 +239,57 @@ namespace tsorcRevamp {
             }
             else {
                 modPlayer.shieldUp = false;
+            }
+        });
+
+        public static readonly PlayerLayer tsorcRevampEstusFlask = new PlayerLayer("tsorcRevamp", "tsorcRevampEstusFlask", PlayerLayer.HeldItem, delegate (PlayerDrawInfo drawInfo) {
+            tsorcRevampEstusPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
+
+            if (estusPlayer.isDrinking && !estusPlayer.player.dead)
+            {
+
+                int estusFrameCount = 3;
+                float estusScale = 0.8f;
+                Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.EstusFlask];
+                Player drawPlayer = drawInfo.drawPlayer;
+                SpriteEffects effects = drawPlayer.direction > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                int rotation = drawPlayer.direction > 0 ? -90 : 90;
+                int drawX = (int)(drawInfo.position.X + drawPlayer.width / 2f - Main.screenPosition.X);
+                int drawY = (int)(drawInfo.position.Y + drawPlayer.height / 2f - Main.screenPosition.Y);
+                int frameHeight = texture.Height / estusFrameCount;
+                int frame = 0;
+                if (estusPlayer.estusChargesCurrent == estusPlayer.estusChargesMax) { frame = 0; }
+                else if (estusPlayer.estusChargesCurrent == 1) { frame = 2; }
+                else { frame = 1; }
+
+                int startY = frameHeight * frame;
+
+                Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+                float chargesPercentage = (float)estusPlayer.estusChargesCurrent / estusPlayer.estusChargesMax;
+                chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                Color newColor = Color.White * 0.8f;
+
+                Vector2 origin = sourceRectangle.Size() / 2f;
+
+                if (estusPlayer.estusDrinkTimer >= estusPlayer.estusDrinkTimerMax * 0.4f)
+                {
+                    if (drawPlayer.direction == 1)
+                    {
+                        DrawData data = new DrawData(texture, new Vector2(drawX + 12, drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
+                        Main.playerDrawData.Add(data);
+                    }
+                    else
+                    {
+                        DrawData data = new DrawData(texture, new Vector2(drawX - 12, drawY - 14), sourceRectangle, newColor, rotation, origin, estusScale, effects, 0);
+                        Main.playerDrawData.Add(data);
+                    }
+                }
+
+            }
+            else
+            {
+                estusPlayer.isDrinking = false;
             }
         });
     }

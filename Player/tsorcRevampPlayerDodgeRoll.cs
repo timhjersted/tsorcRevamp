@@ -148,17 +148,6 @@ namespace tsorcRevamp {
 			return true;
 		}
 
-        public override void PostItemCheck()
-        {
-			Item item = player.HeldItem;
-
-			/*if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-			{
-				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .75f) + 2; // The +2 is to balance out incredibly fast things being too efficient
-			}*/
-
-			base.PostItemCheck();
-        }
         public void QueueDodgeroll(float wantTime, sbyte direction, bool force = false) {
 			wantsDodgerollTimer = wantTime;
 			wantedDodgerollDir = direction;
@@ -193,7 +182,8 @@ namespace tsorcRevamp {
 		private bool TryStartDodgeroll() {
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
-			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30) {
+			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface 
+				&& player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking) {
 				QueueDodgeroll(0.25f, (sbyte)KeyDirection(player));
 			}
 
