@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		#region Chat
 		public override string GetChat()
 		{
-			return "Thank you for freeing me! Have the Oxyale I recovered from the bottom of the sping";
+			return "Thank you for freeing me! Have the Oxyale I recovered from the bottom of the spring";
 		}
 		#endregion
 		public override void SetChatButtons(ref string button, ref string button2)
