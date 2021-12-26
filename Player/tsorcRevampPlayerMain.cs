@@ -158,7 +158,7 @@ namespace tsorcRevamp
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath)
+            if (ModContent.GetInstance<tsorcRevampConfig>().DeleteDroppedSoulsOnDeath && Main.netMode == NetmodeID.SinglePlayer)
             {
                 for (int i = 0; i < 400; i++)
                 {

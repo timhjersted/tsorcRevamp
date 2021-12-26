@@ -25,13 +25,13 @@ namespace tsorcRevamp {
         [Header("Gameplay Changes")]
         [Label("Souls Drop on Death")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Drop all your Dark Souls when you die.\nIf \"Delete Dropped Souls on Death\" is enabled, \nyour Souls will drop after old Souls are deleted.\nDefaults to On")]
+        [Tooltip("Drop all your Dark Souls when you die.\nIf \"Delete Dropped Souls on Death\" is enabled, \nyour Souls will drop after old Souls are deleted.\nDoes not take effect in multiplayer.\nDefaults to On")]
         [DefaultValue(true)]
         public bool SoulsDropOnDeath { get; set; }
 
         [Label("Delete Dropped Souls on Death")]
         [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDefaults to On")]
+        [Tooltip("Any Dark Souls in the world will be deleted when a player dies.\nEven if this option is disabled, your Souls will be deleted \nif over 400 items are active in the world after you die, \nor if you exit the game while your Souls are still on the ground.\nDoes not take effect in multiplayer.\nDefaults to On")]
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
 
