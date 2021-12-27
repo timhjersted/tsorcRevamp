@@ -582,6 +582,18 @@ namespace tsorcRevamp {
                 CrossModTiles.Add(MagicStorage.TileType("StorageConnector"));
 
             }
+
+            Mod MagicStorageExtra = ModLoader.GetMod("MagicStorageExtra");
+            if (MagicStorageExtra != null) {
+                CrossModTiles.Add(MagicStorageExtra.TileType("CraftingAccess"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("CreativeStorageUnit"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("RemoteAccess"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("StorageAccess"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("StorageComponent"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("StorageHeart"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("StorageUnit"));
+                CrossModTiles.Add(MagicStorageExtra.TileType("StorageConnector"));
+            }
             #endregion
             //--------
             #region PlaceAllowedModTiles list
