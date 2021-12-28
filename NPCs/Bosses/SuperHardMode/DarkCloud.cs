@@ -1842,6 +1842,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 npc.aiStyle = 0;
             }
 
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 dustPos = Main.LocalPlayer.Center;
+                dustPos.X -= 1500;
+                dustPos.Y -= 500;
+
+                Dust newDust = Dust.NewDustDirect(dustPos, 3000, 1500, DustID.ShadowbeamStaff, 0, 0, Scale: 2);
+                newDust.velocity = UsefulFunctions.GenerateTargetingVector(newDust.position, npc.position, 40);
+            }
             if (phaseChangeCounter <= 180)
             {
                 npc.velocity = Vector2.Zero;
@@ -1869,7 +1878,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 npc.noTileCollide = true;
                 npc.velocity = new Vector2(0, -22);
-                //Spawn a burst of dust throughout the whole arena and below dark cloud, potentially activate shader
+
+                for (int i = 0; i < 500; i++)
+                {
+                    Vector2 dustPos = Target.Center;
+                    dustPos.X -= 1500;
+                    dustPos.Y -= 500;
+                    Dust.NewDust(dustPos, 3000, 1500, DustID.ShadowbeamStaff, Main.rand.Next(-500, 500), Main.rand.Next(-500, 500), Scale: 5);
+                }
             }
             if (phaseChangeCounter == 240)
             {
@@ -2132,6 +2148,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Main.player[i].Center = pyramidCenter;
                     }
                 }
+
+                for (int i = 0; i < 500; i++)
+                {
+                    Vector2 dustPos = Target.Center;
+                    dustPos.X -= 1500;
+                    dustPos.Y -= 500;
+                    Dust.NewDust(dustPos, 3000, 1500, DustID.ShadowbeamStaff, Main.rand.Next(-500, 500), Main.rand.Next(-500, 500), Scale: 9);
+                }
+
                 DarkCloudParticleEffect(-12, 120, 64);
             }
             return true;
