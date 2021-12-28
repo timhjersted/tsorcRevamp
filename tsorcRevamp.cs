@@ -30,6 +30,7 @@ namespace tsorcRevamp {
         public static bool isAdventureMap = false;
         public static int DarkSoulCustomCurrencyId;
         internal bool UICooldown = false;
+        internal bool worldButtonClicked = false;
         public static List<int> KillAllowed;
         public static List<int> PlaceAllowed;
         public static List<int> Unbreakable;
@@ -1084,12 +1085,17 @@ namespace tsorcRevamp {
                         }
                         File.WriteAllLines(curVersionPath, curVersionFile);
                     }
+
+
                 }
             }
             else
             {
                 Logger.Warn("Failed to download or read changelog.");
             }
+
+
+            TryCopyMap();
         }
 
         //Returns true if download successful
@@ -1108,6 +1114,7 @@ namespace tsorcRevamp {
                 using (WebClient client = new WebClient())
                 {
                     client.DownloadFileAsync(new Uri(VariousConstants.MAP_URL), filePath);
+                    client.DownloadFileCompleted += TryCopyMap;
                 }
 
                 return true;
@@ -1122,6 +1129,47 @@ namespace tsorcRevamp {
                 Logger.Warn("Automatic world download failed ({0}).", e);
             }
             return false;
+        }
+
+
+        //Checks if there is already a copy of the adventure map in the Worlds folder, and if not automatically copies one there.
+        public static void TryCopyMap(object sender = null, AsyncCompletedEventArgs downloadEvent = null)
+        {
+            string userMapFileName = "\\TheStoryofRedCloud.wld";
+            string worldsFolder = Main.SavePath + "\\Worlds";
+            string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
+            string baseMapFileName = "\\tsorcBaseMap.wld";
+
+            FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
+            DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
+            bool worldExists = false;
+
+            foreach(FileInfo file in worlds.GetFiles("*.wld"))
+            {
+                if (file.FullName.Contains("TheStoryofRedCloud"))
+                {
+                    worldExists = true;
+                    break;
+                }
+            }
+
+            if (!worldExists && File.Exists(dataDir + baseMapFileName))
+            {
+                log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+                thisLogger.Info("Attempting to copy world.");
+                try
+                {
+                    fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
+                }
+                catch (System.Security.SecurityException e)
+                {
+                    thisLogger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                }
+                catch (Exception e)
+                {
+                    thisLogger.Warn("World copy failed ({0}).", e);
+                }
+            }
         }
 
         public static void MusicDownload()

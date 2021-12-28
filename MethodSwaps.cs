@@ -36,6 +36,8 @@ namespace tsorcRevamp {
             On.Terraria.Main.DrawPlayer += StaminaBar;
 
             On.Terraria.Main.DrawPlayer += CurseMeter;
+
+            On.Terraria.Main.StartInvasion += BlockInvasions;
         }
 
 
@@ -467,6 +469,7 @@ namespace tsorcRevamp {
             orig(self, gameTime);
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             tsorcRevamp thisMod = (tsorcRevamp)mod;
+
             if (Main.mouseLeftRelease)
             {
                 thisMod.UICooldown = false;
@@ -475,21 +478,19 @@ namespace tsorcRevamp {
            
             if (Main.menuMode == 16) {
 
-                string downloadText = "Want the Custom Map? Click here to install!";
+                string downloadText = "Copy new Story of Red Cloud Adventure Map to Worlds Folder";
+
+                if (thisMod.worldButtonClicked)
+                {
+                    downloadText = "Map copied! Hit back and select it to begin!";
+                }
+
                 Color downloadTextColor = Main.DiscoColor;
                 string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
 
                 string baseMapFileName = "\\tsorcBaseMap.wld";
                 string userMapFileName = "\\TheStoryofRedCloud.wld";
                 string worldsFolder = Main.SavePath + "\\Worlds";
-
-                if (File.Exists(worldsFolder + userMapFileName))
-                {
-                    downloadText = "Custom map loaded! To play it, hit \"Back\" and select it!\n Or, click here to make another fresh copy of the map";
-                    downloadTextColor = Color.AliceBlue;
-                }
-
-
 
                 Vector2 downloadTextOrigin = Main.fontMouseText.MeasureString(downloadText);
                 float textScale = 2;
@@ -502,6 +503,7 @@ namespace tsorcRevamp {
                         downloadTextColor = Color.Yellow;
 
                         if (Main.mouseLeft && !thisMod.UICooldown) {
+                            thisMod.worldButtonClicked = true;
                             thisMod.UICooldown = true;
                             if (File.Exists(dataDir + baseMapFileName)) {
                                 if (!File.Exists(worldsFolder + userMapFileName)) {
@@ -565,7 +567,7 @@ namespace tsorcRevamp {
                 Main.spriteBatch.End();
             }
 
-            if(Main.menuMode == 0)
+            else if(Main.menuMode == 0)
             {
                 string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
                 //This goes here so that it runs *after* the first reload has finished and the game has transitioned back to the main menu.
@@ -621,7 +623,12 @@ namespace tsorcRevamp {
                     DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }               
-            }           
+            }      
+            
+            else
+            {
+                thisMod.worldButtonClicked = false;
+            }
         }
 
         internal static void StaminaBar(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow)
@@ -719,6 +726,25 @@ namespace tsorcRevamp {
                     Main.spriteBatch.Draw(Crop(powerfulMeterFull, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height)), powerfulFullBarDestination, Color.White); 
                 }
             }
+        }
+
+        internal static void BlockInvasions(On.Terraria.Main.orig_StartInvasion orig, int type)
+        {
+            Main.NewText(type);
+            //If the game is naturally spawning a goblin invasion, block it.
+            if(type == 1)
+            {
+                return;
+            }
+
+            //When we want to summon a goblin army, we can just call StartInvasion with -1 instead, which is normally unused.
+            if(type == -1)
+            {
+                type = 1;
+            }
+
+            //Everything else just works normally
+            orig(type);
         }
     }
 }

@@ -67,9 +67,29 @@ namespace tsorcRevamp.NPCs
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff || player.HasBuff(BuffID.PeaceCandle))
+            if (player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff)
             {
                 maxSpawns = 0;
+            }
+
+
+            //Peace candles do not activate if there is a) an invasion and b) the player is near the center of the world.
+            if((Main.invasionType == 0 || player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
+            {
+                if (player.HasBuff(BuffID.PeaceCandle))
+                {
+                    maxSpawns = 0;
+                }
+            }
+            else
+            {
+                if(Main.invasionType == 1)
+                {
+                    player.buffImmune[BuffID.PeaceCandle] = true;
+                    player.ZonePeaceCandle = false;
+                    spawnRate /= 2;
+                    maxSpawns *= 3;
+                }
             }
         }
 
@@ -82,7 +102,7 @@ namespace tsorcRevamp.NPCs
                 foreach (Player player in Main.player)
                 {
                     if (!player.active) { continue; }
-                    player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true; ;
+                    player.GetModPlayer<tsorcRevampPlayer>().bossMagnet = true;
                     player.GetModPlayer<tsorcRevampPlayer>().bossMagnetTimer = 300; //5 seconds of increased grab range, check GlobalItem::GrabStyle and GrabRange
                 }
             }
@@ -143,11 +163,19 @@ namespace tsorcRevamp.NPCs
                     {
                         if (Main.netMode == NetmodeID.SinglePlayer)
                         {
-                            Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
+                            Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75); 
+                            if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
+                            {
+                                Main.StartInvasion(-1);
+                            }
                         }
                         else if (Main.netMode == NetmodeID.Server)
                         {
                             NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
+                            if(((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
+                            {
+                                Main.StartInvasion(-1);
+                            }
                         }
 
                         tsorcRevampWorld.Slain.Add(npc.type, 0);
