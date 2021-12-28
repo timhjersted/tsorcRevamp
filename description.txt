@@ -1,8 +1,10 @@
-The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough. It is currently in beta.
+The Story of Red Cloud is a massive Dark Souls-inspired adventure built inside the world of Terraria using a custom map, mod and companion soundtrack. Your journey will span 17 dungeons spread across an expansive and inter-connected world, offering a 15 to 30+ hr experience for a first playthrough. 
 
-- To load the custom map, click the "Install Custom Map" button once you reach the world creation options.
+- The Custom Map will load automatically when you reach the world selection screen.
 
-- To download the companion Music Mod, click the text prompt you'll see on TML's main menu. Then click Mods and Enable the Music Mod. The Recipe Browser mod is also recommended.
+- To download TSORC's Music Mod, click the text prompt you'll see on TML's main menu. 
+
+- Recommended, Optional Mods: Recipe Browser, Terraria Ambience
 
 
 TOP FEATURES
@@ -44,7 +46,7 @@ GAME MANUAL:
 
 *On death, you will drop all your Dark Souls and have one chance to recover them. For a more forgiving experience, you can turn this off in the mod's Config options.
 
-*New dodge roll action can be bound to any key in the mod's config options
+*New dodge roll action with i-frames can be bound to any key in the mod's config options.
 
-*Multiplayer is currently being beta-tested and is not yet in a polished state. If you'd like to try it out and help with testing, post any issues you find under #bug-reports. Thanks. The map supports up to 3 players. Class diversity recommended.
+*Multiplayer is supported but we're still ironing out bugs. Post issues you find under #bug-reports. Thanks! The map supports up to 3 players. Class diversity recommended. Dark Souls will not drop on death in MP.
 
