@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.npcSlots = 10;
 			Main.npcFrameCount[npc.type] = 16;
 			animationType = 28;
-			npc.knockBackResist = 0f;
+			npc.knockBackResist = 0.2f;
 			npc.aiStyle = 3;
 			npc.damage = 0;
 			npc.defense = 40;
@@ -27,6 +27,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.value = 25000;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.TonberryBanner>();
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				npc.lifeMax = 6660;
+				npc.defense = 57;
+				npc.value = 50000;
+				npc.damage = 295;
+			}
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -68,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
 			bool can_teleport = false;  //  tp around like chaos ele
-			int boredom_time = 1; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+			int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
 			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
 			bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
@@ -377,7 +385,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 						if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 						{
-							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 0f, Main.myPlayer);
 							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 							customAi1 = 1f;
 						}
@@ -652,6 +660,12 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tonberry Gore 2"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tonberry Gore 3"), 1f);
 			}
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5 + Main.rand.Next(5));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 5 + Main.rand.Next(5));
+			}
 		}
 		#endregion
 
@@ -660,18 +674,18 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			if(spearTexture == null)
             {
-				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnife");
+				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnifeSmall");
 			}
 			if (customAi1 >= 120)
 			{
 				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 				if (npc.spriteDirection == -1)
 				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(24, 48), npc.scale, effects, 0);
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(17, 18), npc.scale, effects, 0); //was 24, 48
 				}
 				else
 				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(-4, 48), npc.scale, effects, 0);
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(-7, 18), npc.scale, effects, 0); //was -4, 48
 				}
 			}
 		}
