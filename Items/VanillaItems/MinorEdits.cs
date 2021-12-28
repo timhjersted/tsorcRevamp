@@ -25,6 +25,10 @@ namespace tsorcRevamp.Items.VanillaItems {
                 item.useTime = 30;
                 item.damage = 40;
             }
+            if (item.type == ItemID.ChlorophyteBullet) {
+                //chlorophyte bullets are fucking stupid, dont @ me
+                item.damage = 6; //from 10
+            }
         }
 
         public override bool CanUseItem(Item item, Player player)
