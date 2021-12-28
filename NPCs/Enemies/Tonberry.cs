@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -23,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.lifeMax = 3000;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 5000;
+			npc.value = 25000;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.TonberryBanner>();
 		}
@@ -42,34 +43,16 @@ namespace tsorcRevamp.NPCs.Enemies
 		int drownTimer = 5000;
 		int drowningRisk = 1000;
 
-
-
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
-		{
-			Player P = spawnInfo.player; //These are mostly redundant with the new zone definitions, but it still works.
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = P.ZoneOverworldHeight;
-			bool InBrownLayer = P.ZoneDirtLayerHeight;
-			bool InGrayLayer = P.ZoneRockLayerHeight;
-			bool InHell = P.ZoneUnderworldHeight;
-			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
-
-			// these are all the regular stuff you get , now lets see......
-
-			if (Main.hardMode && InHell && Main.rand.Next(150) == 1) return 1;
-
-			if (Main.hardMode && Jungle && !Corruption && InGrayLayer && Main.rand.Next(300) == 1) return 1;
-
-			if (Main.hardMode && Dungeon && !Corruption && InGrayLayer && Main.rand.Next(300) == 1) return 1;
-
-			if (!Main.hardMode && Dungeon && Main.rand.Next(700) == 1) return 1;
-
-			return 0;
+		{			
+			if (Main.hardMode && Main.rand.Next(400) == 1) { 
+				return 1; 
+			}
+            else
+			{
+				return 0;
+			}
 		}
 		#endregion
 
@@ -384,33 +367,19 @@ namespace tsorcRevamp.NPCs.Enemies
 				//if (npc.justHit)
 				//	npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
-				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (customAi1 >= 40f)
+				customAi1++; ;
+				if (customAi1 >= 180f)
 				{
 					npc.TargetClosest(true);
-					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
 					{
-						if (Main.rand.Next(150) == 1)
+						Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+
+						if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 						{
-							float num48 = 8f;
-							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-							{
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= num51;
-								speedY *= num51;
-								//int damage = 9999;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, throwingKnifeDamage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 15;
-								Main.projectile[num54].aiStyle = 1;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								customAi1 = 1f;
-							}
-							npc.netUpdate = true;
+							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							customAi1 = 1f;
 						}
 					}
 				}
@@ -685,5 +654,26 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 		}
 		#endregion
+
+		static Texture2D spearTexture;
+		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		{
+			if(spearTexture == null)
+            {
+				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnife");
+			}
+			if (customAi1 >= 120)
+			{
+				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				if (npc.spriteDirection == -1)
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(24, 48), npc.scale, effects, 0);
+				}
+				else
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(-4, 48), npc.scale, effects, 0);
+				}
+			}
+		}
 	}
 }
