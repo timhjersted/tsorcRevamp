@@ -488,14 +488,6 @@ namespace tsorcRevamp.Items {
 			};
 		}
 
-        public override bool UseItem(Item item, Player player)
-        {
-			if(item.type == ItemID.GoblinBattleStandard && Main.invasionType == 0)
-            {
-				Main.StartInvasion(-1);
-            }
-
-			return base.UseItem(item, player);
-		}
+		
     }
 }

@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs
                             Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75); 
                             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
                             {
-                                Main.StartInvasion(-1);
+                                Main.StartInvasion();
                             }
                         }
                         else if (Main.netMode == NetmodeID.Server)
@@ -174,7 +174,7 @@ namespace tsorcRevamp.NPCs
                             NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
                             if(((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
                             {
-                                Main.StartInvasion(-1);
+                                Main.StartInvasion();
                             }
                         }
 

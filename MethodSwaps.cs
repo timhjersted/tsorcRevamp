@@ -730,21 +730,15 @@ namespace tsorcRevamp {
 
         internal static void BlockInvasions(On.Terraria.Main.orig_StartInvasion orig, int type)
         {
-            Main.NewText(type);
-            //If the game is naturally spawning a goblin invasion, block it.
-            if(type == 1)
+            //The game sets time to 0 at the start of the day *right* before it checks to naturally spawn invasions.
+            if (Main.time == 0)
             {
                 return;
             }
-
-            //When we want to summon a goblin army, we can just call StartInvasion with -1 instead, which is normally unused.
-            if(type == -1)
+            else
             {
-                type = 1;
+                orig(type);
             }
-
-            //Everything else just works normally
-            orig(type);
         }
     }
 }
