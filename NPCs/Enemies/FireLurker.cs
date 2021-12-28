@@ -57,9 +57,9 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (tsorcRevampWorld.SuperHardMode)
             {
 				npc.lifeMax = 2660;
-				npc.defense = 40;
+				npc.defense = 47;
 				npc.value = 3650;
-				npc.damage = 80;
+				npc.damage = 95;
 				bioSpitDamage = 73;
 				
 			}
@@ -1145,7 +1145,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
 			if (Main.rand.Next(100) < 30) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
-		
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
+			}
+			
+
 		}
 	}
 }
