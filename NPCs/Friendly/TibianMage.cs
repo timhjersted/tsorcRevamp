@@ -55,7 +55,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			WeightedRandom<string> chat = new WeightedRandom<string>();
 			chat.Add("Time is a force we sorcerers will master one day.");
-			chat.Add("Any sorcerer dedicates his whole life to the study of the arcane arts.");
+			chat.Add("Any sorcerer dedicates their whole life to the study of the arcane arts.");
 			chat.Add("Sorry, I only sell spells to sorcerers.");
 			chat.Add("I could tell you much about all sorcerer spells, but you won't understand it. Anyway, feel free to ask me.");
 			chat.Add("I'll teach you a very seldom spell.");

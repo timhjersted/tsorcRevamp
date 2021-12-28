@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(mod.GetItem("Bolt4Tome"), 1);
             recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 1);
             recipe.AddIngredient(mod.GetItem("Humanity"), 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 240000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
