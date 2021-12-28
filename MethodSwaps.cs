@@ -38,8 +38,10 @@ namespace tsorcRevamp {
             On.Terraria.Main.DrawPlayer += CurseMeter;
 
             On.Terraria.Main.StartInvasion += BlockInvasions;
-        }
 
+            //On.Terraria.NPC.AI_037_Destroyer += DestroyerAIRevamp;
+        }
+        
 
         //allow spawns to be set outside a valid house (for bonfires)
         internal static void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self) {
@@ -731,7 +733,8 @@ namespace tsorcRevamp {
         internal static void BlockInvasions(On.Terraria.Main.orig_StartInvasion orig, int type)
         {
             //The game sets time to 0 at the start of the day *right* before it checks to naturally spawn invasions.
-            if (Main.time == 0)
+            //Only applies to adventure mode
+            if (Main.time == 0 && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 return;
             }
@@ -740,5 +743,12 @@ namespace tsorcRevamp {
                 orig(type);
             }
         }
+
+
+        /*private static void DestroyerAIRevamp(On.Terraria.NPC.orig_AI_037_Destroyer orig, NPC self)
+        {
+
+        }*/
+
     }
 }
