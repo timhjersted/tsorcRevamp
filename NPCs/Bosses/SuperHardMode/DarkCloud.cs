@@ -303,11 +303,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SendExtraAI(BinaryWriter writer)
         {
             //Send the list of remaining moves
-            writer.Write(ActiveMoveList.Count);
-            for (int i = 0; i < ActiveMoveList.Count; i++)
+            if(ActiveMoveList == null)
             {
-                writer.Write(ActiveMoveList[i].ID);
+                writer.Write(0);
             }
+            else
+            {
+                writer.Write(ActiveMoveList.Count); 
+                for (int i = 0; i < ActiveMoveList.Count; i++)
+                {
+                    writer.Write(ActiveMoveList[i].ID);
+                }
+            }
+            
 
             //A seed value that clients can use whenever they'd like to pick the next attack.
             //Would allow all clients to "randomly" roll the same attack right when it happens, instead of needing to do it early.
@@ -1981,6 +1989,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if(darkCloudTexture == null)
+            {
+                darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+            }
             Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[npc.type]);
             Vector2 origin = sourceRectangle.Size() / 2f;
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -2008,6 +2020,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
         public void DivineSparkDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if (darkSparkTexture == null)
+            {
+                darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
+            }
             float targetPoint;
             if ((AttackModeCounter % turnLength) > chargeTime && (AttackModeCounter % turnLength) < turnLength)
             {
@@ -2045,6 +2061,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if (antimatTexture == null)
+            {
+                antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
+            }
             float targetPoint = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
             {                
@@ -2063,6 +2083,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
         public void ArrowRainDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if (cernosTexture == null)
+            {
+                cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
+            }
             float targetPoint = arrowRainTargetingVector.ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 80 == 20))
             {
@@ -2143,7 +2167,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 npc.Center = pyramidCenter; 
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Vector2.Distance(Main.player[i].Center, npc.Center) < 2000)
+                    if (Vector2.Distance(Main.player[i].Center, npc.Center) < 10000)
                     {
                         Main.player[i].Center = pyramidCenter;
                     }
