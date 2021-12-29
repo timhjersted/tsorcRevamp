@@ -26,6 +26,18 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.width = 8;
             aiType = ProjectileID.WoodenArrowFriendly;
         }
+        #region PreKill
+        public override bool PreKill(int timeLeft)
+        {
+            projectile.type = 0;
+            Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+            for (int i = 0; i < 10; i++)
+            {
+                Dust.NewDust(projectile.position, projectile.width, projectile.height, 7, 0, 0, 0, default, 1f);
+            }
+            return true;
+        }
+        #endregion
 
         #region Kill
         public void Kill()

@@ -7,7 +7,7 @@ using System;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
-	class BlackKnightsSpear : ModProjectile
+	class RedKnightsSpear : ModProjectile
 	{
 		public override void SetDefaults()
 		{
@@ -33,7 +33,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 			Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
 			for (int i = 0; i < 10; i++)
 			{
-				Dust.NewDust(projectile.position, projectile.width, projectile.height, 7, 0, 0, 0, default, 1f);
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 1f); //6 is a flame dust
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 2f);
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 7, 0, 0, 0, default, 1f); //7 is a wood splinter dust
 			}
 			return true;
 		}

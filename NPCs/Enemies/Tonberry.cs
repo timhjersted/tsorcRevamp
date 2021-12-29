@@ -32,7 +32,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				npc.lifeMax = 6660;
 				npc.defense = 57;
-				npc.value = 50000;
+				npc.value = 70000;
 				npc.damage = 295;
 			}
 		}
@@ -53,14 +53,19 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
-		{			
-			if (Main.hardMode && Main.rand.Next(400) == 1) { 
-				return 1; 
-			}
-            else
-			{
-				return 0;
-			}
+		{
+			Player P = spawnInfo.player;
+			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
+
+			if (Main.hardMode && Main.rand.Next(400) == 1) return 1; 
+			
+			if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(100) == 1) return 1;
+
+			if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.Next(125) == 1) return 1;
+
+			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.Next(200) == 1) return 1;
+
+			return 0;
 		}
 		#endregion
 
@@ -665,6 +670,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5 + Main.rand.Next(5));
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 5 + Main.rand.Next(5));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BlueTitanite>(), 5 + Main.rand.Next(5));
 			}
 		}
 		#endregion

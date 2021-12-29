@@ -13,6 +13,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			DisplayName.SetDefault("Demon Elemental");
 		}
 
+		int crystalFireDamage = 50;
+
 		public override void SetDefaults()
 		{
 			npc.aiStyle = 22;
@@ -31,16 +33,36 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.noTileCollide = true;
 			npc.lavaImmune = true;
 			npc.noGravity = true;
-			npc.knockBackResist = 0.9f;
+			npc.knockBackResist = 0.6f;
 			npc.alpha = 70; // was 100
 			npc.value = 500;
 			banner = npc.type;
+			
 			//bannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				npc.lifeMax = 3660;
+				npc.defense = 67;
+				npc.value = 16500;
+				npc.damage = 295;
+				npc.knockBackResist = 0.0f;
+				crystalFireDamage = 85;
+			}
 
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.Poisoned] = true;
 		}
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			crystalFireDamage = (int)(crystalFireDamage / 2);
+		}
+
+
 		float customAi1;
 
 		#region Spawn
@@ -121,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedY *= num51;
 							int damage = 39; //(int)(14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 120;
 							//Main.projectile[num54].aiStyle = 4;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -144,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedY *= num51;
 							int damage = 59;//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>();//44;//0x37; //14; was purple crush
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 19;
 							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);

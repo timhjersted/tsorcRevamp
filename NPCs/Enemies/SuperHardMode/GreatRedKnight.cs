@@ -6,11 +6,11 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    class GreatRedKnightOfTheAbyss : ModNPC
+    class GreatRedKnight : ModNPC
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Red Knight of the Abyss");
+            DisplayName.SetDefault("Great Red Knight");
         }
         public override void SetDefaults()
         {
@@ -21,18 +21,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.height = 40;
             npc.width = 20;
             npc.damage = 105;
-            npc.defense = 211;
-            npc.lifeMax = 35000;
+            npc.defense = 61; //was 211
+            npc.lifeMax = 17000; //was 35k
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 21870;
+            npc.value = 81870;
             npc.knockBackResist = 0;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
         }
 
-        int meteorDamage = 17;
-        int poisonStrikeDamage = 50;
+        int meteorDamage = 77;
+        int poisonStrikeDamage = 80;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -69,27 +69,35 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && Main.bloodMoon && AboveEarth && Main.rand.Next(2000) == 1)
+            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && Main.bloodMoon && AboveEarth && Main.rand.Next(200) == 1)
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("The Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
+                Main.NewText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && !Corruption && InGrayLayer && Main.rand.Next(1000) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Dungeon && !Corruption && InGrayLayer && Main.rand.Next(400) == 1)
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("The Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
+                Main.NewText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && BeforeFourAfterSix && InHell && Main.rand.Next(700) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.Next(700) == 1)
+
+            {
+                //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
+                Main.NewText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
+                return 1;
+            }
+
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && BeforeFourAfterSix && InHell && Main.rand.Next(400) == 1)
 
             {
                 //Main.NewText("A portal from The Abyss has been opened!", 175, 75, 255);
-                Main.NewText("The Great Red Knight of the Abyss has come to destroy you..", 175, 75, 255);
+                Main.NewText("A Great Red Knight of the Abyss has come to destroy you..", 175, 75, 255);
                 return 1;
             }
 
@@ -737,7 +745,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Knight Gore 3"), 1f);
             }
             if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>(), 1 + Main.rand.Next(1));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.RedTitanite>());
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5 + Main.rand.Next(3));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1 + Main.rand.Next(1));
         }
         #endregion
     }

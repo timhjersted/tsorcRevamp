@@ -4,43 +4,46 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class GreatRedKnightofArtorias : ModNPC
+    class RedKnight : ModNPC
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Great Red Knight of Artorias");
-
+            DisplayName.SetDefault("Red Knight");
         }
+
+        int redKnightsSpearDamage = 90;
+
         public override void SetDefaults()
         {
-            npc.npcSlots = 150;
+            npc.npcSlots = 105;
             Main.npcFrameCount[npc.type] = 16;
             animationType = 28;
             npc.aiStyle = 3;
             npc.height = 40;
             npc.width = 20;
-            npc.damage = 105;
+            npc.damage = 155;
             npc.defense = 41;
-            npc.lifeMax = 35000;
+            npc.lifeMax = 5000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 60000;
+            npc.value = 15000;
             npc.knockBackResist = 0.01f;
             banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.GreatRedKnightOfArtoriasBanner>();
+            bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
-            abyssPoisonBallDamage = (int)(abyssPoisonBallDamage / 2);
+            redKnightsSpearDamage = (int)(redKnightsSpearDamage / 2);
         }
 
-        int abyssPoisonBallDamage = 50;
+        
 
         float customAi1;
         int drownTimerMax = 2000;
@@ -56,38 +59,17 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player P = spawnInfo.player;
 
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && Main.bloodMoon && P.ZoneOverworldHeight && Main.rand.Next(5000) == 1)
+            if (Main.hardMode && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && Main.rand.Next(1200) == 1) return 1;
 
-            {
-                Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("The Great Red Knight of Artorias is now hunting you...", 175, 75, 255);
-                return 1;
-            }
+            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(850) == 1) return 1;
 
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && Main.bloodMoon && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(1000) == 1)
+            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(700) == 1) return 1;
 
-            {
-                Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("The Great Red Knight of Artorias is now hunting you...", 175, 75, 255);
-                return 1;
-            }
+            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.Next(400) == 1) return 1;
 
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && Main.bloodMoon && P.ZoneUnderworldHeight && Main.rand.Next(200) == 1)
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
 
-            {
-                Main.NewText("A portal from The Abyss has been opened!", 175, 75, 255);
-                Main.NewText("The Great Red Knight of Artorias has come to destroy you..", 175, 75, 255);
-                return 1;
-            }
-
-            //if(ModWorld.superHardmode && Main.rand.Next(1800)==1) 
-
-            //	{
-            //		Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-            //		Main.NewText("The Great Red Knight of Artorias is now hunting you...", 175, 75, 255);
-            //		return true;
-            //	}
-
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.Next(25) == 1) return 1;
 
             return 0;
         }
@@ -105,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             //  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
             bool can_teleport = true;  //  tp around like chaos ele
-            int boredom_time = 10; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+            int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
             int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
             bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
@@ -115,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies
             int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
             float acceleration = .07f;  //  how fast it can speed up
-            float top_speed = 3f;  //  max walking speed, also affects jump length
+            float top_speed = 4f;  //  max walking speed, also affects jump length
             float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
             double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
@@ -126,11 +108,11 @@ namespace tsorcRevamp.NPCs.Enemies
             bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
             bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
 
-            bool hops = true; // hops when close to target like Angry Bones, Corrupt Bunny, Armored Skeleton, and Werewolf
+            bool hops = false; // hops when close to target like Angry Bones, Corrupt Bunny, Armored Skeleton, and Werewolf
             float hop_velocity = 1f; // forward velocity needed to initiate hopping; usually 1
             float hop_range_x = 100; // less than this is 'close to target'; usually 100
             float hop_range_y = 50; // less than this is 'close to target'; usually 50
-            float hop_power = 5; // how hard/high offensive hops are; usually 4
+            float hop_power = 4; // how hard/high offensive hops are; usually 4
             float hop_speed = 3; // how fast hops can accelerate vertically; usually 3 (2xSpd is 4 for Hvy Skel & Werewolf so they're noticably capped)
 
             // is_archer & clown bombs only
@@ -146,7 +128,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             // Omnirs creature sorts
             //bool tooBig = true; // force bigger creatures to jump
-            //bool lavaJumping = true; // Enemies jump on lava.
+            //bool lavaJumping = false; // Enemies jump on lava.
             bool canDrown = false; // They will drown if in the water for too long
             bool quickBored = true; //Enemy will respond to boredom much faster(? -- test)
             bool oBored = false; //Whether they're bored under the "quickBored" conditions
@@ -384,34 +366,21 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (npc.justHit)
                     npc.ai[2] = 0f; // reset throw countdown when hit
+
                 #region Projectiles
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-                if (customAi1 >= 10f)
+                customAi1++; ;
+                if (customAi1 >= 180f)
                 {
                     npc.TargetClosest(true);
-                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
                     {
-                        if (Main.rand.Next(40) == 1)
+                        Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
+
+                        if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
                         {
-                            float num48 = 9f;
-                            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                            float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                            float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                            if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-                            {
-                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                                num51 = num48 / num51;
-                                speedX *= num51;
-                                speedY *= num51;
-                                //int damage = 100;//(int) (14f * npc.scale);
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, abyssPoisonBallDamage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 200;
-                                Main.projectile[num54].aiStyle = 23;
-                                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                                customAi1 = 1f;
-                            }
-                            npc.netUpdate = true;
+                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            customAi1 = 1f;
                         }
                     }
                 }
@@ -583,10 +552,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
                 int x_blockpos = (int)npc.position.X / 16; // corner not center
                 int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                int tp_radius = 15; // radius around target(upper left corner) in blocks to teleport into
+                int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
                 int tp_counter = 0;
                 bool flag7 = false;
-                if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 200000000000f)
+                if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
                 { // far away from target; 2000 pixels = 125 blocks
                     tp_counter = 100;
                     flag7 = true; // no teleport
@@ -601,8 +570,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
                     for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                     { // (tp_x_target,m) is block under its feet I think
-                        if ((m < target_y_blockpos - 6 || m > target_y_blockpos + 6 || tp_x_target < target_x_blockpos - 6 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-                        { // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                        if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 4 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                        { // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                             bool safe_to_stand = true;
                             bool dark_caster = false; // not a fighter type AI...
                             if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
@@ -618,7 +587,7 @@ namespace tsorcRevamp.NPCs.Enemies
                                 npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
                                 flag7 = true; // end the loop (after testing every lower point :/)
                             }
-                        } // END over 6 blocks distant from player...
+                        } // END over 4 blocks distant from player...
                     } // END traverse y down to edge of radius
                 } // END try 100 times
             } // END is server & chaos ele & bored
@@ -725,8 +694,39 @@ namespace tsorcRevamp.NPCs.Enemies
             Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Knight Gore 2"), 1f);
             Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Knight Gore 3"), 1f);
 
-            if (Main.rand.Next(99) < 15) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 1);
+            if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 1);
+            if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 1);
+            if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
+            if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1);
+            
+
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
+                if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1);
+            }
         }
         #endregion
+
+        static Texture2D spearTexture;
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (spearTexture == null)
+            {
+                spearTexture = mod.GetTexture("Projectiles/Enemy/RedKnightsSpear");
+            }
+            if (customAi1 >= 120)
+            {
+                SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                if (npc.spriteDirection == -1)
+                {
+                    spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing left (8, 38 work)
+                }
+                else
+                {
+                    spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing right, first value is height, higher number is higher
+                }
+            }
+        }
     }
 }
