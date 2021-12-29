@@ -1,12 +1,16 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
+
 	public class FrozenDragonsBreath : ModProjectile
 	{
+
+		
 
 		public override void SetDefaults()
 		{
@@ -17,8 +21,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.penetrate = 3;
 			projectile.ignoreWater = true;
 			projectile.tileCollide = true;
+			
 			aiType = 4;
 		}
+
+		
 
 		public override void AI()
 		{
@@ -62,14 +69,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 						int num155 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, num153, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
 						if (Main.rand.Next(3) != 0 || (num153 == 76 && Main.rand.Next(3) == 0))
 						{
-							Main.dust[num155].noGravity = true;
-							Main.dust[num155].scale *= 3f;
+							Main.dust[num155].noGravity = true; 
+							Main.dust[num155].scale *= 1.5f; //was 3
 							Dust expr_6767_cp_0 = Main.dust[num155];
 							expr_6767_cp_0.velocity.X = expr_6767_cp_0.velocity.X * 2f;
 							Dust expr_6785_cp_0 = Main.dust[num155];
 							expr_6785_cp_0.velocity.Y = expr_6785_cp_0.velocity.Y * 2f;
 						}
-						Main.dust[num155].scale *= 1.5f;
+						Main.dust[num155].scale *= 1f; //was 1.5
 						Dust expr_67BC_cp_0 = Main.dust[num155];
 						expr_67BC_cp_0.velocity.X = expr_67BC_cp_0.velocity.X * 1.2f;
 						Dust expr_67DA_cp_0 = Main.dust[num155];
@@ -105,5 +112,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 			}
 		}
 
-    }
+		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+		{
+			drawCacheProjsBehindNPCs.Add(index);
+		}
+
+	}
+
 }
