@@ -11,9 +11,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
     {
         public override void SetDefaults()
         {
-            npc.width = 44;
-            npc.height = 44;
-            drawOffsetY = 49;
+            npc.width = 32;
+            npc.height = 32;
+            drawOffsetY = 60;
             npc.aiStyle = 6;
             npc.knockBackResist = 0;
             npc.timeLeft = 22500;

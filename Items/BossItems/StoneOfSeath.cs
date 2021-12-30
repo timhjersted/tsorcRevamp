@@ -28,6 +28,11 @@ namespace tsorcRevamp.Items.BossItems {
         public override bool CanUseItem(Player player)
         {
             bool canUse = true;
+            if (Main.dayTime)
+            {
+                Main.NewText("Nothing happens... Retry at night.", 175, 75, 255);
+                canUse =  false;
+            }
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))
             {
                 canUse = false;
