@@ -108,6 +108,8 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            FireLurkerPain,
+            RedKnightPain,
             RedKnightTwinMountain,
             JungleWyvernFight,
             SeathFight,
@@ -155,7 +157,16 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
-        
+            //FIRE LURKER PATH OF PAIN
+            ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3244, 1253), 10, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.ShadowbeamStaff, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
+            FireLurkerPain.SetCustomStats(1000, 12, 52);
+            FireLurkerPain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1555 });
+
+            //RED KNIGHT IN PATH OF PAIN
+            ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightPainCustomAction);
+            RedKnightPain.SetCustomStats(2700, 10, 60);
+            RedKnightPain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 3555 });
+
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightCustomAction);
             RedKnightTwinMountain.SetCustomStats(1500, 10, 60);
@@ -220,7 +231,7 @@ namespace tsorcRevamp
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
 
             //TWIN EATER OF WORLDS FIGHT
-            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 30, default, DustID.ShadowbeamStaff, true, false, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
+            ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1220), 20, default, DustID.ShadowbeamStaff, true, false, "Twin Eaters surface from the depths!", Color.Purple, false, default, TwinEoWAction);
 
             //DUNLEDING AMBUSH
             List<int> DunledingAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>(), ModContent.NPCType<NPCs.Enemies.Dunlending>() };
@@ -302,7 +313,9 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
-                
+
+                {ScriptedEventType.FireLurkerPain, FireLurkerPain},
+                {ScriptedEventType.RedKnightPain, RedKnightPain},
                 {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},
                 {ScriptedEventType.JungleWyvernFight, JungleWyvernEvent},
                 {ScriptedEventType.SeathFight, SeathEvent},
@@ -522,6 +535,40 @@ namespace tsorcRevamp
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
                 ourKnight.spearDamage = 40;
+            }
+            return true;
+        }
+
+        //FIRE LURKER PAIN CUSTOM ACTION
+        public static bool FireLurkerPainCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            //Changing projectile damage:
+            //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
+            if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.FireLurker>())
+            {
+                //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
+                NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.modNPC;
+
+                ourFireLurker.bioSpitDamage = 23; 
+            }
+            return true;
+        }
+
+        //RED KNIGHT PAIN CUSTOM ACTION
+        public static bool RedKnightPainCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            //Changing projectile damage:
+            //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
+            if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
+            {
+                //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
+                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;
+
+                //Now we can change the damages!!
+                //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
+                //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
+                //Then you'll be able to access them from here and set them to anything!
+                ourRedKnightPain.redKnightsSpearDamage = 17;
             }
             return true;
         }

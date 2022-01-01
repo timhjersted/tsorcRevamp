@@ -22,7 +22,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		bool chargeDamageFlag = false;
 		int meteorDamage = 17;
 		//int hypnoticDisruptorDamage = 15;
-		int bioSpitDamage = 27;
+		
+		public int bioSpitDamage = 27;
 
 
 		public override void SetDefaults()
@@ -41,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.DeathSound = SoundID.NPCDeath5;
 			npc.value = 430;
 			npc.lavaImmune = true;
-			banner = npc.type;
+			//banner = npc.type;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[24] = true;
 
