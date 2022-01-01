@@ -108,6 +108,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            RedKnightTwinMountain,
             JungleWyvernFight,
             SeathFight,
             WyvernMageFight,
@@ -152,6 +153,13 @@ namespace tsorcRevamp
         public static void InitializeScriptedEvents()
         {
             Player player = Main.LocalPlayer;
+
+            //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+        
+            //RED KNIGHT IN TWIN PEAKS MOUNTAIN
+            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightCustomAction);
+            RedKnightTwinMountain.SetCustomStats(1500, 10, 60);
+            RedKnightTwinMountain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 2555 });
 
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.Shadowflame, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
@@ -294,6 +302,8 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
+                
+                {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},
                 {ScriptedEventType.JungleWyvernFight, JungleWyvernEvent},
                 {ScriptedEventType.SeathFight, SeathEvent},
                 {ScriptedEventType.WyvernMageFight, WyvernMageEvent},
@@ -512,6 +522,25 @@ namespace tsorcRevamp
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
                 ourKnight.spearDamage = 40;
+            }
+            return true;
+        }
+
+        //RED KNIGHT MOUNTAIN CUSTOM ACTION
+        public static bool RedKnightCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            //Changing projectile damage:
+            //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
+            if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
+            {
+                //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
+                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;
+
+                //Now we can change the damages!!
+                //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
+                //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
+                //Then you'll be able to access them from here and set them to anything!
+                ourRedKnight.redKnightsSpearDamage = 15;
             }
             return true;
         }

@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
             DisplayName.SetDefault("Red Knight");
         }
 
-        int redKnightsSpearDamage = 90;
+        public int redKnightsSpearDamage = 90;
 
         public override void SetDefaults()
         {
