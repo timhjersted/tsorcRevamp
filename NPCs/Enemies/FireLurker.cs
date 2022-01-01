@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -28,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 25;
+			npc.npcSlots = 30;
 			Main.npcFrameCount[npc.type] = 15;
 			animationType = 28;
 			npc.knockBackResist = 0.4f;
@@ -689,6 +690,30 @@ namespace tsorcRevamp.NPCs.Enemies
 
 				#region Projectiles
 				if (Main.netMode != 1)
+				{ 
+					customAi1++; ;
+					if (customAi1 >= 160f)
+					{
+						npc.TargetClosest(true);
+						if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+						{
+							Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 7); //red knight was 11
+
+							if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+							{
+								Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+								customAi1 = 1f;
+							}
+						}
+					}
+				}
+				#endregion
+
+				//OLD PROJECTILE CODE
+				/*
+				
+				if (Main.netMode != 1)
 				{
 					customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 					if (customAi1 >= 10f)
@@ -749,8 +774,9 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 
 				}
+				#endregion*/
 
-				#endregion
+
 
 				if (Main.player[npc.target].dead)
 				{
@@ -1113,8 +1139,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		#endregion
 
-
-
 		#region Debuffs
 		public override void OnHitPlayer(Player player, int damage, bool crit)
 		{
@@ -1155,5 +1179,36 @@ namespace tsorcRevamp.NPCs.Enemies
 			
 
 		}
+		
+		#region Draw Projectile
+		static Texture2D spearTexture;
+		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		{
+			if (spearTexture == null)
+			{
+				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyBioSpitBall");
+			}
+			if (customAi1 >= 120)
+			{
+				Lighting.AddLight(npc.Center, Color.Green.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(3) == 1)
+				{
+					Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+					Dust.NewDust(npc.position, npc.width, npc.height, DustID.IchorTorch, npc.velocity.X, npc.velocity.Y);
+				}
+
+				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				if (npc.spriteDirection == -1)
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 10), npc.scale, effects, 0); // facing left (8, 38 work)
+				}
+				else
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 13), npc.scale, effects, 0); // facing right, first value is height, higher number is higher, 2nd value is width axis
+				
+				}
+			}
+		}
+		#endregion
 	}
 }
