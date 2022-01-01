@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(1, 4));
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 			}
 			else
 			{

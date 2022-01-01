@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             Item.NewItem(npc.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
             Item.NewItem(npc.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
             if (Main.rand.Next(6) == 0) Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
-            if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
 
 

@@ -224,7 +224,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             Item.NewItem(npc.getRect(), ItemID.Torch, 1);
             Player player = Main.player[npc.target];
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(2) == 0)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(4) == 0)
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(20) == 0 ? 3 : 1); // 1/5 chance of 3, else 1
             }

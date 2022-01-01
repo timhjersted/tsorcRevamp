@@ -893,7 +893,7 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(1, 4));
+            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             Item.NewItem(npc.getRect(), ItemID.Heart);
             Item.NewItem(npc.getRect(), ItemID.Heart);
