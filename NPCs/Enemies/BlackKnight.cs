@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -13,7 +14,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Main.npcFrameCount[npc.type] = 16;
 			animationType = 28;
-			npc.aiStyle = 3;
+			npc.aiStyle = -1;
+			//npc.aiStyle = 3;
 			npc.height = 40;
 			npc.width = 20;
 			npc.damage = 95;
@@ -74,8 +76,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
 			bool can_teleport = false;  //  tp around like chaos ele
-			int boredom_time = 20; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
-			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
+			int boredom_time = 1; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+			int boredom_cooldown = 5 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
 			//bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
 			bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
@@ -208,6 +210,35 @@ namespace tsorcRevamp.NPCs.Enemies
 				}  //  END running slower than top speed (forward), can be jump/fall
 			} // END non archer or not aiming*/
 			#endregion
+
+			if (npc.ai[1] == 0)
+			{
+				npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+			}
+			//Turn and walk away if hitting a wall
+			if (npc.position.X == npc.oldPosition.X)
+			{
+				npc.ai[1]++;
+				if (npc.ai[1] > 120 && npc.velocity.Y == 0)
+				{
+					npc.direction *= -1;
+					npc.spriteDirection = npc.direction;
+					npc.ai[1] = 50;
+				}
+			}
+
+			Player player = Main.player[npc.target];
+
+			if (npc.ai[1] == 51 && npc.Distance(player.Center) > 1100)
+			{
+				npc.ai[1] = 0;
+			}
+
+			if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+			{
+				npc.ai[1] = 0;
+			}
+
 			//-------------------------------------------------------------------
 			#region archer projectile code (stops moving to shoot)
 			if (is_archer)
@@ -309,41 +340,45 @@ namespace tsorcRevamp.NPCs.Enemies
 			#endregion
 			//-------------------------------------------------------------------
 			#region shoot and walk
-			if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
+			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead)  // can generalize this section to moving+projectile code 
 			{
-				if (npc.justHit)
-					npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
-				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (customAi1 >= 10f)
+
+				npc.ai[2]++;
+				if (npc.ai[2] >= 150f)
 				{
-					npc.TargetClosest(true);
-					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					if (npc.justHit)
+						npc.ai[2] = 150f; // reset throw countdown when hit
+
+					if (npc.ai[2] >= 180f && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
 					{
-						if (Main.rand.Next(180) == 1)
+						if (npc.Distance(player.Center) < 300)
 						{
-							float num48 = 6f; //was 11
+							float num48 = 9f;
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 0);
+							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 0);
 							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
 							{
 								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								//int damage = 100;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightsSpear>();//44;//0x37; //14;
+								//int damage = 10;//(int) (14f * npc.scale);
+								int type = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();//44;//0x37; //14;
 								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, spearDamage, 0f, Main.myPlayer);
+								Main.projectile[num54].timeLeft = 600;
 								Main.projectile[num54].aiStyle = 1;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								customAi1 = 1f;
+								npc.ai[2] = 0;
 							}
 							npc.netUpdate = true;
 						}
 					}
 				}
 				#endregion
+
+
 			}
 			#endregion
 			//-------------------------------------------------------------------
@@ -651,6 +686,30 @@ namespace tsorcRevamp.NPCs.Enemies
 			//-------------------------------------------------------------------*/
 		}
 		#endregion
+
+		
+
+		static Texture2D spearTexture;
+		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		{
+			if (spearTexture == null)
+			{
+				spearTexture = mod.GetTexture("Projectiles/Enemy/BlackKnightsSpear");
+			}
+			if (npc.ai[2] >= 150)
+			{
+				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				if (npc.spriteDirection == -1)
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing left (8, 38 work)
+				}
+				else
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing right, first value is height, higher number is higher
+				}
+			}
+		}
+
 
 		#region Gore
 		public override void NPCLoot()

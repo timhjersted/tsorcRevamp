@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void SetDefaults()
         {
-            npc.npcSlots = 15;
+            npc.npcSlots = 25;
             npc.knockBackResist = 0.15f;
             npc.aiStyle = -1;
             npc.damage = 43;
@@ -45,6 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.width = 20;
             npc.lifeMax = 750;
             if (Main.hardMode) { npc.lifeMax = 1400; npc.defense = 40; }
+            if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 2400; npc.defense = 50; npc.damage = 60; npc.value = 3900; }
             npc.value = 3500;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
@@ -871,16 +872,16 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (spawnInfo.player.townNPCs > 1f) return 0f;
 
-            if (tsorcRevampWorld.SuperHardMode) return 0.03f;
+            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneJungle) return 0.03f;
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && NPC.downedBoss3) return chance = 0.02f;
 
             if (Main.expertMode && Main.bloodMoon && NPC.downedBoss3) return chance = 0.02f;
 
-            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.005f;
-            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.015f;
+            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.005f;
+            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.015f;
 
-            if (NPC.downedBoss3) return chance = 0.003f;
+            if (NPC.downedBoss3 && !spawnInfo.player.ZoneJungle) return chance = 0.003f;
 
             return chance;
         }

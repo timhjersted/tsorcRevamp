@@ -32,7 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.height = 40;
             npc.width = 20;
             npc.lifeMax = 75;
-            if (Main.hardMode) { npc.lifeMax = 150; npc.defense = 20; }
+            if (Main.hardMode) { npc.lifeMax = 200; npc.defense = 25; npc.damage = 28; npc.value = 450; }
+            if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 450; npc.defense = 45; npc.damage = 38; npc.value = 550; }
             npc.value = 250;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
@@ -773,7 +774,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.player.townNPCs > 1f) return 0f;
 
-            if (tsorcRevampWorld.SuperHardMode) return 0.01f;
+            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneJungle) return 0.01f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.07f;
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight) return chance = 0.075f;
 
@@ -782,11 +784,11 @@ namespace tsorcRevamp.NPCs.Enemies
             if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.05f;
             if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.09f;
 
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime) return chance = 0.07f;
-            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime) return chance = 0.1f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.07f;
+            if (((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.1f;
 
 
-            if ((!Main.expertMode && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.03f;
+            if ((!Main.expertMode && !spawnInfo.player.ZoneJungle && (NPC.downedBoss1 || NPC.downedBoss2)) || Main.expertMode) return chance = 0.03f;
 
             return chance;
         }

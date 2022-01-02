@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             npc.timeLeft = 60;
-            npc.npcSlots = 15;
+            npc.npcSlots = 25;
             npc.knockBackResist = 0.1f;
             npc.aiStyle = -1;
             npc.damage = 40; 
@@ -30,6 +30,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.width = 20;
             npc.lifeMax = 750;
             if (Main.hardMode) { npc.lifeMax = 1400; npc.defense = 60; }
+            if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 3000; npc.defense = 60; npc.damage = 70; npc.value = 4600; }
             npc.value = 3500;
             npc.noGravity = false;
             npc.HitSound = SoundID.NPCHit1;
@@ -907,16 +908,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.player.townNPCs > 1f) return 0f;
 
-            if (tsorcRevampWorld.SuperHardMode) return 0.03f;
+            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneJungle) return 0.02f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.05f;
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && NPC.downedBoss3) return chance = 0.02f;
 
             if (Main.expertMode && Main.bloodMoon && NPC.downedBoss3) return chance = 0.02f;
 
-            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.005f;
-            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.015f;
+            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.005f;
+            if (NPC.downedBoss3 && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.015f;
 
-            if (NPC.downedBoss3) return chance = 0.003f;
+            if (NPC.downedBoss3 && !spawnInfo.player.ZoneJungle) return chance = 0.003f;
 
             return chance;
         }

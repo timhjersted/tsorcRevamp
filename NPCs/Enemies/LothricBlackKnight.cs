@@ -45,7 +45,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.height = 44;
             npc.width = 20;
             npc.lifeMax = 1000;
-            if (Main.hardMode) { npc.lifeMax = 1500; npc.defense = 30; }
+            if (Main.hardMode) { npc.lifeMax = 1500; npc.defense = 30; npc.value = 10200; }
+            if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 3000; npc.defense = 55; npc.damage = 90; npc.value = 16000; }
             npc.value = 7200;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
@@ -923,11 +924,11 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (tsorcRevampWorld.SuperHardMode) return 0.003f;
+            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneJungle) return 0.002f;
 
             if (Main.expertMode && Main.hardMode && spawnInfo.player.ZoneDungeon) return chance = 0.002f;
 
-            if (NPC.downedBoss3) return chance = 0.00003f;
+            if (NPC.downedBoss3 && !spawnInfo.player.ZoneJungle) return chance = 0.00003f;
 
             return chance;
         }

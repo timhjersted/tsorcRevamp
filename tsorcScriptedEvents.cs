@@ -157,9 +157,10 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+            
             //FIRE LURKER PATH OF PAIN
-            ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3244, 1253), 10, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.ShadowbeamStaff, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
-            FireLurkerPain.SetCustomStats(1000, 12, 52);
+            ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.ShadowbeamStaff, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
+            FireLurkerPain.SetCustomStats(1600, 12, 52);
             FireLurkerPain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1555 });
 
             //RED KNIGHT IN PATH OF PAIN
@@ -168,7 +169,7 @@ namespace tsorcRevamp
             RedKnightPain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 3555 });
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
-            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightCustomAction);
+            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightMountainCustomAction);
             RedKnightTwinMountain.SetCustomStats(1500, 10, 60);
             RedKnightTwinMountain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 2555 });
 
@@ -223,7 +224,7 @@ namespace tsorcRevamp
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT IN FORGOTTEN CITY
-            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
+            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
             BlackKnightCity.SetCustomStats(1500, 10, 50);
             BlackKnightCity.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
 
@@ -549,7 +550,7 @@ namespace tsorcRevamp
                 //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
                 NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.modNPC;
 
-                ourFireLurker.bioSpitDamage = 23; 
+                ourFireLurker.bioSpitDamage = 13; //was 23
             }
             return true;
         }
@@ -574,7 +575,7 @@ namespace tsorcRevamp
         }
 
         //RED KNIGHT MOUNTAIN CUSTOM ACTION
-        public static bool RedKnightCustomAction(Player player, ScriptedEvent thisEvent)
+        public static bool RedKnightMountainCustomAction(Player player, ScriptedEvent thisEvent)
         {
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.

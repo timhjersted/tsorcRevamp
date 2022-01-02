@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
 			bool can_teleport = false;  //  tp around like chaos ele
 			int boredom_time = 1; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
-			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
+			int boredom_cooldown = 5 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
 			float acceleration = .11f;  //  how fast it can speed up
 			float top_speed = 1.65f;  //  max walking speed, also affects jump length
