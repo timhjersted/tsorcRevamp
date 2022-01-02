@@ -70,6 +70,10 @@ namespace tsorcRevamp.NPCs.Enemies
 		int drownTimerMax = 1200;
 		int drownTimer = 1200;
 		int drowningRisk = 500;
+
+		int poisonStrikeTimer = 0;
+		int poisonStormTimer = 0;
+		
 		//Spawns in the Jungle Underground and in the Cavern.
 
 		#region Spawn
@@ -405,78 +409,94 @@ namespace tsorcRevamp.NPCs.Enemies
 				//	npc.alpha = 0;
 				//}
 
-				#region Projectiles
-				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (npc.ai[1] >= 10f)
+				#region Projectiles				
+				npc.TargetClosest(true);
+				poisonStrikeTimer++;
+				poisonStormTimer++;
+
+				if (Main.rand.Next(200) == 1)
 				{
-					npc.TargetClosest(true);
-					if (Main.rand.Next(200) == 1)
+					npc.alpha = 0;
+					npc.netUpdate = true;
+				}
+				if (Main.rand.Next(50) == 1)
+				{
+					npc.alpha = 210;
+					npc.netUpdate = true;
+				}
+				if (Main.rand.Next(250) == 1)
+				{
+					npc.ai[3] = 1;
+					npc.life += 5;
+					if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
+					npc.ai[1] = 1f;
+					npc.netUpdate = true;
+				}
+
+
+				if (poisonStrikeTimer >= 60)
+				{
+					Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+				}
+				if (poisonStormTimer >= 180)
+				{
+					UsefulFunctions.DustRing(npc.Center, 32, DustID.CursedTorch, 12, 4);
+					Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
+					npc.velocity = Vector2.Zero;
+				}
+
+				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+				{
+						
+					if (poisonStrikeTimer >= 120)
 					{
-						npc.alpha = 0;
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(50) == 1)
-					{
-						npc.alpha = 210;
-						npc.netUpdate = true;
-					}
-					if (Main.rand.Next(250) == 1)
-					{
-						npc.ai[3] = 1;
-						npc.life += 5;
-						if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-						npc.ai[1] = 1f;
-						npc.netUpdate = true;
-					}
-					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-					{
-						if (Main.rand.Next(30) == 1)
+						float num48 = 8f;
+						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						
+						float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+						num51 = num48 / num51;
+						speedX *= num51;
+						speedY *= num51;
+						int damage = 7;//(int) (14f * npc.scale);
+						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>();//44;//0x37; //14;
+						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
-							float num48 = 8f;
-							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-							{
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= num51;
-								speedY *= num51;
-								int damage = 7;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 200;
-								Main.projectile[num54].aiStyle = 23;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								npc.ai[1] = 1f;
-							}
-							npc.netUpdate = true;
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							Main.projectile[num54].timeLeft = 200;
+							Main.projectile[num54].aiStyle = 23;
 						}
-						if (Main.rand.Next(120) == 1)
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						poisonStrikeTimer = 0;
+						
+					}
+					if (poisonStormTimer >= 240)
+					{
+						float num48 = 8f;
+						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+
+						float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+						num51 = num48 / num51;
+						speedX *= num51;
+						speedY *= num51;
+						int damage = 9;//(int) (14f * npc.scale);
+						int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();//44;//0x37; //14;
+						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
-							float num48 = 8f;
-							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-							{
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= num51;
-								speedY *= num51;
-								int damage = 9;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 0;
-								Main.projectile[num54].aiStyle = 23;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								npc.ai[1] = 1f;
-							}
-							npc.netUpdate = true;
+							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							Main.projectile[num54].timeLeft = 0;
+							Main.projectile[num54].aiStyle = 23;
 						}
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+
+						poisonStormTimer = 0;
+
 					}
 				}
-				#endregion
+			#endregion
 			}
 			#endregion
 			//-------------------------------------------------------------------
