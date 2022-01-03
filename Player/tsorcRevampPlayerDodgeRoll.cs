@@ -84,7 +84,7 @@ namespace tsorcRevamp {
 				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .7f);
 				}
 
 				// Stamina drain for boomerangs
@@ -123,13 +123,13 @@ namespace tsorcRevamp {
 				// Ranged
 				if (item.damage >= 1 && item.ranged && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .7f);
 				}
 
 				// Magic & Throwing
 				if (item.damage >= 1 && (item.magic || item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .7f);
 				}
 
 				// Summoner
@@ -141,7 +141,7 @@ namespace tsorcRevamp {
 				// Classless? Just in case? 
 				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 0.8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 0.7f);
 				}
 			}
 
@@ -183,7 +183,8 @@ namespace tsorcRevamp {
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
 			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface 
-				&& player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking) {
+				&& player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking
+				&& !player.HasBuff(BuffID.Frozen) && !player.HasBuff(ModContent.BuffType<Buffs.Hold>())) {
 				QueueDodgeroll(0.25f, (sbyte)KeyDirection(player));
 			}
 
