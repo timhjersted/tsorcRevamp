@@ -159,52 +159,50 @@ namespace tsorcRevamp
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
             
             //FIRE LURKER PATH OF PAIN
-            ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.ShadowbeamStaff, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
-            FireLurkerPain.SetCustomStats(1600, 12, 52);
-            FireLurkerPain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1555 });
+            ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
+            FireLurkerPain.SetCustomStats(1600, 12, 52, 1555);
+            FireLurkerPain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
 
             //RED KNIGHT IN PATH OF PAIN
-            ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightPainCustomAction);
-            RedKnightPain.SetCustomStats(2700, 10, 60);
-            RedKnightPain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 3555 });
+            ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightPainCustomAction);
+            RedKnightPain.SetCustomStats(2700, 10, 60, 3555);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
-            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.ShadowbeamStaff, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightMountainCustomAction);
-            RedKnightTwinMountain.SetCustomStats(1500, 10, 60);
-            RedKnightTwinMountain.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 2555 });
+            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightMountainCustomAction);
+            RedKnightTwinMountain.SetCustomStats(1500, 10, 60, 2555);
 
             //JUNGLE WYVERN
-            ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.Shadowflame, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
+            ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
 
             //SEATH THE SCALELESS
-            ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.ShadowbeamStaff, true, true, "Seath the Scaleless rises!", Color.Blue, false);
+            ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.FireworkFountain_Blue, true, true, "Seath the Scaleless rises!", Color.Blue, false);
 
             //WYVERN MAGE 
             ScriptedEvent WyvernMageEvent = new ScriptedEvent(new Vector2(7192, 364), 40, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), DustID.MagicMirror, true, true, "The Wyvern Mage has appeared to defend its fortress!", Color.Blue, false);
 
-            //GAIBON  
-            ScriptedEvent GaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, ModContent.NPCType<NPCs.Bosses.Gaibon>(), DustID.Shadowflame, true, true, "...", Color.Purple, false);
-
-            //SLOGRA
+            //SLOGRA and GAIBON
+            //This one works a little different from the others, because it's an event with two bosses that spawns them in an action instead of normally
+            //As such, it doesn't "save". Instead, it simply has a custom condition that returns "false" if the boss has truly been beaten. Without this, it would save after just running once...
             ScriptedEvent SlograAndGaibonEvent = new ScriptedEvent(new Vector2(6192, 1267), 30, default, DustID.Shadowflame, false, true, "Slogra and Gaibon have risen from the depths!", Color.Purple, false, SlograGaibonCondition, SlograAndGaibonCustomAction);
 
-            //SERRIS 
-            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.Shadowflame, true, true, "Serris has been enraged!", Color.Blue, false);
+            //SERRIS
+            //Like Slogra and Gaibon, this one works a little different due to spawning two bosses.
+            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.FireworkFountain_Blue, false, true, "The Twin Serris Worms have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction);
 
             //MARILITH 
-            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>(), DustID.Shadowflame, true, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>(), DustID.RedTorch, true, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
 
             //KRAKEN
             ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), DustID.MagicMirror, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
             
             //GWYN
-            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.Shadowflame, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
 
             //ABYSMAL OOLACILE SORCERER
             ScriptedEvent AbysmalOolacileSorcererEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>(), DustID.Shadowflame, true, true, "The Abysmal Oolacile Sorcerer shall now disembowel you...", Color.Red, false, SuperHardModeCustomCondition);
 
             //WITCHKING
-            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.RedTorch, true, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
             
             //BLIGHT
             ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, "The Blight surfaces from the ocean!", Color.Blue, false, SuperHardModeCustomCondition);
@@ -225,8 +223,7 @@ namespace tsorcRevamp
 
             //BLACK KNIGHT IN FORGOTTEN CITY
             ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, "A Black Knight is hunting you...", Color.Purple, true, default, BlackKnightCustomAction);
-            BlackKnightCity.SetCustomStats(1500, 10, 50);
-            BlackKnightCity.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 555 });
+            BlackKnightCity.SetCustomStats(1500, 10, 50, 555);
 
             //ATTRAIDIES THE SORROW EVENT
             ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, "[c/D3D3D3:Attraidies:] \"See if you can handle this.\"", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
@@ -310,8 +307,6 @@ namespace tsorcRevamp
             LothricAmbush2.SetCustomStats(null, null, 70); // Lower damage than normal
             //LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
 
-
-
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
@@ -352,11 +347,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.LothricAmbush1, LothricAmbush1},
                 {ScriptedEventType.LothricAmbush2, LothricAmbush2},
 
-
-
-
                 //{ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush} currently disabled
-
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -364,7 +355,6 @@ namespace tsorcRevamp
             {
                 ScriptedEventValues.Add(currentEvent, false);
             }
-
 
             //Add everything to InactiveEvents to start fresh.
             //If the player is NOT loading a fresh world, then this will get wiped later and re-loaded with only the appropriate events.
@@ -461,6 +451,19 @@ namespace tsorcRevamp
             }
             return true;
         }
+
+        public static bool SerrisCustomCondition()
+        {
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static bool AttraidiesTheSorrowCondition()
         {
             if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
@@ -476,8 +479,6 @@ namespace tsorcRevamp
         #endregion
 
         #region customactions
-
-
         //You can make custom actions like this, and pass them as arguments to the event!
         public static bool ExampleCustomAction(Player player, ScriptedEvent thisEvent)
         {
@@ -485,6 +486,7 @@ namespace tsorcRevamp
             if (thisEvent.eventTimer > 900)
             {
                 Main.NewText("The example scripted event ends...", Color.Green);
+                thisEvent.endEvent = true;
                 return true;
             }
             return false;
@@ -543,11 +545,8 @@ namespace tsorcRevamp
         //FIRE LURKER PAIN CUSTOM ACTION
         public static bool FireLurkerPainCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            //Changing projectile damage:
-            //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.FireLurker>())
             {
-                //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
                 NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.modNPC;
 
                 ourFireLurker.bioSpitDamage = 13; //was 23
@@ -558,17 +557,9 @@ namespace tsorcRevamp
         //RED KNIGHT PAIN CUSTOM ACTION
         public static bool RedKnightPainCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            //Changing projectile damage:
-            //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
-                //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;
-
-                //Now we can change the damages!!
-                //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
-                //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
-                //Then you'll be able to access them from here and set them to anything!
+                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
                 ourRedKnightPain.redKnightsSpearDamage = 17;
             }
             return true;
@@ -577,17 +568,9 @@ namespace tsorcRevamp
         //RED KNIGHT MOUNTAIN CUSTOM ACTION
         public static bool RedKnightMountainCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            //Changing projectile damage:
-            //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
-                //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;
-
-                //Now we can change the damages!!
-                //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
-                //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
-                //Then you'll be able to access them from here and set them to anything!
+                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
                 ourRedKnight.redKnightsSpearDamage = 15;
             }
             return true;
@@ -597,6 +580,7 @@ namespace tsorcRevamp
         //... is what it SHOULD do?
         public static bool TinkererAction(Player player, ScriptedEvent thisEvent) {
             NPC.NewNPC(4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
+            thisEvent.endEvent = true;
             return true;
         }
 
@@ -611,8 +595,16 @@ namespace tsorcRevamp
         //Slogra And Gaibon Action
         public static bool SlograAndGaibonCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC((int)player.Center.X + 100, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Slogra>());
-            NPC.NewNPC((int)player.Center.X - 100, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+            NPC.NewNPC((int)player.Center.X + 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Slogra>());
+            NPC.NewNPC((int)player.Center.X - 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+            thisEvent.endEvent = true;
+            return true;
+        }
+        public static bool SerrisCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            NPC.NewNPC((int)player.Center.X, (int)player.Center.Y + 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
+            NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
+            thisEvent.endEvent = true;
             return true;
         }
 
@@ -643,6 +635,7 @@ namespace tsorcRevamp
         public static bool BoulderfallEvent1Action(Player player, ScriptedEvent thisEvent)
         {
             Projectile.NewProjectile(new Vector2(4401 * 16, 895 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+            thisEvent.endEvent = true;
             return true;
         }
 
@@ -673,6 +666,7 @@ namespace tsorcRevamp
             if (thisEvent.eventTimer == rand2)
             {
                 Projectile.NewProjectile(new Vector2(3523 * 16, 409 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropLeft>(), 70, 1);
+                thisEvent.endEvent = true;
                 return true;
             }
             return false;
@@ -683,6 +677,7 @@ namespace tsorcRevamp
         public static bool BoulderfallEvent3Action(Player player, ScriptedEvent thisEvent)
         {
             Projectile.NewProjectile(new Vector2(3639 * 16, 349 * 16), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.BoulderDropRight>(), 70, 1);
+            thisEvent.endEvent = true;
             return true;
         }
 
@@ -928,7 +923,6 @@ namespace tsorcRevamp
                 {
                     for (int i = 0; i < NetworkEvents.Count; i++)
                     {
-
                         float distance = Vector2.DistanceSquared(player.position, NetworkEvents[i].centerpoint);
                         int dustPerTick = 20;
                         float speed = 2f;
@@ -1074,18 +1068,20 @@ namespace tsorcRevamp
         public List<Vector2> NPCCoordinates;
         //A list pointing to the actual active NPC's that it has spawned
         public List<NPC> spawnedNPCs = new List<NPC>();
-        //Stores which NPC's have dropped their extra loot
-        public List<bool> NPCDroppedLoot = new List<bool>();
+        //Stores which NPC's have been killed if in list mode
+        public List<bool> deadNPCs = new List<bool>();
 
         //Does it have extra loot? If so, what items and how many of them should it drop?
-        bool hasCustomDrops = false;
-        List<int> CustomDrops;
-        List<int> DropAmounts;
+        public bool hasCustomDrops = false;
+        public List<int> CustomDrops;
+        public List<int> DropAmounts;
 
         //ID of the NPC to be spawned
         public readonly int npcToSpawn;
         //The ID of the NPC that the event has spawned
         public NPC spawnedNPC = null;
+        //Has the npc been killed? This gets set true in NPCLoot upon the NPC getting killed by the player
+        public bool npcDead = false;
         //The text an event should display
         public readonly string eventText;
         //The color it should display it in
@@ -1097,7 +1093,7 @@ namespace tsorcRevamp
         //Controls whether the event's range is made visible to the player with dust
         public bool visible;
 
-        //Has the event's CustomAction returned true, meaning the event should now end?
+        //If a custom action sets this to true, the event ends.
         public bool endEvent = false;
 
         //ScriptedEvents have two modes: Checking if the player is within range of one specific point, or if they're in a region between two points
@@ -1112,16 +1108,17 @@ namespace tsorcRevamp
 
         //Does it have a custom action? If so, what?
         public bool hasCustomAction = false;
+        public bool finishedCustomAction = false;
         public Func<Player, ScriptedEvent, bool> CustomAction = null;
+
+        //Generic multipurpose timer that custom actions can use to time things
         public int eventTimer = 0;
 
-        bool healthChange = false;
-        public int newMaxLife;
-        bool defChange = false;
-        public int newDefense;
-        bool damageChange = false;
-        public int newDamage;
-
+        //If npcs have custom stats, they get stored here
+        public int? newMaxLife;
+        public int? newDefense;
+        public int? newDamage;
+        public int? newSouls;
 
         public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int dustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null)
         {
@@ -1158,6 +1155,7 @@ namespace tsorcRevamp
                 CustomAction = customAction;
             }
         }
+
         public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs, List<Vector2> coords, int dustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null)
         {
             rangeDetectionMode = true;
@@ -1189,23 +1187,23 @@ namespace tsorcRevamp
             }
         }
 
-
-        public void SetCustomStats(int? health = null, int? defense = null, int? damage = null)
+        public void SetCustomStats(int? health = null, int? defense = null, int? damage = null, int? souls = null)
         {
             if (health != null)
             {
-                healthChange = true;
-                newMaxLife = health.GetValueOrDefault();
+                newMaxLife = health;
             }
             if (defense != null)
             {
-                defChange = true;
-                newDefense = defense.GetValueOrDefault();
+                newDefense = defense;
             }
             if (damage != null)
             {
-                damageChange = true;
-                newDamage = damage.GetValueOrDefault();
+                newDamage = damage;
+            }
+            if(souls != null)
+            {
+                newSouls = souls;
             }
         }
 
@@ -1219,7 +1217,6 @@ namespace tsorcRevamp
         //Runs the event
         public void RunEvent(Player player)
         {
-
             //If this is its first time running, spawn the NPC's and display the text
             if (eventTimer == 0)
             {
@@ -1240,71 +1237,64 @@ namespace tsorcRevamp
                 }
             }
 
-            //If it has a custom action, then run it. End the event if it returns true.
-            if (hasCustomAction)
-            {               
+            //If it has a custom action, then run it. If it returns true, mark it as finished and do not run it again.
+            if (hasCustomAction && !finishedCustomAction)
+            {
                 if(CustomAction(player, this))
                 {
-                    EndEvent();
+                    finishedCustomAction = true;
                 }
             }
+            
+            //Updates timer *after* running actions
+            eventTimer++;
 
+            bool playerAlive = false;
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 //If any player is alive, do nothing
-                if (Main.player[i].active)
+                if (Main.player[i].active && !Main.player[i].dead)
                 {
-                    break;
+                    playerAlive = true;
                 }
                 //If we reach the end without hitting one, end the event.
-                if (i - 1 == Main.maxPlayers)
+                if (!playerAlive)
                 {
-                    EndEvent();
+                    EndEvent(false);
+                    break;
                 }
             }
 
-            eventTimer++;
-
-            
-            //If the NPC is dead, remove it from active events
-            //If it's a boss, confirmed the player actually killed it by checking Slain (as opposed to dying to it or letting it despawn other ways)
-            //If so, and this is marked as "save", then do so by getting the key for this event and marking it as finished in ScriptedEventValues
+            //If the NPC is dead or if the custom action set endEvent to true, remove it from active events
+            //If so, and this is marked as an event that should be saved, then do so by getting the key for this event and marking it as finished in ScriptedEventValues
             //Otherwise add it back to InactiveEvents
             if (!useListSpawns)
             {
-                if (spawnedNPC != null && !spawnedNPC.active)
+                if (npcDead)
                 {
-                    EndEvent();
+                    endEvent = true;
                 }
             }
             else
             {
                 bool oneAlive = false;
-                for (int i = 0; i < spawnedNPCs.Count; i++)
+                for (int i = 0; i < deadNPCs.Count; i++)
                 {
-
-                    if (spawnedNPCs[i].active)
+                    if (deadNPCs[i] == false)
                     {
                         oneAlive = true;
-                    }
-                    else
-                    {
-                        if (hasCustomDrops && !NPCDroppedLoot[i])
-                        {
-                            NPCDroppedLoot[i] = true;
-                            for (int j = 0; j < CustomDrops.Count; j++)
-                            {
-                                Item.NewItem(spawnedNPCs[i].getRect(), CustomDrops[j], DropAmounts[j]);
-                            }
-                        }                            
                     }
                 }
                 if (!oneAlive)
                 {
-                    EndEvent();
+                    endEvent = true;
                 }
             }
-            
+
+            if (endEvent)
+            {
+                EndEvent(true);
+            }            
         }
 
         public void SpawnNPC()
@@ -1314,19 +1304,30 @@ namespace tsorcRevamp
                 for (int i = 0; i < NPCIDs.Count; i++)
                 {
                     spawnedNPCs.Add(Main.npc[NPC.NewNPC((int)NPCCoordinates[i].X * 16, (int)NPCCoordinates[i].Y * 16, NPCIDs[i])]);
-                    NPCDroppedLoot.Add(false);
-                    if (healthChange)
+                    deadNPCs.Add(false);
+                    if (newMaxLife != null)
                     {
-                        spawnedNPCs[i].lifeMax = newMaxLife;
-                        spawnedNPCs[i].life = newMaxLife;
+                        spawnedNPCs[i].lifeMax = newMaxLife.Value;
+                        spawnedNPCs[i].life = newMaxLife.Value;
                     }
-                    if (defChange)
+                    if (newDefense != null)
                     {
-                        spawnedNPCs[i].defense = newDefense;
+                        spawnedNPCs[i].defense = newDefense.Value;
                     }
-                    if (damageChange)
+                    if (newDamage != null)
                     {
-                        spawnedNPCs[i].damage = newDamage;
+                        spawnedNPCs[i].damage = newDamage.Value;
+                    }
+                    if(newSouls != null)
+                    {
+                        if (Main.expertMode)
+                        {
+                            spawnedNPCs[i].value = newSouls.Value * 25;
+                        }
+                        else
+                        {
+                            spawnedNPCs[i].value = newSouls.Value * 10;
+                        }
                     }
 
                     if (Main.netMode == NetmodeID.Server)
@@ -1338,20 +1339,30 @@ namespace tsorcRevamp
             else
             {
                 spawnedNPC = Main.npc[NPC.NewNPC((int)centerpoint.X, (int)centerpoint.Y, npcToSpawn)];
-                if (healthChange)
+                if (newMaxLife != null)
                 {
-                    spawnedNPC.lifeMax = newMaxLife;
-                    spawnedNPC.life = newMaxLife;
+                    spawnedNPC.lifeMax = newMaxLife.Value;
+                    spawnedNPC.life = newMaxLife.Value;
                 }
-                if (defChange)
+                if (newDefense != null)
                 {
-                    spawnedNPC.defense = newDefense;
+                    spawnedNPC.defense = newDefense.Value;
                 }
-                if (damageChange)
+                if (newDamage != null)
                 {
-                    spawnedNPC.damage = newDamage;
+                    spawnedNPC.damage = newDamage.Value;
                 }
-
+                if (newSouls != null)
+                {
+                    if (Main.expertMode)
+                    {
+                        spawnedNPC.value = newSouls.Value * 25;
+                    }
+                    else
+                    {
+                        spawnedNPC.value = newSouls.Value * 10;
+                    }
+                }
                 if (Main.netMode == NetmodeID.Server)
                 {
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawnedNPC.whoAmI, 0f, 0f, 0f, 0);
@@ -1359,26 +1370,55 @@ namespace tsorcRevamp
             }
         }
 
-        public void EndEvent()
+        public void EndEvent(bool eventCompleted)
         {
-            if (save && (tsorcRevampWorld.Slain.ContainsKey(npcToSpawn) || noNPCEvent))
-            {
+            //Save the event if it's marked as a saved event and it is 'completed' (either by a customaction forcibly ending it, or by all the NPC's being killed)
+            if (eventCompleted && save) {
                 foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
                 {
                     if (pair.Value == this)
                     {
                         tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
                     }
-                }
+                }                
             }
+            //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to DisabledEvents to be re-initialized once the player respawns
             else
             {
                 tsorcScriptedEvents.DisabledEvents.Add(this);
+                if(spawnedNPC != null)
+                {
+                    if (spawnedNPC.active)
+                    {
+                        spawnedNPC.active = false;
+                        for (int i = 0; i < 60; i++)
+                        {
+                            Dust.NewDustDirect(spawnedNPC.position, spawnedNPC.width, spawnedNPC.height, dustID, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f).noGravity = true;
+                        }
+                    }
+                }
+                if(spawnedNPCs.Count > 0)
+                {
+                    foreach(NPC thisNPC in spawnedNPCs)
+                    {
+                        if (thisNPC.active)
+                        {
+                            thisNPC.active = false;
+                            for (int i = 0; i < 60; i++)
+                            {
+                                Dust.NewDustDirect(thisNPC.position, thisNPC.width, thisNPC.height, dustID, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f).noGravity = true;
+                            }
+                        }
+                    }
+                }
             }
+
             tsorcScriptedEvents.ActiveEvents.Remove(this);
             eventTimer = 0;
-            NPCDroppedLoot = new List<bool>();
+            deadNPCs = new List<bool>();
             spawnedNPCs = new List<NPC>();
+            finishedCustomAction = false;
+            endEvent = false;
         }
 
         public static bool DefaultCondition()

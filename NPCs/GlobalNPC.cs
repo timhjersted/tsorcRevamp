@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs
                                 Main.StartInvasion();
                             }
                         }
-
+                                                
                         tsorcRevampWorld.Slain.Add(npc.type, 0);
                         
                         if (Main.netMode == NetmodeID.Server)
@@ -253,6 +253,42 @@ namespace tsorcRevamp.NPCs
             }
             #endregion
 
+
+            #region Event saving and custom drops code
+            if(tsorcScriptedEvents.ActiveEvents != null && tsorcScriptedEvents.ActiveEvents.Count > 0) {
+                foreach (ScriptedEvent thisEvent in tsorcScriptedEvents.ActiveEvents)
+                {
+                    if (thisEvent.spawnedNPC != null && thisEvent.spawnedNPC.active && thisEvent.spawnedNPC.whoAmI == npc.whoAmI)
+                    {
+                        thisEvent.npcDead = true;
+                        if (thisEvent.CustomDrops != null && thisEvent.CustomDrops.Count > 0)
+                        {
+                            for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
+                            {
+                                Item.NewItem(npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                            }
+                        }
+                    }
+                    if (thisEvent.spawnedNPCs != null && thisEvent.spawnedNPCs.Count > 0)
+                    {
+                        for (int i = 0; i < thisEvent.spawnedNPCs.Count; i++)
+                        {
+                            if (thisEvent.spawnedNPCs[i].active && thisEvent.spawnedNPCs[i].whoAmI == npc.whoAmI)
+                            {
+                                thisEvent.deadNPCs[i] = true;
+                                if (thisEvent.CustomDrops != null && thisEvent.CustomDrops.Count > 0)
+                                {
+                                    for(int j = 0; j < thisEvent.CustomDrops.Count; j++)
+                                    {
+                                        Item.NewItem(npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
