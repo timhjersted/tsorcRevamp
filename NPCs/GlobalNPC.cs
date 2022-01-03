@@ -278,9 +278,31 @@ namespace tsorcRevamp.NPCs
                                 thisEvent.deadNPCs[i] = true;
                                 if (thisEvent.CustomDrops != null && thisEvent.CustomDrops.Count > 0)
                                 {
-                                    for(int j = 0; j < thisEvent.CustomDrops.Count; j++)
+                                    if (!thisEvent.onlyLastEnemy)
                                     {
-                                        Item.NewItem(npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                        for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
+                                        {
+                                            Item.NewItem(npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bool oneAlive = false;
+                                        foreach(bool thisBool in thisEvent.deadNPCs)
+                                        {
+                                            if(thisBool == false)
+                                            {
+                                                oneAlive = true;
+                                            }
+                                        }
+
+                                        if (!oneAlive)
+                                        {
+                                            for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
+                                            {
+                                                Item.NewItem(npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -1746,7 +1768,7 @@ namespace tsorcRevamp.NPCs
         ///<param name="npcID">The ID of the NPC in question.</param>
         public bool TargetAndDespawn(int npcID)
         {
-            
+
             //When despawning, we set timeLeft to 240. If that's been done, we don't need to check for players or target anyone anymore.
             if (despawnTime < 0)
             {
@@ -1838,6 +1860,223 @@ namespace tsorcRevamp.NPCs
                 }
             }
             return false;
+        }
+
+        //Originally used modified fighter/archer AI by GrtAndPwrflTrtl as a base (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
+        public void FighterAI(NPC npc, float top_speed = 1f, float acceleration = .07f, float braking_power = .2f, bool can_pass_doors = false, bool can_teleport = false, bool hates_light = false, int sound_type = 0, int sound_frequency = 1000, float enrage_percentage = 0, bool hops = false)
+        {
+            float door_break_pow = 10;
+            
+
+
+            BaseAI(npc);
+        }
+
+        public void ArcherAI(NPC npc, int projectile_type, int projectile_damage, int projectile_velocity, int shot_rate, float top_speed = 1f, float acceleration = .07f, float braking_power = .2f,  bool can_pass_doors = false, bool can_teleport = false, bool hates_light = false, int sound_type = 0, int sound_frequency = 1000, float enrage_percentage = 0)
+        {
+            BaseAI(npc, top_speed, acceleration, braking_power, can_pass_doors, can_teleport, hates_light, sound_type, sound_frequency);
+
+            //First half is firing time, second half is cooldown. So we just double it to simplify.
+            shot_rate *= 2;
+
+            if (npc.confused)
+            {
+                npc.ai[2] = 0f; // won't try to stop & aim if confused
+            }
+            else
+            {
+                if (npc.ai[1] > 0f)
+                    npc.ai[1] -= 1f; // decrement fire & reload counter
+
+                if (npc.justHit || npc.velocity.Y != 0f || npc.ai[1] <= 0f) // was just hit?
+                {
+                    npc.ai[1] = shot_rate; //Reset firing time
+                    npc.ai[2] = 0f; //Not aiming
+                }
+
+                //Target the closest player and check if they're in range
+                npc.TargetClosest(true);
+                if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f)
+                {
+                    //If it's not aiming yet, then slow down, aim, and start its cooldown
+                    if (npc.ai[2] == 0)
+                    {
+                        //Aim at them, and start the shot cooldown
+                        npc.velocity.X = npc.velocity.X * 0.5f;
+                        npc.ai[2] = 3f;
+                        npc.ai[1] = shot_rate;
+                    }
+
+                    npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
+                    npc.spriteDirection = npc.direction; // match animation to facing
+
+                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, projectile_velocity);
+                    projVelocity.Y -= projVelocity.X * 0.1f; //Overshoot to compensate for gravity
+                    //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
+                    if (npc.ai[1] == (shot_rate / 2))
+                    {
+                        projVelocity += Main.rand.NextVector2Circular(4, 4); //Add randomness
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVelocity.X, projVelocity.Y, projectile_type, projectile_damage, 0f, Main.myPlayer);
+                        }
+                    }
+
+                    if (Math.Abs(projVelocity.Y) > Math.Abs(projVelocity.X) * 2f) // target steeply above/below NPC
+                    {
+                        if (projVelocity.Y > 0f)
+                            npc.ai[2] = 1f; // aim downward
+                        else
+                            npc.ai[2] = 5f; // aim upward
+                    }
+                    else if (Math.Abs(projVelocity.X) > Math.Abs(projVelocity.Y) * 2f) // target on level with NPC
+                        npc.ai[2] = 3f;  //  aim straight ahead
+                    else if (projVelocity.Y > 0f) // target is below NPC
+                        npc.ai[2] = 2f;  //  aim slight downward
+                    else // target is not below NPC
+                        npc.ai[2] = 4f;  //  aim slight upward                    
+                }
+                //If not, don't aim at them
+                else
+                {
+                    npc.ai[2] = 0;
+                }
+            }
+        }
+
+        public void BaseAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float braking_power = .2f, bool can_pass_doors = false, bool can_teleport = false, bool hates_light = false, int sound_type = 0, int sound_frequency = 1000, float enrage_percentage = 0, bool lavaJumping = false)
+        {
+            bool bored = false;
+            int boredom_time = 60;
+            int boredomCooldown = boredom_time * 10;
+
+            float hop_velocity = 1f; // forward velocity needed to initiate hopping; usually 1
+            float hop_range_x = 100; // less than this is 'close to target'; usually 100
+            float hop_range_y = hop_range_x / 2; // less than this is 'close to target'; usually 50
+            float hop_power = 4; // how hard/high offensive hops are; usually 4
+            float hop_speed = 3; // how fast hops can accelerate vertically; usually 3 (2xSpd is 4 for Hvy Skel & Werewolf so they're noticably capped)
+           
+
+            if (npc.life < (float)npc.lifeMax * enrage_percentage)
+            {
+                acceleration *= 2;
+                topSpeed *= 2;
+            }
+
+            BasicMovement(npc, topSpeed, acceleration);
+
+            if (can_teleport)
+            {
+                TeleportEffects(npc);
+            }
+            //if (forceJumpGaps)
+            {
+                JumpGaps(npc);
+            }
+            if (lavaJumping)
+            {
+                LavaJumping(npc);
+            }
+        }
+
+        private void BasicMovement(NPC npc, float topSpeed, float acceleration)
+        {
+            //Jump if stuck
+            if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
+            {
+                npc.velocity.Y -= 8f;
+                npc.velocity.X -= 2f;
+            }
+            else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
+            {
+                npc.velocity.Y -= 8f;
+                npc.velocity.X += 2f;
+            }
+
+            //If more than max speed then slow down
+            if (npc.velocity.X < -topSpeed || npc.velocity.X > topSpeed)
+            {
+                if (npc.velocity.Y == 0f)
+                {
+                    npc.velocity *= 0.8f;
+                }
+            }
+            //Otherwise, accelerate
+            else
+            {
+                if (npc.velocity.X < topSpeed && npc.direction == 1)
+                {
+                    npc.velocity.X = npc.velocity.X + acceleration;
+                    if (npc.velocity.X > topSpeed)
+                    {
+                        npc.velocity.X = topSpeed;
+                    }
+                }
+                else
+                {
+                    if (npc.velocity.X > -topSpeed && npc.direction == -1)
+                    {
+                        npc.velocity.X = npc.velocity.X - acceleration;
+                        if (npc.velocity.X < -topSpeed)
+                        {
+                            npc.velocity.X = -topSpeed;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void TeleportEffects(NPC npc)
+        {
+            if (npc.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
+            {
+                npc.velocity *= 0f; // stop moving
+                npc.ai[3] = 0f; // reset boredom to 0
+                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+                Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
+                float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
+                float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
+                float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
+                num8 = 2f / num8; // to normalize to 2 unit long vector
+                num6 *= num8; // direction to where it was 3 frames ago, vector normalized
+                num7 *= num8; // direction to where it was 3 frames ago, vector normalized
+                for (int j = 0; j < 20; j++) // make 20 dusts at current position
+                {
+                    int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
+                    Main.dust[num9].noGravity = true; // floating
+                    Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
+                    expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
+                }
+                for (int k = 0; k < 20; k++) // more dust effects at old position
+                {
+                    int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
+                    Main.dust[num10].noGravity = true;
+                    Dust expr_1A6F_cp_0 = Main.dust[num10];
+                    expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
+                }
+            }
+        }
+
+        private void JumpGaps(NPC npc)
+        {
+            if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
+            {
+                npc.velocity.Y -= 8f;
+                npc.velocity.X -= 2f;
+            }
+            else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
+            {
+                npc.velocity.Y -= 8f;
+                npc.velocity.X += 2f;
+            }            
+        }
+
+        private void LavaJumping(NPC npc)
+        {
+            if (npc.lavaWet)
+            {
+                npc.velocity.Y -= 2;
+            }
         }
     }
 }

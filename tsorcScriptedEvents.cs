@@ -1075,6 +1075,7 @@ namespace tsorcRevamp
         public bool hasCustomDrops = false;
         public List<int> CustomDrops;
         public List<int> DropAmounts;
+        public bool onlyLastEnemy = false;
 
         //ID of the NPC to be spawned
         public readonly int npcToSpawn;
@@ -1207,11 +1208,12 @@ namespace tsorcRevamp
             }
         }
 
-        public void SetCustomDrops(List<int> dropIDs, List<int> dropStackSizes)
+        public void SetCustomDrops(List<int> dropIDs, List<int> dropStackSizes, bool onlyFinalEnemy = false)
         {
             CustomDrops = dropIDs;
             DropAmounts = dropStackSizes;
             hasCustomDrops = true;
+            onlyLastEnemy = onlyFinalEnemy;
         }
 
         //Runs the event
