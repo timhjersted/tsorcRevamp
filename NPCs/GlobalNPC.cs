@@ -63,6 +63,35 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Clear(); //stop NPC spawns in The End 
             }
+
+            //VANILLA NPC SPAWN EDITS
+            if (spawnInfo.player.ZoneCorrupt)
+            {
+                //pool.Add(the type of the npc, what chance you want it to spawn with);
+                pool.Add(NPCID.LostGirl, 2f);
+            }
+
+            if (spawnInfo.player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.DD2LightningBugT3, 6f);
+            }
+
+            if (spawnInfo.marble)
+            {
+                //pool.Add(NPCID.DD2LightningBugT3, 4f);
+                //pool.Add(NPCID.LostGirl, 1f);
+                //pool.Add(NPCID.SolarCorite, 0.5f);
+            }
+
+            if (spawnInfo.player.ZoneUnderworldHeight)
+            {
+                pool.Add(NPCID.SolarSpearman, 4f);
+                pool.Add(NPCID.SolarCrawltipedeHead, 4f);
+                pool.Add(NPCID.SolarDrakomire, 4f);
+                pool.Add(NPCID.SolarSroller, 4f);
+                pool.Add(NPCID.SolarCorite, 4f);
+                pool.Add(NPCID.SolarSolenian, 4f);
+            }
         }
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)

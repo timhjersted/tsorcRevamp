@@ -167,6 +167,17 @@ namespace tsorcRevamp.NPCs {
                         break;
                     }
 
+                case (NPCID.DD2LightningBugT3):
+                    {
+                        npc.lifeMax = 500;
+                        npc.damage = 99; //was 329 damage at 166?
+                        npc.value = 2500;
+                        npc.defense = 35;
+                        npc.knockBackResist = 0.36f;
+                        //int witheringBolts ??
+                        break;
+                    }
+                    
                 case (NPCID.Demon): {
                         npc.lifeMax = 140;
                         npc.value = 630;
@@ -534,6 +545,60 @@ namespace tsorcRevamp.NPCs {
                         break;
                     }
 
+                case (NPCID.SolarSpearman):
+                    {
+                        npc.value = 3000;
+                        //npc.damage = 34;
+                        npc.buffImmune[BuffID.OnFire] = true;
+                        npc.lavaImmune = true;
+                        break;
+                    }
+
+                case (NPCID.SolarCrawltipedeHead):
+                    {
+                        npc.value = 10000;
+                        //npc.damage = 34;
+                        npc.buffImmune[BuffID.OnFire] = true;
+                        npc.lavaImmune = true;
+                        break;
+                    }
+
+                case (NPCID.SolarDrakomire):
+                    {
+                        npc.value = 3000;
+                        //npc.damage = 34;
+                        npc.buffImmune[BuffID.OnFire] = true;
+                        npc.lavaImmune = true;
+                        break;
+                    }
+
+                case (NPCID.SolarSroller):
+                    {
+                        npc.value = 2000;
+                        //npc.damage = 34;
+                        npc.buffImmune[BuffID.OnFire] = true;
+                        npc.lavaImmune = true;
+                        break;
+                    }
+
+                case (NPCID.SolarCorite):
+                    {
+                        npc.value = 1000;
+                        //npc.damage = 34;
+                        npc.buffImmune[BuffID.OnFire] = true;
+                        npc.lavaImmune = true;
+                        break;
+                    }
+
+                case (NPCID.SolarSolenian):
+                    {
+                        npc.value = 3000;
+                        //npc.damage = 34;
+                        npc.buffImmune[BuffID.OnFire] = true;
+                        npc.lavaImmune = true;
+                        break;
+                    }
+
                 case (NPCID.Spazmatism): {
                         npc.lifeMax = 25000;
                         npc.value = 120000;
@@ -545,6 +610,7 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.SpikeBall): {
                         npc.scale = 1.5f;
                         npc.damage = 70;
+                    
                         break;
                     }
 
@@ -599,7 +665,7 @@ namespace tsorcRevamp.NPCs {
                         npc.damage = 100;
                         npc.lifeMax = 500;
                         npc.defense = 18;
-                        npc.scale = 1.2f;
+                        npc.scale = 1f;
                         npc.knockBackResist = 0.2f;
                         break;
                     }
@@ -778,14 +844,62 @@ namespace tsorcRevamp.NPCs {
         }
 
         public override void AI(NPC npc) {
-            if (npc.type == NPCID.BigRainZombie
-                || npc.type == NPCID.ZombieRaincoat
+               if (npc.type == NPCID.BigRainZombie
                 || npc.type == NPCID.SmallRainZombie
+                || npc.type == NPCID.ZombieRaincoat
                 || npc.type == NPCID.Clown
-                || npc.type == NPCID.UmbrellaSlime) {
-
+                || npc.type == NPCID.UmbrellaSlime //NEW ADDITIONS
+                || npc.type == NPCID.BigHeadacheSkeleton
+                || npc.type == NPCID.SmallHeadacheSkeleton
+                || npc.type == NPCID.BigSlimedZombie
+                || npc.type == NPCID.RedSlime
+                || npc.type == NPCID.GreenSlime
+                || npc.type == NPCID.TheGroom
+                || npc.type == NPCID.Unicorn
+                || npc.type == NPCID.SantaClaus
+                || npc.type == NPCID.SnowmanGangsta
+                || npc.type == NPCID.MisterStabby
+                || npc.type == NPCID.SnowBalla
+                || npc.type == NPCID.ZombieEskimo
+                || npc.type == NPCID.PigronCorruption
+                || npc.type == NPCID.PigronHallow
+                || npc.type == NPCID.PigronCrimson
+                || npc.type == NPCID.FaceMonster
+                || npc.type == NPCID.SlimedZombie
+                || npc.type == NPCID.HeadacheSkeleton
+                || npc.type == NPCID.AngryNimbus
+                || npc.type == NPCID.FloatyGross
+                || npc.type == NPCID.SkeletonSniper
+                || npc.type == NPCID.TacticalSkeleton
+                || npc.type == NPCID.HoppinJack
+                || npc.type == NPCID.ZombieDoctor
+                || npc.type == NPCID.SkeletonTopHat
+                || npc.type == NPCID.SkeletonAstonaut
+                || npc.type == NPCID.ZombieSuperman
+                || npc.type == NPCID.ZombieXmas
+                || npc.type == NPCID.ZombieSweater
+                || npc.type == NPCID.SlimeRibbonWhite
+                || npc.type == NPCID.SlimeRibbonYellow
+                || npc.type == NPCID.SlimeRibbonGreen
+                || npc.type == NPCID.SlimeRibbonRed
+                || npc.type == NPCID.BunnyXmas
+                || npc.type == NPCID.ZombieElf
+                || npc.type == NPCID.ZombieElfBeard
+                || npc.type == NPCID.ZombieElfGirl
+                || npc.type == NPCID.ArmedZombieEskimo
+                || npc.type == NPCID.ArmedZombieSlimed
+                || npc.type == NPCID.BoneThrowingSkeleton2
+                || npc.type == NPCID.BoneThrowingSkeleton3
+                || npc.type == NPCID.Butcher
+                || npc.type == NPCID.BloodZombie
+                || npc.type == NPCID.TheBride
+                //|| npc.type == NPCID.WindyBalloon
+                || npc.type == NPCID.UmbrellaSlime)
+            
+            {
                 npc.active = false;
             }
+
             if ((npc.friendly) && (npc.townNPC == true)) { //town NPCs are immortal (why was i using a hp check?)
                 npc.dontTakeDamage = true;
                 npc.dontTakeDamageFromHostiles = true;
