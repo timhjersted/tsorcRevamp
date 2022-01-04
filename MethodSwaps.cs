@@ -50,7 +50,7 @@ namespace tsorcRevamp {
 
         private static void OldOnesArmyPatch(NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)
         {
-            if(Terraria.GameContent.Events.DD2Event.Ongoing)
+            if(!Terraria.GameContent.Events.DD2Event.Ongoing)
             {
                 searcher.TargetClosest(faceTarget);
             }
