@@ -50,7 +50,7 @@ namespace tsorcRevamp {
 
         private static void OldOnesArmyPatch(NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)
         {
-            if(Main.invasionType == 0)
+            if(Terraria.GameContent.Events.DD2Event.Ongoing)
             {
                 searcher.TargetClosest(faceTarget);
             }
@@ -64,7 +64,7 @@ namespace tsorcRevamp {
         {
             //Put extra things you want it to do before it runs its normal ai code here
             orig(self); //Run its normal ai
-            //Put extra things you want it to do once it is done with its normal ai here. Before or after usually doesn't matter unless you're trying to manipulate its ai somehow.
+            //Put extra things you want it to do once it is done with its normal ai here. Before vs after usually doesn't matter unless you're trying to manipulate its ai somehow.
         }
 
 
