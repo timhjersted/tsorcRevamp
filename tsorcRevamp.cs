@@ -1095,7 +1095,7 @@ namespace tsorcRevamp {
             }
 
 
-            TryCopyMap();
+           //TryCopyMap();
         }
 
         //Returns true if download successful
