@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs
 
 
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
-        {
+        {            
             if (tsorcRevampWorld.TheEnd)
             {
                 pool.Clear(); //stop NPC spawns in The End 
@@ -90,6 +90,12 @@ namespace tsorcRevamp.NPCs
                     spawnRate /= 2;
                     maxSpawns *= 3;
                 }
+            }
+
+            if(player.ZoneTowerSolar || player.ZoneTowerNebula || player.ZoneTowerStardust || player.ZoneTowerVortex)
+            {
+                spawnRate /= 2;
+                maxSpawns = (int)(maxSpawns * 1.5);
             }
         }
 

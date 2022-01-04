@@ -181,6 +181,23 @@ namespace tsorcRevamp
             {
                 player.statLifeMax -= 20;
             }
+
+            bool onePlayerAlive = false;
+            for(int i = 0; i < Main.maxPlayers; i++)
+            {
+                if(Main.player[i].active && !Main.player[i].dead)
+                {
+                    onePlayerAlive = true;
+                }
+            }
+
+            if (!onePlayerAlive)
+            {
+                NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+                NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+                NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+                NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+            }
         }
 
         public override void SetupStartInventory(IList<Item> items, bool mediumcoreDeath)

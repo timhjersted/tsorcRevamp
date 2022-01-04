@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #endregion
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
-        readonly int testAttack = -1;
+        readonly int testAttack = DarkCloudAttackID.DarkFlow;
         bool firstPhase = true;
         bool changingPhases = false;
 
@@ -695,7 +695,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         Vector2 shockwaveCounter = new Vector2(0, -5.2f);
         void DarkFlowMove()
         {
-            //At the start of the attack, teleport to the arena center, and make a list of every player within 2000 units (the attack's range)
+            //Nope lol
+            NukeGrapples();
+
+            //Make sure it stays still
+            npc.velocity = Vector2.Zero;
+
+            //At the start of the attack, teleport to the arena center, and make a list of every player within 5000 units (to avoid pulling players who are on the other end of the world)
             if (targetPlayers == null || AttackModeCounter == 0)
             {
                 TeleportToArenaCenter();
@@ -708,125 +714,83 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
             }
-            //Make sure it stays still
-            npc.velocity = Vector2.Zero;
-            //Draw some dust
-            DarkCloudParticleEffect(-10 * (AttackModeCounter / 300), 50);
 
-            NukeGrapples();
+            //The attack ramps up over 5 seconds. This helps it keep track of that and keep code clean
+            float strengthFactor = 1;
+            int damageRadius = 220;
+            if (AttackModeCounter < 300)
+            {
+                strengthFactor = (AttackModeCounter / 300);
+            }
 
+            //Draw some dusts
+            //"Black hole" effect dusts
+            for (int i = 0; i < 50; i++)
+            {
+                Vector2 dustPos = Main.rand.NextVector2CircularEdge(damageRadius * strengthFactor, damageRadius * strengthFactor);
+                Vector2 dustVel = new Vector2(15, 0).RotatedBy(dustPos.ToRotation() + MathHelper.Pi);
+                dustPos += npc.Center;
+
+                Dust.NewDustPerfect(dustPos, 109, dustVel, Scale: 2).noGravity = true;
+            }
+
+            //Dusts indicating the damage radius of the attack
+            for (int j = 0; j < 20; j++)
+            {
+                Vector2 dir = Main.rand.NextVector2CircularEdge(damageRadius * strengthFactor, damageRadius * strengthFactor);
+                Vector2 dustPos = npc.Center + dir;
+
+                Vector2 dustVel = new Vector2(2, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+                Dust.NewDustPerfect(dustPos, DustID.ShadowbeamStaff, dustVel, 200).noGravity = true;
+
+            }
+            
             //Spawn a ring of dust at the hard pull radius
             UsefulFunctions.DustRing(npc.Center, 1900, DustID.ShadowbeamStaff, 50);
 
-            //For the first 5 seconds of the attack, pull the player in with strength that increases over time
-            //After 5 seconds, do basically the same thing but with constant strength
-            if (AttackModeCounter < 300)
+            //The actual attack
+            //For each player in the list, check if they're outside past the attack's hard pull radius. If so, pull them back into it hard.
+            //Otherwise, pull them in normally
+            float distance;
+            foreach (Player p in targetPlayers)
             {
-                //Spawn dusts indicating the damage radius of the attack
-                for (int j = 0; j < 20; j++)
+                //Counter the shockwave effect. Sorry!
+                if (p.GetModPlayer<tsorcRevampPlayer>().Shockwave && p.controlDown)
                 {
-
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(220 * (AttackModeCounter / 300), 220 * (AttackModeCounter / 300));
-                    Vector2 dustPos = npc.Center + dir;
-
-                    Vector2 dustVel = new Vector2(2, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                    Dust dustID = Dust.NewDustPerfect(dustPos, DustID.ShadowbeamStaff, dustVel, 200);
-                    dustID.noGravity = true;
-
+                    p.velocity += shockwaveCounter;
                 }
-                //For each player in the list, check if they're out of the attack range. If so, pull them back into it hard.
-                //Otherwise, pull them in normally
-                float distance;
-                foreach (Player p in targetPlayers)
+                distance = Vector2.Distance(p.Center, npc.Center);
+                p.velocity += gravCounter;
+                if (distance < 1900)
                 {
-                    //Counter the shockwave effect. Sorry!
-                    if (p.GetModPlayer<tsorcRevampPlayer>().Shockwave && p.controlDown)
+                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(45));
+                }
+                else
+                {
+                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * 10 * strengthFactor);
+                }
+
+                //If they're within the dust ring in the center, then damage them rapidly. Calculate the damage such that it increases to counter player defense or damage reduction.
+                if (distance < damageRadius * strengthFactor)
+                {
+                    float damage = 99;
+                    damage /= (1 - p.endurance);
+                    if (Main.expertMode)
                     {
-                        p.velocity += shockwaveCounter;
-                    }
-                    distance = Vector2.Distance(p.Center, npc.Center);
-                    p.velocity += gravCounter;
-                    if (distance < 1900)
-                    {
-                        p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * (AttackModeCounter / 300)).RotatedBy(MathHelper.ToRadians(90));
+                        damage += (int)Math.Ceiling(p.statDefense * 0.75);
                     }
                     else
                     {
-                        p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * 10 * (AttackModeCounter / 300));
+                        damage += (int)Math.Ceiling(p.statDefense * 0.5);
                     }
-                    //If they're within the dust ring in the center, then damage them rapidly. Calculate the damage such that it increases to counter player defense or damage reduction.
-                    if (distance < 220 * (AttackModeCounter / 300))
-                    {
-                        float damage = 99;
-                        damage /= (1 - p.endurance);
-                        if (Main.expertMode)
-                        {
-                            damage += (int)Math.Ceiling(p.statDefense * 0.75);
-                        }
-                        else
-                        {
-                            damage += (int)Math.Ceiling(p.statDefense * 0.5);
-                        }
-                        //player.Hurt() lets you cause damage whenever and however you'd like
-                        //This lets us bypass the fact that all hitboxes are square, and simply cause damage if the player is within a the dust ring radius
-                        //https://en.wikipedia.org/wiki/Spaghettification
-                        p.immuneTime = 0;
-                        p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was spaghettified."), (int)damage, 1);
-                    }
+                    //player.Hurt() lets you cause damage whenever and however you'd like
+                    //This lets us bypass the fact that all hitboxes are square, and simply cause damage if the player is within a the dust ring radius
+                    //https://en.wikipedia.org/wiki/Spaghettification
+                    p.immuneTime = 0;
+                    p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was spaghettified."), (int)damage, 1);
                 }
-            }
-            //Else, do all the same stuff but ignore attackTimer and use a fixed strength instead.
-            //This probably could have been simplified to avoid writing it twice, but...
-            else
-            {
-                for (int j = 0; j < 20; j++)
-                {
-
-                    Vector2 dir = Main.rand.NextVector2CircularEdge(220, 220);
-                    Vector2 dustPos = npc.Center + dir;
-
-                    Vector2 dustVel = new Vector2(2, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                    Dust dustID = Dust.NewDustPerfect(dustPos, DustID.ShadowbeamStaff, dustVel, 200);
-                    dustID.noGravity = true;
-
-                }
-                DarkCloudParticleEffect(10 * (AttackModeCounter / 300), 50);
-                float distance;
-                foreach (Player p in targetPlayers)
-                {
-                    if (p.GetModPlayer<tsorcRevampPlayer>().Shockwave && p.controlDown)
-                    {
-                        p.velocity += shockwaveCounter;
-                    }
-                    distance = Vector2.Distance(p.Center, npc.Center);
-                    p.velocity += gravCounter;
-                    if (distance < 1900)
-                    {
-                        p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed).RotatedBy(MathHelper.ToRadians(90));
-                    }
-                    else
-                    {
-                        p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * 10);
-                    }
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed); 
-                    if (Vector2.Distance(p.Center, npc.Center) < 220)
-                    {
-                        float damage = 99;
-                        damage *= (1 - p.endurance);
-                        if (Main.expertMode)
-                        {
-                            damage += (int)Math.Ceiling(p.statDefense * 0.75f);
-                        }
-                        else
-                        {
-                            damage += (int)Math.Ceiling(p.statDefense * 0.5f);
-                        }
-
-                        p.immuneTime = 0;
-                        p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was spaghettified."), (int)damage, 1);
-                    }
-                }
-            }
+            }            
+            
             //At the end of the attack, change attacks and spawn a burst of dust
             if (AttackModeCounter >= 1200)
             {
