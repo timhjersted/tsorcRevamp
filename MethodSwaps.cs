@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Audio;
 using ReLogic.Utilities;
 using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using On.Terraria.Utilities;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -40,8 +41,32 @@ namespace tsorcRevamp {
             On.Terraria.Main.StartInvasion += BlockInvasions;
 
             //On.Terraria.NPC.AI_037_Destroyer += DestroyerAIRevamp;
+
+            On.Terraria.Utilities.NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
+
+
+            On.Terraria.NPC.AI_111_DD2LightningBug += LightningBugTeleport;
         }
-        
+
+        private static void OldOnesArmyPatch(NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)
+        {
+            if(Main.invasionType == 0)
+            {
+                searcher.TargetClosest(faceTarget);
+            }
+            else
+            {
+                orig(searcher, faceTarget, checkPosition);
+            }
+        }
+
+        private static void LightningBugTeleport(On.Terraria.NPC.orig_AI_111_DD2LightningBug orig, NPC self)
+        {
+            //Put extra things you want it to do before it runs its normal ai code here
+            orig(self); //Run its normal ai
+            //Put extra things you want it to do once it is done with its normal ai here. Before or after usually doesn't matter unless you're trying to manipulate its ai somehow.
+        }
+
 
         //allow spawns to be set outside a valid house (for bonfires)
         internal static void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self) {

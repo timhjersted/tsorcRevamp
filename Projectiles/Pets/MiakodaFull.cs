@@ -79,7 +79,10 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 string[] ReadySoundChoices = new string[] { "Sounds/Custom/MiakodaChaaa", "Sounds/Custom/MiakodaChao", "Sounds/Custom/MiakodaDootdoot", "Sounds/Custom/MiakodaHi", "Sounds/Custom/MiakodaOuuee" };
                 string ReadySound = Main.rand.Next(ReadySoundChoices);
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f * MiakodaVol).WithPitchVariance(.2f), projectile.Center);
+                if (!Main.dedServ)
+                {
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f * MiakodaVol).WithPitchVariance(.2f), projectile.Center);
+                }
             }
 
             if (modPlayer.MiakodaFullHeal2) //splash effect and sound once player gets crit+heal.
@@ -88,7 +91,10 @@ namespace tsorcRevamp.Projectiles.Pets
                 {
                     string[] AmgerySoundChoices = new string[] { "Sounds/Custom/MiakodaScream", "Sounds/Custom/MiakodaChaoExcl", "Sounds/Custom/MiakodaUwuu" };
                     string AmgerySound = Main.rand.Next(AmgerySoundChoices);
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, AmgerySound).WithVolume(.6f * MiakodaVol).WithPitchVariance(.2f), projectile.Center);
+                    if (!Main.dedServ)
+                    {
+                        Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, AmgerySound).WithVolume(.6f * MiakodaVol).WithPitchVariance(.2f), projectile.Center);
+                    }
                 }
 
                 for (int d = 0; d < 90; d++)
