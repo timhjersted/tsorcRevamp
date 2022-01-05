@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ID;
 
 namespace tsorcRevamp
 {
@@ -102,6 +103,25 @@ namespace tsorcRevamp
 			//Main.NewText("Stamina regen rate: " + staminaResourceRegenRate);
 			//Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
 			//Main.NewText("Timer: " + staminaResourceRegenTimer);
+
+			for (int p = 0; p < 1000; p++)
+			{
+				if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 3) //find boomerangs, if so, cut regen by 2/3
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
+					break; //break to prevent it nuking the regen rate when multiple boomerangs are present
+				}
+
+				if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].type == ProjectileID.FlyingKnife)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .7f;
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
+					if (staminaResourceCurrent < 1)
+                    {
+						Main.projectile[p].Kill();
+					}
+				}
+			}
 
 			staminaResourceGain = staminaResourceGainMult * staminaResourceRegenRate; //Apply our multiplier to our base regen rate
 

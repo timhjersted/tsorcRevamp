@@ -20,12 +20,15 @@ namespace tsorcRevamp.Items {
 				return false;
             }
 
-			if (item.damage > 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && !item.melee)
+			if (item.damage >= 1 && item.useAnimation * .8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent == player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			{
+				return true;
+			}
+			else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && !item.melee)
             {
 				return false;
             }
-
-			if (item.damage > 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.melee)
+			else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.melee)
 			{
 				return false;
 			}

@@ -216,7 +216,6 @@ namespace tsorcRevamp {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 tsorcScriptedEvents.PlayerScriptedEventCheck(this.player);
             }
-            MiakodaEffectsTimer++;
 
             if (!player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
                 if (player.whoAmI == Main.LocalPlayer.whoAmI)
@@ -224,6 +223,11 @@ namespace tsorcRevamp {
                     BonfireUIState.Visible = false;
                 }
             }
+
+
+            #region Miakoda
+
+            MiakodaEffectsTimer++;
 
             if (MiakodaFullHeal1) { //dust loop on player the instant they get healed
                 for (int d = 0; d < 100; d++) {
@@ -264,6 +268,8 @@ namespace tsorcRevamp {
                 player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
             }
+
+            #endregion
 
             #region manashield
             if (manaShield > 0) {
@@ -1047,6 +1053,8 @@ namespace tsorcRevamp {
                     powerfulCurseDecayTimer = 0;
                 }
             }
+
+
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {

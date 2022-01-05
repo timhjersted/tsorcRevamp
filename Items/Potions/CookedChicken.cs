@@ -20,6 +20,7 @@ namespace tsorcRevamp.Items.Potions {
             item.scale = 1;
             item.value = 2;
             item.width = 20;
+            item.healLife = 100;
         }
 
 
@@ -34,12 +35,10 @@ namespace tsorcRevamp.Items.Potions {
 
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.statLife += 100;
                 if (player.statLife > player.statLifeMax2)
                 {
                     player.statLife = player.statLifeMax2;
                 }
-                player.HealEffect(100, true);
                 player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 1800);
 
                 return true;

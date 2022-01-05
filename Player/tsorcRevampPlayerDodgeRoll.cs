@@ -80,6 +80,11 @@ namespace tsorcRevamp {
 
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
+				if (item.damage >= 1 && item.useAnimation * 0.8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.itemAnimation == player.itemAnimationMax - 1)
+                {
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+				}
+
 				// Stamina drain for most (hopefully) swords and spears
 				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
@@ -91,7 +96,7 @@ namespace tsorcRevamp {
 				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * 1.2f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * 1f);
 				}
 
 				// Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.
@@ -142,6 +147,16 @@ namespace tsorcRevamp {
 				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
 				{
 					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 0.8f);
+				}
+
+				if (item.type == ItemID.Harpoon && player.itemAnimation == 1)
+                {
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
+				}
+
+				if (item.type == ItemID.FlyingKnife && player.itemAnimation != 0)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
 				}
 			}
 
