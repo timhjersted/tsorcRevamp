@@ -848,7 +848,8 @@ namespace tsorcRevamp.NPCs {
                 || npc.type == NPCID.SmallRainZombie
                 || npc.type == NPCID.ZombieRaincoat
                 || npc.type == NPCID.Clown
-                || npc.type == NPCID.UmbrellaSlime //NEW ADDITIONS
+                || npc.type == NPCID.UmbrellaSlime 
+                //NEW ADDITIONS
                 || npc.type == NPCID.BigHeadacheSkeleton
                 || npc.type == NPCID.SmallHeadacheSkeleton
                 || npc.type == NPCID.BigSlimedZombie
