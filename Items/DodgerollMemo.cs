@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items
         {
             Tooltip.SetDefault("It looks like a diary entry. It reads as follows:" +
                                 "\n\"There have been rumours of bandits in the forest lately," +
-                                "\nso father has been apprehensive about letting me go into" +
+                                "\nso father has been apprehensive about letting me go into the" +
                                 "\nforest alone to pick mushrooms... Pfft, what does he know?" +
                                 "\nI may be small, but I'm nimble and have mastered the technique" +
                                 "\nof the dodgeroll! I'll be fine as long as I don't run out of stamina...\"" +
