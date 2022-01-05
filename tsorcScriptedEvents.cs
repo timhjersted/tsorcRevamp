@@ -1263,7 +1263,7 @@ namespace tsorcRevamp
                 if (!playerAlive)
                 {
                     EndEvent(false);
-                    break;
+                    return;
                 }
             }
 
@@ -1395,7 +1395,7 @@ namespace tsorcRevamp
                         spawnedNPC.active = false;
                         for (int i = 0; i < 60; i++)
                         {
-                            Dust.NewDustDirect(spawnedNPC.position, spawnedNPC.width, spawnedNPC.height, dustID, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f).noGravity = true;
+                            Dust.NewDustDirect(spawnedNPC.position, spawnedNPC.width, spawnedNPC.height, dustID, Main.rand.Next(-5, 5), Main.rand.Next(-12, 12), 150, default, 3f).noGravity = true;
                         }
                     }
                 }
@@ -1408,7 +1408,7 @@ namespace tsorcRevamp
                             thisNPC.active = false;
                             for (int i = 0; i < 60; i++)
                             {
-                                Dust.NewDustDirect(thisNPC.position, thisNPC.width, thisNPC.height, dustID, Main.rand.Next(-12, 12), Main.rand.Next(-12, 12), 150, default, 7f).noGravity = true;
+                                Dust.NewDustDirect(thisNPC.position, thisNPC.width, thisNPC.height, dustID, Main.rand.Next(-5, 5), Main.rand.Next(-12, 12), 150, default, 3f).noGravity = true;
                             }
                         }
                     }
