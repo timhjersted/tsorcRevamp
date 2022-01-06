@@ -61,7 +61,7 @@ namespace tsorcRevamp.UI
             PotionBagUI.Top.Set(316, 0f);
             PotionBagUI.Width.Set(353, 0f);
             PotionBagUI.Height.Set(208, 0f);
-            if (!Main.playerInventory || !Main.LocalPlayer.HasItem(ModContent.ItemType<Items.PotionBag>()))
+            if (!Main.playerInventory || (!Main.LocalPlayer.HasItem(ModContent.ItemType<Items.PotionBag>()) && (Main.mouseItem.type != ModContent.ItemType<Items.PotionBag>())))
             {
                 Visible = false;
             }

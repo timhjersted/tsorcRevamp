@@ -894,6 +894,7 @@ namespace tsorcRevamp.NPCs {
                 || npc.type == NPCID.Butcher
                 || npc.type == NPCID.BloodZombie
                 || npc.type == NPCID.TheBride
+                || npc.type == NPCID.MartianProbe
                 //|| npc.type == NPCID.WindyBalloon
                 || npc.type == NPCID.UmbrellaSlime)
             

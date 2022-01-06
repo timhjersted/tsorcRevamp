@@ -12,8 +12,8 @@ namespace tsorcRevamp.Items {
     class PotionBag : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Can store up to 28 potions" +
-                                "\nSupports Quick Buff/Heal/Mana hotkeys, as well as permanent potions!  (But if you live in the future)" +
-                               "\n\"Favorite\" valuable potions in the pouch like you would inventory items" +
+                               "\nSupports Quick Buff/Heal/Mana hotkeys, as well as permanent potions!" +
+                               "\n\"Favorite\" valuable potions in the pouch with Alt+Click" +
                                "\nFavorited potions are not consumed by Quick Buff!");
             Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(10, 9));
 
