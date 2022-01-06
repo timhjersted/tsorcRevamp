@@ -1,13 +1,16 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Items {
     class PotionBag : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Can store up to 30 potions" + 
-                               "\n\"Favorite\" potions in the pouch to allow them to work with Quick Buff!.");
+            Tooltip.SetDefault("Can store up to 28 potions" +
+                                "\nSupports Quick Buff/Heal/Mana hotkeys, as well as permanent potions!  (But if you live in the future)" +
+                               "\n\"Favorite\" valuable potions in the pouch with a right-click" +
+                               "\nFavorited potions are not consumed by Quick Buff");
         }
 
         public override void SetDefaults() {
@@ -18,7 +21,7 @@ namespace tsorcRevamp.Items {
             item.useAnimation = 15;
             item.useTime = 15;
             item.useStyle = ItemUseStyleID.HoldingUp;
-            item.UseSound = SoundID.Item4;
+            //item.UseSound = SoundID.Item4;
             item.maxStack = 1;
         }
 
@@ -27,21 +30,21 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool UseItem(Player player) {
-            if(player.whoAmI == Main.myPlayer)
+            if (player.whoAmI == Main.myPlayer)
             {
-                /** if (!PotionBagUIState.Visible)
-                 {
-                     PotionBagUIState.Visible = true;
-                     Main.PlaySound(SoundID.MenuOpen);
-
-                 }
-                 else
-                 {
-                     PotionBagUIState.Visible = false;
-                     Main.PlaySound(SoundID.MenuClose);
-                 }**/
+                if (!PotionBagUIState.Visible)
+                {
+                    Main.playerInventory = true;
+                    PotionBagUIState.Visible = true;
+                    Main.PlaySound(SoundID.MenuOpen);
+                }
+                else
+                {
+                    PotionBagUIState.Visible = false;
+                    Main.PlaySound(SoundID.MenuClose);
+                }
             }
             return true;
-        }
+        }        
     }
 }

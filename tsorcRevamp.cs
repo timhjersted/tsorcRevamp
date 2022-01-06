@@ -45,6 +45,8 @@ namespace tsorcRevamp {
         internal UserInterface EmeraldHeraldUserInterface;
         internal EstusFlaskUIState EstusFlaskUIState;
         private UserInterface _estusFlaskUIState;
+        internal PotionBagUIState PotionUIState;
+        internal UserInterface PotionBagUserInterface;
 
 
         public static FieldInfo AudioLockInfo;
@@ -90,6 +92,11 @@ namespace tsorcRevamp {
             //if (!Main.dedServ) EstusFlaskUIState.Activate();
             _estusFlaskUIState = new UserInterface();
             if (!Main.dedServ) _estusFlaskUIState.SetState(EstusFlaskUIState);
+
+            PotionUIState = new PotionBagUIState();
+            PotionBagUserInterface = new UserInterface();
+            if (!Main.dedServ) PotionBagUserInterface.SetState(PotionUIState);
+            
 
             ApplyMethodSwaps();
             ApplyILs();
@@ -142,6 +149,11 @@ namespace tsorcRevamp {
             {
                 _estusFlaskUIState?.Update(gameTime);
             }
+
+            if (PotionBagUIState.Visible)
+            {
+                PotionBagUserInterface.Update(gameTime);
+            }
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
@@ -192,6 +204,22 @@ namespace tsorcRevamp {
                     "tsorcRevamp: Estus Flask UI",
                     delegate {
                         _estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
+            int potionBagIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+            if(potionBagIndex != -1)
+            {
+                layers.Insert(potionBagIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Potion Bag UI",
+                    delegate {
+                        if (PotionBagUIState.Visible)
+                        {
+                            PotionBagUserInterface.Draw(Main.spriteBatch, new GameTime());
+                        }
                         return true;
                     },
                     InterfaceScaleType.UI)

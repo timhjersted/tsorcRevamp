@@ -14,6 +14,7 @@ using Terraria.UI;
 using Terraria.Audio;
 using tsorcRevamp.Projectiles.Pets;
 using Terraria.Localization;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp
 {
@@ -21,8 +22,7 @@ namespace tsorcRevamp
     {
 
         public static List<int> startingItemsList;
-
-
+        
         public override void Initialize()
         {
             PermanentBuffToggles = new bool[54]; //todo dont forget to increment this if you add buffs to the dictionary
@@ -81,27 +81,35 @@ namespace tsorcRevamp
             **/
         }
 
+        public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
         public override TagCompound Save()
         {
-            return new TagCompound 
+            TagCompound tsorcTagCompound = new TagCompound
             {
-            {"warpX", warpX},
-            {"warpY", warpY},
-            {"warpWorld", warpWorld},
-            {"warpSet", warpSet},
-            {"townWarpX", townWarpX},
-            {"townWarpY", townWarpY},
-            {"townWarpWorld", townWarpWorld},
-            {"townWarpSet", townWarpSet},
-            {"gotPickaxe", gotPickaxe},
-            {"FirstEncounter", FirstEncounter},
-            {"ReceivedGift", ReceivedGift},
-            {"BearerOfTheCurse", BearerOfTheCurse},
-
-
-            {"soulSlot", ItemIO.Save(SoulSlot.Item) }
+                {"warpX", warpX},
+                {"warpY", warpY},
+                {"warpWorld", warpWorld},
+                {"warpSet", warpSet},
+                {"townWarpX", townWarpX},
+                {"townWarpY", townWarpY},
+                {"townWarpWorld", townWarpWorld},
+                {"townWarpSet", townWarpSet},
+                {"gotPickaxe", gotPickaxe},
+                {"FirstEncounter", FirstEncounter},
+                {"ReceivedGift", ReceivedGift},
+                {"BearerOfTheCurse", BearerOfTheCurse},
+                {"soulSlot", ItemIO.Save(SoulSlot.Item)}
             };
 
+            List<Item> PotionBagList = new List<Item>();
+            foreach (Item thisItem in PotionBagItems)
+            {
+                PotionBagList.Add(thisItem);
+            }
+
+            tsorcTagCompound.Add("PotionBag", PotionBagList);
+
+            return tsorcTagCompound;
         }
 
         public override void Load(TagCompound tag)
@@ -118,9 +126,29 @@ namespace tsorcRevamp
             FirstEncounter = tag.GetBool("FirstEncounter");
             ReceivedGift = tag.GetBool("ReceivedGift");
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
-
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
+
+            IList<Item> PotionBagIList = tag.GetList<Item>("PotionBag");
+            List<Item> PotionTagList = (List<Item>)PotionBagIList;
+
+            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+            {
+                if(PotionTagList == null || PotionTagList.Count <= i || PotionTagList[i] == null)
+                {
+                    PotionBagItems[i] = new Item();
+                    PotionBagItems[i].SetDefaults(0);
+                }
+                else
+                {
+                    PotionBagItems[i] = PotionTagList[i];
+                    if (PotionBagItems[i] == null)
+                    {
+                        PotionBagItems[i] = new Item();
+                        PotionBagItems[i].SetDefaults(0);
+                    }
+                }
+            }
         }
 
         public void SetDirection() => SetDirection(false);
@@ -204,8 +232,11 @@ namespace tsorcRevamp
         {
             Item item = new Item();
             item.SetDefaults(ModContent.ItemType<Darksign>());
-            items.Add(item); 
-            
+            items.Add(item);
+
+            Item PotionBagItem = new Item();
+            PotionBagItem.SetDefaults(ModContent.ItemType<PotionBag>());
+            items.Add(PotionBagItem);            
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)

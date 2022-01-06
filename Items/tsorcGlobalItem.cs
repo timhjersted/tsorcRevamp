@@ -56,11 +56,11 @@ namespace tsorcRevamp.Items {
 			}
 			if (potionList.Contains(item.type))
 			{
-				item.maxStack = 60;
+				item.maxStack = 9999;
 			}
 			else if (ammoList.Contains(item.type))
             {
-				item.maxStack = 2000;
+				item.maxStack = 9999;
             }
 			if(item.type == ItemID.NebulaBlaze)
             {

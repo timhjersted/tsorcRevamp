@@ -9,89 +9,95 @@ namespace tsorcRevamp.Projectiles
     class tsorcGlobalProjectile : GlobalProjectile
     {
         public override bool PreAI(Projectile projectile) {
-            Player player = Main.player[projectile.owner];
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && !(projectile.type == (int)ModContent.ProjectileType<MiakodaCrescent>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellDark>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellLight>() || projectile.type == (int)ModContent.ProjectileType<Bloodsign>())) {
-                if (Main.rand.Next(2) == 0) {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 164, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
-                    Main.dust[dust].noGravity = false;
-                }
-            }
-
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && !(projectile.type == (int)ModContent.ProjectileType<MiakodaNew>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellDark>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellLight>() || projectile.type == (int)ModContent.ProjectileType<Bloodsign>())) {
-                if (Main.rand.Next(2) == 0) {
-                    int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 130, default(Color), 1f);
-                    Main.dust[dust].noGravity = true;
-                }
-            }
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.melee)
+            if (projectile.owner < Main.maxPlayers)
             {
-                if (modPlayer.MagicWeapon)
+                Player player = Main.player[projectile.owner];
+                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+
+                if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && !(projectile.type == (int)ModContent.ProjectileType<MiakodaCrescent>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellDark>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellLight>() || projectile.type == (int)ModContent.ProjectileType<Bloodsign>()))
                 {
-                    Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.45f);
-                    for (int i = 0; i < 4; i++)
+                    if (Main.rand.Next(2) == 0)
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                        Main.dust[dust].noGravity = true;
-                    }
-                    {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                        Main.dust[dust].noGravity = true;
+                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 164, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                        Main.dust[dust].noGravity = false;
                     }
                 }
 
-                if (modPlayer.GreatMagicWeapon)
+                if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && !(projectile.type == (int)ModContent.ProjectileType<MiakodaNew>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellDark>() || projectile.type == (int)ModContent.ProjectileType<ShulletBellLight>() || projectile.type == (int)ModContent.ProjectileType<Bloodsign>()))
                 {
-                    Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.55f);
-                    for (int i = 0; i < 4; i++)
+                    if (Main.rand.Next(2) == 0)
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                        Main.dust[dust].noGravity = true;
-                    }
-                    {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                        Main.dust[dust].noGravity = true;
-                    }
-                    {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
+                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 57, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 130, default(Color), 1f);
                         Main.dust[dust].noGravity = true;
                     }
                 }
-
-                if (modPlayer.CrystalMagicWeapon)
+                if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.melee)
                 {
-                    Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.55f);
-                    for (int i = 0; i < 2; i++)
+                    if (modPlayer.MagicWeapon)
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 221, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                        Main.dust[dust].noGravity = true;
+                        Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.45f);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            Main.dust[dust].noGravity = true;
+                        }
                     }
+
+                    if (modPlayer.GreatMagicWeapon)
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
-                        Main.dust[dust].noGravity = true;
+                        Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.55f);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
+                            Main.dust[dust].noGravity = true;
+                        }
                     }
+
+                    if (modPlayer.CrystalMagicWeapon)
                     {
-                        int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
-                        Main.dust[dust].noGravity = true;
+                        Lighting.AddLight(projectile.position, 0.3f, 0.3f, 0.55f);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 221, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 68, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 30, default(Color), .9f);
+                            Main.dust[dust].noGravity = true;
+                        }
+                        {
+                            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 172, player.velocity.X * .2f, player.velocity.Y * 0.2f, 30, default(Color), 1.3f);
+                            Main.dust[dust].noGravity = true;
+                        }
                     }
                 }
-            }
 
-            if (projectile.owner == Main.myPlayer && (projectile.aiStyle == 99 || projectile.aiStyle == 15 || projectile.type == ModContent.ProjectileType<Projectiles.SilverBall>() 
-                || projectile.type == ModContent.ProjectileType<Projectiles.MythrilBall>() || projectile.type == ModContent.ProjectileType<AdamantiteBall>() 
-                || projectile.type == ModContent.ProjectileType<Projectiles.HeavenBall>()) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
-            {
-                //projectile.Kill();
+                if (projectile.owner == Main.myPlayer && (projectile.aiStyle == 99 || projectile.aiStyle == 15 || projectile.type == ModContent.ProjectileType<Projectiles.SilverBall>()
+                    || projectile.type == ModContent.ProjectileType<Projectiles.MythrilBall>() || projectile.type == ModContent.ProjectileType<AdamantiteBall>()
+                    || projectile.type == ModContent.ProjectileType<Projectiles.HeavenBall>()) && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 1)
+                {
+                    //projectile.Kill();
 
-                if (projectile.aiStyle == 99)
-                {
-                    projectile.ai[0] = -1; //return yoyo smoothly, dont just kill it. This took me ages to find :(
-                }
-                else
-                {
-                    projectile.ai[1] = 1; //return flail smoothly, dont just kill it
+                    if (projectile.aiStyle == 99)
+                    {
+                        projectile.ai[0] = -1; //return yoyo smoothly, dont just kill it. This took me ages to find :(
+                    }
+                    else
+                    {
+                        projectile.ai[1] = 1; //return flail smoothly, dont just kill it
+                    }
                 }
             }
             return true;
