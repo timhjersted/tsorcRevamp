@@ -35,13 +35,13 @@ namespace tsorcRevamp.UI
             PotionBagUI.BackgroundColor = new Color(30, 29, 43);
 
             int slotIndex = 0;
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 4; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < 7; j++)
                 {
                     PotionSlots[i] = new PotionItemSlot(slotIndex, ItemSlot.Context.InventoryItem, 0.85f);
-                    PotionSlots[i].Left.Set(10 + (i * 48), 0);
-                    PotionSlots[i].Top.Set(10 + (j * 48), 0);
+                    PotionSlots[i].Left.Set(10 + (j * 48), 0);
+                    PotionSlots[i].Top.Set(10 + (i * 48), 0);
                     PotionSlots[i].Width.Set(44, 0);
                     PotionSlots[i].Height.Set(44, 0);
                     PotionSlots[i].ValidItemFunc = IsValidPotion;
@@ -73,7 +73,7 @@ namespace tsorcRevamp.UI
         }
 
 
-        private bool IsValidPotion(Item item)
+        public static bool IsValidPotion(Item item)
         {
             bool valid = false;
             if (Items.tsorcGlobalItem.potionList.Contains(item.type))

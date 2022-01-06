@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Items {
 	public class tsorcGlobalItem : GlobalItem
@@ -300,9 +301,44 @@ namespace tsorcRevamp.Items {
 			}
 		}
 
-		#region PrefixChance (taken from Example Mod, leaving most original comments in)
+        public override bool OnPickup(Item item, Player player)
+		{
+			if (PotionBagUIState.IsValidPotion(item))
+			{
+				Item[] PotionItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
+				int? emptySlot = null;
+				for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+				{
+					if(PotionItems[i].type == 0 && emptySlot == null)
+                    {
+						emptySlot = i;
+                    }
+					if (PotionItems[i].type == item.type && (PotionItems[i].stack + item.stack) <= PotionItems[i].maxStack)
+					{
+						PotionItems[i].stack += item.stack;
+						Main.PlaySound(SoundID.Grab);
+						Main.PlaySound(SoundID.Item, Style: 8);
+						return false;
+					}
+				}
 
-		public override bool? PrefixChance(Item item, int pre, UnifiedRandom rand)
+				//If it got here, that means there's no existing stacks with room
+				//So go through it again, finding the first empty slot instead
+				if (emptySlot != null)
+				{
+					PotionItems[emptySlot.Value] = item;
+					Main.PlaySound(SoundID.Grab);
+					Main.PlaySound(SoundID.Item, Style: 8);
+					return false;
+				}
+			}
+
+			return base.OnPickup(item, player);
+		}
+
+        #region PrefixChance (taken from Example Mod, leaving most original comments in)
+
+        public override bool? PrefixChance(Item item, int pre, UnifiedRandom rand)
 		{
 			// pre: The prefix being applied to the item, or the roll mode
 			// -1 is when an item is naturally generated in a chest, crafted, purchased from an NPC, looted from a grab bag (excluding presents), or dropped by a slain enemy
