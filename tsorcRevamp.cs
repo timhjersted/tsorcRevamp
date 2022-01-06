@@ -305,7 +305,7 @@ namespace tsorcRevamp {
                 102, //throne
                 103, //bowl
                 104, //grandfather clock
-                105, //statue
+                //105, //statue
                 106, //sawmill
                 107, //cobalt
                 108, //mythril
@@ -555,6 +555,7 @@ namespace tsorcRevamp {
             Unbreakable = new List<int>() {
                 19, //Wood platform
                 55, //sign
+                105, //statues
                 132, //lever
                 130, //active stone block
                 131, //inactive stone block
@@ -849,7 +850,6 @@ namespace tsorcRevamp {
 
         public override void PostSetupContent()
         {
-
             #region Boss Checklist Compatibility
 
             Mod bossChecklist = ModLoader.GetMod("BossChecklist"); //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
@@ -1403,8 +1403,17 @@ namespace tsorcRevamp {
 
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
 
+            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            {
+                return false;
+            }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+
+                if (Main.tile[x, y - 1].type == TileID.Statues)
+                {
+                    return false;
+                }
 
                 bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
                 bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
@@ -1440,16 +1449,21 @@ namespace tsorcRevamp {
                 else return false; //disallow breaking tiles otherwise
             }
 
+            return base.CanKillTile(x, y, type, ref blockDamaged); //use default value
+        }
+
+        public override bool CanExplode(int x, int y, int type) {
+
             if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
 
-            return base.CanKillTile(x, y, type, ref blockDamaged); //use default value
-        }
-
-        public override bool CanExplode(int x, int y, int type) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                if (Main.tile[x, y - 1].type == TileID.Statues)
+                {
+                    return false;
+                }
                 bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
                 bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
                 bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
@@ -1478,10 +1492,7 @@ namespace tsorcRevamp {
                 return CanDestroy;
             }
 
-            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
-            {
-                return false;
-            }
+
 
             else return base.CanExplode(x, y, type);
 
