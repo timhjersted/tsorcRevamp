@@ -87,7 +87,8 @@ namespace tsorcRevamp {
 
 				// Stamina drain for most (hopefully) swords and spears
 				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
-					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
+					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc 
+					|| item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
 				{
 					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .8f);
 				}
@@ -126,7 +127,7 @@ namespace tsorcRevamp {
 				}
 
 				// Ranged
-				if (item.damage >= 1 && item.ranged && player.itemAnimation == player.itemAnimationMax - 1)
+				if (item.damage >= 1 && item.ranged && player.itemAnimation == player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
 				{
 					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
 				}
@@ -154,9 +155,19 @@ namespace tsorcRevamp {
 					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
 				}
 
-				if (item.type == ItemID.FlyingKnife && player.itemAnimation != 0)
+				if (player.itemAnimation != 0 && (item.type == ItemID.PiranhaGun || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>() || item.type == ItemID.LastPrism || item.type == ItemID.DD2PhoenixBow || item.type == ItemID.Phantasm))
 				{
 					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
+				}
+
+				if (player.itemAnimation != 0 && (item.type == ItemID.LaserMachinegun))
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+				}
+
+				if (player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()))
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
 				}
 			}
 

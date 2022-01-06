@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.VanillaItems {
             //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
             SimpleModTooltip(mod, item, tooltips, ItemID.AdamantiteBreastplate, "Set can be upgraded in 3 ways, with 4000 Dark Souls for each piece");
             SimpleModTooltip(mod, item, tooltips, ItemID.AdamantiteDrill, "Use this to open the Adamantite gates in the", "Corruption Temple to the west of the village");
-            SimpleModTooltip(mod, item, tooltips, ItemID.AngelWings, "You will discover these in time...", "Can be upgraded with 1 Supersonic Boots, 1 Cloud in a Balloon, and 7000 Dark Souls");
+            SimpleModTooltip(mod, item, tooltips, ItemID.AngelWings, "You will discover these in time...", "Can be upgraded with 1 Supersonic Boots, 1 Cloud in a Balloon, and 20000 Dark Souls");
             SimpleModTooltip(mod, item, tooltips, ItemID.BandofRegeneration, "Can be upgraded with the Band of Starpower and 4000 Dark Souls");
             SimpleModTooltip(mod, item, tooltips, ItemID.BandofStarpower, "Can be upgraded with the Band of Regeneration and 4000 Dark Souls");
             SimpleModTooltip(mod, item, tooltips, ItemID.CobaltBreastplate, "Set can be upgraded with 9000 Dark Souls");

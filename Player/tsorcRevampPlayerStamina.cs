@@ -106,19 +106,31 @@ namespace tsorcRevamp
 
 			for (int p = 0; p < 1000; p++)
 			{
-				if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 3) //find boomerangs, if so, cut regen by 2/3
+				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
-					break; //break to prevent it nuking the regen rate when multiple boomerangs are present
-				}
+					if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 3) //find boomerangs, if so, cut regen by 2/3
+					{
+						player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
+						break; //break to prevent it nuking the regen rate when multiple boomerangs are present
+					}
 
-				if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].type == ProjectileID.FlyingKnife)
-				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .7f;
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
-					if (staminaResourceCurrent < 1)
-                    {
-						Main.projectile[p].Kill();
+					if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].type == ProjectileID.FlyingKnife)
+					{
+						player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+						player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+						if (staminaResourceCurrent < 1)
+						{
+							Main.projectile[p].Kill();
+						}
+					}
+
+					if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && (Main.projectile[p].type == ProjectileID.MechanicalPiranha || Main.projectile[p].type == ProjectileID.LaserMachinegun 
+						|| Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.Phantasm))
+					{
+						if (staminaResourceCurrent < 1)
+						{
+							Main.projectile[p].Kill();
+						}
 					}
 				}
 			}

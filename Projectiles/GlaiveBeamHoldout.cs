@@ -78,11 +78,21 @@ namespace tsorcRevamp.Projectiles {
 			if (charge <= 0)
 			{
 				projectile.frame = 10;
+				//Drain BotC players stamina
+				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+				{
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1.5f;
+				}
 			}
 			//If not, move up the animation sheet as the weapon charges
 			else
 			{
 				projectile.frame = (int)((charge / MaxCharge) * (NumAnimationFrames));
+				//Stop the BotC player from using the Glaive Beam if they don't have full stamina
+				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+                {
+					player.channel = false;
+                }
 			}
 			//If it's finished charging, there will be a delay before the next. Set it to negative for the duration, so it stays in the "firing" state.
 			if (charge == MaxCharge) {

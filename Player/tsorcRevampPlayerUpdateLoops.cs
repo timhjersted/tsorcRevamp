@@ -380,6 +380,20 @@ namespace tsorcRevamp {
             }
             #endregion
 
+
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() 
+                || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            {
+                player.channel = false;
+            }
+
+            if (player.itemAnimation != 0 && (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            {
+                player.statMana -= 1;
+                if (player.statMana < 1) { player.channel = false; }
+                if (player.statMana < 0) { player.statMana = 0; }
+
+            }
         }
 
         public override void PreUpdateBuffs() {

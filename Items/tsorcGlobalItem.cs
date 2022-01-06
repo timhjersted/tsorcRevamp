@@ -16,29 +16,36 @@ namespace tsorcRevamp.Items {
 
 		public override bool CanUseItem(Item item, Player player)
         {
-			if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
-            {
-				return false;
-            }
-
-			if (item.damage >= 1 && item.useAnimation * .8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent == player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
-				return true;
-			}
-			else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && !item.melee)
-            {
-				return false;
-            }
-			else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.melee)
-			{
-				return false;
-			}
+				if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
+				{
+					return false;
+				}
 
-			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.healLife > 0)
-			{
-				return false;
-			}
+				if (item.damage >= 1 && item.useAnimation * .8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent == player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+				{
+					return true;
+				}
+				else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.melee && !(item.type == ModContent.ItemType<Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.CernosPrime>()))
+				{
+					return false;
+				}
+				else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && item.melee)
+				{
+					return false;
+				}
 
+				if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50 && (item.type == ModContent.ItemType<Weapons.Magic.DivineSpark>() || (item.type == ModContent.ItemType<Weapons.Magic.DivineBoomCannon>())))
+				{
+					return false;
+				}
+
+				if (item.healLife > 0)
+				{
+					return false;
+				}
+			}
 
 			return true;
 
@@ -102,6 +109,8 @@ namespace tsorcRevamp.Items {
 					Main.projectile[i].Kill();
                 }
             }
+
+
 			return true;
         }
 
