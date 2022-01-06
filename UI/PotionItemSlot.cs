@@ -68,7 +68,7 @@ namespace tsorcRevamp.UI
             }
 
 			// Draw draws the slot itself and Item. Depending on context, the color will change, as will drawing other things like stack counts.
-			ItemSlot.Draw(spriteBatch, ref PotionItems[index], _context, rectangle.TopLeft());
+			ItemSlot.Draw(spriteBatch, ref PotionItems[index], ItemSlot.Context.InventoryAmmo, rectangle.TopLeft());
 			Main.inventoryScale = oldScale;
 		}
 	}

@@ -64,7 +64,10 @@ namespace tsorcRevamp {
             }
             for (int i = 0; i < 28; i++)
             {
-                CheckUseBuffPotion(PotionBagItems[i], player);
+                if (!(bool)PotionBagItems[i]?.favorited)
+                {
+                    CheckUseBuffPotion(PotionBagItems[i], player);
+                }
             }
         }
 

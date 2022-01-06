@@ -19,7 +19,7 @@ namespace tsorcRevamp.UI
 
         public const int POTION_BAG_SIZE = 28;
         public static bool Visible = false;
-        public static PotionItemSlot[] PotionSlots = new PotionItemSlot[POTION_BAG_SIZE]; //Keeps track of the slots so that other things (like quick buff and saving etc) can check them easily later
+        public static PotionItemSlot[] PotionSlots = new PotionItemSlot[POTION_BAG_SIZE]; //Keeps track of the slots
         public override void OnInitialize()
         {
             // Here we define our container UIElement. In DragableUIPanel.cs, you can see that DragableUIPanel is a UIPanel with a couple added features.
@@ -27,10 +27,10 @@ namespace tsorcRevamp.UI
             PotionBagUI.SetPadding(0);
             // We need to place this UIElement in relation to its Parent. Later we will be calling `base.Append(BonfireUI);`. 
             // This means that this class, BonfireUIState, will be our Parent. Since BonfireUIState is a UIState, the Left and Top are relative to the top left of the screen.
-            PotionBagUI.Left.Set(Main.screenWidth / 10, 0f);
-            PotionBagUI.Top.Set(Main.screenHeight / 4, 0f);
-            PotionBagUI.Width.Set(372, 0f);
-            PotionBagUI.Height.Set(222, 0f);
+            PotionBagUI.Left.Set(150, 0f);
+            PotionBagUI.Top.Set(316, 0f);
+            PotionBagUI.Width.Set(350, 0f);
+            PotionBagUI.Height.Set(200, 0f);
             PotionBagUI.BackgroundColor = new Color(35, 20, 20);
 
             int slotIndex = 0;
@@ -38,9 +38,9 @@ namespace tsorcRevamp.UI
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    PotionSlots[i] = new PotionItemSlot(slotIndex, ItemSlot.Context.BankItem, 1);
-                    PotionSlots[i].Left.Set(10 + (i * 50), 0);
-                    PotionSlots[i].Top.Set(10 + (j * 50), 0);
+                    PotionSlots[i] = new PotionItemSlot(slotIndex, ItemSlot.Context.InventoryItem, 0.85f);
+                    PotionSlots[i].Left.Set(10 + (i * 48), 0);
+                    PotionSlots[i].Top.Set(10 + (j * 48), 0);
                     PotionSlots[i].Width.Set(44, 0);
                     PotionSlots[i].Height.Set(44, 0);
                     PotionSlots[i].ValidItemFunc = IsValidPotion;
@@ -50,32 +50,16 @@ namespace tsorcRevamp.UI
                 }
             }
 
-
             Append(PotionBagUI);
-
-            /*
-            // Next, we create another UIElement that we will place. Since we will be calling `BonfireUI.Append(ButtonSetSpawn);`, Left and Top are relative to the top left of the BonfireUI UIElement. 
-            // By properly nesting UIElements, we can position things relatively to each other easily.
-            Texture2D buttonSetSpawnTexture = ModContent.GetTexture("tsorcRevamp/UI/ButtonSetSpawn");
-            tsorcUIHoverTextButton ButtonSetSpawn = new tsorcUIHoverTextButton(buttonSetSpawnTexture, "Set Spawn");
-            ButtonSetSpawn.Left.Set(10, 0f);
-            ButtonSetSpawn.Top.Set(10, 0f);
-            ButtonSetSpawn.Width.Set(44, 0f);
-            ButtonSetSpawn.Height.Set(44, 0f);
-            // UIHoverImageButton doesn't do anything when Clicked. Here we assign a method that we'd like to be called when the button is clicked.
-            ButtonSetSpawn.OnClick += new MouseEvent(ButtonSetSpawnClicked);
-            PotionBagUI.Append(ButtonSetSpawn);            
-            */
-
-            // As a recap, ExampleUI is a UIState, meaning it covers the whole screen. We attach BonfireUI to ExampleUI some distance from the top left corner.
-            // We then place ButtonSetSpawn, closeButton, and moneyDiplay onto BonfireUI so we can easily place these UIElements relative to BonfireUI.
-            // Since BonfireUI will move, this proper organization will move ButtonSetSpawn, closeButton, and moneyDiplay properly when BonfireUI moves.
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            PotionBagUI.Left.Set(152, 0f);
+            PotionBagUI.Top.Set(316, 0f);
+            PotionBagUI.Width.Set(353, 0f);
+            PotionBagUI.Height.Set(208, 0f);
             if (!Main.playerInventory || !Main.LocalPlayer.HasItem(ModContent.ItemType<Items.PotionBag>()))
             {
                 Visible = false;
