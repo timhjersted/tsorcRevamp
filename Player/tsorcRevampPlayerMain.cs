@@ -81,7 +81,6 @@ namespace tsorcRevamp
             **/
         }
 
-        public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
         public override TagCompound Save()
         {
             TagCompound tsorcTagCompound = new TagCompound
@@ -129,25 +128,24 @@ namespace tsorcRevamp
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
 
-            IList<Item> PotionBagIList = tag.GetList<Item>("PotionBag");
-            List<Item> PotionTagList = (List<Item>)PotionBagIList;
-
-            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+            PotionBagItems = ((List<Item>)tag.GetList<Item>("PotionBag")).ToArray();
+            if(PotionBagItems.Length < 28)
             {
-                if(PotionTagList == null || PotionTagList.Count <= i || PotionTagList[i] == null)
+                Item[] TempArray = new Item[28];
+                for(int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
-                    PotionBagItems[i] = new Item();
-                    PotionBagItems[i].SetDefaults(0);
-                }
-                else
-                {
-                    PotionBagItems[i] = PotionTagList[i];
-                    if (PotionBagItems[i] == null)
+                    if (i < PotionBagItems.Length)
                     {
-                        PotionBagItems[i] = new Item();
-                        PotionBagItems[i].SetDefaults(0);
+                        TempArray[i] = PotionBagItems[i];
+                    }
+                    if(TempArray[i] == null)
+                    {
+                        TempArray[i] = new Item();
+                        TempArray[i].SetDefaults(0);
                     }
                 }
+
+                PotionBagItems = TempArray;
             }
         }
 

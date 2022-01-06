@@ -38,6 +38,16 @@ namespace tsorcRevamp.UI
 		{
 			Item[] PotionItems = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
 
+			if(PotionItems == null)
+            {
+				PotionItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
+			}
+			if(PotionItems[index] == null)
+            {
+				PotionItems[index] = new Item();
+				PotionItems[index].SetDefaults(0);
+			}
+
 			float oldScale = Main.inventoryScale;
 			Main.inventoryScale = _scale;
 			Rectangle rectangle = GetDimensions().ToRectangle();

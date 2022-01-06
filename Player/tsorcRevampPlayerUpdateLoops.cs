@@ -152,6 +152,7 @@ namespace tsorcRevamp {
         public bool RadiantLifegemHealing;
         int healingTimer = 0;
 
+        public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
 
         public UIItemSlot SoulSlot;
 
