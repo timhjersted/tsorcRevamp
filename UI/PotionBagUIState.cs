@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.UI.Elements;
 
+
 namespace tsorcRevamp.UI
 {
     class PotionBagUIState : UIState
@@ -31,7 +32,7 @@ namespace tsorcRevamp.UI
             PotionBagUI.Top.Set(316, 0f);
             PotionBagUI.Width.Set(350, 0f);
             PotionBagUI.Height.Set(200, 0f);
-            PotionBagUI.BackgroundColor = new Color(35, 20, 20);
+            PotionBagUI.BackgroundColor = new Color(30, 29, 43);
 
             int slotIndex = 0;
             for (int i = 0; i < 7; i++)
