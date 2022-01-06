@@ -225,6 +225,7 @@ namespace tsorcRevamp {
                 }
             }
 
+            
 
             #region Miakoda
 
@@ -399,6 +400,14 @@ namespace tsorcRevamp {
 
         public override void PostUpdateBuffs()
         {
+            foreach (Item thisItem in PotionBagItems)
+            {
+                if (thisItem != null && !thisItem.IsAir)
+                {
+                    thisItem.modItem?.UpdateInventory(player);
+                }
+            }
+
             if (MiakodaCrescentBoost)
             {
                 player.allDamageMult += 0.07f;

@@ -631,7 +631,8 @@ namespace tsorcRevamp
                         ReflectionShiftState.Y = 1;
                     }
                 }
-        }}
+        }            
+        }        
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
         //The latter is absolutely necessary, because natural mana regen scales with your base mana

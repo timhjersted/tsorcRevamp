@@ -46,6 +46,193 @@ namespace tsorcRevamp {
 
 
             On.Terraria.NPC.AI_111_DD2LightningBug += LightningBugTeleport;
+
+            On.Terraria.Player.QuickBuff += CustomQuickBuff;
+            On.Terraria.Player.QuickMana += CustomQuickMana;
+            On.Terraria.Player.QuickHeal += CustomQuickHeal;
+        }
+        private static void CustomQuickBuff(On.Terraria.Player.orig_QuickBuff orig, Player player)
+        {
+            if (player.noItems)
+                return;
+
+            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
+
+            for (int i = 0; i < 58; i++)
+            {
+                CheckUseBuffPotion(player.inventory[i], player);
+            }
+            for (int i = 0; i < 28; i++)
+            {
+                CheckUseBuffPotion(PotionBagItems[i], player);
+            }
+        }
+
+        private static void CheckUseBuffPotion(Item item, Player player)
+        {
+            if (player.CountBuffs() == Player.MaxBuffs)
+                return;
+
+            if (item.stack <= 0 || item.type <= 0 || item.buffType <= 0 || item.summon || item.buffType == 90)
+                return;
+
+            int buffType = item.buffType;
+            bool validItem = ItemLoader.CanUseItem(item, player);
+            for (int j = 0; j < Player.MaxBuffs; j++)
+            {
+                if (buffType == BuffID.FairyBlue && (player.buffType[j] == BuffID.FairyBlue || player.buffType[j] == BuffID.FairyRed || player.buffType[j] == BuffID.FairyGreen))
+                {
+                    validItem = false;
+                    break;
+                }
+                if (player.buffType[j] == buffType)
+                {
+                    validItem = false;
+                    break;
+                }
+                if (Main.meleeBuff[buffType] && Main.meleeBuff[player.buffType[j]])
+                {
+                    validItem = false;
+                    break;
+                }
+            }
+
+            if (Main.lightPet[item.buffType] || Main.vanityPet[item.buffType])
+            {
+                for (int k = 0; k < Player.MaxBuffs; k++)
+                {
+                    if (Main.lightPet[player.buffType[k]] && Main.lightPet[item.buffType])
+                        validItem = false;
+
+                    if (Main.vanityPet[player.buffType[k]] && Main.vanityPet[item.buffType])
+                        validItem = false;
+                }
+            }
+
+            if (player.whoAmI == Main.myPlayer && item.type == ItemID.Carrot && !Main.cEd)
+                validItem = false;
+
+            if (buffType == BuffID.FairyBlue)
+            {
+                buffType = Main.rand.Next(3);
+                if (buffType == 0)
+                    buffType = BuffID.FairyBlue;
+
+                if (buffType == 1)
+                    buffType = BuffID.FairyRed;
+
+                if (buffType == 2)
+                    buffType = BuffID.FairyGreen;
+            }
+
+            if (validItem)
+            {
+                UsePotion(item, player);
+            }
+        }
+
+        private static void CustomQuickMana(On.Terraria.Player.orig_QuickMana orig, Player player)
+        {
+            if (player.noItems || player.statMana == player.statManaMax2)
+            {
+                return;
+            }
+            Item selectedItem = player.QuickMana_GetItemToUse();
+            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
+            if (!player.HasBuff(BuffID.PotionSickness))
+            {
+                for (int i = 0; i < 28; i++)
+                {
+                    if (PotionBagItems[i] != null && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && player.GetHealLife(PotionBagItems[i], true) > player.GetHealLife(selectedItem, true))
+                    {
+                        selectedItem = PotionBagItems[i];
+                    }
+                }
+
+                UsePotion(selectedItem, player);
+            }
+        }
+        
+        private static void CustomQuickHeal(On.Terraria.Player.orig_QuickHeal orig, Player player)
+        {
+            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
+                return;
+
+            Item selectedItem = player.QuickHeal_GetItemToUse();
+            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
+            if (!player.HasBuff(BuffID.PotionSickness))
+            {
+                for (int i = 0; i < 28; i++)
+                {
+                    if (PotionBagItems[i] != null && PotionBagItems[i].potion && ItemLoader.CanUseItem(PotionBagItems[i], player) && (selectedItem == null || player.GetHealLife(PotionBagItems[i], true) > player.GetHealLife(selectedItem, true)))
+                    {
+                        selectedItem = PotionBagItems[i];
+                    }
+                }
+                
+                UsePotion(selectedItem, player);                
+            }
+        }
+
+        //Generic "use item" code. Since items can be any or all of the 3 categories at once, this handles all of it.
+        private static void UsePotion(Item item, Player player)
+        {
+            Main.PlaySound(item.UseSound, player.position);
+            if (item.potion)
+            {
+                if (item.type == 227)
+                {
+                    player.potionDelay = player.restorationDelayTime;
+                    player.AddBuff(BuffID.PotionSickness, player.potionDelay);
+                }
+                else
+                {
+                    player.potionDelay = player.potionDelayTime;
+                    player.AddBuff(BuffID.PotionSickness, player.potionDelay);
+                }
+            }
+
+            ItemLoader.UseItem(item, player);
+            
+            int healLife = player.GetHealLife(item, true);
+            int healMana = player.GetHealMana(item, true);
+            player.statLife += healLife;
+            player.statMana += healMana;
+            if (player.statLife > player.statLifeMax2)
+                player.statLife = player.statLifeMax2;
+
+            if (player.statMana > player.statManaMax2)
+                player.statMana = player.statManaMax2;
+
+            if (healLife > 0 && Main.myPlayer == player.whoAmI)
+                player.HealEffect(healLife, true);
+
+            if (healMana > 0)
+            {
+                player.AddBuff(BuffID.ManaSickness, 300);
+                if (Main.myPlayer == player.whoAmI)
+                    player.ManaEffect(healMana);
+            }
+
+            if(item.buffType > 0)
+            {
+                int buffTime = item.buffTime;
+                if(buffTime == 0)
+                {
+                    buffTime = 3600;
+                }
+                player.AddBuff(item.buffType, buffTime);
+            }
+
+            Main.PlaySound(item.UseSound, player.position);
+
+            if (ItemLoader.ConsumeItem(item, player))
+                item.stack--;
+
+            if (item.stack <= 0)
+                item.TurnToAir();
+
+            Recipe.FindRecipes();
         }
 
         private static void OldOnesArmyPatch(NPCUtils.orig_TargetClosestOldOnesInvasion orig, NPC searcher, bool faceTarget, Vector2? checkPosition)
