@@ -315,7 +315,13 @@ namespace tsorcRevamp.Items {
                     }
 					if (PotionItems[i].type == item.type && (PotionItems[i].stack + item.stack) <= PotionItems[i].maxStack)
 					{
-						PotionItems[i].stack += item.stack;
+						PotionItems[i].stack += item.stack; 
+						string itemText = item.Name;
+						if (item.stack > 1)
+						{
+							itemText += " (" + item.stack + ")";
+						}
+						CombatText.NewText(player.Hitbox, Color.Purple, itemText);
 						Main.PlaySound(SoundID.Grab);
 						Main.PlaySound(SoundID.Item, Style: 8);
 						return false;
@@ -327,6 +333,12 @@ namespace tsorcRevamp.Items {
 				if (emptySlot != null)
 				{
 					PotionItems[emptySlot.Value] = item;
+					string itemText = item.Name;
+					if(item.stack > 1)
+                    {
+						itemText += " (" + item.stack + ")";
+					}
+					CombatText.NewText(player.Hitbox, Color.Purple, itemText);
 					Main.PlaySound(SoundID.Grab);
 					Main.PlaySound(SoundID.Item, Style: 8);
 					return false;
