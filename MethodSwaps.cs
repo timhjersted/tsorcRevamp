@@ -158,7 +158,7 @@ namespace tsorcRevamp {
         
         private static void CustomQuickHeal(On.Terraria.Player.orig_QuickHeal orig, Player player)
         {
-            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
+            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0 || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 return;
 
             Item selectedItem = player.QuickHeal_GetItemToUse();
