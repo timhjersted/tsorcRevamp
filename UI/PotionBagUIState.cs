@@ -105,6 +105,17 @@ namespace tsorcRevamp.UI
                 valid = true;
             }
 
+            //Excluding these specifically because for now they need to be used by hand. Auto-moving them to the bag would be obnoxious.
+            if (item.type == ModContent.ItemType<Items.Potions.Lifegem>())
+            {
+                valid = false;
+            }
+
+            if (item.type == ModContent.ItemType<Items.Potions.RadiantLifegem>())
+            {
+                valid = false;
+            }
+
             if (item.type == ModContent.ItemType<Items.PotionBag>())
             {
                 valid = false;
