@@ -38,6 +38,16 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
 
+            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int segmentCount = projectile.height / frameHeight;
+            for (int i = 0; i < segmentCount; i++)
+            {
+                Vector2 lightPosition = new Vector2(projectile.Center.X, projectile.position.Y);
+                lightPosition.Y += (frameHeight * i) + (frameHeight / 2);
+                Lighting.AddLight(lightPosition, Color.Orange.ToVector3());
+            }
+
+            
             projectile.frameCounter++;
             if (projectile.frameCounter > 3) {
                 projectile.frame++;
@@ -92,15 +102,13 @@ namespace tsorcRevamp.Projectiles {
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, flameJetTexture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            //origin.X = (float)(projectile.spriteDirection == 1 ? sourceRectangle.Width - 20 : 20);
-            Color drawColor = projectile.GetAlpha(lightColor);
             int drawCount = projectile.height / frameHeight;
             for(int i = 0; i < drawCount; i++)
             {
                 Vector2 startPosition = new Vector2(projectile.Center.X, projectile.position.Y);
                 Vector2 drawPosition = startPosition - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
                 drawPosition.Y += (frameHeight * i) + (frameHeight / 2);
-                Main.spriteBatch.Draw(flameJetTexture, drawPosition, sourceRectangle, drawColor, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(flameJetTexture, drawPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
             }
 
             return false;

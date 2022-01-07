@@ -10,13 +10,12 @@ namespace tsorcRevamp.Items.Accessories
         public static int manaCost = 80;
         public static int regenDelay = 900;
         public static float damageResistance = 0.40f;
-        public static float damagePenalty = 0.25f;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
                                 $"\nReduces damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
                                 "\nInhibits both natural and artificial mana regen" +
-                                $"\n[c/C80032:For melee warriors only], reduces other damage by {(1-damagePenalty) * 100}%");
+                                $"\n[c/C80032:For melee warriors only], reduces other damage dramatically");
         }
 
         public override void SetDefaults()
@@ -53,9 +52,9 @@ namespace tsorcRevamp.Items.Accessories
 
             base.UpdateEquip(player);
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
-            player.rangedDamageMult *= damagePenalty;
-            player.magicDamageMult *= damagePenalty;
-            player.minionDamageMult *= damagePenalty;
+            player.rangedDamage = 0.01f;
+            player.magicDamage = 0.01f;
+            player.minionDamage = 0.01f;
             if (player.statMana >= manaCost)
             {
                 player.endurance += damageResistance;
