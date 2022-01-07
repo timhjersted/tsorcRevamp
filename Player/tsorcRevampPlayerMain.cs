@@ -240,6 +240,91 @@ namespace tsorcRevamp
             }
         }
 
+        public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
+        {
+            if((context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem) && PotionBagUIState.Visible)
+            {
+                if (PotionBagUIState.IsValidPotion(inventory[slot]))
+                {
+                    //Mostly just lazy copying of OnPickup code, but it works
+                    int? emptySlot = null;
+                    Item item = inventory[slot];
+                    bool inPotionBag = false; //Is the item being clicked in the potion bag? Hard to tell, because the bag is treated like a normal inventory slot. We have to check manually.
+                    for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+                    {
+                        if(item == PotionBagItems[i])
+                        {
+                            inPotionBag = true;
+                        }
+                    }
+
+
+                    //If moving from other inventories to the bag
+                    if (!inPotionBag)
+                    {
+                        for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+                        {
+                            if (PotionBagItems[i].type == 0 && emptySlot == null)
+                            {
+                                emptySlot = i;
+                            }
+                            if (PotionBagItems[i].type == item.type && (PotionBagItems[i].stack + item.stack) <= PotionBagItems[i].maxStack)
+                            {
+                                PotionBagItems[i].stack += item.stack;
+                                item.TurnToAir();
+                                Main.PlaySound(SoundID.Grab);
+                                Main.PlaySound(SoundID.Item, Style: 8);
+                                return true;
+                            }
+                        }
+                        
+                        //If it got here, that means there's no existing stacks with room
+                         //So go through it again, finding the first empty slot instead
+                        if (emptySlot != null)
+                        {
+                            PotionBagItems[emptySlot.Value] = item.DeepClone();
+                            item.TurnToAir();
+                            Main.PlaySound(SoundID.Grab);
+                            Main.PlaySound(SoundID.Item, Style: 8);
+                            return true;
+                        }
+                    }
+
+                    //Copying from the bag to inventory
+                    else
+                    {
+                        for (int i = 0; i < 50; i++)
+                        {
+                            if (player.inventory[i].type == 0 && emptySlot == null)
+                            {
+                                emptySlot = i;
+                            }
+                            if (player.inventory[i].type == item.type && (player.inventory[i].stack + item.stack) <= player.inventory[i].maxStack)
+                            {
+                                player.inventory[i].stack += item.stack;
+                                item.TurnToAir();
+                                Main.PlaySound(SoundID.Grab);
+                                Main.PlaySound(SoundID.Item, Style: 8);
+                                return true;
+                            }
+                        }
+
+                        if (emptySlot != null)
+                        {
+                            player.inventory[emptySlot.Value] = item.DeepClone();
+                            item.TurnToAir();
+                            Main.PlaySound(SoundID.Grab);
+                            Main.PlaySound(SoundID.Item, Style: 8);
+                            return true;
+                        }
+                    }
+
+                    
+                }
+            }
+            return false;
+        }
+
         public override void SetupStartInventory(IList<Item> items, bool mediumcoreDeath)
         {
             Item item = new Item();

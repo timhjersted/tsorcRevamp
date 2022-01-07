@@ -56,6 +56,7 @@ namespace tsorcRevamp.Items {
                 {
                     if (!PotionBagUIState.Visible)
                     {
+                        player.chest = -1;
                         Main.playerInventory = true;
                         PotionBagUIState.Visible = true;
                         Main.PlaySound(SoundID.MenuOpen);
