@@ -26,13 +26,14 @@ namespace tsorcRevamp.NPCs.Special
         {
             npc.npcSlots = 200;
             npc.knockBackResist = 0.3f;
+            npc.boss = true;
             npc.aiStyle = -1;
             npc.height = 40;
             npc.width = 20;
             if (NPC.downedBoss1 || NPC.downedBoss2) { npc.damage = 18; }
             else { npc.damage = 12; } //Low contact damage, the slashes will be doing the damage
-            if (NPC.downedBoss1 || NPC.downedBoss2) { npc.lifeMax = 1250; }
-            else { npc.lifeMax = 750; }
+            if (NPC.downedBoss1 || NPC.downedBoss2) { npc.lifeMax = 2500; }
+            else { npc.lifeMax = 1500; }
             npc.defense = 8;
             npc.value = 15000;
             npc.HitSound = SoundID.NPCHit48;

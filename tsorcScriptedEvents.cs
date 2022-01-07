@@ -273,7 +273,7 @@ namespace tsorcRevamp
             ScriptedEvent FirebombHollowAmbush = new ScriptedEvent(new Vector2(3418, 364), 10, FirebombHollowAmbushEnemyTypeList, FirebombHollowAmbushEnemyLocations, default, true, false, "Ambush!", Color.Red, false, default, FirebombHollowAmbushAction);
 
             //LEONHARD PHASE 1 EVENT - BY ADAMANTITE GATE ACROSS BRIDGE FROM WIZARDS HOUSE
-            ScriptedEvent LeonhardPhase1Event = new ScriptedEvent(new Vector2(3314, 355), 34, ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), 54, true, false, "You hear footsteps...", Color.Red, false);
+            ScriptedEvent LeonhardPhase1Event = new ScriptedEvent(new Vector2(3314, 355), 34, ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), 54, true, false, "You hear footsteps...", Color.Red, false, LeonhardPhase1Undefeated);
 
             //HOLLOW AMBUSH 1 - BOTTOM RIGHT OF EARTH TEMPLE
             List<int> HollowAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
@@ -479,6 +479,15 @@ namespace tsorcRevamp
             { 
                 return false; 
             }
+        }
+
+        public static bool LeonhardPhase1Undefeated()
+        {
+            if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Special.LeonhardPhase1>()))
+            {
+                return true;
+            }
+            else { return false; }
         }
 
         #endregion

@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.BossItems {
     class DyingFireCrystal : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("The fading Crystal of Earth. \n" + "Will summon Marilith. \n" + "Item is non-consumable");
+            Tooltip.SetDefault("The fading Crystal of Fire. \n" + "Will summon Marilith. \n" + "Item is non-consumable");
         }
 
         public override void SetDefaults() {
