@@ -50,9 +50,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             projectile.velocity.X *= .95f;
             projectile.velocity.Y *= .95f;
         }
-        static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot");
+        static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/StardustShot");
+            }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
             {

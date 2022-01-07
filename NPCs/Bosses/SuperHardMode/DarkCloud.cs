@@ -1953,7 +1953,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            if(darkCloudTexture == null)
+            if(darkCloudTexture == null || darkCloudTexture.IsDisposed)
             {
                 darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
             }
@@ -1984,7 +1984,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
         public void DivineSparkDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            if (darkSparkTexture == null)
+            if (darkSparkTexture == null || darkSparkTexture.IsDisposed)
             {
                 darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
             }
@@ -2025,7 +2025,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            if (antimatTexture == null)
+            if (antimatTexture == null || darkSparkTexture.IsDisposed)
             {
                 antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
             }
@@ -2047,7 +2047,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
         public void ArrowRainDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            if (cernosTexture == null)
+            if (cernosTexture == null || darkSparkTexture.IsDisposed)
             {
                 cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
             }

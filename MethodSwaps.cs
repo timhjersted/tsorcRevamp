@@ -163,13 +163,10 @@ namespace tsorcRevamp {
         
         private static void CustomQuickHeal(On.Terraria.Player.orig_QuickHeal orig, Player player)
         {
-            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
-                return;
-
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
 
-            if (modPlayer.BearerOfTheCurse)
+            if (modPlayer.BearerOfTheCurse && player.statLife < player.statLifeMax2)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
                 && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift && !modPlayer.isDodging)
@@ -179,6 +176,9 @@ namespace tsorcRevamp {
                 }
                 return;
             }
+
+            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
+                return;
 
             Item selectedItem = player.QuickHeal_GetItemToUse();
             if (selectedItem == null)

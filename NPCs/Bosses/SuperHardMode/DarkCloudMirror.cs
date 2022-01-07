@@ -261,6 +261,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if (darkCloudTexture == null || darkCloudTexture.IsDisposed)
+            {
+                darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+            }
             if (AttackModeCounter >= 80 || MirrorAttackType != DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
                 Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[npc.type]);
@@ -296,6 +300,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if (antimatTexture == null || antimatTexture.IsDisposed)
+            {
+                antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
+            }
             float targetPoint = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
             {                
