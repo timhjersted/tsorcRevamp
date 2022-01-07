@@ -37,9 +37,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         }
 
         //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
-        static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
+        static Texture2D texture;
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureShot");
+            }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
             {

@@ -152,6 +152,11 @@ namespace tsorcRevamp.Projectiles {
         private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
         static Texture2D chainTexture = ModContent.GetTexture(ChainTexturePath);
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {
+            if (chainTexture == null || chainTexture.IsDisposed)
+            {
+                chainTexture = ModContent.GetTexture(ChainTexturePath);
+            }
+
             var player = Main.player[projectile.owner];
 
             Vector2 mountedCenter = player.MountedCenter;

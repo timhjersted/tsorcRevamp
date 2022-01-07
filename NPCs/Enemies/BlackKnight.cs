@@ -692,7 +692,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		static Texture2D spearTexture;
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
 		{
-			if (spearTexture == null)
+			if (spearTexture == null || spearTexture.IsDisposed)
 			{
 				spearTexture = mod.GetTexture("Projectiles/Enemy/BlackKnightsSpear");
 			}

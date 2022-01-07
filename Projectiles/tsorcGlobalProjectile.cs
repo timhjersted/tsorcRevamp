@@ -9,7 +9,7 @@ namespace tsorcRevamp.Projectiles
     class tsorcGlobalProjectile : GlobalProjectile
     {
         public override bool PreAI(Projectile projectile) {
-            if (projectile.owner < Main.maxPlayers)
+            if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
             {
                 Player player = Main.player[projectile.owner];
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();

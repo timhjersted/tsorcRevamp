@@ -184,7 +184,7 @@ namespace tsorcRevamp {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
 
-            if(texture == null)
+            if(texture == null || texture.IsDisposed)
             {
                 texture = ModContent.GetTexture(projectile.modProjectile.Texture);
             }

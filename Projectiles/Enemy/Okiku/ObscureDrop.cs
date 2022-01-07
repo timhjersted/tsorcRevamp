@@ -55,6 +55,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureDrop");
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (texture == null || texture.IsDisposed)
+            {
+                texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureDrop");
+            }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
             {

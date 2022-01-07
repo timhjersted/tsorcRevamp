@@ -58,11 +58,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         Texture2D baseTexture;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (glowTexture == null)
+            if (glowTexture == null || glowTexture.IsDisposed)
             {
                 glowTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatswordGlowmask];
             }
-            if (baseTexture == null)
+            if (baseTexture == null || baseTexture.IsDisposed)
             {
                 baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatsword];
             }
@@ -77,11 +77,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            if (glowTexture == null)
+            if (glowTexture == null || glowTexture.IsDisposed)
             {
                 glowTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatswordGlowmask];
             }
-            if (baseTexture == null)
+            if (baseTexture == null || baseTexture.IsDisposed)
             {
                 baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MoonlightGreatsword];
             }

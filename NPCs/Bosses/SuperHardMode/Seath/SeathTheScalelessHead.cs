@@ -279,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         public static Texture2D texture;
         public static void SeathInvulnerableEffect(NPC npc, SpriteBatch spriteBatch, ref Texture2D texture, float scale = 1.5f)
         {            
-            if (texture == null)
+            if (texture == null || texture.IsDisposed)
             {
                 texture = ModContent.GetTexture(npc.modNPC.Texture);
             }

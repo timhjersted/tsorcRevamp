@@ -53,6 +53,10 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 		static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
+			if (texture == null || texture.IsDisposed)
+			{
+				texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
+			}
 			SpriteEffects spriteEffects = SpriteEffects.None;
 			if (projectile.spriteDirection == -1)
 			{
