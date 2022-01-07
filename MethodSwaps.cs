@@ -161,14 +161,22 @@ namespace tsorcRevamp {
             if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
                 return;
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
+
+            if (modPlayer.BearerOfTheCurse)
             {
-                player.GetModPlayer<tsorcRevampEstusPlayer>().TryDrinkEstus();
+                if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
+                && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift && !modPlayer.isDodging)
+                {
+                    estusPlayer.isDrinking = true;
+                    estusPlayer.estusDrinkTimer = 0;
+                }
                 return;
             }
 
             Item selectedItem = player.QuickHeal_GetItemToUse();
-            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
+            Item[] PotionBagItems = modPlayer.PotionBagItems;
             if (!player.HasBuff(BuffID.PotionSickness))
             {
                 for (int i = 0; i < 28; i++)

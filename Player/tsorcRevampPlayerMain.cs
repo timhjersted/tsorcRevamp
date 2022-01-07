@@ -242,7 +242,7 @@ namespace tsorcRevamp
 
         public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
         {
-            if((context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem) && PotionBagUIState.Visible)
+            if((context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
             {
                 if (PotionBagUIState.IsValidPotion(inventory[slot]))
                 {
