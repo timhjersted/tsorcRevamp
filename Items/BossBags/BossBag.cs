@@ -705,8 +705,20 @@ namespace tsorcRevamp.Items.BossBags {
                     SoulsOnFirstBag(NPCID.BrainofCthulhu, player);
                 }
                 if (arg == ItemID.QueenBeeBossBag) {
-                    StaminaVesselOnFirstBag(NPCID.QueenBee, player);
-                    SoulsOnFirstBag(NPCID.QueenBee, player);
+                    if (Slain.ContainsKey(NPCID.QueenBee))
+                    {
+                        if (Slain[NPCID.QueenBee] == 0)
+                        {
+                            int enemyValue = 5000;
+                            float multiplier = tsorcRevampPlayer.CheckSoulsMultiplier(player);
+
+                            int DarkSoulQuantity = (int)(multiplier * enemyValue);
+
+                            StaminaVesselOnFirstBag(NPCID.QueenBee, player);
+                            player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
+                            Slain[NPCID.QueenBee] = 1;
+                        }
+                    };
                 }
                 if (arg == ItemID.WallOfFleshBossBag) {
                     EstusFlaskShardOnFirstBag(NPCID.WallofFlesh, player);

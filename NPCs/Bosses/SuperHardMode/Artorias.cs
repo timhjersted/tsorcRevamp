@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 	[AutoloadBossHead]
 	class Artorias : ModNPC {
 		public override void SetStaticDefaults() {
-			Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.PossessedArmor]; 
+			Main.npcFrameCount[npc.type] = 15; 
         }
         public override void SetDefaults() {
             npc.knockBackResist = 0;
@@ -25,7 +25,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.value = 700000;
             npc.boss = true;
             npc.lavaImmune = true;
-			animationType = NPCID.PossessedArmor; //this almost feels like cheating lol
 			bossBag = ModContent.ItemType<Items.BossBags.ArtoriasBag>();
 			despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
 		}
@@ -649,5 +648,49 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		}
 		#endregion
 
+		public override void FindFrame(int currentFrame)
+		{
+			int num = 1;
+			if (!Main.dedServ)
+			{
+				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+			}
+			if (npc.velocity.Y == 0f)
+			{
+				if (npc.direction == 1)
+				{
+					npc.spriteDirection = 1;
+				}
+				if (npc.direction == -1)
+				{
+					npc.spriteDirection = -1;
+				}
+				if (npc.velocity.X == 0f)
+				{
+					npc.frame.Y = 0;
+					npc.frameCounter = 0.0;
+				}
+				else
+				{
+					npc.frameCounter += (double)(Math.Abs(npc.velocity.X) * .5f);
+					//npc.frameCounter += 1.0;
+					if (npc.frameCounter > 2)
+					{
+						npc.frame.Y = npc.frame.Y + num;
+						npc.frameCounter = 0;
+					}
+					if (npc.frame.Y / num >= Main.npcFrameCount[npc.type])
+					{
+						npc.frame.Y = num * 1;
+					}
+				}
+			}
+			else
+			{
+				npc.frameCounter = 1.5;
+				npc.frame.Y = num;
+				npc.frame.Y = 0;
+			}
+		}
 	}
 }
