@@ -141,19 +141,24 @@ namespace tsorcRevamp {
                 return;
             }
             Item selectedItem = player.QuickMana_GetItemToUse();
-            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
-            if (!player.HasBuff(BuffID.PotionSickness))
+            if (selectedItem == null)
             {
-                for (int i = 0; i < 28; i++)
-                {
-                    if (PotionBagItems[i] != null && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && player.GetHealLife(PotionBagItems[i], true) > player.GetHealLife(selectedItem, true))
-                    {
-                        selectedItem = PotionBagItems[i];
-                    }
-                }
-
-                UsePotion(selectedItem, player);
+                selectedItem = new Item();
+                selectedItem.SetDefaults(0);
             }
+
+            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
+            
+            for (int i = 0; i < 28; i++)
+            {
+                if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true))
+                {
+                    selectedItem = PotionBagItems[i];
+                }
+            }
+
+            UsePotion(selectedItem, player);
+            
         }
         
         private static void CustomQuickHeal(On.Terraria.Player.orig_QuickHeal orig, Player player)
@@ -176,6 +181,11 @@ namespace tsorcRevamp {
             }
 
             Item selectedItem = player.QuickHeal_GetItemToUse();
+            if (selectedItem == null)
+            {
+                selectedItem = new Item();
+                selectedItem.SetDefaults(0);
+            }
             Item[] PotionBagItems = modPlayer.PotionBagItems;
             if (!player.HasBuff(BuffID.PotionSickness))
             {
