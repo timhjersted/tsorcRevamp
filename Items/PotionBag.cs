@@ -24,34 +24,50 @@ namespace tsorcRevamp.Items {
             item.height = 30;
             item.rare = ItemRarityID.Purple;
             item.value = 0;
+            item.noUseGraphic = true;
             item.useAnimation = 10;
             item.useTime = 10;
-            item.noUseGraphic = true;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            //item.UseSound = SoundID.Item4;
             item.maxStack = 1;
         }
-
+        int countdown = 0;
         public override bool CanUseItem(Player player) {
-			return true;
+           
+            return true;
         }
 
         public override bool UseItem(Player player) {
-            if (player.whoAmI == Main.myPlayer)
+            countdown = 12;
+            return true;
+        }
+
+        //You can't pick up or move items in your inventory while an item is being used
+        //If autopause is on, then the item stays frozen in-use unless you unpause... which closes the bag again :/
+        //Doing it like this means the bag opens *after* the item is finished being used
+        public override void UpdateInventory(Player player)
+        {
+            if(countdown > 0)
             {
-                if (!PotionBagUIState.Visible)
+                countdown--;
+            }
+            if(countdown == 1)
+            {
+                if (player.whoAmI == Main.myPlayer)
                 {
-                    Main.playerInventory = true;
-                    PotionBagUIState.Visible = true;
-                    Main.PlaySound(SoundID.MenuOpen);
-                }
-                else
-                {
-                    PotionBagUIState.Visible = false;
-                    Main.PlaySound(SoundID.MenuClose);
+                    if (!PotionBagUIState.Visible)
+                    {
+                        Main.playerInventory = true;
+                        PotionBagUIState.Visible = true;
+                        Main.PlaySound(SoundID.MenuOpen);
+                    }
+                    else
+                    {
+                        PotionBagUIState.Visible = false;
+                        Main.PlaySound(SoundID.MenuClose);
+                    }
                 }
             }
-            return true;
+            base.UpdateInventory(player);
         }
 
         public override void PostUpdate()

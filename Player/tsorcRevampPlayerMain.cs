@@ -101,6 +101,20 @@ namespace tsorcRevamp
             };
 
             List<Item> PotionBagList = new List<Item>();
+            if(PotionBagItems == null)
+            {
+                PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];                
+            }
+
+            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+            {
+                if(PotionBagItems[i] == null)
+                {
+                    PotionBagItems[i] = new Item();
+                    PotionBagItems[i].SetDefaults(0);
+                }
+            }
+
             foreach (Item thisItem in PotionBagItems)
             {
                 PotionBagList.Add(thisItem);

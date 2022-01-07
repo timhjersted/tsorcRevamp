@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items
                 if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 {
                     player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
-                    Main.NewText("You have become Bearer of the Curse", 200, 60, 40);
+                    Main.NewText("You have become the Bearer of the Curse", 200, 60, 40);
 
                 }
                 else
