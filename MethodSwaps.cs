@@ -169,7 +169,7 @@ namespace tsorcRevamp {
             if (modPlayer.BearerOfTheCurse && player.statLife < player.statLifeMax2)
             {
                 if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.estusChargesCurrent > 0 && player.itemAnimation == 0
-                && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift && !modPlayer.isDodging)
+                && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift && !modPlayer.isDodging && !estusPlayer.isDrinking)
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;

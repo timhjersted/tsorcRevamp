@@ -123,7 +123,7 @@ namespace tsorcRevamp
 			return base.PreItemCheck();
 		}
 
-		public bool TryDrinkEstus()
+		/*public bool TryDrinkEstus()
 		{
 			bool isLocal = player.whoAmI == Main.myPlayer;
 
@@ -136,12 +136,12 @@ namespace tsorcRevamp
 				return true;
 			}
 			return false;
-		}
+		}*/
 
 		public void UpdateDrinkingEstus()
 		{
 			//Attempt to drink if the player isn't already
-			if (!isDrinking && !TryDrinkEstus())
+			if (!isDrinking /*&& !TryDrinkEstus()*/)
 			{
 				return;
 			}

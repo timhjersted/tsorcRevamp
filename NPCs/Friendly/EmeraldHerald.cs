@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Friendly
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.Lifegem>(), 10);
-					Main.NewText("Estus Flask acquired! Don't forget to assign it a hotkey in Controls > Mod Controls. The Estus Flask is a reusable healing item that can be refilled at bonfires", Color.OrangeRed);
+					Main.NewText("Estus Flask acquired! Use it by pressing the Quick Heal hotkey. The Estus Flask is a reusable healing item that can be refilled at bonfires", Color.OrangeRed);
 
 					if (Main.netMode == NetmodeID.MultiplayerClient)
 					{

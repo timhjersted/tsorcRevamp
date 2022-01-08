@@ -65,7 +65,6 @@ namespace tsorcRevamp {
         public static float MusicDownloadProgress = 0;
         public static ModHotKey DodgerollKey;
         //public static ModHotKey SwordflipKey;
-        public static ModHotKey DrinkEstusKey;
 
         internal static bool[] CustomDungeonWalls;
 
@@ -74,7 +73,6 @@ namespace tsorcRevamp {
             reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
             DodgerollKey = RegisterHotKey("Dodge Roll", "LeftAlt");
             //SwordflipKey = RegisterHotKey("Sword Flip", "P"); //TODO change this
-            DrinkEstusKey = RegisterHotKey("Drink Estus", "H");
 
             DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulShekel>(), 99999L));
 
@@ -693,7 +691,6 @@ namespace tsorcRevamp {
             CustomDungeonWalls = null;
             DodgerollKey = null;
             //SwordflipKey = null;
-            DrinkEstusKey = null;
             if (!Main.dedServ) {
                 Main.NPCLoaded[NPCID.TheDestroyer] = false;
                 Main.NPCLoaded[NPCID.TheDestroyerBody] = false;
