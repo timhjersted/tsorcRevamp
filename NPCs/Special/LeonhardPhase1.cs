@@ -107,7 +107,6 @@ namespace tsorcRevamp.NPCs.Special
             if (npc.Distance(player.Center) < 1000)
             {
                 player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
-                //Main.NewText(player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff);
             }
 
             int lifePercentage = (npc.life * 100) / npc.lifeMax;
@@ -205,6 +204,26 @@ namespace tsorcRevamp.NPCs.Special
                 {
                     npc.noTileCollide = true;
                 }
+
+
+                if ((!player.wet && npc.wet) || npc.ai[3] > 2000)
+                {
+                    npc.velocity.Y += 4;
+                    npc.velocity.X = 0;
+
+                    npc.ai[1] = 240;
+                    npc.ai[3] = 0;
+
+                    for (int i = 0; i < 100; i++)
+                    {
+                        Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 89, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 50, default(Color), 1f)];
+                        dust2.noGravity = true;
+                    }
+
+                    Main.PlaySound(SoundID.Item81.WithPitchVariance(.3f), npc.position);
+                    npc.position = player.position + new Vector2(0, -10 * 16);
+                }
+
 
                 #endregion
 
@@ -394,6 +413,12 @@ namespace tsorcRevamp.NPCs.Special
                     if (lifePercentage < 50) { npc.ai[3]++; } //Add an additional 1 to counter if low hp
                     if (lifePercentage < 30) { npc.ai[3]++; } //Add an additional 1 to counter if very low hp
 
+                    if (Math.Abs(npc.Center.Y - player.Center.Y) > 50 && Math.Abs(player.velocity.Y) < 4 && Math.Abs(player.velocity.X) < 2)
+                    {
+                        npc.ai[3] += 5; //this is to speed up his teleport if youre unreachable.
+                    }
+
+
                     if (npc.ai[3] > 1000 && npc.ai[2] == 0)
                     {
                         if (Main.rand.Next(15) == 0)
@@ -403,7 +428,7 @@ namespace tsorcRevamp.NPCs.Special
                         }
                     }
 
-                    if (npc.ai[3] > 1200 && !jump && npc.velocity.Y == 0 && Math.Abs(npc.Center.X - player.Center.X) < 15 * 16)
+                    if (npc.ai[3] > 1200 && !jump && npc.velocity.Y == 0 && Math.Abs(npc.Center.X - player.Center.X) < 15 * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                     {
                         throwing = true;
                     }
@@ -591,7 +616,17 @@ namespace tsorcRevamp.NPCs.Special
 
         #region Drawing and Animation
 
-
+        public override void DrawEffects(ref Color drawColor)
+        {
+            if (npc.ai[3] > 1800)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 89, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 50, default(Color), 1f)];
+                    dust2.noGravity = true;
+                }
+            }
+        }
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw for trails
         {
 
