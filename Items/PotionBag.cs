@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool UseItem(Player player) {
-            countdown = 12;
+            player.GetModPlayer<tsorcRevampPlayer>().potionBagCountdown = 12;
             return true;
         }
 
@@ -46,28 +46,7 @@ namespace tsorcRevamp.Items {
         //Doing it like this means the bag opens *after* the item is finished being used
         public override void UpdateInventory(Player player)
         {
-            if(countdown > 0)
-            {
-                countdown--;
-            }
-            if(countdown == 1)
-            {
-                if (player.whoAmI == Main.myPlayer)
-                {
-                    if (!PotionBagUIState.Visible)
-                    {
-                        player.chest = -1;
-                        Main.playerInventory = true;
-                        PotionBagUIState.Visible = true;
-                        Main.PlaySound(SoundID.MenuOpen);
-                    }
-                    else
-                    {
-                        PotionBagUIState.Visible = false;
-                        Main.PlaySound(SoundID.MenuClose);
-                    }
-                }
-            }
+            
             base.UpdateInventory(player);
         }
 

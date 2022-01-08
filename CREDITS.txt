@@ -1,0 +1,82 @@
+ADVENTURE MAP
+Tim Hjersted aka Vibrent / Everything. Ahhh! :p
+
+MOD REVAMP (Current tModloader Edition)
+Zeodexic / programmer
+Chroma Equinox / programmer + spriter
+RecursiveCollapse / programmer
+Vibrent / programmer + sprite editer
+MarfMasterofDesaster / beta testing
+NephilimDeath / spriter
+W1k / coding help and extensive content contributions
+JayTeff / programmer
+Linklight2 / programmer
+Blasfah / spriting
+Frous / spriting + beta testing
+Mddznyan / spriting
+Articulo / sprites from Dark Souls Vanity
+Maxisi / [???] (They're mentioned in the readme for 'contributions', hopefully someone who knows details can clarify!)
+
+ORIGINAL MOD (tConfig Edition)
+Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
+Yoraiz0r / Dark Souls + Dual Wielding + More Dark Souls features
+Omnir / Omnir's Mod
+W1k / W1k's Mod + help
+Draykon / Dark Souls + Curtain of Bullets, Endgame
+Surfpup / No mining or placing tiles code
+Obsidian54 / Obsidian's Mod
+blahblahbal et al / Avalon Mod
+VortexJ / Unobtanium
+Zoodletec / Necro Pack
+Kujulo / Kujulo's Mod DLC
+Dogsonofawolf / NPCs
+Reborn Team / Reborn Mod
+Phlebas / Debuffs code
+FatObeseBird / League of Legends
+NerdyBoy, Reactorcore / Alchemistry
+PolarBMD / Terraria_
+Delra / Monster Hunter Mod
+KaneStaff / Zelda Mod
+FrosTr / FrosTr's Misc Pack
+Scooterboot9697 / Metroid Mod
+Pwnager / Empowered Endgame
+SuperWeegee1 / Dream (Also credit Dream Team)
+Mitchellex / WululuAcheld / Phoenix Down & Bookmarks
+Wooren / Sprites
+Sapharan / Legend of Sapharan
+Flashkirby99 / Flashkirby's Weapons Mod
+Zero-Exodus/Omnir / Dark,Blood,Crystal Knights, Dark Cloud Sprites
+Heartstone25 / Covenant of Artorias blood moon code
+Ace the Best / Ace The Best's Final Fantasy Modification
+Solenix / Vertigo Elemental
+MiraiMai / Duel Wielding mod aka Mainslot-0
+Eikester / Made Game Launcher and improved tConfig installation
+
+1.1 MOD UPDATE CONTRIBUTORS
+Tim Hjersted / Update director + new content and polish, see the original change log for more
+Grox The Great / coding help
+Zoodletech / content + sprites
+Avalon mod team / coding help
+Wooren / spritesOmnir / content + coding help
+Yorai / coding help
+Blahblahbal / coding help
+Flashkirby99 / mod content
+Zero-Exodus / sprites
+Scooterboot and W1k / Serris boss
+Whale Cancer / sprites
+Ace the Best / sprites
+Sapharan / select Legend of Sapharan content
+Heartstone25 / coding help
+Phlebas / debuff code
+Solenix / select Vertigo Elemental content
+
+TCONFIG EDITION SPECIAL THANKS
+*Yoraizor (is responsible for virtually all of the unique features related to the Dark Souls aspects of the mod and has always been super helpful)
+*Surfpup (made tConfig - would have never attempted to get into modding without tconfig's added accessibility.
+*Surfpup again for updating tConfig to version 0.36, making TSORC playable again in 2018! Hurray!
+*W1k (helped me a ton with mod questions)*Draykon (made the initial Dark Souls mechanic for the mod in like 3 hours!)
+*Diggaroo, Zebri and Triangular Satellite (each made a great trailer for the mod)
+*Omnir (a ton of the mod content is from his Omnir mod. The guy just pumps out tons of quality work)
+*Binary Construct (made the Tedit map editing program - couldn't have made the map without it)
+*Yoraizor (did I mention how helpful he's been? Can't thank him enough for helping me all the times I've been stumped by a mod issue)
+*Eikester (made Game Launcher and improved tConfig installation)

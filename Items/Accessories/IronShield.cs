@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Accessories {
             Tooltip.SetDefault("Greater defense at the cost of mobility" +
                                 "\nMovement Speed -40%. Unequip to regain maximum jumping abilities." +
                                 "\nVery useful when low on life and survival is essential." +
-                                "\nCan be upgraded with 3000 Dark Souls (increased movement speed, thorns buff).");
+                                "\nCan be upgraded with 2000 Dark Souls (increased movement speed, thorns buff).");
         }
 
         public override void SetDefaults() {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
@@ -46,8 +47,14 @@ namespace tsorcRevamp.Projectiles {
                 lightPosition.Y += (frameHeight * i) + (frameHeight / 2);
                 Lighting.AddLight(lightPosition, Color.Orange.ToVector3());
             }
+            for (int i = 0; i < 2; i++)
+            {
+                Dust d = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 174, 0, Main.rand.Next(-3, 0), 0, default, 4);
+                d.velocity.X = 0;
+                d.noGravity = true;
+            }
 
-            
+
             projectile.frameCounter++;
             if (projectile.frameCounter > 3) {
                 projectile.frame++;
@@ -89,7 +96,8 @@ namespace tsorcRevamp.Projectiles {
         public static Texture2D flameJetTexture;
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if(flameJetTexture == null || flameJetTexture.IsDisposed)
+            /*
+            if (flameJetTexture == null || flameJetTexture.IsDisposed)
             {
                 flameJetTexture = mod.GetTexture("Projectiles/FlameJet");
             }
@@ -109,7 +117,7 @@ namespace tsorcRevamp.Projectiles {
                 Vector2 drawPosition = startPosition - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
                 drawPosition.Y += (frameHeight * i) + (frameHeight / 2);
                 Main.spriteBatch.Draw(flameJetTexture, drawPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
-            }
+            }*/
 
             return false;
         }

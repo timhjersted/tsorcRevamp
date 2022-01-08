@@ -153,6 +153,7 @@ namespace tsorcRevamp {
         int healingTimer = 0;
 
         public Item[] PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
+        public int potionBagCountdown = 0; //You can't move items around if an item is still 'in use'. This lets us delay opening the bag until that finishes.
 
         public UIItemSlot SoulSlot;
 
@@ -225,7 +226,29 @@ namespace tsorcRevamp {
                 }
             }
 
-            
+            if (potionBagCountdown > 0)
+            {
+                potionBagCountdown--;
+            }
+            if (potionBagCountdown == 1)
+            {
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    if (!PotionBagUIState.Visible)
+                    {
+                        player.chest = -1;
+                        Main.playerInventory = true;
+                        PotionBagUIState.Visible = true;
+                        Main.PlaySound(SoundID.MenuOpen);
+                    }
+                    else
+                    {
+                        PotionBagUIState.Visible = false;
+                        Main.PlaySound(SoundID.MenuClose);
+                    }
+                }
+            }
+
 
             #region Miakoda
 

@@ -32,12 +32,12 @@ namespace tsorcRevamp.Items
             item.useAnimation = 40;
             item.value = 500;
             item.consumable = true;
+            item.buffType = BuffID.WeaponImbueFire;
+            item.buffTime = 14400;
         }
 
         public override bool UseItem(Player player)
         {
-            player.AddBuff(BuffID.WeaponImbueFire, 14400, false);
-
             return true;
         }
 
