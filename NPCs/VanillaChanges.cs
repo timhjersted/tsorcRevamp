@@ -855,63 +855,63 @@ namespace tsorcRevamp.NPCs {
 
         //BLOCKED NPCS
         public override void AI(NPC npc) {
-               if (npc.type == NPCID.BigRainZombie
-                || npc.type == NPCID.SmallRainZombie
-                || npc.type == NPCID.ZombieRaincoat
-                || npc.type == NPCID.Clown
-                || npc.type == NPCID.UmbrellaSlime 
-                //NEW ADDITIONS
-                || npc.type == NPCID.CursedSkull
-                || npc.type == NPCID.BigHeadacheSkeleton
-                || npc.type == NPCID.SmallHeadacheSkeleton
-                || npc.type == NPCID.BigSlimedZombie
-                || npc.type == NPCID.RedSlime
-                || npc.type == NPCID.GreenSlime
-                || npc.type == NPCID.TheGroom
-                || npc.type == NPCID.Unicorn
-                || npc.type == NPCID.SantaClaus
-                || npc.type == NPCID.SnowmanGangsta
-                || npc.type == NPCID.MisterStabby
-                || npc.type == NPCID.SnowBalla
-                || npc.type == NPCID.ZombieEskimo
-                || npc.type == NPCID.PigronCorruption
-                || npc.type == NPCID.PigronHallow
-                || npc.type == NPCID.PigronCrimson
-                || npc.type == NPCID.FaceMonster
-                || npc.type == NPCID.SlimedZombie
-                || npc.type == NPCID.HeadacheSkeleton
-                || npc.type == NPCID.AngryNimbus
-                || npc.type == NPCID.FloatyGross
-                || npc.type == NPCID.SkeletonSniper
-                || npc.type == NPCID.TacticalSkeleton
-                || npc.type == NPCID.HoppinJack
-                || npc.type == NPCID.ZombieDoctor
-                || npc.type == NPCID.SkeletonTopHat
-                || npc.type == NPCID.SkeletonAstonaut
-                || npc.type == NPCID.ZombieSuperman
-                || npc.type == NPCID.ZombieXmas
-                || npc.type == NPCID.ZombieSweater
-                || npc.type == NPCID.SlimeRibbonWhite
-                || npc.type == NPCID.SlimeRibbonYellow
-                || npc.type == NPCID.SlimeRibbonGreen
-                || npc.type == NPCID.SlimeRibbonRed
-                || npc.type == NPCID.BunnyXmas
-                || npc.type == NPCID.ZombieElf
-                || npc.type == NPCID.ZombieElfBeard
-                || npc.type == NPCID.ZombieElfGirl
-                || npc.type == NPCID.ArmedZombieEskimo
-                || npc.type == NPCID.ArmedZombieSlimed
-                || npc.type == NPCID.BoneThrowingSkeleton2
-                || npc.type == NPCID.BoneThrowingSkeleton3
-                || npc.type == NPCID.Butcher
-                || npc.type == NPCID.BloodZombie
-                || npc.type == NPCID.TheBride
-                || npc.type == NPCID.MartianProbe
-                //|| npc.type == NPCID.WindyBalloon
-                || npc.type == NPCID.UmbrellaSlime)
-            
-            {
-                npc.active = false;
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+                if (npc.type == NPCID.BigRainZombie
+                        || npc.type == NPCID.SmallRainZombie
+                        || npc.type == NPCID.ZombieRaincoat
+                        || npc.type == NPCID.Clown
+                        || npc.type == NPCID.UmbrellaSlime
+                        //NEW ADDITIONS
+                        || npc.type == NPCID.CursedSkull
+                        || npc.type == NPCID.BigHeadacheSkeleton
+                        || npc.type == NPCID.SmallHeadacheSkeleton
+                        || npc.type == NPCID.BigSlimedZombie
+                        || npc.type == NPCID.RedSlime
+                        || npc.type == NPCID.GreenSlime
+                        || npc.type == NPCID.TheGroom
+                        || npc.type == NPCID.Unicorn
+                        || npc.type == NPCID.SantaClaus
+                        || npc.type == NPCID.SnowmanGangsta
+                        || npc.type == NPCID.MisterStabby
+                        || npc.type == NPCID.SnowBalla
+                        || npc.type == NPCID.ZombieEskimo
+                        || npc.type == NPCID.PigronCorruption
+                        || npc.type == NPCID.PigronHallow
+                        || npc.type == NPCID.PigronCrimson
+                        || npc.type == NPCID.FaceMonster
+                        || npc.type == NPCID.SlimedZombie
+                        || npc.type == NPCID.HeadacheSkeleton
+                        || npc.type == NPCID.AngryNimbus
+                        || npc.type == NPCID.FloatyGross
+                        || npc.type == NPCID.SkeletonSniper
+                        || npc.type == NPCID.TacticalSkeleton
+                        || npc.type == NPCID.HoppinJack
+                        || npc.type == NPCID.ZombieDoctor
+                        || npc.type == NPCID.SkeletonTopHat
+                        || npc.type == NPCID.SkeletonAstonaut
+                        || npc.type == NPCID.ZombieSuperman
+                        || npc.type == NPCID.ZombieXmas
+                        || npc.type == NPCID.ZombieSweater
+                        || npc.type == NPCID.SlimeRibbonWhite
+                        || npc.type == NPCID.SlimeRibbonYellow
+                        || npc.type == NPCID.SlimeRibbonGreen
+                        || npc.type == NPCID.SlimeRibbonRed
+                        || npc.type == NPCID.BunnyXmas
+                        || npc.type == NPCID.ZombieElf
+                        || npc.type == NPCID.ZombieElfBeard
+                        || npc.type == NPCID.ZombieElfGirl
+                        || npc.type == NPCID.ArmedZombieEskimo
+                        || npc.type == NPCID.ArmedZombieSlimed
+                        || npc.type == NPCID.BoneThrowingSkeleton2
+                        || npc.type == NPCID.BoneThrowingSkeleton3
+                        || npc.type == NPCID.Butcher
+                        || npc.type == NPCID.BloodZombie
+                        || npc.type == NPCID.TheBride
+                        || npc.type == NPCID.MartianProbe
+                        //|| npc.type == NPCID.WindyBalloon
+                        || npc.type == NPCID.UmbrellaSlime) {
+                    npc.active = false;
+                } 
             }
 
             if ((npc.friendly) && (npc.townNPC == true)) { //town NPCs are immortal (why was i using a hp check?)
