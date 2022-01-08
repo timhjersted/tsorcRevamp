@@ -115,6 +115,19 @@ namespace tsorcRevamp {
                 EmeraldHeraldUserInterface = new UserInterface();
             }
 
+            if (!Main.dedServ) {
+                Main.instance.LoadNPC(NPCID.TheDestroyer);
+                Main.npcTexture[NPCID.TheDestroyer] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_134");
+                Main.instance.LoadNPC(NPCID.TheDestroyerBody);
+                Main.npcTexture[NPCID.TheDestroyerBody] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_135");
+                Main.instance.LoadNPC(NPCID.TheDestroyerTail);
+                Main.npcTexture[NPCID.TheDestroyerTail] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_136");
+                Main.instance.LoadGore(156);
+                Main.goreTexture[156] = GetTexture("NPCs/Bosses/TheDestroyer/Gore_156");
+                Main.instance.LoadNPC(NPCID.Probe);
+                Main.npcTexture[NPCID.Probe] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_139");
+            }
+
             UpdateCheck();
         }
 
@@ -681,6 +694,13 @@ namespace tsorcRevamp {
             DodgerollKey = null;
             //SwordflipKey = null;
             DrinkEstusKey = null;
+            if (!Main.dedServ) {
+                Main.NPCLoaded[NPCID.TheDestroyer] = false;
+                Main.NPCLoaded[NPCID.TheDestroyerBody] = false;
+                Main.NPCLoaded[NPCID.TheDestroyerTail] = false;
+                Main.NPCLoaded[NPCID.Probe] = false;
+                Main.goreLoaded[156] = false;
+            }
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();
