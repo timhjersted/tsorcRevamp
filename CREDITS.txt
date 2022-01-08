@@ -15,7 +15,7 @@ Blasfah / spriting
 Frous / spriting + beta testing
 Mddznyan / spriting
 Articulo / sprites from Dark Souls Vanity
-Maxisi / [???] (They're mentioned in the readme for 'contributions', hopefully someone who knows details can clarify!)
+Maxisi / programmer
 
 ORIGINAL MOD (tConfig Edition)
 Tim Hjersted / Mod Director + Dark Souls concept + New content + Mod Remixing & Compiling
