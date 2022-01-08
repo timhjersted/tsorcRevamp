@@ -9,6 +9,9 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class RedCloudHunter : ModNPC
 	{
+
+		public int archerBoltDamage = 25; //was 85, whoa, how did no one complain about this?
+
 		public override void SetDefaults()
 		{
 			aiType = NPCID.SkeletonArcher;
@@ -16,19 +19,46 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.damage = 52;
 			npc.lifeMax = 1150;
-			npc.scale = 1.1f;
+			npc.scale = 0.9f;
 			npc.defense = 30;
-			npc.value = 3600;
+			npc.value = 6500;
 			npc.width = 18;
 			npc.aiStyle = -1;
 			npc.height = 48;
-			npc.knockBackResist = 0f;
+			npc.knockBackResist = 0.8f;
 			npc.rarity = 3;
 			banner = npc.type;
+			npc.buffImmune[BuffID.Confused] = true;
 			bannerItem = ModContent.ItemType<Banners.RedCloudHunterBanner>();
 
 			animationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[npc.type] = 20;
+
+			if (Main.hardMode)
+			{
+				npc.defense = 14;
+				npc.value = 3500;
+				npc.damage = 40;
+				archerBoltDamage = 65;
+			}
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				npc.lifeMax = 2150;
+				npc.defense = 40;
+				npc.value = 3600;
+				npc.damage = 70;
+				archerBoltDamage = 85;
+			}
+
+	}
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			npc.defense = (int)(npc.defense * (2 / 3));
+			archerBoltDamage = (int)(archerBoltDamage / 2);
 		}
 
 		public override void NPCLoot()
@@ -40,7 +70,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		int drownTimerMax = 3000;
 		int drownTimer = 3000;
 		int drowningRisk = 1200;
-
+		
 
 		#region Spawn
 
@@ -48,12 +78,19 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (!spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && spawnInfo.player.ZoneJungle) return 0.002f;
 
-			if (Main.hardMode && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.033f;
-			if (Main.hardMode && !spawnInfo.player.ZoneMeteor && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.023f;
-			if (Main.hardMode && spawnInfo.player.ZoneOverworldHeight && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.0125f;
+			if (!Main.hardMode && spawnInfo.player.ZoneDungeon) return 0.02f;
 
+			if (Main.hardMode && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.05f;
+			if (Main.hardMode && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.09f;
+			if (Main.hardMode && spawnInfo.player.ZoneOverworldHeight && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneBeach || spawnInfo.player.ZoneJungle)) return 0.0125f;
+
+			if (Main.hardMode && spawnInfo.lihzahrd) return 0.15f;
+
+			if (tsorcRevampWorld.SuperHardMode && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.13f;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneOverworldHeight && (spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.1f;
+			if (tsorcRevampWorld.SuperHardMode && (spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneUndergroundDesert)) return 0.13f;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.01f; //.08% is 4.28%
 			return chance;
 		}
 		#endregion
@@ -70,7 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
 			bool can_teleport = true;  //  tp around like chaos ele
-			int boredom_time = 20; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+			int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
 			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
 			bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
@@ -371,13 +408,15 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (npc.justHit)
 					npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
+				
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f)
 				{
 					npc.TargetClosest(true);
-					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					//(Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					if(Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
 					{
-						if (Main.rand.Next(90) == 1)
+						if (Main.rand.Next(100) == 1)
 						{
 							float num48 = 13f;
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -389,9 +428,9 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 85;//(int) (14f * npc.scale);
+								//int damage = 85;//(int) (14f * npc.scale);
 								int type = ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, archerBoltDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 600;
 								Main.projectile[num54].aiStyle = 1;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);

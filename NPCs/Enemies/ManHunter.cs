@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.width = 18;
 			npc.aiStyle = -1;
 			npc.height = 48;
-			npc.knockBackResist = 0.5f;
+			npc.knockBackResist = 0.7f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.ManHunterBanner>();
 
@@ -410,7 +410,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (customAi1 >= 10f)
 				{
 					npc.TargetClosest(true);
-					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					//if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
 					{
 						if (Main.rand.Next(90) == 1)
 						{

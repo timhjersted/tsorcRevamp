@@ -108,6 +108,7 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            HeroofLumeliaFight,
             FireLurkerPain,
             RedKnightPain,
             RedKnightTwinMountain,
@@ -157,7 +158,12 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
-            
+
+            //HERO OF LUMELIA FIGHT
+            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(4487, 732), 13, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ", Color.LightGoldenrodYellow, false, LumeliaCustomCondition);
+            //HeroofLumeliaFight.SetCustomStats(1600, 12, 52, 1555);
+            //HeroofLumeliaFight.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion }, new List<int>() { 2, 2 });
+
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, "A cursed Fire Lurker appears...", Color.Purple, false, default, FireLurkerPainCustomAction);
             FireLurkerPain.SetCustomStats(1600, 12, 52, 1555);
@@ -165,11 +171,11 @@ namespace tsorcRevamp
 
             //RED KNIGHT IN PATH OF PAIN
             ScriptedEvent RedKnightPain = new ScriptedEvent(new Vector2(3897, 1219), 20, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightPainCustomAction);
-            RedKnightPain.SetCustomStats(2700, 10, 60, 3555);
+            RedKnightPain.SetCustomStats(2700, 10, 60, 3255);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightMountainCustomAction);
-            RedKnightTwinMountain.SetCustomStats(1500, 10, 60, 2555);
+            RedKnightTwinMountain.SetCustomStats(1500, 10, 60, 1855);
 
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
@@ -315,6 +321,7 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight},
                 {ScriptedEventType.FireLurkerPain, FireLurkerPain},
                 {ScriptedEventType.RedKnightPain, RedKnightPain},
                 {ScriptedEventType.RedKnightTwinMountain, RedKnightTwinMountain},
@@ -391,7 +398,22 @@ namespace tsorcRevamp
                 return false;
             }
         }
-        //This condition returns true if the world is in superhardmode
+
+
+        public static bool LumeliaCustomCondition()
+        {
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        //COMMON CONDITIONS
         public static bool NormalModeCustomCondition()
         {
             return !Main.hardMode;
@@ -420,7 +442,7 @@ namespace tsorcRevamp
         {
             return !Main.dayTime;
         }
-        //This condition returns true if the world is in superhardmode
+        
         public static bool HardModeCustomCondition()
         {
             return Main.hardMode;
@@ -574,7 +596,7 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
-                ourRedKnightPain.redKnightsSpearDamage = 17;
+                ourRedKnightPain.redKnightsSpearDamage = 20;
             }
             return true;
         }
@@ -585,7 +607,7 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
-                ourRedKnight.redKnightsSpearDamage = 15;
+                ourRedKnight.redKnightsSpearDamage = 17;
             }
             return true;
         }

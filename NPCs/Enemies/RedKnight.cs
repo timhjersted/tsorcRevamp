@@ -32,6 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 15000;
             npc.knockBackResist = 0.05f;
+            npc.buffImmune[BuffID.Confused] = true;
+            npc.buffImmune[BuffID.OnFire] = true;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
         }
@@ -366,9 +368,44 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (npc.justHit)
                 {
-                    customAi1 = 50f;
+                    customAi1 = 110f;
+
+                    //WHEN HIT, CHANCE TO DASH STEP BACKWARDS
+                    if (Main.rand.Next(5) == 1)
+                    {
+
+                        npc.TargetClosest(false);
+
+                        npc.velocity.Y = -8f;
+                        npc.velocity.X = -3;
+
+                        npc.netUpdate = true;
+                    }
+
+                        //WHEN HIT, CHANCE TO DASH STEP BACKWARDS
+                    if (Main.rand.Next(3) == 1)
+                    {
+
+                        npc.TargetClosest(false);
+
+                        npc.velocity.Y = -5f;
+                        npc.velocity.X = -5;
+
+                        //CHANCE TO JUMP AFTER DASH
+                        if (Main.rand.Next(2) == 1)
+                        {
+                            npc.TargetClosest(false);
+                            npc.velocity.Y = -6f;
+                           
+                        }
+
+                        npc.netUpdate = true;
+                    }
+
                 }
-                    //npc.ai[2] = 0f; // reset throw countdown when hit
+
+               
+                //npc.ai[2] = 0f; // reset throw countdown when hit
 
                 #region Projectiles
                 customAi1++; ;
