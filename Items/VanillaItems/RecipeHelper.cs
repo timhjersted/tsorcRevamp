@@ -56,6 +56,13 @@ namespace tsorcRevamp {
             RecipeRemover(ItemID.MoltenPickaxe);
             RecipeRemover(ItemID.Sandgun);
 
+            RecipeRemover(ItemID.OrichalcumDrill);
+            RecipeRemover(ItemID.OrichalcumPickaxe);
+            RecipeRemover(ItemID.PalladiumPickaxe);
+            RecipeRemover(ItemID.PalladiumDrill);
+            RecipeRemover(ItemID.TitaniumDrill);
+            RecipeRemover(ItemID.TitaniumPickaxe);
+
             RecipeRemover(ItemID.BladeofGrass);
             RecipeRemover(ItemID.RopeCoil);
             RecipeRemover(ItemID.VineRopeCoil);

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 62;
+            item.damage = 68;
             item.knockBack = 7f;
 
             item.useStyle = ItemUseStyleID.HoldingOut;
