@@ -139,8 +139,7 @@ namespace tsorcRevamp.Items.BossBags {
 			var Slain = tsorcRevampWorld.Slain;
 			if (Slain.ContainsKey(BossBagNPC)) {
                 if (Slain[BossBagNPC] == 0) {
-
-                    player.QuickSpawnItem(ModContent.ItemType<EstusFlaskShard>());
+                    VanillaBossBag.EstusFlaskShardOnFirstBag(BossBagNPC, player);
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
 					Slain[BossBagNPC] = 1;
 				}

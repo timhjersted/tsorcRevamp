@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		{
 			npc.aiStyle = 6;
 			npc.netAlways = true;
-			npc.npcSlots = 10;
+			npc.npcSlots = 5;
 			npc.width = 30;
 			npc.height = 30;
 			npc.timeLeft = 22000;
@@ -30,12 +30,12 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			npc.defense = 18;
 			npc.HitSound = SoundID.NPCHit7;
 			npc.DeathSound = SoundID.NPCDeath8;
-			npc.lifeMax = 1500;
+			npc.lifeMax = 1250;
 			npc.knockBackResist = 0f;
 			npc.scale = 0.7f;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
-			npc.value = 3000;
+			npc.value = 2000;
 			npc.buffImmune[BuffID.Poisoned] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
 			npc.buffImmune[BuffID.Confused] = true;
@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 				}
 			}
 
-			if (Main.rand.Next(2020) == 0)//was 120
+			if (Main.rand.Next(100) == 0 && (Math.Abs(npc.velocity.X) > 3 || Math.Abs(npc.velocity.Y) > 3) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 500) //I'm assuming 1 in 2020 was a typo
 			{
 				breath = true;
 				Main.PlaySound(SoundID.Item, npc.position, 20);
@@ -149,7 +149,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 					
 					//These won't work in multiplayer (projectile id's, timeleft, scale, etc are not synced), but it's not that big a deal
 					Main.projectile[num54].timeLeft = 10;
-					//Main.projectile[num54].scale = .8f;
+					Main.projectile[num54].scale = .5f;
 				}
 				breathCD--;
 			}

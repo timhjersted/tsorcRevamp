@@ -32,11 +32,16 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreAI()
         {
+            projectile.ai[1]++;
 
-            int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.CursedTorch, 0, 0, 70, default(Color), Main.rand.NextFloat(2.5f, 4f));
-            Main.dust[dust].noGravity = true;
+            if (projectile.ai[1] > 3)
+            {
+                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.CursedTorch, projectile.velocity.X * 2f, projectile.velocity.Y * 2f, 70, default(Color), Main.rand.NextFloat(2.5f, 4f));
+                Main.dust[dust].noGravity = true;
+            }
 
             return false;
+            
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
