@@ -678,6 +678,10 @@ namespace tsorcRevamp {
                 Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
             }
             DarkSoulCounterUIState.ConfigInstance = null;
+
+            TransparentTextureHandler.TransparentTextures.Clear();
+            TransparentTextureHandler.TransparentTextures = null;
+
             /*
             for (int m = 1; m < Main.maxMusic; m++)
             {

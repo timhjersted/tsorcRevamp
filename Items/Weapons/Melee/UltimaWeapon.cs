@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddRecipe();
         }
 
-        Texture2D glowTexture;
-        Texture2D baseTexture;
+        static Texture2D glowTexture;
+        static Texture2D baseTexture;
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
