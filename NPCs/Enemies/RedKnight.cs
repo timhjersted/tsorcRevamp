@@ -402,6 +402,57 @@ namespace tsorcRevamp.NPCs.Enemies
                         npc.netUpdate = true;
                     }
 
+                    //  if jumping during a dash, chance to teleport
+                    if (npc.velocity.Y >= -2f && Main.rand.Next(3) == 1)
+                    {
+                        
+                        if (Main.netMode != 1 && can_teleport) // is server & chaos ele & bored
+                        {
+                            int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
+                            int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+                            int x_blockpos = (int)npc.position.X / 16; // corner not center
+                            int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                            int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
+                            int tp_counter = 0;
+                            bool flag7 = false;
+                            if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+                            { // far away from target; 2000 pixels = 125 blocks
+                                tp_counter = 100;
+                                flag7 = true; // no teleport
+                            }
+                            while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
+                            {
+                                if (tp_counter >= 100) // run 100 times
+                                    break; //return;
+                                tp_counter++;
+
+                                int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                                int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                                for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
+                                { // (tp_x_target,m) is block under its feet I think
+                                    if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 4 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                                    { // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                                        bool safe_to_stand = true;
+                                        bool dark_caster = false; // not a fighter type AI...
+                                        if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                                            safe_to_stand = false;
+                                        else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                                            safe_to_stand = false;
+
+                                        if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                                        { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
+                                            npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
+                                            npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
+                                            npc.netUpdate = true;
+                                            npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+                                            flag7 = true; // end the loop (after testing every lower point :/)
+                                        }
+                                    } // END over 4 blocks distant from player...
+                                } // END traverse y down to edge of radius
+                            } // END try 100 times
+                        } // END is server & chaos ele & bored
+                        
+                    }
                 }
 
                

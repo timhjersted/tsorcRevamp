@@ -22,8 +22,6 @@ namespace tsorcRevamp.NPCs.Bosses
 		public override void SetDefaults()
 		{
 			npc.npcSlots = 6;
-			//animationType = NPCID.Skeleton;
-			//npc.aiStyle = -1;
 			Main.npcFrameCount[npc.type] = 16;
 			animationType = 28;
 			npc.aiStyle = 3;
