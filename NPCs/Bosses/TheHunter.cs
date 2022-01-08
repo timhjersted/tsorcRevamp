@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npc.knockBackResist = 0f;
             npc.scale = 1.4f;
             npc.value = 200000;
-            npc.npcSlots = 160;
+            npc.npcSlots = 6;
             npc.boss = true;
             npc.lavaImmune = true;
             npc.noGravity = true;

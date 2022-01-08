@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Enemies {
     class DungeonMage : ModNPC {
         public override void SetDefaults() {
-            npc.npcSlots = 10;
+            npc.npcSlots = 5;
             //npc.maxSpawns = 2; todo investigate
             npc.aiStyle = 0;
             npc.damage = 20;

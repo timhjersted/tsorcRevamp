@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 80;
+			npc.npcSlots = 6;
 			//animationType = NPCID.Skeleton;
 			//npc.aiStyle = -1;
 			Main.npcFrameCount[npc.type] = 16;
@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.buffImmune[BuffID.OnFire] = true;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.HeroOfLumeliaBanner>();
-			despawnHandler = new NPCDespawnHandler("The hero of Lumia stands victorious...", Color.Gold, DustID.GoldFlame);
+			despawnHandler = new NPCDespawnHandler("The hero of Lumelia stands victorious...", Color.Gold, DustID.GoldFlame);
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

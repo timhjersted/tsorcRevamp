@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			Main.npcFrameCount[npc.type] = 1;
 			animationType = 10;
 			npc.netAlways = true;
-			npc.npcSlots = 50;
+			npc.npcSlots = 3;
 			npc.width = 40;
 			npc.height = 40;
 			npc.boss = true;

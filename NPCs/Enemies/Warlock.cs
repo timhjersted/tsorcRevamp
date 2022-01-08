@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.knockBackResist = 0.2f;
 			npc.aiStyle = 3;
 			npc.damage = 65;
-			npc.npcSlots = 10;
+			npc.npcSlots = 5;
 			npc.defense = 5;
 			npc.height = 40;
 			npc.width = 20;

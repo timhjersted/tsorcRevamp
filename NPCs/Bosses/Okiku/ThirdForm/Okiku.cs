@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.lifeMax = 22400;
-            npc.npcSlots = 20f;
+            npc.npcSlots = 2f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = Item.buyPrice(0, 26);

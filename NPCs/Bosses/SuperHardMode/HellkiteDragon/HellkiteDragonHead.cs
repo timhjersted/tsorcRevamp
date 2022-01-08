@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
         public override void SetDefaults()
         {
             npc.netAlways = true;
-            npc.npcSlots = 100;
+            npc.npcSlots = 6;
             npc.width = 60;
             npc.height = 60;
             drawOffsetY = 42;

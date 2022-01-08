@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0f;
-            npc.npcSlots = 15f;
+            npc.npcSlots = 6f;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Confused] = true;

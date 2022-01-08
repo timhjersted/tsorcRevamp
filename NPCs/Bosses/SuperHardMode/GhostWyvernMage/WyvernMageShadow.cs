@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
     {
         public override void SetDefaults()
         {
-            npc.npcSlots = 30;
+            npc.npcSlots = 3;
             Main.npcFrameCount[npc.type] = 3;
             animationType = 29;
             npc.aiStyle = 0;

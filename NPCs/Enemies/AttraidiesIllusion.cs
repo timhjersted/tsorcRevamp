@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             animationType = NPCID.GoblinSorcerer;
-            npc.npcSlots = 10;
+            npc.npcSlots = 5;
             npc.lifeMax = 400;
             npc.damage = 13;
             npc.scale = 1f;

@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Bosses
 		public override void SetDefaults()
 		{
 
-			npc.npcSlots = 30;
+			npc.npcSlots = 5;
 			Main.npcFrameCount[npc.type] = 2;
 			npc.width = 70;
 			npc.height = 70;

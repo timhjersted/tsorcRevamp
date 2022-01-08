@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
         public override void SetDefaults() {
 			npc.aiStyle = 6;
             npc.netAlways = true;
-            npc.npcSlots = 100;
+            npc.npcSlots = 1;
             npc.width = 45;
             npc.height = 45;
             npc.timeLeft = 22000;

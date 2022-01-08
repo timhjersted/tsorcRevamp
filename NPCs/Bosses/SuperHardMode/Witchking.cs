@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool chargeDamageFlag = false;
 
         public override void SetDefaults() {
-            npc.npcSlots = 100;
+            npc.npcSlots = 5;
             npc.aiStyle = 3;
             npc.height = 45;
             npc.width = 30;

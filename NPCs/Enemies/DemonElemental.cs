@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void SetDefaults()
 		{
 			npc.aiStyle = 22;
-			npc.npcSlots = 25;
+			npc.npcSlots = 5;
 			Main.npcFrameCount[npc.type] = 3;
 			animationType = -1; //was 60
 			npc.width = 30;

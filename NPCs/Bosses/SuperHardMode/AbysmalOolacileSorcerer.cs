@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 180;
+			npc.npcSlots = 10;
 			Main.npcFrameCount[npc.type] = 3;
 			animationType = 29;
 			npc.aiStyle = 0;

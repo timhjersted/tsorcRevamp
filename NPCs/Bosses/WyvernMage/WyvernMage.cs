@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public override void SetDefaults()
         {
             npc.scale = 1;
-            npc.npcSlots = 150;
+            npc.npcSlots = 6;
             Main.npcFrameCount[npc.type] = 3;
             npc.width = 28;
             npc.height = 44;

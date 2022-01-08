@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetDefaults()
         {
-            npc.npcSlots = 50;
+            npc.npcSlots = 5;
             npc.lifeMax = 80000;
             npc.scale = 1f;
             npc.defense = 10;

@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		public override void SetDefaults()
 		{
 			npc.scale = 1;
-			npc.npcSlots = 20;
+			npc.npcSlots = 10;
 			Main.npcFrameCount[npc.type] = 8;
 			npc.width = 120;
 			npc.height = 160;

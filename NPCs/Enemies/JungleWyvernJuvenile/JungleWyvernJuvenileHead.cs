@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		{
 			npc.aiStyle = 6;
 			npc.netAlways = true;
-			npc.npcSlots = 5;
+			npc.npcSlots = 2;
 			npc.width = 30;
 			npc.height = 30;
 			npc.timeLeft = 22000;

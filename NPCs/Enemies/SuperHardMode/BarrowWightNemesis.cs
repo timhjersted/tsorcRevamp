@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		public override void SetDefaults()
 		{
 
-			npc.npcSlots = 10;
+			npc.npcSlots = 5;
 			Main.npcFrameCount[npc.type] = 4;
 			npc.width = 58;
 			npc.height = 48;

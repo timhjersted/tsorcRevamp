@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
     class Attraidies : ModNPC {
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
         public override void SetDefaults() {
-            npc.npcSlots = 200;
+            npc.npcSlots = 10;
             npc.damage = 70;
             npc.defense = 25;
             npc.height = 44;
