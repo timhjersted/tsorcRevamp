@@ -278,9 +278,15 @@ namespace tsorcRevamp.Items {
 			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 			if (item.melee)
 			{
+				/*Main.NewText("magicDamage: " + player.magicDamage);
+				Main.NewText("magicDamageMult: " + player.magicDamageMult);
+				Main.NewText((player.magicDamage - player.magicDamageMult) * .5f);*/
+
 				if (modPlayer.MagicWeapon)
 				{
-					add += (player.magicDamage - player.magicDamageMult) * .5f /*- (player.meleeDamageMult * 0.05f)*/;
+					float bonusDamage = (player.magicDamage - player.magicDamageMult) * .5f;
+					if (bonusDamage >= 0) { add += bonusDamage; }
+
 					if (player.statManaMax2 >= 100)
 					{
 						flat += (player.statManaMax2 - 100) / 60;
@@ -288,7 +294,9 @@ namespace tsorcRevamp.Items {
 				}
 				if (modPlayer.GreatMagicWeapon)
 				{
-					add += (player.magicDamage - player.magicDamageMult) * .75f /*- (player.meleeDamageMult * 0.1f)*/;
+					float bonusDamage = (player.magicDamage - player.magicDamageMult) * .75f;
+					if (bonusDamage >= 0) { add += bonusDamage; }
+
 					if (player.statManaMax2 >= 100)
 					{
 						flat += (player.statManaMax2 - 100) / 40;
@@ -296,7 +304,9 @@ namespace tsorcRevamp.Items {
 				}
 				if (modPlayer.CrystalMagicWeapon)
 				{
-					add += (player.magicDamage - player.magicDamageMult) * 1f /*- (player.meleeDamageMult * 0.15f)*/; //scales same as melee damage bonus would
+					float bonusDamage = (player.magicDamage - player.magicDamageMult) * 1f;
+					if (bonusDamage >= 0) { add += bonusDamage; }
+
 					if (player.statManaMax2 >= 100)
 					{
 						flat += (player.statManaMax2 - 100) / 20;

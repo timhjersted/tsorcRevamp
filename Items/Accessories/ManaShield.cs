@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Focuses the user's mana into a protective shield" +
-                                $"\nReduces damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
+                                $"\nReduces incoming damage by {damageResistance * 100}%, but drains {manaCost} mana per hit" +
                                 "\nInhibits both natural and artificial mana regen" +
                                 $"\n[c/C80032:For melee warriors only], reduces other damage dramatically");
         }
