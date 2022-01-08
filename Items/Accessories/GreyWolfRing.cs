@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Accessories {
             Tooltip.SetDefault("One of the rings worn by Artorias." +
                                 "\nImmunity to the on-fire, bleeding, poisoned, and broken-armor debuffs." + 
 								"\n+23 defense within the Abyss, +16 defense otherwise." + 
-								"\nWhen awakening from death, you regain full health." + 
 								"\nSwords inflict fire damage." +
 								"\n+8 HP Regen. +100 Mana.");
         }
@@ -38,7 +37,6 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.magmaStone = true;
-			player.spawnMax = true;
 			player.statManaMax2 += 100;
 			player.buffImmune[BuffID.OnFire] = true;
 			player.buffImmune[BuffID.BrokenArmor] = true;

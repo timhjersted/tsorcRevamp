@@ -810,6 +810,7 @@ namespace tsorcRevamp
         public override void OnRespawn(Player player)
         {
             tsorcScriptedEvents.RefreshEvents();
+            player.statLife = player.statLifeMax2;
         }
 
         public static bool CheckBossZen() {

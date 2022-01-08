@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Accessories {
             Tooltip.SetDefault("This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth." +
                                 "\nThe ringstone doubles magic damage, reduces mana use by 50% and boosts magic crit by 50%" +
                                 "\nbut at the cost of one-half Max HP. Your previous max HP is restored" +
-                                "\nwhen the ring is removed. Healing enchantment provides +9 Life Regen and gifts the reborn with full health.");
+                                "\nwhen the ring is removed. Healing enchantment provides +9 Life Regen.");
         }
 
         public override void SetDefaults() {
@@ -37,7 +37,6 @@ namespace tsorcRevamp.Items.Accessories {
 			player.manaCost -= 0.5f;
 			player.magicDamage *= 2;
 			player.magicCrit += 50;
-			player.spawnMax = true;
 			player.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing = true;
 			
         }
