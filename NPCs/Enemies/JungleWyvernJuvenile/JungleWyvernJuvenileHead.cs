@@ -367,6 +367,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(1, 3));
 			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
 			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
+			Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
 
 		}
 	}

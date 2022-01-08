@@ -794,6 +794,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1);
 			if (Main.rand.Next(99) < 30) Item.NewItem(npc.getRect(), ItemID.ShinePotion, 1);
 			if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ItemID.BattlePotion, 1);
+			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
 		}
 		#endregion
 	}

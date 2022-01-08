@@ -706,6 +706,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Wild Warrior Gore 3"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Wild Warrior Gore 2"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Wild Warrior Gore 3"), 1f);
+				if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
 			}
 		}
 	}
