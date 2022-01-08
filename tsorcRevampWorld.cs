@@ -223,9 +223,13 @@ namespace tsorcRevamp {
         Texture2D VanillaSun3 = ModContent.GetTexture("Terraria/Sun3");
         List<Texture2D> VanillaMoonTextures;
 
-        public override void TileCountsAvailable(int[] tileCounts) {
-            Main.dungeonTiles += tileCounts[TileID.BoneBlock];
-        }
+        //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely
+        //because of other code improving dungeon spawn detection
+        
+        //public override void TileCountsAvailable(int[] tileCounts) {
+        //    Main.dungeonTiles += tileCounts[TileID.BoneBlock];
+        //}
+
         public override void PostUpdate() {
             
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.

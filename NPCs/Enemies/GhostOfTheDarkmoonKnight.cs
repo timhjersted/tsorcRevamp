@@ -20,12 +20,12 @@ namespace tsorcRevamp.NPCs.Enemies {
             npc.height = 40;
             npc.width = 20;
             npc.damage = 38;
-            npc.defense = 25;
-            npc.lifeMax = 4000;
+            npc.defense = 35;
+            npc.lifeMax = 3000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 30000;
-            npc.knockBackResist = 0;
+            npc.value = 12500;
+            npc.knockBackResist = 0.1f;
             animationType = 28;
             Main.npcFrameCount[npc.type] = 16;
             banner = npc.type;
@@ -44,6 +44,35 @@ namespace tsorcRevamp.NPCs.Enemies {
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
 
+        #region Spawn
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
+            bool BeforeFourAfterSix = spawnInfo.spawnTileX < Main.maxTilesX * 0.6f || spawnInfo.spawnTileX > Main.maxTilesX * 0.8f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?) but different because I increased numbers by .2
+
+            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && spawnInfo.player.ZoneDungeon)
+            {
+                return 0.3f;
+            }
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneUnderworldHeight && spawnInfo.player.ZoneDungeon)
+            {
+                return 0.4f;
+            }
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.player.ZoneDungeon)
+            {
+                return 0.2f; 
+            }
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon)
+            {
+                return 0.1f;
+            }
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon)
+            {
+                return 0.08f;
+            }
+
+            return 0;
+        }
+        #endregion
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {
             if (Main.rand.Next(4) == 0) {
@@ -234,10 +263,6 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
                 {
 
-
-
-
-
                 #region Charge
                 if (Main.netMode != 1) {
                     if (Main.rand.Next(400) == 1) {
@@ -259,12 +284,24 @@ namespace tsorcRevamp.NPCs.Enemies {
                         chargeDamage = 0;
                     }
                     #endregion
+
+
                     #region Projectiles
-                    customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-                    if (customAi1 >= 10f) {
+                    customAi1++; ;
+
+                    Player player = Main.player[npc.target];
+
+                    if (npc.justHit)
+                    {
+                        customAi1 = 100f;
+                    }
+
+                    if (customAi1 >= 170f) {
                         npc.TargetClosest(true);
-                        if (Main.rand.Next(155) == 1) {
-                            float num48 = 7f;
+                        //if (npc.Distance(player.Center) < 600)
+                        if (npc.Distance(player.Center) < 500 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+                        {
+                            float num48 = 9f;
                             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                             float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                             float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -276,8 +313,8 @@ namespace tsorcRevamp.NPCs.Enemies {
                                 int damage = 20;//(int) (14f * npc.scale);
                                 int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();//44;//0x37; //14;
                                 int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 100;
-                                Main.projectile[num54].aiStyle = 1;
+                                Main.projectile[num54].timeLeft = 600;
+                                //Main.projectile[num54].aiStyle = 1;
                                 Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
                                 customAi1 = 1f;
                             }
@@ -567,6 +604,8 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
         #endregion
 
+        #region Draw
+        static Texture2D spearTexture;
         static Texture2D darkKnightGlow = ModContent.GetTexture("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor) {
 
@@ -587,7 +626,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
 
             //Glowing Eye Effect
-            for (int i = 1; i > -1; i--) {
+            for (int i = 1; i > -1; i--) 
+            {
                 //draw 3 levels of trail
                 int alphaVal = 255 - (1 * i);
                 Color modifiedColour = new Color((int)(alphaVal), (int)(alphaVal), (int)(alphaVal), alphaVal);
@@ -600,8 +640,33 @@ namespace tsorcRevamp.NPCs.Enemies {
                     flop,
                     0);
             }
-        }
 
+            if (spearTexture == null)
+            {
+                spearTexture = mod.GetTexture("Projectiles/Enemy/ShadowShot");
+            }
+            if (customAi1 >= 150)
+            {
+                Lighting.AddLight(npc.Center, Color.MediumPurple.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.Next(3) == 1)
+                {
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.DiamondBolt, npc.velocity.X, npc.velocity.Y);
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.DiamondBolt, npc.velocity.X, npc.velocity.Y);
+                }
+
+                SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                if (npc.spriteDirection == -1)
+                {
+                    spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 10), npc.scale, effects, 0); // facing left (8, 38 work)
+                }
+                else
+                {
+                    spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 13), npc.scale, effects, 0); // facing right, first value is height, higher number is higher
+                }
+            }
+
+        }
+        #endregion
 
     }
 }

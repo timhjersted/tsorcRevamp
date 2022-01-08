@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("GIT GUD");
+            DisplayName.SetDefault("Arrow of Bard");
         }
         public override void SetDefaults()
         {
@@ -20,13 +20,25 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.friendly = false;
             projectile.hostile = true;
             projectile.height = 10;
-            projectile.penetrate = 2;
+            projectile.penetrate = 1;
             projectile.ranged = true;
             projectile.scale = 1f;
             projectile.tileCollide = true;
             projectile.width = 5;
             aiType = ProjectileID.WoodenArrowFriendly;
             projectile.aiStyle = 1;
+        }
+
+        public override bool PreKill(int timeLeft)
+        {
+            projectile.type = 0;
+            Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+            for (int i = 0; i < 10; i++)
+            {
+                Dust.NewDust(projectile.position, projectile.width, projectile.height, 7, 0, 0, 0, default, 1f);
+                Dust.NewDust(projectile.position, projectile.width, projectile.height, 7, 0, 0, 0, default, 0.5f);
+            }
+            return true;
         }
 
         #region Kill

@@ -12,13 +12,13 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 10;
+			npc.npcSlots = 20;
 			Main.npcFrameCount[npc.type] = 16;
 			animationType = 28;
 			npc.knockBackResist = 0.2f;
 			npc.aiStyle = 3;
 			npc.damage = 0;
-			npc.defense = 40;
+			npc.defense = 30;
 			npc.height = 40;
 			npc.width = 20;
 			npc.lifeMax = 3000;
@@ -57,13 +57,15 @@ namespace tsorcRevamp.NPCs.Enemies
 			Player P = spawnInfo.player;
 			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
 
-			if (Main.hardMode && Main.rand.Next(400) == 1) return 1; 
+			if (Main.hardMode && Main.rand.Next(200) == 1) return 1; 
 			
-			if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(100) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
 
-			if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.Next(125) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.Next(75) == 1) return 1;
 
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.Next(200) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InGrayLayer && Main.rand.Next(100) == 1) return 1;
+
+			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Main.rand.Next(100) == 1) return 1;
 
 			return 0;
 		}
@@ -82,7 +84,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
 			bool can_teleport = false;  //  tp around like chaos ele
 			int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
-			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
+			int boredom_cooldown = 20 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
 			bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
 			bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
@@ -93,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			float acceleration = .07f;  //  how fast it can speed up
 			float top_speed = 1f;  //  max walking speed, also affects jump length
 			float braking_power = .5f;  //  %of speed that can be shed every tick when above max walking speed
-			double bored_speed = .5;  //  above this speed boredom decreases(if not already bored); usually .9
+			double bored_speed = 1f;  //  above this speed boredom decreases(if not already bored); usually .9
 
 			float enrage_percentage = 0;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
 			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
@@ -678,8 +680,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		static Texture2D spearTexture;
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
 		{
-			if(spearTexture == null || spearTexture.IsDisposed)
-            {
+			if (spearTexture == null || spearTexture.IsDisposed)
+			{
 				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnifeSmall");
 			}
 			if (customAi1 >= 120)

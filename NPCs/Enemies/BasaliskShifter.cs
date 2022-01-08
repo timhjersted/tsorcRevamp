@@ -11,6 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
+			npc.npcSlots = 30;
 			Main.npcFrameCount[npc.type] = 12;
 			animationType = 28;
 			npc.knockBackResist = 0.03f;
@@ -444,10 +445,11 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					npc.ai[3] = 0f;
 				}
-				//if (npc.justHit)
-				//{
-				//	npc.ai[3] = 0f;
-				//}
+				if (npc.justHit)
+				{
+					customAi1 = 0f;
+					//npc.ai[3] = 0f;
+				}
 				if (npc.ai[3] == (float)num5)
 				{
 					npc.netUpdate = true;
@@ -695,8 +697,19 @@ namespace tsorcRevamp.NPCs.Enemies
 				#region Projectiles
 				if (Main.netMode != 1)
 				{
-					customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-					if (customAi1 >= 10f)
+					//customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+					customAi1++; ;
+					if (customAi1 >= 75)
+					{
+						Lighting.AddLight(npc.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+						if (Main.rand.Next(3) == 1)
+						{
+							Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+							Dust.NewDust(npc.position, npc.width, npc.height, DustID.EmeraldBolt, npc.velocity.X, npc.velocity.Y);
+						}
+
+					}
+					if (customAi1 >= 85f)
 					{
 
 
@@ -706,7 +719,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 							//Player nT = Main.player[npc.target];
-							if (Main.rand.Next(320) == 0)
+							if (Main.rand.Next(520) == 0) //320
 							{
 								breath = true;
 
@@ -717,7 +730,7 @@ namespace tsorcRevamp.NPCs.Enemies
 								//float num48 = 5f;
 								float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
 								int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType <Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 40;
+								Main.projectile[num54].timeLeft = 26; //40
 
 
 								npc.netUpdate = true;

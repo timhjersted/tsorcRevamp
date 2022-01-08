@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
 
-            if (target.type == ModContent.NPCType<NPCs.Enemies.HeroofLumelia>() 
+            if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>() 
                 || target.type == ModContent.NPCType<NPCs.Enemies.Warlock>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.TibianAmazon>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.TibianValkyrie>()

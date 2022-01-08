@@ -17,16 +17,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
         }
         public override void SetDefaults() {
             npc.netAlways = true;
-            npc.npcSlots = 30;
+            npc.npcSlots = 50;
             npc.width = 42;
             npc.height = 81;
             npc.aiStyle = 6;
-            npc.defense = 260;
+            npc.defense = 200;
             npc.timeLeft = 22500;
             npc.damage = 170;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
-            npc.lifeMax = 60000;
+            npc.lifeMax = 50000; //50k, down from 120k
             npc.knockBackResist = 0;
             npc.lavaImmune = true;
             npc.scale = 1;
@@ -44,6 +44,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 bodyTypes[i] = bodyID;
             }
         }
+
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.lifeMax = (int)(npc.lifeMax / 2);
+            npc.damage = (int)(npc.damage / 2);
+        }
         int[] bodyTypes;
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
@@ -57,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                         else return 0.067f; //not blood moon, underworld, edge
                     }
                     else if (Main.bloodMoon) { return 0.067f; } //blood moon, underworld
-                    else return 0.05f; //underworld
+                    else return 0.02f; //underworld
                 }
             }
             return 0; //outside shm
@@ -69,8 +75,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
 
 
             Player nT = Main.player[npc.target];
-
-            if (Main.rand.Next(90) == 0) {
+            //190 was 90
+            if (Main.rand.Next(190) == 0) {
                 breath = true;
                 Main.PlaySound(SoundID.Item, -1, -1, 20);
                 npc.netUpdate = true;
@@ -137,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
         public override void OnHitPlayer(Player target, int damage, bool crit) {
             if (Main.rand.Next(2) == 0) {
                 target.AddBuff(BuffID.CursedInferno, 600);
-                target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 3600);
+                target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1200);
             }
         }
     }

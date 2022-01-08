@@ -21,6 +21,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.damage = 95;
 			npc.defense = 21;
 			npc.lifeMax = 900;
+			if (Main.hardMode) { npc.lifeMax = 1400; npc.defense = 60; }
+			if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 3000; npc.defense = 75; npc.damage = 120; npc.value = 6600; }
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.lavaImmune = true;
@@ -46,19 +48,20 @@ namespace tsorcRevamp.NPCs.Enemies
 		int drowningRisk = 1200;
 
 		int boredTimer = 0;
-		int tBored = 3;//increasing this increases how long it take for the NP to get bored
+		int tBored = 2;//increasing this increases how long it take for the NP to get bored
 		int boredResetT = 0;
 		int bReset = 70;//increasing this will increase how long an NPC "gives up" before coming back to try again.
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			if (!spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime && Main.rand.Next(700) == 1) return 1;
-			if (!Main.hardMode && spawnInfo.player.ZoneMeteor && Main.rand.Next(500) == 1) return 1;
-			if (Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(200) == 1) return 1;
-			if (Main.hardMode && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !spawnInfo.player.ZoneBeach && !Main.dayTime && Main.rand.Next(400) == 1) return 1;
+			if (spawnInfo.player.townNPCs > 1f) return 0f;
+			if (!spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.Next(100) == 1) return 1;
+			if (!Main.hardMode && spawnInfo.player.ZoneMeteor && NPC.downedBoss2 && Main.rand.Next(100) == 1) return 1;
+			if (Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(100) == 1) return 1;
+			if (Main.hardMode && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !spawnInfo.player.ZoneBeach && !Main.dayTime && Main.rand.Next(200) == 1) return 1;
 			if (Main.hardMode && spawnInfo.player.ZoneUnderworldHeight && !Main.dayTime && Main.rand.Next(60) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.bloodMoon && Main.rand.Next(10) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(50) == 1) return 1;
 
 			return 0;
 		}
@@ -76,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
 			bool can_teleport = false;  //  tp around like chaos ele
-			int boredom_time = 1; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+			int boredom_time = 20; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
 			int boredom_cooldown = 5 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
 			//bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
@@ -347,8 +350,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.ai[2]++;
 				if (npc.ai[2] >= 150f)
 				{
-					if (npc.justHit)
-						npc.ai[2] = 150f; // reset throw countdown when hit
+					if (npc.justHit && Main.rand.Next(2) == 1)
+						npc.ai[2] = 100f; // reset throw countdown when hit, was 150
 
 					if (npc.ai[2] >= 180f && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
 					{
@@ -365,7 +368,8 @@ namespace tsorcRevamp.NPCs.Enemies
 								speedX *= num51;
 								speedY *= num51;
 								//int damage = 10;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();//44;//0x37; //14;
+								//int type = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();//44;//0x37; //14;
+								int type = ProjectileID.JavelinHostile; //44;//0x37; //14;
 								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, spearDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 600;
 								Main.projectile[num54].aiStyle = 1;
@@ -694,9 +698,10 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			if (spearTexture == null || spearTexture.IsDisposed)
 			{
-				spearTexture = mod.GetTexture("Projectiles/Enemy/BlackKnightsSpear");
+				//spearTexture = mod.GetTexture("Projectiles/Enemy/BlackKnightsSpear");
+				spearTexture = ModContent.GetTexture("Terraria/Projectile_508");
 			}
-			if (npc.ai[2] >= 150)
+			if (npc.ai[2] >= 165)
 			{
 				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 				if (npc.spriteDirection == -1)

@@ -54,9 +54,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (Dungeon && tsorcRevampWorld.SuperHardMode && Main.rand.Next(10) == 1) return 1;
+            if (Dungeon && tsorcRevampWorld.SuperHardMode && Main.rand.Next(5) == 1) return 1;
 
-            if (Corruption && tsorcRevampWorld.SuperHardMode && !AboveEarth && Main.rand.Next(100) == 1) return 1;
+            if (Dungeon && Main.hardMode && Main.rand.Next(10) == 1) return 1;
+
+            if (Corruption && tsorcRevampWorld.SuperHardMode && !AboveEarth && Main.rand.Next(50) == 1) return 1;
 
             if (InHell && tsorcRevampWorld.SuperHardMode && Main.rand.Next(30) == 1) return 1;
 

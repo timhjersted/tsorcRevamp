@@ -10,19 +10,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 30;
+			npc.npcSlots = 50;
 			Main.npcFrameCount[npc.type] = 2;
 			npc.width = 42;
 			npc.height = 42;
 			npc.aiStyle = 22;
 			npc.damage = 165;
-			npc.defense = 190;
+			npc.defense = 70; //190
 			npc.lavaImmune = true; ;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-			npc.lifeMax = 35000;
+			npc.lifeMax = 6000; //was 35k
 			npc.scale = 1.1f;
-			npc.knockBackResist = 0f;
+			npc.knockBackResist = 0.6f;
 			npc.noGravity = true;
 			npc.noTileCollide = false;
 			npc.value = 18750;
@@ -30,9 +30,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bannerItem = ModContent.ItemType<Banners.TetsujinBanner>();
 		}
 
-		int meteorDamage = 17;
-		int breathDamage = 33;
-		int laserDamage = 35;
+		int meteorDamage = 38; //17
+		int breathDamage = 40; //33
+		int laserDamage = 44; //35
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 						//Player nT = Main.player[npc.target];
-						if (Main.rand.Next(600) == 0)
+						if (Main.rand.Next(800) == 0)
 						{
 							breath = true;
 							Main.PlaySound(2, -1, -1, 20);
@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 							float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
 							int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 0f, Main.myPlayer);
-							Main.projectile[num54].timeLeft = 50;
+							Main.projectile[num54].timeLeft = 40;
 							npc.netUpdate = true;
 
 
@@ -130,12 +130,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-						//if (Main.rand.Next(35) == 0) 
-						//	{
-						//		int num65 = Projectile.NewProjectile(npc.Center.X+Main.rand.Next(-500,500), npc.Center.Y+Main.rand.Next(-500,500), 0, 0, "Dark Explosion", 70, 0f, Main.myPlayer);
-						//	}
-
-						if (Main.rand.Next(15) == 1)
+						
+						//LASER
+						if (Main.rand.Next(55) == 1)//was 45
 						{
 							float num48 = 13f;
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -418,7 +415,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			{
 
 				player.AddBuff(36, 600, false); //broken armor
-				player.AddBuff(23, 120, false); //cursed
+				//player.AddBuff(23, 120, false); //cursed
 
 			}
 

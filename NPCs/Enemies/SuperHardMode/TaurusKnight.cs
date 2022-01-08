@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -14,19 +15,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void SetDefaults()
         {
-            npc.npcSlots = 20;
+            npc.npcSlots = 80;
             Main.npcFrameCount[npc.type] = 16;
             animationType = 28;
             npc.aiStyle = 3;
             npc.height = 40;
             npc.width = 20;
             npc.damage = 145;
-            npc.defense = 301;
-            npc.lifeMax = 21200;
+            npc.defense = 101;
+            npc.timeLeft = 22000;
+            npc.lifeMax = 11200;
             npc.scale = 1.1f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 12000;
+            npc.value = 62000;
             npc.knockBackResist = 0.01f;
             npc.lavaImmune = true;
             banner = npc.type;
@@ -37,9 +39,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.buffImmune[BuffID.Confused] = true;
         }
 
-        int meteorDamage = 17;
-        int breathDamage = 38;
-        int tridentDamage = 55;
+        int meteorDamage = 42;
+        int breathDamage = 40;
+        int tridentDamage = 49;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -51,6 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         float customAi1;
+        public int disrupterDamage = 65;
         int breathCD = 45;
         int chargeDamage = 0;
         bool chargeDamageFlag = false;
@@ -114,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             //  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
             bool can_teleport = true;  //  tp around like chaos ele
-            int boredom_time = 20; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+            int boredom_time = 4; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
             int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
             bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
@@ -128,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             float braking_power = .1f;  //  %of speed that can be shed every tick when above max walking speed
             double bored_speed = .2;  //  above this speed boredom decreases(if not already bored); usually .9
 
-            float enrage_percentage = .4f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+            float enrage_percentage = .5f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
             float enrage_acceleration = .10f;  //  faster when enraged, usually 2*acceleration
             float enrage_top_speed = 5;  //  faster when enraged, usually 2*top_speed
 
@@ -155,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool tooBig = true; // force bigger creatures to jump
             bool lavaJumping = true; // Enemies jump on lava.
             bool canDrown = false; // They will drown if in the water for too long
-            bool quickBored = true; //Enemy will respond to boredom much faster(? -- test)
+            bool quickBored = false; //Enemy will respond to boredom much faster(? -- test)
             bool oBored = false; //Whether they're bored under the "quickBored" conditions
 
             // calculated parameters
@@ -413,389 +416,473 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             #region shoot and walk
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
             {
-                //if (npc.justHit)
-                //	npc.ai[2] = 0f; // reset throw countdown when hit
+                if (npc.justHit && Main.rand.Next(10) == 0)
+                    npc.ai[2] = 0f; // reset throw countdown when hit
+
+
+                //PROJECTILES
                 #region Projectiles
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-                if (customAi1 >= 10f)
+                //customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+                //if (customAi1 >= 10f)
+                //{
+                Player nT = Main.player[npc.target];
+
+                customAi1++; ;
+
+                if (customAi1 >= 100f)
                 {
-                    npc.TargetClosest(true);
-                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                    if (customAi1 >= 115f)
                     {
-
-                        if (enraged == true)
+                        npc.TargetClosest(true);
+                        if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
                         {
-                            // charge forward code 
-                            if (Main.rand.Next(350) == 1)
+                            //POISON FIRE FROM THE SKY ATTACK
+                            if (Main.rand.Next(300) == 0)//1460, 200 was pretty awesome but a bit crazy
                             {
-                                chargeDamageFlag = true;
-                                Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                                float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                                npc.velocity.X = (float)(Math.Cos(rotation) * 11) * -1;
-                                npc.velocity.Y = (float)(Math.Sin(rotation) * 11) * -1;
-                                npc.ai[1] = 1f;
-                                npc.netUpdate = true;
-                            }
-                            if (chargeDamageFlag == true)
-                            {
-                                npc.damage = 125;
-                                chargeDamage++;
-                            }
-                            if (chargeDamage >= 125)
-                            {
-                                chargeDamageFlag = false;
-                                npc.damage = 115;
-                                chargeDamage = 0;
-                            }
-
-                            // fire breath attack
-                            if (Main.rand.Next(275) == 0)
-                            {
-                                breath = true;
-                                Main.PlaySound(2, -1, -1, 20);
-                            }
-                            if (breath)
-                            {
-                                //while (breathCD > 0) {
-                                //for (int pcy = 0; pcy < 10; pcy++) {
-                                Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 1f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer); //96 was Config.projDefs.byName["Enemy Light Spirit"].type,  85 is damage
-                                                                                                                                                                                                                                                                                                                         //}
-                                breathCD--;
-                                //}
-                            }
-                            if (breathCD <= 0)
-                            {
-                                breath = false;
-                                breathCD = 30;
-                                //Main.PlaySound(2, -1, -1, 20);
-                            }
-
-                            //end fire breath attack
-                        }
-
-                        if (Main.rand.Next(380) == 1)
-                        {
-                            float num48 = 10f;
-                            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                            float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                            float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                            if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-                            {
-                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                                num51 = num48 / num51;
-                                speedX *= num51;
-                                speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>();//44;//0x37; //14; 
-                                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 900;
-                                Main.projectile[num54].aiStyle = 1;
-                                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                                customAi1 = 1f;
-                            }
-                            npc.netUpdate = true;
-                        }
-                    }
-                }
-                #endregion
-            }
-            #endregion
-            //-------------------------------------------------------------------
-            #region check if standing on a solid tile
-            // warning: this section contains a return statement
-            bool standing_on_solid_tile = false;
-            if (npc.velocity.Y == 0f) // no jump/fall
-            {
-                int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-                int x_left_edge = (int)npc.position.X / 16;
-                int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
-                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                {
-                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                        return;
-
-                    if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
-                    {
-                        standing_on_solid_tile = true;
-                        break; // one is enough so stop checking
-                    }
-                } // END traverse blocks under feet
-            } // END no jump/fall
-            #endregion
-            //-------------------------------------------------------------------
-            #region new Tile()s, door opening/breaking
-            if (standing_on_solid_tile)  //  if standing on solid tile
-            {
-                int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
-                int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
-                if (clown_sized)
-                    x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f); // 16 pix in front of edge
-                                                                                                                                         //  create? 5 tile high stack in front
-                if (Main.tile[x_in_front, y_above_feet] == null)
-                    Main.tile[x_in_front, y_above_feet] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    Main.tile[x_in_front, y_above_feet - 1] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    Main.tile[x_in_front, y_above_feet - 2] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    Main.tile[x_in_front, y_above_feet - 3] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    Main.tile[x_in_front, y_above_feet + 1] = new Tile();
-                //  create? 2 other tiles farther in front
-                if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null)
-                    Main.tile[x_in_front + npc.direction, y_above_feet - 1] = new Tile();
-
-                if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null)
-                    Main.tile[x_in_front + npc.direction, y_above_feet + 1] = new Tile();
-
-                if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tile[x_in_front, y_above_feet - 1].type == 10 && can_pass_doors)
-                { // tile in front is active, is door and NPC can pass doors: trying to break door
-                    npc.ai[2] += 1f; // inc knock countdown
-                    npc.ai[3] = 0f; // not bored if working on breaking a door
-                    if (npc.ai[2] >= 60f)  //  knock once per second
-                    {
-                        if (!Main.bloodMoon && can_pass_doors_bloodmoon_only)
-                            npc.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
-
-                        npc.velocity.X = 0.5f * (float)(-(float)npc.direction); //  slight recoil from hitting it
-                        npc.ai[1] += door_break_pow;  //  increase door damage counter
-                        npc.ai[2] = 0f;  //  knock finished; start next knock
-                        bool door_breaking = false;  //  door break flag
-                        if (npc.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
-                        {
-                            door_breaking = true;
-                            npc.ai[1] = 10f;
-                        }
-                        WorldGen.KillTile(x_in_front, y_above_feet - 1, true, false, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
-                        if (door_breaking && Main.netMode != 1)  //  server and door breaking
-                        {
-                            if (breaks_doors)  //  breaks doors rather than attempt to open
-                            {
-                                WorldGen.KillTile(x_in_front, y_above_feet - 1, false, false, false);  //  kill door
-                                if (Main.netMode == 2) // server
-                                    NetMessage.SendData(17, -1, -1, null, 0, (float)x_in_front, (float)(y_above_feet - 1), 0f, 0); // ?? tile breaking and/or item drop probably
-                            }
-                            else  //  try to open without breaking
-                            {
-                                bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction);  //  open the door
-                                if (!door_opened)  //  door not opened successfully
+                                for (int pcy = 0; pcy < 10; pcy++)
                                 {
-                                    npc.ai[3] = (float)boredom_time;  //  bored if door is stuck
-                                    npc.netUpdate = true;
-                                    npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
+                                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(500), (float)nT.position.Y - 300f, (float)(-50 + Main.rand.Next(100)) / 5, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), meteorDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
+                                    Main.PlaySound(2, -1, -1, 20);
+                                    npc.netUpdate = true; //new
                                 }
-                                if (Main.netMode == 2 && door_opened) // is server & door was just opened
-                                    NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
                             }
-                        }  //  END server and door breaking
-                    } // END knock on door
-                } // END trying to break door
+
+                            //HYPNOTIC DISRUPTER ATTACK 
+                            if (Main.rand.Next(135) == 0)
+                            {
+                                Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disrupterDamage, 0f, Main.myPlayer);
+                                Main.PlaySound(2, -1, -1, 20);
+                                npc.netUpdate = true; //new
+                            }
+
+                            if (enraged == true)
+                                {
+                                    // charge forward code 
+                                    if (Main.rand.Next(50) == 1)
+                                    {
+                                        chargeDamageFlag = true;
+                                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
+                                        npc.velocity.X = (float)(Math.Cos(rotation) * 11) * -1;
+                                        npc.velocity.Y = (float)(Math.Sin(rotation) * 11) * -1;
+                                        npc.ai[1] = 1f;
+                                        npc.netUpdate = true;
+                                    }
+                                    if (chargeDamageFlag == true)
+                                    {
+                                        npc.damage = 125;
+                                        chargeDamage++;
+                                    }
+                                    if (chargeDamage >= 125)
+                                    {
+                                        chargeDamageFlag = false;
+                                        npc.damage = 115;
+                                        chargeDamage = 0;
+                                    }
+
+                                    // fire breath attack
+                                    if (Main.rand.Next(75) == 0) //was 275
+                                    {
+                                        breath = true;
+                                        Main.PlaySound(2, -1, -1, 20);
+                                    }
+                                    if (breath)
+                                    {
+                                        //while (breathCD > 0) {
+                                        //for (int pcy = 0; pcy < 10; pcy++) {
+                                        Projectile.NewProjectile(npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 1f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), breathDamage, 1.2f, Main.myPlayer); //96 was Config.projDefs.byName["Enemy Light Spirit"].type,  85 is damage
+                                                                                                                                                                                                                                                                                                                                                         //}
+                                        breathCD--;
+                                        //}
+                                    }
+                                    if (breathCD <= 0)
+                                    {
+                                        breath = false;
+                                        breathCD = 30;
+                                        //Main.PlaySound(2, -1, -1, 20);
+                                    }
+                                    //end fire breath attack
+                                }
+
+                                //JUMP BEFORE TRIDENT ATTACK SOMETIMES
+                                    if (customAi1 == 125f)
+                                    {
+                                        if (Main.rand.Next(2) == 1)
+                                        {
+                                            npc.velocity.Y = -8f; // jump with power 7 (for 3 block steps)
+                                            customAi1 = 126f;
+                                        }
+                                        npc.netUpdate = true;
+                                     }
+
+
+                            if (customAi1 >= 136f)
+                            {
+
+                                if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                                {
+                                    //TRIDENT ATTACK
+                                    float num48 = 14f;//was 10
+                                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                                    float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                                    float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                                    if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                                    {
+                                        float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                                        num51 = num48 / num51;
+                                        speedX *= num51;
+                                        speedY *= num51;
+                                        int type = ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>();//44;//0x37; //14; 
+                                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
+                                        Main.projectile[num54].timeLeft = 1200;
+                                        Main.projectile[num54].aiStyle = 1;
+                                        Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                                        customAi1 = 1f;
+                                    }
+                                    npc.netUpdate = true;
+                                }
+                            }
+                            
+                        }
+                    }
+                    #endregion
+                }
                 #endregion
                 //-------------------------------------------------------------------
-                #region jumping, reset door knock & damage counters
-                else // standing on solid tile but not in front of a passable door
+                #region check if standing on a solid tile
+                // warning: this section contains a return statement
+                bool standing_on_solid_tile = false;
+                if (npc.velocity.Y == 0f) // no jump/fall
                 {
-                    if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
-                    {  //  moving forward
-                        if (Main.tile[x_in_front, y_above_feet - 2].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].type])
-                        { // 3 blocks above ground level(head height) blocked
-                            if (Main.tile[x_in_front, y_above_feet - 3].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].type])
-                            { // 4 blocks above ground level(over head) blocked
-                                npc.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-                                npc.netUpdate = true;
-                            }
-                            else
-                            {
-                                npc.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-                                npc.netUpdate = true;
-                            }
-                        } // for everything else, head height clear:
-                        else if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].type])
-                        { // 2 blocks above ground level(mid body height) blocked
-                            npc.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-                            npc.netUpdate = true;
-                        }
-                        else if (Main.tile[x_in_front, y_above_feet].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].type])
-                        { // 1 block above ground level(foot height) blocked
-                            npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-                            npc.netUpdate = true;
-                        }
-                        else if (npc.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type]))
-                        { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                            npc.velocity.Y = -8f; // jump with power 8
-                            npc.velocity.X = npc.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                            npc.netUpdate = true;
-                        }
-                        else if (can_pass_doors) // standing on solid tile but not in front of a passable door, moving forward, didnt jump.  I assume recoil from hitting door is too small to move passable door out of range and trigger this
+                    int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
+                    int x_left_edge = (int)npc.position.X / 16;
+                    int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
+                    for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
+                    {
+                        if (Main.tile[l, y_below_feet] == null) // null tile means ??
+                            return;
+
+                        if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
                         {
-                            npc.ai[1] = 0f;  //  reset door dmg counter
-                            npc.ai[2] = 0f;  //  reset knock counter
+                            standing_on_solid_tile = true;
+                            break; // one is enough so stop checking
                         }
-                    } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    if (hops && npc.velocity.Y == 0f && Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2))) < hop_range_x && Math.Abs(npc.position.Y + (float)(npc.height / 2) - (Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2))) < hop_range_y && ((npc.direction > 0 && npc.velocity.X >= hop_velocity) || (npc.direction < 0 && npc.velocity.X <= -hop_velocity)))
-                    { // type that hops & no jump/fall & near target & moving forward fast enough: hop code
-                        npc.velocity.X = npc.velocity.X * 2f; // burst forward
-                        if (npc.velocity.X > hop_speed) // but cap at hop_speed
-                            npc.velocity.X = hop_speed;
-                        else if (npc.velocity.X < -hop_speed)
-                            npc.velocity.X = -hop_speed;
+                    } // END traverse blocks under feet
+                } // END no jump/fall
+                #endregion
+                //-------------------------------------------------------------------
+                #region new Tile()s, door opening/breaking
+                if (standing_on_solid_tile)  //  if standing on solid tile
+                {
+                    int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
+                    int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
+                    if (clown_sized)
+                        x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f); // 16 pix in front of edge
+                                                                                                                                             //  create? 5 tile high stack in front
+                    if (Main.tile[x_in_front, y_above_feet] == null)
+                        Main.tile[x_in_front, y_above_feet] = new Tile();
 
-                        npc.velocity.Y = -hop_power; // and jump of course
-                        npc.netUpdate = true;
-                    }
-                    if (can_teleport && npc.velocity.Y < 0f) // jumping
-                        npc.velocity.Y = npc.velocity.Y * 1.1f; // infinite jump? antigravity?
-                }
-            }
-            else if (can_pass_doors)  //  not standing on a solid tile & can open/break doors
-            {
-                npc.ai[1] = 0f;  //  reset door damage counter
-                npc.ai[2] = 0f;  //  reset knock counter
-            }//*/
-            #endregion
-            //-------------------------------------------------------------------
-            #region teleportation
-            if (Main.netMode != 1 && can_teleport && npc.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
-            {
-                int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-                int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-                int x_blockpos = (int)npc.position.X / 16; // corner not center
-                int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                int tp_radius = 15; // radius around target(upper left corner) in blocks to teleport into
-                int tp_counter = 0;
-                bool flag7 = false;
-                if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 20000000f)
-                { // far away from target; 2000 pixels = 125 blocks
-                    tp_counter = 100;
-                    flag7 = true; // no teleport
-                }
-                while (!flag7) // loop always ran full 100 time before I added "flag7 = true;" below
-                {
-                    if (tp_counter >= 100) // run 100 times
-                        break; //return;
-                    tp_counter++;
+                    if (Main.tile[x_in_front, y_above_feet - 1] == null)
+                        Main.tile[x_in_front, y_above_feet - 1] = new Tile();
 
-                    int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                    int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                    for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
-                    { // (tp_x_target,m) is block under its feet I think
-                        if ((m < target_y_blockpos - 6 || m > target_y_blockpos + 6 || tp_x_target < target_x_blockpos - 6 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-                        { // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
-                            bool safe_to_stand = true;
-                            bool dark_caster = false; // not a fighter type AI...
-                            if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
-                                safe_to_stand = false;
-                            else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
-                                safe_to_stand = false;
+                    if (Main.tile[x_in_front, y_above_feet - 2] == null)
+                        Main.tile[x_in_front, y_above_feet - 2] = new Tile();
 
-                            if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
-                            { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-                                npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-                                npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                npc.netUpdate = true;
-                                npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-                                flag7 = true; // end the loop (after testing every lower point :/)
-                            }
-                        } // END over 6 blocks distant from player...
-                    } // END traverse y down to edge of radius
-                } // END try 100 times
-            } // END is server & chaos ele & bored
-            #endregion
-            //-------------------------------------------------------------------
-            #region drown // code by Omnir
-            if (canDrown)
-            {
-                if (!npc.wet)
-                {
-                    npc.TargetClosest(true);
-                    drownTimer = drownTimerMax;
-                }
-                if (npc.wet)
-                {
-                    drownTimer--;
-                }
-                if (npc.wet && drownTimer > drowningRisk)
-                {
-                    npc.TargetClosest(true);
-                }
-                else if (npc.wet && drownTimer <= drowningRisk)
-                {
-                    npc.TargetClosest(false);
-                    if (npc.timeLeft > 10)
-                    {
-                        npc.timeLeft = 10;
-                    }
-                    npc.directionY = -1;
-                    if (npc.velocity.Y > 0f)
-                    {
-                        npc.direction = 1;
-                    }
-                    npc.direction = -1;
-                    if (npc.velocity.X > 0f)
-                    {
-                        npc.direction = 1;
-                    }
-                }
-                if (drownTimer <= 0)
-                {
-                    npc.life--;
-                    if (npc.life <= 0)
-                    {
-                        Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 1);
-                        npc.NPCLoot();
-                        npc.netUpdate = true;
-                    }
-                }
-            }
-            #endregion
-            //-------------------------------------------------------------------*/
-            #region New Boredom by Omnir
-            if (quickBored)
-            {
-                if (!oBored)
-                {
-                    if (npc.velocity.X == 0f)
-                    {
-                        boredTimer++;
-                        if (boredTimer > tBored)
+                    if (Main.tile[x_in_front, y_above_feet - 3] == null)
+                        Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+
+                    if (Main.tile[x_in_front, y_above_feet + 1] == null)
+                        Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                    //  create? 2 other tiles farther in front
+                    if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null)
+                        Main.tile[x_in_front + npc.direction, y_above_feet - 1] = new Tile();
+
+                    if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null)
+                        Main.tile[x_in_front + npc.direction, y_above_feet + 1] = new Tile();
+
+                    if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tile[x_in_front, y_above_feet - 1].type == 10 && can_pass_doors)
+                    { // tile in front is active, is door and NPC can pass doors: trying to break door
+                        npc.ai[2] += 1f; // inc knock countdown
+                        npc.ai[3] = 0f; // not bored if working on breaking a door
+                        if (npc.ai[2] >= 60f)  //  knock once per second
                         {
-                            boredResetT = 0;
-                            npc.TargetClosest(false);
-                            if (npc.timeLeft > 10)
+                            if (!Main.bloodMoon && can_pass_doors_bloodmoon_only)
+                                npc.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
+
+                            npc.velocity.X = 0.5f * (float)(-(float)npc.direction); //  slight recoil from hitting it
+                            npc.ai[1] += door_break_pow;  //  increase door damage counter
+                            npc.ai[2] = 0f;  //  knock finished; start next knock
+                            bool door_breaking = false;  //  door break flag
+                            if (npc.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
                             {
-                                npc.timeLeft = 10;
+                                door_breaking = true;
+                                npc.ai[1] = 10f;
                             }
-                            npc.directionY = -1;
-                            if (npc.velocity.Y > 0f)
+                            WorldGen.KillTile(x_in_front, y_above_feet - 1, true, false, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
+                            if (door_breaking && Main.netMode != 1)  //  server and door breaking
                             {
-                                npc.direction = 1;
+                                if (breaks_doors)  //  breaks doors rather than attempt to open
+                                {
+                                    WorldGen.KillTile(x_in_front, y_above_feet - 1, false, false, false);  //  kill door
+                                    if (Main.netMode == 2) // server
+                                        NetMessage.SendData(17, -1, -1, null, 0, (float)x_in_front, (float)(y_above_feet - 1), 0f, 0); // ?? tile breaking and/or item drop probably
+                                }
+                                else  //  try to open without breaking
+                                {
+                                    bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction);  //  open the door
+                                    if (!door_opened)  //  door not opened successfully
+                                    {
+                                        npc.ai[3] = (float)boredom_time;  //  bored if door is stuck
+                                        npc.netUpdate = true;
+                                        npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
+                                    }
+                                    if (Main.netMode == 2 && door_opened) // is server & door was just opened
+                                        NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
+                                }
+                            }  //  END server and door breaking
+                        } // END knock on door
+                    } // END trying to break door
+                    #endregion
+                    //-------------------------------------------------------------------
+                    #region jumping, reset door knock & damage counters
+                    else // standing on solid tile but not in front of a passable door
+                    {
+                        if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
+                        {  //  moving forward
+                            if (Main.tile[x_in_front, y_above_feet - 2].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].type])
+                            { // 3 blocks above ground level(head height) blocked
+                                if (Main.tile[x_in_front, y_above_feet - 3].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].type])
+                                { // 4 blocks above ground level(over head) blocked
+                                    npc.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
+                                    npc.netUpdate = true;
+                                }
+                                else
+                                {
+                                    npc.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
+                                    npc.netUpdate = true;
+                                }
+                            } // for everything else, head height clear:
+                            else if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].type])
+                            { // 2 blocks above ground level(mid body height) blocked
+                                npc.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
+                                npc.netUpdate = true;
                             }
-                            npc.direction = -1;
-                            if (npc.velocity.X > 0f)
+                            else if (Main.tile[x_in_front, y_above_feet].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].type])
+                            { // 1 block above ground level(foot height) blocked
+                                npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
+                                npc.netUpdate = true;
+                            }
+                            else if (npc.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type]))
+                            { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
+                                npc.velocity.Y = -8f; // jump with power 8
+                                npc.velocity.X = npc.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
+                                npc.netUpdate = true;
+                            }
+                            else if (can_pass_doors) // standing on solid tile but not in front of a passable door, moving forward, didnt jump.  I assume recoil from hitting door is too small to move passable door out of range and trigger this
                             {
-                                npc.direction = 1;
+                                npc.ai[1] = 0f;  //  reset door dmg counter
+                                npc.ai[2] = 0f;  //  reset knock counter
                             }
-                            oBored = true;
+                        } // END moving forward, still: standing on solid tile but not in front of a passable door
+                        if (hops && npc.velocity.Y == 0f && Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2))) < hop_range_x && Math.Abs(npc.position.Y + (float)(npc.height / 2) - (Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2))) < hop_range_y && ((npc.direction > 0 && npc.velocity.X >= hop_velocity) || (npc.direction < 0 && npc.velocity.X <= -hop_velocity)))
+                        { // type that hops & no jump/fall & near target & moving forward fast enough: hop code
+                            npc.velocity.X = npc.velocity.X * 2f; // burst forward
+                            if (npc.velocity.X > hop_speed) // but cap at hop_speed
+                                npc.velocity.X = hop_speed;
+                            else if (npc.velocity.X < -hop_speed)
+                                npc.velocity.X = -hop_speed;
+
+                            npc.velocity.Y = -hop_power; // and jump of course
+                            npc.netUpdate = true;
                         }
+                        if (can_teleport && npc.velocity.Y < 0f) // jumping
+                            npc.velocity.Y = npc.velocity.Y * 1.1f; // infinite jump? antigravity?
                     }
                 }
-                if (oBored)
+                else if (can_pass_doors)  //  not standing on a solid tile & can open/break doors
                 {
-                    boredResetT++;
-                    if (boredResetT > bReset)
+                    npc.ai[1] = 0f;  //  reset door damage counter
+                    npc.ai[2] = 0f;  //  reset knock counter
+                }//*/
+                #endregion
+                //-------------------------------------------------------------------
+                #region teleportation
+                if (Main.netMode != 1 && can_teleport && npc.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
+                {
+                    int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
+                    int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+                    int x_blockpos = (int)npc.position.X / 16; // corner not center
+                    int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                    int tp_radius = 15; // radius around target(upper left corner) in blocks to teleport into
+                    int tp_counter = 0;
+                    bool flag7 = false;
+                    if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 20000000f)
+                    { // far away from target; 2000 pixels = 125 blocks
+                        tp_counter = 100;
+                        flag7 = true; // no teleport
+                    }
+                    while (!flag7) // loop always ran full 100 time before I added "flag7 = true;" below
                     {
-                        boredTimer = 0;
+                        if (tp_counter >= 100) // run 100 times
+                            break; //return;
+                        tp_counter++;
+
+                        int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                        int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                        for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
+                        { // (tp_x_target,m) is block under its feet I think
+                            if ((m < target_y_blockpos - 6 || m > target_y_blockpos + 6 || tp_x_target < target_x_blockpos - 6 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                            { // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                                bool safe_to_stand = true;
+                                bool dark_caster = false; // not a fighter type AI...
+                                if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                                    safe_to_stand = false;
+                                else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                                    safe_to_stand = false;
+
+                                if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                                { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
+                                    npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
+                                    npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
+                                    npc.netUpdate = true;
+                                    npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+                                    flag7 = true; // end the loop (after testing every lower point :/)
+                                }
+                            } // END over 6 blocks distant from player...
+                        } // END traverse y down to edge of radius
+                    } // END try 100 times
+                } // END is server & chaos ele & bored
+                #endregion
+                //-------------------------------------------------------------------
+                #region drown // code by Omnir
+                if (canDrown)
+                {
+                    if (!npc.wet)
+                    {
                         npc.TargetClosest(true);
-                        oBored = false;
+                        drownTimer = drownTimerMax;
+                    }
+                    if (npc.wet)
+                    {
+                        drownTimer--;
+                    }
+                    if (npc.wet && drownTimer > drowningRisk)
+                    {
+                        npc.TargetClosest(true);
+                    }
+                    else if (npc.wet && drownTimer <= drowningRisk)
+                    {
+                        npc.TargetClosest(false);
+                        if (npc.timeLeft > 10)
+                        {
+                            npc.timeLeft = 10;
+                        }
+                        npc.directionY = -1;
+                        if (npc.velocity.Y > 0f)
+                        {
+                            npc.direction = 1;
+                        }
+                        npc.direction = -1;
+                        if (npc.velocity.X > 0f)
+                        {
+                            npc.direction = 1;
+                        }
+                    }
+                    if (drownTimer <= 0)
+                    {
+                        npc.life--;
+                        if (npc.life <= 0)
+                        {
+                            Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 1);
+                            npc.NPCLoot();
+                            npc.netUpdate = true;
+                        }
                     }
                 }
+                #endregion
+                //-------------------------------------------------------------------*/
+                #region New Boredom by Omnir
+                if (quickBored)
+                {
+                    if (!oBored)
+                    {
+                        if (npc.velocity.X == 0f)
+                        {
+                            boredTimer++;
+                            if (boredTimer > tBored)
+                            {
+                                boredResetT = 0;
+                                npc.TargetClosest(false);
+                                if (npc.timeLeft > 10)
+                                {
+                                    npc.timeLeft = 10;
+                                }
+                                npc.directionY = -1;
+                                if (npc.velocity.Y > 0f)
+                                {
+                                    npc.direction = 1;
+                                }
+                                npc.direction = -1;
+                                if (npc.velocity.X > 0f)
+                                {
+                                    npc.direction = 1;
+                                }
+                                oBored = true;
+                            }
+                        }
+                    }
+                    if (oBored)
+                    {
+                        boredResetT++;
+                        if (boredResetT > bReset)
+                        {
+                            boredTimer = 0;
+                            npc.TargetClosest(true);
+                            oBored = false;
+                        }
+                    }
+                }
+                #endregion
             }
-            #endregion
         }
         #endregion
+
+        static Texture2D spearTexture;
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+
+            if (spearTexture == null)
+            {
+                spearTexture = mod.GetTexture("Projectiles/Enemy/EarthTrident");
+                //spearTexture = ModContent.GetTexture("Terraria/Projectile_508");
+            }
+
+            //TELEGRAPH DUSTS
+            if (customAi1 >= 117 && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))  
+            {
+                Lighting.AddLight(npc.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.Next(2) == 1)
+                {
+                    Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.GoldFlame, npc.velocity.X, npc.velocity.Y);
+                    Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.GoldFlame, npc.velocity.X, npc.velocity.Y); //CrystalPulse
+                }
+
+                //if (npc.ai[2] >= 150)
+                //{
+                
+                    SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                    if (npc.spriteDirection == -1)
+                    {
+                        spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing left (8, 38 work)
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing right, first value is height, higher number is higher
+                    }
+
+                
+            }
+        }
 
         #region Gore
         public override void NPCLoot()

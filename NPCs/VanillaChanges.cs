@@ -115,7 +115,7 @@ namespace tsorcRevamp.NPCs {
                         npc.damage = 46;
                         npc.value = 1500;
                         npc.defense = 25;
-                        npc.knockBackResist = 0.0f;
+                        npc.knockBackResist = 0.2f;
                         break;
                     }
 
@@ -170,10 +170,10 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.DD2LightningBugT3):
                     {
                         npc.lifeMax = 500;
-                        npc.damage = 99; //was 329 damage at 166?
+                        npc.damage = 69; //was 329 damage at 166?
                         npc.value = 2500;
                         npc.defense = 35;
-                        npc.knockBackResist = 0.36f;
+                        npc.knockBackResist = 0.46f;
                         //int witheringBolts ??
                         break;
                     }
@@ -283,7 +283,7 @@ namespace tsorcRevamp.NPCs {
                         npc.defense = 18;
                         break;
                     }
-
+                    
                 case (NPCID.GiantBat): {
                         npc.lifeMax = 105;
                         npc.damage = 49;
@@ -298,7 +298,16 @@ namespace tsorcRevamp.NPCs {
                         npc.value = 90;
                         break;
                     }
-
+                    
+                //case (NPCID.GoblinShark):
+                   // {
+                        //npc.lifeMax = 100;
+                        //npc.damage = 40;
+                        //npc.value = 550;
+                        //npc.defense = 10;
+                        //npc.knockBackResist = 0.1f;
+                      //  break;
+                   // }
                 case (NPCID.GoblinSorcerer): {
                         npc.lifeMax = 100;
                         npc.damage = 40;
@@ -843,6 +852,8 @@ namespace tsorcRevamp.NPCs {
             base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
         }
 
+
+        //BLOCKED NPCS
         public override void AI(NPC npc) {
                if (npc.type == NPCID.BigRainZombie
                 || npc.type == NPCID.SmallRainZombie
@@ -850,6 +861,7 @@ namespace tsorcRevamp.NPCs {
                 || npc.type == NPCID.Clown
                 || npc.type == NPCID.UmbrellaSlime 
                 //NEW ADDITIONS
+                || npc.type == NPCID.CursedSkull
                 || npc.type == NPCID.BigHeadacheSkeleton
                 || npc.type == NPCID.SmallHeadacheSkeleton
                 || npc.type == NPCID.BigSlimedZombie

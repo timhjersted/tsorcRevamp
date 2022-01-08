@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			return false;
 		}
 
-		public int PoisonFlamesDamage = 45;
+		public int PoisonFlamesDamage = 45; //should this be so high?
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 

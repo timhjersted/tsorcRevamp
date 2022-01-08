@@ -18,6 +18,15 @@ namespace tsorcRevamp.Projectiles {
 		}
 
 		public override void AI() {
+
+			Lighting.AddLight(projectile.Center, Color.Purple.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+			if (Main.rand.Next(3) == 1)
+			{
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.CrystalPulse2, projectile.velocity.X, projectile.velocity.Y);
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.PortalBolt, projectile.velocity.X, projectile.velocity.Y);
+			}
+
+
 			if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
 				projectile.soundDelay = 10;
 				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);

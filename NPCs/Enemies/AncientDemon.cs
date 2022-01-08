@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.aiStyle = 3;;
 			npc.height = 120;
 			npc.width = 50;
-			npc.damage = 45;
+			npc.damage = 55;
 			npc.defense = 15;
 			npc.lifeMax = 9000;
 			npc.scale = 1;
@@ -95,14 +95,22 @@ namespace tsorcRevamp.NPCs.Enemies
 					return 0;
 				}
 
-				if (Main.hardMode && tsorcRevampWorld.SuperHardMode)
+				if (Main.hardMode)
 				{
 					bool hunterDowned = tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheHunter>());
 
 					if (hunterDowned && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.Next(100) == 1) return 1;
-					if (hunterDowned && Main.rand.Next(2000) == 1) return 1;
-					if (hunterDowned && !Main.dayTime && Main.rand.Next(1000) == 1) return 1;
+					if (hunterDowned && Main.rand.Next(1000) == 1) return 1;
+					if (hunterDowned && !Main.dayTime && Main.rand.Next(500) == 1) return 1;
 					else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.25f || spawnInfo.spawnTileX > Main.maxTilesX * 0.75f) && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.rand.Next(500) == 1) return 1;
+					return 0;
+				}
+
+				if (tsorcRevampWorld.SuperHardMode)
+				{
+					if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientDemon>()) && Main.rand.Next(100) == 1) return 1;
+					if (Main.rand.Next(1000) == 1) return 1;
+					else if (!Main.dayTime && Main.rand.Next(500) == 1) return 1;
 					return 0;
 				}
 				return 0;

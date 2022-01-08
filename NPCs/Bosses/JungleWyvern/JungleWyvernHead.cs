@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			}
 
 
-			if (juvenileSpawnTimer >= 1200 && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 2)
+			if (juvenileSpawnTimer >= 1900 && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 2) //1900 was 1200
 			{
 				if (Vector2.Distance(Main.player[npc.target].Center, npc.Center) > 500)
 				{
@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				}
 			}
 
-			if (Main.rand.Next(120) == 0)
+			if (Main.rand.Next(240) == 0) //was 120
 			{
 				breath = true;
 				Main.PlaySound(SoundID.Item, -1, -1, 20);
@@ -121,8 +121,8 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				{
 					
 					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), CursedFlamesDamage, 0f, Main.myPlayer); //cursed dragons breath
-					Main.projectile[num54].timeLeft = 25;
-					Main.projectile[num54].scale = 1f;
+					Main.projectile[num54].timeLeft = 20;//was 25
+					Main.projectile[num54].scale = 0.5f;
 					
 				}
 				npc.netUpdate = true;

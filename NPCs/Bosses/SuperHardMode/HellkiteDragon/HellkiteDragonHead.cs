@@ -9,10 +9,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
     [AutoloadBossHead]
     class HellkiteDragonHead : ModNPC
     {
+
+        int breathDamage = 33;
+        int flameRainDamage = 32; //was 37
+        int meteorDamage = 63;
+
         public override void SetDefaults()
         {
             npc.netAlways = true;
-            npc.npcSlots = 10;
+            npc.npcSlots = 100;
             npc.width = 60;
             npc.height = 60;
             drawOffsetY = 42;
@@ -30,6 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             npc.noTileCollide = true;
             npc.behindTiles = true;
             npc.value = 200000;
+            npc.lavaImmune = true;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -38,12 +44,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             Color textColor = new Color(175, 75, 255);
             despawnHandler = new NPCDespawnHandler("The Hellkite Dragon claims its prey...", textColor, 174);
+
+            if (tsorcRevampWorld.SuperHardMode) 
+            { 
+                npc.damage = 120;
+                npc.value = 100000;
+                breathDamage = 45;
+                flameRainDamage = 37;
+                meteorDamage = 73;
+            }
         }
 
 
-        int breathDamage = 33;
-        int flameRainDamage = 27;
-        int meteorDamage = 33;
+       
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.damage = (int)(npc.damage / 2);
@@ -120,7 +133,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             despawnHandler.TargetAndDespawn(npc.whoAmI);
 
             Player nT = Main.player[npc.target];
-            if (Main.rand.Next(275) == 0)
+            if (Main.rand.Next(175) == 0)
             {
                 breath = true;
                 //Main.PlaySound(15, -1, -1, 0);
@@ -141,20 +154,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 breathCD = 90;
                 Main.PlaySound(2, -1, -1, 20);
             }
-            if (Main.rand.Next(833) == 0)
+            if (Main.rand.Next(303) == 0)//was 833
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
+                    Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
+                    //Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
                     Main.PlaySound(2, -1, -1, 20);
                     npc.netUpdate = true; //new
                 }
             }
-            if (Main.rand.Next(1460) == 0)
+            if (Main.rand.Next(400) == 0)//1460, 200 was pretty awesome but a bit crazy
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer);
+                    //Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+                    Projectile.NewProjectile((float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
                     Main.PlaySound(2, -1, -1, 20);
                     npc.netUpdate = true; //new
                 }

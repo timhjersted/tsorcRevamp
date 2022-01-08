@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -14,6 +15,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			DisplayName.SetDefault("Ghost of the Forgotten Knight");
 
 		}
+
+		public int spearDamage = 30;
+		int drownTimerMax = 3000;
+		int drownTimer = 3000;
+		int drowningRisk = 1200;
+		float customAi1;
+
 		public override void SetDefaults()
 		{
 			npc.npcSlots = 3;
@@ -28,10 +36,28 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.lavaImmune = true;
-			npc.value = 650;
-			npc.knockBackResist = 0;
+			npc.value = 450;
+			npc.knockBackResist = 0.1f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
+
+			if (Main.hardMode)
+			{
+				npc.lifeMax = 400;
+				npc.defense = 32;
+				npc.value = 650;
+				npc.damage = 80;
+				spearDamage = 50;
+			}
+
+			if (tsorcRevampWorld.SuperHardMode) 
+			{ 
+				npc.lifeMax = 1800; 
+				npc.defense = 70; 
+				npc.damage = 100; 
+				npc.value = 1000;
+				spearDamage = 90;
+			}
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -41,11 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			spearDamage = (int)(spearDamage / 2);
 		}
 
-		int spearDamage = 30;
-		int drownTimerMax = 3000;
-		int drownTimer = 3000;
-		int drowningRisk = 1200;
-		float customAi1;
+		
 
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -53,13 +75,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.12f;
+				return 0.2f; //.16 should be 8%
 			}
 			if (Main.hardMode && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.05f;
+				return 0.17f;
 			}
-			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(100) == 0) return 1;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon)
+			{
+				return 0.08f; //.08% is 4.28%
+			}
 
 			return 0;
 		}
@@ -83,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			// set parameters
 			//  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
 			bool is_archer = false; // stops and shoots when target sighted; skel archer & gob archer are the archers
-			bool can_pass_doors = true;  //  can open or break doors; c. bunny, crab, clown, skel archer, gob archer, & chaos elemental cannot
+			bool can_pass_doors = false;  //  can open or break doors; c. bunny, crab, clown, skel archer, gob archer, & chaos elemental cannot
 			bool shoot_and_walk = true;  //  can shoot while walking like clown; uses ai[2] so cannot be used with is_archer or can_pass_doors
 
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
@@ -390,9 +415,48 @@ namespace tsorcRevamp.NPCs.Enemies
 			#region shoot and walk
 			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
 			{
-				//if (npc.justHit)
-				//	npc.ai[2] = 0f; // reset throw countdown when hit
+				if (npc.justHit)
+					npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
+
+				npc.ai[2]++;
+				if (npc.ai[2] >= 150f)
+				{
+					if (npc.justHit && Main.rand.Next(2) == 1)
+							npc.ai[2] = 150f; // reset throw countdown when hit
+
+					if (npc.ai[2] >= 180f && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+					{
+
+						Player player = Main.player[npc.target];
+
+						if (npc.Distance(player.Center) < 1600)
+						{
+							float num48 = 8f;
+							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 0);
+							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 0);
+							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+							{
+								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+								num51 = num48 / num51;
+								speedX *= num51;
+								speedY *= num51;
+								//int damage = 10;//(int) (14f * npc.scale);
+								int type = ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>();//44;//0x37; //14;
+								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, spearDamage, 0f, Main.myPlayer);
+								Main.projectile[num54].timeLeft = 300;
+								Main.projectile[num54].aiStyle = 1;
+								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+								npc.ai[2] = 0;
+							}
+							npc.netUpdate = true;
+						}
+					}
+				}
+				#endregion
+				/*
+				 #region Projectiles
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f)
 				{
@@ -424,6 +488,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 				}
 				#endregion
+				*/
 			}
 			#endregion
 			//-------------------------------------------------------------------
@@ -680,11 +745,38 @@ namespace tsorcRevamp.NPCs.Enemies
 			#endregion
 			//-------------------------------------------------------------------*/
 		}
-		#endregion
+        #endregion
 
+        #region Draw Spear Texture
+        static Texture2D spearTexture;
+		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		{
+			if (spearTexture == null)
+			{
+				spearTexture = mod.GetTexture("Projectiles/Enemy/BlackKnightGhostSpear");
+			}
+			if (npc.ai[2] >= 150)
+			{
+				Lighting.AddLight(npc.Center, Color.White.ToVector3() * 0.3f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(3) == 1)
+				{
+					Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, npc.velocity.X, npc.velocity.Y);
+				}
+				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				if (npc.spriteDirection == -1)
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing left (8, 38 work)
+				}
+				else
+				{
+					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing right, first value is height, higher number is higher
+				}
+			}
+		}
+        #endregion
 
-		#region Gore
-		public override void NPCLoot()
+        #region Gore
+        public override void NPCLoot()
 		{
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 1"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Black Knight Gore 2"), 1f);

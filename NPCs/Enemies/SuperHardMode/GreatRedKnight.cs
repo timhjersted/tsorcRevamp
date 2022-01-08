@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -26,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 81870;
-            npc.knockBackResist = 0;
+            npc.knockBackResist = 0.36f;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
         }
@@ -93,7 +94,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return 1;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && BeforeFourAfterSix && InHell && Main.rand.Next(400) == 1)
+            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && BeforeFourAfterSix && InHell && Main.rand.Next(200) == 1)
 
             {
                 //Main.NewText("A portal from The Abyss has been opened!", 175, 75, 255);
@@ -403,34 +404,60 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //if (npc.justHit)
                 //	npc.ai[2] = 0f; // reset throw countdown when hit
                 #region Projectiles
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-                if (customAi1 >= 10f)
+                //customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+                customAi1++; ;
+
+                //TELEGRAPH DUSTS
+                if (customAi1 >= 70)
+                {
+                    Lighting.AddLight(npc.Center, Color.YellowGreen.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    if (Main.rand.Next(6) == 1)
+                    {
+                        Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.CrystalSerpent, npc.velocity.X, npc.velocity.Y);
+                        Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y); //CrystalPulse
+                    }
+                }
+
+
+                if (customAi1 >= 100f)
                 {
                     npc.TargetClosest(true);
-                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                    //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+                    if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                     {
-                        if (Main.rand.Next(30) == 1)
+                        /*
+                         *Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
+
+                        if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
                         {
-                            float num48 = 9f;
-                            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                            float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                            float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                            if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-                            {
-                                float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                                num51 = num48 / num51;
-                                speedX *= num51;
-                                speedY *= num51;
-                                int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
-                                Main.projectile[num54].timeLeft = 200;
-                                Main.projectile[num54].aiStyle = 23;
-                                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                                customAi1 = 1f;
-                            }
-                            npc.netUpdate = true;
+                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonStrikeDamage, 0f, Main.myPlayer);
+                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            customAi1 = 1f;
                         }
+                        */
+
+                        float num48 = 9f;
+                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        {
+                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+                            num51 = num48 / num51;
+                            speedX *= num51;
+                            speedY *= num51;
+                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
+                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                            Main.projectile[num54].timeLeft = 350;
+                            //Main.projectile[num54].aiStyle = 23;
+                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            customAi1 = 1f;
+                        }
+                        npc.netUpdate = true;
                     }
+                   // /* if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                     
+                   // */
                 }
                 #endregion
             }
@@ -732,6 +759,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             #endregion
         }
         #endregion
+
+
 
         #region Gore
         public override void NPCLoot()

@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 				}
 			}
 
-			if (Main.rand.Next(120) == 0)
+			if (Main.rand.Next(2020) == 0)//was 120
 			{
 				breath = true;
 				Main.PlaySound(SoundID.Item, npc.position, 20);
@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 					int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), 22, 0f, Main.myPlayer); //cursed dragons breath
 					
 					//These won't work in multiplayer (projectile id's, timeleft, scale, etc are not synced), but it's not that big a deal
-					Main.projectile[num54].timeLeft = 15;
+					Main.projectile[num54].timeLeft = 10;
 					//Main.projectile[num54].scale = .8f;
 				}
 				breathCD--;
@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			{
 				npc.spriteDirection = -1;
 			}
-			float num111 = 10f; //max speed
+			float num111 = 8f; //max speed was 10
 			float Acceleration = 0.13f;
 			Vector2 vector14 = new Vector2(npc.position.X + npc.width * 0.5f, npc.position.Y + npc.height * 0.5f);
 			float num113 = Main.rand.Next(-500, 500) + Main.player[npc.target].position.X + Main.player[npc.target].width / 2;

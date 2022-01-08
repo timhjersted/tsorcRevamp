@@ -65,32 +65,62 @@ namespace tsorcRevamp.NPCs
             }
 
             //VANILLA NPC SPAWN EDITS
-            if (spawnInfo.player.ZoneCorrupt)
+            if (spawnInfo.player.ZoneJungle && !tsorcRevampWorld.SuperHardMode)
             {
                 //pool.Add(the type of the npc, what chance you want it to spawn with);
-                pool.Add(NPCID.LostGirl, 2f);
-            }
-
-            if (spawnInfo.player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(NPCID.DD2LightningBugT3, 6f);
+                pool.Add(NPCID.LostGirl, 0.02f);
             }
 
             if (spawnInfo.marble)
             {
-                //pool.Add(NPCID.DD2LightningBugT3, 4f);
-                //pool.Add(NPCID.LostGirl, 1f);
                 //pool.Add(NPCID.SolarCorite, 0.5f);
             }
 
-            if (spawnInfo.player.ZoneUnderworldHeight)
+            if (spawnInfo.spawnTileType == TileID.LihzahrdBrick && spawnInfo.lihzahrd) 
             {
-                pool.Add(NPCID.SolarSpearman, 4f);
-                pool.Add(NPCID.SolarCrawltipedeHead, 4f);
-                pool.Add(NPCID.SolarDrakomire, 4f);
-                pool.Add(NPCID.SolarSroller, 4f);
-                pool.Add(NPCID.SolarCorite, 4f);
-                pool.Add(NPCID.SolarSolenian, 4f);
+                pool.Add(NPCID.DiabolistRed, 0.2f);
+            }
+
+            //SUPER HARD MODE SECTION
+            if (spawnInfo.player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.DD2LightningBugT3, 0.3f);
+            }
+
+            if (spawnInfo.player.ZoneUnderworldHeight && tsorcRevampWorld.SuperHardMode)
+            {
+                //pool.Add(NPCID.SolarSpearman, 1f);
+                pool.Add(NPCID.SolarCrawltipedeHead, 0.2f); //.1 is 3%
+                //pool.Add(NPCID.SolarDrakomire, 0.2f);
+                pool.Add(NPCID.SolarSroller, 0.5f); //.5 is 16%
+                pool.Add(NPCID.SolarCorite, 0.1f);
+                //pool.Add(NPCID.SolarSolenian, 1f);
+            }
+
+            if (spawnInfo.spawnTileType == TileID.BoneBlock && spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            {
+                
+                pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
+                
+            }
+
+            if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
+            //spawn tile is on one of the outer thirds of the map
+            {
+
+                //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
+
+            }
+           
+
+            if (spawnInfo.player.ZoneUnderworldHeight && spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.SolarSpearman, 1f);
+                //pool.Add(NPCID.SolarCrawltipedeHead, 0.1f);
+                pool.Add(NPCID.SolarDrakomire, 0.2f);
+                //pool.Add(NPCID.SolarSroller, 0.5f);
+                //pool.Add(NPCID.SolarCorite, 0.1f);
+                pool.Add(NPCID.SolarSolenian, 2f);
             }
         }
 

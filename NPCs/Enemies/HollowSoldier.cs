@@ -776,20 +776,24 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.player.townNPCs > 1f) return 0f;
 
-            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneJungle) return 0.06f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.04f;
+            if (Main.hardMode && spawnInfo.lihzahrd) return 0.18f;
+
+            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.23f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneOverworldHeight && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.25f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDesert) return 0.13f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.16f; //.08% is 4.28%
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
 
             if (Main.expertMode && Main.bloodMoon && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
 
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime) return chance = 0.035f;
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime) return chance = 0.075f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && Main.dayTime && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return chance = 0.035f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.player.ZoneOverworldHeight && !Main.dayTime && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return chance = 0.075f;
 
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.06f;
-            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime && !spawnInfo.player.ZoneJungle) return chance = 0.08f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return chance = 0.06f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return chance = 0.08f;
 
-            if (NPC.downedBoss2 || NPC.downedBoss3) return chance = 0.025f;
+            if (NPC.downedBoss2 || NPC.downedBoss3 && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return chance = 0.025f;
 
             return chance;
         }

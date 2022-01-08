@@ -24,8 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.defense = 42;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 3200;
-			npc.scale = 1.1f;
+			npc.lifeMax = 1200;
+			npc.scale = 1f;
 			npc.value = 1200;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.HydrisElementalBanner>();
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
 			float acceleration = .08f;  //  how fast it can speed up
-			float top_speed = 2.8f;  //  max walking speed, also affects jump length
+			float top_speed = 4.8f;  //  max walking speed, also affects jump length
 			float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 

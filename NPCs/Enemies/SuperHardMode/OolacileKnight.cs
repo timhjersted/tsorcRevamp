@@ -30,9 +30,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 28750;
-            npc.knockBackResist = 0.02f;
+            npc.knockBackResist = 0.04f;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
+            npc.lavaImmune = true;
         }
 
         int meteorDamage = 17;
@@ -527,14 +528,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (breath)
                         {
 
-                            //float num48 = 5f;
+                            float num48 = 5f;
                             float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
                             int num54 = Projectile.NewProjectile(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2), (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
-                            Main.projectile[num54].timeLeft = 50;
+                            Main.projectile[num54].timeLeft = 25; //was 50
 
                             npc.netUpdate = true;
 
-                            if (Main.rand.Next(35) == 0)
+                            if (Main.rand.Next(15) == 0) //was 35
                             {
                                 int num65 = Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion2>(), darkExplosionDamage, 0f, Main.myPlayer);
                             }

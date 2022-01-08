@@ -23,7 +23,7 @@ namespace tsorcRevamp.Buffs {
                 player.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel = 0; //Reset to 0
                 player.AddBuff(ModContent.BuffType<Invincible>(), 720); //12 seconds
                 player.AddBuff(ModContent.BuffType<Strength>(), 7200); //2 minutes
-                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 10800); //3 minutes
+                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 600);  //reduced duration, so it adds visually to the moment of curse
                 player.AddBuff(BuffID.Clairvoyance, 36000); //10 minutes
 
                 for (int i = 0; i < 50; i++)

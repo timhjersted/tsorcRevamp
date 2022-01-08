@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y - 10), projectile.width, projectile.height, DustID.Shadowflame, 0, 0, 50, color, 3.0f);
 			Main.dust[dust].noGravity = true;
 
-			if (Main.rand.Next(4) == 0)
+			if (Main.rand.Next(2) == 0)
 			{
 				Lighting.AddLight((int)(projectile.position.X / 16f), (int)(projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
 			}
@@ -73,6 +73,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			target.AddBuff(BuffID.Bleeding, 600 / buffLengthMod, false); //bleeding
 			target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600 / buffLengthMod, false); //you take knockback
+			target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1800 / buffLengthMod, false);
 		}
 	}
 }

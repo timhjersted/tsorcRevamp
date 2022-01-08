@@ -15,8 +15,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.Skeleton];
 		}
 
+		public int throwingKnifeDamage = 8;
+
 		public override void SetDefaults()
 		{
+
+			
+
 			animationType = NPCID.Skeleton;
 			npc.aiStyle = -1;
 			npc.height = 40;
@@ -31,16 +36,25 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.defense = 2;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
+
+			if (Main.hardMode)
+			{
+				npc.lifeMax = 180;
+				npc.defense = 16;
+				npc.value = 320;
+				npc.damage = 50;
+				throwingKnifeDamage = 20;
+			}
 		}
 
 		public override void NPCLoot()
 		{
 			Item.NewItem(npc.getRect(), ItemID.Torch);
 			Item.NewItem(npc.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
-			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMageTunic>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMagePants>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMageHat>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldDoubleAxe>(), 1, false, -1);
+			if (!Main.hardMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMageTunic>());
+			if (!Main.hardMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMagePants>());
+			if (!Main.hardMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.RedMageHat>());
+			if (!Main.hardMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldDoubleAxe>(), 1, false, -1);
 			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DeadChicken>());
 		}
 
@@ -69,13 +83,13 @@ namespace tsorcRevamp.NPCs.Enemies
 				return chance;
 			}
 
-			if (spawnInfo.player.townNPCs > 0f || Main.hardMode || spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneMeteor) chance = 0f;
-			if (spawnInfo.player.ZoneOverworldHeight || spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight)
+			if (spawnInfo.player.townNPCs > 0f || tsorcRevampWorld.SuperHardMode || spawnInfo.player.ZoneDungeon) chance = 0f;
+			if (!tsorcRevampWorld.SuperHardMode && (spawnInfo.player.ZoneOverworldHeight || spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight))
 			{
 				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.05f;
 				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.055f;
 				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && Main.dayTime) return 0.0534f;
-				if (!(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && !Main.dayTime) return 0.0725f;
+				if (spawnInfo.player.ZoneMeteor && !Main.dayTime) return 0.0725f;
 			}
 
 			return chance;
@@ -227,9 +241,9 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 8;//(int) (14f * npc.scale);
+								//int throwingKnifeDamage = 8;//(int) (14f * npc.scale);
 								int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, throwingKnifeDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 600;
 								Main.projectile[num54].aiStyle = 1;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);

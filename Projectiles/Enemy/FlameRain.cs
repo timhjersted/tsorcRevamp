@@ -21,16 +21,16 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.hostile = true;
             projectile.penetrate = 1;
             projectile.light = 0.8f;
-            projectile.tileCollide = true;
+            //projectile.tileCollide = true;
             projectile.magic = true;
 
-            projectile.aiStyle = 0;
-            projectile.hostile = true;
-            projectile.height = 34;
+            //projectile.aiStyle = 0; //2 aistyle declarations? hmm
+            //projectile.hostile = true;
+            //projectile.height = 34;
             projectile.tileCollide = false;
-            projectile.width = 34;
-            projectile.timeLeft = 150;
-            projectile.light = .3f;
+            //projectile.width = 34;
+            //projectile.timeLeft = 150;
+            //projectile.light = .3f;
             Main.projFrames[projectile.type] = 4;
         }
 

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.height = 34; //was 8
             projectile.penetrate = 2;
             projectile.ranged = true;
-            projectile.scale = .6f; //was .8
+            projectile.scale = .5f; //was .8
             projectile.tileCollide = true;
             projectile.width = 18; //was 8
             aiType = ProjectileID.WoodenArrowFriendly;

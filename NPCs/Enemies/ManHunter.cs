@@ -9,24 +9,45 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class ManHunter : ModNPC
 	{
+		public int archerBoltDamage = 20;
 		public override void SetDefaults()
 		{
 			aiType = NPCID.SkeletonArcher;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.damage = 25;
-			npc.lifeMax = 110;
+			npc.lifeMax = 250;
 			npc.defense = 10;
 			npc.value = 1000;
+			npc.scale = 0.9f;
 			npc.width = 18;
 			npc.aiStyle = -1;
 			npc.height = 48;
-			npc.knockBackResist = 0f;
+			npc.knockBackResist = 0.5f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.ManHunterBanner>();
 
 			animationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[npc.type] = 20;
+
+			if (Main.hardMode)
+			{
+				npc.lifeMax = 500;
+				npc.defense = 14;
+				npc.value = 1500;
+				npc.damage = 50;
+				archerBoltDamage = 30;
+			}
+
+
+		}
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+			npc.defense = (int)(npc.defense * (2 / 3));
+			archerBoltDamage = (int)(archerBoltDamage / 2);
 		}
 
 		public override void NPCLoot()
@@ -65,10 +86,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (!Main.hardMode && !spawnInfo.player.ZoneMeteor && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson)
 			{
 				if (spawnInfo.player.ZoneOverworldHeight) return 0.15f;
-				if (spawnInfo.player.ZoneDirtLayerHeight) return 0.04f;
-				if (spawnInfo.player.ZoneRockLayerHeight) return 0.08f;
+				if (spawnInfo.player.ZoneDirtLayerHeight) return 0.06f;
+				if (spawnInfo.player.ZoneRockLayerHeight) return 0.10f;
 			}
-			if (Main.hardMode && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneBeach && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson) return 0.005f;
+			if (Main.hardMode && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneBeach && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson) return 0.04f;
 
 			return chance;
 		}
@@ -382,8 +403,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			#region shoot and walk
 			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
 			{
-				//if (npc.justHit)
-				//	npc.ai[2] = 0f; // reset throw countdown when hit
+				if (npc.justHit)
+					npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f)
@@ -403,9 +424,9 @@ namespace tsorcRevamp.NPCs.Enemies
 								num51 = num48 / num51;
 								speedX *= num51;
 								speedY *= num51;
-								int damage = 20;//(int) (14f * npc.scale);
+								//int damage = 20;//(int) (14f * npc.scale);
 								int type = ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, archerBoltDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 600;
 								Main.projectile[num54].aiStyle = 1;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);

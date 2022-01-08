@@ -13,15 +13,16 @@ namespace tsorcRevamp.NPCs.Enemies
 			aiType = NPCID.SkeletonArcher;
 			npc.HitSound = SoundID.NPCHit48;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.damage = 52;
-			npc.lifeMax = 3000;
-			npc.scale = 1.1f;
+			npc.damage = 70;
+			npc.lifeMax = 1000; //was 3000 which means 6000
+			if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 3000; npc.defense = 60; npc.damage = 80; npc.value = 6900; }
+			npc.scale = 1.0f; //was 1.1
 			npc.defense = 40;
-			npc.value = 3600;
+			npc.value = 4600;
 			npc.width = 18;
 			npc.aiStyle = -1;
 			npc.height = 48;
-			npc.knockBackResist = 0f;
+			npc.knockBackResist = 0.5f;
 			npc.rarity = 3;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.AssassinBanner>();
@@ -29,6 +30,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			animationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[npc.type] = 20;
 		}
+
+		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+		{
+			npc.lifeMax = (int)(npc.lifeMax / 2);
+			npc.damage = (int)(npc.damage / 2);
+		}
+
 
 		public override void NPCLoot()
 		{
@@ -55,13 +63,31 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (Main.hardMode && !Main.dayTime && !spawnInfo.player.ZoneMeteor && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(100) == 0)
+			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneOverworldHeight && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(60) == 0)
 			{
 				Main.NewText("An assassin is tracking your position...", 175, 75, 255);
 				return 1f;
 			}
 
-			if (Main.hardMode && !Main.dayTime && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneOverworldHeight && Main.rand.Next(100) == 0)
+			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(80) == 0)
+			{
+				Main.NewText("You hear foot steps...", 175, 75, 255);
+				return 1f;
+			}
+
+			if (Main.hardMode && (spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneUndergroundDesert || spawnInfo.player.ZoneDesert) && Main.rand.Next(70) == 0)
+			{
+				Main.NewText("You hear foot steps...", 175, 75, 255);
+				return 1f;
+			}
+
+			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(80) == 0)
+			{
+				Main.NewText("You hear a bow draw...", 175, 75, 255);
+				return 1f;
+			}
+
+			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneOverworldHeight && Main.rand.Next(50) == 0)
 			{
 				Main.NewText("You are being hunted...", 175, 75, 255);
 				return 1f;
@@ -122,9 +148,9 @@ namespace tsorcRevamp.NPCs.Enemies
 			float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-			float enrage_percentage = 0.2f;  // double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+			float enrage_percentage = 0.4f;  // double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
 			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
-			float enrage_top_speed = 2f;  //  faster when enraged, usually 2*top_speed
+			float enrage_top_speed = 4f;  //  faster when enraged, usually 2*top_speed
 
 			bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
 			bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
@@ -143,8 +169,16 @@ namespace tsorcRevamp.NPCs.Enemies
 			int projectile_id = ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>();//44;//0x37; //14;
 			float projectile_velocity = 14; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
 
-			// can_pass_doors only
-			float door_break_pow = 2; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
+			//Assassin Damage/Bow Stats for SHM
+			if (tsorcRevampWorld.SuperHardMode) 
+			{
+				shot_rate = 90;  
+				projectile_damage = 99;
+            }
+
+
+				// can_pass_doors only
+				float door_break_pow = 2; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
 			bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
 			// Omnirs creature sorts

@@ -4,27 +4,34 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
 	class QuaraHydromancer : ModNPC
 	{
+
+		int bubbleDamage = 60;
 		public override void SetDefaults()
 		{
 			Main.npcFrameCount[npc.type] = 15;
 			animationType = 21;
 			npc.aiStyle = 3;
-			npc.damage = 125;
+			npc.damage = 65;
 			npc.defense = 22;
 			npc.height = 45;
-			npc.lifeMax = 2100;
+			npc.lifeMax = 500;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 1500;
 			npc.width = 18;
-			npc.knockBackResist = 0.15f;
+			npc.lavaImmune = true;
+			npc.knockBackResist = 0.25f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
+
+			if (Main.hardMode) { npc.lifeMax = 1000; npc.defense = 22; npc.damage = 125; npc.value = 1500; bubbleDamage = 70; }
+			if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 3000; npc.defense = 50; npc.damage = 160; npc.value = 3600; bubbleDamage = 80; }
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -34,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			bubbleDamage = (int)(bubbleDamage / 2);
 		}
 
-		int bubbleDamage = 60;
+		
 
 		float customAi1;
 
@@ -43,9 +50,13 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player P = spawnInfo.player;
 			
-			if (Main.hardMode && !Main.dayTime && P.ZoneJungle && P.ZoneOverworldHeight && Main.rand.Next(35) == 1) return 1;
-			if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && Main.rand.Next(25) == 1) return 1;
+			if (Main.hardMode && !Main.dayTime && P.ZoneJungle && P.ZoneOverworldHeight && Main.rand.Next(30) == 1) return 1;
+			if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && Main.rand.Next(15) == 1) return 1;
+			if (Main.hardMode && spawnInfo.lihzahrd && Main.rand.Next(5) == 1) return 1;
+			if (Main.hardMode && spawnInfo.player.ZoneDesert && Main.rand.Next(35) == 1) return 1;
 			if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && (P.ZoneDirtLayerHeight || P.ZoneRockLayerHeight) && Main.rand.Next(30) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.Next(5) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneGlowshroom && Main.rand.Next(5) == 1) return 1;
 			return 0;
 		}
 		#endregion
@@ -103,7 +114,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			// Omnirs creature sorts
 			bool tooBig = true; // force bigger creatures to jump
-			bool lavaJumping = false; // Enemies jump on lava.
+			bool lavaJumping = true; // Enemies jump on lava.
 			bool canDrown = false; // They will drown if in the water for too long
 
 			// calculated parameters
@@ -361,38 +372,56 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (npc.justHit)
 					npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
-				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (customAi1 >= 10f)
+
+				//TELEGRAPH DUST
+				if (customAi1 >= 63)
+				{
+					Lighting.AddLight(npc.Center, Color.Blue.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+					if (Main.rand.Next(3) == 1)
+					{
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.Water, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.BlueFairy, npc.velocity.X, npc.velocity.Y);
+					}
+
+				}
+
+				customAi1++; ;
+				if (customAi1 >= 80f)
 				{
 					npc.TargetClosest(true);
-					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-					{
-						if (Main.rand.Next(60) == 1)
+
+
+					
+						if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
 						{
-							float num48 = 8f;
-							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-							{
-								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-								num51 = num48 / num51;
-								speedX *= num51;
-								speedY *= num51;
-								//int damage = 120;//(int) (14f * npc.scale);
-								int type = ModContent.ProjectileType<Projectiles.Enemy.Bubble>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, bubbleDamage, 0f, Main.myPlayer);
-								Main.projectile[num54].timeLeft = 100;
-								Main.projectile[num54].aiStyle = 1;
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-								customAi1 = 1f;
+
+							//if (Main.rand.Next(60) == 1)
+							//{
+								float num48 = 8f;
+								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+								float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+								float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+								if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+								{
+									float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+									num51 = num48 / num51;
+									speedX *= num51;
+									speedY *= num51;
+									//int damage = 120;//(int) (14f * npc.scale);
+									int type = ModContent.ProjectileType<Projectiles.Enemy.Bubble>();//44;//0x37; //14;
+									int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, bubbleDamage, 0f, Main.myPlayer);
+									Main.projectile[num54].timeLeft = 100;
+									Main.projectile[num54].aiStyle = 1;
+									Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+									customAi1 = 1f;
+							//	}
+								npc.netUpdate = true;
 							}
-							npc.netUpdate = true;
 						}
-					}
-				}
-				#endregion
-			}
+                }
+                #endregion
+
+            }
 			#endregion
 			//-------------------------------------------------------------------
 			#region check if standing on a solid tile
@@ -605,6 +634,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		}
 		#endregion
+
+
 
 		#region Gore
 		public override void NPCLoot()

@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 15000;
-            npc.knockBackResist = 0.01f;
+            npc.knockBackResist = 0.05f;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
         }
@@ -61,15 +61,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && Main.rand.Next(1200) == 1) return 1;
 
-            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(850) == 1) return 1;
+            if (Main.hardMode && P.ZoneMeteor && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(250) == 1) return 1;
 
-            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(700) == 1) return 1;
+            if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && !(P.ZoneCorrupt || P.ZoneCrimson) && P.ZoneRockLayerHeight && Main.rand.Next(350) == 1) return 1;
 
-            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.Next(400) == 1) return 1;
+            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.Next(100) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(5) == 1) return 1; //30 was 1 percent, 10 is 2.76%
 
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.Next(25) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && P.ZoneUnderworldHeight && Main.rand.Next(3) == 1) return 1;
 
             return 0;
         }
@@ -365,14 +365,18 @@ namespace tsorcRevamp.NPCs.Enemies
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
             {
                 if (npc.justHit)
-                    npc.ai[2] = 0f; // reset throw countdown when hit
+                {
+                    customAi1 = 50f;
+                }
+                    //npc.ai[2] = 0f; // reset throw countdown when hit
 
                 #region Projectiles
                 customAi1++; ;
                 if (customAi1 >= 180f)
                 {
                     npc.TargetClosest(true);
-                    if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+                    //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+                    if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                     {
                         Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
 

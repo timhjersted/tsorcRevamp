@@ -15,21 +15,37 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.damage = 35;
 			npc.lifeMax = 95;
 			npc.defense = 16;
-			npc.value = 450;
+			npc.value = 350;
 			npc.width = 20;
 			npc.aiStyle = -1;
 			npc.height = 40;
-			npc.knockBackResist = 0f;
+			npc.knockBackResist = 0.01f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
 
 			animationType = NPCID.GoblinWarrior;
 			Main.npcFrameCount[npc.type] = 16;
+
+			if (Main.hardMode)
+			{
+				npc.lifeMax = 195;
+				npc.defense = 20;
+				npc.value = 450;
+				npc.damage = 50;
+			}
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				npc.lifeMax = 1095;
+				npc.defense = 70;
+				npc.damage = 100;
+				npc.value = 1000;
+			}
 		}
 		public override void NPCLoot()
 		{
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
+			if (!Main.hardMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
+			if (Main.hardMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
 		}
 
 		#region Spawn
@@ -39,15 +55,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.2f;
+				return 0.25f;
 			}
 			else if (Main.hardMode && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.025f;
+				return 0.12f;
 			}
 			else if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon)
 			{
-				return 0.01f;
+				return 0.1f; //.05 is 3.85%
 			}
 
 			return chance;
@@ -108,8 +124,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			float projectile_velocity = 14; // initial velocity? 11 for Skeleton Archers, 9 for Goblin Archers, bombs have fixed speed & direction atm
 
 			// can_pass_doors only
-			float door_break_pow = 2; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
-			bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
+			float door_break_pow = 5; // 10 dmg breaks door; 2 for goblin thief and 7 for Angry Bones; 1 for others
+			bool breaks_doors = true; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
 			// Omnirs creature sorts
 			bool tooBig = false; // force bigger creatures to jump

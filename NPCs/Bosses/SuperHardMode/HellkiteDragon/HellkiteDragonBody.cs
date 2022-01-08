@@ -55,6 +55,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             if (!Main.npc[(int)npc.ai[1]].active)
             {
+                
+                    for (int num36 = 0; num36 < 50; num36++)
+                    {
+                        Color color = new Color();
+                        int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 10f);
+                        Main.dust[dust].noGravity = false;
+                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
+                        Main.dust[dust].noGravity = false;
+                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
+                        Main.dust[dust].noGravity = false;
+                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 62, 0, 0, 100, Color.White, 10.0f);
+                        Main.dust[dust].noGravity = true;
+                        //npc.netUpdate = true; //new
+                    }
                 npc.life = 0;
                 npc.HitEffect(0, 10.0);
                 NPCLoot();

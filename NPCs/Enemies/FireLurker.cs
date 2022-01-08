@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			Main.npcFrameCount[npc.type] = 15;
 			animationType = 28;
 			npc.knockBackResist = 0.4f;
-			npc.aiStyle = 3;
+			npc.aiStyle = -1;//was 3
 			npc.damage = 40;
 			npc.defense = 10;
 			npc.height = 40;
@@ -99,11 +99,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 
 			//ONLY SPAWNS IN HELL
-			if (!Main.hardMode && InHell && Main.rand.Next(15) == 1) return 1;
+			if (!Main.hardMode && InHell && Main.rand.Next(6) == 1) return 1;
 
-			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(10) == 1) return 1;
+			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(5) == 1) return 1;
 
-			if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(8) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(5) == 1) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
 			return 0;
 		}
 		#endregion
@@ -134,9 +134,9 @@ namespace tsorcRevamp.NPCs.Enemies
 			//float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .8;  //  above this speed boredom decreases(if not already bored); usually .9
 
-			float enrage_percentage = .1f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+			float enrage_percentage = .36f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
 			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
-			float enrage_top_speed = 2;  //  faster when enraged, usually 2*top_speed
+			float enrage_top_speed = 3f;  //  faster when enraged, usually 2*top_speed
 
 			bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
 			bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
@@ -161,7 +161,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			// Omnirs creature sorts
 			//bool tooBig = false; // force bigger creatures to jump
-			//bool lavaJumping = true; // Enemies jump on lava.
+			bool lavaJumping = true; // Enemies jump on lava.
 			bool canDrown = false; // They will drown if in the water for too long
 			bool quickBored = false; //Enemy will respond to boredom much faster(? -- test)
 			bool oBored = false; //Whether they're bored under the "quickBored" conditions
@@ -687,22 +687,36 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-
+				//SPIT ATTACK
 				#region Projectiles
 				if (Main.netMode != 1)
-				{ 
+				{
 					customAi1++; ;
-					if (customAi1 >= 160f)
+					if (customAi1 >= 130)
 					{
-						npc.TargetClosest(true);
-						if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+						
+						Lighting.AddLight(npc.Center, Color.Green.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+						if (Main.rand.Next(3) == 1)
 						{
-							Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 7); //red knight was 11
+							Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+							Dust.NewDust(npc.position, npc.width, npc.height, DustID.IchorTorch, npc.velocity.X, npc.velocity.Y);
+						}
+					}
+						
+					if (customAi1 >= 160f)
+					{ 
+						npc.TargetClosest(true);
+
+						if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+						//if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+						{
+
+								Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 9); //red knight was 11
 
 							if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 							{
 								Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+								Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
 								customAi1 = 1f;
 							}
 						}
@@ -1179,7 +1193,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			
 
 		}
-		
+
+		/*
 		#region Draw Projectile
 		static Texture2D spearTexture;
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
@@ -1210,5 +1225,6 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 		}
 		#endregion
+		*/
 	}
 }

@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             npc.DeathSound = SoundID.NPCDeath1;
             npc.lavaImmune = true;
             npc.knockBackResist = 0;
-            npc.lifeMax = 60000000;
+            npc.lifeMax = 50000;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.behindTiles = true;
@@ -37,6 +37,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             }
         }
         int[] bodyTypes;
+
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
+            npc.lifeMax = (int)(npc.lifeMax / 2);
+            npc.damage = (int)(npc.damage / 2);
+        }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
