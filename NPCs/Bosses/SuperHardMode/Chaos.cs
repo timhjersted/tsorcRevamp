@@ -446,10 +446,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
-				if (Main.rand.Next(99) < 20) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
-				if (Main.rand.Next(99) < 40) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
-				if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3000);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfChaos>(), 3);

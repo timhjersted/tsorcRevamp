@@ -5,7 +5,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
     class ElfinBow : ModItem {
         public override void SetDefaults() {
             item.autoReuse = true;
-            item.damage = 85;
+            item.damage = 385;
             item.height = 58;
             item.knockBack = 5;
             item.noMelee = true;

@@ -348,10 +348,10 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
-            if (Main.rand.Next(99) < 20) player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
-            if (Main.rand.Next(99) < 40) player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>());
-            if (Main.rand.Next(99) < 50) player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 3000);
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfChaos>(), 3);
