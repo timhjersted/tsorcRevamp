@@ -22,8 +22,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.width = 16;
 		}
 		public override bool PreKill(int timeLeft)
-        {
-
+		{
+			projectile.type = 15;
 
 
 			return true;
