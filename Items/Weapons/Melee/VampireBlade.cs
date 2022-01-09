@@ -36,14 +36,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
             player.statLife += damage / 20;
-            if (player.statLife < player.statLifeMax2) {
+            if (player.statLife > player.statLifeMax2) {
                 player.statLife = player.statLifeMax2;
             }
         }
 
         public override void OnHitPvp(Player player, Player target, int damage, bool crit) {
             player.statLife += damage / 20;
-            if (player.statLife < player.statLifeMax2) {
+            if (player.statLife > player.statLifeMax2) {
                 player.statLife = player.statLifeMax2;
             }
         }
