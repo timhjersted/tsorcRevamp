@@ -69,7 +69,6 @@ namespace tsorcRevamp.Projectiles {
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            Color drawColor = projectile.GetAlpha(lightColor);
             for(int i = 0; i < 9; i++)
             {
                 Main.spriteBatch.Draw(texture,

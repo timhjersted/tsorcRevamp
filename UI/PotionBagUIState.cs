@@ -84,6 +84,10 @@ namespace tsorcRevamp.UI
             {
                 valid = true;
             }
+            if (item.Name.Contains("Flask"))
+            {
+                valid = true;
+            }
             if (item.buffTime != 0)
             {
                 valid = true;
