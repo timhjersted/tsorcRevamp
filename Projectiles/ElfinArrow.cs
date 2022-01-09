@@ -24,11 +24,11 @@ namespace tsorcRevamp.Projectiles {
         }
 
         float topSpeed = 14;
-        float homingStrength = 2;
+        float homingStrength = 0.0001f;
         public override void AI()
         {
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            homingStrength += 0.005f;
+            homingStrength += 0.03f;
             if (projectile.ai[0] >= 0)
             {
                 Projectile target = Main.projectile[(int)projectile.ai[0]];
