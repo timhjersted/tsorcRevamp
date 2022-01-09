@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items {
             item.useAnimation = 15;
             item.useTime = 15;
             item.maxStack = 10;
-            item.healLife = 500;
+            //item.healLife = 500;
             item.consumable = true;
             item.scale = 1;
             item.UseSound = SoundID.Item4;
@@ -58,9 +58,9 @@ namespace tsorcRevamp.Items {
                 player.statLifeMax = 500; //BOTC can still heal from this, they're expensive and have a long CD
             }
 
-            player.statLife += 500;
             player.AddBuff(BuffID.PotionSickness, 10800);
             player.HealEffect(500);
+            player.statLife += 500;
 
             int buffIndex = 0;
 
