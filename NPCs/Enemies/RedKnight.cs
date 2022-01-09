@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
             DisplayName.SetDefault("Red Knight");
         }
 
-        public int redKnightsSpearDamage = 90;
+        public int redKnightsSpearDamage = 80;
 
         public override void SetDefaults()
         {
@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.aiStyle = 3;
             npc.height = 40;
             npc.width = 20;
-            npc.damage = 155;
+            npc.damage = 149;
             npc.defense = 41;
             npc.lifeMax = 5000;
             npc.HitSound = SoundID.NPCHit1;
@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
             double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-            float enrage_percentage = .4f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+            float enrage_percentage = .5f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
             float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
             float enrage_top_speed = 6;  //  faster when enraged, usually 2*top_speed
 
@@ -366,12 +366,13 @@ namespace tsorcRevamp.NPCs.Enemies
             #region shoot and walk
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
             {
+                
                 if (npc.justHit)
                 {
                     customAi1 = 110f;
 
-                    //WHEN HIT, CHANCE TO DASH STEP BACKWARDS
-                    if (Main.rand.Next(5) == 1)
+                    //WHEN HIT, CHANCE TO JUMP BACKWARDS
+                    if (Main.rand.Next(6) == 1)
                     {
 
                         npc.TargetClosest(false);
@@ -379,11 +380,13 @@ namespace tsorcRevamp.NPCs.Enemies
                         npc.velocity.Y = -8f;
                         npc.velocity.X = -3;
 
+                       
+
                         npc.netUpdate = true;
                     }
 
                         //WHEN HIT, CHANCE TO DASH STEP BACKWARDS
-                    if (Main.rand.Next(3) == 1)
+                    if (Main.rand.Next(5) == 1)
                     {
 
                         npc.TargetClosest(false);
@@ -391,10 +394,14 @@ namespace tsorcRevamp.NPCs.Enemies
                         npc.velocity.Y = -5f;
                         npc.velocity.X = -5;
 
+                        npc.direction *= -1;
+                        npc.spriteDirection = npc.direction;
+                        npc.ai[0] = 0f;
+
                         //CHANCE TO JUMP AFTER DASH
                         if (Main.rand.Next(2) == 1)
                         {
-                            npc.TargetClosest(false);
+                            npc.TargetClosest(true);
                             npc.velocity.Y = -6f;
                            
                         }
@@ -403,9 +410,9 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     //  if jumping during a dash, chance to teleport
-                    if (npc.velocity.Y >= -2f && Main.rand.Next(3) == 1)
+                    if (npc.velocity.Y >= -2f && Main.rand.Next(5) == 1)
                     {
-                        
+                        customAi1 = 111f;
                         if (Main.netMode != 1 && can_teleport) // is server & chaos ele & bored
                         {
                             int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
@@ -430,7 +437,7 @@ namespace tsorcRevamp.NPCs.Enemies
                                 int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
                                 for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                                 { // (tp_x_target,m) is block under its feet I think
-                                    if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 4 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                                    if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 7 || tp_x_target > target_x_blockpos + 7) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
                                     { // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                                         bool safe_to_stand = true;
                                         bool dark_caster = false; // not a fighter type AI...
@@ -446,10 +453,14 @@ namespace tsorcRevamp.NPCs.Enemies
                                             npc.netUpdate = true;
                                             npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
                                             flag7 = true; // end the loop (after testing every lower point :/)
+                                           
                                         }
                                     } // END over 4 blocks distant from player...
                                 } // END traverse y down to edge of radius
                             } // END try 100 times
+
+                            customAi1 = 112f;
+
                         } // END is server & chaos ele & bored
                         
                     }
@@ -477,8 +488,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
                 #endregion
+                
             }
             #endregion
+
+
             //-------------------------------------------------------------------
             #region check if standing on a solid tile
             // warning: this section contains a return statement

@@ -175,7 +175,7 @@ namespace tsorcRevamp
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
             ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, "A Red Knight appears...", Color.Purple, false, default, RedKnightMountainCustomAction);
-            RedKnightTwinMountain.SetCustomStats(1500, 10, 60, 1855);
+            RedKnightTwinMountain.SetCustomStats(1500, 10, 60, 2055);
 
             //JUNGLE WYVERN
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
@@ -607,7 +607,7 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
-                ourRedKnight.redKnightsSpearDamage = 17;
+                ourRedKnight.redKnightsSpearDamage = 19;
             }
             return true;
         }
