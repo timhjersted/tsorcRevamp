@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -52,6 +53,11 @@ namespace tsorcRevamp.Projectiles {
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
+            data.Apply(null);
+
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
             {
@@ -73,6 +79,9 @@ namespace tsorcRevamp.Projectiles {
             Main.spriteBatch.Draw(texture,
                 projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
                 sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }

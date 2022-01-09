@@ -280,7 +280,7 @@ namespace tsorcRevamp {
             float distance = float.MaxValue;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].friendly)
+                if (Main.npc[i].active && !Main.npc[i].friendly && (Main.npc[i].damage > 0 || Main.npc[i].type == NPCID.TargetDummy))
                 {
                     float newDistance = Vector2.DistanceSquared(point, Main.npc[i].Center);
                     if (newDistance < distance)

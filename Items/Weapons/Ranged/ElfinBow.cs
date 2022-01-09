@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Never miss again\n" +
-                "Fires a storm of homing arrows that track toward whatever you hover over");
+                "Unleashes a storm of enchanted arrows that hunt down any enemy you select");
         }
         public override void SetDefaults() {
             item.autoReuse = true;
