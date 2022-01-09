@@ -122,7 +122,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     {
                         int crystal = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, npc.whoAmI);
                         Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
-                        firstCrystalSpawned = true;
+                        if(npc.life >= (npc.lifeMax / 2))
+                        {
+                            firstCrystalSpawned = true;
+                        }
+                        else
+                        {
+                            secondCrystalSpawned = true;
+                        }
                         UsefulFunctions.ServerText("Seath calls upon a Primordial Crystal...", Color.Cyan);
                     }
 
@@ -259,7 +266,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (npc.dontTakeDamage)
             {
                 spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);                
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+                ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MidnightRainbowDye), Main.LocalPlayer);
+                data.Apply(null);
                 SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;

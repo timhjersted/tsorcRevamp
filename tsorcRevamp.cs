@@ -1846,8 +1846,9 @@ namespace tsorcRevamp {
             PhazonRound,
             MoonlightGreatsword,
             MoonlightGreatswordGlowmask,
-            EstusFlask
-
+            EstusFlask,
+            ElfinArrow,
+            ElfinTargeting
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -1889,7 +1890,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.MoonlightGreatsword, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword")},
                 {TransparentTextureType.MoonlightGreatswordGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")},
                 {TransparentTextureType.EstusFlask, ModContent.GetTexture("tsorcRevamp/Textures/EstusFlask_drinking")},
-
+                {TransparentTextureType.ElfinArrow, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinArrow")},
+                {TransparentTextureType.ElfinTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinTargeting")}
             };
 
             //Runs each entry through the XNA's premultiplication function

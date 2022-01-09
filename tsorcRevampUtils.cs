@@ -268,6 +268,31 @@ namespace tsorcRevamp {
             
             return null;            
         }
+        
+        ///<summary> 
+        ///Gets the closest Enemy NPC to a given point. Returns that NPC's whoami.
+        ///Uses nullable ints, will return null if it can't find one (like in the rare but possible situation where there *are* no NPCs). You've been warned!
+        ///</summary>
+        ///<param name="point">The point it's comparing to</param>
+        public static int? GetClosestEnemyNPC(Vector2 point)
+        {
+            int? closestNPC = null;
+            float distance = float.MaxValue;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && !Main.npc[i].friendly)
+                {
+                    float newDistance = Vector2.DistanceSquared(point, Main.npc[i].Center);
+                    if (newDistance < distance)
+                    {
+                        distance = newDistance;
+                        closestNPC = i;
+                    }
+                }
+            }
+
+            return closestNPC;
+        }
 
 
         ///<summary> 
