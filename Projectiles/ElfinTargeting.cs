@@ -23,6 +23,7 @@ namespace tsorcRevamp.Projectiles {
 
         public override void AI()
         {
+            Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3() * 1.5f);
             projectile.damage = 0;
             projectile.rotation -= 0.05f;
             if (Main.npc[(int)projectile.ai[0]].active)

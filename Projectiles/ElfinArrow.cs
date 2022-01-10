@@ -27,8 +27,19 @@ namespace tsorcRevamp.Projectiles {
         float homingStrength = 0.0001f;
         public override void AI()
         {
+            if (!UsefulFunctions.IsTileReallySolid(projectile.Center / 16))
+            {
+                Dust thisdust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f);
+                thisdust.velocity = Vector2.Zero;
+            }
+
+            
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            homingStrength += 0.03f;
+            homingStrength += 0.035f;
+            if (topSpeed < 24)
+            {
+                topSpeed += 0.02f;
+            }
             if (projectile.ai[0] >= 0)
             {
                 Projectile target = Main.projectile[(int)projectile.ai[0]];
@@ -49,6 +60,18 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
             base.AI();
+        }
+
+        public override bool PreKill(int timeLeft)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 vel = projectile.velocity + Main.rand.NextVector2Circular(5, 5);
+                Dust d = Dust.NewDustPerfect(projectile.Center, DustID.MagicMirror, vel, 10, default, 2);
+                d.noGravity = true;
+                d.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
+            }
+            return true;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
