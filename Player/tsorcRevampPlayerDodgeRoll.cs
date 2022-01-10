@@ -78,7 +78,9 @@ namespace tsorcRevamp {
 
 			Item item = player.HeldItem;
 
-			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            #region BotC Stamina Usage
+
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
 				if (item.damage >= 1 && item.useAnimation * 0.8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.itemAnimation == player.itemAnimationMax - 1)
                 {
@@ -171,7 +173,9 @@ namespace tsorcRevamp {
 				}
 			}
 
-			return true;
+            #endregion
+
+            return true;
 		}
 
         public void QueueDodgeroll(float wantTime, sbyte direction, bool force = false) {
@@ -210,7 +214,7 @@ namespace tsorcRevamp {
 
 			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface 
 				&& player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking
-				&& !player.HasBuff(BuffID.Frozen) && !player.HasBuff(ModContent.BuffType<Buffs.Hold>())) {
+				&& !player.HasBuff(BuffID.Frozen) && !player.HasBuff(ModContent.BuffType<Buffs.Hold>()) && !player.HasBuff(BuffID.Stoned)) {
 				QueueDodgeroll(0.25f, (sbyte)KeyDirection(player));
 			}
 

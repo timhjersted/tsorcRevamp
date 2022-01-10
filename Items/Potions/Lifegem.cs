@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override bool CanUseItem(Player player)
         {
-            if (player.HasBuff(BuffID.PotionSickness))
+            if (player.HasBuff(BuffID.PotionSickness) || player.HasBuff(BuffID.Frozen) || player.HasBuff(BuffID.Stoned))
             {
                 return false;
             }
