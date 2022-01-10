@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         Projectile thisProjectile;
         public override void HoldItem(Player player)
         {
-            if (Main.time % 5 == 0)
+            if (Main.GameUpdateCount % 5 == 0)
             {
                 int? closest = UsefulFunctions.GetClosestEnemyNPC(Main.MouseWorld);
                 if (closest != null)
