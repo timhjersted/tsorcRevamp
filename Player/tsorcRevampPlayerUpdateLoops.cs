@@ -1071,7 +1071,7 @@ namespace tsorcRevamp {
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.allDamage += 0.2f;
+                player.allDamageMult *= 1.2f;
 
                 if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
                 {
