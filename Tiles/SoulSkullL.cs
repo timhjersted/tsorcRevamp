@@ -246,14 +246,8 @@ namespace tsorcRevamp.Tiles
 			if (tile.frameX / 36 == 0)
 			{
 				Main.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
-				if (!Main.hardMode)
-				{
-					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("LostUndeadSoul"), 1);
-				}
-				else
-				{
-					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("NamelessSoldierSoul"), 1);
-				}
+				SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
+
 				if (Main.rand.Next(10) == 0) // 5%, maybe rarer depending on how many are on the map
 				{
 					Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Megalovania").WithVolume(1f).WithPitchVariance(-.01f));

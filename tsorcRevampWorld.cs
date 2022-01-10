@@ -40,6 +40,7 @@ namespace tsorcRevamp {
             Slain = new Dictionary<int, int>();
 
             tsorcScriptedEvents.InitializeScriptedEvents();
+            Tiles.SoulSkellyGeocache.InitializeSkellys();
         }
 
 		public override TagCompound Save() {

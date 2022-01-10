@@ -123,14 +123,8 @@ namespace tsorcRevamp.Tiles
 			if (tile.frameX / 54 == 0)
 			{
 				Main.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
-				if (!Main.hardMode)
-				{
-					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("NamelessSoldierSoul"), 1);
-				}
-				else
-				{
-					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("ProudKnightSoul"), 1);
-				}
+				SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
+
 				int x = i - Main.tile[i, j].frameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
 				int y = j - Main.tile[i, j].frameY / 18 % 3; // 3 because it is 3 blocks tall
 				for (int l = x; l < x + 3; l++)             // this chunk of code basically makes it so that when you right click one tile, 
