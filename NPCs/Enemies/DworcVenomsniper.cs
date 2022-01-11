@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -389,18 +390,21 @@ namespace tsorcRevamp.NPCs.Enemies
 				//if (npc.justHit)
 				//	npc.ai[2] = 0f; // reset throw countdown when hit
 				#region Projectiles
-				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-				if (npc.ai[1] >= 10f)
+				//npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale; lol why
+				npc.ai[1]++;
+				if (npc.ai[1] >= 180f)
 				{
 					npc.TargetClosest(true);
 					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 					{
-						if (Main.rand.Next(70) == 1)
+						Player player = Main.player[npc.target];
+
+						if (Main.rand.Next(2) == 1 && npc.Distance(player.Center) < 250)
 						{
 							float num48 = 8f;
 							Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+							float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, -10);
+							float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, -10);
 							if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
 							{
 								float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
@@ -677,6 +681,23 @@ namespace tsorcRevamp.NPCs.Enemies
 			//-------------------------------------------------------------------*/
 		}
 		#endregion
+
+		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		{
+			if (npc.ai[1] >= 140)
+			{
+				Texture2D blowpipeTexture = mod.GetTexture("NPCs/Enemies/DworcVenomsniper_Telegraph");
+				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				if (npc.spriteDirection == -1)
+				{
+					spriteBatch.Draw(blowpipeTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 44, 56), drawColor, npc.rotation, new Vector2(22, 32), npc.scale, effects, 0);
+				}
+				else
+				{
+					spriteBatch.Draw(blowpipeTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 44, 56), drawColor, npc.rotation, new Vector2(22, 32), npc.scale, effects, 0);
+				}
+			}
+		}
 
 		#region Gore
 		public override void HitEffect(int hitDirection, double damage)

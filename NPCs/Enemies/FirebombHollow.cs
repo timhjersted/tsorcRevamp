@@ -76,10 +76,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Throwing.Firebomb>(), Main.rand.Next(1, 3));
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
             if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(6) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 
         }
 
@@ -412,11 +412,19 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-
+            Main.NewText(AI_State_Timer_1);
             // FIREBOMBING
             if (AI_State == State_Firebombing)
             {
-                AI_State_Timer_1++;
+                AI_State_Timer_1 += 1f;
+
+                if (!standing_on_solid_tile || npc.velocity.Y != 0)
+                {
+                    AI_State = State_Pursuing;
+                    AI_Universal_Timer = 40;
+                    AI_State_Timer_1 = 0;
+                    npc.frameCounter = 0;
+                }
 
                 if (AI_State_Timer_1 < 0)
                 {
@@ -439,11 +447,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     npc.velocity.X = 0;
                 }
-                if (AI_State_Timer_1 < 35)
+                if (AI_State_Timer_1 < 45)
                 {
                     npc.TargetClosest(true);
                 }
-                if (AI_State_Timer_1 == 35)
+                if (AI_State_Timer_1 == 45)
                 {
                     Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), npc.position); //Play swing-throw sound
                     Vector2 difference = Main.player[npc.target].Center - npc.Center; //Distance between player center and npc center
@@ -489,7 +497,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                if (AI_State_Timer_1 == 50)
+                if (AI_State_Timer_1 > 65)
                 {
                     AI_State = State_Pursuing;
                     AI_Universal_Timer = 0;
@@ -500,17 +508,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
-            if (AI_State == State_Firebombing && AI_State_Timer_1 < 35)
+            if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
             {
-                AI_State_Timer_1 = -30;
+                AI_State_Timer_1 = -10;
             }
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            if (AI_State == State_Firebombing && AI_State_Timer_1 < 35)
+            if (AI_State == State_Firebombing && AI_State_Timer_1 < 45)
             {
-                AI_State_Timer_1 = 0;
+                AI_State_Timer_1 = 10;
             }
         }
 
@@ -560,15 +568,15 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 npc.spriteDirection = npc.direction;
 
-                if (AI_State_Timer_1 <= 20)
+                if (AI_State_Timer_1 <= 25)
                 {
                     npc.frame.Y = 10 * frameHeight;
                 }
-                else if (AI_State_Timer_1 < 35)
+                else if (AI_State_Timer_1 < 45)
                 {
                     npc.frame.Y = 11 * frameHeight;
                 }
-                else if (AI_State_Timer_1 <= 41)
+                else if (AI_State_Timer_1 <= 51)
                 {
                     npc.frame.Y = 12 * frameHeight;
                 }

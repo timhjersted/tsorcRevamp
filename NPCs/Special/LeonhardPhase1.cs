@@ -205,8 +205,12 @@ namespace tsorcRevamp.NPCs.Special
                     npc.noTileCollide = true;
                 }
 
+                if ((Math.Abs(npc.Center.Y - player.Center.Y) > 50 || Math.Abs(player.Center.Y - npc.Center.Y) > 100) && Math.Abs(player.velocity.Y) < 4 && Math.Abs(player.velocity.X) < 3)
+                {
+                    npc.ai[3] += 8; //this is to speed up his teleport if youre unreachable.
+                }
 
-                if ((!player.wet && npc.wet) || npc.ai[3] > 2000)
+                if (npc.ai[3] > 3000)
                 {
                     npc.velocity.Y += 4;
                     npc.velocity.X = 0;
@@ -221,7 +225,15 @@ namespace tsorcRevamp.NPCs.Special
                     }
 
                     Main.PlaySound(SoundID.Item81.WithPitchVariance(.3f), npc.position);
-                    npc.position = player.position + new Vector2(0, -10 * 16);
+                    if (Framing.GetTileSafely((int)player.position.X / 16, ((int)player.position.Y - 5 * 16) / 16).active() && Main.tileSolid[Framing.GetTileSafely((int)player.position.X / 16, ((int)player.position.Y - 5 * 16) / 16).type])
+                    {
+                        if (player.direction == 1) { npc.position = player.position + new Vector2(-4 * 16, 0); }
+                        else { npc.position = player.position + new Vector2(5 * 16, 0); }
+                    }
+                    else
+                    {
+                        npc.position = player.position + new Vector2(0, -5 * 16);
+                    }
                 }
 
 
@@ -413,11 +425,6 @@ namespace tsorcRevamp.NPCs.Special
                     if (lifePercentage < 50) { npc.ai[3]++; } //Add an additional 1 to counter if low hp
                     if (lifePercentage < 30) { npc.ai[3]++; } //Add an additional 1 to counter if very low hp
 
-                    if (Math.Abs(npc.Center.Y - player.Center.Y) > 50 && Math.Abs(player.velocity.Y) < 4 && Math.Abs(player.velocity.X) < 2)
-                    {
-                        npc.ai[3] += 5; //this is to speed up his teleport if youre unreachable.
-                    }
-
 
                     if (npc.ai[3] > 1000 && npc.ai[2] == 0)
                     {
@@ -428,12 +435,12 @@ namespace tsorcRevamp.NPCs.Special
                         }
                     }
 
-                    if (npc.ai[3] > 1200 && !jump && npc.velocity.Y == 0 && Math.Abs(npc.Center.X - player.Center.X) < 15 * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+                    if (npc.ai[3] > 1200 && !jump && standing_on_solid_tile && npc.velocity.Y == 0 && Math.Abs(npc.Center.X - player.Center.X) < 15 * 16 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
                     {
                         throwing = true;
                     }
 
-                    if (throwing)
+                    if (throwing && standing_on_solid_tile && !jump && npc.velocity.Y == 0)
                     {
                         if (npc.velocity.X > 0.2)
                         {
@@ -444,6 +451,7 @@ namespace tsorcRevamp.NPCs.Special
                         {
                             npc.velocity.X += 0.2f;
                         }
+
 
                         if (Math.Abs(npc.velocity.X) < 0.21)
                         {
@@ -553,32 +561,6 @@ namespace tsorcRevamp.NPCs.Special
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1);
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
 
-                    /*var Slain = tsorcRevampWorld.Slain;
-                    int playerQuantity = 0;
-
-                    for (int i = 0; i < Main.maxPlayers; i++)
-                    {
-                        Player thisPlayer = Main.player[i];
-                        if (thisPlayer != null && thisPlayer.active)
-                        {
-                            playerQuantity++;
-                        }
-                    }
-
-                    if (Slain.ContainsKey(ThisNPC))
-                    {
-                        if (Slain[ThisNPC] == 0)
-                        {
-                            player.QuickSpawnItem(ModContent.ItemType<Items.StaminaVessel>(), playerQuantity);
-                            Slain[ThisNPC] = 1;
-                        }
-                    }
-
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
-                    }*/
-
                 }
 
                 if (npc.ai[1] == 300) //When timer is 270
@@ -611,6 +593,21 @@ namespace tsorcRevamp.NPCs.Special
 
         }
 
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (projectile.type == ProjectileID.Boulder) //Rewarding those who are sneaky enough to use the boulder in the cave to hurt him
+            {
+                damage *= 5; //340 damage +/-
+            }
+
+            if (projectile.minion)
+            {
+                knockback = 0; //to prevent slime staff from stunlocking him
+            }
+
+            base.ModifyHitByProjectile(projectile, ref damage, ref knockback, ref crit, ref hitDirection);
+        }
+
         #endregion
 
 
@@ -618,7 +615,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void DrawEffects(ref Color drawColor)
         {
-            if (npc.ai[3] > 1800)
+            if (npc.ai[3] > 2800)
             {
                 for (int i = 0; i < 2; i++)
                 {
@@ -646,7 +643,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            if (npc.ai[3] > 1000)
+            if (npc.ai[3] > 1000 && npc.life < npc.lifeMax * .8f)
             {
                 Texture2D firebombTexture = mod.GetTexture("NPCs/Special/Leonhard_Firebomb");
                 SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

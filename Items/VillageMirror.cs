@@ -20,19 +20,28 @@ namespace tsorcRevamp.Items {
         }
 
         bool checkWarpLocation2(int x, int y) {
-            if (x < 10 || x > Main.maxTilesX - 10 || y < 10 || y > Main.maxTilesY - 10) {
-                Main.NewText("Your warp is bugged! (outside the world)", 255, 240, 20);
-                return false;
-            }
-
-            for (int sanityX = x - 1; sanityX < x + 1; sanityX++) {
-                for (int sanityY = y - 3; sanityY < y; sanityY++) {
-                    Tile tile = Framing.GetTileSafely(sanityX, sanityY);
-                    if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type]) {
-                        WorldGen.KillTile(sanityX, sanityY);
-                    }
-
+            Player player = Main.LocalPlayer;
+            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (x < 10 || x > Main.maxTilesX - 10 || y < 10 || y > Main.maxTilesY - 10)
+                {
+                    Main.NewText("Your warp is bugged! (outside the world)", 255, 240, 20);
+                    return false;
                 }
+
+                for (int sanityX = x - 1; sanityX < x + 1; sanityX++)
+                {
+                    for (int sanityY = y - 3; sanityY < y; sanityY++)
+                    {
+                        Tile tile = Framing.GetTileSafely(sanityX, sanityY);
+                        if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type])
+                        {
+                            WorldGen.KillTile(sanityX, sanityY);
+                        }
+
+                    }
+                }
+                return true;
             }
             return true;
         }
@@ -68,18 +77,23 @@ namespace tsorcRevamp.Items {
                 return false;
             }
 
-            if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet) {
-                Main.NewText("You haven't set a location!", 255, 240, 20);
-                return false;
-            }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID) {
-                Main.NewText("This mirror is set in a different world!", 255, 240, 20);
-                return false;
+            if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
+                {
+                    Main.NewText("You haven't set a location!", 255, 240, 20);
+                    return false;
+                }
+                else if (player.GetModPlayer<tsorcRevampPlayer>().townWarpWorld != Main.worldID)
+                {
+                    Main.NewText("This mirror is set in a different world!", 255, 240, 20);
+                    return false;
+                }
             }
             return base.CanUseItem(player);
         }
         public override void UseStyle(Player player) {
-            if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY))
+            if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
                 {
