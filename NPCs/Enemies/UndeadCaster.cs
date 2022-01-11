@@ -72,8 +72,9 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(npc.getRect(), ItemID.Heart, 1);
             Item.NewItem(npc.getRect(), ItemID.Heart, 1);
             Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
+            if (Main.rand.Next(8) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(2) == 0)
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(8) == 0)
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             }

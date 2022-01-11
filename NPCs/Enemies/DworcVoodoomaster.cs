@@ -46,7 +46,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
 			Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 3));
 
-			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(5) == 0)
 			{
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 			}

@@ -806,12 +806,12 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
 
-            if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(6) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.CobaltShield, 1, false, -1);
+            if (Main.rand.Next(30) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ItemID.CobaltShield, 1, false, -1);
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.IronskinPotion); }
             if (Main.rand.Next(3) == 0) { Item.NewItem(npc.getRect(), ItemID.EndurancePotion); }

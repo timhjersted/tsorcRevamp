@@ -931,9 +931,8 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            Item.NewItem(npc.getRect(), ItemID.Heart);
+            if (Main.rand.Next(4) == 0 && !Main.hardMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            if (Main.rand.Next(10) == 0 && Main.hardMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>()); Item.NewItem(npc.getRect(), ItemID.Heart);
             Item.NewItem(npc.getRect(), ItemID.Heart);
 
             if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);

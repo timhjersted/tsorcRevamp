@@ -327,8 +327,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
-				if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-				if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+				if (Main.rand.Next(100) < 35) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+				if (Main.rand.Next(100) < 35) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
 			}
 			else
 			{

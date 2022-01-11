@@ -803,9 +803,9 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[npc.target];
 
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(1, 3));
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(6) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), mod.ItemType("FadingSoul"));
+            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 
 
             if (Main.rand.Next(10) == 0)

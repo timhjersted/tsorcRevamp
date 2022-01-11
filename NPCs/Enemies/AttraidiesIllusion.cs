@@ -374,7 +374,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Item.NewItem(npc.getRect(), mod.ItemType("HealingElixir"));
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .8f))
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .5f))
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             }
