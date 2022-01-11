@@ -17,6 +17,7 @@ using Terraria.GameContent.NetModules;
 using Terraria.Localization;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -29,6 +30,8 @@ namespace tsorcRevamp {
         public static bool TheEnd;
 
         public static Dictionary<int, int> Slain;
+
+        public static List<Vector2> LitBonfireList;
 
         public override void Initialize() {
             DownedVortex = false;
@@ -90,6 +93,8 @@ namespace tsorcRevamp {
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
+
+            LitBonfireList = MinimapBonfireUIState.GetActiveBonfires();
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
@@ -280,11 +285,6 @@ namespace tsorcRevamp {
                     }
                 }
             }
-        }
-
-        public static void AdventureModeCheck()
-        {
-
         }
 
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".

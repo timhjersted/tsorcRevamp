@@ -12,9 +12,10 @@ namespace tsorcRevamp.Items {
     class PotionBag : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Can store up to 28 potions" +
-                               "\nSupports Quick Buff/Heal/Mana hotkeys, as well as permanent potions!" +
-                               "\n\"Favorite\" valuable potions in the pouch with Alt+Click" +
-                               "\nFavorited potions are not consumed by Quick Buff!");
+                               "\nSupports Quick Buff/Heal/Mana hotkeys as well as permanent potions!" +
+                               "\n\"[c/C92CD1:Favorite]\" valuable potions in the pouch with Alt+Click" +
+                               "\n[c/C92CD1:Favorited potions] are not consumed by Quick Buff" +
+                               "\nPotions are stored per character instead of per-bag, similar to a piggy bank");
             Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(10, 9));
 
         }
@@ -30,7 +31,7 @@ namespace tsorcRevamp.Items {
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.maxStack = 1;
         }
-        int countdown = 0;
+
         public override bool CanUseItem(Player player) {
            
             return true;
@@ -128,7 +129,6 @@ namespace tsorcRevamp.Items {
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
-        }
-
+        }       
     }
 }

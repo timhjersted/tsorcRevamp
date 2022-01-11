@@ -242,7 +242,7 @@ namespace tsorcRevamp
 
         public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
         {
-            if((context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
+            if(player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
             {
                 if (PotionBagUIState.IsValidPotion(inventory[slot]))
                 {
@@ -258,7 +258,6 @@ namespace tsorcRevamp
                         }
                     }
 
-
                     //If moving from other inventories to the bag
                     if (!inPotionBag)
                     {
@@ -271,7 +270,11 @@ namespace tsorcRevamp
                             if (PotionBagItems[i].type == item.type && (PotionBagItems[i].stack + item.stack) <= PotionBagItems[i].maxStack)
                             {
                                 PotionBagItems[i].stack += item.stack;
-                                item.TurnToAir();
+                                item.TurnToAir(); 
+                                if (Main.netMode == 1 && player.chest >= -1 && context == ItemSlot.Context.ChestItem)
+                                {
+                                    NetMessage.SendData(32, -1, -1, null, player.chest, slot);
+                                }
                                 Main.PlaySound(SoundID.Grab);
                                 Main.PlaySound(SoundID.Item, Style: 8);
                                 return true;
@@ -284,6 +287,10 @@ namespace tsorcRevamp
                         {
                             PotionBagItems[emptySlot.Value] = item.DeepClone();
                             item.TurnToAir();
+                            if (Main.netMode == 1 && player.chest >= -1 && context == ItemSlot.Context.ChestItem)
+                            {
+                                NetMessage.SendData(32, -1, -1, null, player.chest, slot);
+                            }
                             Main.PlaySound(SoundID.Grab);
                             Main.PlaySound(SoundID.Item, Style: 8);
                             return true;
@@ -302,7 +309,7 @@ namespace tsorcRevamp
                             if (player.inventory[i].type == item.type && (player.inventory[i].stack + item.stack) <= player.inventory[i].maxStack)
                             {
                                 player.inventory[i].stack += item.stack;
-                                item.TurnToAir();
+                                item.TurnToAir();                                
                                 Main.PlaySound(SoundID.Grab);
                                 Main.PlaySound(SoundID.Item, Style: 8);
                                 return true;
@@ -312,7 +319,7 @@ namespace tsorcRevamp
                         if (emptySlot != null)
                         {
                             player.inventory[emptySlot.Value] = item.DeepClone();
-                            item.TurnToAir();
+                            item.TurnToAir(); 
                             Main.PlaySound(SoundID.Grab);
                             Main.PlaySound(SoundID.Item, Style: 8);
                             return true;

@@ -47,6 +47,8 @@ namespace tsorcRevamp {
         private UserInterface _estusFlaskUIState;
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
+        internal MinimapBonfireUIState MinimapBonfireUIState;
+        internal UserInterface MinimapBonfireInterface;
 
 
         public static FieldInfo AudioLockInfo;
@@ -94,7 +96,11 @@ namespace tsorcRevamp {
             PotionUIState = new PotionBagUIState();
             PotionBagUserInterface = new UserInterface();
             if (!Main.dedServ) PotionBagUserInterface.SetState(PotionUIState);
-            
+
+            MinimapBonfireUIState = new MinimapBonfireUIState();
+            MinimapBonfireInterface = new UserInterface();
+            if (!Main.dedServ) MinimapBonfireInterface.SetState(MinimapBonfireUIState);
+
 
             ApplyMethodSwaps();
             ApplyILs();
@@ -230,6 +236,22 @@ namespace tsorcRevamp {
                         if (PotionBagUIState.Visible)
                         {
                             PotionBagUserInterface.Draw(Main.spriteBatch, new GameTime());
+                        }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+            }
+
+           int miniMapIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Map / Minimap"));
+            if(miniMapIndex != -1)
+            {
+                layers.Insert(miniMapIndex, new LegacyGameInterfaceLayer(
+                    "tsorcRevamp: Potion Bag UI",
+                    delegate {
+                        if (MinimapBonfireUIState.Visible)
+                        {
+                            MinimapBonfireInterface.Draw(Main.spriteBatch, new GameTime());
                         }
                         return true;
                     },

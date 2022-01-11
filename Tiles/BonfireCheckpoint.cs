@@ -432,6 +432,7 @@ namespace tsorcRevamp.Tiles
 			{
 				Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
 				Main.NewText("Bonfire lit!", 250, 110, 90);
+				tsorcRevampWorld.LitBonfireList.Add(new Vector2(i * 16, j * 16));
 
 				int x = i - Main.tile[i, j].frameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
 				int y = j - Main.tile[i, j].frameY / 18 % 4; // 4 because it is 4 blocks tall

@@ -322,7 +322,7 @@ namespace tsorcRevamp.Items {
 
         public override bool OnPickup(Item item, Player player)
 		{
-			if (PotionBagUIState.IsValidPotion(item))
+			if (PotionBagUIState.IsValidPotion(item) && player.HasItem(ModContent.ItemType<PotionBag>()))
 			{
 				Item[] PotionItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
 				int? emptySlot = null;

@@ -15,6 +15,7 @@ using ReLogic.Utilities;
 using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using On.Terraria.Utilities;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -50,7 +51,50 @@ namespace tsorcRevamp {
             On.Terraria.Player.QuickBuff += CustomQuickBuff;
             On.Terraria.Player.QuickMana += CustomQuickMana;
             On.Terraria.Player.QuickHeal += CustomQuickHeal;
+
+            On.Terraria.UI.ChestUI.LootAll += PotionBagLootAllPatch;
         }
+
+        private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)
+        {
+            if (Main.LocalPlayer.HasItem(ModContent.ItemType<PotionBag>()))
+            {
+                Player player = Main.player[Main.myPlayer];
+                Item[] inventory;
+                if (player.chest > -1)
+                {
+                    inventory = Main.chest[player.chest].item;
+                }
+                else if (player.chest == -3)
+                {
+                    inventory = player.bank2.item;
+                }
+
+                else if (player.chest == -4)
+                {
+                    inventory = player.bank3.item;
+                }
+                else
+                {
+                    inventory = player.bank.item;
+                }
+
+                for (int i = 0; i < 40; i++)
+                {
+                    if (inventory[i].type > 0 && PotionBagUIState.IsValidPotion(inventory[i]))
+                    {
+                        player.GetModPlayer<tsorcRevampPlayer>().ShiftClickSlot(inventory, ItemSlot.Context.BankItem, i);
+                        if(Main.netMode == 1 && player.chest >= -1)
+                        {
+                            NetMessage.SendData(32, -1, -1, null, player.chest, i);
+                        }
+                    }
+                }
+            }
+
+            orig();
+        }
+
         private static void CustomQuickBuff(On.Terraria.Player.orig_QuickBuff orig, Player player)
         {
             if (player.noItems)
