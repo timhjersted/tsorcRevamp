@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void PostDraw(SpriteBatch sp, Color lightColor)
         {
-        Random rand1 = new Random((int)Main.time);
+        Random rand1 = new Random((int)Main.GameUpdateCount);
             Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.projectile.width, this.projectile.height);
             Vector2 PC;
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Projectiles
             }
             targetColor = new Color(0, 0, 255, 0);
             modlastposindex = lastposindex;
-            rand1 = new Random((int)Main.time);
+            rand1 = new Random((int)Main.GameUpdateCount);
 
             for (int i = 0; i < 19; i++)
             {

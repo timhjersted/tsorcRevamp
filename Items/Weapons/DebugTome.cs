@@ -41,8 +41,24 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 
-			UsefulFunctions.NewItemInstanced(player.Center, player.Size, ModContent.ItemType<Items.DarkSoul>(), 5);
-			return true;
+			for (float i = 0.1f; i < 19; i *= 1.01f)
+			{
+				Vector2 trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, (9.8f / 60), false, false);
+				if(trajectory != Vector2.Zero)
+				{
+					trajectory += player.velocity;
+					Projectile.NewProjectile(player.Center, trajectory, ModContent.ProjectileType<Projectiles.IdealArrow>(), damage, knockBack, Main.myPlayer);
+					i++; //Just to keep this from getting out of hand
+				}
+				trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, (9.8f / 60), true, false);
+				if (trajectory != Vector2.Zero)
+				{
+					trajectory += player.velocity;
+					Projectile.NewProjectile(player.Center, trajectory, ModContent.ProjectileType<Projectiles.IdealArrow>(), damage, knockBack, Main.myPlayer);
+					i++;
+				}
+			}
+			return false;
 		}
 
 		//For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.

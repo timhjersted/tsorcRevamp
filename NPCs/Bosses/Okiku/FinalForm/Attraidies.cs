@@ -430,7 +430,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 #region Mode 1: Black Fire Rain
                 if (AttackMode == 1)
                 {
-                    if (AttackModeCounter > 15 && (Main.time % 45 == 0))
+                    if (AttackModeCounter > 15 && (Main.GameUpdateCount % 45 == 0))
                     {
                         for (int i = 0; i < 10; i++)
                         {
@@ -442,7 +442,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         }
                     }
 
-                    if (AttackModeCounter > 75 && (Main.time % 5 == 0))
+                    if (AttackModeCounter > 75 && (Main.GameUpdateCount % 5 == 0))
                     {
                         //The second projectile, which comes raining down a second later and means business
                         Vector2 position = Main.player[npc.target].position + new Vector2(Main.rand.Next(-1400, 1400), -700);

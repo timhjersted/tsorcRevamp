@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs {
             player.jump = (int)(player.jump * 0.5);
             player.meleeSpeed *= 0.5f;
             player.statDefense -= 20;
-            if (Main.time % 12 == 0) {
+            if (Main.GameUpdateCount % 12 == 0) {
                 int dust = Dust.NewDust(player.position, player.width, player.height, 43, 0, 0, 0, default, 0.8f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity = player.velocity * 0.1f;

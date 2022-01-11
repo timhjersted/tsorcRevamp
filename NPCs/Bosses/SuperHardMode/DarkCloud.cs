@@ -150,8 +150,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Lighting.AddLight(npc.Center, Color.Blue.ToVector3());
             UsefulFunctions.DustRing(npc.Center, 64, DustID.ShadowbeamStaff);
 
-            //Force an update once a second. Terraria gets a bit lazy about it, and this consistency is required to prevent rubberbanding on certain high-intensity attacks
-            if (Main.time % 20 == 0)
+            //Force an update 3 times a second. Terraria gets a bit lazy about it, and this consistency is required to prevent rubberbanding on certain high-intensity attacks
+            if (Main.GameUpdateCount % 20 == 0)
             {
                 npc.netUpdate = true;
             }
@@ -610,7 +610,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     DarkDivineSparkBeam.LaserOrigin = npc.Center;
                     DarkDivineSparkBeam.LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
                 }
-                if (Main.time % 8 == 0)
+                if (Main.GameUpdateCount % 8 == 0)
                 {
                     Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MasterBuster"));
                 }

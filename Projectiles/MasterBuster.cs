@@ -93,7 +93,7 @@ namespace tsorcRevamp.Projectiles {
             SetLaserPosition(player);
             SpawnDusts(player);
             CastLights();
-            if (Main.time % 8 == 0) {
+            if (Main.GameUpdateCount % 8 == 0) {
                 Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MasterBuster"));
             }
 
@@ -135,7 +135,7 @@ namespace tsorcRevamp.Projectiles {
             }
             else {
                 // Do we still have enough mana? If not, we kill the projectile because we cannot use it anymore
-                if (Main.time % 10 < 1 && !player.CheckMana(player.inventory[player.selectedItem].mana, true)) {
+                if (Main.GameUpdateCount % 10 < 1 && !player.CheckMana(player.inventory[player.selectedItem].mana, true)) {
                     projectile.Kill();
                 }
                 Vector2 offset = projectile.velocity;

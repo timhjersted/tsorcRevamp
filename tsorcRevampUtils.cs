@@ -156,17 +156,69 @@ namespace tsorcRevamp {
     {
         ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.
-        ///Simplifies all projectile, enemy dash, etc aiming calculations to a single call.
+        ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.
+        ///If "ballistic" is true it adjusts for gravity. Default is 0.1f, may be stronger or weaker for some projectiles though.
         ///</summary>         
         ///<param name="source">The start point of the vector</param>
         ///<param name="target">The end point it is aiming towards</param>
         ///<param name="speed">The length of the resulting vector</param>
         public static Vector2 GenerateTargetingVector(Vector2 source, Vector2 target, float speed)
         {
+            Vector2 distance = target - source;
+            distance.Normalize();
+            return distance * speed;            
+        }
+
+        ///<summary> 
+        ///Returns a vector that indicates a true ballistic trajectory from a source to a target
+        ///</summary>         
+        ///<param name="source">The start point of the vector</param>
+        ///<param name="target">The end point it is aiming towards</param>
+        ///<param name="speed">The initial speed of the projectile</param>
+        ///<param name="gravity">How much does the projectile's Y velocity increase every tick? Default is fairly close for aiStyle 1 projectiles, but for true accuracy set it yourself in the projectile AI instead of using an aiStyle</param>
+        ///<param name="highAngle">There are two solutions to this equation. This makes it return the higher arcing one. Does not work at *all* for projectiles with vanilla aiStyles</param>
+        ///<param name="fallback">If this is set to true it will fall back to GenerateTargetingVector if it's mathematically impossible to hit its target. If not it will return Vector2.Zero so you can handle it yourself</param>
+        public static Vector2 BallisticTrajectory(Vector2 source, Vector2 target, float speed, float gravity = 0.06f, bool highAngle = false, bool fallback = true)
+        {
+            //This is where the fun begins
             Vector2 diff = target - source;
-            float angle = diff.ToRotation();
-            Vector2 velocity = new Vector2(speed, 0);
-            velocity = velocity.RotatedBy(angle);
+            diff.Y *= -1;
+
+            double calculation = (gravity * diff.X * diff.X) + (2 * speed * speed * diff.Y);
+            calculation *= gravity;
+            calculation = Math.Pow(speed, 4) - calculation;
+            calculation = Math.Sqrt(calculation);
+
+            double angle;
+            if (highAngle)
+            {
+                angle = Math.Atan(((speed * speed) + calculation) / (gravity * diff.X));
+            }
+            else
+            {
+                angle = Math.Atan(((speed * speed) - calculation) / (gravity * diff.X));
+            }
+
+            if (Double.IsNaN(angle))
+            {
+                if (fallback)
+                {
+                    return GenerateTargetingVector(source, target, speed);
+                }
+                else
+                {
+                    return Vector2.Zero;
+                }
+            }
+
+            Vector2 velocity = new Vector2();
+            velocity.X = speed * (float)Math.Cos(angle);
+            velocity.Y = -speed * (float)Math.Sin(angle);
+
+            if (diff.X < 0)
+            {
+                velocity *= -1;
+            }
             return velocity;
         }
 

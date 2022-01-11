@@ -265,7 +265,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 targetspazzlevel = 0;
 
 
-                if (((int)Main.time % 60) < 1) {
+                if ((Main.GameUpdateCount % 60) < 1) {
                     for (int i = 0; i < 5; i++) {
                         num54 = Projectile.NewProjectile(new Vector2(npc.position.X + 20, npc.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer); //Phantom Seeker
                         Main.projectile[num54].timeLeft = 400;
@@ -279,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Antimatter - Black Comet
             else if (attackindex == 3) {
                 targetspazzlevel = 10;                
-                if (((int)Main.time % 5) < 1)
+                if ((Main.GameUpdateCount % 5) < 1)
                 {
                     float posX = Main.player[npc.target].position.X + Main.rand.Next(-1400, 1400);
                    /** int spread = Main.rand.Next(3);
@@ -301,7 +301,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else if (attackindex == 2) {
                 targetspazzlevel = 25;
 
-                if (((int)Main.time % 60) < 1) {
+                if ((Main.GameUpdateCount % 60) < 1) {
                     for (int i = 0; i < 3; i++) {
                         num54 = Projectile.NewProjectile(new Vector2(npc.position.X + 20, npc.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.PhantomSpiral>(), darkAstronomyDamage, 0f, Main.myPlayer); //Phantom Spiral
                         Main.projectile[num54].timeLeft = 1000;
@@ -319,7 +319,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 targetspazzlevel = 50;
                 npc.velocity.Y = 0;
                 npc.velocity.X = 0;
-                if (((int)Main.time % 5) < 1 && phase > 100) {
+                if ((Main.GameUpdateCount % 5) < 1 && phase > 100) {
                     phase += 10;
                     for (int i = 0; i < 6; i++) {
                         int s = Main.rand.Next(2, 10);
@@ -341,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor) {
 
             Texture2D Noise_Texture = Main.npcTexture[this.npc.type];
-            Random rand1 = new Random((int)Main.time);
+            Random rand1 = new Random((int)Main.GameUpdateCount);
             int height = this.npc.frame.Height;
             int width = this.npc.frame.Width;
             int offsetx = this.npc.frame.X;
@@ -372,7 +372,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             0f);
             }
 
-            rand1 = new Random((int)Main.time);
+            rand1 = new Random((int)Main.GameUpdateCount);
             for (int i = 0; i < 5; i++) {
                 PC = this.npc.position;
 

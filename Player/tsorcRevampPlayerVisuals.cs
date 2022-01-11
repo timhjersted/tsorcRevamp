@@ -143,7 +143,7 @@ namespace tsorcRevamp {
                         //It's essentially the same to all other animation, you're just picking different parts of the texture to draw.
                         //In this case animationFrame is set as a function that depends on game time, making it animate as time passes. For another example, the Glaive Beam above animates based on weapon charge.
                         int textureFrames = 1;
-                        int animationFrame = (int)Math.Floor(textureFrames * (((Main.time / 5) % 10) / 10));
+                        int animationFrame = (int)Math.Floor(textureFrames * (double)(((Main.GameUpdateCount / 5) % 10) / 10));
                         int frameHeight = (int)texture.Height / textureFrames;
                         int startY = frameHeight * animationFrame;
                         Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);

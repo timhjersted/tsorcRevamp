@@ -928,7 +928,7 @@ namespace tsorcRevamp
                 }
 
                 //Send events that need to be drawn to the clients
-                if (Main.netMode == NetmodeID.Server && (NetworkEvents == null || NetworkEvents.Count != DrawnEvents || Main.time % 300 == 0))
+                if (Main.netMode == NetmodeID.Server && (NetworkEvents == null || NetworkEvents.Count != DrawnEvents || Main.GameUpdateCount % 300 == 0))
                 {
                     NetworkEvents = new List<NetworkEvent>();
                     for (int i = 0; i < InactiveEvents.Count; i++)

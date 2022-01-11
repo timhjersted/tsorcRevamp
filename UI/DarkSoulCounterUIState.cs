@@ -53,13 +53,9 @@ namespace tsorcRevamp.UI
 			Append(area);
 		}
         public override void Update(GameTime gameTime)
-		{
-			if (Main.time % 30 == 0) {
-				//Main.NewText("config pos " + ConfigInstance.SoulCounterPosX + ", " + ConfigInstance.SoulCounterPosY);
-				//Main.NewText("set pos " + (-area.Left.Pixels) + ", " + -(area.Top.Pixels));
-            }
+		{			
 			var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
-			var item = ModContent.ItemType<Items.DarkSoul>();
+
 			// Setting the text per tick to update and show our DS values.
 			soulQuantityText.SetText($"[c/D3D3D3:{modPlayer.darkSoulQuantity}]");
 

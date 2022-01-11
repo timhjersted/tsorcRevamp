@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor) {
-            Random rand1 = new Random((int)Main.time);
+            Random rand1 = new Random((int)Main.GameUpdateCount);
             Rectangle fromrect = new Rectangle(0, 0, this.projectile.width, this.projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles {
             }
             targetColor = new Color(0, 0, 255, 0);
             modlastposindex = lastposindex;
-            rand1 = new Random((int)Main.time);
+            rand1 = new Random((int)Main.GameUpdateCount);
 
             for (int i = 0; i < 19; i++) {
                 float rotmod = rand1.Next(-100, 100) / 100f;
