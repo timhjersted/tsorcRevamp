@@ -412,7 +412,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            Main.NewText(AI_State_Timer_1);
             // FIREBOMBING
             if (AI_State == State_Firebombing)
             {
