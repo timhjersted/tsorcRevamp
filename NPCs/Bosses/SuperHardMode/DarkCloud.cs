@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #endregion
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
-        readonly int testAttack = DarkCloudAttackID.DarkFlow;
+        readonly int testAttack = -1;
         bool firstPhase = true;
         bool changingPhases = false;
 
