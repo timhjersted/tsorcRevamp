@@ -73,7 +73,10 @@ namespace tsorcRevamp.UI
                     //Check if each tile is a bonfire, and has a bonfire tile to its right and below it, but none to its left and above it. Only the top left corner of each bonfire is valid for this.
                     if ((Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType) && (Main.tile[i - 1, j] == null || !Main.tile[i - 1, j].active() || Main.tile[i - 1, j].type != bonfireType) && (Main.tile[i, j - 1] == null || !Main.tile[i, j - 1].active() || Main.tile[i, j - 1].type != bonfireType))
                     {
-                        BonfireList.Add(new Vector2(i, j));
+                        if (Main.tile[i, j].frameY / 74 == 0)
+                        {
+                            BonfireList.Add(new Vector2(i, j));
+                        }
                     }                    
                 }
             }

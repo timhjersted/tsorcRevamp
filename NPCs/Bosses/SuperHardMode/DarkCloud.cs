@@ -137,7 +137,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //If we're about to despawn, and it's not first phase, then clean up by deactivating the pyramid and clearing any targeting lasers
             if (despawnHandler.TargetAndDespawn(npc.whoAmI) && !firstPhase)
             {
-                ActuatePyramid();
+                if (Main.tile[5810, 1670] != null)
+                {
+                    if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                    {
+                        ActuatePyramid();
+                    }
+                }
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>())
@@ -454,14 +460,42 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float initialTargetRotation;
         bool counterClockwise = false;
         //How long each cycle takes
-        const int turnLength = 120;
+        const int turnLength = 60;
         //How long dark cloud telegraphs its shot
-        const int chargeTime = 80;
+        const int chargeTime = 20;
         //Length in degrees of the arc on either side of the player
         const int arcLength = 60;
 
+        const int firingDuration = 35;
+
         void DivineSparkMove()
         {
+            //If it's the first attack wait and charge for a moment
+            if (AttackModeTally <= 0) {
+
+                if (AttackModeCounter == chargeTime)
+                {
+                    AttackModeCounter--;
+                    if (AttackModeTally == 0)
+                    {
+                        AttackModeTally = -90;
+                    }
+                    else
+                    {
+                        AttackModeTally++;
+                    }
+                    if (AttackModeTally == -1)
+                    {
+                        AttackModeTally = 1;
+                    }
+                    DarkCloudParticleEffect(-18, 200, AttackModeTally * 3);
+                }
+                else
+                {
+                    DarkCloudParticleEffect(-18, 200, (110 - AttackModeCounter ) * 3);
+                }
+            }
+
             if (AttackModeCounter % turnLength == 0)
             {
                 //Clean up the old targeting lasers
@@ -586,7 +620,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     DarkDivineSparkBeam.LaserDust = 234;
                     DarkDivineSparkBeam.lightColor = Color.Indigo;
                     DarkDivineSparkBeam.MaxCharge = 0; //It fires instantly upon creation
-                    DarkDivineSparkBeam.FiringDuration = 35;
+                    DarkDivineSparkBeam.FiringDuration = firingDuration;
                     DarkDivineSparkBeam.LaserSize = 3.5f;
                     DarkDivineSparkBeam.LaserTextureBody = new Rectangle(0, 24, 26, 30);
                     DarkDivineSparkBeam.LaserTextureHead = new Rectangle(0, 0, 26, 22);
@@ -1416,12 +1450,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 AttackModeTally++;
 
                 //This is generated client-side here because it's also needed for the draw code, to make it hold the bow at the right angle
-                arrowRainTargetingVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 7);
-                float travelTime = Math.Abs((npc.Center.X - Target.Center.X) / arrowRainTargetingVector.X);
-                //float gravityOffset = travelTime * 0.092f;
-                float gravityOffset = travelTime * 0.055f;
-                arrowRainTargetingVector.Y -= gravityOffset; //Up is negative
-                arrowRainTargetingVector += Target.velocity / 2; //Lightly predictive
+                if (AttackModeTally % 2 == 0)
+                {
+                    arrowRainTargetingVector = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 11, 0.05f, false);
+                }
+                else
+                {
+                    arrowRainTargetingVector = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 11, 0.05f, true);
+                }
             }
 
             if (AttackModeCounter == 1200)
@@ -1739,12 +1775,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void ArrowRainAttack()
         {
-            if (AttackModeCounter == 0 || AttackModeCounter % 80 == 20)
+            if (AttackModeCounter == 0 || AttackModeCounter % 40 == 20)
             {
-                for (int i = 0; i < 7; i++)
+                if (AttackModeTally % 2 == 0)
                 {
-                    Projectile.NewProjectile(npc.Center, arrowRainTargetingVector.RotatedBy(MathHelper.ToRadians(-45 + 15 * i)), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                    for (int i = 0; i < 13; i++)
+                    {
+                        Vector2 offset = (i - 7) * new Vector2(1.05f, 1.05f);
+                        Projectile.NewProjectile(npc.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                    }
                 }
+                else
+                {
+                    for (int i = 0; i < 13; i++)
+                    {
+                        Vector2 velocity = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 5 + i, 0.05f, true, false);
+                        if (velocity != Vector2.Zero)
+                        {
+                            Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                        }
+                    }
+                }
+                //Vector2 projVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 10, 0.05f, true);
+                
             }
         }
 
@@ -2190,8 +2243,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
                 }
             }
-
-            ActuatePyramid();
+            if (Main.tile[5810, 1670] != null)
+            {
+                if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                {
+                    ActuatePyramid();
+                }
+            }
             Main.NewText("You have subsumed your shadow...", Color.Blue);
         }
 

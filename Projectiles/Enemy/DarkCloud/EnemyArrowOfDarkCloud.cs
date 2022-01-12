@@ -11,7 +11,6 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
     {
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
             projectile.width = 10;
             projectile.height = 5;
             projectile.hostile = true;
