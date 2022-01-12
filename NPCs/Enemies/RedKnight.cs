@@ -15,7 +15,8 @@ namespace tsorcRevamp.NPCs.Enemies
             DisplayName.SetDefault("Red Knight");
         }
 
-        public int redKnightsSpearDamage = 80;
+        public int redKnightsSpearDamage = 70;
+        public int redMagicDamage = 35;
 
         public override void SetDefaults()
         {
@@ -30,12 +31,21 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.lifeMax = 5000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 15000;
-            npc.knockBackResist = 0.05f;
+            npc.value = 15110;
+            npc.knockBackResist = 0.06f;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
+
+            if (!Main.hardMode)
+            {
+                //npc.defense = 14;
+                //npc.value = 3500;
+                //npc.damage = 40;
+                redKnightsSpearDamage = 28;
+                redMagicDamage = 25;
+    }
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -43,6 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
             redKnightsSpearDamage = (int)(redKnightsSpearDamage / 2);
+            redMagicDamage = (int)(redMagicDamage / 2);
         }
 
         
@@ -76,6 +87,432 @@ namespace tsorcRevamp.NPCs.Enemies
             return 0;
         }
         #endregion
+
+
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            base.OnHitByItem(player, item, damage, .09f, crit);
+            
+
+            //Insert whatever you want to happen on-hit here
+            if (npc.justHit)
+            {
+                customAi1 = 100f;
+                npc.knockBackResist = 0.09f;
+
+                //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
+                if (Main.rand.Next(10) == 1)//was 12
+                {
+
+                    npc.TargetClosest(false);
+
+                    npc.velocity.Y = -8f;
+                    npc.velocity.X = -4f * npc.direction;
+                    
+                    //if (Main.rand.Next(1) == 1)
+                    //{ 
+                        customAi1 = 160f; 
+                    //}
+
+                    npc.netUpdate = true;
+                }
+
+                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS && npc.velocity.Y >= 1f
+                else if (Main.rand.Next(8) == 1)//was 10
+                {
+
+                    //npc.TargetClosest(false);
+
+                    npc.velocity.Y = -4f;
+                    npc.velocity.X = -6f * npc.direction;
+
+                    //npc.direction *= -1;
+                    //npc.spriteDirection = npc.direction;
+                    npc.ai[0] = 0f;
+                    //if (Main.rand.Next(2) == 1)
+                    //{
+                        customAi1 = 160f;
+                    //}
+
+                    //CHANCE TO JUMP AFTER DASH
+                    if (Main.rand.Next(4) == 1)
+                    {
+                        npc.TargetClosest(true);
+                        npc.velocity.Y = -7f;
+                        customAi1 = 161f;
+                        
+                    }
+
+                    npc.netUpdate = true;
+                }
+
+                //TELEPORT MELEE
+                if (Main.rand.Next(12) == 1)
+                {
+                    //NEW DUST
+                    int d = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                    Main.dust[d].noGravity = true;
+
+                    npc.velocity *= 0f; // stop moving
+                    npc.ai[3] = 0f; // reset boredom to 0
+                    Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+                    Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
+                    float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
+                    float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
+                    float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
+                    num8 = 2f / num8; // to normalize to 2 unit long vector
+                    num6 *= num8; // direction to where it was 3 frames ago, vector normalized
+                    num7 *= num8; // direction to where it was 3 frames ago, vector normalized
+                    for (int j = 0; j < 25; j++) // make 20 dusts at current position
+                    {
+                        int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
+                        Main.dust[num9].noGravity = true; // floating
+                        Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
+                        expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
+                    }
+                    for (int k = 0; k < 25; k++) // more dust effects at old position
+                    {
+                        int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
+                        Main.dust[num10].noGravity = true;
+                        Dust expr_1A6F_cp_0 = Main.dust[num10];
+                        expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
+                    }
+
+
+
+                    //maybe remove
+                    //npc.velocity.X = npc.velocity.X + (float)npc.direction * 1f;  //  accellerate fwd; can happen midair
+
+
+
+                    npc.netUpdate = true;
+                    if (Main.netMode != 1) // is server & chaos ele & bored
+                    {
+                        //NEW DUST
+                        int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                        Main.dust[d].noGravity = true;
+
+                        npc.TargetClosest(true);
+                        int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
+                        int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+                        int x_blockpos = (int)npc.position.X / 16; // corner not center
+                        int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                        int tp_radius = 25; // radius around target(upper left corner) in blocks to teleport into
+                        int tp_counter = 0;
+                        bool flag7 = false;
+                        if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+                        { // far away from target; 2000 pixels = 125 blocks
+                            tp_counter = 100;
+                            flag7 = true; // no teleport
+                        }
+                        while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
+                        {
+                            if (tp_counter >= 100) // run 100 times
+                                break; //return;
+                            tp_counter++;
+
+                            int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                            int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                            for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
+                            { // (tp_x_target,m) is block under its feet I think
+                                if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 5 || tp_x_target > target_x_blockpos + 5) && (m < y_blockpos - 10 || m > y_blockpos + 10 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                                { // WHERE TELEPORT over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                                    bool safe_to_stand = true;
+                                    bool dark_caster = false; // not a fighter type AI...
+                                    if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                                        safe_to_stand = false;
+                                    else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                                        safe_to_stand = false;
+
+                                    if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                                    { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
+
+                                        npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
+                                        npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
+                                        npc.netUpdate = true;
+                                        npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+                                        flag7 = true; // end the loop (after testing every lower point :/)
+                                        npc.TargetClosest(true);
+                                    }
+                                } // END over 4 blocks distant from player...
+                            } // END traverse y down to edge of radius
+                        } // END try 100 times
+
+                        customAi1 = 112f;
+
+
+
+                    } // END TELEPORT MELEE
+
+
+                }
+            }
+        }
+
+        
+        //PROJECTILE HIT LOGIC
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        {
+            //Insert whatever you want to happen on-hit here
+            Player player = Main.player[npc.target];
+            //base.OnHitByProjectile(projectile, damage, 0, crit);
+            
+            //
+            if (npc.justHit && Main.rand.Next(2) == 1)
+            {
+                //customAi1 = 110f;
+
+                //WHEN HIT BY RANGE, CHANCE TO JUMP FORWARDS
+                if (Main.rand.Next(2) == 1)
+                {
+
+                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                    Main.dust[dust].noGravity = true;
+                    //npc.spriteDirection = npc.direction;
+
+
+                    npc.velocity.Y = -9f; //9
+                    npc.velocity.X = 4f * npc.direction; //was -4
+                                          
+                    npc.TargetClosest(true);
+                    //npc.velocity.X = npc.velocity.X + (float)npc.direction * 4f;  //was 2  accellerate fwd; can happen midair
+                   if ((float)npc.direction * npc.velocity.X > 4)
+                        npc.velocity.X = (float)npc.direction * 4;  //  but cap at top speed
+                    npc.netUpdate = true;
+                }
+
+                //WHEN HIT BY RANGE, CHANCE TO DASH STEP FORWARDS 
+                //npc.Distance(player.Center) > 50 && 
+                if (Main.rand.Next(4) == 1)
+                {
+
+                    //npc.direction *= -1;
+                    
+                    npc.ai[0] = 0f;
+                    npc.velocity.Y = -5f;
+                    npc.velocity.X = npc.velocity.X * 4f; // burst forward
+                    npc.TargetClosest(true);
+                    //npc.velocity.X = npc.direction * -4f;
+                    npc.velocity.X = npc.velocity.X + (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
+                    if ((float)npc.direction * npc.velocity.X > 5)
+                        npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
+
+                    
+
+                    //CHANCE TO JUMP AFTER DASH
+                    if (Main.rand.Next(8) == 1)
+                    {
+                        npc.TargetClosest(true);
+                        
+                        npc.spriteDirection = npc.direction;
+                        npc.ai[0] = 0f;
+
+                        npc.velocity.Y = -6f;
+                        
+                        customAi1 = 170f;
+                    }
+
+                    npc.netUpdate = true;
+                }
+
+                //  TELEPORT WHEN HIT BY RANGE
+
+                /*
+                if (Main.rand.Next(2) == 1)
+                {
+
+                    
+                    #region teleportation particle effects
+                    
+                        
+                            npc.velocity *= 0f; // stop moving
+                            npc.ai[3] = 0f; // reset boredom to 0
+                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+                            Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
+                            float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
+                            float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
+                            float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
+                            num8 = 2f / num8; // to normalize to 2 unit long vector
+                            num6 *= num8; // direction to where it was 3 frames ago, vector normalized
+                            num7 *= num8; // direction to where it was 3 frames ago, vector normalized
+                            for (int j = 0; j < 20; j++) // make 20 dusts at current position
+                            {
+                                int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
+                                Main.dust[num9].noGravity = true; // floating
+                                Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
+                                expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
+                            }
+                            for (int k = 0; k < 20; k++) // more dust effects at old position
+                            {
+                                int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
+                                Main.dust[num10].noGravity = true;
+                                Dust expr_1A6F_cp_0 = Main.dust[num10];
+                                expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
+                            }
+               
+
+                    #endregion
+
+                    #region teleportation
+                    if (Main.netMode != 1) // is server & chaos ele & bored
+                    {
+                        int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
+                        int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+                        int x_blockpos = (int)npc.position.X / 16; // corner not center
+                        int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                        int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
+                        int tp_counter = 0;
+                        bool flag7 = false;
+                        if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+                        { // far away from target; 2000 pixels = 125 blocks
+                            tp_counter = 100;
+                            flag7 = true; // no teleport
+                        }
+                        while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
+                        {
+                            if (tp_counter >= 100) // run 100 times
+                                break; //return;
+                            tp_counter++;
+
+                            int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                            int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                            for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
+                            { // (tp_x_target,m) is block under its feet I think
+                                if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 4 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                                { // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                                    bool safe_to_stand = true;
+                                    bool dark_caster = false; // not a fighter type AI...
+                                    if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                                        safe_to_stand = false;
+                                    else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                                        safe_to_stand = false;
+
+                                    if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                                    { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
+                                        npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
+                                        npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
+                                        npc.netUpdate = true;
+                                        npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+                                        flag7 = true; // end the loop (after testing every lower point :/)
+                                    }
+                                } // END over 4 blocks distant from player...
+                            } // END traverse y down to edge of radius
+                        } // END try 100 times
+                    } // END is server & chaos ele & bored
+                    #endregion
+
+
+
+
+
+
+                }
+                */
+                if (npc.Distance(player.Center) > 80 && Main.rand.Next(20) == 1)
+                {
+                    //NEW DUST
+                    int d = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                    Main.dust[d].noGravity = true;
+
+                    npc.velocity *= 0f; // stop moving
+                    npc.ai[3] = 0f; // reset boredom to 0
+                    Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+                    Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
+                    float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
+                    float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
+                    float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
+                    num8 = 2f / num8; // to normalize to 2 unit long vector
+                    num6 *= num8; // direction to where it was 3 frames ago, vector normalized
+                    num7 *= num8; // direction to where it was 3 frames ago, vector normalized
+                    for (int j = 0; j < 25; j++) // make 20 dusts at current position
+                    {
+                        int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
+                        Main.dust[num9].noGravity = true; // floating
+                        Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
+                        expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
+                    }
+                    for (int k = 0; k < 25; k++) // more dust effects at old position
+                    {
+                        int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
+                        Main.dust[num10].noGravity = true;
+                        Dust expr_1A6F_cp_0 = Main.dust[num10];
+                        expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
+                    }
+
+
+
+                    //maybe remove
+                    //npc.velocity.X = npc.velocity.X + (float)npc.direction * 1f;  //  accellerate fwd; can happen midair
+                    
+                      
+
+                    npc.netUpdate = true;
+                    if (Main.netMode != 1) // is server & chaos ele & bored
+                    {
+                        //NEW DUST
+                        int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, 6, npc.velocity.X / 4f, npc.velocity.Y / 4f, 100, default(Color), 1f);
+                        Main.dust[d].noGravity = true;
+
+                        npc.TargetClosest(true);
+                        int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
+                        int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+                        int x_blockpos = (int)npc.position.X / 16; // corner not center
+                        int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                        int tp_radius = 25; // radius around target(upper left corner) in blocks to teleport into
+                        int tp_counter = 0;
+                        bool flag7 = false;
+                        if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+                        { // far away from target; 2000 pixels = 125 blocks
+                            tp_counter = 100;
+                            flag7 = true; // no teleport
+                        }
+                        while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
+                        {
+                            if (tp_counter >= 100) // run 100 times
+                                break; //return;
+                            tp_counter++;
+
+                            int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                            int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
+                            for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
+                            { // (tp_x_target,m) is block under its feet I think
+                                if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 4 || tp_x_target > target_x_blockpos + 4) && (m < y_blockpos - 10 || m > y_blockpos + 10 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                                { // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                                    bool safe_to_stand = true;
+                                    bool dark_caster = false; // not a fighter type AI...
+                                    if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                                        safe_to_stand = false;
+                                    else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                                        safe_to_stand = false;
+
+                                    if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                                    { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
+                                        
+                                        npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
+                                        npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
+                                        npc.netUpdate = true;
+                                        npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+                                        flag7 = true; // end the loop (after testing every lower point :/)
+                                        npc.TargetClosest(true);
+                                    }
+                                } // END over 4 blocks distant from player...
+                            } // END traverse y down to edge of radius
+                        } // END try 100 times
+
+                        customAi1 = 112f;
+
+
+                
+                    } // END SERVER AND TELEPORT
+                
+                
+                   }
+
+            
+            }
+        }
+        
+
 
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         public override void AI()  //  warrior ai
@@ -240,8 +677,8 @@ namespace tsorcRevamp.NPCs.Enemies
             //-------------------------------------------------------------------
             #region melee movement
 
-            int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
-            Main.dust[dust].noGravity = true;
+            //int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+            //Main.dust[dust].noGravity = true;
 
 
 
@@ -366,116 +803,168 @@ namespace tsorcRevamp.NPCs.Enemies
             #region shoot and walk
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
             {
-                
-                if (npc.justHit)
-                {
-                    customAi1 = 110f;
-
-                    //WHEN HIT, CHANCE TO JUMP BACKWARDS
-                    if (Main.rand.Next(6) == 1)
-                    {
-
-                        npc.TargetClosest(false);
-
-                        npc.velocity.Y = -8f;
-                        npc.velocity.X = -3;
-
-                       
-
-                        npc.netUpdate = true;
-                    }
-
-                        //WHEN HIT, CHANCE TO DASH STEP BACKWARDS
-                    if (Main.rand.Next(5) == 1)
-                    {
-
-                        npc.TargetClosest(false);
-
-                        npc.velocity.Y = -5f;
-                        npc.velocity.X = -5;
-
-                        npc.direction *= -1;
-                        npc.spriteDirection = npc.direction;
-                        npc.ai[0] = 0f;
-
-                        //CHANCE TO JUMP AFTER DASH
-                        if (Main.rand.Next(2) == 1)
-                        {
-                            npc.TargetClosest(true);
-                            npc.velocity.Y = -6f;
-                           
-                        }
-
-                        npc.netUpdate = true;
-                    }
-
-                    //  if jumping during a dash, chance to teleport
-                    if (npc.velocity.Y >= -2f && Main.rand.Next(5) == 1)
-                    {
-                        customAi1 = 111f;
-                        if (Main.netMode != 1 && can_teleport) // is server & chaos ele & bored
-                        {
-                            int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-                            int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-                            int x_blockpos = (int)npc.position.X / 16; // corner not center
-                            int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                            int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
-                            int tp_counter = 0;
-                            bool flag7 = false;
-                            if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
-                            { // far away from target; 2000 pixels = 125 blocks
-                                tp_counter = 100;
-                                flag7 = true; // no teleport
-                            }
-                            while (!flag7) // loop always ran full 100 time before I added "flag7 = true" below
-                            {
-                                if (tp_counter >= 100) // run 100 times
-                                    break; //return;
-                                tp_counter++;
-
-                                int tp_x_target = Main.rand.Next(target_x_blockpos - tp_radius, target_x_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                                int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
-                                for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
-                                { // (tp_x_target,m) is block under its feet I think
-                                    if ((m < target_y_blockpos - 4 || m > target_y_blockpos + 4 || tp_x_target < target_x_blockpos - 7 || tp_x_target > target_x_blockpos + 7) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-                                    { // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
-                                        bool safe_to_stand = true;
-                                        bool dark_caster = false; // not a fighter type AI...
-                                        if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
-                                            safe_to_stand = false;
-                                        else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
-                                            safe_to_stand = false;
-
-                                        if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
-                                        { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-                                            npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-                                            npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                            npc.netUpdate = true;
-                                            npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
-                                            flag7 = true; // end the loop (after testing every lower point :/)
-                                           
-                                        }
-                                    } // END over 4 blocks distant from player...
-                                } // END traverse y down to edge of radius
-                            } // END try 100 times
-
-                            customAi1 = 112f;
-
-                        } // END is server & chaos ele & bored
-                        
-                    }
-                }
-
-               
-                //npc.ai[2] = 0f; // reset throw countdown when hit
 
                 #region Projectiles
                 customAi1++; ;
-                if (customAi1 >= 180f)
+
+                Player player3 = Main.player[npc.target];
+
+                //CHANCE TO JUMP FORWARDS
+                if (npc.Distance(player3.Center) > 20 && npc.velocity.Y == 0f && Main.rand.Next(500) == 1)
+                {
+                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                    Main.dust[dust].noGravity = true;
+                    npc.velocity.Y = -6f; //9             
+                    npc.TargetClosest(true);
+                    npc.velocity.X = npc.velocity.X + (float)npc.direction * 2f;  //was 2  accellerate fwd; can happen midair
+                    if ((float)npc.direction * npc.velocity.X > 2)
+                        npc.velocity.X = (float)npc.direction * 2;  //  but cap at top speed
+                    npc.netUpdate = true;
+
+                }
+                //CHANCE TO DASH STEP FORWARDS 
+                else if (npc.Distance(player3.Center) > 80 && npc.velocity.Y == 0f && Main.rand.Next(300) == 1)
+                {
+                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                    Main.dust[dust].noGravity = true;
+                    //npc.direction *= -1;
+
+                    npc.ai[0] = 0f;
+                            npc.velocity.Y = -4f;
+                            //npc.TargetClosest(true);
+                            npc.velocity.X = npc.velocity.X * 4f; // burst forward
+                                                                   
+                            if ((float)npc.direction * npc.velocity.X > 4)
+                            npc.velocity.X = (float)npc.direction * 4;  //  but cap at top speed
+                            //customAi1 = 160f;
+                        
+
+                                //CHANCE TO JUMP AFTER DASH
+                                if (Main.rand.Next(14) == 1)
+                                {
+                                    npc.TargetClosest(true);
+
+                                    //npc.spriteDirection = npc.direction;
+                                    npc.ai[0] = 0f;
+                                    Lighting.AddLight(npc.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                                    if (Main.rand.Next(3) == 1)
+                                    {
+                                        Dust.NewDust(npc.position, npc.width, npc.height, DustID.PinkFlame, npc.velocity.X, npc.velocity.Y);
+                                        Dust.NewDust(npc.position, npc.width, npc.height, DustID.PinkFlame, npc.velocity.X, npc.velocity.Y);
+                                    }
+                                    npc.velocity.Y = -7f;
+                                    
+
+                                    customAi1 = 175f;
+                       
+                                }
+
+                                npc.netUpdate = true;
+                }
+                
+
+                //FIRE ATTACK
+                //Player player = Main.player[npc.target];
+                if (customAi1 <= 100 && npc.Distance(player3.Center) > 60)
+                {
+                    
+                    if (Main.rand.Next(500) == 0) //30 was cool for great red knight
+                    {
+                        //FIRE
+                        for (int pcy = 0; pcy < 2; pcy++)
+                        {
+                            //Player nT = Main.player[npc.target];
+
+                            //Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+                            Projectile.NewProjectile((float)player3.position.X - 10 + Main.rand.Next(10), (float)player3.position.Y - 400f, (float)(-10 + Main.rand.Next(10)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
+                            Main.PlaySound(2, -1, -1, 5);
+                            //int FireAttack = Projectile... 
+                            //Main.projectile[FireAttack].timeLeft = 15296;
+                            npc.netUpdate = true;
+                        }
+
+                    }
+                }
+
+                //if (Main.rand.Next(3) == 1) //30 was cool for great red knight
+                //{
+                        
+                    //}
+                    
+                }
+
+
+
+
+            /*ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
+            Player player = Main.player[npc.target];
+            if (npc.Distance(player.Center) > 20 && Main.rand.Next(3) == 0)
+            {
+                Player nT = Main.player[npc.target];
+                if (Main.rand.Next(8) == 0)
+                {
+                    Main.NewText("Death!", 175, 75, 255);
+                }
+
+                for (int pcy = 0; pcy < 3; pcy++)
+                {
+                    //Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+                    Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), redMagicDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+                    Main.PlaySound(2, -1, -1, 5);
+                    npc.netUpdate = true;
+                }
+            }
+
+
+
+          //INSANE WHIP ATTACK
+            if (customAi1 >= 180f) //180 (without 2nd condition) and 185 created an insane attack
+            {
+                npc.TargetClosest(true);
+                if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+                {
+                    Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
+
+                    if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+                    {
+                        Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                        Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+
+                        customAi1 = 185f;
+                    }
+                }
+                #endregion
+
+            }
+            */
+
+           
+
+            //OFFENSIVE JUMPS
+            Player player2 = Main.player[npc.target];
+                if (customAi1 >= 160 && customAi1 <= 161 && npc.Distance(player2.Center) > 40)
+                {
+                    //CHANCE TO JUMP 
+                    if (Main.rand.Next(10) == 1)
+                    {
+                        Lighting.AddLight(npc.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                        if (Main.rand.Next(3) == 1)
+                        {
+                            Dust.NewDust(npc.position, npc.width, npc.height, DustID.TeleportationPotion, npc.velocity.X, npc.velocity.Y);
+                            
+                        }
+                        npc.velocity.Y = -9f; //9             
+                        npc.TargetClosest(true);
+                        customAi1 = 165;
+                        npc.netUpdate = true;
+
+                    }
+                }
+                //SPEAR ATTACK
+                if (customAi1 >= 180f && customAi1 <= 181f) //180 (without 2nd condition) and 185 created an insane attack
                 {
                     npc.TargetClosest(true);
-                    //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
-                    if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+                    if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
                     {
                         Vector2 speed = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
 
@@ -483,14 +972,64 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
                             Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            //go to poison attack
+                            customAi1 = 185f;
+
+                        if (Main.rand.Next(3) == 1)
+                        {
+                            //or chance to reset
+                            customAi1 = 1f;
+                            
+                        }
+                    }
+                    }
+                #endregion
+
+            }
+
+            //POISON ATTACK DUST TELEGRAPH
+            Player player = Main.player[npc.target];
+            if (customAi1 >= 185 && npc.Distance(player.Center) > 160) //was 180
+            {
+                //if(Main.rand.Next(60) == 0)
+                //{
+                Lighting.AddLight(npc.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.Next(2) == 1 && npc.Distance(player.Center) > 1)
+                {
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Teleporter, npc.velocity.X, npc.velocity.Y);
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Teleporter, npc.velocity.X, npc.velocity.Y);
+                }
+
+                //POISON ATTACK
+                //Player nT = Main.player[npc.target];
+                if (customAi1 >= 250 && npc.Distance(player.Center) > 160) //30 was cool for great red knight
+                {
+                    npc.TargetClosest(true);
+                    //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+                    if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+                    {
+                        Vector2 speed2 = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
+
+                        if (((speed2.X < 0f) && (npc.velocity.X < 0f)) || ((speed2.X > 0f) && (npc.velocity.X > 0f)))
+                        {
+                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
                             customAi1 = 1f;
                         }
                     }
+
                 }
-                #endregion
-                
+
+
+
+
             }
             #endregion
+            //else
+            //{
+            //    customAi1 = 1f;
+            //}
+
 
 
             //-------------------------------------------------------------------
@@ -814,6 +1353,21 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
+        #region Debuffs
+        public override void OnHitPlayer(Player player, int damage, bool crit)
+        {
+            player.AddBuff(BuffID.OnFire, 180, false);
+
+            if (Main.rand.Next(5) == 0)
+            {
+                player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 180, false); // loss of flight mobility
+                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 1800, false);
+                player.AddBuff(BuffID.NightOwl, 30, false);
+
+            }
+        }
+        #endregion
+
         static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
         {
@@ -821,8 +1375,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spearTexture = mod.GetTexture("Projectiles/Enemy/RedKnightsSpear");
             }
-            if (customAi1 >= 120)
+            if (customAi1 >= 120 && customAi1 <= 181f)
             {
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                Main.dust[dust].noGravity = true;
+
                 SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (npc.spriteDirection == -1)
                 {
