@@ -28,7 +28,8 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.buffImmune[BuffID.Darkness] = true;
-            player.immune = true;
+            player.noKnockback = true;
+            player.fireWalk = true;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragonStone = true;
         }
 
