@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items
         {
             Tooltip.SetDefault("Consume to become the [c/6d8827:Bearer of the Curse]" +
                                "\nPlaying as the [c/6d8827:Bearer of the Curse] has the following effects:" +
-                               "\nYou deal +20% damage, recieve +20% more souls and your stamina recovers much faster" +
+                               "\nYou deal +20% damage, receive +20% more souls and your stamina recovers much faster" +
                                "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
                                "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
                                "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
