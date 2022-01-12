@@ -909,7 +909,10 @@ namespace tsorcRevamp.NPCs {
                         || npc.type == NPCID.TheBride
                         || npc.type == NPCID.MartianProbe
                         //|| npc.type == NPCID.WindyBalloon
-                        || npc.type == NPCID.UmbrellaSlime) {
+                        || npc.type == NPCID.UmbrellaSlime
+                        || npc.type == NPCID.BoundGoblin
+                        || npc.type == NPCID.BoundMechanic
+                        || npc.type == NPCID.BoundWizard) {
                     npc.active = false;
                 } 
             }
@@ -1299,6 +1302,19 @@ namespace tsorcRevamp.NPCs {
             }
 
             #endregion
+
+            if (npc.type == NPCID.GoblinTinkerer) {
+                npc.GivenName = "Elijah";
+                return true;
+            }
+            if (npc.type == NPCID.Mechanic) {
+                npc.GivenName = "Asha";
+                return true;
+            }
+            if (npc.type == NPCID.Wizard) {
+                npc.GivenName = "Araz";
+                return true;
+            }
 
             else return base.PreAI(npc);
         }

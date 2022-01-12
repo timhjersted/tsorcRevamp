@@ -145,6 +145,8 @@ namespace tsorcRevamp
             BridgeAmbush1,
             LothricAmbush1,
             LothricAmbush2,
+            SpawnMechanic,
+            SpawnWizard
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -262,7 +264,13 @@ namespace tsorcRevamp
             //ScriptedEvent FrogpocalypseEvent = new ScriptedEvent(SuperHardModeCustomCondition, new Vector2(5728, 1460), 120, ModContent.NPCType<NPCs.Enemies.MutantGigatoad>(), DustID.GreenTorch, default, true, "The Abyssal Toad rises to assist in debugging...", Color.Green);
 
             //GOBLIN TINKERER  SPAWN EVENT
-            ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, null, 31, true, true, "", default, true, TinkererCondition, TinkererAction);
+            ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, default, 31, true, true, "", default, false, TinkererCondition, TinkererAction);
+            
+            //MECHANIC SPAWN EVENT
+            ScriptedEvent SpawnMechanic = new ScriptedEvent(new Vector2(294, 1366), 100, default, 31, true, true, "", default, false, MechanicCondition, MechanicAction);
+
+            //WIZARD SPAWN EVENT
+            ScriptedEvent SpawnWizard = new ScriptedEvent(new Vector2(7322, 603), 40, default, 31, true, true, "", default, true, WizardCondition, WizardAction);
 
             //BOULDERFALL EVENT 1 - EARTH TEMPLE ENTRANCE
             ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, false, false, "", default, false, default, BoulderfallEvent1Action);
@@ -358,7 +366,10 @@ namespace tsorcRevamp
                 {ScriptedEventType.BridgeAmbush1, BridgeAmbush1},
                 {ScriptedEventType.LothricAmbush1, LothricAmbush1},
                 {ScriptedEventType.LothricAmbush2, LothricAmbush2},
-                {ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush}
+                {ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush},
+                {ScriptedEventType.SpawnMechanic, SpawnMechanic},
+                {ScriptedEventType.SpawnWizard, SpawnWizard},
+
 
             };
 
@@ -510,6 +521,14 @@ namespace tsorcRevamp
                 return true;
             }
             else { return false; }
+        }
+
+        public static bool MechanicCondition() {
+            return !NPC.AnyNPCs(NPCID.Mechanic);
+        }
+        
+        public static bool WizardCondition() {
+            return !NPC.AnyNPCs(NPCID.Wizard);
         }
 
         #endregion
@@ -736,6 +755,18 @@ namespace tsorcRevamp
                 }
             }
             return false;
+        }
+
+        public static bool MechanicAction(Player player, ScriptedEvent thisEvent) {
+            NPC.NewNPC(277 * 16, 1366 * 16, NPCID.Mechanic);
+            thisEvent.endEvent = true;
+            return true;
+        }
+
+        public static bool WizardAction(Player player, ScriptedEvent thisEvent) {
+            NPC.NewNPC(7322 * 16, 603 * 16, NPCID.Wizard);
+            thisEvent.endEvent = true;
+            return true;
         }
         #endregion
 
