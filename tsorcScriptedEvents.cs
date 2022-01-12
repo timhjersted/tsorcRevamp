@@ -636,6 +636,7 @@ namespace tsorcRevamp
         //... is what it SHOULD do?
         public static bool TinkererAction(Player player, ScriptedEvent thisEvent) {
             NPC.NewNPC(4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
+            NPC.savedGoblin = true;
             thisEvent.endEvent = true;
             return true;
         }
@@ -759,12 +760,14 @@ namespace tsorcRevamp
 
         public static bool MechanicAction(Player player, ScriptedEvent thisEvent) {
             NPC.NewNPC(277 * 16, 1366 * 16, NPCID.Mechanic);
+            NPC.savedMech = true;
             thisEvent.endEvent = true;
             return true;
         }
 
         public static bool WizardAction(Player player, ScriptedEvent thisEvent) {
             NPC.NewNPC(7322 * 16, 603 * 16, NPCID.Wizard);
+            NPC.savedWizard = true;
             thisEvent.endEvent = true;
             return true;
         }
