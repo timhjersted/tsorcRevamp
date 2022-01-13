@@ -46,9 +46,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (projectile.ai[0] >= 10)
             {
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 89, 0, 0, 50, default(Color), 1f)];
+                    Dust dust2 = Main.dust[Dust.NewDust(new Vector2(projectile.position.X - 10, projectile.position.Y - 10), projectile.width + 20, projectile.height + 20, 89, 0, 0, 50, default(Color), 1f)];
                     dust2.velocity *= 0;
                     dust2.noGravity = true;
                 }

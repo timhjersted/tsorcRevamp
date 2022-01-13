@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ID;
+using System;
 
 namespace tsorcRevamp
 {
@@ -26,6 +27,8 @@ namespace tsorcRevamp
 		public float staminaResourceGain;
 		internal float staminaResourceRegenTimer = 0f;
 		public static readonly Color RestoreStaminaResource = new Color(20, 100, 20); // We can use this for CombatText, if you create an item that replenishes exampleResourceCurrent.
+
+		public int minionStaminaCap;
 
         /*
 		In order to make the Example Resource example straightforward, several things have been left out that would be needed for a fully functional resource similar to mana and health. 
@@ -104,7 +107,7 @@ namespace tsorcRevamp
 			//Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
 			//Main.NewText("Timer: " + staminaResourceRegenTimer);
 
-			for (int p = 0; p < 1000; p++)
+			for (int p = 0; p < 1000; p++) //To-do add a check before this making this loop only run if there are actually any projectiles in the array
 			{
 				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 				{
@@ -135,6 +138,20 @@ namespace tsorcRevamp
 				}
 			}
 
+			//Stamina capping for summoners - First minion costs 18, second one 16, third one 14, etc. Once the cost hits 2, at 9 minions, it keeps costing 2 for subsequent minions
+			int scale = Math.Max(0, 19 - player.numMinions);
+			if (player.numMinions > 9)
+			{
+				minionStaminaCap = (int)(staminaResourceMax2 - (72 + 2 * player.numMinions));
+			}
+			else
+			{
+				minionStaminaCap = (int)(staminaResourceMax2 - (scale * player.numMinions));
+			}
+			//Main.NewText(minionStaminaCap);
+
+
+
 			staminaResourceGain = staminaResourceGainMult * staminaResourceRegenRate; //Apply our multiplier to our base regen rate
 
 			// For our resource lets make it regen slowly over time to keep it simple, let's use exampleResourceRegenTimer to count up to whatever value we want, then increase currentResource.
@@ -154,11 +171,14 @@ namespace tsorcRevamp
 							staminaResourceRegenTimer = 0;
 						}
 					}
-					else if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.itemAnimation == 0) //Bearer of the Curse doesn't regen stamina while using items
+					else if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.itemAnimation == 0 && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
                     {
 						if (staminaResourceRegenTimer > 3)
 						{
 							staminaResourceCurrent += staminaResourceGain;
+
+							if (staminaResourceCurrent > minionStaminaCap) { staminaResourceCurrent = minionStaminaCap; }
+
 							staminaResourceRegenTimer = 0;
 						}
 					}

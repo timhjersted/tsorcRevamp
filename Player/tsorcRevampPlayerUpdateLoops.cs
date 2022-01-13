@@ -157,6 +157,8 @@ namespace tsorcRevamp {
 
         public UIItemSlot SoulSlot;
 
+        public int MaxAcquiredHP; //To prevent purging stones and humanity from raising hp above your max acquired hp from life crystals and life fruit. This is updated every time the player dies or has the curse debuffs reapplied
+
         public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
@@ -208,7 +210,7 @@ namespace tsorcRevamp {
         public override void PreUpdate() {
             player.fullRotationOrigin = new Vector2(11, 22);
             SetDirection(true);
-            //Main.NewText(darkSoulQuantity);
+            //Main.NewText(MaxAcquiredHP);
 
             darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
 
@@ -416,6 +418,16 @@ namespace tsorcRevamp {
                 if (player.statMana < 1) { player.channel = false; }
                 if (player.statMana < 0) { player.statMana = 0; }
 
+            }
+
+            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].wall == WallID.StarlitHeavenWallpaper)
+            {
+                player.AddBuff(BuffID.Darkness, 60);
+            }
+
+            if (MaxAcquiredHP < player.statLifeMax)
+            {
+                MaxAcquiredHP = player.statLifeMax;
             }
         }
 

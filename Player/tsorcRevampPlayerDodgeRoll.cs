@@ -143,7 +143,7 @@ namespace tsorcRevamp {
 				// Summoner
 				if (item.damage >= 1 && item.summon && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 1f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
 				}
 
 				// Classless? Just in case? 

@@ -104,11 +104,6 @@ namespace tsorcRevamp.NPCs.Special
             Player player = Main.player[npc.target];
             despawnHandler.TargetAndDespawn(npc.whoAmI);
 
-            if (npc.Distance(player.Center) < 1000)
-            {
-                player.GetModPlayer<tsorcRevampPlayer>().BossZenBuff = true;
-            }
-
             int lifePercentage = (npc.life * 100) / npc.lifeMax;
             float acceleration = 0.04f;
             //float top_speed = (lifePercentage * 0.02f) + .2f; //good calculation to remember for decreasing speed the lower the enemy HP%

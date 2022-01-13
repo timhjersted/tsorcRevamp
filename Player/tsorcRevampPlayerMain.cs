@@ -97,7 +97,9 @@ namespace tsorcRevamp
                 {"FirstEncounter", FirstEncounter},
                 {"ReceivedGift", ReceivedGift},
                 {"BearerOfTheCurse", BearerOfTheCurse},
-                {"soulSlot", ItemIO.Save(SoulSlot.Item)}
+                {"soulSlot", ItemIO.Save(SoulSlot.Item)},
+                {"MaxAcquiredHP", MaxAcquiredHP}
+
             };
 
             List<Item> PotionBagList = new List<Item>();
@@ -141,6 +143,8 @@ namespace tsorcRevamp
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
             Item soulSlotSouls = ItemIO.Load(tag.GetCompound("soulSlot"));
             SoulSlot.Item = soulSlotSouls.Clone();
+            MaxAcquiredHP = tag.GetInt("MaxAcquiredHP");
+
 
             PotionBagItems = ((List<Item>)tag.GetList<Item>("PotionBag")).ToArray();
             if(PotionBagItems.Length < 28)
@@ -215,7 +219,6 @@ namespace tsorcRevamp
         {
             Projectile.NewProjectile(player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, player.whoAmI);
             Main.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
-
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.statLifeMax > 200)
             {

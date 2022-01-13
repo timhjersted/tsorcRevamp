@@ -1,4 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -6,12 +9,13 @@ namespace tsorcRevamp.Items {
     class Humanity : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Permanently increases maximum life by 20" + 
-                               "\nUsed to craft the summoning stone of Blight.");
+                               "\nWon't increase max HP over the maximum achieved " +
+                               "\nvia Life Crystals or Life Fruit");
         }
 
         public override void SetDefaults() {
             item.width = 16;
-            item.height = 16;
+            item.height = 24;
             item.rare = ItemRarityID.Green;
             item.value = 75000;
             item.useAnimation = 15;
@@ -23,7 +27,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override bool CanUseItem(Player player) {
-            return (player.statLifeMax < 500);
+            return (player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP);
         }
 
         public override bool UseItem(Player player) {
@@ -38,6 +42,23 @@ namespace tsorcRevamp.Items {
                 player.statLifeMax = 500;
             }
             return true;
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            Player player = Main.LocalPlayer;
+
+            tooltips.Insert(6, new TooltipLine(mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
+
+        }
+
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+
+            Texture2D texture = Main.itemTexture[item.type];
+            spriteBatch.Draw(texture, item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(0, 4), item.scale, SpriteEffects.None, 0f);
+
+            return false;
         }
     }
 }
