@@ -64,6 +64,12 @@ namespace tsorcRevamp.NPCs
                 pool.Clear(); //stop NPC spawns in The End 
             }
 
+            if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.StarlitHeavenWallpaper)
+            {
+                pool.Clear();
+                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
+            }
+
             //VANILLA NPC SPAWN EDITS
             if (spawnInfo.player.ZoneJungle && !tsorcRevampWorld.SuperHardMode)
             {
@@ -156,6 +162,12 @@ namespace tsorcRevamp.NPCs
                 spawnRate /= 2;
                 maxSpawns = (int)(maxSpawns * 1.5);
             }
+
+            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].wall == WallID.StarlitHeavenWallpaper)
+            {
+                spawnRate /= 10; //Origin of the Abyss. All spawns blocked other than Humanity Phantoms
+            }
+
         }
 
         //vanilla npc changes moved to separate file
