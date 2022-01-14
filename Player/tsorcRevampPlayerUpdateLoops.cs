@@ -157,7 +157,7 @@ namespace tsorcRevamp {
 
         public UIItemSlot SoulSlot;
 
-        public int MaxAcquiredHP; //To prevent purging stones and humanity from raising hp above your max acquired hp from life crystals and life fruit. This is updated every time the player dies or has the curse debuffs reapplied
+        public int MaxAcquiredHP; //To prevent purging stones and humanity from raising hp above your max acquired hp from life crystals and life fruit.
 
         public override void ResetEffects() {
             SilverSerpentRing = false;
