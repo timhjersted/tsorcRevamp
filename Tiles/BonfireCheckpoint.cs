@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using tsorcRevamp.UI;
+using System.Collections.Generic;
 
 namespace tsorcRevamp.Tiles
 {
@@ -432,15 +433,14 @@ namespace tsorcRevamp.Tiles
 			{
 				Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
 				Main.NewText("Bonfire lit!", 250, 110, 90);
-				if (tsorcRevampWorld.LitBonfireList != null)
+
+				if (tsorcRevampWorld.LitBonfireList == null)
 				{
-					tsorcRevampWorld.LitBonfireList.Add(new Vector2(i * 16, j * 16));
+					tsorcRevampWorld.LitBonfireList = new List<Vector2>();
 				}
-				else
-				{
-					Main.NewText("tsorcRevamp Warning: Bonfire list not initialized! Please report this!", Color.Red);
-					Main.NewText("It would be super helpful if you could post your client.log to our discord:  https://discord.gg/kSptDbe", Color.Red);
-				}
+
+				tsorcRevampWorld.LitBonfireList.Add(new Vector2(i * 16, j * 16));
+
 				int x = i - Main.tile[i, j].frameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
 				int y = j - Main.tile[i, j].frameY / 18 % 4; // 4 because it is 4 blocks tall
 				for (int l = x; l < x + 3; l++)             // this chunk of code basically makes it so that when you right click one tile, 

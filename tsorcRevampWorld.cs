@@ -41,6 +41,7 @@ namespace tsorcRevamp {
             SuperHardMode = false;
             TheEnd = false;
             Slain = new Dictionary<int, int>();
+            LitBonfireList = new List<Vector2>();
 
             tsorcScriptedEvents.InitializeScriptedEvents();
             Tiles.SoulSkellyGeocache.InitializeSkellys();
@@ -94,7 +95,6 @@ namespace tsorcRevamp {
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
 
-            LitBonfireList = new List<Vector2>();
             LitBonfireList = MinimapBonfireUIState.GetActiveBonfires();
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
