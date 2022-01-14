@@ -19,10 +19,11 @@ using ReLogic.Graphics;
 using System.Net;
 using System.Reflection;
 using System.ComponentModel;
+using Terraria.Graphics;
 
 namespace tsorcRevamp {
 
-   
+
     public class tsorcRevamp : Mod {
 
         public static ModHotKey toggleDragoonBoots;
@@ -70,6 +71,19 @@ namespace tsorcRevamp {
 
         internal static bool[] CustomDungeonWalls;
 
+        public Cutscene cutscene;
+        public float cutsceneZoom;
+        public Vector2 cutsceneCameraOffset;
+        //it may end up being useful to have a UI instance we can use as needed
+        public UserInterface GlobalUI;
+        //cause im tired of ModContent.GetInstance<T>
+        internal static tsorcRevamp instance;
+
+        //required, or every use of the above instance will NullReference :))))
+        public tsorcRevamp() {
+            instance = this;
+        }
+        
         public override void Load() {
             toggleDragoonBoots = RegisterHotKey("Dragoon Boots", "Z");
             reflectionShiftKey = RegisterHotKey("Reflection Shift", "O");
@@ -117,6 +131,7 @@ namespace tsorcRevamp {
                 //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
                
                 EmeraldHeraldUserInterface = new UserInterface();
+                GlobalUI = new UserInterface();
             }
 
             if (!Main.dedServ) {
@@ -171,6 +186,28 @@ namespace tsorcRevamp {
             {
                 PotionBagUserInterface.Update(gameTime);
             }
+            //UpdateUI is pretty early in Main.DoUpdate so it seems as good a place as any
+            //todo experiment with putting this in different places?
+            
+            if (cutscene != null && !cutscene.paused) {
+                cutscene.UpdateCutscene();
+            }
+            GlobalUI?.Update(gameTime);
+        }
+        
+        public override void ModifyTransformMatrix(ref SpriteViewMatrix Transform) {
+            //mostly done?
+            float targetZoom = 0f;
+            if (instance.cutscene != null) {
+                targetZoom = instance.cutscene.CameraZoom();
+            }
+            //dont think this was doing anything
+            //cutsceneZoom = MathHelper.Lerp(cutsceneZoom, targetZoom, 1f);
+            Transform.Zoom += new Vector2(targetZoom);
+        }
+        
+        internal void HideCutsceneUI() {
+            GlobalUI?.SetState(null);
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
@@ -187,6 +224,8 @@ namespace tsorcRevamp {
                     },
                     InterfaceScaleType.UI)
                 );
+                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("tsorcRevamp: Cutscene", DrawCutscene, InterfaceScaleType.UI));
+                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("tsorcRevamp: Cutscene UI", DrawCutsceneUI, InterfaceScaleType.UI));
             }
 
             int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
@@ -258,8 +297,24 @@ namespace tsorcRevamp {
                     InterfaceScaleType.UI)
                 );
             }
+            /*
+            if (cutscene != null) {
+                foreach (GameInterfaceLayer layer in layers) {
+                    layer.Active = false;
+                } 
+            }
+            */
         }
 
+        public bool DrawCutscene() {
+            cutscene?.Draw(Main.spriteBatch);
+            return true;
+        }
+
+        public bool DrawCutsceneUI() {
+            GlobalUI.Draw(Main.spriteBatch, new GameTime());
+            return true;
+        }
 
         private void PopulateArrays() {
             #region KillAllowed list
@@ -724,6 +779,8 @@ namespace tsorcRevamp {
                 Main.NPCLoaded[NPCID.Probe] = false;
                 Main.goreLoaded[156] = false;
             }
+
+            instance = null;
         }
         public override void AddRecipes() {
             ModRecipeHelper.AddModRecipes();
@@ -870,7 +927,37 @@ namespace tsorcRevamp {
                 }                
             }
 
+            else if (message == tsorcPacketID.CutsceneStart) {
+                //there must be a better way to do this
+                byte cutsceneType = reader.ReadByte();
+                if (cutsceneType == (byte)Cutscene.CutsceneType.TestCutscene) {
+                    bool bounced = reader.ReadBoolean();
+                    byte who = reader.ReadByte();
 
+                    if (Main.netMode == NetmodeID.MultiplayerClient || !bounced) {
+                        Player player = Main.player[who];
+                        new TestCutscene(player);
+
+                        //bounce the packet if we're the server
+                        if (Main.netMode == NetmodeID.Server) {
+                            ModPacket cutscenePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                            cutscenePacket.Write(tsorcPacketID.CutsceneStart);
+                            cutscenePacket.Write((byte)Cutscene.CutsceneType.TestCutscene);
+                            cutscenePacket.Write(true);
+                            cutscenePacket.Write((byte)player.whoAmI);
+
+                            //skip the original player
+                            for (int i = 0; i < Main.maxPlayers; i++) {
+                                if (Main.player[i].active && i != player.whoAmI) {
+                                    cutscenePacket.Send(i);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
 
             /**
             //For synced random
@@ -1554,6 +1641,7 @@ namespace tsorcRevamp {
         public const byte DispelShadow = 4;
         public const byte DropSouls = 5;
         public const byte SyncPlayerDodgeroll = 6;
+        public const byte CutsceneStart = 7;
     }
 
     //config moved to separate file

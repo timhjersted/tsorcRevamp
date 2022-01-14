@@ -41,6 +41,8 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 
+			new TestCutscene(player).Start();
+			
 			for (float i = 0.1f; i < 19; i *= 1.01f)
 			{
 				Vector2 trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, (9.8f / 60), false, false);

@@ -820,6 +820,12 @@ namespace tsorcRevamp
             player.statLife = player.statLifeMax2;
         }
 
+        public override void ModifyScreenPosition() {
+            Vector2 lerp = (tsorcRevamp.instance.cutscene != null) ? tsorcRevamp.instance.cutscene.CameraPosition() : Vector2.Zero;
+            tsorcRevamp.instance.cutsceneCameraOffset = Vector2.Lerp(tsorcRevamp.instance.cutsceneCameraOffset, lerp, 1f);
+            Main.screenPosition += tsorcRevamp.instance.cutsceneCameraOffset;
+        }
+
         public static bool CheckBossZen() {
             for (int i = 0; i < 200; i++) {
                 if (Main.npc[i].active && Main.npc[i].boss) {
