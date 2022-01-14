@@ -50,7 +50,7 @@ namespace tsorcRevamp {
         }
 
         /// <summary>
-        /// Currently unimplemented.
+        /// Change the camera position
         /// </summary>
         /// <returns></returns>
         public virtual Vector2 CameraPosition() {
