@@ -19,9 +19,7 @@ namespace tsorcRevamp.UI
         //public tsorcUIHoverTextButton ButtonSafe;
         //public tsorcUIHoverTextButton ButtonClose;
 
-        public const int POTION_BAG_SIZE = 28;
         public static bool Visible = false;
-        public static PotionItemSlot[] PotionSlots = new PotionItemSlot[POTION_BAG_SIZE]; //Keeps track of the slots
         public override void OnInitialize()
         {
             // Here we define our container UIElement. In DragableUIPanel.cs, you can see that DragableUIPanel is a UIPanel with a couple added features.

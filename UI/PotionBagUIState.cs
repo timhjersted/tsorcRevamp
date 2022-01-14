@@ -18,7 +18,7 @@ namespace tsorcRevamp.UI
         //public tsorcUIHoverTextButton ButtonSafe;
         //public tsorcUIHoverTextButton ButtonClose;
 
-        public const int POTION_BAG_SIZE = 28;
+        public const int POTION_BAG_SIZE = 40;
         public static bool Visible = false;
         public static PotionItemSlot[] PotionSlots = new PotionItemSlot[POTION_BAG_SIZE]; //Keeps track of the slots
         public override void OnInitialize()
@@ -28,16 +28,16 @@ namespace tsorcRevamp.UI
             PotionBagUI.SetPadding(0);
             // We need to place this UIElement in relation to its Parent. Later we will be calling `base.Append(BonfireUI);`. 
             // This means that this class, BonfireUIState, will be our Parent. Since BonfireUIState is a UIState, the Left and Top are relative to the top left of the screen.
-            PotionBagUI.Left.Set(150, 0f);
+            PotionBagUI.Left.Set(152, 0f);
             PotionBagUI.Top.Set(316, 0f);
-            PotionBagUI.Width.Set(350, 0f);
-            PotionBagUI.Height.Set(200, 0f);
+            PotionBagUI.Width.Set(400, 0f);
+            PotionBagUI.Height.Set(255, 0f);
             PotionBagUI.BackgroundColor = new Color(30, 29, 43);
 
             int slotIndex = 0;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
-                for (int j = 0; j < 7; j++)
+                for (int j = 0; j < 8; j++)
                 {
                     PotionSlots[i] = new PotionItemSlot(slotIndex, ItemSlot.Context.InventoryItem, 0.85f);
                     PotionSlots[i].Left.Set(10 + (j * 48), 0);
@@ -56,11 +56,7 @@ namespace tsorcRevamp.UI
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-            PotionBagUI.Left.Set(152, 0f);
-            PotionBagUI.Top.Set(316, 0f);
-            PotionBagUI.Width.Set(353, 0f);
-            PotionBagUI.Height.Set(208, 0f);
+            base.Update(gameTime);           
             if (!Main.playerInventory || Main.LocalPlayer.chest != -1 || (!Main.LocalPlayer.HasItem(ModContent.ItemType<Items.PotionBag>()) && (Main.mouseItem.type != ModContent.ItemType<Items.PotionBag>())))
             {
                 Visible = false;

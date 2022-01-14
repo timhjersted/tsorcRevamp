@@ -147,9 +147,9 @@ namespace tsorcRevamp
 
 
             PotionBagItems = ((List<Item>)tag.GetList<Item>("PotionBag")).ToArray();
-            if(PotionBagItems.Length < 28)
+            if(PotionBagItems.Length < PotionBagUIState.POTION_BAG_SIZE)
             {
-                Item[] TempArray = new Item[28];
+                Item[] TempArray = new Item[PotionBagUIState.POTION_BAG_SIZE];
                 for(int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
                     if (i < PotionBagItems.Length)
