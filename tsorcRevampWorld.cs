@@ -156,10 +156,15 @@ namespace tsorcRevamp {
             return Main.keyState.IsKeyDown(key) && !Main.oldKeyState.IsKeyDown(key);
         }
 
+
+        #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
+
         public static void CampfireToBonfire() {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             for (int x = 0; x < Main.maxTilesX - 2; x++) {
                 for (int y = 0; y < Main.maxTilesY - 2; y++) {
+
+                    //Campfire to Bonfire
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
 
                         //kill the space above the campfire, to remove vines and such
@@ -213,6 +218,127 @@ namespace tsorcRevamp {
 
                         }
                     }
+
+                    //Slime blocks to SkullLeft - SlimeBlock-PinkSlimeBlock (I tried to stick right and lefts together but the code refuses to work for both, I swear I'm not just being dumb) 
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.PinkSlimeBlock && Main.tile[x - 1, y].type == TileID.SlimeBlock) 
+                    {
+
+                        //kill the space the skull occupies, to remove vines and such
+                        for (int q = -1; q < 1; q++)
+                        {
+                            for (int w = -1; w < 1; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+                        //WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
+                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5) {
+                            return;
+                        }
+                        short num = 0;
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 1; i++) {
+                            for (int j = y - 1; j < y + 1; j++) {
+                                if (Main.tile[i, j] == null) {
+                                    Main.tile[i, j] = new Tile();
+                                }
+                                if (Main.tile[i, j].active()) {
+                                    flag = false;
+                                }
+                            }
+                            if (Main.tile[i, y + 1] == null) {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag) {
+                            short num2 = (short)(36 * style);
+                            Main.tile[x - 1, y - 1].active(active: true);
+                            Main.tile[x - 1, y - 1].frameY = num;
+                            Main.tile[x - 1, y - 1].frameX = num2;
+                            Main.tile[x - 1, y - 1].type = type;
+                            Main.tile[x, y - 1].active(active: true);
+                            Main.tile[x, y - 1].frameY = num;
+                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
+                            Main.tile[x, y - 1].type = type;
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = (short)(num + 18);
+                            Main.tile[x - 1, y].frameX = num2;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = (short)(num + 18);
+                            Main.tile[x, y].frameX = (short)(num2 + 18);
+                            Main.tile[x, y].type = type;
+                        }
+                    }
+
+                    //Slime block to SkullRight - PinkSlimeBlock-SlimeBlock
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.SlimeBlock && Main.tile[x - 1, y].type == TileID.PinkSlimeBlock)
+                    {
+
+                        //kill the space the skull occupies, to remove vines and such
+                        for (int q = -1; q < 1; q++)
+                        {
+                            for (int w = -1; w < 1; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+                        //WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullR>();
+                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
+                            return;
+                        }
+                        short num = 0;
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 1; i++)
+                        {
+                            for (int j = y - 1; j < y + 1; j++)
+                            {
+                                if (Main.tile[i, j] == null)
+                                {
+                                    Main.tile[i, j] = new Tile();
+                                }
+                                if (Main.tile[i, j].active())
+                                {
+                                    flag = false;
+                                }
+                            }
+                            if (Main.tile[i, y + 1] == null)
+                            {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag)
+                        {
+                            short num2 = (short)(36 * style);
+                            Main.tile[x - 1, y - 1].active(active: true);
+                            Main.tile[x - 1, y - 1].frameY = num;
+                            Main.tile[x - 1, y - 1].frameX = num2;
+                            Main.tile[x - 1, y - 1].type = type;
+                            Main.tile[x, y - 1].active(active: true);
+                            Main.tile[x, y - 1].frameY = num;
+                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
+                            Main.tile[x, y - 1].type = type;
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = (short)(num + 18);
+                            Main.tile[x - 1, y].frameX = num2;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = (short)(num + 18);
+                            Main.tile[x, y].frameX = (short)(num2 + 18);
+                            Main.tile[x, y].type = type;
+                        }
+                    }
+
+
                 } 
             }
             for (int i = 0; i < 400; i++) {
@@ -221,6 +347,10 @@ namespace tsorcRevamp {
                 }
             }
         }
+
+        #endregion
+
+
         Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
         Texture2D SHMSun2 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun2");
         Texture2D SHMSun3 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
