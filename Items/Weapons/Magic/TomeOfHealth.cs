@@ -15,12 +15,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void SetDefaults() {
             item.height = 38;
             item.useTurn = true;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.LightRed;
             item.useStyle = ItemUseStyleID.HoldingUp;
             item.UseSound = SoundID.Item4;
             item.useAnimation = 17;
             item.useTime = 17;
-            item.value = 27000;
+            item.value = PriceByRarity.LightRed_4;
             item.width = 28;
             item.mana = 240;
         }

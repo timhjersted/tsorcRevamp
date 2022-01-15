@@ -15,13 +15,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = 60;
             item.knockBack = 4f;
             item.mana = 8;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Pink;
             item.UseSound = SoundID.Item8;
             item.magic = true;
             item.noMelee = true;
             item.useTurn = true;
             item.autoReuse = true;
-            item.value = 18400;
+            item.value = PriceByRarity.Pink_5;
             item.shootSpeed = 8;
             item.shoot = ModContent.ProjectileType<Projectiles.ChaosBall2>();
         }

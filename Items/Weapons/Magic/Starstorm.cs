@@ -20,9 +20,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.alpha = 100;
             item.scale = 1.15f;
             item.UseSound = SoundID.Item9;
-            item.rare = ItemRarityID.Orange;
+            item.rare = ItemRarityID.LightRed;
             item.mana = 13;
-            item.value = 70000;
+            item.value = PriceByRarity.LightRed_4;
             item.magic = true;
         }
 

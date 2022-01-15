@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void SetDefaults() {
             item.height = 10;
             item.knockBack = 4;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Cyan;
             item.magic = true;
             item.noMelee = true;
             item.mana = 40;
@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 10;
             item.useAnimation = 10;
-            item.value = 1000000;
+            item.value = PriceByRarity.Cyan_9;
             item.width = 34;
         }
 

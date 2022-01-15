@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.Orange;
             item.mana = 14;
             item.noMelee = true;
-            item.value = 100000;
+            item.value = PriceByRarity.Orange_3;
             item.magic = true;
         }
 

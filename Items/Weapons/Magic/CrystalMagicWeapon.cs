@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.useStyle = ItemUseStyleID.HoldingUp;
             item.useTime = 34;
             item.useAnimation = 34;
-            item.value = 30000;
+            item.value = PriceByRarity.Cyan_9;
 
         }
 

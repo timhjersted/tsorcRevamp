@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.knockBack = 4;
             item.noMelee = true;
             item.magic = true;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Red;
             item.mana = 40;
             item.channel = true;
             item.autoReuse = true;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item5;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 15;
-            item.value = 30000000;
+            item.value = PriceByRarity.Red_10;
             item.width = 16;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice5Ball>();
         }
