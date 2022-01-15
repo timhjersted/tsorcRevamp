@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class SilverRing : ModItem {
         public override void SetStaticDefaults() {
-            string defString = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "Grants 6 defense" : " Grants 3 defense";
+            string defString = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "Grants 6 defense" : "Grants 3 defense";
             Tooltip.SetDefault(defString);
         }
 

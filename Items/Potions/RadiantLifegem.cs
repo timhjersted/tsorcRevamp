@@ -15,7 +15,6 @@ namespace tsorcRevamp.Items.Potions
                 "\nGradually restores HP" +
                 "\nThe dull glimmer of these mysterious" +
                 "\nstones brightens with the passage of time" +
-                "\nDue to the gradual healing effect, potion sickness is low" +
                 "\nRestores 200 HP over the course of 13 seconds"); 
 
 
@@ -110,7 +109,7 @@ namespace tsorcRevamp.Items.Potions
                 }
 
                 player.AddBuff(ModContent.BuffType<Buffs.RadiantLifegemHealing>(), 800); //just over 13 seconds
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 2400);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1800 : 3600);
 
                 if (item.stack == 1) item.TurnToAir();
                 else item.stack--;

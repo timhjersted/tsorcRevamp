@@ -106,7 +106,7 @@ namespace tsorcRevamp {
             {
                 CheckUseBuffPotion(player.inventory[i], player);
             }
-            for (int i = 0; i < 28; i++)
+            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
             {
                 if (!(bool)PotionBagItems[i]?.favorited)
                 {
@@ -193,7 +193,7 @@ namespace tsorcRevamp {
 
             Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
             
-            for (int i = 0; i < 28; i++)
+            for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
             {
                 if (PotionBagItems[i] != null && PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true))
                 {
@@ -233,7 +233,7 @@ namespace tsorcRevamp {
             Item[] PotionBagItems = modPlayer.PotionBagItems;
             if (!player.HasBuff(BuffID.PotionSickness))
             {
-                for (int i = 0; i < 28; i++)
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
                     if (PotionBagItems[i] != null && PotionBagItems[i].potion && ItemLoader.CanUseItem(PotionBagItems[i], player) && (selectedItem == null || player.GetHealLife(PotionBagItems[i], true) > player.GetHealLife(selectedItem, true)))
                     {

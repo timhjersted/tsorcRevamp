@@ -41,6 +41,7 @@ namespace tsorcRevamp {
             SuperHardMode = false;
             TheEnd = false;
             Slain = new Dictionary<int, int>();
+            LitBonfireList = new List<Vector2>();
 
             tsorcScriptedEvents.InitializeScriptedEvents();
             Tiles.SoulSkellyGeocache.InitializeSkellys();

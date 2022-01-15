@@ -18,7 +18,6 @@ namespace tsorcRevamp.Items.Potions
                 "\nGradually restores a small amount of HP" +
                 "\nOften found near abandoned corpses," +
                 "\nas if it were what remains of the soul" +
-                "\nDue to the gradual healing effect, potion sickness is mild" +
                 "\nRestores 120 HP over the course of 12 seconds");
         }
 
@@ -113,7 +112,7 @@ namespace tsorcRevamp.Items.Potions
                 }
 
                 player.AddBuff(ModContent.BuffType<Buffs.LifegemHealing>(), 720);
-                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1200 : 2400);
+                player.AddBuff(BuffID.PotionSickness, player.pStone ? 1800 : 3600);
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
