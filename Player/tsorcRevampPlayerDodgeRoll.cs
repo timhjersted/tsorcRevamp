@@ -120,7 +120,7 @@ namespace tsorcRevamp {
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientDragonLance>()
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.AncientBloodLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.AncientHolyLance>()
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.CelestialLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.DragoonLance>()
-					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenRadiantLance>() && item.type != ModContent.ItemType<Items.Weapons.Melee.SupremeDragoonLance>()
+					 && item.type != ModContent.ItemType<Items.Weapons.Melee.SupremeDragoonLance>()
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenImpHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.OldHalberd>()
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.ReforgedOldHalberd>()
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPolearm>()))

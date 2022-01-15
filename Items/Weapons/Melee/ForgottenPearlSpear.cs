@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.noMelee = true;
             item.noUseGraphic = true;
 
-            item.value = 9000000;
-            item.rare = ItemRarityID.LightRed;
+            item.value = PriceByRarity.Pink_5;
+            item.rare = ItemRarityID.Pink;
             item.maxStack = 1;
             item.UseSound = SoundID.Item1;
             item.shoot = ModContent.ProjectileType<Projectiles.ForgottenPearlSpear>();

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nDoes up to 8x damage to mages");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Green;
             item.damage = 20;
             item.height = 36;
             item.knockBack = 5;
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 20;
-            item.value = 10000;
+            item.value = PriceByRarity.Green_2;
             item.width = 36;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {

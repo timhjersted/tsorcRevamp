@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Yellow;
             item.damage = 50;
             item.height = 64;
             item.width = 64;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useTime = 21;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 1000000;
+            item.value = PriceByRarity.Yellow_8;
         }
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);

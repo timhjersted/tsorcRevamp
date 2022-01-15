@@ -30,11 +30,11 @@ namespace tsorcRevamp.Items.Weapons.Melee
             item.knockBack = (float)10;
             item.scale = (float)1.1;
             item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Red;
             item.shootSpeed = (float)14; 
             item.noUseGraphic = true;
             item.noMelee = true;
-            item.value = 2500000;
+            item.value = PriceByRarity.Red_10;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.HeavenBall>();
         }

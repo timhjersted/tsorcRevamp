@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
     internal class BlizzardBlaster : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Fires a blast of freezing wind,\n damaging up to 8 enemies in a cone.");
+            Tooltip.SetDefault("Fires a blast of freezing wind,\ndamaging up to 8 enemies in a cone.");
         }
 
         static readonly int RADIUS = 300;

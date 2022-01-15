@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
+using tsorcRevamp.NPCs.Enemies;
 
 namespace tsorcRevamp.Projectiles {
 
@@ -20,26 +21,26 @@ namespace tsorcRevamp.Projectiles {
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
             //todo add mod NPCs to this list
-            if (target.type == NPCID.Tim
-                || target.type == NPCID.DarkCaster
+            if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
-                //|| target.type == ModContent.NPCType<UndeadCaster>()
-                //|| target.type == ModContent.NPCType<MindflayerServant>()
-                //|| target.type == ModContent.NPCType<DungeonMage>()
-                //|| target.type == ModContent.NPCType<DemonSpirit>()
-                //|| target.type == ModContent.NPCType<CrazedDemonSpirit>()
-                //|| target.type == ModContent.NPCType<ShadowMage>()
-                //|| target.type == ModContent.NPCType<AttraidiesIllusion>()
-                //|| target.type == ModContent.NPCType<AttraidiesManifestation>()
-                //|| target.type == ModContent.NPCType<MindflayerKing>()
-                //|| target.type == ModContent.NPCType<DarkShogunMask>()
-                //|| target.type == ModContent.NPCType<DarkDragonMask>()
-                //|| target.type == ModContent.NPCType<BrokenOkiku>()
-                //|| target.type == ModContent.NPCType<Okiku>()
-                //|| target.type == ModContent.NPCType<WyvernMage>()
-                //|| target.type == ModContent.NPCType<GhostOfTheForgottenKnight>()
-                //|| target.type == ModContent.NPCType<GhostOfTheForgottenWarrior>()
-                //|| target.type == ModContent.NPCType<BarrowWight>()
+                || target.type == ModContent.NPCType<UndeadCaster>()
+                || target.type == ModContent.NPCType<MindflayerServant>()
+                || target.type == ModContent.NPCType<DungeonMage>()
+                || target.type == ModContent.NPCType<DemonSpirit>()
+                || target.type == ModContent.NPCType<ShadowMage>()
+                || target.type == ModContent.NPCType<AttraidiesIllusion>()
+                || target.type == ModContent.NPCType<AttraidiesManifestation>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.AttraidiesMimic>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.DarkDragonMask>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.Okiku>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerKingServant>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
+                || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
                 ) {
                 damage *= 2;
             }

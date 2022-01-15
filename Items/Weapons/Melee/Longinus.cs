@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.noMelee = true;
             item.noUseGraphic = true;
 
-            item.value = 1880000;
-            item.rare = ItemRarityID.LightPurple;
+            item.value = PriceByRarity.Cyan_9;
+            item.rare = ItemRarityID.Cyan;
             item.maxStack = 1;
             item.UseSound = SoundID.Item1;
             item.shoot = ModContent.ProjectileType<Projectiles.Longinus>();

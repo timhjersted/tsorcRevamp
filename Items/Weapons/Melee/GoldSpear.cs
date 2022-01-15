@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.noMelee = true;
             item.noUseGraphic = true;
 
-            item.value = 1000;
+            item.value = PriceByRarity.White_0;
             item.rare = ItemRarityID.White;
             item.maxStack = 1;
             item.UseSound = SoundID.Item1;

@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class RTQ2Sword : ModItem {
         public override void SetStaticDefaults() {
+            DisplayName.SetDefault("RTQ2 Sword");
             Tooltip.SetDefault("Causes stars to rain from the sky" +
                                 "\nMagnetic to stars.");
         }
