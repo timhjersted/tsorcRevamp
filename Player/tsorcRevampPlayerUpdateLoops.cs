@@ -1127,7 +1127,7 @@ namespace tsorcRevamp {
             return new Rectangle(0, (int)frame * 56, 40, 56);
         }
         public override void UpdateBiomes() {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3) {
                 if (Main.dungeonTiles >= 200 && player.Center.Y > Main.worldSurface * 16.0 * 1.5f) {
                     int playerTileX = (int)player.Center.X / 16;
                     int playerTileY = (int)player.Center.Y / 16;
