@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useTime = 9;
             item.damage = 42;
             item.autoReuse = true;
-            item.UseSound = SoundID.Item12;
+            item.UseSound = SoundID.Item91;
             item.rare = ItemRarityID.LightPurple;
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 11;
