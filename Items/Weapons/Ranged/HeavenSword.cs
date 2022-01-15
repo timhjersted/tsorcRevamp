@@ -23,9 +23,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.shootSpeed = 12f;
             item.noUseGraphic = true;
             item.noMelee = true;
-            item.value = 700000;
+            item.value = PriceByRarity.LightRed_4;
             item.ranged = true;
             item.shoot = ModContent.ProjectileType<Projectiles.HeavenSword>();
+            item.rare = ItemRarityID.LightRed;
         }
 
         public override void AddRecipes() {

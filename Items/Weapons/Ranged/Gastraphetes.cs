@@ -19,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 3;
-            item.value = 200000;
-            item.rare = ItemRarityID.Pink;
+            item.value = PriceByRarity.LightPurple_6;
+            item.rare = ItemRarityID.LightPurple;
             item.UseSound = SoundID.Item5;
             item.autoReuse = true;
 

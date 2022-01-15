@@ -20,12 +20,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.knockBack = 0f;
             item.autoReuse = true;
             item.UseSound = SoundID.Item31;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.LightPurple;
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 7;
             item.useAmmo = 14;
             item.noMelee = true;
-            item.value = 300000;
+            item.value = PriceByRarity.LightPurple_6;
             item.ranged = true;
             item.reuseDelay = 11;
             item.useAmmo = AmmoID.Bullet;

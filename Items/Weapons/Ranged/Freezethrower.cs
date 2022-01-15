@@ -18,11 +18,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.knockBack = 2;
             item.autoReuse = true;
             item.UseSound = SoundID.Item34;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.LightPurple;
             item.shootSpeed = 9;
             item.useAmmo = AmmoID.Gel;
             item.noMelee = true;
-            item.value = 378000;
+            item.value = PriceByRarity.LightPurple_6;
             item.ranged = true;
             item.shoot = ModContent.ProjectileType<Projectiles.Freezethrower>();
         }

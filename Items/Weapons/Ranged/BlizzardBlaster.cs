@@ -9,27 +9,36 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
     internal class BlizzardBlaster : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Fires a blast of freezing wind,\n damaging every enemy in a cone.");
+            Tooltip.SetDefault("Fires a blast of freezing wind,\n damaging up to 8 enemies in a cone.");
         }
 
         static readonly int RADIUS = 300;
         static readonly float WIDTH = (RADIUS / 500f); //idk it just works (tm)
         public override void SetDefaults() {
-            item.damage = 24;
-            item.useTime = 35;
-            item.useAnimation = 35;
+            item.damage = 91;
+            item.useTime = 26;
+            item.useAnimation = 26;
             item.autoReuse = true;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.ranged = true;
             item.shoot = ModContent.ProjectileType<BlizzardBlasterShot>();
             item.shootSpeed = 10f; //unused
-            item.value = Item.sellPrice(0, 1);
-            item.rare = ItemRarityID.Orange;
+            item.value = PriceByRarity.Pink_5;
+            item.rare = ItemRarityID.Pink;
             //item.UseSound = SoundID.Item98;
         }
 
         public override Vector2? HoldoutOffset() {
             return new Vector2(-12f, 0f);
+        }
+
+        public override void AddRecipes() {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
+            recipe.AddIngredient(ItemID.CobaltBar, 12);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
@@ -51,6 +60,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                     int projectile = Projectile.NewProjectile(player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
                     BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].modProjectile as BlizzardBlasterShot;
                     BlizzardBlasterShot.target = targetList[j];
+                    if (j >= 8) {
+                        break;
+                    }
                 }
             }
             Main.PlaySound(SoundID.Item98);
@@ -66,6 +78,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 if (n.active && !n.dontTakeDamage && !n.townNPC) {
                     if (ConicalCollision(player.Center, RADIUS, aim, WIDTH, n.Hitbox) && Collision.CanHitLine(player.Center, 1, 1, n.Center, 1, 1)) {
                         list.Add(n);
+                        if (list.Count == 10) {
+                            break;
+                        }
                     }
 
                 }
@@ -146,7 +161,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
             target.AddBuff(BuffID.Frostburn, 120);
-            target.AddBuff(ModContent.BuffType<Buffs.ElectrocutedBuff>(), 120);
             base.OnHitNPC(target, damage, knockback, crit);
         }
     }
