@@ -22,12 +22,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.crit = 5;
             item.autoReuse = true;
             item.UseSound = SoundID.Item11;
-            item.rare = ItemRarityID.LightPurple;
+            item.rare = ItemRarityID.Purple;
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 13;
             item.useAmmo = AmmoID.Bullet;
             item.noMelee = true;
-            item.value = 69000000;
+            item.value = PriceByRarity.Purple_11;
             item.ranged = true;
             item.autoReuse = true;
         }

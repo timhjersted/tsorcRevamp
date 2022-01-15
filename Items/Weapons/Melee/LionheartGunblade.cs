@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.width = 66;
             item.height = 26;
             item.knockBack = 7;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.LightRed;
             item.scale = 1.1f;
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 10;
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 45;
-            item.value = 4600000;
+            item.value = PriceByRarity.LightRed_4;
         }
     }
 }

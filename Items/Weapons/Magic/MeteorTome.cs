@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = 90;
             item.height = 10;
             item.knockBack = 4;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Pink;
             item.shootSpeed = 6;
             item.noMelee = true;
             item.magic = true;
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 10;
             item.useAnimation = 120;
-            item.value = 5000000;
+            item.value = PriceByRarity.Pink_5;
             item.width = 34;
             item.autoReuse = true;
         }

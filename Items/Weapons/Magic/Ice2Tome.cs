@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = LegacyMode ? 15 : 15;
             item.height = 10;
             item.knockBack = 0f;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Orange;
             item.channel = true;
             item.autoReuse = true;
             item.shootSpeed = 10;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = LegacyMode ? 10 : 19;
-            item.value = 140000;
+            item.value = PriceByRarity.Orange_3;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice2Ball>();
         }

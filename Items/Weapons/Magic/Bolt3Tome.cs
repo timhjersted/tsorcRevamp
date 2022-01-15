@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.width = 34;
             item.knockBack = 0;
             item.autoReuse = true;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.LightRed;
             item.shootSpeed = 6f;
             item.magic = true;
             item.noMelee = true;
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 25;
-            item.value = 20000;
+            item.value = PriceByRarity.LightRed_4;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt3Ball>();
         }
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

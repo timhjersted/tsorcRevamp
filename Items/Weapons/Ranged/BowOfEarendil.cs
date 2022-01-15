@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.autoReuse = true;
             item.UseSound = SoundID.Item5;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 500000;
+            item.value = PriceByRarity.Pink_5;
 
         }
 

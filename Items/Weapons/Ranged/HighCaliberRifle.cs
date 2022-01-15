@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.noMelee = true;
             item.autoReuse = true;
             item.ranged = true;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Lime;
             item.scale = 1;
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 20;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.UseSound = SoundID.Item11;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 150;
-            item.value = 397000;
+            item.value = PriceByRarity.Lime_7;
             item.width = 66;
         }
 

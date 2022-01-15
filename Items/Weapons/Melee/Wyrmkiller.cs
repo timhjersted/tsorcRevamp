@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs;
 
 namespace tsorcRevamp.Items.Weapons.Melee {
     class Wyrmkiller : ModItem {
@@ -33,27 +34,44 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddRecipe();
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
-            //todo add mod NPCs to this list
+            //what a mess lmao, should probably be a switch but im lazy
             if (target.type == NPCID.WyvernBody
                 || target.type == NPCID.WyvernBody2
                 || target.type == NPCID.WyvernBody3
                 || target.type == NPCID.WyvernHead
                 || target.type == NPCID.WyvernTail
-                //|| target.type == ModContent.NPCType<ShadowDragonBody>()
-                //|| target.type == ModContent.NPCType<ShadowDragonHead>()
-                //|| target.type == ModContent.NPCType<WyvernMageDisciple>()
-                //|| target.type == ModContent.NPCType<JungleWyvernBody>()
-                //|| target.type == ModContent.NPCType<JungleWyvernHead>()
-                //|| target.type == ModContent.NPCType<GhostDragonBody>()
-                //|| target.type == ModContent.NPCType<GhostDragonHead>()
-                //|| target.type == ModContent.NPCType<MechaDragonBody>()
-                //|| target.type == ModContent.NPCType<MechaDragonHead>()
-                //|| target.type == ModContent.NPCType<HelkiteDragonBody>()
-                //|| target.type == ModContent.NPCType<HelkiteDragonHead>()
-                //|| target.type == ModContent.NPCType<HelkiteDragonTail>()
-                //|| target.type == ModContent.NPCType<SeathBody>()
-                //|| target.type == ModContent.NPCType<SeathHead>()
-                //|| target.type == ModContent.NPCType<SeathTail>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.ShadowDragonBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.ShadowDragonHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonBody2>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonBody3>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonLegs>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonTail>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody2>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernBody3>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernLegs>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernTail>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody2>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonBody3>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonLegs>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonTail>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonBody2>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonBody3>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonLegs>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonTail>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessBody2>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessBody3>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessLegs>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessTail>()
                 ) {
                 damage *= 8;
             }

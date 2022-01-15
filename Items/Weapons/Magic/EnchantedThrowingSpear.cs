@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.magic = true;
 
             item.UseSound = SoundID.Item1;
-            item.value = 100000;
+            item.value = PriceByRarity.LightRed_4;
             item.shoot = ModContent.ProjectileType<Projectiles.EnchantedThrowingSpear>();
         }
 

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item1;
             item.rare = ItemRarityID.LightRed;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 500000;
+            item.value = PriceByRarity.LightRed_4;
             item.magic = true;
             item.mana = 5;
             item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();

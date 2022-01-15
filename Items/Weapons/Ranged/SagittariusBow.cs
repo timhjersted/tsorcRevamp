@@ -41,8 +41,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 item.noMelee = true;
                 item.noUseGraphic = true;
                 item.knockBack = 5f;
-                item.value = Item.sellPrice(platinum: 4);
-                item.rare = ItemRarityID.LightPurple;
+                item.value = PriceByRarity.Red_10;
+                item.rare = ItemRarityID.Red;
                 item.UseSound = SoundID.Item7;
 
                 item.shootSpeed = 21f;

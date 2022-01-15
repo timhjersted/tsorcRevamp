@@ -18,9 +18,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.autoReuse = true;
             item.useTurn = true;
             item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Red;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 500000;
+            item.value = PriceByRarity.Red_10;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             item.shootSpeed = 13f;

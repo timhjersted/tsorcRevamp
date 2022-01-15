@@ -23,10 +23,10 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.knockBack = 6;
             item.scale = 0.9f;
             
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Cyan;
             item.shootSpeed = 10;
             item.noMelee = true;
-            item.value = 10000000;
+            item.value = PriceByRarity.Cyan_9;
             item.magic = true;
 
             if (LegacyMode) {

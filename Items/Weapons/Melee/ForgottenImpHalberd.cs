@@ -13,13 +13,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.melee = true;
             item.noMelee = true;
             item.noUseGraphic = true;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Pink;
             item.shootSpeed = 7;
             item.useAnimation = 16;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 8;
-            item.value = 30000000;
+            item.value = PriceByRarity.Pink_5;
             item.height = 50;
             item.width = 50;
             item.shoot = ModContent.ProjectileType<Projectiles.ForgottenImpHalberd>();

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = 40;
             item.height = 10;
             item.knockBack = 1;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.LightRed;
             item.shootSpeed = 4;
             item.magic = true;
             item.mana = 10;
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 10;
             item.useAnimation = 10;
-            item.value = 800000;
+            item.value = PriceByRarity.LightRed_4;
             item.width = 34;
             item.noMelee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.FlameStrike>();

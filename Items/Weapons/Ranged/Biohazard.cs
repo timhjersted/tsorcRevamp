@@ -30,9 +30,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.noMelee = true;
             item.knockBack = 3f;
-            item.value = 1000000;
+            item.value = PriceByRarity.Yellow_8;
             item.scale = 0.8f;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Yellow;
             item.shoot = mod.ProjectileType("BiohazardShot");
             item.shootSpeed = 10f;
         }

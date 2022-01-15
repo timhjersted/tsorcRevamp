@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = 45;
             item.height = 30;
             item.knockBack = 6;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Pink; //yes, despite not taking any mech boss items
             item.shootSpeed = 13f;
             item.magic = true;
             item.mana = 25;
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = LegacyMode ? 20 : 26;
-            item.value = 300000;
+            item.value = PriceByRarity.Pink_5; 
             item.width = 30;
             item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
         }

@@ -19,10 +19,10 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.autoReuse = true;
             item.scale = 1.3f;
             item.UseSound = SoundID.Item9;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Cyan;
             item.shootSpeed = 13;
             item.mana = 5;
-            item.value = 700000;
+            item.value = PriceByRarity.Cyan_9;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
         }

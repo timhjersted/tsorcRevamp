@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.scale = 0.95f;
             item.UseSound = SoundID.Item1;
             item.rare = ItemRarityID.Pink;
-            item.value = 600000;
+            item.value = PriceByRarity.Pink_5;
             item.melee = true;
         }
 

@@ -19,8 +19,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.damage = 11;
             item.knockBack = 4f;
             item.UseSound = SoundID.Item1;
-            item.value = 21000;
+            item.value = PriceByRarity.Blue_1;
             item.melee = true;
+            item.rare = ItemRarityID.Blue;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             if (target.type == NPCID.EaterofSouls

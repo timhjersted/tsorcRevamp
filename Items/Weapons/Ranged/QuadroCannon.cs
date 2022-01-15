@@ -22,12 +22,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.knockBack = 5;
             item.crit = 3;
             item.UseSound = SoundID.Item11;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Red;
             item.shoot = ProjectileID.PurificationPowder;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.shootSpeed = 10;
             if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.shootSpeed = 14;
             item.noMelee = true;
-            item.value = 9000000;
+            item.value = PriceByRarity.Red_10;
             item.ranged = true;
             item.autoReuse = true;
             item.useAmmo = AmmoID.Bullet;

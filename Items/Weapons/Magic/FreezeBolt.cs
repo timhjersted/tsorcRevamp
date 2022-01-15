@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.rare = ItemRarityID.Orange;
             item.shootSpeed = 7;
             item.mana = 12;
-            item.value = 50000;
+            item.value = PriceByRarity.Orange_3;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt>();
         }

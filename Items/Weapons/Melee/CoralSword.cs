@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useTime = 23;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 110000;
+            item.value = PriceByRarity.Blue_1;
             item.width = 36;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {

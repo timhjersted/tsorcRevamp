@@ -16,13 +16,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useTime = 5;
             item.autoReuse = true;
             item.UseSound = SoundID.Item8;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Orange;
             item.knockBack = 3;
             item.mana = 10;
             item.damage = 40;
             item.autoReuse = true;
             item.noMelee = true;
-            item.value = 100000;
+            item.value = PriceByRarity.Orange_3;
             item.magic = true;
         }
 

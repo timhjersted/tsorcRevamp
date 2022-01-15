@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useAnimation = 25;
             item.UseSound = SoundID.Item5;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 18000;
+            item.value = PriceByRarity.Green_2;
         }
 
         public override void AddRecipes() {

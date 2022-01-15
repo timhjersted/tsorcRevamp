@@ -29,8 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.noMelee = true;
             item.noUseGraphic = true;
 
-            item.value = 57000000;
-            item.rare = ItemRarityID.LightPurple;
+            item.value = PriceByRarity.Red_10;
+            item.rare = ItemRarityID.Red;
             item.maxStack = 1;
             item.UseSound = SoundID.Item1;
             item.shoot = ModContent.ProjectileType<Projectiles.CelestialLance>();
