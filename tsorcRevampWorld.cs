@@ -235,7 +235,7 @@ namespace tsorcRevamp {
 
                         int style = 0;
                         ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
-                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        //reimplement WorldGen.Place2x2 minus SolidTile2 checking
                         if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5) {
                             return;
                         }
@@ -291,7 +291,7 @@ namespace tsorcRevamp {
 
                         int style = 0;
                         ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullR>();
-                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        //reimplement WorldGen.Place2x2 minus SolidTile2 checking
                         if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
                         {
                             return;
@@ -338,8 +338,171 @@ namespace tsorcRevamp {
                         }
                     }
 
+                    //Stucco blocks to SkellyLeft - GreyStucco-GreenStuccoBlock-GreyStuccoBlock
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.GreenStucco && Main.tile[x + 1, y].type == TileID.GrayStucco && Main.tile[x - 1, y].type == TileID.GrayStucco)
+                    {
 
-                } 
+                        //kill the space the skelly occupies, to remove vines and such
+                        for (int q = -1; q < 2; q++)
+                        {
+                            for (int w = 0; w < 1; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkellyL>();
+                        //reimplement WorldGen.Place3x1 minus SolidTile2
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
+                            return;
+                        }
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 2; i++)
+                        {
+                            if (Main.tile[i, y] == null)
+                            {
+                                Main.tile[i, y] = new Tile();
+                            }
+                            if (Main.tile[i, y].active())
+                            {
+                                flag = false;
+                            }
+                            if (Main.tile[i, y + 1] == null)
+                            {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag)
+                        {
+                            short num = (short)(54 * style);
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = 0;
+                            Main.tile[x - 1, y].frameX = num;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = 0;
+                            Main.tile[x, y].frameX = (short)(num + 18);
+                            Main.tile[x, y].type = type;
+                            Main.tile[x + 1, y].active(active: true);
+                            Main.tile[x + 1, y].frameY = 0;
+                            Main.tile[x + 1, y].frameX = (short)(num + 36);
+                            Main.tile[x + 1, y].type = type;
+                        }
+                    }
+
+                    //Stucco blocks to SkellyRight - GreenStucco-GreyStuccoBlock-GreenStuccoBlock
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.GrayStucco && Main.tile[x + 1, y].type == TileID.GreenStucco && Main.tile[x - 1, y].type == TileID.GreenStucco)
+                    {
+
+                        //kill the space the skelly occupies, to remove vines and such
+                        for (int q = -1; q < 2; q++)
+                        {
+                            for (int w = 0; w < 1; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkellyR>();
+                        //reimplement WorldGen.Place3x1 minus SolidTile2
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
+                            return;
+                        }
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 2; i++)
+                        {
+                            if (Main.tile[i, y] == null)
+                            {
+                                Main.tile[i, y] = new Tile();
+                            }
+                            if (Main.tile[i, y].active())
+                            {
+                                flag = false;
+                            }
+                            if (Main.tile[i, y + 1] == null)
+                            {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag)
+                        {
+                            short num = (short)(54 * style);
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = 0;
+                            Main.tile[x - 1, y].frameX = num;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = 0;
+                            Main.tile[x, y].frameX = (short)(num + 18);
+                            Main.tile[x, y].type = type;
+                            Main.tile[x + 1, y].active(active: true);
+                            Main.tile[x + 1, y].frameY = 0;
+                            Main.tile[x + 1, y].frameX = (short)(num + 36);
+                            Main.tile[x + 1, y].type = type;
+                        }
+                    }
+
+                    //Confetti blocks to SkellyHangingUp - Confetti Block
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Confetti)
+                    {
+
+                        //kill the space the skelly occupies, to remove vines and such
+                        for (int q = -1; q < 2; q++)
+                        {
+                            for (int w = -1; w < 2; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkellyR>();
+                        //reimplement WorldGen.Place3x3Wall minus SolidTile2
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
+                            return;
+                        }
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 2; i++)
+                        {
+                            if (Main.tile[i, y] == null)
+                            {
+                                Main.tile[i, y] = new Tile();
+                            }
+                            if (Main.tile[i, y].active())
+                            {
+                                flag = false;
+                            }
+                            if (Main.tile[i, y + 1] == null)
+                            {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag)
+                        {
+                            short num = (short)(54 * style);
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = 0;
+                            Main.tile[x - 1, y].frameX = num;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = 0;
+                            Main.tile[x, y].frameX = (short)(num + 18);
+                            Main.tile[x, y].type = type;
+                            Main.tile[x + 1, y].active(active: true);
+                            Main.tile[x + 1, y].frameY = 0;
+                            Main.tile[x + 1, y].frameX = (short)(num + 36);
+                            Main.tile[x + 1, y].type = type;
+                        }
+                    }
+
+
+
+                }
             }
             for (int i = 0; i < 400; i++) {
                 if (Main.item[i].type == ItemID.Campfire && Main.item[i].active) {
