@@ -125,14 +125,11 @@ namespace tsorcRevamp.Items {
                     }
 
 
-
-                    player.position.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpX * 16) - (float)((float)player.width / 2.0);
-                    player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpY * 16) - (float)player.height;
-                    player.gravDir = 1;
-                    player.velocity.X = 0f;
-                    player.velocity.Y = 0f;
+                    Vector2 destination;
+                    destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpX * 16) - (float)((float)player.width / 2.0);
+                    destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().warpY * 16) - (float)player.height;
+                    player.SafeTeleport(destination);
                     player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
-                    player.fallStart = (int)player.Center.Y;
 
                     for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (destination)
                         Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);

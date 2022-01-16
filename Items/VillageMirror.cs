@@ -135,21 +135,19 @@ namespace tsorcRevamp.Items {
                         }
                     }
 
+                    Vector2 destination;
                     if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {
-                        player.position.X = (float)(4182 * 16) - (float)((float)player.width / 2.0);
-                        player.position.Y = (float)(714 * 16) - (float)player.height;
+                        destination.X = (float)(4182 * 16) - (float)((float)player.width / 2.0);
+                        destination.Y = (float)(714 * 16) - (float)player.height;
                     }
                     else
                     {
-                        player.position.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
-                        player.position.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
+                        destination.X = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpX * 16) - (float)((float)player.width / 2.0);
+                        destination.Y = (float)(player.GetModPlayer<tsorcRevampPlayer>().townWarpY * 16) - (float)player.height;
                     }
-                    player.gravDir = 1;
-                    player.velocity.X = 0f;
-                    player.velocity.Y = 0f;
+                    player.SafeTeleport(destination);
                     player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
-                    player.fallStart = (int)player.Center.Y;
 
                     for (int dusts = 0; dusts < 70; dusts++)
                     { //dusts on tp (destination)

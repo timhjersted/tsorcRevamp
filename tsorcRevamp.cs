@@ -205,7 +205,7 @@ namespace tsorcRevamp {
                     if (Main.mouseLeft)
                     {
                         Main.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
-                        Main.LocalPlayer.position = bonfirePoint * 16;
+                        UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
                         Main.mapFullscreen = false;
                         Main.PlaySound(SoundID.Item20, bonfirePoint * 16);
                     }

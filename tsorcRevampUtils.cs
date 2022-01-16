@@ -479,5 +479,17 @@ namespace tsorcRevamp {
 
             return Math.Abs(c);
         }
+
+        /// <summary>
+        /// No more fall damage from teleports!
+        /// </summary>
+        public static void SafeTeleport(this Player player, Vector2 destination) {
+            player.position.X = destination.X;
+            player.position.Y = destination.Y;
+            player.gravDir = 1;
+            player.velocity.X = 0f;
+            player.velocity.Y = 0f;
+            player.fallStart = (int)player.Center.Y;
+        }
     }
 }
