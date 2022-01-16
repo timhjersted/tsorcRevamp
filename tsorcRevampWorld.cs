@@ -446,7 +446,7 @@ namespace tsorcRevamp {
                         }
                     }
 
-                    //Confetti blocks to SkellyHangingUp - Confetti Block
+                    //Confetti blocks to SkellyHangingUp (arms chained) - Confetti Block
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Confetti)
                     {
 
@@ -460,47 +460,99 @@ namespace tsorcRevamp {
                         }
 
                         int style = 0;
-                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkellyR>();
-                        //reimplement WorldGen.Place3x3Wall minus SolidTile2
-                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkellyWall1>();
+                        //reimplement WorldGen.Place3x3Wall
+                        int num = x - 1;
+                        int num2 = y - 1;
+                        bool flag = true;
+                        for (int i = num; i < num + 3; i++)
+                        {
+                            for (int j = num2; j < num2 + 3; j++)
+                            {
+                                if (Main.tile[i, j].active() || Main.tile[i, j].wall == 0)
+                                {
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!flag)
                         {
                             return;
                         }
-                        bool flag = true;
-                        for (int i = x - 1; i < x + 2; i++)
+                        int num3 = 0;
+                        while (style > 35)
                         {
-                            if (Main.tile[i, y] == null)
-                            {
-                                Main.tile[i, y] = new Tile();
-                            }
-                            if (Main.tile[i, y].active())
-                            {
-                                flag = false;
-                            }
-                            if (Main.tile[i, y + 1] == null)
-                            {
-                                Main.tile[i, y + 1] = new Tile();
-                            }
+                            num3++;
+                            style -= 36;
                         }
-                        if (flag)
+                        int num4 = style * 54;
+                        int num5 = num3 * 54;
+                        for (int k = num; k < num + 3; k++)
                         {
-                            short num = (short)(54 * style);
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = 0;
-                            Main.tile[x - 1, y].frameX = num;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = 0;
-                            Main.tile[x, y].frameX = (short)(num + 18);
-                            Main.tile[x, y].type = type;
-                            Main.tile[x + 1, y].active(active: true);
-                            Main.tile[x + 1, y].frameY = 0;
-                            Main.tile[x + 1, y].frameX = (short)(num + 36);
-                            Main.tile[x + 1, y].type = type;
+                            for (int l = num2; l < num2 + 3; l++)
+                            {
+                                Main.tile[k, l].active(active: true);
+                                Main.tile[k, l].type = type;
+                                Main.tile[k, l].frameX = (short)(num4 + 18 * (k - num));
+                                Main.tile[k, l].frameY = (short)(num5 + 18 * (l - num2));
+                            }
                         }
                     }
 
+                    //Confetti blocks to SkellyHangingUp (arms chained) - Confetti Black Block (aka Midnight Confetti Block)
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.ConfettiBlack)
+                    {
 
+                        //kill the space the skelly occupies, to remove vines and such
+                        for (int q = -1; q < 2; q++)
+                        {
+                            for (int w = -1; w < 2; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkellyWall2>();
+                        //reimplement WorldGen.Place3x3Wall
+                        int num = x - 1;
+                        int num2 = y - 1;
+                        bool flag = true;
+                        for (int i = num; i < num + 3; i++)
+                        {
+                            for (int j = num2; j < num2 + 3; j++)
+                            {
+                                if (Main.tile[i, j].active() || Main.tile[i, j].wall == 0)
+                                {
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!flag)
+                        {
+                            return;
+                        }
+                        int num3 = 0;
+                        while (style > 35)
+                        {
+                            num3++;
+                            style -= 36;
+                        }
+                        int num4 = style * 54;
+                        int num5 = num3 * 54;
+                        for (int k = num; k < num + 3; k++)
+                        {
+                            for (int l = num2; l < num2 + 3; l++)
+                            {
+                                Main.tile[k, l].active(active: true);
+                                Main.tile[k, l].type = type;
+                                Main.tile[k, l].frameX = (short)(num4 + 18 * (k - num));
+                                Main.tile[k, l].frameY = (short)(num5 + 18 * (l - num2));
+                            }
+                        }
+                    }
 
                 }
             }

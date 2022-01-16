@@ -45,16 +45,16 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList = new List<SoulSkellyGeocache>();
 
 
-            //SOUL SKELLYS - They are 3x1, so use 3, 1 in the rectangle
+            //SOUL SKELLYS - They are 3x1, so use 3, 1 in the rectangle. In TEdit, these are SlimeBlock-PinkSlimeBlock (facing left) and PinkSlimeBlock-SlimeBlock (facing right)
 
             //Test skelly placed in Earth Temple
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4221, 951, 3, 1), ModContent.ItemType<Items.Accessories.CosmicWatch>(), 1)); //int x and y of the rectangle are the top left tiles' x and y position
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4221, 951, 3, 1), ModContent.ItemType<Items.Accessories.CosmicWatch>(), 1)); //int x and y of the rectangle are the top left tiles' x and y position (in the skulls case, the top left air block above the slime blocks)
             //SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(0, 0, 3, 1), ModContent.ItemType<Items.Humanity>(), 1));
 
 
 
 
-            //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle
+            //SOUL SKULLS - They are 2x2, so use 2, 2 in the rectangle. In TEdit, these are GreyStucco-GreenStuccoBlock-GreyStuccoBlock (head on left) and GreenStucco-GreyStuccoBlock-GreenStuccoBlock (head on right)
 
             //Blank
             //SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(0, 0, 2, 2), ModContent.ItemType<Items.FadingSoul>(), 1));
@@ -62,7 +62,7 @@ namespace tsorcRevamp.Tiles
 
 
 
-            //HANGING SOUL SKELLYS - They are 3x3, so use 3, 3 in the rectangle
+            //HANGING SOUL SKELLYS - They are 3x3, so use 3, 3 in the rectangle. In TEdit, these are a ConfettiBlock (hanging from wrists) and BlackConfettiBlock, also called MidnightConfettiBlock (hanging from ankles)
 
             //Blank
             //SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(0, 0, 3, 3), ModContent.ItemType<Items.FadingSoul>(), 1));
