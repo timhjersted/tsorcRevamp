@@ -95,7 +95,7 @@ namespace tsorcRevamp {
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
 
-            LitBonfireList = MinimapBonfireUIState.GetActiveBonfires();
+            LitBonfireList = GetActiveBonfires();
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
@@ -349,7 +349,27 @@ namespace tsorcRevamp {
         }
 
         #endregion
+        public static List<Vector2> GetActiveBonfires()
+        {
+            List<Vector2> BonfireList = new List<Vector2>();
+            int bonfireType = ModContent.TileType<Tiles.BonfireCheckpoint>();
+            for (int i = 1; i < (Main.tile.GetUpperBound(0) - 1); i++)
+            {
+                for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j++)
+                {
+                    //Check if each tile is a bonfire, and has a bonfire tile to its right and below it, but none to its left and above it. Only the top left corner of each bonfire is valid for this.
+                    if ((Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType) && (Main.tile[i - 1, j] == null || !Main.tile[i - 1, j].active() || Main.tile[i - 1, j].type != bonfireType) && (Main.tile[i, j - 1] == null || !Main.tile[i, j - 1].active() || Main.tile[i, j - 1].type != bonfireType))
+                    {
+                        if (Main.tile[i, j].frameY / 74 != 0)
+                        {
+                            BonfireList.Add(new Vector2(i, j));
+                        }
+                    }
+                }
+            }
 
+            return BonfireList;
+        }
 
         Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
         Texture2D SHMSun2 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun2");

@@ -19,6 +19,7 @@ using ReLogic.Graphics;
 using System.Net;
 using System.Reflection;
 using System.ComponentModel;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp {
 
@@ -47,9 +48,6 @@ namespace tsorcRevamp {
         private UserInterface _estusFlaskUIState;
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
-        internal MinimapBonfireUIState MinimapBonfireUIState;
-        internal UserInterface MinimapBonfireInterface;
-
 
         public static FieldInfo AudioLockInfo;
         public static FieldInfo ActiveSoundInstancesInfo;
@@ -97,11 +95,6 @@ namespace tsorcRevamp {
             PotionBagUserInterface = new UserInterface();
             if (!Main.dedServ) PotionBagUserInterface.SetState(PotionUIState);
 
-            MinimapBonfireUIState = new MinimapBonfireUIState();
-            MinimapBonfireInterface = new UserInterface();
-            if (!Main.dedServ) MinimapBonfireInterface.SetState(MinimapBonfireUIState);
-
-
             ApplyMethodSwaps();
             ApplyILs();
             PopulateArrays();
@@ -135,6 +128,8 @@ namespace tsorcRevamp {
             UpdateCheck();
         }
 
+
+        Texture2D BonfireMinimapTexture;
         public override void PostDrawFullscreenMap(ref string mouseText) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 if (!NPC.downedMechBossAny || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()) || !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) {
@@ -147,6 +142,77 @@ namespace tsorcRevamp {
 
                     Main.spriteBatch.DrawString(Main.fontMouseText, NPCHide2, new Vector2(textPos + 2, (textPos * 2) + 2), Color.Black); //just draw the text twice!
                     Main.spriteBatch.DrawString(Main.fontMouseText, NPCHide2, new Vector2(textPos, textPos * 2), Color.White);
+                }
+            }
+
+
+            if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
+            {
+                DrawMinimapBonfires();
+            }
+        }
+
+        public void DrawMinimapBonfires()
+        {
+            if (BonfireMinimapTexture == null || BonfireMinimapTexture.IsDisposed)
+            {
+                BonfireMinimapTexture = ModContent.GetTexture("tsorcRevamp/UI/MinimapBonfire");
+            }
+
+            //Step 1: Convert mouse position on the minimap screen to position in-world
+            //Also convert these to vectors because it dramatically simplifies calculations. Why aren't they vectors to start with?
+            Vector2 scrCenter = new Vector2((Main.screenWidth / 2), (Main.screenHeight / 2));
+            Vector2 mouse = new Vector2(Main.mouseX, Main.mouseY);
+
+            mouse -= scrCenter;
+            mouse *= Main.UIScale;
+            mouse += scrCenter;            
+
+            Vector2 mapPos = Main.mapFullscreenPos * Main.mapFullscreenScale;
+            Vector2 scrOrigin = scrCenter - mapPos;
+
+            scrOrigin.X += 10 * Main.mapFullscreenScale;
+            scrOrigin.Y += 10 * Main.mapFullscreenScale;
+
+            Vector2 mouseTile = (mouse - scrOrigin) / Main.mapFullscreenScale;
+            mouseTile.X += 10;
+            mouseTile.Y += 10;
+
+            //Step 2: Convert world coordinates to minimap fucko-units for every bonfire as they get drawn
+            float mapScale = Main.mapFullscreenScale / Main.UIScale;
+            Vector2 scaledMapCoords = Main.mapFullscreenPos * mapScale * -1;
+            scaledMapCoords += scrCenter;
+            foreach (Vector2 bonfirePoint in tsorcRevampWorld.LitBonfireList)
+            {
+                Vector2 bonfireDrawCoords = bonfirePoint;
+                bonfireDrawCoords.X += 1.5f;
+                bonfireDrawCoords.Y += 1f;
+                bonfireDrawCoords *= mapScale;
+                bonfireDrawCoords += scaledMapCoords;
+
+                //Step 3: While drawing check if it's in-range of the cursor, and if so give it a rainbow backdrop
+                float hoverRange = 32 / Main.mapFullscreenScale;
+                if ((mouseTile - bonfirePoint).Length() <= hoverRange)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
+                        Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Main.DiscoColor, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
+                    }
+                    Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1f, SpriteEffects.None, 1);
+
+                    //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
+                    if (Main.mouseLeft)
+                    {
+                        Main.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
+                        Main.LocalPlayer.position = bonfirePoint * 16;
+                        Main.mapFullscreen = false;
+                        Main.PlaySound(SoundID.Item20, bonfirePoint * 16);
+                    }
+                }
+                else
+                {
+                    Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
                 }
             }
         }
@@ -236,22 +302,6 @@ namespace tsorcRevamp {
                         if (PotionBagUIState.Visible)
                         {
                             PotionBagUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-           int miniMapIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Map / Minimap"));
-            if(miniMapIndex != -1)
-            {
-                layers.Insert(miniMapIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Potion Bag UI",
-                    delegate {
-                        if (MinimapBonfireUIState.Visible)
-                        {
-                            MinimapBonfireInterface.Draw(Main.spriteBatch, new GameTime());
                         }
                         return true;
                     },
@@ -1838,7 +1888,7 @@ namespace tsorcRevamp {
         {
             PhasedMatterBlast,
             AntiGravityBlast,
-            EnemyPlamaOrb,
+            EnemyPlasmaOrb,
             ManaShield,
             CrazedOrb,
             MasterBuster,
@@ -1882,7 +1932,7 @@ namespace tsorcRevamp {
             {
                 {TransparentTextureType.PhasedMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast")},
                 {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
-                {TransparentTextureType.EnemyPlamaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
+                {TransparentTextureType.EnemyPlasmaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
                 {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
                 {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
                 {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")},

@@ -8,6 +8,7 @@ using System;
 using System.Net;
 using Newtonsoft.Json;
 using System.Threading;
+using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Items.Weapons {
 	public class DebugTome : ModItem {
@@ -41,23 +42,6 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 
-			for (float i = 0.1f; i < 19; i *= 1.01f)
-			{
-				Vector2 trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, (9.8f / 60), false, false);
-				if(trajectory != Vector2.Zero)
-				{
-					trajectory += player.velocity;
-					Projectile.NewProjectile(player.Center, trajectory, ModContent.ProjectileType<Projectiles.IdealArrow>(), damage, knockBack, Main.myPlayer);
-					i++; //Just to keep this from getting out of hand
-				}
-				trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, (9.8f / 60), true, false);
-				if (trajectory != Vector2.Zero)
-				{
-					trajectory += player.velocity;
-					Projectile.NewProjectile(player.Center, trajectory, ModContent.ProjectileType<Projectiles.IdealArrow>(), damage, knockBack, Main.myPlayer);
-					i++;
-				}
-			}
 			return false;
 		}
 
