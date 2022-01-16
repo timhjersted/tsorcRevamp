@@ -93,40 +93,48 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.DD2LightningBugT3, 0.3f);
             }
 
-            if (spawnInfo.player.ZoneUnderworldHeight && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.player.ZoneUnderworldHeight && !spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
-                //pool.Add(NPCID.SolarSpearman, 1f);
-                pool.Add(NPCID.SolarCrawltipedeHead, 0.2f); //.1 is 3%
-                //pool.Add(NPCID.SolarDrakomire, 0.2f);
+                pool.Add(NPCID.SolarCrawltipedeHead, 0.002f); //.1 is 3%
                 pool.Add(NPCID.SolarSroller, 0.5f); //.5 is 16%
-                pool.Add(NPCID.SolarCorite, 0.1f);
-                //pool.Add(NPCID.SolarSolenian, 1f);
+                pool.Add(NPCID.SolarCorite, 0.01f);
+                pool.Add(NPCID.SolarSpearman, 0.5f);
+                pool.Add(NPCID.SolarDrakomire, 0.5f);
+                pool.Add(NPCID.SolarSolenian, 1f);
             }
 
-            if (spawnInfo.spawnTileType == TileID.BoneBlock && spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.spawnTileType == TileID.BoneBlock  && tsorcRevampWorld.SuperHardMode)
             {
-                
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
-                
-            }
-
-            if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
-            //spawn tile is on one of the outer thirds of the map
-            {
-
-                //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
+                pool.Add(NPCID.NebulaHeadcrab, 0.5f); //.1 is 3%
+                pool.Add(NPCID.NebulaBeast, 1f); //.1 is 3%
+                pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
 
             }
+
+                //if(spawnInfo.spawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
+                //{
+                //
+                //}
+
+                if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
+                //spawn tile is on one of the outer thirds of the map
+                {
+
+                    //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
+
+                }
            
 
-            if (spawnInfo.player.ZoneUnderworldHeight && spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.player.ZoneUnderworldHeight && spawnInfo.spawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
+            // && spawnInfo.player.ZoneDungeon
             {
-                pool.Add(NPCID.SolarSpearman, 1f);
-                //pool.Add(NPCID.SolarCrawltipedeHead, 0.1f);
-                pool.Add(NPCID.SolarDrakomire, 0.2f);
-                //pool.Add(NPCID.SolarSroller, 0.5f);
-                //pool.Add(NPCID.SolarCorite, 0.1f);
-                pool.Add(NPCID.SolarSolenian, 2f);
+                pool.Add(NPCID.StardustWormHead, 0.4f); //.1 is 3%
+                pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
+                pool.Add(NPCID.StardustJellyfishBig, 0.3f);
+                pool.Add(NPCID.StardustSpiderBig, 0.6f);
+                pool.Add(NPCID.StardustSoldier, 1f);
+                
             }
         }
 

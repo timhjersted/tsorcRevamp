@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.timeLeft = 50;
 			projectile.friendly = false;
 			projectile.light = 0.8f;
-			projectile.penetrate = 2; //was 4, was causing curse buildup way too fast
+			projectile.penetrate = 3; //was 4, was causing curse buildup way too fast
 			projectile.tileCollide = true;
 			aiType = 96;
 			projectile.magic = true;
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		{
 			
 
-			if (Main.rand.Next(12) == 0)
+			if (Main.rand.Next(3) == 0) //was 12
 			{
 				//Vanilla Debuffs cut in half to counter expert mode doubling them
 				target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 36000, false);

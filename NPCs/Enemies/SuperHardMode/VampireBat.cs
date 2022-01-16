@@ -20,14 +20,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.aiStyle = 14;
             aiType = NPCID.CaveBat;
             npc.timeLeft = 750;
-            npc.damage = 88;
+            npc.damage = 98;
             npc.defense = 70;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath4;
-            npc.lifeMax = 2092;
+            npc.lifeMax = 1092;
             npc.scale = 1;
             npc.knockBackResist = 0.5f;
-            npc.value = 650;
+            npc.value = 1200;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
@@ -41,11 +41,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             Player p = spawnInfo.player;
             if (tsorcRevampWorld.SuperHardMode) {
-                if (p.ZoneDungeon) {
+                if (p.ZoneCorrupt || p.ZoneCrimson) {
                     return 0.125f;
                 }
                 else if (Underworld(p)) {
-                    return 0.0667f;
+                    return 0.0167f;
                 }
             }
             return 0;

@@ -234,7 +234,9 @@ namespace tsorcRevamp {
         //because of other code improving dungeon spawn detection
         
         //public override void TileCountsAvailable(int[] tileCounts) {
-        //    Main.dungeonTiles += tileCounts[TileID.BoneBlock];
+            //Main.dungeonTiles += tileCounts[TileID.BoneBlock];
+            //Main.dungeonTiles += tileCounts[TileID.MeteoriteBrick];
+            
         //}
 
         public override void PostUpdate() {

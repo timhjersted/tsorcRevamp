@@ -26,14 +26,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             npc.damage = 170;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
-            npc.lifeMax = 50000; //50k, down from 120k
+            npc.lifeMax = 20000; //20k, down from 120k
             npc.knockBackResist = 0;
             npc.lavaImmune = true;
             npc.scale = 1;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.behindTiles = true;
-            npc.value = 37500;
+            npc.value = 25500;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
 

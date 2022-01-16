@@ -26,8 +26,21 @@ namespace tsorcRevamp.Projectiles.Enemy
 			target.AddBuff(22, 600, false);
 		}
 
-        #region Kill
-        public override void Kill(int timeLeft)
+		public override bool PreKill(int timeLeft)
+		{
+			projectile.type = 0;
+			Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+			for (int i = 0; i < 10; i++)
+			{
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 1f); //6 is a flame dust
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 2f);
+				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 2f); 
+			}
+			return true;
+		}
+
+		#region Kill
+		public override void Kill(int timeLeft)
         {
 			if (!projectile.active)
 			{

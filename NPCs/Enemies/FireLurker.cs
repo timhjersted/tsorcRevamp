@@ -54,6 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.value = 650;
 				npc.damage = 60;
 				bioSpitDamage = 43;
+				npc.knockBackResist = 0.2f;
 			}
 
 			if (tsorcRevampWorld.SuperHardMode)
@@ -63,7 +64,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.value = 3650;
 				npc.damage = 95;
 				bioSpitDamage = 73;
-				
+				npc.knockBackResist = 0.1f;
+
 			}
 		}
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

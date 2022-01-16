@@ -778,10 +778,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.hardMode && spawnInfo.lihzahrd) return 0.18f;
 
-            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.23f;
+            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneUnderworldHeight)) return 0.23f;
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneOverworldHeight && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.25f;
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDesert) return 0.13f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.16f; //.08% is 4.28%
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneUnderworldHeight) return 0.16f; //.08% is 4.28%
 
             if (Main.expertMode && Main.bloodMoon && spawnInfo.player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
 

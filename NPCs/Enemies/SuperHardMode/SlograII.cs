@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -14,18 +15,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void SetDefaults()
         {
-            npc.npcSlots = 1;
+            npc.npcSlots = 3;
             Main.npcFrameCount[npc.type] = 16;
             npc.width = 38;
             npc.height = 32;
             animationType = 104;
             npc.aiStyle = 26;
-            npc.timeLeft = 750;
+            //npc.timeLeft = 750;
             npc.damage = 116;
-            npc.defense = 120;
+            npc.defense = 50;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-            npc.lifeMax = 18200;
+            npc.lifeMax = 6200; //was 18k
             npc.knockBackResist = 0.1f;
             npc.value = 6000;
             banner = npc.type;
@@ -54,9 +55,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int drownTimer = 2000;
         int drowningRisk = 1200;
         int boredTimer = 0;
-        int tBored = 1;//increasing this increases how long it take for the NP to get bored
+        int tBored = 50;//increasing this increases how long it take for the NP to get bored
         int boredResetT = 0;
-        int bReset = 50;//increasing this will increase how long an NPC "gives up" before coming back to try again.
+        int bReset = 100;//increasing this will increase how long an NPC "gives up" before coming back to try again.
 
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -77,19 +78,78 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             // these are all the regular stuff you get , now lets see......
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Jungle && AboveEarth && Main.rand.Next(20) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && AboveEarth && Main.rand.Next(50) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Jungle && InBrownLayer && Main.rand.Next(12) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InBrownLayer && Main.rand.Next(32) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Jungle && InGrayLayer && Main.rand.Next(10) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && InGrayLayer && Main.rand.Next(40) == 1) return 1;
 
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Jungle && Main.bloodMoon && Main.rand.Next(5) == 1) return 1;
+            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && !Dungeon && Jungle && Main.bloodMoon && Main.rand.Next(5) == 1) return 1;
 
 
             return 0;
         }
         #endregion
 
+
+        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        {
+            base.OnHitByItem(player, item, damage, .09f, crit);
+
+
+            //Insert whatever you want to happen on-hit here
+            if (npc.justHit)
+            {
+                customAi1 = 100f;
+                //npc.knockBackResist = 0.09f;
+
+                //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
+                if (Main.rand.Next(10) == 1)//was 12
+                {
+
+                    npc.TargetClosest(false);
+
+                    npc.velocity.Y = -8f;
+                    npc.velocity.X = -4f * npc.direction;
+
+                    //if (Main.rand.Next(1) == 1)
+                    //{ 
+                    customAi1 = 140f;
+                    //}
+
+                    npc.netUpdate = true;
+                }
+
+                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS && npc.velocity.Y >= 1f
+                else if (Main.rand.Next(8) == 1)//was 10
+                {
+
+                    //npc.TargetClosest(false);
+
+                    npc.velocity.Y = -4f;
+                    npc.velocity.X = -6f * npc.direction;
+
+                    //npc.direction *= -1;
+                    //npc.spriteDirection = npc.direction;
+                    //npc.ai[0] = 0f;
+                    //if (Main.rand.Next(2) == 1)
+                    //{
+                    customAi1 = 140f;
+                    //}
+
+                    //CHANCE TO JUMP AFTER DASH
+                    if (Main.rand.Next(4) == 1)
+                    {
+                        npc.TargetClosest(true);
+                        npc.velocity.Y = -7f;
+                        customAi1 = 140f;
+
+                    }
+
+                    npc.netUpdate = true;
+                }
+            }
+        }
 
         #region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
         public override void AI()  //  warrior ai
@@ -103,8 +163,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             //  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
             bool can_teleport = true;  //  tp around like chaos ele
-            int boredom_time = 20; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
-            int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
+            int boredom_time = 260; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
+            int boredom_cooldown = 20 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
             bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
             bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
@@ -117,9 +177,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
             double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-            float enrage_percentage = .5f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
-            float enrage_acceleration = .11f;  //  faster when enraged, usually 2*acceleration
-            float enrage_top_speed = 4.5f;  //  faster when enraged, usually 2*top_speed
+            float enrage_percentage = .1f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+            float enrage_acceleration = .09f;  //  faster when enraged, usually 2*acceleration
+            float enrage_top_speed = 4f;  //  faster when enraged, usually 2*top_speed
 
             bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
             bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
@@ -141,7 +201,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool breaks_doors = false; // meaningless unless can_pass_doors; if this is true the door breaks down instead of trying to open; Goblin Peon is only warrior to do this
 
             // Omnirs creature sorts
-            bool tooBig = true; // force bigger creatures to jump
+            bool tooBig = false; // force bigger creatures to jump
             bool lavaJumping = true; // Enemies jump on lava.
             bool canDrown = false; // They will drown if in the water for too long
             bool quickBored = false; //Enemy will respond to boredom much faster(? -- test)
@@ -419,7 +479,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     //customAi5 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
                     if (customspawn1 == 0)
                     {
-                        if ((customspawn1 < 4) && Main.rand.Next(450) == 1)
+                        if ((customspawn1 < 4) && Main.rand.Next(550) == 1)
                         {
                             int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.VampireBat>(), 0);
                             Main.npc[Spawned].velocity.Y = -8;
@@ -434,14 +494,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     }
 
-                    if (breakCombo == true || (enraged == true && Main.rand.Next(200) == 1))
+                    if (breakCombo == true || (enraged == true && Main.rand.Next(400) == 1))
                     {
                         chargeDamageFlag = true;
                         //npc.dontTakeDamage = true;
                         Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                        npc.velocity.X = (float)(Math.Cos(rotation) * 13) * -1; //12 was 10
-                        npc.velocity.Y = (float)(Math.Sin(rotation) * 13) * -1;
+                        npc.velocity.X = (float)(Math.Cos(rotation) * 10) * -1; //12 was 10
+                        npc.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
                         npc.knockBackResist = 0f;
                         breakCombo = false;
                         //npc.ai[1] = 1f;
@@ -474,15 +534,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //if (npc.justHit)
                 //	npc.ai[2] = 0f; // reset throw countdown when hit
                 #region Projectiles
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-                if (customAi1 >= 10f)
+                customAi1++; ;
+
+                if (customAi1 >= 110f)
                 {
                     npc.TargetClosest(true);
                     if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
                     {
-                        if (Main.rand.Next(200) == 1)
+                        if (customAi1 >= 150f)
                         {
-                            float num48 = 10f;
+                            float num48 = 11f;
                             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                             float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                             float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -671,7 +732,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
                 int x_blockpos = (int)npc.position.X / 16; // corner not center
                 int y_blockpos = (int)npc.position.Y / 16; // corner not center
-                int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
+                int tp_radius = 24; // radius around target(upper left corner) in blocks to teleport into
                 int tp_counter = 0;
                 bool flag7 = false;
                 if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
@@ -689,8 +750,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
                     for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                     { // (tp_x_target,m) is block under its feet I think
-                        if ((m < target_y_blockpos - 12 || m > target_y_blockpos + 12 || tp_x_target < target_x_blockpos - 12 || tp_x_target > target_x_blockpos + 12) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
-                        { // over 12 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                        if ((m < target_y_blockpos - 0 || m > target_y_blockpos + 0 || tp_x_target < target_x_blockpos - 20 || tp_x_target > target_x_blockpos + 20) && (m < y_blockpos - 10 || m > y_blockpos + 10 || tp_x_target < x_blockpos - 10 || tp_x_target > x_blockpos + 10) && Main.tile[tp_x_target, m].active())
+                        { // THIS IS WHERE DISTANCE FROM PLAYER IS DECIDED - over 20 blocks distant from player & over 10 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                             bool safe_to_stand = true;
                             bool dark_caster = false; // not a fighter type AI...
                             if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
@@ -843,5 +904,32 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
         }
         #endregion
+
+        #region Draw Spear
+        static Texture2D spearTexture;
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (spearTexture == null)
+            {
+                spearTexture = mod.GetTexture("Projectiles/Enemy/EarthTrident");
+            }
+            if (customAi1 >= 110)
+            {
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                Main.dust[dust].noGravity = true;
+
+                SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                if (npc.spriteDirection == -1)
+                {
+                    spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing left (8, 38 work)
+                }
+                else
+                {
+                    spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), npc.scale, effects, 0); // facing right, first value is height, higher number is higher
+                }
+            }
+        }
+        #endregion
+
     }
 }

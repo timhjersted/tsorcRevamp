@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.noTileCollide = true;
 			npc.lavaImmune = true;
 			npc.noGravity = true;
-			npc.knockBackResist = 0.6f;
+			npc.knockBackResist = 0f;
 			npc.alpha = 70; // was 100
 			npc.value = 500;
 			banner = npc.type;

@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public int redKnightsSpearDamage = 70;
-        public int redMagicDamage = 35;
+        public int redMagicDamage = 40;
 
         public override void SetDefaults()
         {
@@ -34,6 +34,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.value = 15110;
             npc.knockBackResist = 0.06f;
             npc.buffImmune[BuffID.Confused] = true;
+            npc.lavaImmune = true;
             npc.buffImmune[BuffID.OnFire] = true;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();

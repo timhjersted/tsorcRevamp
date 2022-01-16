@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.height = 6;
 			projectile.timeLeft = 3600;
 			projectile.hostile = true;
-			projectile.penetrate = 3;
+			projectile.penetrate = 1; //was 3
 			projectile.ignoreWater = true;
 			projectile.tileCollide = true;
 			
@@ -102,7 +102,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
-			target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits
+			if (Main.rand.Next(6) == 0)
+			{
+				target.AddBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>(), 18000, false); //may lose -100 max HP after taking enough hits. It had 100% trigger before. I think that was the problem.
+			}
 			if (Main.expertMode)
 			{
 				target.AddBuff(BuffID.Frozen, 10, false);

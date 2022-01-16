@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
 			npc.lifeMax = 6000; //was 35k
-			npc.scale = 1.1f;
-			npc.knockBackResist = 0.6f;
+			npc.scale = 1f;
+			npc.knockBackResist = 0f;
 			npc.noGravity = true;
 			npc.noTileCollide = false;
 			npc.value = 18750;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			//if (Meteor && tsorcRevampWorld.SuperHardMode && Main.rand.Next(30)==1) return true;
 			if (Meteor && tsorcRevampWorld.SuperHardMode && AboveEarth && Main.rand.Next(8) == 1) return 1;
-			if (Meteor && tsorcRevampWorld.SuperHardMode && !AboveEarth && Main.rand.Next(16) == 1) return 1;
+			if (Meteor && !InHell && tsorcRevampWorld.SuperHardMode && !AboveEarth && Main.rand.Next(16) == 1) return 1;
 			if (Meteor && tsorcRevampWorld.SuperHardMode && !Main.dayTime && AboveEarth && Main.rand.Next(6) == 1) return 1;
 			if (Meteor && tsorcRevampWorld.SuperHardMode && Main.bloodMoon && AboveEarth && Main.rand.Next(3) == 1) return 1;
 			if (Sky && !SevenToNine && tsorcRevampWorld.SuperHardMode && Main.dayTime && Main.rand.Next(30) == 1) return 1;
@@ -160,10 +160,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 				}
 			}
-			//if (npc.justHit)
-			//{
-			//   npc.ai[2] = 0f;
-			//}
+			//IF HIT, SOMETIMES GET INTERRUPTED 
+			if (npc.justHit && Main.rand.Next(2) == 1)
+			{
+			   npc.ai[2] = 0f;
+			}
 			if (npc.ai[2] >= 0f)
 			{
 				int num258 = 16;

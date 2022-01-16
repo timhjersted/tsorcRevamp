@@ -933,23 +933,6 @@ namespace tsorcRevamp.NPCs.Bosses
 			}
 		}
 		#region Gore
-
-		#region Debuffs
-		public override void OnHitPlayer(Player player, int damage, bool crit)
-		{
-			
-			player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 18000, false); // loss of flight mobility moohahaha
-
-			
-			if (Main.rand.Next(4) == 0)
-			{
-				player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 1800, false);
-				player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
-				
-			}
-		}
-		#endregion
-	
 		public override void NPCLoot()
 		{
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 1"), 1f);
@@ -975,6 +958,22 @@ namespace tsorcRevamp.NPCs.Bosses
 			{ //If the boss has not yet been killed
 				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 2000); //Then drop the souls
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>());
+
+			}
+		}
+		#endregion
+
+		#region Debuffs
+		public override void OnHitPlayer(Player player, int damage, bool crit)
+		{
+
+			player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 18000, false); // loss of flight mobility moohahaha
+
+
+			if (Main.rand.Next(4) == 0)
+			{
+				player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 1800, false);
+				player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
 
 			}
 		}
