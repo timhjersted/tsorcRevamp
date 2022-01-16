@@ -446,7 +446,7 @@ namespace tsorcRevamp {
                         }
                     }
 
-                    //Confetti blocks to SkellyHangingUp (arms chained) - Confetti Block
+                    //Confetti blocks to SkellyHangingUp (wrists chained) - Confetti Block
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Confetti)
                     {
 
@@ -500,7 +500,7 @@ namespace tsorcRevamp {
                         }
                     }
 
-                    //Confetti blocks to SkellyHangingUp (arms chained) - Confetti Black Block (aka Midnight Confetti Block)
+                    //Confetti blocks to SkellyHangingDown (ankles chained) - Confetti Black Block (aka Midnight Confetti Block)
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.ConfettiBlack)
                     {
 

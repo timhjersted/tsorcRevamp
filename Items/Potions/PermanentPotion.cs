@@ -361,9 +361,20 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void UpdateInventory(Player player) {
-            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10]) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[10] && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
                 Lighting.AddLight((int)(player.Center.X / 16), (int)(player.Center.Y / 16), 0.8f, 0.95f, 1f);
                 player.buffImmune[BuffID.Shine] = true;
+            }
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+            Player player = Main.LocalPlayer;
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
+                //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
+                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+                if (ttindex != -1) {// if we find one
+                    //insert the extra tooltip line
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", "Has no effect on the [c/6d8827:Bearer of the Curse]"));
+                }
             }
         }
     }

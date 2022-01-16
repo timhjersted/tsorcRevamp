@@ -63,6 +63,7 @@ namespace tsorcRevamp.Items.Potions
             {
                 player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
                 player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 90);
+                player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 90);
             }
 
             if (player.itemTime < (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)

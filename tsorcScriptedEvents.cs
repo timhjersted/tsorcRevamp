@@ -180,7 +180,7 @@ namespace tsorcRevamp
             RedKnightTwinMountain.SetCustomStats(1600, 10, 60, 2055);
 
             //JUNGLE WYVERN
-            ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1472), 10, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
+            ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1713), 16, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
 
             //SEATH THE SCALELESS
             ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.FireworkFountain_Blue, true, true, "Seath the Scaleless rises!", Color.Blue, false);

@@ -19,9 +19,10 @@ namespace tsorcRevamp.Items
                                "\nYou deal +20% damage, receive +20% more souls and your stamina recovers much faster" +
                                "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
                                "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
+                               "\nShine potions have no effect, you'll have to make use of other sources of light" +
                                "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
                                "\ntake you to the village. Additionally, instant-heal items won't heal you" +
-                               "\nSeek out the Emerald Herald, perhaps she has something for you..." +
+                               "\nSeek out the Emerald Herald, perhaps she has a gift for you..." +
                                "\n[c/ca1e00:Currently toggleable and non-consumable]" +
                                "\n[c/ca1e00:Experimental mode in alpha]" +
                                "\nIf you find any bugs please report on our [c/7e61ab:Discord] server");

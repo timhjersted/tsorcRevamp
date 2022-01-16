@@ -217,6 +217,8 @@ namespace tsorcRevamp {
                 {
                     estusPlayer.isDrinking = true;
                     estusPlayer.estusDrinkTimer = 0;
+                    player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 120);
+                    player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 120);
                 }
                 return;
             }

@@ -82,7 +82,10 @@ namespace tsorcRevamp.Items.VanillaItems {
                 SimpleGlobalModTooltip(mod, tooltips, "Doesn't heal the [c/6d8827:Bearer of the Curse]");
             }
 
-
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer)
+            {
+                SimpleModTooltip(mod, item, tooltips, ItemID.ShinePotion,"Has no effect on the [c/6d8827:Bearer of the Curse]");
+            }
 
         }
     }
