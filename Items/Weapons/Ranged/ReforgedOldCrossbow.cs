@@ -15,13 +15,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.crit = 16;
             item.useAnimation = 45;
             item.useTime = 45;
-            item.rare = ItemRarityID.White;
+            item.rare = ItemRarityID.Blue;
             item.UseSound = SoundID.Item5;
             item.useAmmo = mod.ItemType("Bolt");
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 10;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 9000;
+            item.value = PriceByRarity.Blue_1;
             item.noMelee = true;
         }
         public override void AddRecipes() {

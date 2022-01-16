@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -21,8 +19,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.shoot = ModContent.ProjectileType<Projectiles.Limit>();
             item.useAnimation = 40;
             item.useTime = item.useAnimation / 4;
-            item.shootSpeed = 0f;
-            item.damage = 150;
+            item.shootSpeed = 0.08f;
+            item.damage = 151;
             item.knockBack = 6.5f;
             item.value = Item.sellPrice(0, 20);
             item.crit = 10;
@@ -34,11 +32,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Vector2 mousePos = Main.MouseWorld;
             Vector2 playerToMouse = mousePos - player.Center;
 
-            if (playerToMouse.Length() > 75f) {
-                playerToMouse *= 75f / playerToMouse.Length();
+            if (playerToMouse.Length() > 60f) {
+                playerToMouse *= 60f / playerToMouse.Length();
                 mousePos = player.Center + playerToMouse;
             }
-            Projectile.NewProjectile(mousePos, new Vector2(18,  0), ModContent.ProjectileType<Projectiles.Limit>(), item.damage, item.knockBack, item.owner);
+            Projectile.NewProjectile(mousePos, new Vector2(speedX, speedY), ModContent.ProjectileType<Projectiles.Limit>(), item.damage, item.knockBack, item.owner);
             return false;
         }
     }

@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.knockBack = 0f;
             item.autoReuse = true;
             item.maxStack = 1;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Blue;
             item.shootSpeed = 6f;
             item.magic = true;
             item.noMelee = true;
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = LegacyMode ? 15 : 27;
-            item.value = 140;
+            item.value = PriceByRarity.Blue_1;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt1Ball>();
         }

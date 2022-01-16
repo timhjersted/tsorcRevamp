@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = LegacyMode ? 10 : 19;
-            item.value = 200000;
+            item.value = PriceByRarity.Green_2;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice1Ball>();
         }

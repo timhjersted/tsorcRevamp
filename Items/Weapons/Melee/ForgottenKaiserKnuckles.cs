@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void SetDefaults() {
             item.autoReuse = true;
             item.useTurn = true;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Green;
             item.damage = 17;
             item.height = 23;
             item.useStyle = ItemUseStyleID.SwingThrow;
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useAnimation = 8;
             item.useTime = 8;
             item.UseSound = SoundID.Item1;
-            item.value = 50000;
+            item.value = PriceByRarity.Green_2;
             item.width = 21;
         }
     }

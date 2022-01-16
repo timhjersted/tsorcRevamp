@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 15;
-            item.value = 6000000;
+            item.value = PriceByRarity.Pink_5;
             item.width = 42;
         }
 

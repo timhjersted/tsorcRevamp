@@ -22,14 +22,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.maxStack = 1;
             item.noMelee = true;
             item.autoReuse = true;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Red;
             item.useAmmo = mod.ItemType("TeslaBolt");
             item.shootSpeed = 30;
             item.useAnimation = 60;
             item.useTime = 60;
             item.UseSound = SoundID.Item12;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 450000;
+            item.value = PriceByRarity.Red_10;
         }
 
         public override void AddRecipes() {

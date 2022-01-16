@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 28;
-            item.value = 69000;
+            item.value = PriceByRarity.LightRed_4;
         }
         public override bool AltFunctionUse(Player player)
         {

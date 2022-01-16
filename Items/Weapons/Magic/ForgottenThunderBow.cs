@@ -16,14 +16,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.autoReuse = true;
             item.noMelee = true;
             item.magic = true;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Red;
             item.mana = 100;
             item.shootSpeed = 33;
             item.useAnimation = 40;
             item.UseSound = SoundID.Item5;
             item.useTime = 40;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 35000000;
+            item.value = PriceByRarity.Red_10;
             item.width = 16;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }

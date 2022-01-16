@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.width = 28;
             item.height = 30;
             item.maxStack = 1;
-            item.rare = ItemRarityID.Yellow;
+            item.rare = ItemRarityID.Cyan;
             item.magic = true;
             item.noMelee = true;
             item.mana = 150;
@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 20;
             item.useAnimation = 20;
-            item.value = 5000000;
+            item.value = PriceByRarity.Cyan_9;
         }
 
         public override void AddRecipes() {

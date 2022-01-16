@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.damage = 49;
             item.knockBack = 8;
             item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.LightPurple;
             item.shootSpeed = 13;
             item.noUseGraphic = true;
             item.noMelee = true;
-            item.value = 205000;
+            item.value = PriceByRarity.LightPurple_6;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.BerserkerSphere>();
         }

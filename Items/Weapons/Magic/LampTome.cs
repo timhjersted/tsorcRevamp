@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void SetDefaults() {
             item.height = 10;
             item.knockBack = 4;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Orange; //yes, even though it's hardmode
             item.magic = true;
             item.noMelee = true;
             item.mana = 5;
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 10;
             item.useAnimation = 10;
-            item.value = 10000;
+            item.value = PriceByRarity.Orange_3;
             item.width = 34;
         }
 

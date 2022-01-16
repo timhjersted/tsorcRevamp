@@ -503,10 +503,10 @@ namespace tsorcRevamp.NPCs
                 }
                 npc.lifeRegen = -8;
 
-                int dust = Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
+                int dust = Dust.NewDust(npc.position, npc.width, npc.height, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust].noGravity = true;
 
-                int dust2 = Dust.NewDust(npc.position, npc.width / 2, npc.height / 2, DustID.FireworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
+                int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.FireworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust2].noGravity = true;                
             }
 

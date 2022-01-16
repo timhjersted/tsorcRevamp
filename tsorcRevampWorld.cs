@@ -95,7 +95,7 @@ namespace tsorcRevamp {
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
 
-            LitBonfireList = MinimapBonfireUIState.GetActiveBonfires();
+            LitBonfireList = GetActiveBonfires();
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
@@ -156,10 +156,15 @@ namespace tsorcRevamp {
             return Main.keyState.IsKeyDown(key) && !Main.oldKeyState.IsKeyDown(key);
         }
 
+
+        #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
+
         public static void CampfireToBonfire() {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             for (int x = 0; x < Main.maxTilesX - 2; x++) {
                 for (int y = 0; y < Main.maxTilesY - 2; y++) {
+
+                    //Campfire to Bonfire
                     if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
 
                         //kill the space above the campfire, to remove vines and such
@@ -213,6 +218,127 @@ namespace tsorcRevamp {
 
                         }
                     }
+
+                    //Slime blocks to SkullLeft - SlimeBlock-PinkSlimeBlock (I tried to stick right and lefts together but the code refuses to work for both, I swear I'm not just being dumb) 
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.PinkSlimeBlock && Main.tile[x - 1, y].type == TileID.SlimeBlock) 
+                    {
+
+                        //kill the space the skull occupies, to remove vines and such
+                        for (int q = -1; q < 1; q++)
+                        {
+                            for (int w = -1; w < 1; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+                        //WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
+                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5) {
+                            return;
+                        }
+                        short num = 0;
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 1; i++) {
+                            for (int j = y - 1; j < y + 1; j++) {
+                                if (Main.tile[i, j] == null) {
+                                    Main.tile[i, j] = new Tile();
+                                }
+                                if (Main.tile[i, j].active()) {
+                                    flag = false;
+                                }
+                            }
+                            if (Main.tile[i, y + 1] == null) {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag) {
+                            short num2 = (short)(36 * style);
+                            Main.tile[x - 1, y - 1].active(active: true);
+                            Main.tile[x - 1, y - 1].frameY = num;
+                            Main.tile[x - 1, y - 1].frameX = num2;
+                            Main.tile[x - 1, y - 1].type = type;
+                            Main.tile[x, y - 1].active(active: true);
+                            Main.tile[x, y - 1].frameY = num;
+                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
+                            Main.tile[x, y - 1].type = type;
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = (short)(num + 18);
+                            Main.tile[x - 1, y].frameX = num2;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = (short)(num + 18);
+                            Main.tile[x, y].frameX = (short)(num2 + 18);
+                            Main.tile[x, y].type = type;
+                        }
+                    }
+
+                    //Slime block to SkullRight - PinkSlimeBlock-SlimeBlock
+                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.SlimeBlock && Main.tile[x - 1, y].type == TileID.PinkSlimeBlock)
+                    {
+
+                        //kill the space the skull occupies, to remove vines and such
+                        for (int q = -1; q < 1; q++)
+                        {
+                            for (int w = -1; w < 1; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
+                            }
+                        }
+                        //WorldGen.Place3x4(x + 1, y + 1, (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>(), 0);
+
+                        int style = 0;
+                        ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullR>();
+                        //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
+                            return;
+                        }
+                        short num = 0;
+                        bool flag = true;
+                        for (int i = x - 1; i < x + 1; i++)
+                        {
+                            for (int j = y - 1; j < y + 1; j++)
+                            {
+                                if (Main.tile[i, j] == null)
+                                {
+                                    Main.tile[i, j] = new Tile();
+                                }
+                                if (Main.tile[i, j].active())
+                                {
+                                    flag = false;
+                                }
+                            }
+                            if (Main.tile[i, y + 1] == null)
+                            {
+                                Main.tile[i, y + 1] = new Tile();
+                            }
+                        }
+                        if (flag)
+                        {
+                            short num2 = (short)(36 * style);
+                            Main.tile[x - 1, y - 1].active(active: true);
+                            Main.tile[x - 1, y - 1].frameY = num;
+                            Main.tile[x - 1, y - 1].frameX = num2;
+                            Main.tile[x - 1, y - 1].type = type;
+                            Main.tile[x, y - 1].active(active: true);
+                            Main.tile[x, y - 1].frameY = num;
+                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
+                            Main.tile[x, y - 1].type = type;
+                            Main.tile[x - 1, y].active(active: true);
+                            Main.tile[x - 1, y].frameY = (short)(num + 18);
+                            Main.tile[x - 1, y].frameX = num2;
+                            Main.tile[x - 1, y].type = type;
+                            Main.tile[x, y].active(active: true);
+                            Main.tile[x, y].frameY = (short)(num + 18);
+                            Main.tile[x, y].frameX = (short)(num2 + 18);
+                            Main.tile[x, y].type = type;
+                        }
+                    }
+
+
                 } 
             }
             for (int i = 0; i < 400; i++) {
@@ -221,6 +347,30 @@ namespace tsorcRevamp {
                 }
             }
         }
+
+        #endregion
+        public static List<Vector2> GetActiveBonfires()
+        {
+            List<Vector2> BonfireList = new List<Vector2>();
+            int bonfireType = ModContent.TileType<Tiles.BonfireCheckpoint>();
+            for (int i = 1; i < (Main.tile.GetUpperBound(0) - 1); i++)
+            {
+                for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j++)
+                {
+                    //Check if each tile is a bonfire, and has a bonfire tile to its right and below it, but none to its left and above it. Only the top left corner of each bonfire is valid for this.
+                    if ((Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType) && (Main.tile[i - 1, j] == null || !Main.tile[i - 1, j].active() || Main.tile[i - 1, j].type != bonfireType) && (Main.tile[i, j - 1] == null || !Main.tile[i, j - 1].active() || Main.tile[i, j - 1].type != bonfireType))
+                    {
+                        if (Main.tile[i, j].frameY / 74 != 0)
+                        {
+                            BonfireList.Add(new Vector2(i, j));
+                        }
+                    }
+                }
+            }
+
+            return BonfireList;
+        }
+
         Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
         Texture2D SHMSun2 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun2");
         Texture2D SHMSun3 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");

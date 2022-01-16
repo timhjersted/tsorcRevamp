@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.shootSpeed = 13;
             item.noUseGraphic = true;
             item.noMelee = true;
-            item.value = 50000;
+            item.value = PriceByRarity.LightRed_4;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.MoonfuryBall>();
         }

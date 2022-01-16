@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nDoes 8x damage to werewolves.");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.LightRed;
             item.damage = 32;
             item.height = 42;
             item.knockBack = 9;
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useTurn = true;
             item.useTime = 21;
             item.useAnimation = 21;
-            item.value = 100000;
+            item.value = PriceByRarity.LightRed_4;
             item.width = 42;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.UseSound = SoundID.Item1;
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddRecipe();
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
-            if (target.type == NPCID.Werewolf) damage *= 8;
+            if (target.type == NPCID.Werewolf) damage *= 16;
         }
     }
 }

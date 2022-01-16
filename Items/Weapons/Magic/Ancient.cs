@@ -26,12 +26,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.scale = (float)1;
             item.UseSound = SoundID.Item34;
             //item.projectile=Sandstorm;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Red;
             item.shootSpeed = (float)10;
             item.crit = 2;
             item.mana = 14;
             item.noMelee = true;
-            item.value = 184000;
+            item.value = PriceByRarity.Red_10;
             item.magic = true;
         }
 

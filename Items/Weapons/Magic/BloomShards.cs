@@ -23,13 +23,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.autoReuse = true;
             item.scale = (float)1;
             item.UseSound = SoundID.Item34;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Cyan;
             item.shoot = ProjectileID.PurificationPowder;
             item.shootSpeed = 11f;
             item.mana = 5;
             item.noMelee = true;
             item.magic = true;
-            item.value = 20000;
+            item.value = PriceByRarity.Cyan_9;
         }
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {

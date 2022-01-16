@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.useTurn = true;
             item.scale = 1.4f;
             item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Pink;
-            item.value = 150000;
+            item.rare = ItemRarityID.LightRed;
+            item.value = PriceByRarity.LightRed_4;
             item.melee = true;
         }
 

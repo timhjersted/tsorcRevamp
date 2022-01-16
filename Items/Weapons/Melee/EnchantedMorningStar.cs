@@ -20,11 +20,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.damage = 33;
             item.knockBack = 6f;
             item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Green;
             item.shootSpeed = 12;
             item.noUseGraphic = true;
             item.noMelee = true;
-            item.value = 160000;
+            item.value = PriceByRarity.Green_2;
             item.melee = true;
             item.shoot = ModContent.ProjectileType<Projectiles.EnchantedMorningStar>();
         }

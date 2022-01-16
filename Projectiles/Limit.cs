@@ -1,17 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles {
     class Limit : ModProjectile {
-		int flip;
-		int direction;
 
 		public override string Texture => "tsorcRevamp/Items/Weapons/Melee/Limit";
 		public override void SetDefaults() {
-			projectile.width = 43;
-			projectile.height = 43;
+			projectile.width = 58;
+			projectile.height = 58;
 			projectile.friendly = true;
 			projectile.melee = true;
 			projectile.tileCollide = false;
@@ -21,32 +16,21 @@ namespace tsorcRevamp.Projectiles {
 			projectile.localNPCHitCooldown = 8; //this thing is way stronger than it looks
 			projectile.penetrate = -1;
 			projectile.timeLeft = 90;
+			projectile.light = 0.6f;
 		}
-        
         public override void AI() {
-			if (projectile.ai[0] < 1) {
-				flip = Main.rand.Next(2);
-				direction = (flip == 0 ? 1 : -1); //choose a rotation direction when the projectile is spawned
-            }
+			int toEdge = projectile.height / 4;
 			projectile.ai[0]++;
-			projectile.rotation -= 0.225f * direction;
-			if (projectile.ai[0] < 45) {
-				projectile.velocity = Vector2.Zero;
+			projectile.rotation -= 0.225f * projectile.direction;
+			if (projectile.ai[0] == 45) {
+				projectile.velocity *= 20;
 			}
-
-			else if (projectile.ai[1] == 0) {
-				Vector2 speed;
-				speed.X = (Main.mouseX + Main.screenPosition.X) - (projectile.position.X + projectile.width * 0.5f);
-				speed.Y = (Main.mouseY + Main.screenPosition.Y) - (projectile.position.Y + projectile.height * 0.5f);
-				speed.Normalize();
-				speed *= 5f;
-				projectile.velocity = speed;
-				projectile.ai[1] = 1;
+			if (projectile.ai[0] > 60) {
+				projectile.alpha += 25;	
 			}
-			if (projectile.ai[0] > 75) {
-				projectile.alpha += 17;
-				
-			}
+			if (projectile.alpha > 250) {
+				projectile.Kill();
+            }
 		}
     }
 }

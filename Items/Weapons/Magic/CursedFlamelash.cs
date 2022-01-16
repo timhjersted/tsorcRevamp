@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.crit = 4;
             item.mana = 17;
             item.noMelee = true;
-            item.value = 250000;
+            item.value = PriceByRarity.LightRed_4;
             item.magic = true;
             item.shoot = ModContent.ProjectileType<Projectiles.CursedFlamelash>();
         }

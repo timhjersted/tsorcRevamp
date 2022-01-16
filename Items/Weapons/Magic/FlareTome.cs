@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.damage = 100;
             item.height = 10;
             item.knockBack = 4;
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.Red;
             item.shootSpeed = 18;
             item.magic = true;
             item.noMelee = true;
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 10;
             item.useAnimation = 10;
-            item.value = 50000000;
+            item.value = PriceByRarity.Red_10;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.GreatFireballBall>();
             item.autoReuse = true;

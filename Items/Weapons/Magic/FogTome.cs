@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.width = 28;
             item.height = 30;
             item.maxStack = 1;
-            item.rare = ItemRarityID.Green;
+            item.rare = ItemRarityID.Blue;
             item.magic = true;
             item.noMelee = true;
             item.mana = 20;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 20;
             item.useAnimation = 20;
-            item.value = 1400;
+            item.value = PriceByRarity.Blue_1;
 
         }
 

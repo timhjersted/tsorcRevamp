@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 60;
-            item.value = 100000;
+            item.value = PriceByRarity.Orange_3;
             item.width = 20;
             item.shoot = ModContent.ProjectileType<Projectiles.PoisonBombBall>();
         }

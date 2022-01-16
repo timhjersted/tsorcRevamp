@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                                 "\nreturn them if the wielder's throw misses the one for whom it was intended.");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Pink;
+            item.rare = ItemRarityID.LightRed;
             item.width = 20;
             item.height = 20;
             item.useStyle = ItemUseStyleID.SwingThrow;
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.UseSound = SoundID.Item1;
             item.noMelee = true;
             item.ranged = true;
-            item.value = 200000;
+            item.value = PriceByRarity.LightRed_4;
             item.noUseGraphic = true;
             item.shoot = ProjectileID.PurificationPowder;
         }

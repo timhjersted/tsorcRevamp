@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             DisplayName.SetDefault("Witchking's Sword");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
+            item.rare = ItemRarityID.Red;
             item.damage = 107;
             item.height = 32;
             item.autoReuse = true;
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.useTime = 15;
-            item.value = 1000000;
+            item.value = PriceByRarity.Red_10;
             item.width = 40;
         }
 

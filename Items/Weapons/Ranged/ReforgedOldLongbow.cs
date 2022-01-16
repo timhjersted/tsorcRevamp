@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.knockBack = 4f;
             item.maxStack = 1;
             item.noMelee = true;
-            item.rare = ItemRarityID.White;
+            item.rare = ItemRarityID.Blue;
             item.scale = 0.9f;
             item.shoot = AmmoID.Arrow;
             item.shootSpeed = 13f;
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useTime = 25;
             item.UseSound = SoundID.Item5;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = 50000;
+            item.value = PriceByRarity.Blue_1;
 
         }
         public override void AddRecipes() {
