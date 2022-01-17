@@ -349,7 +349,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 		public override void BossLoot(ref string name, ref int potionType)
 		{
-			potionType = ItemID.GreaterHealingPotion;
+			potionType = ItemID.SuperHealingPotion;
 		}
 		public override void NPCLoot()
 		{
