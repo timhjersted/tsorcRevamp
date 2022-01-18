@@ -920,6 +920,7 @@ namespace tsorcRevamp.NPCs {
             if ((npc.friendly) && (npc.townNPC == true)) { //town NPCs are immortal (why was i using a hp check?)
                 npc.dontTakeDamage = true;
                 npc.dontTakeDamageFromHostiles = true;
+                npc.life = npc.lifeMax;
             }
 
         }

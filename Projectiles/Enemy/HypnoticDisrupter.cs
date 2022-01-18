@@ -31,6 +31,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void AI()
 		{
+			if(projectile.ai[1] > 0 && projectile.timeLeft > 300)
+            {
+				projectile.timeLeft = 150;
+            }
 			projectile.rotation += 3f;
 
 			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X)
@@ -73,7 +77,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			target.AddBuff(BuffID.Bleeding, 600 / buffLengthMod, false); //bleeding
 			target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600 / buffLengthMod, false); //you take knockback
-			target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1800 / buffLengthMod, false);
+
+			if (projectile.ai[1] < 1)
+			{
+				target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1800 / buffLengthMod, false);
+			}
 		}
 	}
 }

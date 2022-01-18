@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class Oxyale : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Gear worn by Dragoons.\n" +
-                                "Allows you to breathe underwater.");
+            Tooltip.SetDefault("Gear worn by Dragoons\n" +
+                                "Allows you to breathe underwater and negates water physics");
 
         }
 
@@ -23,6 +23,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             if (player.wet) {
                 player.gills = true;
+                player.ignoreWater = true;
             }
         }
     }

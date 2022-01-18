@@ -438,7 +438,10 @@ namespace tsorcRevamp.Tiles
 				{
 					tsorcRevampWorld.LitBonfireList = new List<Vector2>();
 				}
-
+				if(tsorcRevampWorld.LitBonfireList.Count == 1)
+                {
+					Main.NewText("Open your minimap near a bonfire to instantly teleport to any other lit ones in the world!", Color.Red);
+                }
 				tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));
 
 				int x = i - Main.tile[i, j].frameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
@@ -502,7 +505,7 @@ namespace tsorcRevamp.Tiles
 
 			public override bool CanUseItem(Player player)
 			{
-				if (player.name == "Chroma TSORC test" || player.name == "Yournamehere") //feel free to add your players name
+				if (player.name == "Chroma TSORC test" || player.name.Contains("Sam") || player.name == "Yournamehere") //feel free to add your players name
 				{
 					return true;
 				}

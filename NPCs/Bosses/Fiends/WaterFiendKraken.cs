@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,8 +15,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		public override void SetDefaults()
 		{
 			Main.npcFrameCount[npc.type] = 8;
-			npc.width = 120;
-			npc.height = 190;
+			npc.width = 110;
+			npc.height = 170;
 			drawOffsetY = 50;
 			npc.damage = trueContactDamage;
 			npc.defense = 35;
@@ -23,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 200000;
+			npc.lifeMax = 400000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -47,12 +48,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 
 		int cursedFlamesDamage = 45;
-		int plasmaOrbDamage = 75;
+		int plasmaOrbDamage = 65;
 		int hypnoticDisruptorDamage = 35;
 		int trueContactDamage = 185;
 		int chargeContactDamage = 240;
-
-		float[] wraithAI = new float[4];
 
 		//If this is set to anything but -1, the boss will *only* use that attack ID
 		readonly int testAttack = -1;
@@ -82,17 +81,17 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			get => Main.player[npc.target];
         }
 
-		bool charging = false;
+		int MoveTimer = 0;
 		NPCDespawnHandler despawnHandler;
 
-		#region AI
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
+			Lighting.AddLight((int)npc.Center.X / 16, (int)npc.Center.Y / 16, 0.4f, 0f, 0.25f);
+
 			if (testAttack != -1)
             {
-				//MoveIndex = testAttack;
+				MoveIndex = testAttack;
             }
 			if(MoveList == null)
             {
@@ -100,15 +99,17 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
 			if(MoveIndex >= MoveList.Count)
             {
-				//MoveIndex = 0;
+				MoveIndex = 0;
             }
 
-			//CurrentMove.Move();
-			CursedFireSpam();
+			CurrentMove.Move();
 		}
 
 		Vector2 chargeVelocity = new Vector2(0, 0);
 		float ChargeTimer = 0;
+		float projectileTimer = -120;
+		float projectileType = 0;
+		bool charging = false;
 		private void CursedFireSpam()
         {
 			ChargeTimer++;
@@ -148,46 +149,145 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			{
 				FloatOminouslyTowardPlayer();
 			}
-			if(MoveCounter >= 3)
+			if(MoveCounter >= 3 && projectileTimer == 0)
             {
 				NextAttack();
             }
 
-            #region Projectiles and NPCs
-            if (Main.netMode != NetmodeID.MultiplayerClient && !charging)
+			#region Projectiles and NPCs
+			if (Main.netMode != NetmodeID.MultiplayerClient && !charging)
 			{
-				if (Main.rand.Next(50) == 1)
+				projectileTimer++;
+
+				if (projectileTimer == 0)
+				{
+					projectileType = Main.rand.Next(10);
+
+				}
+				if (projectileTimer >= 0)
+				{
+					float offset = MathHelper.ToRadians(-15 + 5 * projectileTimer);
+					if (projectileType < 6)
+					{
+						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
+						projVector = projVector.RotatedBy(offset);
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
+						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					}
+					if (projectileType >= 6 && projectileType != 9)
+					{
+						Vector2 projVector;
+						if (chamberFlooded)
+						{
+							projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 3);
+						}
+						else
+						{
+							projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
+						}
+						projVector = projVector.RotatedBy(offset);
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, npc.target, 1f);
+						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					}
+					if (projectileType == 9)
+					{
+						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
+						projVector = projVector.RotatedBy(offset);
+						projVector += (Main.player[npc.target].velocity / 2);
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					}
+
+					if(projectileTimer == 6)
+                    {
+						projectileTimer = -120;
+                    }
+				}
+			}
+			#endregion
+
+			//If low on life, start flooding the chamber constantly
+			if(npc.life < (npc.lifeMax / 2)){
+
+				//Don't start a new flood if it's below the normal water line, to avoid fucking with it as much as possible
+				if (radius != 0 || ((npc.Center.Y / 16) < 1713 && !UsefulFunctions.IsTileReallySolid(npc.Center / 16)))
+				{
+					radius++;
+					FloodArena();
+				}
+				if (radius > 300)
+				{
+					chamberFlooded = !chamberFlooded;
+					radius = 0;
+				}
+			}
+		}
+
+		float radius = 0;
+		bool chamberFlooded;
+		//Rectangle arena = new Rectangle(1557, 1639, 467, 103);
+		List<Vector2> activeTiles;
+		List<Vector2> nextTiles;
+
+		private void AquaWave()
+		{
+			npc.velocity = Vector2.Zero;
+
+            if (Main.GameUpdateCount % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+				int projType = Main.rand.Next(10);			
+			
+				if (projType < 5)
 				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
-					projVector += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
 					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
 				}
-				if (Main.rand.Next(120) == 1)
+				if (projType >= 5 && projType < 8)
+				{
+					Vector2 projVector;
+					if (chamberFlooded)
+					{
+						projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 3);
+					}
+					else
+					{
+						projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
+					}
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, npc.target, 1f);
+					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+				}
+				if (projType >= 8)
 				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 15);
-					projVector += (Main.player[npc.target].velocity / 2);
 					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
-				}
-				if (Main.rand.Next(200) == 1)
-				{
-					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
-					projVector += Main.rand.NextVector2Circular(10, 10);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
-				}
+				}				
+			}
 
-				if (Main.rand.Next(900) == 0)
+
+			radius++;
+			FloodArena();
+
+
+			//Check if we're done
+			if (radius > 300)
+			{
+				//Self-correcting: If the chamber starts out flooded then the flooding algorithm will by nature do nothing
+				chamberFlooded = !chamberFlooded;
+				radius = 0;
+				
+				MoveTimer++; 
+			
+				if (MoveTimer >= 5)
 				{
-					NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
-					NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y + 216 - this.npc.width / 2, NPCID.CursedHammer, 0);
+					MoveTimer = 0;
+					NextAttack();
 				}
-			}            
+			}			
 		}
-        #endregion
 
-        private void FloatOminouslyTowardPlayer()
+		private void FloatOminouslyTowardPlayer()
         {
 			Vector2 krakenMaxSpeed = new Vector2(3, 4);
 			float krakenAccelerationX = 0.05f;
@@ -234,7 +334,145 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.velocity = Vector2.Clamp(npc.velocity, -krakenMaxSpeed, krakenMaxSpeed);
 		}
 
+		Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);
+		private void DashToArenaCenter()
+        {
+			
+        }		
+		private void DashToArenaMidline()
+		{
+			MoveCounter++;
+			int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
+			Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
+			if (MoveCounter > 60)
+			{
+				if(npc.Center.Y < ArenaCenter.Y)
+                {
+					npc.velocity.Y = 12;
+                }
+				else
+                {
+					npc.velocity.Y = -12;
+                }
+			}
+			if (Math.Abs(npc.Center.Y - ArenaCenter.Y) < 16)
+			{
+				NextAttack();
+			}
+		}
+		private void GeyserSpam()
+        {
+			//TODO
+        }
+		private void FloodArena()
+		{
+			Vector2 centerOver16 = npc.Center / 16;
+			//Initialize some things
+			if (radius == 1)
+			{
+				activeTiles = new List<Vector2>();
+				nextTiles = new List<Vector2>();
+				activeTiles.Add(centerOver16);
+			}
+			//Perform the flooding algorithm
+			else
+			{
+				//Most things here work in vector2s, so declaring these here simplifies calculations below
+				Vector2 up = new Vector2(0, 1);
+				Vector2 right = new Vector2(1, 0);
+				Vector2 left = new Vector2(-1, 0);
+				Vector2 down = new Vector2(0, -1);
 
+				//Pick whether we're flooding or emptying
+				int liquidLevel = 255;
+				if (chamberFlooded)
+				{
+					liquidLevel = 0;
+				}
+
+				//For every tile on the list
+				for (int i = 0; i < activeTiles.Count; i++)
+				{
+					//Set it to full/empty
+					Main.tile[(int)activeTiles[i].X, (int)activeTiles[i].Y].liquid = (byte)liquidLevel;
+
+					//And add any adjacent unchanged tiles to the nextTiles list
+					if (!nextTiles.Contains(activeTiles[i] + up) && Main.tile[(int)(activeTiles[i] + up).X, (int)(activeTiles[i] + up).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + up))
+					{
+						nextTiles.Add(activeTiles[i] + up);
+					}
+					if (!nextTiles.Contains(activeTiles[i] + right) && Main.tile[(int)(activeTiles[i] + right).X, (int)(activeTiles[i] + right).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + right))
+					{
+						nextTiles.Add(activeTiles[i] + right);
+					}
+					if (!nextTiles.Contains(activeTiles[i] + left) && Main.tile[(int)(activeTiles[i] + left).X, (int)(activeTiles[i] + left).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + left))
+					{
+						nextTiles.Add(activeTiles[i] + left);
+					}
+					if (!nextTiles.Contains(activeTiles[i] + down) && Main.tile[(int)(activeTiles[i] + down).X, (int)(activeTiles[i] + down).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + down))
+					{
+						nextTiles.Add(activeTiles[i] + down);
+					}
+				}
+
+				//Push tiles that got queued in nextTiles into activeTiles to be operated on next tick, then wipe it
+				activeTiles = nextTiles;
+				nextTiles = new List<Vector2>();
+
+
+				//Dust effect
+				ArmorShaderData shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.CyanGradientDye), Main.LocalPlayer);
+				for (int i = 0; i < 90; i++)
+				{
+					float offset = Main.rand.NextFloat(-720, 0);
+					Vector2 velocity = new Vector2(-16, 0);
+					if (radius < 20)
+					{
+						velocity *= radius / 20;
+					}
+					Vector2 positionOffset = Vector2.Zero;
+					positionOffset.X += radius * 16;
+					positionOffset.X += offset;
+					positionOffset.Y += offset;
+
+					Vector2 offset1 = positionOffset + npc.Center;
+					Vector2 offset2 = positionOffset;
+					offset2.X *= -1;
+					offset2 += npc.Center;
+					Vector2 offset3 = positionOffset;
+					offset3.Y *= -1;
+					offset3 += npc.Center;
+					Vector2 offset4 = positionOffset;
+					offset4 *= -1;
+					offset4 += npc.Center;
+
+					if (!UsefulFunctions.IsTileReallySolid(offset1 / 16))
+					{
+						Dust r = Dust.NewDustPerfect(offset1, 174, velocity, 10, default, 2);
+						r.noGravity = true;
+						r.shader = shader;
+					}
+					if (!UsefulFunctions.IsTileReallySolid(offset2 / 16))
+					{
+						Dust l = Dust.NewDustPerfect(offset2, 174, velocity, 10, default, 2);
+						l.noGravity = true;
+						l.shader = shader;
+					}
+					if (!UsefulFunctions.IsTileReallySolid(offset3 / 16))
+					{
+						Dust r = Dust.NewDustPerfect(offset3, 174, velocity, 10, default, 2);
+						r.noGravity = true;
+						r.shader = shader;
+					}
+					if (!UsefulFunctions.IsTileReallySolid(offset4 / 16))
+					{
+						Dust l = Dust.NewDustPerfect(offset4, 174, velocity, 10, default, 2);
+						l.noGravity = true;
+						l.shader = shader;
+					}
+				}
+			}
+		}
 		private void NextAttack()
         {
 			MoveIndex++;
@@ -249,13 +487,18 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		{
 			MoveList = new List<KrakenMove> {
 				new KrakenMove(CursedFireSpam, KrakenAttackID.CursedFireSpam, "Cursed Fire"),
-                };
+				new KrakenMove(DashToArenaMidline, KrakenAttackID.CenterDash, "Dash to Center"),
+				new KrakenMove(AquaWave, KrakenAttackID.AquaWave, "Aqua Wave"),
+				//new KrakenMove(GeyserSpam, KrakenAttackID.GeyserSpam, "Geysers"),
+				};
 		}
 
 		private class KrakenAttackID
 		{
 			public const short CursedFireSpam = 0;
-
+			public const short AquaWave = 1;
+			public const short CenterDash = 2;
+			public const short GeyserSpam = 3;
 		}
 		private class KrakenMove
 		{
@@ -272,11 +515,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				Name = AttackName;
 			}
 		}
-
-		#endregion
-
-
-
 
 		public override void FindFrame(int currentFrame)
 		{

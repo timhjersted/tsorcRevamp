@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
             int randomness = 12;
             int target = -1;
-            if(thisProjectile != null)
+            if(thisProjectile != null && thisProjectile.type == ModContent.ProjectileType<Projectiles.ElfinTargeting>())
             {
                 target = thisProjectile.whoAmI;
                 randomness = 3;

@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,6 +23,7 @@ namespace tsorcRevamp.Items {
         }
         public override bool UseItem(Player player) {
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Friendly.FreedFairy>());
+            Main.NewText("Check your minimap to find them!", Color.HotPink);
             return true;
         }
     }
