@@ -176,15 +176,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					}
 					if (projectileType >= 6 && projectileType != 9)
 					{
-						Vector2 projVector;
-						if (chamberFlooded)
-						{
-							projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 3);
-						}
-						else
-						{
-							projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
-						}
+						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
 						projVector = projVector.RotatedBy(offset);
 						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, npc.target, 1f);
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
@@ -245,15 +237,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				}
 				if (projType >= 5 && projType < 8)
 				{
-					Vector2 projVector;
-					if (chamberFlooded)
-					{
-						projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 3);
-					}
-					else
-					{
-						projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
-					}
+
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
 					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, npc.target, 1f);
 					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
 				}

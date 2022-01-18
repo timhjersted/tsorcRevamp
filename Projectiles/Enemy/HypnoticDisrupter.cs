@@ -33,7 +33,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 		{
 			if(projectile.ai[1] > 0 && projectile.timeLeft > 300)
             {
-				projectile.timeLeft = 150;
+				projectile.timeLeft = 300;
+				projectile.tileCollide = true;
             }
 			projectile.rotation += 3f;
 
@@ -83,5 +84,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 				target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1800 / buffLengthMod, false);
 			}
 		}
-	}
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+			projectile.velocity = oldVelocity;
+            return false;
+        }
+    }
 }
