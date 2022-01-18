@@ -1921,7 +1921,8 @@ namespace tsorcRevamp {
             EstusFlask,
             ElfinArrow,
             ElfinTargeting,
-            HumanityPhantom
+            HumanityPhantom,
+            BarbarousThornBladeGlowmask
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -1965,7 +1966,9 @@ namespace tsorcRevamp {
                 {TransparentTextureType.EstusFlask, ModContent.GetTexture("tsorcRevamp/Textures/EstusFlask_drinking")},
                 {TransparentTextureType.ElfinArrow, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinArrow")},
                 {TransparentTextureType.ElfinTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinTargeting")},
-                {TransparentTextureType.HumanityPhantom, ModContent.GetTexture("tsorcRevamp/NPCs/Enemies/HumanityPhantom")}
+                {TransparentTextureType.HumanityPhantom, ModContent.GetTexture("tsorcRevamp/NPCs/Enemies/HumanityPhantom")},
+                {TransparentTextureType.BarbarousThornBladeGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow")},
+
 
             };
 

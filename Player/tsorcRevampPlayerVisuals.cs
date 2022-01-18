@@ -136,6 +136,10 @@ namespace tsorcRevamp {
                     {
                         texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeaponGlowmask];
                     }
+                    if (modPlayer.player.HeldItem.type == ModContent.ItemType<Items.Weapons.Melee.BarbarousThornBlade>())
+                    {
+                        texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.BarbarousThornBladeGlowmask];
+                    }
                     //If it's not on the list, don't bother.
                     if (texture != null) {
                         #region animation
@@ -167,8 +171,8 @@ namespace tsorcRevamp {
                         //Set the origin based on the offset point
                         Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
 
-                        //Sword support
-                        if (modPlayer.player.HeldItem.useStyle == ItemUseStyleID.SwingThrow)
+                        //Sword+stab support
+                        if (modPlayer.player.HeldItem.useStyle == ItemUseStyleID.SwingThrow || modPlayer.player.HeldItem.useStyle == ItemUseStyleID.Stabbing)
                         {
                             drawPos -= new Vector2(modPlayer.player.HeldItem.width / 2, modPlayer.player.HeldItem.height / 2);
                             origin.Y = modPlayer.player.HeldItem.height;
@@ -179,7 +183,8 @@ namespace tsorcRevamp {
                                 origin.Y = 0;
                             }
                         }
-                       
+
+
                         // Shift everything if the player is facing the other way
                         if (drawPlayer.direction == -1)
                         {

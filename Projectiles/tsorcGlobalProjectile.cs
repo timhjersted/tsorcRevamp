@@ -100,6 +100,17 @@ namespace tsorcRevamp.Projectiles
                     }
                 }
             }
+
+            if (projectile.type == ProjectileID.IceBolt || projectile.type == ProjectileID.EnchantedBeam || projectile.type == ProjectileID.SwordBeam || projectile.type == ProjectileID.FrostBoltSword
+                || projectile.type == ProjectileID.LightBeam || projectile.type == ProjectileID.NightBeam || projectile.type == ProjectileID.TerraBeam) 
+            {
+                projectile.ai[1]++;
+                if (projectile.ai[1] > 15)
+                {
+                    projectile.timeLeft = 0;
+                }
+            }
+
             return true;
         }
         public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit) {
@@ -128,7 +139,9 @@ namespace tsorcRevamp.Projectiles
             if(projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
             {
                 return false;
-            } else
+            } 
+
+            else
             {
                 return true;
             }
