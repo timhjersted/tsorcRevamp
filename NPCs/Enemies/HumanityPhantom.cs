@@ -54,19 +54,22 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (spawnInfo.player.ZoneRockLayerHeight && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.SpiderUnsafe) //This is at the very bottom of the chasm. Accessible pre-HM. Still difficult to encounter them as the area isn't really big enough to allow them to spawn offscreen
+			if (spawnInfo.spawnTileY >= Main.maxTilesY - 400)
 			{
-				chance = 2f;
-			}
+				if (spawnInfo.player.ZoneRockLayerHeight && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.SpiderUnsafe) //This is at the very bottom of the chasm. Accessible pre-HM. Still difficult to encounter them as the area isn't really big enough to allow them to spawn offscreen
+				{
+					chance = 2f;
+				}
 
-			if ((spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneUnderworldHeight) && (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.ObsidianBrickUnsafe || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.TitanstoneBlock)) //Gwyns tomb entrance, a SHM cave under the krakens arena, and the caves leading up to the Witchking
-			{
-				chance = 1.5f;
-			}
+				if ((spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneUnderworldHeight) && (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.ObsidianBrickUnsafe || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.TitanstoneBlock)) //Gwyns tomb entrance, a SHM cave under the krakens arena, and the caves leading up to the Witchking
+				{
+					chance = 1.5f;
+				}
 
-			if (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) < Main.maxTilesX / 3 && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.StarlitHeavenWallpaper) //Inner third of the map, abyss wall. This is the heart of the abyss, SHM
-			{
-				chance = 10f;
+				if (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) < Main.maxTilesX / 3 && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.StarlitHeavenWallpaper) //Inner third of the map, abyss wall. This is the heart of the abyss, SHM
+				{
+					chance = 10f;
+				}
 			}
 			return chance;
 		}
