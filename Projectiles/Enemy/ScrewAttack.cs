@@ -19,7 +19,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.tileCollide = false;
 			projectile.height = 34;
 			projectile.width = 34;
-			projectile.timeLeft = 1500;
+			projectile.timeLeft = 800;
 			projectile.scale = 2f;
 		}
 		public override void AI()

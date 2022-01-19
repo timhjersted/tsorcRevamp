@@ -40,6 +40,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void AI()
         {
+            Lighting.AddLight(projectile.position, 0.1f, .35f, .25f);
+
             if (Main.netMode == NetmodeID.Server)
             {
                 NetMessage.SendData(MessageID.SyncProjectile, number: this.projectile.whoAmI);

@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.width = 20;
 			npc.aiStyle = -1;
 			npc.height = 40;
-			npc.knockBackResist = 0.01f;
+			npc.knockBackResist = 0.1f;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
 

@@ -35,7 +35,8 @@ namespace tsorcRevamp.NPCs.Enemies {
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             float chance = 0;
-            if (spawnInfo.player.ZoneDungeon) {
+            if (spawnInfo.player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
+               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1) {
                 chance += 0.03f;
             }
             return chance;
@@ -58,13 +59,15 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
 
             if (Main.netMode != NetmodeID.Server) {
-                if (npc.ai[0] >= 12 && npc.ai[2] < 5) {
+                if (npc.ai[0] >= 12 && npc.ai[2] < 5 && Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 500) {
                     float num48 = 2f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                     int damage = 18;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                    int proj = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                    Main.projectile[proj].timeLeft = 120;
+
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 20);
                     npc.ai[0] = 0;
                     npc.ai[2]++;
@@ -76,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 npc.velocity.Y *= 0.17f;
             }
 
-            if ((npc.ai[1] >= 200 && npc.life > 50) || (npc.ai[1] >= 120 && npc.life <= 50)) {
+            if ((npc.ai[1] >= 260 && npc.life > 50) || (npc.ai[1] >= 180 && npc.life <= 50)) {
                 Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++) {
                     int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);

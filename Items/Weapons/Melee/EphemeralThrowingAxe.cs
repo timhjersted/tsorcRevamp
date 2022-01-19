@@ -4,6 +4,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Melee {
     class EphemeralThrowingAxe : ModItem {
 
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Passes through solid walls");
+        }
+
         public override void SetDefaults() {
             item.damage = 30;
             item.height = 34;

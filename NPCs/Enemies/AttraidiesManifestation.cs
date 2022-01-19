@@ -51,7 +51,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			if (!Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(40) == 0)
+			if (!Main.hardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(40) == 0 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 
+				&& NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
 			{
 				//MaxSpawns = 1;
 				if (!NPC.AnyNPCs(ModContent.NPCType<AttraidiesManifestation>()))
@@ -256,9 +257,16 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					int Random = Main.rand.Next(80);
 					int Paraspawn = 0;
+					int Paraspawn2 = 0;
+
 					if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.CursedSkull, 0);
-					if (Random == 5) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.ChaosElemental, 0);
+					if (Random == 5) Paraspawn2 = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.ChaosElemental, 0);
 					Main.npc[Paraspawn].velocity.X = npc.velocity.X;
+					Main.npc[Paraspawn2].velocity.X = npc.velocity.X;
+					Main.npc[Paraspawn2].lifeMax = 200;
+					Main.npc[Paraspawn2].life = 200; //because not setting this still gives them 800/100 hp for some reason
+
+
 					npc.active = true;
 
 				}

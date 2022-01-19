@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			npc.height = 30;
 			npc.timeLeft = 22000;
 			npc.damage = 50;
-			npc.defense = 18;
+			npc.defense = 12;
 			npc.HitSound = SoundID.NPCHit7;
 			npc.DeathSound = SoundID.NPCDeath8;
 			npc.lifeMax = 1250;
@@ -50,7 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		{
 			float chance = 0f;
 
-			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 1)
+			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 
+				&& NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
 			{
 				chance = 0.05f;
 			}
@@ -357,19 +358,21 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			npc.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 			return false;
 		}
+
 		public override void NPCLoot()
 		{
 
-			Item.NewItem(npc.getRect(), ItemID.Sapphire, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.Ruby, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.Topaz, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Sapphire, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Ruby, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Topaz, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
+			//Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
 			//if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CompactFrame>());
-			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
 
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>(), 1);
 		}
 	}
 }
