@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameInput;
+using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace tsorcRevamp.UI
@@ -55,7 +57,26 @@ namespace tsorcRevamp.UI
 			if (ContainsPoint(Main.MouseScreen) && !PlayerInput.IgnoreMouseInterface)
 			{
 				Main.LocalPlayer.mouseInterface = true;
-				if (ValidItemFunc == null || ValidItemFunc(Main.mouseItem) || ValidItemFunc(PotionItems[index]))
+
+				bool valid = false;
+
+				if(ValidItemFunc == null)
+                {
+					valid = true;
+                }
+				if (ValidItemFunc(Main.mouseItem))
+				{
+					valid = true;
+				}
+				if (Main.mouseItem.type == 0) //You can always pull stuff *out* of the bag if you're holding nothing, even if it's not valid
+				{
+					valid = true;
+				}
+				if (Main.mouseItem.type == ModContent.ItemType<Items.PotionBag>()) //No
+				{
+					valid = false;
+				}
+				if (valid)
 				{
 					// Handle handles all the click and hover actions based on the context.
 					ItemSlot.Handle(ref PotionItems[index], _context);

@@ -40,10 +40,6 @@ namespace tsorcRevamp.Items.Weapons {
 			item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
 		}
 
-		float radius = 0;
-		List<Vector2> activeTiles;
-		List<Vector2> nextTiles;
-		Rectangle arena = new Rectangle(1557, 1639, 467, 103);
 		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
@@ -52,15 +48,7 @@ namespace tsorcRevamp.Items.Weapons {
 
 			return false;
 		}
-        public override bool CanRightClick()
-        {
-			return true;
-        }
-        public override void RightClick(Player player)
-        {
-			radius = 0;
-			Main.NewText("Radius Reset!");
-        }
+
         //For multiplayer testing, because I only have enough hands for one keyboard. Makes the player holding it float vaguely near the next other player.
         public override void UpdateInventory(Player player)
 		{
