@@ -455,6 +455,7 @@ namespace tsorcRevamp {
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
         }
+
         ///<summary> 
         ///Compares the angle of two vectors. Returns the absolute value of the difference between their angles.
         ///Tip: I hate XNA so fucking much
@@ -490,6 +491,87 @@ namespace tsorcRevamp {
             player.velocity.X = 0f;
             player.velocity.Y = 0f;
             player.fallStart = (int)player.Center.Y;
+        }
+
+        /// <summary>
+        /// Toggles rain. If called serverside, syncs. Cannot be called clientside
+        /// </summary>
+        public static void ToggleRain()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                //Clients should NEVER execute this, will cause desync
+                return;
+            }
+
+            if (!Main.raining)
+            {
+                StartRain();
+            }
+            else
+            {
+                StopRain();
+            }
+        }
+
+        public static void StopRain()
+        {
+            Main.raining = false;
+            Main.maxRaining = 0f;
+            Main.rainTime = 0;
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
+        }
+
+        public static void StartRain()
+        {
+            Main.raining = true;
+            Main.rainTime = 18000;
+
+            ChangeRain();
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
+        }
+
+        private static void ChangeRain()
+        {
+            //private, will be public in 1.4, together with StartRain (which has random duration)
+            if (Main.cloudBGActive >= 1f || Main.numClouds > 150)
+            {
+                if (Main.rand.Next(3) == 0)
+                {
+                    Main.maxRaining = Main.rand.Next(20, 90) * 0.01f;
+                }
+                else
+                {
+                    Main.maxRaining = Main.rand.Next(40, 90) * 0.01f;
+                }
+            }
+            else if (Main.numClouds > 100)
+            {
+                if (Main.rand.Next(3) == 0)
+                {
+                    Main.maxRaining = Main.rand.Next(10, 70) * 0.01f;
+                }
+                else
+                {
+                    Main.maxRaining = Main.rand.Next(20, 60) * 0.01f;
+                }
+            }
+            else if (Main.rand.Next(3) == 0)
+            {
+                Main.maxRaining = Main.rand.Next(5, 40) * 0.01f;
+            }
+            else
+            {
+                Main.maxRaining = Main.rand.Next(5, 30) * 0.01f;
+            }
         }
     }
 }
