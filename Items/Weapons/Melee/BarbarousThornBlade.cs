@@ -138,7 +138,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.YellowTail>());
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);
-            recipe.AddTile(TileID.Anvils);
+            recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
