@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using tsorcRevamp.UI;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace tsorcRevamp.Items.Weapons {
 	public class DebugTome : ModItem {
@@ -47,92 +48,8 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 
+			typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 
-			float radiusSquared = radius * radius;
-			Vector2 centerOver16 = player.Center / 16;
-			float circumference = 2 * MathHelper.Pi * radius;
-
-
-
-			radius++;
-			Main.NewText("Radius: " + radius);
-			if (radius == 1)
-			{
-				activeTiles = new List<Vector2>();
-				nextTiles = new List<Vector2>();
-				activeTiles.Add(centerOver16);
-			}
-			else
-            {
-				Vector2 a = new Vector2(0, 1);
-				Vector2 b = new Vector2(1, 0);
-				Vector2 c = new Vector2(-1, 0);
-				Vector2 d = new Vector2(0, -1);
-
-				for (int i = 0; i < activeTiles.Count; i++)
-                {
-					Main.tile[(int)activeTiles[i].X, (int)activeTiles[i].Y].liquid = 255;
-					if (!nextTiles.Contains(activeTiles[i] + a) && Main.tile[(int)(activeTiles[i] + a).X, (int)(activeTiles[i] + a).Y].liquid != 255)
-                    {
-						nextTiles.Add(activeTiles[i] + a);
-                    }
-					if (!nextTiles.Contains(activeTiles[i] + b) && Main.tile[(int)(activeTiles[i] + b).X, (int)(activeTiles[i] + b).Y].liquid != 255)
-					{
-						nextTiles.Add(activeTiles[i] + b);
-					}
-					if (!nextTiles.Contains(activeTiles[i] + c) && Main.tile[(int)(activeTiles[i] + c).X, (int)(activeTiles[i] + c).Y].liquid != 255)
-					{
-						nextTiles.Add(activeTiles[i] + c);
-					}
-					if (!nextTiles.Contains(activeTiles[i] + d) && Main.tile[(int)(activeTiles[i] + d).X, (int)(activeTiles[i] + d).Y].liquid != 255)
-					{
-						nextTiles.Add(activeTiles[i] + d);
-					}
-				}
-
-				activeTiles = nextTiles;
-				nextTiles = new List<Vector2>();
-			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			/*if (radius < 10)
-			{
-				for (int x = arena.Left; x < arena.Right; x++)
-				{
-					for (int y = arena.Height; y < arena.Bottom; y++)
-					{
-						Vector2 point = new Vector2(x, y);
-						if (Vector2.DistanceSquared(centerOver16, point) < radiusSquared)
-						{
-							if (!UsefulFunctions.IsTileReallySolid(point))
-							{
-								Tile thisTile = Main.tile[(int)point.X, (int)point.Y];
-								if (thisTile != null)
-								{
-									thisTile.liquid = 255;
-								}
-							}
-						}
-					}
-				}
-			}*/
-			//for (int i = 0; i < circumference; i++)
-			//{
-
-			//}
 			return false;
 		}
         public override bool CanRightClick()
