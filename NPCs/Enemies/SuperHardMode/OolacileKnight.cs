@@ -23,9 +23,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.width = 20;
             music = 12;
             npc.damage = 125;
-            npc.defense = 201;
+            npc.defense = 70;
             npc.lavaImmune = true;
-            npc.lifeMax = 46000;
+            npc.lifeMax = 26000;
             npc.scale = 1.1f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(20) == 1)
 
             {
-                Main.NewText("An ancient warrior has come to banish you from the Abyss...", 175, 75, 255);
+                Main.NewText("An ancient warrior has come to banish you from existence...", 175, 75, 255);
                 return 1;
             }
 

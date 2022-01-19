@@ -344,6 +344,12 @@ namespace tsorcRevamp.NPCs {
                         break;
                     }
 
+                case (NPCID.IceGolem):
+                    {
+                        npc.value = 25000;
+                        break;
+                    }
+
                 case (NPCID.IlluminantBat): {
                         npc.value = 650;
                         npc.defense = 27;
@@ -360,7 +366,7 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.KingSlime): {
                         npc.damage = 33;
                         npc.defense = 15;
-                        npc.scale = 1.25f;
+                        //npc.scale = 1.25f;
                         break;
                     }
                 //Evaluates npcd on groups of hornets according to https://terraria.fandom.com/wiki/NPC_IDs
@@ -556,7 +562,7 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.SolarSpearman):
                     {
-                        npc.value = 3000;
+                        npc.value = 2000;
                         //npc.damage = 34;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
@@ -574,7 +580,7 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.SolarDrakomire):
                     {
-                        npc.value = 3000;
+                        npc.value = 2000;
                         //npc.damage = 34;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
@@ -583,7 +589,7 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.SolarSroller):
                     {
-                        npc.value = 2000;
+                        npc.value = 1000;
                         //npc.damage = 34;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;
@@ -601,7 +607,7 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.SolarSolenian):
                     {
-                        npc.value = 3000;
+                        npc.value = 2000;
                         //npc.damage = 34;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.lavaImmune = true;

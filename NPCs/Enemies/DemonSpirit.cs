@@ -21,18 +21,18 @@ namespace tsorcRevamp.NPCs.Enemies
 			animationType = 60;
 			npc.width = 50;
 			npc.height = 50;
-			npc.damage = 32;
+			npc.damage = 42;
 			npc.defense = 18;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.lifeMax = 400;
+			npc.lifeMax = 425;
 			npc.friendly = false;
 			npc.noTileCollide = true;
 			npc.lavaImmune = true;
 			npc.noGravity = true;
 			npc.knockBackResist = 0;
 			npc.alpha = 100;
-			npc.value = 2500;
+			npc.value = 2200;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
 
@@ -431,7 +431,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 
-			Main.NewText("A lost spirit has been freed from its curse...", 175, 75, 255);
+			//Main.NewText("A lost spirit has been freed from its curse...", 175, 75, 255);
 
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 			if (npc.life <= 0)

@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			DisplayName.SetDefault("Demon Elemental");
 		}
 
-		int crystalFireDamage = 50;
+		int crystalFireDamage = 55;
 
 		public override void SetDefaults()
 		{
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.value = 16500;
 				npc.damage = 295;
 				npc.knockBackResist = 0.0f;
-				crystalFireDamage = 85;
+				crystalFireDamage = 95;
 			}
 
 			npc.buffImmune[BuffID.Confused] = true;
@@ -454,7 +454,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 
-			Main.NewText("A demon elemental has faded from existence...", 175, 75, 255);
+			//Main.NewText("A demon elemental has faded from existence...", 175, 75, 255);
 
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore1"), 1.1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore2"), 1.1f);

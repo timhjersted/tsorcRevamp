@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Localization;
+using System.Reflection;
 
 namespace tsorcRevamp
 {
@@ -108,6 +109,9 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            Golem2,
+            IceGolemEvent,
+            KingSlimeEvent,
             HeroofLumeliaFight,
             FireLurkerPain,
             RedKnightPain,
@@ -160,6 +164,18 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            //ICE GOLEM YETI COMBO
+            List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
+            List<Vector2> Golem2EnemyLocations = new List<Vector2>() { new Vector2(7776, 829), new Vector2(7800, 868) };
+            ScriptedEvent Golem2 = new ScriptedEvent(new Vector2(7900, 868), 30, Golem2EnemyTypeList, Golem2EnemyLocations, DustID.Snow, true, false, "!!!", Color.BlueViolet, false, null, StormCustomAction); //
+
+
+            //ICE GOLEM - FROZEN OCEAN
+            ScriptedEvent IceGolemEvent = new ScriptedEvent(new Vector2(7651, 1020), 20, NPCID.IceGolem, DustID.MagicMirror, true, true, "!", Color.Blue, false);
+
+            //KING SLIME
+            ScriptedEvent KingSlimeEvent = new ScriptedEvent(new Vector2(5995, 1117), 20, NPCID.KingSlime, DustID.MagicMirror, true, true, "King Slime appears!", Color.Blue, false);
 
             //HERO OF LUMELIA FIGHT
             ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(4487, 732), 13, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ", Color.LightGoldenrodYellow, false, LumeliaCustomCondition);
@@ -328,7 +344,10 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
-
+                
+                {ScriptedEventType.Golem2, Golem2},
+                {ScriptedEventType.IceGolemEvent, IceGolemEvent},
+                {ScriptedEventType.KingSlimeEvent, KingSlimeEvent},
                 {ScriptedEventType.HeroofLumeliaFight, HeroofLumeliaFight},
                 {ScriptedEventType.FireLurkerPain, FireLurkerPain},
                 {ScriptedEventType.RedKnightPain, RedKnightPain},
@@ -577,6 +596,15 @@ namespace tsorcRevamp
             }
             return false;
         }
+
+       
+       public static bool StormCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null); 
+            return true;   
+        }
+       
+
 
         //This is an example custom action that just changes the damage of an NPC's projectile. Most enemies will require a very small change for this to work with them (the word 'public' needs to be in front of the variable controlling that projectile's damage).
         public static bool BlackKnightCustomAction(Player player, ScriptedEvent thisEvent)

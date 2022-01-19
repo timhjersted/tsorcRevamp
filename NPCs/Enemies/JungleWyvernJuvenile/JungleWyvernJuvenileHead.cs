@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 
 			if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.player.ZoneDungeon && NPC.CountNPCS(mod.NPCType("JungleWyvernJuvenileHead")) < 1)
 			{
-				chance = 0.075f;
+				chance = 0.05f;
 			}
 
 			return chance;
@@ -367,7 +367,8 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(1, 3));
 			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
 			Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
-			Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
+			//if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CompactFrame>());
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.GoldenKey, 1);
 
 		}
 	}
