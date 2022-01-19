@@ -72,6 +72,7 @@ namespace tsorcRevamp.UI
         public static bool IsValidPotion(Item item)
         {
             bool valid = false;
+            if (item.type == ModContent.ItemType<Items.PotionBag>()) return false;
             if (Items.tsorcGlobalItem.potionList.Contains(item.type))
             {
                 valid = true;
