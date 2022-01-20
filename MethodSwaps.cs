@@ -27,8 +27,6 @@ namespace tsorcRevamp {
 
             On.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
 
-            On.Terraria.NPC.TypeToHeadIndex += MapHeadPatch;
-
             On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
 
             On.Terraria.NPC.SpawnNPC += BossZenPatch;
@@ -660,35 +658,6 @@ namespace tsorcRevamp {
             for (int num8 = 0; num8 < Recipe.maxRecipes; num8++) {
                 Main.availableRecipeY[num8] -= num7;
             }
-        }
-
-        //stop npc heads from displaying on the map
-        private static int MapHeadPatch(On.Terraria.NPC.orig_TypeToHeadIndex orig, int type) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && (!(Main.EquipPage == 1) || Main.mapFullscreen)) {
-                NPC npc = new NPC();
-                npc.SetDefaults(type);
-                //Mechanic is hidden until any mech boss is killed
-                if (npc.type == NPCID.Mechanic && !NPC.downedMechBossAny)
-                {
-                    return 0;
-                }
-                //Goblin is hidden until the Jungle Wyvern is killed
-                else if (npc.type == NPCID.GoblinTinkerer && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>()))
-                {
-                    return 0;
-                    
-                }
-                //Wizard is hidden until The Sorrow is killed
-                else if (npc.type == NPCID.Wizard && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
-                {
-                    return 0;
-                }
-                else {
-                    return orig(type);
-                }
-
-            }
-            else { return orig(type); }
         }
 
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
