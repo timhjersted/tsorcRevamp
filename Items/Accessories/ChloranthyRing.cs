@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases Stamina recovery speed by 20%" +
+                               "\nIncreases Stamina Droplet pickup range" +
                                "\nThis old ring is named for its decorative green" +
                                "\nblossom, but its luster is long since faded" +
                                "\n+2 defense");
@@ -27,18 +28,8 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            /*if (player.name == "Chroma TSORC test")
-            {
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 3f;
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 += 200;
-
-            }*/
-
-            //else
-            //{
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
-            //}
-
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.2f;
+            player.GetModPlayer<tsorcRevampPlayer>().StaminaReaper = 4;
             player.statDefense += 2;
         }
 

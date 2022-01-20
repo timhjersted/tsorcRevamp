@@ -56,5 +56,17 @@ namespace tsorcRevamp.Items
 
             return false;
         }
+        public override bool GrabStyle(Player player)
+        {
+            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
+            item.velocity = item.velocity + movement;
+            return true;
+        }
+
+        public override void GrabRange(Player player, ref int grabRange)
+        {
+            grabRange *= (1 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().StaminaReaper);
+        }
     }
 }

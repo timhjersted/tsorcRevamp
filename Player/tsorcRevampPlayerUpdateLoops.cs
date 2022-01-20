@@ -159,6 +159,9 @@ namespace tsorcRevamp {
 
         public int MaxAcquiredHP; //To prevent purging stones and humanity from raising hp above your max acquired hp from life crystals and life fruit.
 
+        public bool PowerWithin;
+        public int StaminaReaper = 0;
+
         public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
@@ -205,6 +208,8 @@ namespace tsorcRevamp {
             PhazonCorruption = false;
             LifegemHealing = false;
             RadiantLifegemHealing = false;
+            PowerWithin = false;
+            StaminaReaper = 0;
         }
 
         public override void PreUpdate() {
@@ -971,7 +976,7 @@ namespace tsorcRevamp {
                 }
             }
 
-            if (SOADrain) {
+            if (SOADrain || PowerWithin) {
                 if (player.lifeRegen > 0) {
                     player.lifeRegen = 0;
                 }

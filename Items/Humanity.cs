@@ -48,10 +48,14 @@ namespace tsorcRevamp.Items {
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(6, new TooltipLine(mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
-
+            //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
+            int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+            if (ttindex != -1)
+            {// if we find one
+             //insert the extra tooltip line
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
+            }
         }
-
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 

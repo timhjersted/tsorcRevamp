@@ -660,16 +660,16 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.TheHungry): {
                         npc.value = 500;
                         npc.knockBackResist = 0.3f;
-                        npc.damage = 50;
-                        npc.lifeMax = 300;
-                        npc.defense = 10;
+                        //npc.damage = 50;
+                        //npc.lifeMax = 250;
+                        //npc.defense = 10;
                         break;
                     }
 
                 case (NPCID.TheHungryII): {
                         npc.value = 300;
-                        npc.damage = 50;
-                        npc.lifeMax = 150;
+                        //npc.damage = 50;
+                        //npc.lifeMax = 150;
                         npc.knockBackResist = 0.5f;
                         break;
                     }
@@ -938,6 +938,347 @@ namespace tsorcRevamp.NPCs {
                 return false;
             }
 
+
+            if (npc.type == NPCID.WallofFlesh){
+                #region WoF AI
+
+
+                if (npc.position.X < 160f || npc.position.X > (float)((Main.maxTilesX - 10) * 16))
+                {
+                    npc.active = false;
+                }
+                if (npc.localAI[0] == 0f)
+                {
+                    npc.localAI[0] = 1f;
+                    Main.wofB = -1;
+                    Main.wofT = -1;
+                }
+                npc.ai[1] += 1f;
+                if (npc.ai[2] == 0f)
+                {
+                    if ((double)npc.life < (double)npc.lifeMax * 0.5)
+                    {
+                        npc.ai[1] += 1f;
+                    }
+                    if ((double)npc.life < (double)npc.lifeMax * 0.2)
+                    {
+                        npc.ai[1] += 1f;
+                    }
+                    if (npc.ai[1] > 2700f)
+                    {
+                        npc.ai[2] = 1f;
+                    }
+                }
+                /*if (npc.ai[2] > 0f && npc.ai[1] > 50f && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                {
+                    float num220 = 0.2f;
+                    Vector2 vector28 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
+                    float num221 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector28.X + (float)Main.rand.Next(-100, 101);
+                    float num222 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector28.Y + (float)Main.rand.Next(-100, 101);
+                    float num223 = (float)Math.Sqrt(num221 * num221 + num222 * num222);
+                    num223 = num220 / num223;
+                    num221 *= num223;
+                    num222 *= num223;
+                    int num224 = 21;
+                    int num225 = 44;
+                    int num226 = Projectile.NewProjectile(vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                    Main.projectile[num226].timeLeft = 300;
+                }*/
+                if (npc.ai[2] > 0f && npc.ai[1] > 60f)
+                {
+                    int num333 = 3;
+                    if ((double)npc.life < (double)npc.lifeMax * 0.3)
+                    {
+                        num333++;
+                    }
+                    npc.ai[2] += 1f;
+                    npc.ai[1] = 0f;
+                    if (npc.ai[2] > (float)num333)
+                    {
+                        npc.ai[2] = 0f;
+                    }
+                    if (Main.netMode != 1)
+                    {
+                        int num334 = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)(npc.height / 2) + 20f), 117, 1);
+                        Main.npc[num334].velocity.X = npc.direction * 8;
+                    }
+                }
+                npc.localAI[3] += 1f;
+                if (npc.localAI[3] >= (float)(600 + Main.rand.Next(1000)))
+                {
+                    npc.localAI[3] = -Main.rand.Next(200);
+                    Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 10);
+                }
+                Main.wof = npc.whoAmI;
+                int num335 = (int)(npc.position.X / 16f);
+                int num336 = (int)((npc.position.X + (float)npc.width) / 16f);
+                int num337 = (int)((npc.position.Y + (float)(npc.height / 2)) / 16f);
+                int num338 = 0;
+                int num339 = num337 + 7;
+                while (num338 < 15 && num339 > Main.maxTilesY - 200)
+                {
+                    num339++;
+                    for (int num340 = num335; num340 <= num336; num340++)
+                    {
+                        try
+                        {
+                            if (WorldGen.SolidTile(num340, num339) || Main.tile[num340, num339].liquid > 0)
+                            {
+                                num338++;
+                            }
+                        }
+                        catch
+                        {
+                            num338 += 15;
+                        }
+                    }
+                }
+                num339 += 4;
+                if (Main.wofB == -1)
+                {
+                    Main.wofB = num339 * 16;
+                }
+                else if (Main.wofB > num339 * 16)
+                {
+                    Main.wofB--;
+                    if (Main.wofB < num339 * 16)
+                    {
+                        Main.wofB = num339 * 16;
+                    }
+                }
+                else if (Main.wofB < num339 * 16)
+                {
+                    Main.wofB++;
+                    if (Main.wofB > num339 * 16)
+                    {
+                        Main.wofB = num339 * 16;
+                    }
+                }
+                num338 = 0;
+                num339 = num337 - 7;
+                while (num338 < 15 && num339 < Main.maxTilesY - 10)
+                {
+                    num339--;
+                    for (int num341 = num335; num341 <= num336; num341++)
+                    {
+                        try
+                        {
+                            if (WorldGen.SolidTile(num341, num339) || Main.tile[num341, num339].liquid > 0)
+                            {
+                                num338++;
+                            }
+                        }
+                        catch
+                        {
+                            num338 += 15;
+                        }
+                    }
+                }
+                num339 -= 4;
+                if (Main.wofT == -1)
+                {
+                    Main.wofT = num339 * 16;
+                }
+                else if (Main.wofT > num339 * 16)
+                {
+                    Main.wofT--;
+                    if (Main.wofT < num339 * 16)
+                    {
+                        Main.wofT = num339 * 16;
+                    }
+                }
+                else if (Main.wofT < num339 * 16)
+                {
+                    Main.wofT++;
+                    if (Main.wofT > num339 * 16)
+                    {
+                        Main.wofT = num339 * 16;
+                    }
+                }
+                float num342 = (Main.wofB + Main.wofT) / 2 - npc.height / 2;
+                if (npc.position.Y > num342 + 1f)
+                {
+                    npc.velocity.Y = -1f;
+                }
+                else if (npc.position.Y < num342 - 1f)
+                {
+                    npc.velocity.Y = 1f;
+                }
+                npc.velocity.Y = 0f;
+                int num343 = (Main.maxTilesY - 180) * 16;
+                if (num342 < (float)num343)
+                {
+                    num342 = num343;
+                }
+                npc.position.Y = num342;
+                float num344 = 1.5f;
+                if ((double)npc.life < (double)npc.lifeMax * 0.75)
+                {
+                    num344 += 0.25f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.5)
+                {
+                    num344 += 0.4f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.25)
+                {
+                    num344 += 0.5f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.1)
+                {
+                    num344 += 0.6f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.66 && Main.expertMode)
+                {
+                    num344 += 0.3f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.33 && Main.expertMode)
+                {
+                    num344 += 0.3f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.05 && Main.expertMode)
+                {
+                    num344 += 0.6f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.035 && Main.expertMode)
+                {
+                    num344 += 0.6f;
+                }
+                if ((double)npc.life < (double)npc.lifeMax * 0.025 && Main.expertMode)
+                {
+                    num344 += 0.6f;
+                }
+                /*if (Main.expertMode)
+                {
+                    num344 *= 1.35f;
+                    num344 += 0.35f;
+                }*/
+                if (npc.velocity.X == 0f)
+                {
+                    npc.TargetClosest();
+                    npc.velocity.X = npc.direction;
+                }
+                if (npc.velocity.X < 0f)
+                {
+                    npc.velocity.X = 0f - num344;
+                    npc.direction = -1;
+                }
+                else
+                {
+                    npc.velocity.X = num344;
+                    npc.direction = 1;
+                }
+                npc.spriteDirection = npc.direction;
+                Vector2 vector37 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
+                float num345 = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) - vector37.X;
+                float num346 = Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2) - vector37.Y;
+                float num347 = (float)Math.Sqrt(num345 * num345 + num346 * num346);
+                float num348 = num347;
+                num345 *= num347;
+                num346 *= num347;
+                if (npc.direction > 0)
+                {
+                    if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
+                    {
+                        npc.rotation = (float)Math.Atan2(0f - num346, 0f - num345) + 3.14f;
+                    }
+                    else
+                    {
+                        npc.rotation = 0f;
+                    }
+                }
+                else if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) < npc.position.X + (float)(npc.width / 2))
+                {
+                    npc.rotation = (float)Math.Atan2(num346, num345) + 3.14f;
+                }
+                else
+                {
+                    npc.rotation = 0f;
+                }
+                if (Main.expertMode && Main.netMode != 1)
+                {
+                    int num349 = (int)(1f + (float)npc.life / (float)npc.lifeMax * 10f);
+                    num349 *= num349;
+                    if (num349 < 400)
+                    {
+                        num349 = (num349 * 19 + 400) / 20;
+                    }
+                    if (num349 < 60)
+                    {
+                        num349 = (num349 * 3 + 60) / 4;
+                    }
+                    if (num349 < 20)
+                    {
+                        num349 = (num349 + 20) / 2;
+                    }
+                    num349 = (int)((double)num349 * 0.7);
+                    if (Main.rand.Next(num349) == 0)
+                    {
+                        int num350 = 0;
+                        float[] array = new float[10];
+                        for (int num351 = 0; num351 < 200; num351++)
+                        {
+                            if (num350 < 10 && Main.npc[num351].active && Main.npc[num351].type == 115)
+                            {
+                                array[num350] = Main.npc[num351].ai[0];
+                                num350++;
+                            }
+                        }
+                        int maxValue = 1 + num350 * 2;
+                        if (num350 < 10 && Main.rand.Next(maxValue) <= 1)
+                        {
+                            int num352 = -1;
+                            for (int num353 = 0; num353 < 1000; num353++)
+                            {
+                                int num354 = Main.rand.Next(10);
+                                float num355 = (float)num354 * 0.1f - 0.05f;
+                                bool flag27 = true;
+                                for (int num356 = 0; num356 < num350; num356++)
+                                {
+                                    if (num355 == array[num356])
+                                    {
+                                        flag27 = false;
+                                        break;
+                                    }
+                                }
+                                if (flag27)
+                                {
+                                    num352 = num354;
+                                    break;
+                                }
+                            }
+                            if (num352 >= 0)
+                            {
+                                int num357 = NPC.NewNPC((int)npc.position.X, (int)num342, 115, npc.whoAmI);
+                                Main.npc[num357].ai[0] = (float)num352 * 0.1f - 0.05f;
+                            }
+                        }
+                    }
+                }
+                if (npc.localAI[0] == 1f && Main.netMode != 1)
+                {
+                    npc.localAI[0] = 2f;
+                    num342 = (Main.wofB + Main.wofT) / 2;
+                    num342 = (num342 + (float)Main.wofT) / 2f;
+                    int num358 = NPC.NewNPC((int)npc.position.X, (int)num342, 114, npc.whoAmI);
+                    Main.npc[num358].ai[0] = 1f;
+                    num342 = (Main.wofB + Main.wofT) / 2;
+                    num342 = (num342 + (float)Main.wofB) / 2f;
+                    num358 = NPC.NewNPC((int)npc.position.X, (int)num342, 114, npc.whoAmI);
+                    Main.npc[num358].ai[0] = -1f;
+                    num342 = (Main.wofB + Main.wofT) / 2;
+                    num342 = (num342 + (float)Main.wofB) / 2f;
+                    for (int num359 = 0; num359 < 11; num359++)
+                    {
+                        num358 = NPC.NewNPC((int)npc.position.X, (int)num342, 115, npc.whoAmI);
+                        Main.npc[num358].ai[0] = (float)num359 * 0.1f - 0.05f;
+                    }
+                }
+
+
+            #endregion
+                return false;
+            }
             #region Lunar Towers
 
             if (npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerStardust || npc.type == NPCID.LunarTowerVortex) {
@@ -2175,11 +2516,11 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief) {
 
                 if (Main.rand.Next(200) == 0) { // 0.5%
-                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"), 1, false, ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems ? PrefixID.Damaged : -1);
+                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"), 1, false, -1);
                 }
 
                 else if (Main.rand.Next(200) == 0) { // 0.5% 
-                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems ? PrefixID.Damaged : -1);
+                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, -1);
                 }
             }
             if (npc.type == NPCID.Plantera && !Main.expertMode)
@@ -2204,6 +2545,11 @@ namespace tsorcRevamp.NPCs {
             if (npc.type == NPCID.HornetLeafy || npc.type == NPCID.BigHornetLeafy || npc.type == NPCID.LittleHornetLeafy)
             {
                 if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+            }
+            if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall)
+            {
+                if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.Next(10) == 0 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>());
             }
 
 

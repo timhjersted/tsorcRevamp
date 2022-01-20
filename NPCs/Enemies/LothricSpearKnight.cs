@@ -37,9 +37,6 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.DeathSound = SoundID.NPCDeath2;
             npc.noTileCollide = false;
             npc.lavaImmune = true;
-            npc.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
-            npc.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
-            npc.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
 
             /*banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
