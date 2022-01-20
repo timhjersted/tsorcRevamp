@@ -44,7 +44,16 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 
-			typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+			for(int i = 0; i < 100; i++)
+			{
+				Vector2 dustPoint = Main.rand.NextVector2Circular(320, 320) + player.Center;
+				if(UsefulFunctions.IsPointWithinEllipse(dustPoint, player.Center, 150, 320))
+                {
+					Dust.NewDustPerfect(dustPoint, DustID.ShadowbeamStaff).noGravity = true;
+                }
+
+
+			}
 
 			return false;
 		}

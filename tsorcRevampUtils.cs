@@ -270,6 +270,28 @@ namespace tsorcRevamp {
         }
 
         ///<summary> 
+        ///Checks if a point is within an ellipse
+        ///</summary>         
+        ///<param name="point">Point to be checked</param>
+        ///<param name="center">Centerpoint of the ellipse</param>
+        ///<param name="width">How wide is the ellipse</param>
+        ///<param name="height">How tall is the ellipse</param>
+        public static bool IsPointWithinEllipse(Vector2 point, Vector2 center, float width, float height)
+        {
+            float xTerm = ((point.X - center.X) * (point.X - center.X)) / (width * width);
+            float yTerm = ((point.Y - center.Y) * (point.Y - center.Y)) / (height * height);
+
+            if(xTerm + yTerm < 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        ///<summary> 
         ///Broadcasts a message from the server to all players. Safe to use in singleplayer, where it simply defaults to a NewText() instead.
         ///</summary>         
         ///<param name="text">String containing the text</param>
