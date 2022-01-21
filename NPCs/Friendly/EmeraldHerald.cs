@@ -119,7 +119,7 @@ namespace tsorcRevamp.NPCs.Friendly
 						Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
 						if (Main.LocalPlayer.inventory[ShardItemIndex].stack == 1) { Main.LocalPlayer.inventory[ShardItemIndex].TurnToAir(); }
 						else Main.LocalPlayer.inventory[ShardItemIndex].stack--;
-						Main.NewText("Estus Flask size increased! Max charges:" + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
+						Main.NewText("Estus Flask size increased! Max charges: " + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
 					}
 					return;
 				}
