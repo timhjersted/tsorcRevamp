@@ -134,6 +134,24 @@ namespace tsorcRevamp.Projectiles
             }
         }
 
+        public override void OnHitPlayer(Projectile projectile, Player target, int damage, bool crit)
+        {
+            if (projectile.type == ProjectileID.EyeLaser && projectile.ai[0] == 1)
+            {
+                target.AddBuff(BuffID.Slow, 180);
+            }
+
+            if (projectile.type == ProjectileID.DemonSickle)
+            {
+                target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 15);
+                target.AddBuff(BuffID.Slow, 180);
+                target.AddBuff(BuffID.Darkness, 180);
+
+            }
+
+            base.OnHitPlayer(projectile, target, damage, crit);
+        }
+
         public override bool PreKill(Projectile projectile, int timeLeft)
         {
             if(projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)

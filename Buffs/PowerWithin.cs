@@ -23,12 +23,12 @@ namespace tsorcRevamp.Buffs
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 player.allDamageMult *= 1.4f;
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.4f;
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.6f;
             }
             else
             {
                 player.allDamageMult *= 1.2f;
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.2f;
+                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.3f;
             }
 
             player.GetModPlayer<tsorcRevampPlayer>().PowerWithin = true;

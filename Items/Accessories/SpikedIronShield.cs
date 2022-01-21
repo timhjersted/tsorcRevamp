@@ -13,13 +13,13 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Everyone will stay away from you'" +
                                 "\n-30% Movement Speed, Thorns Buff" +
-                                "\nCan be upgraded with a Cobalt Shield and 10000 Dark Souls");
+                                "\nCan be upgraded with an Obsidian Shield and 10000 Dark Souls");
         }
 
         public override void SetDefaults() {
             item.width = 28;
             item.height = 28;
-            item.defense = 9;
+            item.defense = 8;
             item.rare = ItemRarityID.Green;
             item.accessory = true;
             item.value = PriceByRarity.Green_2;

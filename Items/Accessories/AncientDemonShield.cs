@@ -6,9 +6,11 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     [AutoloadEquip(EquipType.Shield)]
     public class AncientDemonShield : ModItem {
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Powerful, but slows movement by 25%" +
-                                "\nGreat Shield that grants immunity to knockback and gives thorns effect");
+                               "\nGreat Shield that grants immunity to knockback and gives thorns effect" +
+                               "\nAlso provides immunity to fire blocks");
         }
 
         public override void SetDefaults() {
@@ -24,6 +26,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.noKnockback = true;
             player.moveSpeed -= 0.25f;
             player.thorns = 1f;
+            player.fireWalk = true;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 player.endurance += 0.06f;
             }
@@ -42,9 +45,9 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.CobaltShield);
-            recipe.AddIngredient(mod.GetItem("SpikedIronShield"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(ItemID.ObsidianShield);
+            recipe.AddIngredient(ModContent.ItemType<Accessories.SpikedIronShield>());
+            recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

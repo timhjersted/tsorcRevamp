@@ -660,16 +660,11 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.TheHungry): {
                         npc.value = 500;
                         npc.knockBackResist = 0.3f;
-                        //npc.damage = 50;
-                        //npc.lifeMax = 250;
-                        //npc.defense = 10;
                         break;
                     }
 
                 case (NPCID.TheHungryII): {
                         npc.value = 300;
-                        //npc.damage = 50;
-                        //npc.lifeMax = 150;
                         npc.knockBackResist = 0.5f;
                         break;
                     }
@@ -723,7 +718,7 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.WallofFlesh):
                     {
                         npc.damage = 100;
-                        npc.lifeMax = 15000;
+                        npc.lifeMax = 14000; 
                         break;
                     }
 
@@ -939,7 +934,7 @@ namespace tsorcRevamp.NPCs {
             }
 
 
-            if (npc.type == NPCID.WallofFlesh){
+            if (npc.type == NPCID.WallofFlesh) {
                 #region WoF AI
 
 
@@ -969,21 +964,6 @@ namespace tsorcRevamp.NPCs {
                         npc.ai[2] = 1f;
                     }
                 }
-                /*if (npc.ai[2] > 0f && npc.ai[1] > 50f && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-                {
-                    float num220 = 0.2f;
-                    Vector2 vector28 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-                    float num221 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector28.X + (float)Main.rand.Next(-100, 101);
-                    float num222 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector28.Y + (float)Main.rand.Next(-100, 101);
-                    float num223 = (float)Math.Sqrt(num221 * num221 + num222 * num222);
-                    num223 = num220 / num223;
-                    num221 *= num223;
-                    num222 *= num223;
-                    int num224 = 21;
-                    int num225 = 44;
-                    int num226 = Projectile.NewProjectile(vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
-                    Main.projectile[num226].timeLeft = 300;
-                }*/
                 if (npc.ai[2] > 0f && npc.ai[1] > 60f)
                 {
                     int num333 = 3;
@@ -1128,7 +1108,7 @@ namespace tsorcRevamp.NPCs {
                 {
                     num344 += 0.6f;
                 }
-                if ((double)npc.life < (double)npc.lifeMax * 0.66 && Main.expertMode)
+                /*if ((double)npc.life < (double)npc.lifeMax * 0.66 && Main.expertMode)
                 {
                     num344 += 0.3f;
                 }
@@ -1138,21 +1118,21 @@ namespace tsorcRevamp.NPCs {
                 }
                 if ((double)npc.life < (double)npc.lifeMax * 0.05 && Main.expertMode)
                 {
-                    num344 += 0.6f;
+                    num344 += 0.3f;
                 }
                 if ((double)npc.life < (double)npc.lifeMax * 0.035 && Main.expertMode)
                 {
-                    num344 += 0.6f;
+                    num344 += 0.3f;
                 }
                 if ((double)npc.life < (double)npc.lifeMax * 0.025 && Main.expertMode)
                 {
-                    num344 += 0.6f;
-                }
-                /*if (Main.expertMode)
-                {
-                    num344 *= 1.35f;
-                    num344 += 0.35f;
+                    num344 += 0.3f;
                 }*/
+                if (Main.expertMode)
+                {
+                    //num344 *= 1.35f;
+                    num344 += 0.35f;
+                }
                 if (npc.velocity.X == 0f)
                 {
                     npc.TargetClosest();
@@ -1279,6 +1259,227 @@ namespace tsorcRevamp.NPCs {
             #endregion
                 return false;
             }
+
+            if (npc.type == NPCID.WallofFleshEye) {
+                #region WoF Eye AI
+
+
+                if (Main.wof < 0)
+                {
+                    npc.active = false;
+                    return false;
+                }
+                npc.realLife = Main.wof;
+                if (Main.npc[Main.wof].life > 0)
+                {
+                    npc.life = Main.npc[Main.wof].life;
+                }
+                npc.TargetClosest();
+                npc.position.X = Main.npc[Main.wof].position.X;
+                npc.direction = Main.npc[Main.wof].direction;
+                npc.spriteDirection = npc.direction;
+                float num360 = (Main.wofB + Main.wofT) / 2;
+                num360 = ((!(npc.ai[0] > 0f)) ? ((num360 + (float)Main.wofB) / 2f) : ((num360 + (float)Main.wofT) / 2f));
+                num360 -= (float)(npc.height / 2);
+                if (npc.position.Y > num360 + 1f)
+                {
+                    npc.velocity.Y = -1f;
+                }
+                else if (npc.position.Y < num360 - 1f)
+                {
+                    npc.velocity.Y = 1f;
+                }
+                else
+                {
+                    npc.velocity.Y = 0f;
+                    npc.position.Y = num360;
+                }
+                if (npc.velocity.Y > 5f)
+                {
+                    npc.velocity.Y = 5f;
+                }
+                if (npc.velocity.Y < -5f)
+                {
+                    npc.velocity.Y = -5f;
+                }
+                Vector2 vector38 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
+                float num361 = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) - vector38.X;
+                float num362 = Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2) - vector38.Y;
+                float num363 = (float)Math.Sqrt(num361 * num361 + num362 * num362);
+                float num364 = num363;
+                num361 *= num363;
+                num362 *= num363;
+                bool flag28 = true;
+                if (npc.direction > 0)
+                {
+                    if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
+                    {
+                        npc.rotation = (float)Math.Atan2(0f - num362, 0f - num361) + 3.14f;
+                    }
+                    else
+                    {
+                        npc.rotation = 0f;
+                        flag28 = false;
+                    }
+                }
+                else if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) < npc.position.X + (float)(npc.width / 2))
+                {
+                    npc.rotation = (float)Math.Atan2(num362, num361) + 3.14f;
+                }
+                else
+                {
+                    npc.rotation = 0f;
+                    flag28 = false;
+                }
+                if (Main.netMode == 1)
+                {
+                    return false;
+                }
+                int num365 = 4;
+                npc.localAI[1] += 1f;
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.75)
+                {
+                    npc.localAI[1] += 1f;
+                    num365++;
+                }
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.5)
+                {
+                    npc.localAI[1] += 1f;
+                    num365++;
+                }
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.25)
+                {
+                    npc.localAI[1] += 1f;
+                    num365 += 2;
+                }
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.1)
+                {
+                    npc.localAI[1] += 2f;
+                    num365 += 3;
+                }
+                if (Main.expertMode)
+                {
+                    npc.localAI[1] += 0.5f;
+                    num365++;
+                    if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.1)
+                    {
+                        npc.localAI[1] += 2f;
+                        num365 += 3;
+                    }
+                }
+                if (npc.localAI[2] == 0f)
+                {
+                    if (npc.localAI[1] > 600f)
+                    {
+                        npc.localAI[2] = 1f;
+                        npc.localAI[1] = 0f;
+                    }
+                }
+                else
+                {
+                    if (!(npc.localAI[1] > 45f) || !Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                    {
+                        return false;
+                    }
+                    npc.localAI[1] = 0f;
+                    npc.localAI[2] += 1f;
+                    if (npc.localAI[2] >= (float)num365)
+                    {
+                        npc.localAI[2] = 0f;
+                    }
+                    if (flag28)
+                    {
+                        float num366 = 9f;
+                        int num367 = 11;
+                        int num368 = 83;
+                        if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.5)
+                        {
+                            num367++;
+                            num366 += 1f;
+                        }
+                        if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.25)
+                        {
+                            num367++;
+                            num366 += 1f;
+                        }
+                        if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.1)
+                        {
+                            num367 += 2;
+                            num366 += 2f;
+                        }
+                        vector38 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
+                        num361 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector38.X;
+                        num362 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector38.Y;
+                        num363 = (float)Math.Sqrt(num361 * num361 + num362 * num362);
+                        num363 = num366 / num363;
+                        num361 *= num363;
+                        num362 *= num363;
+                        vector38.X += num361;
+                        vector38.Y += num362;
+                        int num369 = Projectile.NewProjectile(vector38.X, vector38.Y, num361, num362, num368, num367, 0f, Main.myPlayer, 1);
+                    }
+                }
+
+
+                npc.ai[3]++;
+
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.75)
+                {
+                    npc.ai[3] += 0.5f;
+                }
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.5)
+                {
+                    npc.ai[3] += 0.5f;
+                }
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.25)
+                {
+                    npc.ai[3] += 0.5f;
+
+                }
+                if ((double)Main.npc[Main.wof].life < (double)Main.npc[Main.wof].lifeMax * 0.1)
+                {
+                    npc.ai[3] += 0.5f;
+                }
+
+                if (Main.player[npc.target].Distance(npc.Center) < 1200f && npc.ai[3] >= 360 /*&& Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)*/)
+                {
+                    float num220 = 0.2f;
+                    Vector2 vector28 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
+                    float num221 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector28.X + (float)Main.rand.Next(-100, 101);
+                    float num222 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector28.Y + (float)Main.rand.Next(-100, 101);
+                    float num223 = (float)Math.Sqrt(num221 * num221 + num222 * num222);
+                    num223 = num220 / num223;
+                    num221 *= num223;
+                    num222 *= num223;
+                    int num224 = 18;
+                    int num225 = 44;
+                    int num226 = Projectile.NewProjectile(vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                    Main.projectile[num226].timeLeft = 420;
+                    npc.ai[3] = 0f;
+
+                }
+
+                if (Main.player[npc.target].Distance(npc.Center) >= 1100f && npc.ai[3] >= 90 /*&& Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)*/)
+                {
+                    float num220 = 0.2f;
+                    Vector2 vector28 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
+                    float num221 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector28.X + (float)Main.rand.Next(-100, 101);
+                    float num222 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector28.Y + (float)Main.rand.Next(-100, 101);
+                    float num223 = (float)Math.Sqrt(num221 * num221 + num222 * num222);
+                    num223 = num220 / num223;
+                    num221 *= num223;
+                    num222 *= num223;
+                    int num224 = 21;
+                    int num225 = 44;
+                    int num226 = Projectile.NewProjectile(vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                    Main.projectile[num226].timeLeft = 420;
+                    npc.ai[3] = 0f;
+
+                }
+                #endregion
+                return false;
+            }
+
             #region Lunar Towers
 
             if (npc.type == NPCID.LunarTowerNebula || npc.type == NPCID.LunarTowerSolar || npc.type == NPCID.LunarTowerStardust || npc.type == NPCID.LunarTowerVortex) {
@@ -2546,7 +2747,7 @@ namespace tsorcRevamp.NPCs {
             {
                 if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
             }
-            if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall)
+            if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall || npc.type == NPCID.BlackRecluse || npc.type == NPCID.BlackRecluseWall)
             {
                 if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>());
                 if (Main.rand.Next(10) == 0 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>());
