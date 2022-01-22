@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool undergroundEvil = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
 			bool undergroundHoly = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && p.ZoneHoly;
 						
-			if (underworld && Main.rand.Next(35) == 0) return 1;
+			if (underworld && Main.rand.Next(15) == 0) return 1;
 			else if (underworld && Main.hardMode && Main.rand.Next(1000) == 0) return 1;
 			return 0;
 		}

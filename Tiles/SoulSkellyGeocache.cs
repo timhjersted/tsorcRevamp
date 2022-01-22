@@ -1,12 +1,9 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using Terraria.Localization;
+
 
 namespace tsorcRevamp.Tiles
 {
@@ -109,6 +106,12 @@ namespace tsorcRevamp.Tiles
             //Behind safehouse under Forgotten City leading to early Underworld 
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4810, 1819, 2, 2), ModContent.ItemType<Items.Weapons.Melee.RuneBlade>(), 1, PrefixID.Legendary));
 
+            //WoF summoning pedestal
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3397, 1827, 2, 2), ModContent.ItemType<Items.PowerWithin>(), 1));
+
+            //Underworld, in ceiling left of WoF summoning pedestal above lava
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 5));
+
 
 
 
@@ -132,7 +135,7 @@ namespace tsorcRevamp.Tiles
 
 
 
-        }
 
+        }
     }
 }

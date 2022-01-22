@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.lifeMax = 250;
             if (Main.hardMode) { npc.lifeMax = 500; npc.defense = 30; npc.damage = 42; npc.value = 1500; }
             if (tsorcRevampWorld.SuperHardMode) { npc.lifeMax = 1000; npc.defense = 40; npc.damage = 52; npc.value = 2500; }
-            npc.value = 1500;
+            npc.value = 1200;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
             /*banner = npc.type;
