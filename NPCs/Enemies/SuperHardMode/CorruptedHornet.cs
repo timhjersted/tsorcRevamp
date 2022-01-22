@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				if (spawnInfo.player.position.Y > Main.rockLayer && spawnInfo.player.position.Y < Main.maxTilesY - 200 && (Main.evilTiles > 20 || Main.jungleTiles > 20) && !spawnInfo.player.ZoneDungeon && Main.rand.Next(5) == 0)
+				if (spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneOverworldHeight && Main.rand.Next(2) == 0)
 				{
 					return 1;
 				}

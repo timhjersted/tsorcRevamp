@@ -52,20 +52,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			Player P = spawnInfo.player;
-				bool Meteor = P.ZoneMeteor;
-				bool Jungle = P.ZoneJungle;
-				bool Dungeon = P.ZoneDungeon;
-				bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-				bool Hallow = P.ZoneHoly;
-				bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-				bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-				bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-				bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-				bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+			bool Meteor = P.ZoneMeteor;
+			bool Jungle = P.ZoneJungle;
+			bool Dungeon = P.ZoneDungeon;
+			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
+			bool Hallow = P.ZoneHoly;
+			bool AboveEarth = P.ZoneOverworldHeight;
+			bool InBrownLayer = P.ZoneDirtLayerHeight;
+			bool InGrayLayer = P.ZoneRockLayerHeight;
+			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200);
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 
-				// these are all the regular stuff you get , now lets see......
+			// these are all the regular stuff you get , now lets see......
 
-				if ((Meteor || Jungle) && tsorcRevampWorld.SuperHardMode && !Dungeon && !Corruption && AboveEarth && Main.rand.Next(40) == 1) return 1;
+			if ((Meteor || Jungle) && tsorcRevampWorld.SuperHardMode && !Dungeon && !Corruption && AboveEarth && Main.rand.Next(40) == 1) return 1;
 
 				if ((Meteor || Jungle) && tsorcRevampWorld.SuperHardMode && !Dungeon && !Corruption && InBrownLayer && Main.rand.Next(30) == 1) return 1;
 

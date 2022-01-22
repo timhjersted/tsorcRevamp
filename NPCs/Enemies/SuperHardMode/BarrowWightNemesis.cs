@@ -51,20 +51,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			bool oSky = spawnInfo.player.ZoneSkyHeight;
-			bool oSurface = ((spawnInfo.player.position.Y > (Main.rockLayer * 4)) && (spawnInfo.player.position.Y <= (Main.rockLayer * 8)));
-			bool oUnderSurface = ((spawnInfo.player.position.Y > (Main.rockLayer * 8)) && (spawnInfo.player.position.Y < (Main.rockLayer * 13)));
-			bool oUnderground = ((spawnInfo.player.position.Y >= (Main.rockLayer * 13)) && (spawnInfo.player.position.Y < (Main.rockLayer * 17)));
-			bool oCavern = ((spawnInfo.player.position.Y >= (Main.rockLayer * 17)) && (spawnInfo.player.position.Y < (Main.rockLayer * 24)));
-			bool oMagmaCavern = ((spawnInfo.player.position.Y >= (Main.rockLayer * 24)) && (spawnInfo.player.position.Y < (Main.rockLayer * 32)));
-			bool oUnderworld = (spawnInfo.player.position.Y >= (Main.rockLayer * 32));
-			//if (spawnInfo.player.townNPCs > 2f || spawnInfo.player.ZoneMeteor) return false;
-			if (tsorcRevampWorld.SuperHardMode && oSky && !Main.dayTime && Main.rand.Next(15) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && oSky && Main.dayTime && Main.rand.Next(25) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && oSky && !Main.dayTime && Main.rand.Next(6) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && oSky && Main.dayTime && Main.rand.Next(10) == 1) return 1;
+			Player P = spawnInfo.player;
+			bool Meteor = P.ZoneMeteor;
+			bool Jungle = P.ZoneJungle;
+			bool Dungeon = P.ZoneDungeon;
+			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
+			bool Hallow = P.ZoneHoly;
+			bool AboveEarth = P.ZoneOverworldHeight;
+			bool InBrownLayer = P.ZoneDirtLayerHeight;
+			bool InGrayLayer = P.ZoneRockLayerHeight;
+			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200);
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
+			bool Sky = P.ZoneSkyHeight;
+
+			if (tsorcRevampWorld.SuperHardMode && Sky && !Main.dayTime && Main.rand.Next(15) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && Sky && Main.dayTime && Main.rand.Next(25) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Sky && !Main.dayTime && Main.rand.Next(6) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Sky && Main.dayTime && Main.rand.Next(10) == 1) return 1;
 			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && oSurface && Main.rand.Next(205) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && AboveEarth && Main.rand.Next(205) == 1) return 1;
 			return 0;
 		}
 		#endregion

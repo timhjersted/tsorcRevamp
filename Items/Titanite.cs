@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -28,7 +30,23 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {            
-            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Ice cold to the touch"));
+            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Ice cold to the touch, it glows with enchanted power"));
+        }
+
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = Main.itemTexture[item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.DeepPink * 0.3f, 0, origin, scale, SpriteEffects.None, 0f);
+
+                offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.DeepPink * 0.3f, 0, origin, scale, SpriteEffects.None, 0f);
+            }
+            return true;
         }
     }
 
@@ -43,7 +61,23 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Glowing with heat"));
+            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Radiating heat, it shimmers with forbidden magic"));
+        }
+
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = Main.itemTexture[item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Black * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+
+                offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Black * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+            }
+            return true;
         }
     }
 
@@ -58,7 +92,22 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Forged into the strongest armaments"));
+            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "A solid white surface, it casts an eerie purple shadow"));
+        }
+        float rotation = 0;
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = Main.itemTexture[item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                rotation += 0.01f;
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Purple * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+
+                offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Purple * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+            }
+            return true;
         }
     }
 }

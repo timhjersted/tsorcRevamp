@@ -51,36 +51,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
+			Player P = spawnInfo.player;
 			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
 			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-			bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
-			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 500) * 16;
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 
 			// these are all the regular stuff you get , now lets see......
+			float chance = 0;
 
-			if (tsorcRevampWorld.SuperHardMode && !Meteor && !Jungle && !Dungeon && !Corruption && FrozenOcean && Main.rand.Next(20) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && (FrozenOcean || Hallow)){
+				chance = 1;
+			}
+			if(FrozenOcean && Hallow)
+            {
+				chance *= 2;
+            }
 
-			if (tsorcRevampWorld.SuperHardMode && Hallow && !Jungle && !Dungeon && !Corruption && FrozenOcean && Main.rand.Next(10) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && Hallow && !Jungle && Dungeon && !Corruption && Main.rand.Next(20) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && Hallow && (InBrownLayer || InGrayLayer) && Main.rand.Next(10) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && !Meteor && !Jungle && !InHell && !Corruption && FrozenOcean && Main.rand.Next(6) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && !Meteor && !InHell && !Corruption && Hallow && Main.rand.Next(8) == 1) return 1;
-
-
-
-			return 0;
+            if (Main.bloodMoon)
+            {
+				chance *= 2;
+            }
+			
+			return chance;
 		}
 		#endregion
 

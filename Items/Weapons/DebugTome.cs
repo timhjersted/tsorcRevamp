@@ -44,12 +44,12 @@ namespace tsorcRevamp.Items.Weapons {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
 
-			for(int i = 0; i < 100; i++)
+			for(int i = 0; i < 300; i++)
 			{
-				Vector2 dustPoint = Main.rand.NextVector2Circular(320, 320) + player.Center;
-				if(UsefulFunctions.IsPointWithinEllipse(dustPoint, player.Center, 150, 320))
+				Vector2 dustPoint = Main.rand.NextVector2Circular(500, 500) + player.Center;
+				if(UsefulFunctions.IsPointWithinEllipse(dustPoint, player.Center, 500, 220))
                 {
-					Dust.NewDustPerfect(dustPoint, DustID.ShadowbeamStaff).noGravity = true;
+					Dust.NewDustPerfect(dustPoint, DustID.ShadowbeamStaff, Scale: 3).noGravity = true;
                 }
 
 

@@ -50,28 +50,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-			bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+			Player player = spawnInfo.player;
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 
 			// these are all the regular stuff you get , now lets see......
+			float chance = 0;
+			if (tsorcRevampWorld.SuperHardMode && player.townNPCs < 1f && (player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDungeon) && !player.ZoneMeteor && !player.ZoneJungle && !player.ZoneUnderworldHeight && !player.ZoneHoly && !Ocean)
+			{
+				chance = 0.2f;
+			}
+			if (!Main.dayTime)
+			{
+				chance *= 2;
+			}
+			if (Main.bloodMoon)
+			{
+				chance *= 2;
+			}
 
-			if (tsorcRevampWorld.SuperHardMode && P.townNPCs < 1f && !Meteor && !Jungle && !Dungeon && !Corruption && !AboveEarth && !InHell && !Hallow && !Ocean && Main.rand.Next(20) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && P.townNPCs < 1f && !Meteor && !Jungle && !Dungeon && !Corruption && !AboveEarth && !InHell && !Hallow && !Ocean && Main.bloodMoon && Main.rand.Next(5) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && P.townNPCs < 1f && !Meteor && !Jungle && !Dungeon && !Corruption && !AboveEarth && !InHell && !Hallow && !Ocean && !Main.dayTime && Main.rand.Next(10) == 1) return 1;
+			
 
 
-			return 0;
+			return chance;
 		}
 		#endregion
 
