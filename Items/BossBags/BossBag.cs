@@ -689,15 +689,6 @@ namespace tsorcRevamp.Items.BossBags {
                     SublimeBoneDustOnFirstBag(NPCID.EyeofCthulhu, player);
                     SoulsOnFirstBag(NPCID.EyeofCthulhu, player);
                 }
-                if (arg == ItemID.EyeOfCthulhuBossBag && player.ZoneJungle) { //If you open your first EoC bag in the jungle, get a stamina vessel as well.
-                    player.QuickSpawnItem(ItemID.HermesBoots);                //Hopefully people won't kill Earth Temple EoC then take the bag to the jungle to open it lol
-                    player.QuickSpawnItem(ItemID.HerosHat);
-                    player.QuickSpawnItem(ItemID.HerosPants);
-                    player.QuickSpawnItem(ItemID.HerosShirt);
-                    SublimeBoneDustOnFirstBag(NPCID.EyeofCthulhu, player);
-                    StaminaVesselOnFirstBag(NPCID.EyeofCthulhu, player);
-                    SoulsOnFirstBag(NPCID.EyeofCthulhu, player);
-                }
                 if (arg == ItemID.EaterOfWorldsBossBag) {
                     SoulsOnFirstBag(NPCID.EaterofWorldsHead, player);
                 }
