@@ -250,7 +250,7 @@ namespace tsorcRevamp {
 			//only subtract stamina on a successful roll
 			player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
 			player.immune = true;
-			player.immuneTime = 15;
+			player.immuneTime = 18;
 			dodgeStartRot = player.GetModPlayer<tsorcRevampPlayer>().rotation;
 			dodgeItemRotation = player.itemRotation;
 			dodgeTime = 0f;
@@ -294,7 +294,7 @@ namespace tsorcRevamp {
 			}
 			//Apply velocity
 			if (dodgeTime < DodgeTimeMax * 0.5f) {
-				float newVelX = (onGround ? 10f : 6.5f) * dodgeDirection;
+				float newVelX = (onGround ? 12f : 8f) * dodgeDirection;
 
 				if (Math.Abs(player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(player.velocity.X)) {
 					player.velocity.X = newVelX;
