@@ -51,36 +51,27 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
+			Player player = spawnInfo.player;
 
-			bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-			bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
-			bool SevenToNine = spawnInfo.spawnTileX > Main.maxTilesX * 0.7f && spawnInfo.spawnTileX < Main.maxTilesX * 0.9f; //Seven to nine/tenths wide (the right side of the map but not the very edge)
-			bool ThreeToSeven = spawnInfo.spawnTileX > Main.maxTilesX * 0.3f && spawnInfo.spawnTileX < Main.maxTilesX * 0.7f; //Between three and seven tenths wide (the middle of the map)
-			bool BeforeThreeAfterSeven = spawnInfo.spawnTileX < Main.maxTilesX * 0.3f || spawnInfo.spawnTileX > Main.maxTilesX * 0.7f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
-																													   // these are all the regular stuff you get , now lets see......
+			float chance = 0;
+            if (player.ZoneSkyHeight)
+            {
+				chance = 0.5f;
+            }
+			if (player.ZoneMeteor)
+            {
+				chance = 1f;
+            }
+            if (!Main.dayTime)
+            {
+				chance *= 2;
+            }
+            if (Main.bloodMoon)
+            {
+				chance *= 2;
+            }
 
-			//if (Meteor && tsorcRevampWorld.SuperHardMode && Main.rand.Next(30)==1) return true;
-			if (Meteor && tsorcRevampWorld.SuperHardMode && AboveEarth && Main.rand.Next(8) == 1) return 1;
-			if (Meteor && !InHell && tsorcRevampWorld.SuperHardMode && !AboveEarth && Main.rand.Next(16) == 1) return 1;
-			if (Meteor && tsorcRevampWorld.SuperHardMode && !Main.dayTime && AboveEarth && Main.rand.Next(6) == 1) return 1;
-			if (Meteor && tsorcRevampWorld.SuperHardMode && Main.bloodMoon && AboveEarth && Main.rand.Next(3) == 1) return 1;
-			if (Sky && !SevenToNine && tsorcRevampWorld.SuperHardMode && Main.dayTime && Main.rand.Next(30) == 1) return 1;
-			if (Sky && !SevenToNine && tsorcRevampWorld.SuperHardMode && !Main.dayTime && Main.rand.Next(15) == 1) return 1;
-			if (Sky && SevenToNine && tsorcRevampWorld.SuperHardMode && Main.rand.Next(6) == 1) return 1;
-			if (SevenToNine && tsorcRevampWorld.SuperHardMode && Main.bloodMoon && AboveEarth && Main.rand.Next(4) == 1) return 1;
-			if (Sky && BeforeThreeAfterSeven && tsorcRevampWorld.SuperHardMode && Main.rand.Next(25) == 1) return 1;
-
-			return 0;
+			return chance;
 		}
 		#endregion
 		#region AI

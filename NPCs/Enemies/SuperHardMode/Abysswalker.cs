@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.damage = 105;
 			npc.defense = 122;
 			npc.height = 40;
-			npc.lifeMax = 20023;
+			npc.lifeMax = 9023;
 			npc.scale = 1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
@@ -51,34 +51,31 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player;
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = P.ZoneOverworldHeight;
-			bool InBrownLayer = P.ZoneDirtLayerHeight;
-			bool InGrayLayer = P.ZoneRockLayerHeight;
-			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200);
-			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
-			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
+			Player player = spawnInfo.player;			
 
 			// these are all the regular stuff you get , now lets see......
+			float chance = 0;
 
-			if ((Meteor || Jungle) && tsorcRevampWorld.SuperHardMode && !Dungeon && !Corruption && AboveEarth && Main.rand.Next(40) == 1) return 1;
-
-				if ((Meteor || Jungle) && tsorcRevampWorld.SuperHardMode && !Dungeon && !Corruption && InBrownLayer && Main.rand.Next(30) == 1) return 1;
-
-				if ((Meteor || Jungle) && tsorcRevampWorld.SuperHardMode && !Dungeon && !Corruption && InGrayLayer && Main.rand.Next(20) == 1) return 1;
-
-
-				if (tsorcRevampWorld.SuperHardMode && Jungle && !Corruption && !Ocean && Main.bloodMoon && Main.rand.Next(8) == 1) return 1;
-
-
-				return 0;
+			if ((player.ZoneMeteor || player.ZoneJungle) && tsorcRevampWorld.SuperHardMode && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson))
+			{
+				chance = 0.25f;
 			}
-			#endregion
+			if (player.ZoneDirtLayerHeight)
+			{
+				chance *= 1.5f;
+			}
+			if (player.ZoneRockLayerHeight)
+			{
+				chance *= 1.5f;
+			}
+			if (Main.bloodMoon)
+			{
+				chance *= 2;
+			}
+
+			return chance;
+		}
+		#endregion
 
 		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
 		public override void AI()  //  warrior ai

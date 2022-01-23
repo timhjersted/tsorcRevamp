@@ -37,12 +37,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
             float chance = 0;
-            var player = spawnInfo.player;
+            Player player = spawnInfo.player;
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.067f;
-                else if (player.ZoneCorrupt && player.ZoneRockLayerHeight && !Main.dayTime) chance = 0.125f;
-                else if (player.ZoneCorrupt) chance = 0.05f;
+                if (player.ZoneCorrupt && player.ZoneOverworldHeight && !Main.dayTime) chance = 0.5f;
+                else if (player.ZoneCorrupt && player.ZoneRockLayerHeight && !Main.dayTime) chance = 0.5f;
+                else if (player.ZoneCorrupt) chance = 0.25f;
             }
 
             return chance;

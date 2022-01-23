@@ -53,9 +53,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				if ((spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.position.Y > Main.rockLayer && spawnInfo.player.position.Y < Main.maxTilesY - 200 && !spawnInfo.player.ZoneDungeon && Main.rand.Next(8) == 0)
+				if ((spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && (spawnInfo.player.position.Y / 16) < Main.rockLayer && (spawnInfo.player.position.Y / 16) < Main.maxTilesY - 200 && !spawnInfo.player.ZoneDungeon)
 				{
-					return 1;
+					return 0.5f;
 				}
 				else return 0;
 			}

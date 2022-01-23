@@ -51,19 +51,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
+			Player player = spawnInfo.player;
 			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
-			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 
 			// these are all the regular stuff you get , now lets see......
 			float chance = 0;
 
-			if (tsorcRevampWorld.SuperHardMode && (FrozenOcean || Hallow)){
+			if (tsorcRevampWorld.SuperHardMode && (FrozenOcean || player.ZoneHoly)){
 				chance = 1;
 			}
-			if(FrozenOcean && Hallow)
+			if(FrozenOcean && player.ZoneHoly)
             {
 				chance *= 2;
             }

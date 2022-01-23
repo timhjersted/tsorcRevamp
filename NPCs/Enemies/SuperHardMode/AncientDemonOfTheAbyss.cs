@@ -73,22 +73,33 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			bool oSky = (spawnInfo.player.position.Y < (Main.maxTilesY * 0.1f));
-			bool oSurface = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.1f) && spawnInfo.player.position.Y < (Main.maxTilesY * 0.2f));
-			bool oUnderSurface = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.2f) && spawnInfo.player.position.Y < (Main.maxTilesY * 0.3f));
-			bool oUnderground = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.3f) && spawnInfo.player.position.Y < (Main.maxTilesY * 0.4f));
-			bool oCavern = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.4f) && spawnInfo.player.position.Y < (Main.maxTilesY * 0.6f));
-			bool oMagmaCavern = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.6f) && spawnInfo.player.position.Y < (Main.maxTilesY * 0.8f));
-			bool oUnderworld = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.8f));
+			bool oMagmaCavern = (spawnInfo.player.position.Y >= (Main.maxTilesY * 0.6f) && !spawnInfo.player.ZoneUnderworldHeight);
 			bool BeforeThreeAfterSeven = (spawnInfo.player.position.X < Main.maxTilesX * 0.3f) || (spawnInfo.player.position.X > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width
 
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.player.ZoneUnderworldHeight && Main.rand.Next(20) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneUnderworldHeight && Main.rand.Next(50) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && oMagmaCavern && Main.rand.Next(300) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && BeforeThreeAfterSeven && spawnInfo.player.ZoneUnderworldHeight && Main.rand.Next(50) == 0) return 1;
-			if (tsorcRevampWorld.SuperHardMode && BeforeThreeAfterSeven && spawnInfo.player.ZoneUnderworldHeight && Main.bloodMoon && Main.rand.Next(15) == 0) return 1;
+			float chance = 0;
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				if (spawnInfo.player.ZoneUnderworldHeight)
+				{
+					chance = 0.1f;
 
-			return 0;
+					if (BeforeThreeAfterSeven)
+					{
+						chance *= 2;
+					}
+				}
+				if (oMagmaCavern)
+				{
+					chance = 0.003f;
+				}
+			}
+
+            if (Main.bloodMoon)
+            {
+				chance *= 2;
+            }
+
+			return chance;
 		}
 		#endregion
 

@@ -37,35 +37,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.damage = (int)(npc.damage / 2);
         }
 
-        #region Spawn
+        //Super high because they seem to like spawning, rolling out of range, and instantly despawning
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHoly;
-            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+            Player player = spawnInfo.player;
 
-            // these are all the regular stuff you get , now lets see......
+            if (player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) return 1;
 
-            if (Dungeon && tsorcRevampWorld.SuperHardMode && Main.rand.Next(5) == 1) return 1;
+            if (player.ZoneDungeon && Main.hardMode) return 0.5f;
 
-            if (Dungeon && Main.hardMode && Main.rand.Next(10) == 1) return 1;
+            if ((player.ZoneCorrupt || player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode) return 1;
 
-            if (Corruption && tsorcRevampWorld.SuperHardMode && !AboveEarth && Main.rand.Next(50) == 1) return 1;
-
-            if (InHell && tsorcRevampWorld.SuperHardMode && Main.rand.Next(30) == 1) return 1;
+            if (player.ZoneUnderworldHeight && tsorcRevampWorld.SuperHardMode) return 0.5f;
 
 
             return 0;
         }
-        #endregion
 
         public override void AI()
         {

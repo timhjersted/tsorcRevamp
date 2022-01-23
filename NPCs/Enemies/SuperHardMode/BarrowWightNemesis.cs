@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.defense = 125;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 12970;
+			npc.lifeMax = 8000;
 			npc.knockBackResist = 0;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -51,27 +51,31 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player;
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = P.ZoneOverworldHeight;
-			bool InBrownLayer = P.ZoneDirtLayerHeight;
-			bool InGrayLayer = P.ZoneRockLayerHeight;
-			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200);
-			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
-			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
-			bool Sky = P.ZoneSkyHeight;
+			Player player = spawnInfo.player;			
 
-			if (tsorcRevampWorld.SuperHardMode && Sky && !Main.dayTime && Main.rand.Next(15) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && Sky && Main.dayTime && Main.rand.Next(25) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Sky && !Main.dayTime && Main.rand.Next(6) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Sky && Main.dayTime && Main.rand.Next(10) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && AboveEarth && Main.rand.Next(205) == 1) return 1;
-			return 0;
+			float chance = 0;
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				if (player.ZoneSkyHeight || spawnInfo.player.ZoneDungeon)
+				{
+					chance = 0.17f;
+				}
+				else if (player.ZoneOverworldHeight && !Main.dayTime)
+				{
+					chance = 0.02f;
+				}
+			}
+			
+			if (!Main.dayTime)
+            {
+				chance *= 2;
+            }
+			if (Main.bloodMoon)
+			{
+				chance *= 2;
+			}
+
+			return chance;
 		}
 		#endregion
 

@@ -67,9 +67,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			if (Main.bloodMoon)
 			{
 				chance *= 2;
-			}
-
-			
+			}		
 
 
 			return chance;

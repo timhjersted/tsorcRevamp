@@ -71,32 +71,31 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region Spawn
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            Player P = spawnInfo.player;
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHoly;
-            bool AboveEarth = P.ZoneOverworldHeight;
-            bool InBrownLayer = P.ZoneDirtLayerHeight;
-            bool InGrayLayer = P.ZoneRockLayerHeight;
-            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200);
+            Player player = spawnInfo.player;
             bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
             bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
-            bool Sky = P.ZoneSkyHeight;
 
+            float chance = 0;
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if (((player.ZoneMeteor && (player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight)) || player.ZoneCorrupt || player.ZoneCrimson) && !player.ZoneDungeon && !player.ZoneJungle)
+                {
+                    chance = 0.33f;
+                }
+                else
+                {
+                    if (player.ZoneOverworldHeight && !Ocean && !Main.dayTime)
+                    {
+                        chance = 0.11f;
+                    }
+                }
+            }
+            if (Main.bloodMoon)
+            {
+                chance *= 2;
+            }
 
-            if (tsorcRevampWorld.SuperHardMode && Meteor && !Dungeon && !Jungle && (InBrownLayer || InGrayLayer) && Main.rand.Next(10) == 1) return 1;
-
-            //if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Corruption && Main.rand.Next(10) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && Jungle && Main.bloodMoon && (InBrownLayer || InGrayLayer || AboveEarth) && Main.rand.Next(6) == 1) return 1;
-
-            //if (tsorcRevampWorld.SuperHardMode && Corruption && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(8) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && AboveEarth && !Ocean && !Main.dayTime && Main.rand.Next(30) == 1) return 1;
-
-            return 0;
+            return chance;
         }
         #endregion
 

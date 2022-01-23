@@ -51,31 +51,33 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player;
-			bool Meteor = P.ZoneMeteor;
-			bool Jungle = P.ZoneJungle;
-			bool Dungeon = P.ZoneDungeon;
-			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
-			bool AboveEarth = P.ZoneOverworldHeight;
-			bool InBrownLayer = P.ZoneDirtLayerHeight;
-			bool InGrayLayer = P.ZoneRockLayerHeight;
-			bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200);
+			Player player = spawnInfo.player;
 			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
 			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 
-			// these are all the regular stuff you get , now lets see......
+			float chance = 0;
+			if (tsorcRevampWorld.SuperHardMode && player.ZoneJungle && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson) && !Ocean)
+            {
+                if (player.ZoneOverworldHeight)
+                {
+					chance = 0.25f;
+                }
+				else
+				{
+					chance = 0.3f;
+				}
+            }
 
-			if (tsorcRevampWorld.SuperHardMode && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.Next(30) == 1) return 1;
+			if (!Main.dayTime)
+			{
+				chance *= 2;
+			}
+			if (Main.bloodMoon)
+            {
+				chance *= 2;
+            }
 
-			if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && !Meteor && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.Next(9) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Jungle && !Dungeon && !Corruption && !AboveEarth && !Ocean && Main.rand.Next(15) == 1) return 1;
-
-			if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Jungle && !Dungeon && !Corruption && AboveEarth && !Ocean && Main.rand.Next(20) == 1) return 1;
-
-
-			return 0;
+			return chance;
 		}
 		#endregion
 

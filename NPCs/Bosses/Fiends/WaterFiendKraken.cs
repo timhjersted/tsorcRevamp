@@ -166,12 +166,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				}
 				if (projectileTimer >= 0)
 				{
-					float offset = MathHelper.ToRadians(-15 + 5 * projectileTimer);
+					float offset = MathHelper.ToRadians(-20 + 10 * projectileTimer);
 					if (projectileType < 6)
 					{
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
 						projVector = projVector.RotatedBy(offset);
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, npc.target);
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
 					}
 					if (projectileType >= 6 && projectileType != 9)
@@ -190,7 +190,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
 					}
 
-					if(projectileTimer == 6)
+					if(projectileTimer == 4)
                     {
 						projectileTimer = -120;
                     }
@@ -225,7 +225,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		{
 			npc.velocity = Vector2.Zero;
 
-            if (Main.GameUpdateCount % 30 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.GameUpdateCount % 40 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
 				int projType = Main.rand.Next(10);			
 			
@@ -349,6 +349,41 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
 			//TODO
         }
+
+		private void TempMeleeAttack()
+		{
+			MoveCounter++;
+			npc.velocity = Vector2.Zero;
+
+			for (int j = 0; j < 100; j++)
+			{
+				Vector2 dir = Main.rand.NextVector2CircularEdge(1000, 1000);
+				Vector2 dustPos = npc.Center + dir;
+				Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
+				Dust.NewDustPerfect(dustPos, DustID.CursedTorch, dustVel, 200, default, 1).noGravity = true;
+			}
+
+			int frequency = 30;
+            if (chamberFlooded)
+            {
+				frequency = 40;
+            }
+			if(MoveCounter % frequency == 0)
+            {
+				Vector2 projCenter = Main.rand.NextVector2CircularEdge(1000, 1000) + npc.Center;
+				Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[npc.target].Center, 10);
+				Projectile.NewProjectile(projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, npc.target);
+			}
+			if (MoveCounter > 800)
+			{
+				int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
+				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
+			}
+			if (MoveCounter > 900)
+			{
+				NextAttack();
+			}
+		}
 		private void FloodArena()
 		{
 			Vector2 centerOver16 = npc.Center / 16;
@@ -474,6 +509,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				new KrakenMove(CursedFireSpam, KrakenAttackID.CursedFireSpam, "Cursed Fire"),
 				new KrakenMove(DashToArenaMidline, KrakenAttackID.CenterDash, "Dash to Center"),
 				new KrakenMove(AquaWave, KrakenAttackID.AquaWave, "Aqua Wave"),
+				new KrakenMove(TempMeleeAttack, KrakenAttackID.TempMeleeAttack, "Temp attack"),
 				//new KrakenMove(GeyserSpam, KrakenAttackID.GeyserSpam, "Geysers"),
 				};
 		}
@@ -484,6 +520,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			public const short AquaWave = 1;
 			public const short CenterDash = 2;
 			public const short GeyserSpam = 3;
+			public const short TempMeleeAttack = 4;
 		}
 		private class KrakenMove
 		{
