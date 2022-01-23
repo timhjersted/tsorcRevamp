@@ -54,22 +54,26 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			Player player = spawnInfo.player;
 
 			float chance = 0;
-            if (player.ZoneSkyHeight)
-            {
-				chance = 0.5f;
-            }
-			if (player.ZoneMeteor)
-            {
-				chance = 1f;
-            }
-            if (!Main.dayTime)
-            {
-				chance *= 2;
-            }
-            if (Main.bloodMoon)
-            {
-				chance *= 2;
-            }
+
+			if (tsorcRevampWorld.SuperHardMode)
+			{
+				if (player.ZoneSkyHeight)
+				{
+					chance = 0.5f;
+				}
+				if (player.ZoneMeteor)
+				{
+					chance = .75f;
+				}
+				if (!Main.dayTime)
+				{
+					chance *= 2;
+				}
+				if (Main.bloodMoon)
+				{
+					chance *= 2;
+				}
+			}
 
 			return chance;
 		}
