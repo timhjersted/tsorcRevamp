@@ -165,7 +165,7 @@ namespace tsorcRevamp
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
-            //ICE GOLEM YETI COMBO
+            //ICE GOLEM WYVERN COMBO
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
             List<Vector2> Golem2EnemyLocations = new List<Vector2>() { new Vector2(7776, 829), new Vector2(7800, 868) };
             ScriptedEvent Golem2 = new ScriptedEvent(new Vector2(7900, 868), 30, Golem2EnemyTypeList, Golem2EnemyLocations, DustID.Snow, true, false, "!!!", Color.BlueViolet, false, null, StormCustomAction); //
