@@ -69,10 +69,12 @@ namespace tsorcRevamp.NPCs.Friendly
 					{
 						chat.Add("Seek misery. For misery will lead you to greater, stronger souls. You will never defeat Attraidies with a soul so frail and palid.");
 					}
-					chat.Add("Forge your souls in the flames of sacred altars and make their power your own.");
+					chat.Add("Forge your souls in the flames of sacred altars and make" +
+						"\ntheir power your own.");
 					chat.Add("If you ever chance upon a weapon befallen the terrible curse of poor craftsmanship, bring it to me and I shall bless it.");
 					chat.Add("I hope you have a keen eye, for this is a land brimming with secrets...");
-					chat.Add("The near-constant use of potions will prove vital on your journey, especially when attempting to retrieve lost souls.");
+					chat.Add("The near-constant use of potions will prove vital on your" +
+						"\njourney, especially when attempting to retrieve lost souls.");
 					chat.Add("Bearer... Seek... Seek... Lest...", 0.05); // Easter egg. A classic DS2 meme. Rare dialogue.
 				}
 			}
@@ -131,28 +133,30 @@ namespace tsorcRevamp.NPCs.Friendly
 				}
 				if (chatState == 1) //if you click while on the first page of text
 				{
-					Main.npcChatText = "Dark souls have special properties. On death, you will drop all your souls and have one chance to recover them. Die before this and they are gone for good."; 
+					Main.npcChatText = "Dark souls have special properties. On death, you will drop all your souls and have one chance to recover them." +
+						"\nDie before this and they are gone for good."; 
 					chatState = 2; //move to state 2
 					return;
 				}
 				if (chatState == 2) //if you click while on the second page of text
 				{
-					Main.npcChatText = "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can use them as checkpoints and storage.";
+					Main.npcChatText = "On your journey you will encounter unlit bonfires, light them and enjoy the peaceful respite they provide. You can" +
+						"\nuse them as checkpoints and storage.";
 					chatState = 3; //move to state 3, etc
 					return;
 				}
 				if (chatState == 3)
 				{
 					Main.npcChatText = "You can stash excess ammo, weapons and armor in the safes and piggy banks found at save points and bonfires.";
-					chatState = 4;
+					chatState = 5;
 					return;
 				}
-				if (chatState == 4)
+				/*if (chatState == 4)
 				{
 					Main.npcChatText = "Don't move vanilla NPC's like the Wizard, Mechanic or Goblin Tinkerer until you've found them in game. Modded NPCs may be moved.";
 					chatState = 5;
 					return;
-				}
+				}*/
 				if (chatState == 5)
 				{
 					Main.npcChatText = "Stronger pickaxes can be used to open gates of strong ore.";
@@ -161,7 +165,8 @@ namespace tsorcRevamp.NPCs.Friendly
 				}
 				if (chatState == 6)
 				{
-					Main.npcChatText = "And finally... I'm not sure what it means, but I was told to tell you to read something called 'The Game Manual' for more information. I get the feeling you know where to find it.";
+					Main.npcChatText = "And finally... I'm not sure what it means, but I was told to tell you to read something called 'The Game Manual' for more information. I get the feeling you know where to" +
+						"\nfind it.";
 					chatState = 7;
 					return;
 				}
