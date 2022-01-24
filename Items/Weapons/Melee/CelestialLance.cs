@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("Longinus"), 1);
             recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 20);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 100);
+            recipe.AddIngredient(mod.GetItem("CursedSoul"), 30);
             recipe.AddIngredient(ItemID.FallenStar, 20);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 240000);
             recipe.SetResult(this, 1);
