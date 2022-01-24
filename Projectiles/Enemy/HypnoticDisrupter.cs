@@ -87,8 +87,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-			projectile.velocity = oldVelocity;
-            return false;
+            return true;
         }
     }
 }

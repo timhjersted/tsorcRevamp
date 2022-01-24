@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             item.useAnimation = 38;
             item.useTime = 38;
             item.maxStack = 1;
-            item.damage = 350;
+            item.damage = 1000;
             item.knockBack = (float)10;
             item.scale = (float)1.1;
             item.UseSound = SoundID.Item1;
@@ -45,9 +45,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
             //recipe.AddIngredient(mod.GetItem("EnchantedMorningStar", 1);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 60);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 17);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 120000);
+            recipe.AddIngredient(mod.GetItem("CursedSoul"), 20);
+            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 15);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

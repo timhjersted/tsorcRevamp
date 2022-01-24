@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             item.useAnimation = 30;
             item.useTime = 30;
             item.maxStack = 1;
-            item.damage = 750;
+            item.damage = 2000;
             item.knockBack = (float)10;
             item.scale = (float)1.1;
             item.UseSound = SoundID.Item1;
@@ -46,8 +46,9 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
             recipe.AddIngredient(mod.GetItem("HeavensTear"), 1);
             recipe.AddIngredient(mod.GetItem("Humanity"), 15);
+            recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
             recipe.AddIngredient(mod.GetItem("RedTitanite"), 20);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 230000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 220000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

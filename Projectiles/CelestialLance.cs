@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles {
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
             Player pOwner = Main.player[projectile.owner];
             
-            if (Main.rand.Next(2) == 0) {
+            if (Main.rand.Next(5) == 0) {
                 if (!hasHealed)
                 {
 					int healAmount = 20;

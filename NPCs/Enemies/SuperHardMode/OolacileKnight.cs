@@ -528,7 +528,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (breath)
                         {
 
-                            float num48 = 5f;
                             float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
                             int num54 = Projectile.NewProjectile(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2), (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 25; //was 50

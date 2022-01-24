@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			animationType = -1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 400000;
+			npc.lifeMax = 500000;
 			npc.timeLeft = 22500;
 			npc.friendly = false;
 			npc.noTileCollide = true;
@@ -46,15 +46,15 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			DisplayName.SetDefault("Water Fiend Kraken");
 		}
 
-
-		int cursedFlamesDamage = 45;
-		int plasmaOrbDamage = 65;
 		int hypnoticDisruptorDamage = 35;
-		int trueContactDamage = 185;
-		int chargeContactDamage = 240;
+		int cursedFlamesDamage = 40;
+		int geyserDamage = 30;
+		int plasmaOrbDamage = 65;
+		int trueContactDamage = 140; //Contact damage does not get multiplied by 4, hence the higher values
+		int chargeContactDamage = 200;
 
 		//If this is set to anything but -1, the boss will *only* use that attack ID
-		readonly int testAttack = -1;
+		int testAttack = -1;
 		KrakenMove CurrentMove
         {
 			get => MoveList[MoveIndex];
@@ -158,15 +158,26 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			if (Main.netMode != NetmodeID.MultiplayerClient && !charging)
 			{
 				projectileTimer++;
-
-				if (projectileTimer == 0)
-				{
-					projectileType = Main.rand.Next(10);
-
+				ArmorShaderData dustShader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
+				if (projectileType == 9)
+				{					
+					for (int j = 0; j < 10; j++)
+					{
+						Vector2 dir = Main.rand.NextVector2Circular(300, 300);
+						Vector2 dustPos = npc.Center + dir;
+						Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+						Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.FireworkFountain_Blue, dustVel, Scale: 1);
+						thisDust.noGravity = true;
+						thisDust.shader = dustShader;
+					}
 				}
 				if (projectileTimer >= 0)
 				{
 					float offset = MathHelper.ToRadians(-20 + 10 * projectileTimer);
+					if (projectileType == 9)
+					{
+						offset = MathHelper.ToRadians(-30 + 10 * projectileTimer);
+					}
 					if (projectileType < 6)
 					{
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
@@ -189,11 +200,22 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
 					}
-
-					if(projectileTimer == 4)
+					if (projectileType != 9)
+					{
+						if (projectileTimer == 4)
+						{
+							projectileTimer = -120;
+							projectileType = Main.rand.Next(10);
+						}
+					}
+					else
                     {
-						projectileTimer = -120;
-                    }
+						if (projectileTimer == 6)
+						{
+							projectileTimer = -120;
+							projectileType = Main.rand.Next(10);
+						}
+					}
 				}
 			}
 			#endregion
@@ -209,6 +231,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				}
 				if (radius > 300)
 				{
+					if (Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						Vector2 projCenter = Target.Center;
+						projCenter += Main.rand.NextVector2CircularEdge(500, 500);
+
+						Projectile.NewProjectile(projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
+					}
 					chamberFlooded = !chamberFlooded;
 					radius = 0;
 				}
@@ -220,14 +249,27 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		//Rectangle arena = new Rectangle(1557, 1639, 467, 103);
 		List<Vector2> activeTiles;
 		List<Vector2> nextTiles;
-
+		int projType = 0;
 		private void AquaWave()
 		{
 			npc.velocity = Vector2.Zero;
 
-            if (Main.GameUpdateCount % 40 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-				int projType = Main.rand.Next(10);			
+			if (projType >= 8)
+			{
+				ArmorShaderData dustShader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
+				for (int j = 0; j < 10; j++)
+				{
+					Vector2 dir = Main.rand.NextVector2Circular(300, 300);
+					Vector2 dustPos = npc.Center + dir;
+					Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+					Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.FireworkFountain_Blue, dustVel, Scale: 1);
+					thisDust.noGravity = true;
+					thisDust.shader = dustShader;
+				}
+			}
+
+			if (Main.GameUpdateCount % 40 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            {		
 			
 				if (projType < 5)
 				{
@@ -247,7 +289,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 15);
 					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
-				}				
+				}
+				projType = Main.rand.Next(10);
 			}
 
 
@@ -319,11 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			npc.velocity = Vector2.Clamp(npc.velocity, -krakenMaxSpeed, krakenMaxSpeed);
 		}
 
-		Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);
-		private void DashToArenaCenter()
-        {
-			
-        }		
+		Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);	
 		private void DashToArenaMidline()
 		{
 			MoveCounter++;
@@ -344,42 +383,50 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			{
 				NextAttack();
 			}
-		}
-		private void GeyserSpam()
-        {
-			//TODO
-        }
+		}		
 
-		private void TempMeleeAttack()
+		float cursedRadius = 1400;
+		bool targetPlayer = false;
+		private void CursedBarrage()
 		{
 			MoveCounter++;
 			npc.velocity = Vector2.Zero;
 
 			for (int j = 0; j < 100; j++)
 			{
-				Vector2 dir = Main.rand.NextVector2CircularEdge(1000, 1000);
+				Vector2 dir = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius);
 				Vector2 dustPos = npc.Center + dir;
 				Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
 				Dust.NewDustPerfect(dustPos, DustID.CursedTorch, dustVel, 200, default, 1).noGravity = true;
 			}
 
-			int frequency = 30;
+			int cursedFlameCooldown = 60;
             if (chamberFlooded)
             {
-				frequency = 40;
+				cursedFlameCooldown = 80;
             }
-			if(MoveCounter % frequency == 0)
+			if(MoveCounter % cursedFlameCooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-				Vector2 projCenter = Main.rand.NextVector2CircularEdge(1000, 1000) + npc.Center;
+				Vector2 projCenter = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius) + npc.Center;
 				Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[npc.target].Center, 10);
 				Projectile.NewProjectile(projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, npc.target);
 			}
+
+			int waterJetCooldown = 160;
+			if (MoveCounter % waterJetCooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				Vector2 projCenter = Target.Center;
+				projCenter += Main.rand.NextVector2CircularEdge(500, 500);
+
+				Projectile.NewProjectile(projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
+			}
+
 			if (MoveCounter > 800)
 			{
 				int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
 				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
 			}
-			if (MoveCounter > 900)
+			if (MoveCounter > 1200)
 			{
 				NextAttack();
 			}
@@ -509,8 +556,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				new KrakenMove(CursedFireSpam, KrakenAttackID.CursedFireSpam, "Cursed Fire"),
 				new KrakenMove(DashToArenaMidline, KrakenAttackID.CenterDash, "Dash to Center"),
 				new KrakenMove(AquaWave, KrakenAttackID.AquaWave, "Aqua Wave"),
-				new KrakenMove(TempMeleeAttack, KrakenAttackID.TempMeleeAttack, "Temp attack"),
-				//new KrakenMove(GeyserSpam, KrakenAttackID.GeyserSpam, "Geysers"),
+				new KrakenMove(CursedBarrage, KrakenAttackID.CursedBarrage, "Cursed Barrage"),
 				};
 		}
 
@@ -519,8 +565,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			public const short CursedFireSpam = 0;
 			public const short AquaWave = 1;
 			public const short CenterDash = 2;
-			public const short GeyserSpam = 3;
-			public const short TempMeleeAttack = 4;
+			public const short CursedBarrage = 3;
 		}
 		private class KrakenMove
 		{

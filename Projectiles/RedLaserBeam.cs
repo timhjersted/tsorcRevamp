@@ -127,7 +127,7 @@ namespace tsorcRevamp.Projectiles {
 		 * Sets the end of the laser position based on where it collides with something
 		 */
         private void SetLaserPosition(Player player) {
-            for (Distance = MOVE_DISTANCE; Distance <= 550f; Distance += 5f) {
+            for (Distance = MOVE_DISTANCE; Distance <= 2000f; Distance += 5f) {
                 var start = player.Center + projectile.velocity * Distance;
                 if (!Collision.CanHitLine(player.Center, 1, 1, start, 1, 1)) {
                     Distance -= 5f;

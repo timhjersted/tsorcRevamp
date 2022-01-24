@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
         public override void SetDefaults() {
             item.rare = ItemRarityID.Pink;
-            item.damage = 250;
+            item.damage = 2000;
             item.height = 72;
             item.width = 72;
             item.knockBack = 12f;
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
 
-            if (!Main.dayTime)
+            if (!Main.dayTime && player.magicDamage > 1)
             {
                 damage = (int)(damage * player.magicDamage);
             }
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            if (!Main.dayTime)
+            if (!Main.dayTime && player.magicDamage > 1)
             {
                 damage = (int)(damage * player.magicDamage);
             }

@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Fog Tome");
             Tooltip.SetDefault("A lost beginner's tome\n" +
-                                "Casts Fog on the player, raising defense by 8 for 10 seconds" +
+                                "Casts Fog on the player, raising defense by 8 for 15 seconds" +
                                 "\nDoes not stack with Barrier, Wall or Shield spells");
 
         }
@@ -72,9 +72,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             }
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            Player player = Main.LocalPlayer;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "FogTomeTip", "Duration increased to 15 seconds"));
+            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+                tooltips.Add(new TooltipLine(mod, "FogTomeTip", "Legacy Mode: Duration reduced to 10 seconds"));
             }
         }
     }
