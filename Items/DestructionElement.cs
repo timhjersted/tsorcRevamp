@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items {
     class DestructionElement : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Used for making high damage guns\n" +
-                               "Guarded by entities of living cosmic metal, it's warm to the touch...");
+                               "The strange way it feels warm to the touch reminds you of somewhere...");
         }
 
         public override void SetDefaults() {
@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items {
             item.height = 32;
             item.rare = ItemRarityID.Red;
             item.value = 350000;
-            item.maxStack = 4;
+            item.maxStack = 99;
         }
 
         float rotation = 0;
