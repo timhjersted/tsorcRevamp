@@ -48,6 +48,7 @@ namespace tsorcRevamp {
 	public partial class tsorcRevampPlayer : ModPlayer {
 		public static float DodgeTimeMax => 0.37f;
 		public static uint DodgeDefaultCooldown => 30;
+		public static int DodgeImmuneTime = 18;
 
 		public Timer dodgeCooldown;
 		public sbyte dodgeDirection;
@@ -250,7 +251,7 @@ namespace tsorcRevamp {
 			//only subtract stamina on a successful roll
 			player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
 			player.immune = true;
-			player.immuneTime = 18;
+			player.immuneTime = DodgeImmuneTime;
 			dodgeStartRot = player.GetModPlayer<tsorcRevampPlayer>().rotation;
 			dodgeItemRotation = player.itemRotation;
 			dodgeTime = 0f;

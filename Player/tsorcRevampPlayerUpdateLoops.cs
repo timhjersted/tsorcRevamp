@@ -162,6 +162,8 @@ namespace tsorcRevamp {
         public bool PowerWithin;
         public int StaminaReaper = 0;
 
+        public List<int> ActivePermanentPotions;
+
         public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
@@ -210,6 +212,8 @@ namespace tsorcRevamp {
             RadiantLifegemHealing = false;
             PowerWithin = false;
             StaminaReaper = 0;
+
+            ActivePermanentPotions = new List<int>();
         }
 
         public override void PreUpdate() {

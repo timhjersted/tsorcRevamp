@@ -187,6 +187,7 @@ namespace tsorcRevamp
             }
         }
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
+            if (player.HasBuff(ModContent.BuffType<Invincible>())) return false;
             if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
                 player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             }
