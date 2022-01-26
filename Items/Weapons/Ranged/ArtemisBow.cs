@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.GoldBow, 1);
-            recipe.AddIngredient(ItemID.CobaltBar, 12);
+            recipe.AddIngredient(ItemID.ChlorophyteBar, 12);
             recipe.AddIngredient(ItemID.SoulofLight, 18);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 75000);
 

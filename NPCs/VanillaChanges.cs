@@ -424,10 +424,33 @@ namespace tsorcRevamp.NPCs {
 
                 case (NPCID.MotherSlime): {
                         npc.value = 400;
-                        npc.scale = 1.25f;
+                        //npc.scale = 1.25f;
                         break;
                     }
-
+                case (NPCID.NebulaBrain):
+                {
+                        npc.value = 600;
+                        
+                        break;
+                    }
+                case (NPCID.NebulaHeadcrab):
+                {
+                        npc.value = 600;
+                        
+                        break;
+                    }
+                case (NPCID.NebulaBeast):
+                {
+                        npc.value = 600;
+                        
+                        break;
+                    }
+                case (NPCID.NebulaSoldier):
+                {
+                        npc.value = 600;
+                        
+                        break;
+                    }
                 case (NPCID.Pixie): {
                         npc.buffImmune[BuffID.Poisoned] = true;
                         npc.buffImmune[BuffID.OnFire] = true;
