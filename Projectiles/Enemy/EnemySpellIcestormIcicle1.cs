@@ -15,8 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Enemy Spell Lightning 3");
-
+            DisplayName.SetDefault("Enemy Spell Ice Storm");
         }
         public override void AI() {
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
