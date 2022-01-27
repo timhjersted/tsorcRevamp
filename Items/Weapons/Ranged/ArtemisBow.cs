@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 item.shoot = ModContent.ProjectileType<Projectiles.ArtemisBowHeld>();
                 item.channel = true;
 
-                item.damage = 370;
+                item.damage = 220; //was 370
                 item.width = 14;
                 item.height = 28;
                 item.useTime = 60;
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             ModRecipe recipe = new ModRecipe(mod);
 
             recipe.AddIngredient(ItemID.GoldBow, 1);
-            recipe.AddIngredient(ItemID.ChlorophyteBar, 12);
+            recipe.AddIngredient(ItemID.AdamantiteBar, 12);
             recipe.AddIngredient(ItemID.SoulofLight, 18);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 75000);
 

@@ -69,19 +69,19 @@ namespace tsorcRevamp.NPCs.Enemies
 				return 1f;
 			}
 
-			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(140) == 0)
+			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(160) == 0)
 			{
 				Main.NewText("You hear foot steps...", 175, 75, 255);
 				return 1f;
 			}
 
-			if (Main.hardMode && (spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneUndergroundDesert || spawnInfo.player.ZoneDesert) && Main.rand.Next(120) == 0)
+			if (Main.hardMode && (spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneUndergroundDesert || spawnInfo.player.ZoneDesert) && Main.rand.Next(180) == 0)
 			{
 				Main.NewText("You hear foot steps...", 175, 75, 255);
 				return 1f;
 			}
 
-			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(90) == 0)
+			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(120) == 0)
 			{
 				Main.NewText("You hear a bow draw...", 175, 75, 255);
 				return 1f;
