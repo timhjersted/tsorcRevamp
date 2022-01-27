@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("RoyalThrowingSpear"), 30);
             recipe.AddIngredient(mod.GetItem("EphemeralDust"), 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 30);
             recipe.AddRecipe();

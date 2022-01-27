@@ -43,16 +43,23 @@ namespace tsorcRevamp.Items.Weapons {
 		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
 			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
-
-			for(int i = 0; i < 300; i++)
+			int projType = ModContent.ProjectileType<Projectiles.IdealArrow>();
+			for (float i = 0.1f; i < 19; i *= 1.01f)
 			{
-				Vector2 dustPoint = Main.rand.NextVector2Circular(500, 500) + player.Center;
-				if(UsefulFunctions.IsPointWithinEllipse(dustPoint, player.Center, 500, 220))
-                {
-					Dust.NewDustPerfect(dustPoint, DustID.ShadowbeamStaff, Scale: 3).noGravity = true;
-                }
-
-
+				Vector2 trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, 0.07f, false, false);
+				if (trajectory != Vector2.Zero)
+				{
+					trajectory += player.velocity;
+					Projectile.NewProjectile(player.Center, trajectory, projType, damage, knockBack, Main.myPlayer);
+					i++; //Just to keep this from getting out of hand
+				}
+				trajectory = UsefulFunctions.BallisticTrajectory(player.Center, Main.MouseWorld, i, 0.07f, true, false);
+				if (trajectory != Vector2.Zero)
+				{
+					trajectory += player.velocity;
+					Projectile.NewProjectile(player.Center, trajectory, projType, damage, knockBack, Main.myPlayer);
+					i++;
+				}
 			}
 
 			return false;

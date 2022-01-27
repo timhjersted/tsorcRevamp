@@ -1947,22 +1947,55 @@ namespace tsorcRevamp.NPCs
             return false;
         }
 
-        //Originally used modified fighter/archer AI by GrtAndPwrflTrtl as a base (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-        public void FighterAI(NPC npc, float top_speed = 1f, float acceleration = .07f, float braking_power = .2f, bool can_pass_doors = false, bool can_teleport = false, bool hates_light = false, int sound_type = 0, int sound_frequency = 1000, float enrage_percentage = 0, bool hops = false)
+       
+    }
+
+
+    static class tsorcRevampAIs
+    {
+        ///<summary> 
+        ///Walking AI that can be configured to fire simple projectiles while walking, break doors, and jump at the player.
+        ///Uses up to three ai slots depending on configuration: npc.ai[1] is the projectile timer (only used if it has one), npc.ai[2] is door break progress (only used if it can break them), and npc.ai[3] is boredom
+        ///</summary>
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="topSpeed">The max speed it can run at</param>
+        ///<param name="acceleration">How quickly it can speed up</param>
+        ///<param name="brakingPower">How quickly it can slow down</param>
+        ///<param name="canTeleport">Lets it teleport near the player when it gets bored instead of walking around randomly</param>
+        ///<param name="doorBreakingDamage">Setting this above 0 lets the npc break doors, and sets much damage should it deal when it hits them. Doors have 10 "health"</param>
+        ///<param name="hatesLight">Should it run away during daylight?</param>
+        ///<param name="soundType">What sound should it play?</param>
+        ///<param name="soundFrequency">How often does it play its sound?</param>
+        ///<param name="enragePercent">Accelerates twice as fast when below this % health</param> 
+        ///<param name="enrageTopSpeed">Its new top speed when enraged</param>
+        ///<param name="lavaJumping">Lets it hop around in lava</param>
+        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
-            float door_break_pow = 10;
-            
+            BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
+        }        
 
-
-            BaseAI(npc);
-        }
-
-        public void ArcherAI(NPC npc, int projectile_type, int projectile_damage, int projectile_velocity, int shot_rate, float top_speed = 1f, float acceleration = .07f, float braking_power = .2f,  bool can_pass_doors = false, bool can_teleport = false, bool hates_light = false, int sound_type = 0, int sound_frequency = 1000, float enrage_percentage = 0)
+        ///<summary> 
+        ///Special version of the fighter ai, stopping to shoot when the player is within range. Gets bored if it doesn't have line of sight to the player, and if it can teleport it will attempt to warp to a position with a clean shot.
+        ///Uses three ai slots: npc.ai[1] is shot cooldown, npc.ai[2] controls the sprite aiming animation, and npc.ai[3] is boredom
+        ///</summary>         
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="projectileType">The ID of the projectile you want to shoot</param>
+        ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
+        ///<param name="projectileVelocity">Speed of the projectile</param>
+        ///<param name="projectileCooldown">Sets the delay (in ticks) between shots</param>
+        ///<param name="topSpeed">The max speed it can run at</param>
+        ///<param name="acceleration">How quickly it can speed up</param>
+        ///<param name="brakingPower">How quickly it can slow down</param>
+        ///<param name="canTeleport">Lets it teleport near the player when it gets bored instead of walking around randomly</param>
+        ///<param name="hatesLight">Should it run away during daylight? (UNIMPLEMENTED!)</param>
+        ///<param name="soundType">What sound should it play?</param>
+        ///<param name="soundFrequency">How often does it play its sound?</param>
+        ///<param name="enragePercent">Below this percent health, doubles speed and acceleration</param>
+        ///<param name="lavaJumping">Lets it hop around in lava</param>
+        ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Set 0 for projectiles with no gravity. If your projectile has custom gravity dropoff, stick that here.</param>
+        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f)
         {
-            BaseAI(npc, top_speed, acceleration, braking_power, can_pass_doors, can_teleport, hates_light, sound_type, sound_frequency);
-
-            //First half is firing time, second half is cooldown. So we just double it to simplify.
-            shot_rate *= 2;
+            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
 
             if (npc.confused)
             {
@@ -1975,53 +2008,57 @@ namespace tsorcRevamp.NPCs
 
                 if (npc.justHit || npc.velocity.Y != 0f || npc.ai[1] <= 0f) // was just hit?
                 {
-                    npc.ai[1] = shot_rate; //Reset firing time
+                    npc.ai[1] = projectileCooldown; //Reset firing time
                     npc.ai[2] = 0f; //Not aiming
                 }
 
-                //Target the closest player and check if they're in range
-                npc.TargetClosest(true);
-                if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f)
+                //Check if we're in range of and can hit the player
+                if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) < 700f && Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && npc.velocity.Y == 0)
                 {
+                    //If so, set boredom to 0
+                    npc.ai[3] = 0;
+
                     //If it's not aiming yet, then slow down, aim, and start its cooldown
                     if (npc.ai[2] == 0)
                     {
                         //Aim at them, and start the shot cooldown
                         npc.velocity.X = npc.velocity.X * 0.5f;
                         npc.ai[2] = 3f;
-                        npc.ai[1] = shot_rate;
+                        npc.ai[1] = projectileCooldown;
                     }
 
                     npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
                     npc.spriteDirection = npc.direction; // match animation to facing
 
-                    Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, projectile_velocity);
-                    projVelocity.Y -= projVelocity.X * 0.1f; //Overshoot to compensate for gravity
                     //Fire at halfway through: first half of delay is aim, 2nd half is cooldown
-                    if (npc.ai[1] == (shot_rate / 2))
+                    if (npc.ai[1] == (projectileCooldown / 2))
                     {
-                        projVelocity += Main.rand.NextVector2Circular(4, 4); //Add randomness
+                        //Calculate the actual ballistic trajectory to aim the projectile on
+                        Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVelocity.X, projVelocity.Y, projectile_type, projectile_damage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);                            
                         }
                     }
 
-                    if (Math.Abs(projVelocity.Y) > Math.Abs(projVelocity.X) * 2f) // target steeply above/below NPC
+                    //Calculate a vector aiming at the player. This is purely for the npc's sprite visuals, so it can use the much simpler aiming code.
+                    Vector2 aimVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, projectileVelocity);
+
+                    if (Math.Abs(aimVector.Y) > Math.Abs(aimVector.X) * 2f) // target steeply above/below NPC
                     {
-                        if (projVelocity.Y > 0f)
+                        if (aimVector.Y > 0f)
                             npc.ai[2] = 1f; // aim downward
                         else
                             npc.ai[2] = 5f; // aim upward
                     }
-                    else if (Math.Abs(projVelocity.X) > Math.Abs(projVelocity.Y) * 2f) // target on level with NPC
+                    else if (Math.Abs(aimVector.X) > Math.Abs(aimVector.Y) * 2f) // target on level with NPC
                         npc.ai[2] = 3f;  //  aim straight ahead
-                    else if (projVelocity.Y > 0f) // target is below NPC
+                    else if (aimVector.Y > 0f) // target is below NPC
                         npc.ai[2] = 2f;  //  aim slight downward
                     else // target is not below NPC
                         npc.ai[2] = 4f;  //  aim slight upward                    
                 }
-                //If not, don't aim at them
+                //If we're out of range of the player, don't aim at them
                 else
                 {
                     npc.ai[2] = 0;
@@ -2029,65 +2066,67 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public void BaseAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float braking_power = .2f, bool can_pass_doors = false, bool can_teleport = false, bool hates_light = false, int sound_type = 0, int sound_frequency = 1000, float enrage_percentage = 0, bool lavaJumping = false)
+
+
+        //Todo:
+        //Upgrade gap-jumping code to scale jump x and  y velocity with gap size, up to a limit
+        //Upgrade wall-jumping code to scale jump height with how tall the wall in front of it is. Also let it recognize walls with gaps in them.
+        private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
-            bool bored = false;
-            int boredom_time = 60;
-            int boredomCooldown = boredom_time * 10;
+            //If it has a sound to play, roll a chance for playing it
+            if (soundType > 0 && Main.rand.Next(soundFrequency) <= 0)
+            {
+                Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, 1);
+            }
 
-            float hop_velocity = 1f; // forward velocity needed to initiate hopping; usually 1
-            float hop_range_x = 100; // less than this is 'close to target'; usually 100
-            float hop_range_y = hop_range_x / 2; // less than this is 'close to target'; usually 50
-            float hop_power = 4; // how hard/high offensive hops are; usually 4
-            float hop_speed = 3; // how fast hops can accelerate vertically; usually 3 (2xSpd is 4 for Hvy Skel & Werewolf so they're noticably capped)
-           
-
-            if (npc.life < (float)npc.lifeMax * enrage_percentage)
+            //If we can enrage, do that
+            if (npc.life < (float)npc.lifeMax * enragePercentage)
             {
                 acceleration *= 2;
-                topSpeed *= 2;
+                topSpeed = enrageTopSpeed;
             }
 
-            BasicMovement(npc, topSpeed, acceleration);
-
-            if (can_teleport)
+            //If it can jump in lava and is in lava, do that
+            if (lavaJumping && npc.lavaWet)
             {
-                TeleportEffects(npc);
-            }
-            //if (forceJumpGaps)
-            {
-                JumpGaps(npc);
-            }
-            if (lavaJumping)
-            {
-                LavaJumping(npc);
-            }
-        }
-
-        private void BasicMovement(NPC npc, float topSpeed, float acceleration)
-        {
-            //Jump if stuck
-            if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
-            {
-                npc.velocity.Y -= 8f;
-                npc.velocity.X -= 2f;
-            }
-            else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
-            {
-                npc.velocity.Y -= 8f;
-                npc.velocity.X += 2f;
+                npc.velocity.Y -= 2;
             }
 
-            //If more than max speed then slow down
-            if (npc.velocity.X < -topSpeed || npc.velocity.X > topSpeed)
+            //If not fleeing light and not bored, target the closest player
+            if (hatesLight && Main.dayTime && (npc.position.Y / 16f) < Main.worldSurface)
             {
-                if (npc.velocity.Y == 0f)
+                npc.ai[3] = -999;
+                npc.timeLeft = 10;
+            }
+            else if (npc.ai[3] >= 0)
+            {
+                npc.TargetClosest(true);
+            }
+            else
+            {
+                //If we are bored, increase the bored timer.
+                npc.ai[3]++;
+            }
+
+            //If moving more than max speed, then slow down
+            if (npc.velocity.X > topSpeed)
+            {
+                npc.velocity.X -= brakingPower;
+                if (npc.velocity.X < 0)
                 {
-                    npc.velocity *= 0.8f;
+                    npc.velocity.X = 0;
                 }
             }
-            //Otherwise, accelerate
-            else
+            if (npc.velocity.X < -topSpeed)
+            {
+                npc.velocity.X += brakingPower;
+                if (npc.velocity.X > 0)
+                {
+                    npc.velocity.X = 0;
+                }
+            }            
+            //If not then accelerate (unless the npc is an aiming archer)
+            else if(!isArcher || npc.ai[2] == 0)
             {
                 if (npc.velocity.X < topSpeed && npc.direction == 1)
                 {
@@ -2109,59 +2148,404 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
-        }
 
-        private void TeleportEffects(NPC npc)
-        {
-            if (npc.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
+            //Jumping and platform falling code, copied and edited from Firebomb Hollow
+            int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
+            int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
+            int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
+            bool standing_on_solid_tile = false;
+
+            //Check if standing on a solid tile
+            int x_left_edge = (int)npc.position.X / 16;
+            int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
+            if (npc.velocity.Y == 0)
             {
-                npc.velocity *= 0f; // stop moving
-                npc.ai[3] = 0f; // reset boredom to 0
-                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
-                Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
-                float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
-                float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
-                float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
-                num8 = 2f / num8; // to normalize to 2 unit long vector
-                num6 *= num8; // direction to where it was 3 frames ago, vector normalized
-                num7 *= num8; // direction to where it was 3 frames ago, vector normalized
-                for (int j = 0; j < 20; j++) // make 20 dusts at current position
+                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
                 {
-                    int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
-                    Main.dust[num9].noGravity = true; // floating
-                    Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
-                    expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
-                }
-                for (int k = 0; k < 20; k++) // more dust effects at old position
-                {
-                    int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
-                    Main.dust[num10].noGravity = true;
-                    Dust expr_1A6F_cp_0 = Main.dust[num10];
-                    expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
+                    if (UsefulFunctions.IsTileReallySolid(l, y_below_feet)) // tile exists and is solid
+                    {
+                        standing_on_solid_tile = true;
+                        break; // one is enough so stop checking
+                    }
                 }
             }
-        }
 
-        private void JumpGaps(NPC npc)
-        {
-            if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
+            if (standing_on_solid_tile)  //  if standing on solid tile
             {
-                npc.velocity.Y -= 8f;
-                npc.velocity.X -= 2f;
+                if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
+                {  //  moving forward
+                    ;
+                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 2))
+                    { // 3 blocks above ground level(head height) blocked
+                        if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 3))
+                        { // 4 blocks above ground level(over head) blocked
+                            npc.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
+                            npc.netUpdate = true;
+                        }
+                        else
+                        {
+                            npc.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
+                            npc.netUpdate = true;
+                        }
+                    } // for everything else, head height clear:
+                    else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1))
+                    { // 2 blocks above ground level(mid body height) blocked
+                        npc.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
+                        npc.netUpdate = true;
+                    }
+                    else if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet))
+                    { // 1 block above ground level(foot height) blocked
+                        npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
+                        npc.netUpdate = true;
+                    }
+                    else if (npc.directionY < 0 && !UsefulFunctions.IsTileReallySolid(x_in_front, y_below_feet) && !UsefulFunctions.IsTileReallySolid(x_in_front + npc.direction, y_below_feet))
+                    { //If player is above npc and no solid tile ahead to step on for 2 spaces
+                        npc.velocity.Y = -8f; // jump with power 8
+                        npc.velocity.X += 4f * npc.direction; // jump forward hard as well; we're trying to jump a gap
+                        npc.netUpdate = true;
+                    }
+
+                    //Door breaking
+                    //First, it checks if the tile in front of it is solid, a door, and the npc can break it
+                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].type == 10 && (doorBreakingDamage > 0))
+                    {
+                        npc.ai[3] = 0f; // not bored if working on breaking a door
+                        if (Main.GameUpdateCount % 60 == 0)  //  knock once per second
+                        {
+                            npc.velocity.X = 0.5f * -npc.direction; //  slight recoil from hitting it
+                            npc.ai[2] += doorBreakingDamage;  //  increase door damage counter
+                            WorldGen.KillTile(x_in_front, y_above_feet - 1, true, true, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
+                            if (npc.ai[2] >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                npc.ai[2] = 0; //Reset counter
+
+                                //Try to open door
+                                if (!WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction))
+                                {
+                                    //If the door is stuck set the npc to bored
+                                    npc.ai[3] = 999;
+                                    npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
+                                }
+                                else if (Main.netMode == NetmodeID.Server)
+                                {
+                                    //If it didn't fail sync the door opening
+                                    NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
+
+            //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
+            if ((Math.Abs(npc.velocity.X) <= topSpeed / 1.3f) || (canTeleport && (!Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))))
             {
-                npc.velocity.Y -= 8f;
-                npc.velocity.X += 2f;
+                npc.ai[3]++;
+
+                //If it's been bored for 3 seconds enter bored mode where it walks away for 9 seconds
+                if (npc.ai[3] > 180)
+                {
+                    if (!canTeleport)
+                    {
+                        npc.ai[3] = -360;
+                        npc.direction *= -1;
+                    }
+                    else
+                    {
+                        //If the npc is an archer, try to teleport somewhere it has line of sight to the player
+                        Teleport(npc, 40, true);
+                        npc.ai[3] = 0;
+                    }
+                }
+            }
+            //If it's not stuck not and it's not bored decrease the boredom counter
+            else if (npc.ai[3] > 0)
+            {
+                npc.ai[3]--;
+            }      
+        }
+        
+        
+
+        
+
+        //AI snippits go here! Simply call these in the npc's main AI function to add them
+        #region AI Snippets
+
+
+        ///<summary> 
+        ///Fires a projectile with various parameters. Uses any timer variable you give it, and goes in the npc's AI() function
+        ///</summary>
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="projectileType">The ID of the projectile you want to shoot</param>
+        ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
+        ///<param name="projectileVelocity">Speed of the projectile</param>
+        ///<param name="projectileCooldown">Sets the delay (in ticks) between shots</param>
+        ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
+        public static bool SimpleProjectile(NPC npc, ref float timer, int projectileType, int projectileCooldown, int projectileDamage, float projectileVelocity, bool actuallyFire = true, float projectileGravity = 0.035f)
+        {            
+            timer++;
+            if (timer >= projectileCooldown && actuallyFire)
+            {
+                timer = 0;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
+                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
+                }
+                return true;
             }            
+
+            return false;
         }
 
-        private void LavaJumping(NPC npc)
+        ///<summary> 
+        ///Lets the npc leap at players who are close, does not use any ai slots, and goes in an npc's ai function
+        ///</summary>
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="hopSpeedX">How fast it leaps horizontally</param>
+        ///<param name="hopSpeedY">How fast it leaps vertically</param>
+        ///<param name="minimumSpeed">How fast it has to be running to be allowed to hop</param>
+        ///<param name="hopRange">It leaps at the player when it is this close to them</param>
+        public static void LeapAtPlayer(NPC npc, float hopSpeedX, float hopSpeedY, float minimumSpeed, float hopRange = 64)
         {
-            if (npc.lavaWet)
+            //If the player is within range and if the npc is moving fast enough to be allowed to hop, then hop
+            if (npc.velocity.Y == 0f && Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < hopRange && Math.Abs(npc.Center.Y - Main.player[npc.target].Center.Y) < hopRange && ((npc.direction > 0 && npc.velocity.X >= minimumSpeed) || (npc.direction < 0 && npc.velocity.X <= -minimumSpeed)))
             {
-                npc.velocity.Y -= 2;
+                npc.velocity.X = hopSpeedX * npc.direction;
+                npc.velocity.Y = -hopSpeedY;
+                npc.netUpdate = true;
             }
         }
+
+        ///<summary> 
+        ///Teleports the NPC to a random position within a specified range around the player. *No* effects or sound! Does not teleport the enemy if no safe location exists. Will not teleport enemies right next to the player.
+        ///</summary>
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="range">The max range from the player it can teleport</param>
+        ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
+        public static void TeleportNoEffects(NPC npc, float range = 50, bool requireLineofSight = true)
+        {
+            int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
+
+            //Do not teleport if the player is way way too far away (stops enemies following you home if you mirror away)
+            if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+            { // far away from target; 2000 pixels = 125 blocks
+                return;
+            }
+
+            //Try 1000 times at most
+            for (int i = 0; i < 1000; i++)
+            {
+                //Pick a random point to target. Make sure it's at least 5 blocks away from the player to avoid cheap hits.
+                Vector2 teleportTarget;
+                do
+                {
+                    teleportTarget = Main.rand.NextVector2Circular(range, range);
+                } while (teleportTarget.Length() < 5);
+
+                //Add the player's position to it to convert it to an actual tile coordinate
+                teleportTarget += Main.player[npc.target].position / 16;
+
+                //Starting from the point we picked, go down one block at a time until we find hit a solid block
+                for (int y = (int)teleportTarget.Y; y < target_y_blockpos + range; y++)
+                {
+                    if (UsefulFunctions.IsTileReallySolid((int)teleportTarget.X, y))
+                    {
+                        //Skip to the next tile if any of the following is true:
+                        //If the selected tile has lava above it, and the npc isn't immune
+                        if(Main.tile[(int)teleportTarget.X, y - 1].lava() && !npc.lavaImmune)
+                        {
+                            continue;
+                        }
+
+                        //The selected tile is closer than 8 blocks from the player
+                        else if(Vector2.DistanceSquared(Main.player[npc.target].Center / 16, new Vector2(teleportTarget.X, y)) < 64)
+                        {
+                            continue;
+                        }
+
+                        //If there are solid blocks in the way, leaving no room to teleport to
+                        else if(Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, y - 4, y - 1))
+                        {
+                            continue;
+                        }
+
+                        //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
+                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
+                        {
+                            continue;
+                        }
+
+                        
+                        //Then teleport and return
+                        npc.position.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
+                        npc.position.Y = (y * 16 - npc.height); //Subtract npc.height from y so block is under feet
+                        npc.TargetClosest(true);
+                        npc.netUpdate = true;
+                        return;
+                        
+                    }
+                }
+            }
+        }
+
+
+        ///<summary> 
+        ///Teleports the NPC to a random position within a specified range around the player, includes effects. Does not teleport the enemy if no safe location exists.
+        ///Will not teleport enemies right next to the player. Teleports enemies somewhere with line of sight to the player by default.
+        ///</summary>
+        ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="range">The max range from the player it can teleport</param>
+        ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
+        public static void Teleport(NPC npc, float range = 50, bool requireLineofSight = true)
+        {
+            Vector2 oldPosition = npc.Center;
+            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                    TeleportNoEffects(npc, range, requireLineofSight);
+                    if (!requireLineofSight || (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1)))
+                    {
+                        break;
+                    }
+                }
+            }
+            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+
+            Vector2 newPosition = npc.Center;
+
+            Vector2 diff = newPosition - oldPosition;
+            float length = diff.Length();            
+            diff.Normalize();
+            Vector2 offset = Vector2.Zero;
+
+            for (int i = 0; i < length; i++)
+            {
+                offset += diff;
+                if (Main.rand.Next(2) == 0)
+                {
+                    Vector2 dustPoint = offset;
+                    dustPoint.X += Main.rand.NextFloat(-npc.width / 2, npc.width / 2);
+                    dustPoint.Y += Main.rand.NextFloat(-npc.height / 2, npc.height / 2);
+                    if (Main.rand.NextBool())
+                    {
+                        Dust.NewDustPerfect(oldPosition + dustPoint, 71, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                    else
+                    {
+                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                    }
+                }
+            }       
+        }
+
+        public static void RedKnightOnHit(NPC npc, bool melee)
+        {
+            if (melee)
+            {
+                npc.localAI[1] = 100f;
+                npc.knockBackResist = 0.09f;
+
+                //WHEN HIT, CHANCE TO JUMP BACKWARDS && npc.velocity.Y >= -1f
+                if (Main.rand.Next(10) == 1)
+                {
+                    npc.TargetClosest(false);
+
+                    npc.velocity.Y = -8f;
+                    npc.velocity.X = -4f * npc.direction;
+
+                    
+                    npc.localAI[1] = 160f;
+
+                    npc.netUpdate = true;
+                }
+
+                //WHEN HIT, CHANCE TO DASH STEP BACKWARDS && npc.velocity.Y >= 1f
+                else if (Main.rand.Next(8) == 1)//was 10
+                {
+                    npc.velocity.Y = -4f;
+                    npc.velocity.X = -6f * npc.direction;
+
+                    npc.localAI[1] = 160f;
+
+                    //CHANCE TO JUMP AFTER DASH
+                    if (Main.rand.Next(4) == 1)
+                    {
+                        npc.TargetClosest(true);
+                        npc.velocity.Y = -7f;
+                        npc.localAI[1] = 161f;
+                    }
+
+                    npc.netUpdate = true;
+                }
+                
+                //TELEPORT MELEE
+                if (Main.rand.Next(12) == 1)
+                {
+                    Teleport(npc, 20, true);
+                }
+            }            
+
+            if (!melee && Main.rand.NextBool())
+            {
+                if (Main.rand.Next(2) == 1)
+                {
+                    //customAi1 = 110f;
+                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 1f);
+                    Main.dust[dust].noGravity = true;
+                    //npc.spriteDirection = npc.direction;
+
+
+                    npc.velocity.Y = -9f; //9
+                    npc.velocity.X = 4f * npc.direction; //was -4
+
+                    npc.TargetClosest(true);
+                    //npc.velocity.X = npc.velocity.X + (float)npc.direction * 4f;  //was 2  accellerate fwd; can happen midair
+                    if ((float)npc.direction * npc.velocity.X > 4)
+                    {
+                        npc.velocity.X = (float)npc.direction * 4;  //  but cap at top speed
+                    }
+                    npc.netUpdate = true;
+                }
+
+                if (Main.rand.Next(4) == 1)
+                {
+                    //npc.direction *= -1;
+
+                    npc.ai[0] = 0f;
+                    npc.velocity.Y = -5f;
+                    npc.velocity.X = npc.velocity.X * 4f; // burst forward
+                    npc.TargetClosest(true);
+                    //npc.velocity.X = npc.direction * -4f;
+                    npc.velocity.X = npc.velocity.X + (float)npc.direction * 5f;  //  accellerate fwd; can happen midair
+                    if ((float)npc.direction * npc.velocity.X > 5)
+                    {
+                        npc.velocity.X = (float)npc.direction * 5;  //  but cap at top speed
+                    }
+
+                    //CHANCE TO JUMP AFTER DASH
+                    if (Main.rand.Next(8) == 1)
+                    {
+                        npc.TargetClosest(true);
+
+                        npc.spriteDirection = npc.direction;
+                        npc.ai[0] = 0f;
+
+                        npc.velocity.Y = -6f;
+                    }
+
+                    npc.netUpdate = true;
+                }
+                if (npc.Distance(Main.player[npc.target].Center) > 80 && Main.rand.Next(20) == 1)
+                {
+                    Teleport(npc, 20, false);
+                }
+            }
+            
+        }
+        #endregion
     }
 }

@@ -95,6 +95,24 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		#endregion
 
+		int projectileType = 81;
+		int projectileDamage = 14;
+		float projectileSpeed = 11;
+		int fireCooldown = 120;
+
+		float topSpeed = 1.3f;
+		float acceleration = 0.08f;
+		float brakingPower = 0.2f;
+		bool canTeleport = true;
+
+        public override void AI()
+        {
+			tsorcRevampAIs.ArcherAI(npc, projectileType, projectileDamage, projectileSpeed, fireCooldown, topSpeed, acceleration, brakingPower, canTeleport);
+        }
+
+
+
+        /*
 		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
 		public override void AI()  //  warrior ai
 		{
@@ -298,7 +316,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					if ((float)npc.direction * npc.velocity.X > top_speed)
 						npc.velocity.X = (float)npc.direction * top_speed;  //  but cap at top speed
 				}  //  END running slower than top speed (forward), can be jump/fall
-			} // END non archer or not aiming*/
+			} // END non archer or not aiming
 			#endregion
 			//-------------------------------------------------------------------
 			#region archer projectile code (stops moving to shoot)
@@ -595,7 +613,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				npc.ai[1] = 0f;  //  reset door damage counter
 				npc.ai[2] = 0f;  //  reset knock counter
-			}//*/
+			}//
 			#endregion
 			//-------------------------------------------------------------------
 			#region teleportation
@@ -692,12 +710,14 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 			}
 			#endregion
-			//-------------------------------------------------------------------*/
 		}
 		#endregion
+			*/
 
-		#region Gore
-		public override void HitEffect(int hitDirection, double damage)
+
+
+        #region Gore
+        public override void HitEffect(int hitDirection, double damage)
 		{
 			for (int i = 0; i < 5; i++)
 			{

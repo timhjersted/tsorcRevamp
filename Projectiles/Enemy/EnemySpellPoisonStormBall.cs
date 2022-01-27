@@ -15,8 +15,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetDefaults()
         {
-
-            projectile.aiStyle = 1;
+            projectile.aiStyle = 23;
             projectile.friendly = false;
             projectile.hostile = true;
             projectile.width = 16;
@@ -26,11 +25,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.magic = true;
             projectile.scale = 1f;
             projectile.tileCollide = true;
+			projectile.timeLeft = 0;
         }
 
 		#region AI
 		public override void AI()
-		{
+		{		
 			if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f)
 			{
 				projectile.soundDelay = 10;

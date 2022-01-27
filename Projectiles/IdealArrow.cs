@@ -18,10 +18,10 @@ namespace tsorcRevamp.Projectiles {
         {
             projectile.height = 5;
             projectile.width = 5;
-            projectile.friendly = true;
             projectile.ranged = true;
             projectile.tileCollide = false;
             projectile.timeLeft = 360;
+            projectile.aiStyle = -1;
             //Missing: aiStyle = 1;
             //Vanilla aiStyles are kinda janky. We can do better with just a few lines below in AI()...
         }
@@ -29,8 +29,9 @@ namespace tsorcRevamp.Projectiles {
         public override void AI()
         {
 			projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2; //This makes it rotate to face where it's moving
-			projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
-
+             //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
+            projectile.velocity.Y += 0.07f;
+            
             Dust thisdust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f); //This creates a dust trail
             thisdust.velocity = Vector2.Zero; //This makes the dust stay still instead of wandering randomly
         }

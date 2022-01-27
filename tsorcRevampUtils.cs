@@ -178,7 +178,7 @@ namespace tsorcRevamp {
         ///<param name="gravity">How much does the projectile's Y velocity increase every tick? Default is fairly close for aiStyle 1 projectiles, but for true accuracy set it yourself in the projectile AI instead of using an aiStyle</param>
         ///<param name="highAngle">There are two solutions to this equation. This makes it return the higher arcing one. Does not work at *all* for projectiles with vanilla aiStyles</param>
         ///<param name="fallback">If this is set to true it will fall back to GenerateTargetingVector if it's mathematically impossible to hit its target. If not it will return Vector2.Zero so you can handle it yourself</param>
-        public static Vector2 BallisticTrajectory(Vector2 source, Vector2 target, float speed, float gravity = 0.06f, bool highAngle = false, bool fallback = true)
+        public static Vector2 BallisticTrajectory(Vector2 source, Vector2 target, float speed, float gravity = 0.035f, bool highAngle = false, bool fallback = true)
         {
             //This is where the fun begins
             Vector2 diff = target - source;
@@ -380,6 +380,29 @@ namespace tsorcRevamp {
             if (Main.tile.GetUpperBound(0) > tilePos.X && Main.tile.GetUpperBound(1) > tilePos.Y)
             {
                 Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];                
+
+                //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
+                if (thisTile != null && thisTile.active() && !thisTile.inActive() && Main.tileSolid[thisTile.type])
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        ///<summary> 
+        ///Does this tile exist, and if so is it solid?
+        ///Yes, this requires all of this to learn the answer safely. Nothing can be easy here.
+        ///Also returns false if the tile is null, or if the coordinates you gave it are out of range of the tile array.
+        ///</summary>
+        ///<param name="X">The X coordinate of the tile</param>
+        ///<param name="Y">The Y coordinate of the tile</param>
+        public static bool IsTileReallySolid(int X, int Y)
+        {
+            if (Main.tile.GetUpperBound(0) > X && Main.tile.GetUpperBound(1) > Y)
+            {
+                Tile thisTile = Main.tile[X, Y];
 
                 //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
                 if (thisTile != null && thisTile.active() && !thisTile.inActive() && Main.tileSolid[thisTile.type])
