@@ -67,10 +67,6 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.SpellTome);
 		}
 
-		int drownTimerMax = 1200;
-		int drownTimer = 1200;
-		int drowningRisk = 500;
-
 		float poisonStrikeTimer = 0;
 		float poisonStormTimer = 0;
 		
@@ -106,32 +102,21 @@ namespace tsorcRevamp.NPCs.Enemies
 				readyToFire = true;
 			}
 
-			if (tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 120, 7, 8, readyToFire, 0))
-            {
-				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-			}
-
-			if (tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 180, 9, 0, readyToFire))
-			{
-				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-			}
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, readyToFire, true, 2, 17, 0);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, readyToFire, true, 2, 17);
 
 			if (Main.rand.Next(200) == 1)
 			{
 				npc.alpha = 0;
-				npc.netUpdate = true;
 			}
 			if (Main.rand.Next(50) == 1)
 			{
 				npc.alpha = 210;
-				npc.netUpdate = true;
 			}
 			if (Main.rand.Next(250) == 1)
 			{
-				npc.ai[3] = 1;
 				npc.life += 5;
 				if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-				npc.ai[1] = 1f;
 				npc.netUpdate = true;
 			}
 

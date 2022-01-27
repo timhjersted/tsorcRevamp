@@ -1972,7 +1972,7 @@ namespace tsorcRevamp.NPCs
         public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
             BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
-        }        
+        }
 
         ///<summary> 
         ///Special version of the fighter ai, stopping to shoot when the player is within range. Gets bored if it doesn't have line of sight to the player, and if it can teleport it will attempt to warp to a position with a clean shot.
@@ -1993,9 +1993,11 @@ namespace tsorcRevamp.NPCs
         ///<param name="enragePercent">Below this percent health, doubles speed and acceleration</param>
         ///<param name="lavaJumping">Lets it hop around in lava</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Set 0 for projectiles with no gravity. If your projectile has custom gravity dropoff, stick that here.</param>
-        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f)
+        ///<param name="soundType">The type of sound to play when it shoots</param>
+        ///<param name="soundStyle">The style of sound to play when it shoots</param>
+        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int passiveSound = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, int soundType = 2, int soundStyle = 5)
         {
-            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
+            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, passiveSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
 
             if (npc.confused)
             {
@@ -2037,7 +2039,11 @@ namespace tsorcRevamp.NPCs
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);                            
+                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
+                        }
+                        if (soundType > 0)
+                        {
+                            Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
                         }
                     }
 
@@ -2071,6 +2077,7 @@ namespace tsorcRevamp.NPCs
         //Todo:
         //Upgrade gap-jumping code to scale jump x and  y velocity with gap size, up to a limit
         //Upgrade wall-jumping code to scale jump height with how tall the wall in front of it is. Also let it recognize walls with gaps in them.
+        //More complex "bored" check than simple velocity. Right now it can get bored if it takes too long doing things that require it to move slow.
         private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
             //If it has a sound to play, roll a chance for playing it
@@ -2090,6 +2097,12 @@ namespace tsorcRevamp.NPCs
             if (lavaJumping && npc.lavaWet)
             {
                 npc.velocity.Y -= 2;
+            }
+
+            //If just hit, then it's not bored
+            if (npc.justHit)
+            {
+                npc.ai[3] = 0;
             }
 
             //If not fleeing light and not bored, target the closest player
@@ -2238,16 +2251,16 @@ namespace tsorcRevamp.NPCs
             }
 
             //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
-            if ((Math.Abs(npc.velocity.X) <= topSpeed / 1.3f) || (canTeleport && (!Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))))
+            if ((Math.Abs(npc.velocity.X) <= topSpeed * 0.9f) || (canTeleport && (!Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))))
             {
                 npc.ai[3]++;
 
-                //If it's been bored for 3 seconds enter bored mode where it walks away for 9 seconds
-                if (npc.ai[3] > 180)
+                //Time it takes to get bored scales with how long it takes to accelerate
+                if (npc.ai[3] > 4 * (topSpeed / acceleration))
                 {
                     if (!canTeleport)
                     {
-                        npc.ai[3] = -360;
+                        npc.ai[3] = -180;
                         npc.direction *= -1;
                     }
                     else
@@ -2261,13 +2274,13 @@ namespace tsorcRevamp.NPCs
             //If it's not stuck not and it's not bored decrease the boredom counter
             else if (npc.ai[3] > 0)
             {
-                npc.ai[3]--;
+                npc.ai[3] -= 10;
             }      
         }
-        
-        
 
-        
+
+
+
 
         //AI snippits go here! Simply call these in the npc's main AI function to add them
         #region AI Snippets
@@ -2277,21 +2290,34 @@ namespace tsorcRevamp.NPCs
         ///Fires a projectile with various parameters. Uses any timer variable you give it, and goes in the npc's AI() function
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
+        ///<param name="timer">The variable used as a timer. This function will increment it automatically, disable incrementTimer to stop that</param>
+        ///<param name="timerCap">How high does the timer have to be for it to shoot</param>
         ///<param name="projectileType">The ID of the projectile you want to shoot</param>
         ///<param name="projectileDamage">Damage of the projectile. Multiplied by 2 by default, and then 2 again in expert mode</param>
         ///<param name="projectileVelocity">Speed of the projectile</param>
-        ///<param name="projectileCooldown">Sets the delay (in ticks) between shots</param>
+        ///<param name="actuallyFire">This lets you use a condition to block the projectile from firing unless it is true (such as having line of sight to the player)</param>
+        ///<param name="incrementTimer">Should this functoin increase the timer variable by 1 every tick</param>
+        ///<param name="soundType">The type of sound to play</param>
+        ///<param name="soundStyle">The style of sound to play</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
-        public static bool SimpleProjectile(NPC npc, ref float timer, int projectileType, int projectileCooldown, int projectileDamage, float projectileVelocity, bool actuallyFire = true, float projectileGravity = 0.035f)
-        {            
-            timer++;
-            if (timer >= projectileCooldown && actuallyFire)
+        ///<param name="ai0">Lets you pass a value to the projectile's ai0</param>
+        ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
+        public static bool SimpleProjectile(NPC npc, ref float timer, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, int soundType = 0, int soundStyle = 0, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
+        {
+            if (incrementTimer) {
+                timer++;
+            }
+            if (timer >= timerCap && actuallyFire)
             {
                 timer = 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
-                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer, ai0, ai1);
+                }
+                if(soundType > 0)
+                {
+                    Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
                 }
                 return true;
             }            

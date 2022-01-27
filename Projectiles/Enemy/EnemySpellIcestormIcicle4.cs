@@ -13,6 +13,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.ignoreWater = true;
             projectile.timeLeft = 400;
         }
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Enemy Spell Lightning 3");
+
+        }
         public override void AI() {
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }

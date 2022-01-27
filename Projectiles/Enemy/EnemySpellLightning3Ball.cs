@@ -18,13 +18,23 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.width = 16;
             projectile.timeLeft = 600;
         }
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Enemy Spell Lightning 3");
 
+        }
+
+        bool timeleftSet = false;
         public override void AI()
         {
-            if (projectile.ai[0] != 0)
+            if (!timeleftSet)
             {
                 projectile.timeLeft = (int)projectile.ai[0];
-                projectile.ai[0] = 0;
+                timeleftSet = true;
+            }
+            if(projectile.ai[1] != 0)
+            {
+                projectile.aiStyle = 1;
             }
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f)
             {

@@ -51,9 +51,6 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.BattlePotion);
 		}
 
-		int drownTimerMax = 1200;
-		int drownTimer = 1200;
-		int drowningRisk = 500;
 		//Spawns in the Jungle, mostly Underground and in the Cavern.
 
 		#region Spawn
@@ -88,9 +85,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				readyToFire = true;
 			}
-			if (tsorcRevampAIs.SimpleProjectile(npc, ref npc.ai[1], ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 180, 9, 8, readyToFire, 0.035f)){
-				Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 65);
-			}
+			tsorcRevampAIs.SimpleProjectile(npc, ref npc.ai[1], 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, readyToFire, true, 2, 65);
+			
 		}
 
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)

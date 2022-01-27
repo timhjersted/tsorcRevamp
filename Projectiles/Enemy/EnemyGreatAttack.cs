@@ -26,6 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.tileCollide = true;
 			projectile.width = 5;
 			projectile.alpha = 200;
+			projectile.timeLeft = 20;
 		}
 		public override bool PreKill(int timeLeft)
         {

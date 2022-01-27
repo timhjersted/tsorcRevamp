@@ -9,13 +9,9 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/ThrowingSpear";
 
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("GIT GUD");
-        }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 2;
+            projectile.aiStyle = 1;
             projectile.friendly = false;
             projectile.hostile = true;
             projectile.height = 12;
@@ -24,7 +20,6 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.scale = 0.8f;
             projectile.tileCollide = true;
             projectile.width = 12;
-            aiType = ProjectileID.WoodenArrowFriendly;
         }
 
         #region Kill

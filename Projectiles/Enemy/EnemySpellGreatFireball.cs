@@ -28,6 +28,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.ignoreWater = true;
 			projectile.timeLeft = 360;
 			projectile.penetrate = 50;
+			drawOriginOffsetX = -75;
+			drawOriginOffsetY = 70;
 		}
 		#region AI
 		public override void AI()
