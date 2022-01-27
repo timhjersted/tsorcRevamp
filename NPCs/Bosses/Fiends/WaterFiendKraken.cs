@@ -386,7 +386,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}		
 
 		float cursedRadius = 1400;
-		bool targetPlayer = false;
 		private void CursedBarrage()
 		{
 			MoveCounter++;

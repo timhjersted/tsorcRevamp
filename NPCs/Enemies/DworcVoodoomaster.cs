@@ -96,15 +96,30 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			tsorcRevampAIs.FighterAI(npc, 1f, 0.02f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 2);
 
-			bool readyToFire = false;
-			if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+			bool clearLineofSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
+
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, 2, 17, 0);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, 2, 17);
+
+			if (poisonStrikeTimer >= 60)
 			{
-				readyToFire = true;
+				Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+			}
+			if (poisonStormTimer >= 90)
+			{
+				UsefulFunctions.DustRing(npc.Center, 32, DustID.CursedTorch, 12, 4);
+				Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
+				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+				{
+					npc.velocity = Vector2.Zero;
+				}
 			}
 
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, readyToFire, true, 2, 17, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, readyToFire, true, 2, 17);
-
+			//Transparency. Higher alpha = more invisible
+			if (npc.justHit)
+			{
+				npc.alpha = 0;
+			}
 			if (Main.rand.Next(200) == 1)
 			{
 				npc.alpha = 0;
@@ -118,20 +133,6 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.life += 5;
 				if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
 				npc.netUpdate = true;
-			}
-
-			if (poisonStrikeTimer >= 60)
-			{
-				Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
-			}
-			if (poisonStormTimer >= 180)
-			{
-				UsefulFunctions.DustRing(npc.Center, 32, DustID.CursedTorch, 12, 4);
-				Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
-				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-				{
-					npc.velocity = Vector2.Zero;
-				}
 			}
 		}
 		#endregion

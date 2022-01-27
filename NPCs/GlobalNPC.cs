@@ -2256,7 +2256,7 @@ namespace tsorcRevamp.NPCs
                 npc.ai[3]++;
 
                 //Time it takes to get bored scales with how long it takes to accelerate
-                if (npc.ai[3] > 4 * (topSpeed / acceleration))
+                if (npc.ai[3] > 100 + (4 * (topSpeed / acceleration)))
                 {
                     if (!canTeleport)
                     {
