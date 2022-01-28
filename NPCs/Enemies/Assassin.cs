@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void NPCLoot()
 		{
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(3, 6));
 			Item.NewItem(npc.getRect(), ItemID.ArcheryPotion);
 			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
 			if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());

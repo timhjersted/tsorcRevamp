@@ -71,70 +71,119 @@ namespace tsorcRevamp.NPCs
             }
 
             //VANILLA NPC SPAWN EDITS
-            if (spawnInfo.player.ZoneJungle && !tsorcRevampWorld.SuperHardMode)
+
+            //PRE-HARD MODE
+            //jungle
+            if (spawnInfo.player.ZoneJungle && !Main.hardMode)
             {
                 //pool.Add(the type of the npc, what chance you want it to spawn with);
                 pool.Add(NPCID.LostGirl, 0.02f);
+                pool.Add(NPCID.Salamander2, 0.03f);
             }
-
-            if (spawnInfo.marble)
+            //corrupt (not in water)
+            if (spawnInfo.player.ZoneCorrupt && !spawnInfo.water && !Main.hardMode)
             {
-                //pool.Add(NPCID.SolarCorite, 0.5f);
+                pool.Add(NPCID.CochinealBeetle, 0.02f);
+                pool.Add(NPCID.GiantShelly, 0.02f);
+            }
+            //corrupt (in water)
+            if (spawnInfo.player.ZoneCorrupt && spawnInfo.water && !Main.hardMode)
+            {
+                pool.Add(NPCID.Squid, 0.02f);
+            }
+            //crimson
+            if (spawnInfo.player.ZoneCrimson && !Main.hardMode)
+            {
+                pool.Add(NPCID.LacBeetle, 0.02f);
+            }
+            //meteor
+            if (spawnInfo.player.ZoneMeteor && !Main.hardMode)
+            {
+                pool.Add(NPCID.GraniteFlyer, 0.4f);
+                pool.Add(NPCID.Salamander4, 0.4f);
             }
 
-            if (spawnInfo.spawnTileType == TileID.LihzahrdBrick && spawnInfo.lihzahrd) 
+            //HARD MODE SECTION
+            //golem temple
+            if (spawnInfo.spawnTileType == TileID.LihzahrdBrick && spawnInfo.lihzahrd && Main.hardMode)
             {
                 pool.Add(NPCID.DiabolistRed, 0.2f);
+                pool.Add(NPCID.DiabolistWhite, 0.1f);
+                pool.Add(NPCID.GoblinSummoner, 0.15f);
+            }
+            //shadow temple
+            if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe)
+            {
+                pool.Add(NPCID.Necromancer, 0.2f);
+                pool.Add(NPCID.NecromancerArmored, 0.2f);
+            }
+            //machine temple (in water)
+            if (spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe)
+            {
+                pool.Add(NPCID.GreenJellyfish, 1f);
+            }
+            //machine temple (not in water)
+            if (!spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe)
+            {
+                pool.Add(NPCID.NecromancerArmored, 0.2f);
+            }
+            //sky
+            if (spawnInfo.player.ZoneSkyHeight && Main.hardMode)
+            {
+                pool.Add(NPCID.GoblinSummoner, 0.1f);
+            }
+            //ocean water (outer thirds of the map)
+            if (spawnInfo.water && Main.hardMode && (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
+            {
+                pool.Add(NPCID.SandsharkHallow, 0.3f); 
+                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.ManOfWar>(), 2f);
             }
 
             //SUPER HARD MODE SECTION
+            if (spawnInfo.player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.BoneLee, 0.05f); 
+            }
+            //mushroom
             if (spawnInfo.player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.DD2LightningBugT3, 0.3f);
             }
-
             if (spawnInfo.player.ZoneUnderworldHeight && !spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.SolarCrawltipedeHead, 0.002f); //.1 is 3%
+                pool.Add(NPCID.SolarCrawltipedeHead, 0.002f); 
                 pool.Add(NPCID.SolarSroller, 0.5f); //.5 is 16%
                 pool.Add(NPCID.SolarCorite, 0.01f);
                 pool.Add(NPCID.SolarSpearman, 0.5f);
                 pool.Add(NPCID.SolarDrakomire, 0.5f);
                 pool.Add(NPCID.SolarSolenian, 1f);
             }
-
+            //catacombs
             if (spawnInfo.spawnTileType == TileID.BoneBlock  && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.5f); //.1 is 3%
                 pool.Add(NPCID.NebulaBeast, 1f); //.1 is 3%
                 pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
-
             }
-
-                //if(spawnInfo.spawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
-                //{
-                //
-                //}
-
-                if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
-                //spawn tile is on one of the outer thirds of the map
-                {
-
-                    //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
-
-                }
-           
-
+            //spaceships
+            if (spawnInfo.spawnTileType == TileID.MartianConduitPlating && tsorcRevampWorld.SuperHardMode)
+            {
+                pool.Add(NPCID.VortexLarva, 0.4f); //.1 is 3%
+            }
+            //one of the outer thirds of the map
+            if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
+            {
+               //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
+            }
+            // molten sky temple
             if (spawnInfo.player.ZoneUnderworldHeight && spawnInfo.spawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
-            // && spawnInfo.player.ZoneDungeon
             {
                 pool.Add(NPCID.StardustWormHead, 0.4f); //.1 is 3%
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
                 pool.Add(NPCID.StardustJellyfishBig, 0.3f);
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);
                 pool.Add(NPCID.StardustSoldier, 1f);
-                
             }
         }
 

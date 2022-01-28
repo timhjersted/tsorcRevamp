@@ -56,8 +56,11 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player P = spawnInfo.player;
 			bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
 
-			if (Main.hardMode && Main.rand.Next(200) == 1) return 1; 
+			if (spawnInfo.water) return 0f;
+
+			if (Main.hardMode && !FrozenOcean && Main.rand.Next(200) == 1) return 1; 
 			
 			if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.Next(30) == 1) return 1;
 

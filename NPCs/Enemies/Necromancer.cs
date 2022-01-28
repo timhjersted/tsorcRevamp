@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (spawnInfo.player.townNPCs > 0f || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor) return 0;
 
-
+			if (spawnInfo.water) return 0f;
 
 			if (!Main.hardMode)
 			{

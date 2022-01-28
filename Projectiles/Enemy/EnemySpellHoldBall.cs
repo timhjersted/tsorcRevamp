@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {
-            target.AddBuff(ModContent.BuffType<Buffs.Hold>(), 120, false);
+            target.AddBuff(ModContent.BuffType<Buffs.Hold>(), 30, false); //was 120
         }
 
         public override void Kill(int timeLeft) {

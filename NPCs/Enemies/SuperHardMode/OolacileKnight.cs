@@ -86,9 +86,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
             bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
             bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+            bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 
             // these are all the regular stuff you get , now lets see......
+
+            if (spawnInfo.water) return 0f;
 
             if (NPC.AnyNPCs(ModContent.NPCType<OolacileKnight>()))
             {

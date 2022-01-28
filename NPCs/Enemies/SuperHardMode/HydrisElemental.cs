@@ -56,6 +56,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
+			if (spawnInfo.water) return 0f;
+
 			if (tsorcRevampWorld.SuperHardMode)
 			{
 				if ((spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) && spawnInfo.player.position.Y > Main.rockLayer && spawnInfo.player.position.Y < Main.maxTilesY - 200 && !spawnInfo.player.ZoneDungeon && Main.rand.Next(1500) == 0)

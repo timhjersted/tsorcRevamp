@@ -721,7 +721,12 @@ namespace tsorcRevamp.NPCs {
                         npc.lifeMax = 250;
                         break;
                     }
-
+                case (NPCID.VortexHornetQueen):
+                    {
+                        npc.value = 3700;
+                        break;
+                    }
+                    
                 case (NPCID.Vulture): {
                         npc.damage = 60;
                         npc.lifeMax = 100;
@@ -885,7 +890,6 @@ namespace tsorcRevamp.NPCs {
                         || npc.type == NPCID.ZombieRaincoat
                         || npc.type == NPCID.Clown
                         || npc.type == NPCID.UmbrellaSlime
-                        //NEW ADDITIONS
                         || npc.type == NPCID.CursedSkull
                         || npc.type == NPCID.BigHeadacheSkeleton
                         || npc.type == NPCID.SmallHeadacheSkeleton
@@ -934,6 +938,7 @@ namespace tsorcRevamp.NPCs {
                         || npc.type == NPCID.MartianProbe
                         //|| npc.type == NPCID.WindyBalloon
                         || npc.type == NPCID.UmbrellaSlime
+                        || npc.type == NPCID.ToxicSludge
                         || npc.type == NPCID.BoundGoblin
                         || npc.type == NPCID.BoundMechanic
                         || npc.type == NPCID.BoundWizard) {

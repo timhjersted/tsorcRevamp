@@ -921,11 +921,17 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneJungle) return 0.002f;
+            bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+            bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
+
+            if (spawnInfo.water) return 0f;
+            if (spawnInfo.player.ZoneGlowshroom) return 0f;
+
+            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneBeach || spawnInfo.player.ZoneSkyHeight || spawnInfo.player.ZoneUnderworldHeight)) return 0.002f;
 
             if (Main.expertMode && Main.hardMode && spawnInfo.player.ZoneDungeon) return chance = 0.002f;
 
-            if (NPC.downedBoss3 && !spawnInfo.player.ZoneJungle) return chance = 0.00003f;
+            if (NPC.downedBoss3 && !(spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneBeach || spawnInfo.player.ZoneSkyHeight || spawnInfo.player.ZoneUnderworldHeight)) return chance = 0.00003f;
 
             return chance;
         }

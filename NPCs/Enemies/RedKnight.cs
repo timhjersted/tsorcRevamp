@@ -80,14 +80,12 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-
+        //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
             tsorcRevampAIs.RedKnightOnHit(npc, true);            
         }
-
         
-        //PROJECTILE HIT LOGIC
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {           
             tsorcRevampAIs.RedKnightOnHit(npc, projectile.melee);
@@ -161,7 +159,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                 //FIRE ATTACK
-                //Player player = Main.player[npc.target];
                 if (npc.localAI[1] <= 100 && npc.Distance(player.Center) > 60)
                 {
 
@@ -295,7 +292,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
 
                 //POISON ATTACK
-                //Player nT = Main.player[npc.target];
                 if (npc.localAI[1] >= 250 && npc.Distance(player.Center) > 160) //30 was cool for great red knight
                 {
                     npc.TargetClosest(true);

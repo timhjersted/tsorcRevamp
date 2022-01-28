@@ -44,9 +44,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				npc.lifeMax = 2150;
+				npc.lifeMax = 1750;
 				npc.defense = 40;
-				npc.value = 3600;
+				npc.value = 3700;
 				npc.damage = 70;
 				archerBoltDamage = 85;
 			}

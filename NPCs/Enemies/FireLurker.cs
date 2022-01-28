@@ -100,6 +100,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				return 0;
 			}
 
+			if (spawnInfo.water) return 0f;
+
 			//ONLY SPAWNS IN HELL
 			if (!Main.hardMode && InHell && Main.rand.Next(6) == 1) return 1;
 

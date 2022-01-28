@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.height = 40;
             npc.width = 30;
             npc.lifeMax = 150000;
-            npc.scale = 1.2f;
+            npc.scale = 1.1f;
             npc.HitSound = SoundID.NPCHit4;
             npc.DeathSound = SoundID.NPCDeath6;
             npc.value = 700000;
@@ -77,6 +77,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 		float customspawn2;
 		NPCDespawnHandler despawnHandler;
+
+
+		//PROJECTILE HIT LOGIC
+		public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+		{
+			tsorcRevampAIs.RedKnightOnHit(npc, true);
+		}
+
+		public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+		{
+			tsorcRevampAIs.RedKnightOnHit(npc, projectile.melee);
+		}
+
+
 		public override void AI()
 		{
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
@@ -283,8 +297,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f) {
 
-					if ((customspawn2 < 1) && Main.rand.Next(950) == 1) {
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>(), 0); // Spawns Barrow Wight Nemesis
+					if ((customspawn2 < 2) && Main.rand.Next(1950) == 1) {
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 						npc.ai[0] = 20 - Main.rand.Next(80);
@@ -301,7 +315,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						npc.ai[1] = 1f;
 						npc.netUpdate = true;
 					}
-					if (Main.rand.Next(200) == 1) {
+					if (Main.rand.Next(400) == 1) {
 						float num48 = 10f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 100 + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -344,6 +358,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						}
 						npc.netUpdate = true;
 					}
+					/* removed because it looks broken and can't be fairly dodged
 					if (Main.rand.Next(40) == 1) {
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -360,6 +375,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						}
 						npc.netUpdate = true;
 					}
+					*/
 					if (Main.rand.Next(200) == 1) {
 						float num48 = 8f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));

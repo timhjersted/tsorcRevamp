@@ -49,13 +49,19 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
 			Player P = spawnInfo.player;
+
+			if (spawnInfo.water) return 0f;
+
+			//now spawns in hallow, since jungle was getting crowded
+			//spawns more before the rage is defeated
 			
-			if (Main.hardMode && !Main.dayTime && P.ZoneJungle && P.ZoneOverworldHeight && Main.rand.Next(30) == 1) return 1;
-			if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && Main.rand.Next(15) == 1) return 1;
-			if (Main.hardMode && spawnInfo.lihzahrd && Main.rand.Next(5) == 1) return 1;
-			if (Main.hardMode && spawnInfo.player.ZoneDesert && Main.rand.Next(35) == 1) return 1;
-			if (Main.hardMode && !Main.dayTime && P.ZoneDungeon && (P.ZoneDirtLayerHeight || P.ZoneRockLayerHeight) && Main.rand.Next(30) == 1) return 1;
-			if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.Next(5) == 1) return 1;
+			if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && !Main.dayTime && P.ZoneHoly && P.ZoneOverworldHeight && Main.rand.Next(30) == 1) return 1;
+			if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && !Main.dayTime && P.ZoneHoly && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.Next(25) == 1) return 1;
+			if (Main.hardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && Main.dayTime && P.ZoneHoly && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.Next(35) == 1) return 1;
+			if (Main.hardMode && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheRage>()) && P.ZoneHoly && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.Next(10) == 1) return 1;
+			if (Main.hardMode && spawnInfo.lihzahrd && Main.rand.Next(45) == 1) return 1;
+			if (Main.hardMode && spawnInfo.player.ZoneDesert && Main.rand.Next(45) == 1) return 1;
+			if (tsorcRevampWorld.SuperHardMode && P.ZoneHoly && Main.rand.Next(10) == 1) return 1;
 			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneGlowshroom && Main.rand.Next(5) == 1) return 1;
 			return 0;
 		}

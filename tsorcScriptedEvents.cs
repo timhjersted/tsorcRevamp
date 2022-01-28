@@ -109,6 +109,8 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            GoblinWizardWMF,
+            GoblinWizardClouds,
             Golem2,
             IceGolemEvent,
             KingSlimeEvent,
@@ -165,11 +167,18 @@ namespace tsorcRevamp
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
 
+            //GOBLIN SUMMONER IN WMF
+            ScriptedEvent GoblinWizardWMF = new ScriptedEvent(new Vector2(7822, 118), 20, NPCID.GoblinSummoner, DustID.MagicMirror, true, true, "You're arrogant, Red. You were a fool to come here...", Color.MediumPurple, false);
+            GoblinWizardWMF.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 1500 });
+
+            //GOBLIN SUMMONER IN THE CLOUDS (WMF)
+            ScriptedEvent GoblinWizardClouds = new ScriptedEvent(new Vector2(7822, 118), 40, NPCID.GoblinSummoner, DustID.MagicMirror, true, false, "You think you're clever, Red?", Color.MediumPurple, false);
+            GoblinWizardClouds.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Humanity>(), ModContent.ItemType<Items.DarkSoul>() }, new List<int>() { 1, 1500 });
+
             //ICE GOLEM WYVERN COMBO
             List<int> Golem2EnemyTypeList = new List<int>() { NPCID.WyvernHead, NPCID.IceGolem };
             List<Vector2> Golem2EnemyLocations = new List<Vector2>() { new Vector2(7776, 829), new Vector2(7800, 868) };
             ScriptedEvent Golem2 = new ScriptedEvent(new Vector2(7900, 868), 30, Golem2EnemyTypeList, Golem2EnemyLocations, DustID.Snow, true, false, "!!!", Color.BlueViolet, false, null, StormCustomAction); //
-
 
             //ICE GOLEM - FROZEN OCEAN
             ScriptedEvent IceGolemEvent = new ScriptedEvent(new Vector2(7651, 1020), 20, NPCID.IceGolem, DustID.MagicMirror, true, true, "!", Color.Blue, false);
@@ -202,7 +211,7 @@ namespace tsorcRevamp
             ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.FireworkFountain_Blue, true, true, "Seath the Scaleless rises!", Color.Blue, false);
 
             //WYVERN MAGE 
-            ScriptedEvent WyvernMageEvent = new ScriptedEvent(new Vector2(7192, 364), 40, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), DustID.MagicMirror, true, true, "The Wyvern Mage has appeared to defend its fortress!", Color.Blue, false);
+            ScriptedEvent WyvernMageEvent = new ScriptedEvent(new Vector2(7192, 364), 40, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), DustID.MagicMirror, true, true, "You impress me Red! But this is where your journey ends...", Color.Blue, false, null, StormCustomAction);
 
             //SLOGRA and GAIBON
             //This one works a little different from the others, because it's an event with two bosses that spawns them in an action instead of normally
@@ -344,7 +353,9 @@ namespace tsorcRevamp
 
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
-                
+
+                {ScriptedEventType.GoblinWizardWMF,GoblinWizardWMF},
+                {ScriptedEventType.GoblinWizardClouds,GoblinWizardClouds},
                 {ScriptedEventType.Golem2, Golem2},
                 {ScriptedEventType.IceGolemEvent, IceGolemEvent},
                 {ScriptedEventType.KingSlimeEvent, KingSlimeEvent},
