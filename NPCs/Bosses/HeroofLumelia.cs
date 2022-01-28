@@ -18,25 +18,25 @@ namespace tsorcRevamp.NPCs.Bosses
 		}
 
 		public int throwingKnifeDamage = 44;
-
+		public int smokebombDamage = 22;
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 6;
+			npc.npcSlots = 5;
 			Main.npcFrameCount[npc.type] = 16;
 			animationType = 28;
 			npc.aiStyle = 3;
 			npc.height = 40;
 			npc.width = 20;
 			npc.damage = 75;
-			npc.defense = 36;
+			npc.defense = 55;
 			npc.boss = true;
 			//npc.timeLeft = 22000;
 			npc.lifeMax = 10000;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 100000;
+			npc.value = 20000;
 			npc.lavaImmune = true;
-			npc.knockBackResist = 0.15f;
+			npc.knockBackResist = 0.1f;
 			npc.rarity = 4;
 			npc.buffImmune[BuffID.Confused] = true;
 			npc.buffImmune[BuffID.OnFire] = true;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			throwingKnifeDamage = (int)(throwingKnifeDamage / 2);
 		}
 
-		int herosArrowDamage = 30; //was 40, which means 80? ouch.
+		int herosArrowDamage = 35; //was 40, which means 80? ouch.
 
 		bool wolfSpawned1 = false;
 		bool wolfSpawned2 = false;
@@ -79,10 +79,10 @@ namespace tsorcRevamp.NPCs.Bosses
 			//	return 0;
 			//}
 
-			if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(500) == 1) { Main.NewText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
-			if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(350) == 1) { Main.NewText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
-			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(300) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
-			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(150) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
+			//if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(500) == 1) { Main.NewText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
+			//if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(350) == 1) { Main.NewText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
+			//if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(300) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
+			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(500) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
 
 			return 0;
 		}
@@ -117,9 +117,9 @@ namespace tsorcRevamp.NPCs.Bosses
 			float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-			float enrage_percentage = 0.5f;  // double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+			float enrage_percentage = 0.4f;  // double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
 			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
-			float enrage_top_speed = 4f;  //  faster when enraged, usually 2*top_speed
+			float enrage_top_speed = 5f;  //  faster when enraged, usually 2*top_speed
 
 			bool clown_sized = false; // is hitbox the same as clowns' for purposes of when to jump?
 			bool jump_gaps = true; // attempt to jump gaps; everything but crabs do this
@@ -433,61 +433,111 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region shoot and walk
 			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
 			{
-				
-				//WHEN HIT, CHANCE TO DASH STEP BACKWARDS
-				if (npc.justHit && Main.rand.Next(3) == 1) 
+				//ENEMY SPAWNS
+				if (npc.Distance(player.Center) > 220)
 				{
-					
-						npc.TargetClosest(false);
 
-						npc.velocity.Y = -5f;
-						npc.velocity.X = -4;
+					if ((customSpawn1 == 0) && npc.life <= 4500)
+					{
+						//spawn it and increase customSpawn1
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						customSpawn1 += 1f;
+					}
+					if ((customSpawn1 == 1) && npc.life <= 3500)
+					{
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						customSpawn1 += 1f;
+					}
+					if ((customSpawn1 == 2) && npc.life <= 3000)
+					{
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.ManHunter>(), 0);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						customSpawn1 += 1f;
+					}
 
-						if (Main.rand.Next(3) == 1)
-						{
-							npc.TargetClosest(false);
-							npc.velocity.Y = -5f;
-							npc.velocity.X = -3;
-							npc.velocity.X = npc.velocity.X * -1.2f; // burst forward
-						}
-					
-					
-					npc.netUpdate = true;
+
+					//WOLF SPAWNS
+					if (!wolfSpawned1 && npc.life <= 2500)
+					{
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
+						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
+						int Spawned3 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						wolfSpawned1 = true;
+
+					}
+
+					if (!wolfSpawned2 && npc.life <= 1500)
+					{
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
+						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
+						
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						wolfSpawned2 = true;
+
+					}
+
+					if (!wolfSpawned3 && npc.life <= 1000)
+					{
+						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
+						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.RedCloudHunter>(), 0);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						wolfSpawned3 = true;
+
+					}
 				}
+
+
+				
 
 				#region Projectiles
 
 				customAi1++; ;
 				npc.TargetClosest(true);
 
-
-				/*SPAWN ALLIES RANDOMLY
-				if ((customSpawn1 < 3) && npc.life <= 4000 && Main.rand.Next(600) == 1)
+				//JUSTHIT CODE
+				
+				if (npc.justHit && npc.Distance(player.Center) < 100)
 				{
-					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);//was HydrisElemental ModContent.NPCType<DemonWheel>(), 0);
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);                                                                                                                                
-					customSpawn1 += 1f;
-					}
-
-				SPAWN ANOTHER ALLY RANDOMLY
-				if ((customSpawn2 < 4) && npc.life <= 2500 && Main.rand.Next(550) == 1)
-				{
-					int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0); //ModContent.NPCType<HollowSoldier>()
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);                                                                                                                       
-					customSpawn2 += 1f;
+					customAi1 = 1f;
 				}
-				*/
+				if (npc.justHit && npc.Distance(player.Center) < 350 && Main.rand.Next(3) == 1)//
+				{
+					npc.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
+                    float v = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-6f, -4f);
+                    npc.velocity.X = v;
+					if(Main.rand.Next(2) == 1) 
+					{ customAi1 = 70f; } //was 100 but knife goes away and doesn't shoot consistently
+					else
+					{ customAi1 = 240f; }
+					
+					
+					npc.netUpdate = true;
+				}
+				if (npc.justHit && npc.Distance(player.Center) > 351 && Main.rand.Next(3) == 1)
+				{
+					npc.knockBackResist = 0f;
+					npc.velocity.Y = Main.rand.NextFloat(-10f, -3f);
+					npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(9f, 3f);
+					npc.netUpdate = true;
 
+				}
 
-				//ARROWS FROM ARCHERS IN THE DISTANCE ATTACK
-				if (npc.Distance(player.Center) < 500 && Main.rand.Next(300) == 0) 
+				//ARROWS FROM ARCHERS NEARBY ATTACK
+				if (npc.Distance(player.Center) < 500 && Main.rand.Next(350) == 0) 
 				{
 					Player nT = Main.player[npc.target];
 
 				
-					if (Main.rand.Next(2) == 0)
+					if (Main.rand.Next(4) == 0)
 					{
 						Main.NewText("Archers nearby!", 175, 75, 255);
 					}
@@ -503,11 +553,12 @@ namespace tsorcRevamp.NPCs.Bosses
 					}
 				}
 
+				//ARROWS FROM ARCHERS IN THE DISTANCE ATTACK
 				if (npc.Distance(player.Center) > 800 && Main.rand.Next(100) == 0)
 				{
 					Player nT = Main.player[npc.target];
 
-					if (Main.rand.Next(2) == 0)
+					if (Main.rand.Next(4) == 0)
 					{ 
 						Main.NewText("Archers in the trees!", 175, 75, 255);
 					}
@@ -522,130 +573,113 @@ namespace tsorcRevamp.NPCs.Bosses
 					}
 				}
 
-				if (npc.Distance(player.Center) > 220)
-				{
 
-					//NEW SWORD SPAWNS
-						if ((customSpawn1 == 0) && npc.life <= 4500)
-						{
-							//spawn it and increase customSpawn1
-							int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
-							Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-							Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);                                                                                                                                
-							customSpawn1 += 1f;
-						}
-						if ((customSpawn1 == 1) && npc.life <= 3500)
-						{
-							int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
-							Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-							Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);                                                                                                                               
-							customSpawn1 += 1f;
-						}
-						if ((customSpawn1 == 2) && npc.life <= 3000)
-						{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.ManHunter>(), 0); 
-							Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-							Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);                                                                                                                               
-							customSpawn1 += 1f;
-						}
+				
+
+				//JUMP BEFORE KNIFE ATTACK SOMETIMES
+				if (customAi1 == 130f && npc.velocity.Y == 0f && npc.life >= 1001 && Main.rand.Next(2) == 1)
+					//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+					{
+
+					npc.velocity.Y = Main.rand.NextFloat(-10f, -5f);
+
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 8); //0.4f, true, true																								
+					speed += Main.rand.NextVector2Circular(-4, -2);
+					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+					{
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						//customAi1 = 132f;
+					}
+					
+					npc.netUpdate = true;
+				}
+
+				//DESPERATE FINAL ATTACK
+				if (customAi1 >= 130f && customAi1 <= 148f && npc.life <= 1000)
+				//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+				{
+					if(npc.velocity.Y == 0f)
+
+
+					{ npc.velocity.Y = Main.rand.NextFloat(-11f, -8f); }
 					
 
-					//NEW WOLF SPAWNS
-					if (!wolfSpawned1 && npc.life <= 2500)
-                    {
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0); //ModContent.NPCType<HollowSoldier>()
-						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0); //ModContent.NPCType<HollowSoldier>()
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						wolfSpawned1 = true;
-
-                    }
-
-					if (!wolfSpawned2 && npc.life <= 1500)
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 8); //0.4f, true, true																								
+					speed += Main.rand.NextVector2Circular(-4, -2);
+					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0); //ModContent.NPCType<HollowSoldier>()
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						wolfSpawned2 = true;
-
+						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						//customAi1 = 132f;
 					}
 
-					if (!wolfSpawned3 && npc.life <= 1000)
-					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0); //ModContent.NPCType<HollowSoldier>()
-						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						wolfSpawned3 = true;
-
-					}
+					npc.netUpdate = true;
 				}
 
-				if (customAi1 >= 100f)
+				//THROW KNIFE
+				//&& Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1)
+				//if (Collision.CanHitLine(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))			
+				if (customAi1 == 152 )	
 				{
-
-					if (customAi1 >= 120)
+				Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 12); //0.4f, true, true
+				//speed += Main.rand.NextVector2Circular(-3, -1);
+				speed += Main.player[npc.target].velocity / 2;
+					if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 					{
-						Lighting.AddLight(npc.Center, Color.White.ToVector3() * 0.1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-					}
+							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 
-					//JUMP BEFORE KNIFE ATTACK SOMETIMES
-					if (customAi1 == 130f)
-					{
-						if (Main.rand.Next(2) == 1)
-						{
-							npc.velocity.Y = -8f; // jump with power -7 (for 3 block steps)
-							customAi1 = 131f;
-						}
-					//SOMETIMES DOUBLE JUMP
-						if (customAi1 == 135f)
-						{
-							if (Main.rand.Next(3) == 1)
+							//go to smoke bomb attack
+							customAi1 = 200f;
+							npc.knockBackResist = 0.1f;
+
+							if (Main.rand.Next(2) == 1)
 							{
-								npc.velocity.Y = -6f; // jump with power -7 (for 3 block steps)
-								customAi1 = 136f;
+							//or chance to reset - decided not to use for now
+							//customAi1 = 1f;
 							}
-							else
-							{
-								customAi1 = 136f;
-							}
-							
-						}
-						npc.netUpdate = true;
 					}
+					npc.netUpdate = true;
 
-					if (customAi1 >= 151)
-					{
-						if (npc.Distance(player.Center) > 90)
-						{
-							//THROW KNIFE
-							npc.TargetClosest(true);
-							if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-							{
-
-								float num48 = 9f;
-								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));//(npc.height / 2)
-								float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-25, 5); //(-20, 0x15);
-								float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-25, 5); //-25, 5 means less shooting the ground
-								if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-								{
-									float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-									num51 = num48 / num51;
-									speedX *= num51;
-									speedY *= num51;
-									//int damage = 80;//(int) (14f * npc.scale);
-									int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>();//44;//0x37; //14;
-									int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, throwingKnifeDamage, 0f, Main.myPlayer);
-									Main.projectile[num54].aiStyle = 1;
-									Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-									customAi1 = 1f;
-								}
-								npc.netUpdate = true;
-
-							}
-						}
-					}
 				}
+				
+				//SMOKE BOMB DUST TELEGRAPH
+				if (customAi1 >= 220 && customAi1 >= 280) //&& npc.Distance(player.Center) > 10
+				{
+							Lighting.AddLight(npc.Center, Color.Green.ToVector3() * 1f); 
+							if (Main.rand.Next(2) == 1 && npc.Distance(player.Center) > 1)
+							{
+								Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, npc.velocity.X, npc.velocity.Y);
+							}
+
+							//JUMP BEFORE BOMB ATTACK SOMETIMES
+							if (customAi1 == 260f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+							{
+								npc.velocity.Y = Main.rand.NextFloat(-8f, -4f);
+								npc.netUpdate = true;
+							}
+
+							//SMOKE BOMB ATTACK
+							if (customAi1 >= 280) //&& npc.Distance(player.Center) > 10
+							{
+								npc.TargetClosest(true);
+							
+								if (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+								{
+											Vector2 speed2 = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 10); //, 0.2f, false, false
+											speed2 += Main.rand.NextVector2Circular(-4, 0);
+											//speed2 += Main.player[npc.target].velocity / 2;
+											if (((speed2.X < 0f) && (npc.velocity.X < 0f)) || ((speed2.X > 0f) && (npc.velocity.X > 0f)))
+											{
+												Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
+												Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), npc.position); //Play swing-throw sound
+												customAi1 = 1f;
+											}
+								}
+							}
+				}
+				
 				#endregion
 				
 			}
@@ -909,18 +943,28 @@ namespace tsorcRevamp.NPCs.Bosses
 		#endregion
 
 		static Texture2D spearTexture;
+		static Texture2D bombTexture;
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
 		{
 			
 			Player player = Main.player[npc.target];
+			SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-			if (spearTexture == null || spearTexture.IsDisposed)
+			if (spearTexture == null) //|| spearTexture.IsDisposed
 			{
 				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnifeSmall");
 			}
-			if (customAi1 >= 120 && npc.Distance(player.Center) > 90)
+
+			if (bombTexture == null)
 			{
-				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				bombTexture = mod.GetTexture("Projectiles/Enemy/EnemySmokebomb");
+			}
+			
+			//knife
+			if (customAi1 >= 120 && customAi1 <= 152)
+			{
+				Lighting.AddLight(npc.Center, Color.White.ToVector3() * 0.1f);
+
 				if (npc.spriteDirection == -1)
 				{
 					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), npc.scale, effects, 0); //facing left, (-22,--) was above NPC head, was 24, 48
@@ -928,7 +972,20 @@ namespace tsorcRevamp.NPCs.Bosses
 				else
 				{
 					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(4, 10), npc.scale, effects, 0); // facing right, first value is height, higher number is higher, 2nd value is width axis
+				}
+			}
 
+			//bomb
+			if (customAi1 >= 220) //&& npc.Distance(player.Center) > 10 && customAi1 <= 280
+			{
+				//bomb sprite doesn't always show for some reason
+				if (npc.spriteDirection == -1)
+				{
+					spriteBatch.Draw(bombTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), npc.scale, effects, 0); //facing left, 
+				}
+				else
+				{
+					spriteBatch.Draw(bombTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(14, 4), npc.scale, effects, 0); // facing right
 				}
 			}
 		}
@@ -941,24 +998,30 @@ namespace tsorcRevamp.NPCs.Bosses
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
 
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+			if (Main.rand.Next(99) < 80) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
 			
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaShirt>(), 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaPants>(), 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.ArcherOfLumeliaHairStyle>(), 1);
+			
 			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
-			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
-			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 1);
+			if (Main.rand.Next(99) < 70) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
+			if (Main.rand.Next(99) < 80) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
+			if (Main.rand.Next(99) < 90) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.ObsidianSkinPotion, 1);
+			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 3);
 			Item.NewItem(npc.getRect(), ItemID.ArcheryPotion, 1);
 			Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
 
+			//if not killed before
 			if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>())))
-			{ //If the boss has not yet been killed
-				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 2000); //Then drop the souls
+			{ 
+				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 10000); //Then drop the souls
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>());
-
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(4, 8));
+			}
+			//if the boss has been killed once
+			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
+			{ 
+				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 3500); //Then drop the souls
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 15));
 			}
 		}
 		#endregion
