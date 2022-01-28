@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         static readonly int RADIUS = 300;
         static readonly float WIDTH = (RADIUS / 500f); //idk it just works (tm)
         public override void SetDefaults() {
-            item.damage = 91;
+            item.damage = 77;
             item.useTime = 26;
             item.useAnimation = 26;
             item.autoReuse = true;
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                     int projectile = Projectile.NewProjectile(player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
                     BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].modProjectile as BlizzardBlasterShot;
                     BlizzardBlasterShot.target = targetList[j];
-                    if (j >= 8) {
+                    if (j >= 5) {
                         break;
                     }
                 }
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 if (n.active && !n.dontTakeDamage && !n.townNPC) {
                     if (ConicalCollision(player.Center, RADIUS, aim, WIDTH, n.Hitbox) && Collision.CanHitLine(player.Center, 1, 1, n.Center, 1, 1)) {
                         list.Add(n);
-                        if (list.Count == 10) {
+                        if (list.Count == 7) {
                             break;
                         }
                     }

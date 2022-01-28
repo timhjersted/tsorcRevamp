@@ -465,8 +465,14 @@ namespace tsorcRevamp.Tiles
 								Main.tile[l, m].frameY -= 74;
 							}
 						}
+						
 					}
 				}
+				//syncs the tile frames
+				NetMessage.SendTileSquare(-1, x, y + 1, 5);
+
+				//and is *supposed* to sync the lit bonfire list ;-;
+				NetMessage.SendData(MessageID.WorldData);
 			}
 			else if (tile.frameY / 74 >= 1)
 			{

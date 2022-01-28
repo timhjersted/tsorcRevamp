@@ -132,6 +132,11 @@ namespace tsorcRevamp {
                     //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
                     writer.WriteVector2(new Vector2(pair.Key, pair.Value));
                 }
+                int litBonfireSize = LitBonfireList.Count;
+                writer.Write(litBonfireSize);
+                foreach (Vector2 location in LitBonfireList) {
+                    writer.WriteVector2(location);
+                }
             }
         }
 
@@ -149,6 +154,17 @@ namespace tsorcRevamp {
                 {
                     Slain.Add((int)readData.X, (int)readData.Y);
                 }
+            }
+            int litBonfireSize = reader.ReadInt32();
+            for (int i = 0; i < litBonfireSize; i++) {
+                Vector2 readLocation = reader.ReadVector2();
+                if (LitBonfireList.Contains(readLocation)) {
+                    continue;
+                }
+                else {
+                    LitBonfireList.Add(readLocation);
+                }
+                
             }
         }
 
