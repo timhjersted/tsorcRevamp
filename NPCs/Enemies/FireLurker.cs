@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		int meteorDamage = 17;
 		//int hypnoticDisruptorDamage = 15;
 		
-		public int bioSpitDamage = 27;
+		public int bioSpitDamage = 33;
 
 
 		public override void SetDefaults()
@@ -115,9 +115,10 @@ namespace tsorcRevamp.NPCs.Enemies
 		float spitTimer = 0;
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 1.5f, 0.07f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true);
+			
+			tsorcRevampAIs.FighterAI(npc, 1.5f, 0.07f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
 			bool lineOfSight = Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref spitTimer, 160, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 9, lineOfSight, true, 4, 9);
+			tsorcRevampAIs.SimpleProjectile(npc, ref spitTimer, 160, ProjectileID.LostSoulHostile , bioSpitDamage, 3, lineOfSight, true, 4, 9); //ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>()
 
 			if (spitTimer >= 130)
 			{
