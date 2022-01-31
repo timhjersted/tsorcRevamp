@@ -17,6 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.melee = true;
             item.value = 100;
             item.knockBack = 3.5f;
+            item.UseSound = SoundID.Item1;
         }
 
         public override void AddRecipes()
