@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
@@ -132,25 +133,26 @@ namespace tsorcRevamp {
 				// Ranged
 				if (item.damage >= 1 && item.ranged && player.itemAnimation == player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+					
 				}
 
 				// Magic & Throwing
 				if (item.damage >= 1 && (item.magic || item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				// Summoner
 				if (item.damage >= 1 && item.summon && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * .8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				// Classless? Just in case? 
 				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * 0.8f);
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				if (item.type == ItemID.Harpoon && player.itemAnimation == 1)
@@ -186,6 +188,13 @@ namespace tsorcRevamp {
 			if (force) {
 				dodgeCooldown = 0;
 			}
+		}
+
+		//request that the compiler inlines this method, as opposed to making method calls which are slightly slower
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal float ReduceStamina(int itemUseAnimation) {
+			// y=\left(\log_{1.025}\left(x+41\right)\right)-150.392
+			return (float)((Math.Log(itemUseAnimation + 41, 1.025)) - 150.392);
 		}
 
 		public int KeyDirection(Player player) => player.controlLeft ? -1 : player.controlRight ? 1 : 0;
