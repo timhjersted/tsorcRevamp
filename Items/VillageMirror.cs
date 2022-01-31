@@ -73,10 +73,6 @@ namespace tsorcRevamp.Items {
         }
         public override bool CanUseItem(Player player) {
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.InCombat>())) {
-                return false;
-            }
-
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 if (!player.GetModPlayer<tsorcRevampPlayer>().townWarpSet)
@@ -170,8 +166,7 @@ namespace tsorcRevamp.Items {
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is greatly increased and you cannot move during the channel."));
-                    tooltips.Insert(ttindex + 2, new TooltipLine(mod, "RevampMirrorNerf2", "Cannot be used while in combat."));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is four seconds and you cannot move during the channel."));
                     if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
                         tooltips.Insert(ttindex + 3, new TooltipLine(mod, "BotCNerfedVillageMirror", "Will always take the [c/6d8827:Bearer of the Curse] to the center of the village"));
                     }
