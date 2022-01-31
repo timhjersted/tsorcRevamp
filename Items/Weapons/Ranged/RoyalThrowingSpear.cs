@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void SetDefaults() {
             item.consumable = true;
-            item.damage = 30;
+            item.damage = 21;
             item.height = 66;
             item.knockBack = 6;
             item.maxStack = 2000;
