@@ -51,6 +51,9 @@ namespace tsorcRevamp {
             On.Terraria.Player.QuickHeal += CustomQuickHeal;
 
             On.Terraria.UI.ChestUI.LootAll += PotionBagLootAllPatch;
+
+            On.Terraria.Player.HasUnityPotion += HasWormholePotion;
+            On.Terraria.Player.TakeUnityPotion += ConsumeWormholePotion;
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)
@@ -1377,6 +1380,67 @@ namespace tsorcRevamp {
 
             if (((npc.velocity.X > 0f && npc.oldVelocity.X < 0f) || (npc.velocity.X < 0f && npc.oldVelocity.X > 0f) || (npc.velocity.Y > 0f && npc.oldVelocity.Y < 0f) || (npc.velocity.Y < 0f && npc.oldVelocity.Y > 0f)) && !npc.justHit)
                 npc.netUpdate = true;
+        }
+
+
+        internal static bool HasWormholePotion(On.Terraria.Player.orig_HasUnityPotion orig, Player self) {
+            bool hasWormhole = false;
+            for (int i = 0; i < 58; i++) {
+                if (self.inventory[i].type == ItemID.WormholePotion && self.inventory[i].stack > 0) {
+                    hasWormhole = true;
+                    break;
+                }
+            }
+
+            if (!hasWormhole) {
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++) {
+                    if (self.GetModPlayer<tsorcRevampPlayer>().PotionBagItems[i].type == ItemID.WormholePotion) {
+                        hasWormhole = true;
+                        break;
+                    }
+                }
+            }
+
+            return hasWormhole;
+        }
+
+        internal static void ConsumeWormholePotion(On.Terraria.Player.orig_TakeUnityPotion orig, Player self) {
+            int wormholeSlot = 0;
+            bool potionBag = false;
+
+            for (int i = 0; i < 58; i++) {
+                if (self.inventory[i].type == ItemID.WormholePotion && self.inventory[i].stack > 0) {
+                    wormholeSlot = i;
+                    break;
+                }
+            }
+
+            if (wormholeSlot == 0) {
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++) {
+                    if (self.GetModPlayer<tsorcRevampPlayer>().PotionBagItems[i].type == ItemID.WormholePotion) {
+                        wormholeSlot = i;
+                        potionBag = true;
+                        break;
+                    }
+                }
+            }
+
+            Item wormholePotion;
+
+            if (potionBag) {
+                wormholePotion = self.GetModPlayer<tsorcRevampPlayer>().PotionBagItems[wormholeSlot];
+            }
+            else {
+                wormholePotion = self.inventory[wormholeSlot];
+            }
+
+            if (ItemLoader.ConsumeItem(wormholePotion, self)) {
+                wormholePotion.stack--;
+            }
+            if (wormholePotion.stack <= 0) {
+                wormholePotion.TurnToAir();
+            }
+            
         }
     }
 }
