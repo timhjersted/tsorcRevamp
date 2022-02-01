@@ -69,10 +69,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 2, 0.5f, canTeleport: true, lavaJumping: true);
+			tsorcRevampAIs.FighterAI(npc, 2, 0.05f, canTeleport: true, lavaJumping: true);
 
 			bool lineOfSight = Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 8, lineOfSight, true, 2, 17);
+			tsorcRevampAIs.SimpleProjectile(npc, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, 2, 17);
 
 			if (npc.justHit)
 			{
@@ -80,13 +80,18 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 
 			//TELEGRAPH DUST
-			if (bubbleTimer >= 63)
+			if (bubbleTimer >= 40)
 			{
-				Lighting.AddLight(npc.Center, Color.Blue.ToVector3() * 0.5f);
-				if (Main.rand.Next(3) == 1)
+				Lighting.AddLight(npc.Center, Color.Blue.ToVector3());
+
+				for (int j = 0; j < 30; j++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.Water, npc.velocity.X, npc.velocity.Y);
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.BlueFairy, npc.velocity.X, npc.velocity.Y);
+					Vector2 dir = Main.rand.NextVector2CircularEdge(48, 64);
+					Vector2 dustPos = npc.Center + dir;
+					Vector2 dustVel = dir * -1;
+					dustVel.Normalize();
+					dustVel *= 3;
+					Dust.NewDustPerfect(dustPos, 29, dustVel, 200).noGravity = true;
 				}
 			}
 		}

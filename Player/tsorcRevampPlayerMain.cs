@@ -15,6 +15,7 @@ using Terraria.Audio;
 using tsorcRevamp.Projectiles.Pets;
 using Terraria.Localization;
 using tsorcRevamp.UI;
+using System.IO;
 
 namespace tsorcRevamp
 {
@@ -774,7 +775,7 @@ namespace tsorcRevamp
         }
 
         public override void OnEnterWorld(Player player)
-        {
+        {            
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
                 player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());

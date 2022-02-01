@@ -148,7 +148,7 @@ namespace tsorcRevamp.Items {
                     //insert the extra tooltip line
                     tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is four seconds and you cannot move during the channel."));
                     if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
-                        tooltips.Insert(ttindex + 3, new TooltipLine(mod, "BotCNoGreaterMM", "[c/ca1e00:The curse prevents you from using this!]"));
+                        tooltips.Insert(ttindex + 2, new TooltipLine(mod, "BotCNoGreaterMM", "[c/ca1e00:The curse prevents you from using this!]"));
                     }
                 }
             }

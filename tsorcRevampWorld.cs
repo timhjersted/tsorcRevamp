@@ -44,6 +44,7 @@ namespace tsorcRevamp {
             CustomMap = false;
             Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
+            initialized = false;
 
             tsorcScriptedEvents.InitializeScriptedEvents();
             Tiles.SoulSkellyGeocache.InitializeSkellys();
@@ -689,7 +690,7 @@ namespace tsorcRevamp {
                         {
                             Main.worldID = Main.rand.Next(9999999);
                             UsefulFunctions.ServerText("Running initialization! New world ID is:" + Main.worldID);
-                        }
+                        }                        
 
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
                         {
@@ -697,6 +698,7 @@ namespace tsorcRevamp {
                             NPC.NewNPC(4510, 737, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                         }
                     }
+
                 }
                 else
                 {

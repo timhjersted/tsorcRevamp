@@ -18,7 +18,6 @@ namespace tsorcRevamp.Items.Potions
 
         public override void SetDefaults()
         {
-            Main.PlaySound(1, 1, 1, 1, 2);
             item.width = 20;
             item.height = 30;
             item.useStyle = ItemUseStyleID.EatingUsing;
