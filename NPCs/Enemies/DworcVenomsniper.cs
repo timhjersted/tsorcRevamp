@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		#endregion
 
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.FighterAI(npc, 1.2f, 0.05f);
 

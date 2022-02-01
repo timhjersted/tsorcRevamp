@@ -217,9 +217,9 @@ namespace tsorcRevamp {
         }
 
         public override void PreUpdate() {
+
             player.fullRotationOrigin = new Vector2(11, 22);
             SetDirection(true);
-            //Main.NewText(MaxAcquiredHP);
 
             darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
 
@@ -429,7 +429,7 @@ namespace tsorcRevamp {
 
             }
 
-            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].wall == WallID.StarlitHeavenWallpaper)
+            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16] != null && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].wall == WallID.StarlitHeavenWallpaper)
             {
                 player.AddBuff(BuffID.Darkness, 60);
             }

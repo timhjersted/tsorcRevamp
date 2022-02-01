@@ -82,8 +82,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		#endregion
 
 
-		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.FighterAI(npc, 2, 0.07f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 3);
 			tsorcRevampAIs.LeapAtPlayer(npc, 4, 3, 1, 100);
@@ -108,7 +107,6 @@ namespace tsorcRevamp.NPCs.Enemies
 				
 			}
 		}
-		#endregion
 
 		#region Gore
 		public override void NPCLoot()

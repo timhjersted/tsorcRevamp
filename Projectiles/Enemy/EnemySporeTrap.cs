@@ -9,8 +9,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
 	class EnemySporeTrap : ModProjectile
 	{
-		int sporeType;
-		int gasType;
+		int spriteType;
 
 		public override void SetDefaults()
 		{
@@ -58,8 +57,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
-			Texture2D texture;
-			if (spriteType = 0)
+			Texture2D texture = null;
+			if (spriteType == 0)
 			{
 				texture = Main.projectileTexture[ProjectileID.SporeTrap];
 			}
@@ -79,7 +78,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 			{
 				texture = Main.projectileTexture[ProjectileID.SporeGas3];
 			}
-			spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+
+			if (texture != null)
+			{
+				spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+			}
+
 			return false;
 		}
 

@@ -10,23 +10,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	class FireLurker : ModNPC
 	{
-
-		float customAi1;
-		int drownTimerMax = 2000;
-		int drownTimer = 2000;
-		int drowningRisk = 1200;
-		int boredTimer = 0;
-		int tBored = 1;//increasing this increases how long it take for the NP to get bored
-		int boredResetT = 0;
-		int bReset = 120;//increasing this will increase how long an NPC "gives up" before coming back to try again. Was 50
-		int chargeDamage = 0;
-		bool chargeDamageFlag = false;
-		int meteorDamage = 17;
-		//int hypnoticDisruptorDamage = 15;
-		
-		public int bioSpitDamage = 33;
-
-
 		public override void SetDefaults()
 		{
 			npc.npcSlots = 3;
@@ -53,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.defense = 22;
 				npc.value = 650;
 				npc.damage = 60;
-				bioSpitDamage = 43;
+				lostSoulDamage = 43;
 				npc.knockBackResist = 0.2f;
 			}
 
@@ -63,18 +46,20 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.defense = 47;
 				npc.value = 3650;
 				npc.damage = 95;
-				bioSpitDamage = 73;
+				lostSoulDamage = 73;
 				npc.knockBackResist = 0.1f;
 
 			}
 		}
+
+		public int lostSoulDamage = 27;
+
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			meteorDamage = (int)(meteorDamage / 2);
 			//hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
-			bioSpitDamage = (int)(bioSpitDamage / 2);
+			lostSoulDamage = (int)(lostSoulDamage / 2);
 		}
 
 		
@@ -112,15 +97,15 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		#endregion
 
-		float spitTimer = 0;
+		float lostSoulTimer = 0;
 		public override void AI()
 		{
 			
 			tsorcRevampAIs.FighterAI(npc, 1.5f, 0.07f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
 			bool lineOfSight = Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref spitTimer, 160, ProjectileID.LostSoulHostile , bioSpitDamage, 3, lineOfSight, true, 4, 9); //ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>()
+			tsorcRevampAIs.SimpleProjectile(npc, ref lostSoulTimer, 160, ProjectileID.LostSoulHostile , lostSoulDamage, 3, lineOfSight, true, 4, 9); //ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>()
 
-			if (spitTimer >= 130)
+			if (lostSoulTimer >= 130)
 			{
 				Lighting.AddLight(npc.Center, Color.Green.ToVector3());
 				if (Main.rand.Next(3) == 1)

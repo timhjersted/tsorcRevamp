@@ -904,7 +904,26 @@ namespace tsorcRevamp {
                     }
                 }                
             }
+            else if (message == tsorcPacketID.SyncBonfire)
+            {
+                if (tsorcRevampWorld.LitBonfireList == null)
+                {
+                    tsorcRevampWorld.LitBonfireList = new List<Vector2>();
+                }
 
+                Vector2 bonfireLocation = reader.ReadVector2();
+                if (!tsorcRevampWorld.LitBonfireList.Contains(bonfireLocation))
+                {
+                    tsorcRevampWorld.LitBonfireList.Add(bonfireLocation);
+                }
+
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    UsefulFunctions.ServerText("Server recieved packet " + bonfireLocation);
+                    NetMessage.SendData(MessageID.WorldData);
+                }
+
+            }
 
 
             /**
@@ -1589,6 +1608,7 @@ namespace tsorcRevamp {
         public const byte DispelShadow = 4;
         public const byte DropSouls = 5;
         public const byte SyncPlayerDodgeroll = 6;
+        public const byte SyncBonfire = 7;
     }
 
     //config moved to separate file

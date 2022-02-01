@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 
 		float spearTimer = 0;
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.FighterAI(npc, 1.8f, .05f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
 

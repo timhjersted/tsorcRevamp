@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		#endregion
 
 		int spawnedWerewolves = 0;
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			npc.localAI[1]++;
 			bool lineOfSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);

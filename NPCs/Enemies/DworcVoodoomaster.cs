@@ -91,8 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		#endregion
 
-		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.FighterAI(npc, 1f, 0.02f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 2);
 
@@ -135,7 +134,6 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.netUpdate = true;
 			}
 		}
-		#endregion
 
 		#region Gore
 		public override void HitEffect(int hitDirection, double damage)

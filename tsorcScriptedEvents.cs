@@ -643,7 +643,7 @@ namespace tsorcRevamp
             {
                 NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.modNPC;
 
-                ourFireLurker.bioSpitDamage = 13; //was 23
+                ourFireLurker.lostSoulDamage = 13; //was 23
             }
             return true;
         }

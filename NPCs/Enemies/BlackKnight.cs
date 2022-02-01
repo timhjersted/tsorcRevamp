@@ -56,8 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		#endregion
 
-		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.FighterAI(npc, 2.6f, 0.05f, enragePercent: 0.3f, enrageTopSpeed: 3.4f);
 			bool inRange = npc.Distance(Main.player[npc.target].Center) < 300 && Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0);
@@ -68,7 +67,6 @@ namespace tsorcRevamp.NPCs.Enemies
 				npc.ai[2] = 100f; // reset throw countdown when hit, was 150
 			}
 		}
-		#endregion
 
 		
 

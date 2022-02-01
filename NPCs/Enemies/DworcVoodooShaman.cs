@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		float poisonStrikeTimer = 0;
 		float poisonStormTimer = 0;
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.FighterAI(npc, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3);
 

@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
             get => Main.player[npc.target];
         }
 
-        public override void AI()  //  warrior ai
+        public override void AI()
         {
             tsorcRevampAIs.FighterAI(npc, 4, 0.07f, 0.2f, true, 10, false, 0, 1000, 0.5f, 6, true);
 

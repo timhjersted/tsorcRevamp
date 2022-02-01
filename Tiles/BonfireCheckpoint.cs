@@ -468,10 +468,20 @@ namespace tsorcRevamp.Tiles
 						
 					}
 				}
+
 				//syncs the tile frames
 				NetMessage.SendTileSquare(-1, x, y + 1, 5);
 
-				//and is *supposed* to sync the lit bonfire list ;-;
+				//Tell the server to add the new bonfire to the list
+				if (Main.netMode != NetmodeID.SinglePlayer)
+				{
+					ModPacket bonfirePacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+					bonfirePacket.Write(tsorcPacketID.SyncBonfire);
+					bonfirePacket.WriteVector2(new Vector2(i, j));
+					bonfirePacket.Send();
+				}
+
+				//Tell the server to sync the list to the clients
 				NetMessage.SendData(MessageID.WorldData);
 			}
 			else if (tile.frameY / 74 >= 1)

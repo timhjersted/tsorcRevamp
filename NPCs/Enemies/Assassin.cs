@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		#endregion
 
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
 			tsorcRevampAIs.ArcherAI(npc, ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>(), 50, 14, 100, 2f, .05f, canTeleport: true, enragePercent: 0.4f, enrageTopSpeed: 4f);			
 		}

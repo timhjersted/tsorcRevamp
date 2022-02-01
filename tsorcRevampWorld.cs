@@ -28,6 +28,7 @@ namespace tsorcRevamp {
         public static bool DownedSolar;
         public static bool SuperHardMode;
         public static bool TheEnd;
+        public static bool CustomMap;
 
         public static Dictionary<int, int> Slain;
 
@@ -40,6 +41,7 @@ namespace tsorcRevamp {
             DownedSolar = false;
             SuperHardMode = false;
             TheEnd = false;
+            CustomMap = false;
             Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
 
@@ -64,6 +66,7 @@ namespace tsorcRevamp {
                 world_state.Remove("SuperHardMode");
             }
             if (TheEnd) world_state.Add("TheEnd");
+            if (CustomMap) world_state.Add("CustomMap");
 
             TagCompound tagCompound = new TagCompound
 			{
@@ -94,8 +97,16 @@ namespace tsorcRevamp {
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             TheEnd = worldStateList.Contains("TheEnd");
+            CustomMap = worldStateList.Contains("CustomMap");
+
+            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
+            if(Main.tile[7102, 137].type == 54 && Main.tile[7103, 137].type == 357 && Main.tile[7104, 136].type == 357 && Main.tile[7105, 136].type == 197)
+            {
+                CustomMap = true;
+            }
 
             LitBonfireList = GetActiveBonfires();
+            
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
@@ -124,6 +135,9 @@ namespace tsorcRevamp {
         {
             if(Main.netMode == NetmodeID.Server)
             {
+                writer.Write(CustomMap);
+                writer.Write(SuperHardMode);
+
                 //Storing it in an int32 just so its exact type is guranteed, since that does matter
                 int slainSize = Slain.Count;
                 writer.Write(slainSize);
@@ -132,16 +146,24 @@ namespace tsorcRevamp {
                     //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
                     writer.WriteVector2(new Vector2(pair.Key, pair.Value));
                 }
-                int litBonfireSize = LitBonfireList.Count;
-                writer.Write(litBonfireSize);
-                foreach (Vector2 location in LitBonfireList) {
-                    writer.WriteVector2(location);
+
+                int bonfireSize = LitBonfireList.Count;
+                writer.Write(bonfireSize);
+                foreach (Vector2 bonfire in LitBonfireList)
+                {
+                    //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
+                    writer.WriteVector2(bonfire);
                 }
+
+                UsefulFunctions.ServerText("Server sent " + bonfireSize + "bonfires");
             }
         }
 
         public override void NetReceive(BinaryReader reader)
         {
+            CustomMap = reader.ReadBoolean();
+            SuperHardMode = reader.ReadBoolean();
+
             int slainSize = reader.ReadInt32();
             for (int i = 0; i < slainSize; i++)
             {
@@ -155,17 +177,23 @@ namespace tsorcRevamp {
                     Slain.Add((int)readData.X, (int)readData.Y);
                 }
             }
-            int litBonfireSize = reader.ReadInt32();
-            for (int i = 0; i < litBonfireSize; i++) {
-                Vector2 readLocation = reader.ReadVector2();
-                if (LitBonfireList.Contains(readLocation)) {
-                    continue;
-                }
-                else {
-                    LitBonfireList.Add(readLocation);
-                }
-                
+
+            int bonfireSize = reader.ReadInt32();
+            if(LitBonfireList == null)
+            {
+                LitBonfireList = new List<Vector2>();
             }
+
+            for (int i = 0; i < bonfireSize; i++)
+            {
+                Vector2 bonfire = reader.ReadVector2();
+                if (!LitBonfireList.Contains(bonfire))
+                {
+                    LitBonfireList.Add(bonfire);
+                }
+            }
+
+            Main.NewText("Client recieved " + bonfireSize + "bonfires");
         }
 
         public static bool JustPressed(Keys key) {
@@ -584,12 +612,14 @@ namespace tsorcRevamp {
         {
             List<Vector2> BonfireList = new List<Vector2>();
             int bonfireType = ModContent.TileType<Tiles.BonfireCheckpoint>();
-            for (int i = 1; i < (Main.tile.GetUpperBound(0) - 1); i++)
+
+            //Only check every 3 tiles horizontally and every 4 vertically, since bonfires are 3x4 and we only want to add each of them once
+            for (int i = 1; i < (Main.tile.GetUpperBound(0) - 1); i += 3)
             {
-                for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j++)
+                for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j += 4)
                 {
-                    //Check if each tile is a bonfire, and has a bonfire tile to its right and below it, but none to its left and above it. Only the top left corner of each bonfire is valid for this.
-                    if ((Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType) && (Main.tile[i - 1, j] == null || !Main.tile[i - 1, j].active() || Main.tile[i - 1, j].type != bonfireType) && (Main.tile[i, j - 1] == null || !Main.tile[i, j - 1].active() || Main.tile[i, j - 1].type != bonfireType))
+                    //Check if each tile is a bonfire, and is the left frame, and does not have a bonfire above it (aka just the top left tile of a bonfire)
+                    if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType)
                     {
                         if (Main.tile[i, j].frameY / 74 != 0)
                         {
@@ -613,12 +643,77 @@ namespace tsorcRevamp {
 
         //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely
         //because of other code improving dungeon spawn detection
-        
+
         //public override void TileCountsAvailable(int[] tileCounts) {
-            //Main.dungeonTiles += tileCounts[TileID.BoneBlock];
-            //Main.dungeonTiles += tileCounts[TileID.MeteoriteBrick];
-            
+        //Main.dungeonTiles += tileCounts[TileID.BoneBlock];
+        //Main.dungeonTiles += tileCounts[TileID.MeteoriteBrick];
+
         //}
+
+        bool initialized = false;
+        public override void PreUpdate()
+        {
+            //Only do this on the first tick after loading
+            if (!initialized)
+            {
+                initialized = true;
+                if (CheckForCustomMap())
+                {
+                    //This is done like this so that it can never set CustomMap to false, since that isn't what that function returning false means.
+                    CustomMap = true;
+                }
+
+                //Stuff that should only be done on the custom map
+                if (CustomMap)
+                {
+                    //Stuff that should be done by every client that joins
+                    if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                    {
+                        Main.NewText("Custom map detected. Adventure Mode auto-enabled.", Color.GreenYellow);
+                        ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
+                    }
+                    if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                    {
+                        Main.NewText("Warning!! The setting 'Adventure Mode: Recipes and Items' is disabled!!", Color.OrangeRed);
+                        Main.NewText("Having this off can break progression and parts of the map, please enable this setting and reload mods!", Color.OrangeRed);
+                    }
+
+                    //Stuff that should only be done by either a solo player or the server
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                        {
+                            CampfireToBonfire();
+                        }
+                        if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
+                        {
+                            Main.worldID = Main.rand.Next(9999999);
+                            UsefulFunctions.ServerText("Running initialization! New world ID is:" + Main.worldID);
+                        }
+
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
+                        {
+                            //Where she spawns doesn't matter so long as it's offscreen right? This removes the need for a reference to the player here
+                            NPC.NewNPC(4510, 737, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                        }
+                    }
+                }
+                else
+                {
+                    //Stuff that should only be done if they're *not* on the custom map
+                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+                    {
+                        Main.NewText("Randomly-generated map detected. Adventure Mode auto-disabled.", Color.GreenYellow);
+                        ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
+                    }
+                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                    {
+                        Main.NewText("Warning!! The setting 'Adventure Mode: Recipes and Items' is enabled!!", Color.OrangeRed);
+                        Main.NewText("This is intended for the custom map and can break randomly generated worlds! To prevent issues, please disable this setting and reload mods!", Color.OrangeRed);
+                    }
+                }
+            }
+        }
 
         public override void PostUpdate() {
             
@@ -710,6 +805,27 @@ namespace tsorcRevamp {
             //		Main.NewText("You have vanquished the final guardian of the Abyss...");
             //		Main.NewText("The kiln of the First Flame has been ignited!");
             //		//Main.NewText("Congratulations, you have inherited the fire of this world. You will forever be known as the hero of the age.");  
+        }
+
+        //Runs a double check on whether or not the world is the custom map.
+        public static bool CheckForCustomMap()
+        {
+            if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
+            {
+                return true;
+            }
+
+            //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's towers that are unlikely to change. Even if they do, this shouldn't be necessary though
+            //This simply ensures even if something deeply silly happens it'll still likely register as the custom map
+            if (Main.tile[7102, 137] != null && Main.tile[7103, 137] != null && Main.tile[7104, 136] != null && Main.tile[7105, 136] != null)
+            {
+                if (Main.tile[7102, 137].type == 54 && Main.tile[7103, 137].type == 357 && Main.tile[7104, 136].type == 357 && Main.tile[7105, 136].type == 197)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
