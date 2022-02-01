@@ -8,6 +8,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
     class ShadowOrb : ModProjectile {
 
         public override void SetDefaults() {
+	    projectile.timeLeft = 480;
             projectile.hostile = true;
             projectile.height = 15;
             projectile.width = 15;
