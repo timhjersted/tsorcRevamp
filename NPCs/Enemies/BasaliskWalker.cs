@@ -21,13 +21,13 @@ namespace tsorcRevamp.NPCs.Enemies
 		int chargeDamage = 0;
 		bool chargeDamageFlag = false;
 		int meteorDamage = 17;
-		int hypnoticDisruptorDamage = 20; //was 15
-		int bioSpitDamage = 15; //was 10
+		int hypnoticDisruptorDamage = 30; //was 15
+		int bioSpitDamage = 20; //was 10
 
 
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 3;
+			npc.npcSlots = 2;
 			Main.npcFrameCount[npc.type] = 12;
 			animationType = 28;
 			npc.knockBackResist = 0.3f;
@@ -42,15 +42,15 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				npc.lifeMax = 380;
 				npc.defense = 20;
-				npc.value = 2200;
+				npc.value = 1000;
 				npc.damage = 60;
 				hypnoticDisruptorDamage = 45;
-				bioSpitDamage = 30;
+				bioSpitDamage = 35;
 			}
 
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
-			npc.value = 1000; //was 2000
+			npc.value = 400; //was 2000
 			npc.lavaImmune = true;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.BasaliskWalkerBanner>();
@@ -86,7 +86,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool InBrownLayer = P.ZoneDirtLayerHeight;
 			bool InGrayLayer = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
+			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
 			// P.townNPCs > 0f // is no town NPCs nearby
 
 			if (spawnInfo.invasion)
@@ -94,25 +95,28 @@ namespace tsorcRevamp.NPCs.Enemies
 				return 0;
 			}
 
-			if (!Main.hardMode && !Dungeon && !Corruption && !Main.dayTime && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(24) == 1) return 1;
+			if (spawnInfo.water) return 0f;
 
-			if (!Main.hardMode && Jungle && !Corruption && !Main.dayTime && AboveEarth && Main.rand.Next(20) == 1) return 1;
+			if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(24) == 1) return 1;
 
-			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(15) == 1) return 1;
+			//new chance to spawn in the corruption or crimson below ground (poison and cursed aren't activated until EoW and Skeletron respectively for balance; now we'll finally have a unique mod npc that fits well in these zones)
+			if (!Main.hardMode && Corruption && !Main.dayTime && !AboveEarth && Main.rand.Next(20) == 1) return 1;
 
-			if (!Main.hardMode && Meteor && !Dungeon && !Corruption && Main.dayTime && InGrayLayer && Main.rand.Next(35) == 1) return 1; //was 60
+			if (!Main.hardMode && Corruption && Main.dayTime && !AboveEarth && Main.rand.Next(40) == 1) return 1;
 
-			//if (!Main.hardMode && Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(40) == 1) return 1;
+			//jungle or meteor
+			if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(10) == 1) return 1;
 
-			//if (!Main.hardMode && InHell && Main.rand.Next(15) == 1) return 1;
+			if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && InGrayLayer && Main.rand.Next(20) == 1) return 1; //was 60
 
-			if (!Main.hardMode && Jungle && !Corruption && InGrayLayer && Main.rand.Next(120) == 1) return 1; //was 200
+			if (!Main.hardMode && Jungle && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(100) == 1) return 1; //was 200
 
-			if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(100) == 1) return 1; //was 850
+			if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(80) == 1) return 1; //was 850
 
-			if (Main.hardMode && !Main.dayTime && (Meteor || Jungle) && !Dungeon && !Corruption && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(25) == 1) return 1;
+			//hard mode
+			if (Main.hardMode && P.townNPCs <= 0f && !Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (AboveEarth || InBrownLayer || InGrayLayer) && Main.rand.Next(45) == 1) return 1;
 
-			if (Main.hardMode && Main.dayTime && (Meteor || Jungle) && !Dungeon && !Corruption && (InBrownLayer || InGrayLayer) && Main.rand.Next(55) == 1) return 1;
+			if (Main.hardMode && P.townNPCs <= 0f && Main.dayTime && (Meteor || Jungle || Corruption) && !Dungeon && (InBrownLayer || InGrayLayer) && Main.rand.Next(55) == 1) return 1;
 
 			return 0;
 		}
@@ -129,7 +133,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool shoot_and_walk = true;  //  can shoot while walking like clown; uses ai[2] so cannot be used with is_archer or can_pass_doors
 
 			//  can_teleport==true code uses boredom_time and ai[3] (boredom), but not mutually exclusive
-			bool can_teleport = true;  //  tp around like chaos ele
+			bool can_teleport = false;  //  tp around like chaos ele
 			int boredom_time = 60; // time until it stops targeting player if blocked etc, 60 for anything but chaos ele, 20 for chaos ele
 			int boredom_cooldown = 10 * boredom_time; // boredom level where boredom wears off; usually 10*boredom_time
 
@@ -144,7 +148,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//float braking_power = .2f;  //  %of speed that can be shed every tick when above max walking speed
 			double bored_speed = .9;  //  above this speed boredom decreases(if not already bored); usually .9
 
-			float enrage_percentage = .1f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
+			float enrage_percentage = .2f;  //  double movement speed below this life fraction. 0 for no enrage. Mummies enrage below .5
 			float enrage_acceleration = .14f;  //  faster when enraged, usually 2*acceleration
 			float enrage_top_speed = 2;  //  faster when enraged, usually 2*top_speed
 
@@ -286,135 +290,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-			//if (!is_archer || (npc.ai[2] <= 0f && !npc.confused))  //  meelee attack/movement. archers only use while not aiming
-			//{
-			//	if (Math.Abs(npc.velocity.X) > top_speed)  //  running/flying faster than top speed
-			//	{
-			//		if (npc.velocity.Y == 0f)  //  and not jump/fall
-			//			npc.velocity *= (1f - braking_power);  //  decelerate
-			//	}
-			//	else if ((npc.velocity.X < top_speed && npc.direction == 1)||(npc.velocity.X > -top_speed && npc.direction == -1))
-			//	{  //  running slower than top speed (forward), can be jump/fall
-			//		if (can_teleport && moonwalking)
-			//			npc.velocity.X = npc.velocity.X * 0.99f;  //  ? small decelerate for teleporters
-
-			//		npc.velocity.X = npc.velocity.X + (float)npc.direction*acceleration;  //  accellerate fwd; can happen midair
-			//		if ((float)npc.direction*npc.velocity.X > top_speed)
-			//			npc.velocity.X = (float)npc.direction*top_speed;  //  but cap at top speed
-			//	}  //  END running slower than top speed (forward), can be jump/fall
-
-
-
-
-			//} // END non archer or not aiming*/
 			#endregion
-			//-------------------------------------------------------------------
-			#region archer projectile code (stops moving to shoot)
-			if (is_archer)
-			{
-				if (npc.confused)
-					npc.ai[2] = 0f; // won't try to stop & aim if confused
-				else // not confused
-				{
-					if (npc.ai[1] > 0f)
-						npc.ai[1] -= 1f; // decrement fire & reload counter
-
-					//if (npc.justHit) // was just hit?
-					//{
-					//	npc.ai[1] = 30f; // shot on .5 sec cooldown
-					//	npc.ai[2] = 0f; // not aiming
-					//}
-					if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
-					{
-						npc.TargetClosest(true); // target and face closest player
-						if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
-						{ // firing:
-							Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
-							float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X; // x vector to target
-							float num16 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-							float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num16; // y vector to target (aiming high at distant targets)
-							npc_to_target_x += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
-							npc_to_target_y += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
-							float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y)); // distance to target
-							npc.netUpdate = true; // ??
-							target_dist = projectile_velocity / target_dist; // to normalize by projectile_velocity
-							npc_to_target_x *= target_dist; // normalize by projectile_velocity
-							npc_to_target_y *= target_dist; // normalize by projectile_velocity
-							npc_center.X += npc_to_target_x;  //  initial projectile position includes one tick of initial movement
-							npc_center.Y += npc_to_target_y;  //  initial projectile position includes one tick of initial movement
-							if (Main.netMode != 1)  //  is server
-								Projectile.NewProjectile(npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, meteorDamage, 0f, Main.myPlayer);
-
-							if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
-							{
-								if (npc_to_target_y > 0f)
-									npc.ai[2] = 1f; // aim downward
-								else
-									npc.ai[2] = 5f; // aim upward
-							}
-							else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-								npc.ai[2] = 3f;  //  aim straight ahead
-							else if (npc_to_target_y > 0f) // target is below NPC
-								npc.ai[2] = 2f;  //  aim slight downward
-							else // target is not below NPC
-								npc.ai[2] = 4f;  //  aim slight upward
-						} // END firing
-						if (npc.velocity.Y != 0f || npc.ai[1] <= 0f) // jump/fall or firing reload
-						{
-							npc.ai[2] = 0f; // not aiming
-							npc.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
-						}
-						else // no jump/fall and no firing reload
-						{
-							npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
-							npc.spriteDirection = npc.direction; // match animation to facing
-						}
-					} // END if aiming: adjust aim and fire if needed
-					if (npc.ai[2] <= 0f && npc.velocity.Y == 0f && npc.ai[1] <= 0f && !Main.player[npc.target].dead && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-					{ // not aiming & no jump/fall & fire/reload ctr is 0 & target is alive and LOS to target: start aiming
-						float num21 = 10f; // dummy vector length in place of initial velocity? not sure why this is needed
-						Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-						float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X;
-						float num23 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-						float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num23; // y vector to target (aiming high at distant targets)
-						npc_to_target_x += (float)Main.rand.Next(-40, 41);
-						npc_to_target_y += (float)Main.rand.Next(-40, 41);
-						float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y));
-						if (target_dist < 700f) // 700 pix = 43.75 blocks
-						{ // target is in range
-							npc.netUpdate = true; // ??
-							npc.velocity.X = npc.velocity.X * 0.5f; // hard brake
-							target_dist = num21 / target_dist; // to normalize by num21
-							npc_to_target_x *= target_dist; // normalize by num21
-							npc_to_target_y *= target_dist; // normalize by num21
-							npc.ai[2] = 3f; // aim straight ahead
-							npc.ai[1] = (float)shot_rate; // start fire & reload counter
-							if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
-							{
-								if (npc_to_target_y > 0f)
-									npc.ai[2] = 1f; // aim downward
-								else
-									npc.ai[2] = 5f; // aim upward
-							}
-							else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-								npc.ai[2] = 3f; // aim straight ahead
-							else if (npc_to_target_y > 0f)
-								npc.ai[2] = 2f; // aim slight downward
-							else
-								npc.ai[2] = 4f; // aim slight upward
-						} // END target is in range
-					} // END start aiming
-				} // END not confused
-			}  //  END is archer
-			#endregion
-			//-------------------------------------------------------------------
+			
 
 			#region shoot and walk
 			if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
 			{
 
-
-				bool flag2 = false;
+                #region LOGIC
+				//should this be added to other npcs?
+                bool flag2 = false;
 				int num5 = 60;
 				bool flag3 = true;
 				if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
@@ -450,9 +335,26 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					npc.ai[3] = 0f;
 				}
-				if (npc.justHit)
+				
+				//JUSTHIT CODE
+				Player player2 = Main.player[npc.target];
+				if (npc.justHit && npc.Distance(player2.Center) < 100)
 				{
+					customAi1 = 40f;
 					npc.ai[3] = 0f;
+				}
+				if (npc.justHit && npc.Distance(player2.Center) < 150 && Main.rand.Next(2) == 1)
+				{
+					customAi1 = 100f;
+					npc.velocity.Y = Main.rand.NextFloat(-6f, -3f);
+					npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-5f, -3f);
+					npc.netUpdate = true;
+				}
+				if (npc.justHit && npc.Distance(player2.Center) > 150 && Main.rand.Next(2) == 1)
+				{
+					npc.velocity.Y = Main.rand.NextFloat(-5f, -2f);
+					npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-5f, 3f);
+					npc.netUpdate = true;
 				}
 				if (npc.ai[3] == (float)num5)
 				{
@@ -665,12 +567,13 @@ namespace tsorcRevamp.NPCs.Enemies
 						npc.ai[2] = 0f;
 					}
 				}
+                #endregion
 
-
-				#region Charge
-				if (Main.netMode != 1)
+                #region Charge
+                if (Main.netMode != 1)
 				{
-					if (Main.rand.Next(1500) == 1)
+					Player player = Main.player[npc.target];
+					if (Main.rand.Next(200) == 1 && npc.Distance(player.Center) > 260)
 					{
 						chargeDamageFlag = true;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
@@ -701,18 +604,39 @@ namespace tsorcRevamp.NPCs.Enemies
 				#region Projectiles
 				if (Main.netMode != 1)
 				{
-					customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
-					if (customAi1 >= 10f)
+
+					//MAKE SOUND WHEN JUMPING/HOVERING
+					if (Main.rand.Next(12) == 0 && npc.velocity.Y <= -1f)
+					{
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 24, 0.2f, .1f);
+					}
+
+					customAi1++; ;
+					//TELEGRAPH DUSTS
+					if (customAi1 >= 100)
+					{
+						Lighting.AddLight(npc.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+						if (Main.rand.Next(3) == 1)
+						{
+							Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+							//Dust.NewDust(npc.position, npc.width, npc.height, DustID.EmeraldBolt, npc.velocity.X, npc.velocity.Y);
+						}
+
+					}
+
+
+					if (customAi1 >= 120f)
 					{
 
-
+						//DISRUPTOR ATTACK
 						npc.TargetClosest(true);
-						if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+						//if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+						if (Collision.CanHitLine(npc.Center, 2, 2, Main.player[npc.target].Center, 2, 2))
 						{
 
 							if (Main.rand.Next(800) == 1)
 							{
-								float num48 = 7f;
+								float num48 = 3f;
 								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 								float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 								float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -726,31 +650,42 @@ namespace tsorcRevamp.NPCs.Enemies
 									int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, hypnoticDisruptorDamage, 0f, Main.myPlayer);
 									Main.projectile[num54].timeLeft = 330;
 									Main.projectile[num54].aiStyle = 1;
-									Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-									customAi1 = 1f;
+									Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 24, 0.6f, -0.5f); //wobble
+																												  
 								}
 								npc.netUpdate = true;
 							}
 
-
-							if (Main.rand.Next(70) == 1)
+							//MAIN SPIT ATTACK
+							if (customAi1 >= 140f) //was main rand 70
 							{
-								float num48 = 6f;
-								Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-								float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-								float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-								if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+								Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 8);
+
+								if (Main.rand.Next(3) == 1 && ((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 								{
-									float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-									num51 = num48 / num51;
-									speedX *= num51;
-									speedY *= num51;
-									int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>();//44;//0x37; //14;
-									int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
-									Main.projectile[num54].timeLeft = 60;
-									Main.projectile[num54].aiStyle = 1;
-									Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+									Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
+									Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, 0.3f);
 									customAi1 = 1f;
+								}
+								else
+								{ 
+									float num48 = 6f;
+									Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
+									float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+									float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+									if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+									{
+										float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
+										num51 = num48 / num51;
+										speedX *= num51;
+										speedY *= num51;
+										int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>();//44;//0x37; //14;
+										int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
+										Main.projectile[num54].timeLeft = 60;
+										Main.projectile[num54].aiStyle = 1;
+										Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.1f); //fire
+										customAi1 = 1f;
+									}
 								}
 								npc.netUpdate = true;
 							}
@@ -763,6 +698,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 				#endregion
 
+				//DESPAWN WHEN PLAYER DIES
 				if (Main.player[npc.target].dead)
 				{
 					if (npc.timeLeft > 20)
@@ -1129,16 +1065,17 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region Debuffs
 		public override void OnHitPlayer(Player player, int damage, bool crit)
 		{
+			player.AddBuff(17, 180, false); //hunter
+
 			if (Main.rand.Next(2) == 0)
 			{
-				//player.AddBuff(37, 10800, false); //horrified
 				player.AddBuff(20, 300, false); //poisoned
-				
 			}
-
-			player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
-			player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
-
+			if(tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
+			{ 
+				player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
+				player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += 5;
+			}
 			if (Main.rand.Next(10) == 0)
 			{
 				player.AddBuff(36, 600, false); //broken armor
@@ -1162,10 +1099,10 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Blood Splat"), 1.1f);
 			}
 
-			if (Main.rand.Next(100) < 50) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
+			if (!Main.hardMode && Main.rand.Next(100) < 30) Item.NewItem(npc.getRect(), ItemID.HealingPotion);
 			if (Main.rand.Next(100) < 30) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
 			//if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>());
-			//if (Main.rand.Next(100) < 5) Item.NewItem(npc.getRect(), ItemID.BattlePotion);
+			
 		}
 	}
 }

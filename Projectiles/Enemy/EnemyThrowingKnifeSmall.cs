@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             aiType = ProjectileID.WoodenArrowFriendly;
         }
 
-
+        
         public override bool PreKill(int timeLeft)
         {
             projectile.type = 0;
@@ -37,6 +37,11 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Dust.NewDust(projectile.position, projectile.width, projectile.height, 7, 0, 0, 0, default, 1f);
             }
             return true;
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            Main.PlaySound(SoundLoader.customSoundType, (int)projectile.position.X, (int)projectile.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/im-sorry"), 0.3f, 0.0f);
         }
 
         #region Kill
@@ -49,6 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             projectile.timeLeft = 0;
             {
+                
                 Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
                 for (int i = 0; i < 10; i++)
                 {

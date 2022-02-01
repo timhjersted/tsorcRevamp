@@ -31,7 +31,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void AI()
 		{
-			if(projectile.ai[1] > 0 && projectile.timeLeft > 300)
+
+			
+
+			
+			if (projectile.ai[1] > 0 && projectile.timeLeft > 300)
             {
 				projectile.timeLeft = 300;
 				projectile.tileCollide = true;
@@ -60,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 
 			Color color = new Color();
-			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y - 10), projectile.width, projectile.height, DustID.Shadowflame, 0, 0, 50, color, 3.0f);
+			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y - 10), projectile.width, projectile.height, DustID.Shadowflame, 0, 0, 50, color, 2.0f);
 			Main.dust[dust].noGravity = true;
 
 			if (Main.rand.Next(2) == 0)
