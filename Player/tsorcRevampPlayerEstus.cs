@@ -65,10 +65,10 @@ namespace tsorcRevamp
 			//estusChargesCurrent = estusChargesMax;
 		}
 
-		/*public override void OnRespawn(Player player) //When a player respawns, restore charges
+		public override void OnRespawn(Player player) //When a player respawns, restore charges
 		{
 			estusChargesCurrent = estusChargesMax;
-		}*/
+		}
 
 		public override void PostUpdateBuffs()
 		{
