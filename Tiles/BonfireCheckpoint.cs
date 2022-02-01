@@ -431,7 +431,9 @@ namespace tsorcRevamp.Tiles
 			Tile tile = Main.tile[i, j];
 			if (tile.frameY / 74 == 0)
 			{
-				Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
+				//new bonfire lit sound
+				Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/bonfire-lit"), 0.2f, 0.0f);
+				//Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
 				Main.NewText("Bonfire lit!", 250, 110, 90);
 
 				if (tsorcRevampWorld.LitBonfireList == null)

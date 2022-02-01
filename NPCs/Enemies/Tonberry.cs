@@ -77,6 +77,13 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
 		public override void AI()  //  warrior ai
 		{
+			//play creature sounds
+			if (Main.rand.Next(1000) == 1)
+			{
+				Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y, 55, 0.3f, -0.7f); // cultist
+			}
+
+
 			#region set up NPC's attributes & behaviors
 			// set parameters
 			//  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -208,6 +215,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			#endregion
 			//-------------------------------------------------------------------
+
+
+			
+
+
 			#region play creature sounds, target/face player, respond to boredom
 			if ((!hates_light || !Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0) && npc.ai[3] < (float)boredom_time)
 			{   // not fleeing light & not bored
@@ -382,8 +394,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			#region shoot and walk
 			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
 			{
-				//if (npc.justHit)
-				//	npc.ai[2] = 0f; // reset throw countdown when hit
+				
 				#region Projectiles
 				customAi1++; ;
 				if (customAi1 >= 180f)

@@ -72,11 +72,42 @@ namespace tsorcRevamp.NPCs.Enemies
 			tsorcRevampAIs.FighterAI(npc, 2, 0.05f, canTeleport: true, lavaJumping: true);
 
 			bool lineOfSight = Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, 2, 17);
+			tsorcRevampAIs.SimpleProjectile(npc, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, 2, 87); //2, 87 is bubble 2 sound
 
-			if (npc.justHit)
+
+			//projectile sound needs volume and pitch variables (the last two below)
+			//if (bubbleTimer >= 80)
+			//{
+			//	Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 87, 0.2f, -0.1f); // water2 sound
+			//}
+
+
+			//PLAY CREATURE SOUND
+			if (Main.rand.Next(1000) == 1)
 			{
-				bubbleTimer = 0; // reset throw countdown when hit
+				Main.PlaySound(23, (int)npc.position.X, (int)npc.position.Y, 0, 0.3f, -0.3f); // water sound
+			}
+
+
+			//JUSTHIT CODE
+
+			Player player2 = Main.player[npc.target];
+			if (npc.justHit && npc.Distance(player2.Center) < 100)
+			{
+				bubbleTimer = 0f;
+			}
+			if (npc.justHit && npc.Distance(player2.Center) < 150 && Main.rand.Next(2) == 1)
+			{
+				bubbleTimer = 40f;
+				npc.velocity.Y = Main.rand.NextFloat(-11f, -3f);
+				npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-4f, -3f);
+				npc.netUpdate = true;
+			}
+			if (npc.justHit && npc.Distance(player2.Center) > 200 && Main.rand.Next(2) == 1)
+			{
+				npc.velocity.Y = Main.rand.NextFloat(-11f, -3f);
+				npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(4f, 3f);
+				npc.netUpdate = true;
 			}
 
 			//TELEGRAPH DUST
@@ -107,14 +138,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Quara Hydromancer Gore 2"), 1.2f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Quara Hydromancer Gore 3"), 1.2f);
 
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.HealingPotion, 1);
+			//if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.HealingPotion, 1);
 			if (Main.rand.Next(99) < 2) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.GreatEnergyBeamScroll>(), 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
-			if (Main.rand.Next(99) < 15) Item.NewItem(npc.getRect(), ItemID.SwiftnessPotion, 1);
-			if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ItemID.WaterWalkingPotion, 1);
-			if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ItemID.BattlePotion, 1);
+			if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion, 1);
+			if (Main.rand.Next(99) < 8) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 1);
+			if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ItemID.IronskinPotion, 1);
+			if (Main.rand.Next(99) < 5) Item.NewItem(npc.getRect(), ItemID.SwiftnessPotion, 1);
+			if (Main.rand.Next(99) < 3) Item.NewItem(npc.getRect(), ItemID.WaterWalkingPotion, 1);
+			if (Main.rand.Next(99) < 3) Item.NewItem(npc.getRect(), ItemID.BattlePotion, 1);
 		}
 		#endregion
 	}

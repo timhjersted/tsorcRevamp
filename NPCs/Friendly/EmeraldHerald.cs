@@ -48,6 +48,8 @@ namespace tsorcRevamp.NPCs.Friendly
 
 			if (!player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter)
 			{
+				Main.PlaySound(SoundLoader.customSoundType, (int)npc.position.X, (int)npc.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
+
 				chat.Add("Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King." +
 					"\nHe has grown mighty in power and seeks to destroy not only your world, but also mine and many others.");
 				player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter = true;
@@ -57,12 +59,14 @@ namespace tsorcRevamp.NPCs.Friendly
 			{
 				if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5)
 				{
+					Main.PlaySound(SoundLoader.customSoundType, (int)npc.position.X, (int)npc.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
 					chat.Add("Is that a shard you've found? Here, let me see it." + "\nSo that I may help you. To see light, to see hope… However faint it might be…");
 				}
 				else
 				{
 					if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
 					{
+						Main.PlaySound(SoundLoader.customSoundType, (int)npc.position.X, (int)npc.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
 						chat.Add("Listen to everything I have to say and I may give you a reward.", 4);
 					}
 					if (!tsorcRevampWorld.SuperHardMode)
