@@ -16,7 +16,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.height = 58;
             item.width = 20;
             item.ranged = true;
-            item.knockBack = 15f;
+            item.knockBack = 4f;
             item.maxStack = 1;
             item.noMelee = true;
             item.rare = ItemRarityID.Pink;

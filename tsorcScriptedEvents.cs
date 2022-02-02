@@ -443,7 +443,7 @@ namespace tsorcRevamp
 
         public static bool LumeliaCustomCondition()
         {
-            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()))
             {
                 return true;
             }

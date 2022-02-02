@@ -109,12 +109,12 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DiabolistRed, 0.2f);
                 pool.Add(NPCID.DiabolistWhite, 0.1f);
-                pool.Add(NPCID.GoblinSummoner, 0.15f);
+                //pool.Add(NPCID.GoblinSummoner, 0.15f);
             }
             //shadow temple
             if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe)
             {
-                pool.Add(NPCID.Necromancer, 0.2f);
+                pool.Add(NPCID.Necromancer, 0.1f);
                 pool.Add(NPCID.NecromancerArmored, 0.2f);
             }
             //machine temple (in water)
