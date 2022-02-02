@@ -110,7 +110,10 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DiabolistRed, 0.2f);
                 pool.Add(NPCID.DiabolistWhite, 0.1f);
-                //pool.Add(NPCID.GoblinSummoner, 0.15f);
+                pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.2f);
+                pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.05f);
+                pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.05f);
+
             }
             //shadow temple
             if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe)
@@ -131,7 +134,7 @@ namespace tsorcRevamp.NPCs
             //sky
             if (spawnInfo.player.ZoneSkyHeight && Main.hardMode)
             {
-                pool.Add(NPCID.GoblinSummoner, 0.1f);
+                pool.Add(NPCID.GoblinSummoner, 0.01f);
             }
             //ocean water (outer thirds of the map)
             if (spawnInfo.water && Main.hardMode && (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
