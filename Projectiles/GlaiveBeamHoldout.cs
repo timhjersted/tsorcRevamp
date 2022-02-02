@@ -50,15 +50,15 @@ namespace tsorcRevamp.Projectiles {
 				//Drain BotC players stamina
 				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1.5f;
+					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1f;
 				}
 			}
 			//If not, move up the animation sheet as the weapon charges
 			else
 			{
 				projectile.frame = (int)((charge / MaxCharge) * (NumAnimationFrames));
-				//Stop the BotC player from using the Glaive Beam if they don't have full stamina
-				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+				//Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
+				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 120 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2))
                 {
 					player.channel = false;
                 }

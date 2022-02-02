@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.channel = true;
             item.autoReuse = true;
             item.shootSpeed = 30;
-            item.useAnimation = 230;
+            item.useAnimation = 150;
             item.useTime = 200;
             item.value = 8000000;
             

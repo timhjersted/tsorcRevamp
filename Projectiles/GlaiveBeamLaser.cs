@@ -32,14 +32,6 @@ namespace tsorcRevamp.Projectiles {
 
         public bool IsAtMaxCharge => Charge == MAX_CHARGE;
 
-        // The width of the beam in pixels for the purposes of tile collision.
-        // This should generally be left at 1, otherwise the beam tends to stop early when touching tiles.
-        private const float BeamTileCollisionWidth = 0.3f;
-
-        // The width of the beam in pixels for the purposes of entity hitbox collision.
-        // This gets scaled with the beam's scale value, so as the beam visually grows its hitbox gets wider as well.
-        private const float BeamHitboxCollisionWidth = 22f;
-
         public int FiringTimeLeft = 0;
 
         public override void SetDefaults() {
@@ -137,7 +129,6 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
 
-
             return origin;
         }
 
@@ -216,7 +207,7 @@ namespace tsorcRevamp.Projectiles {
 
         public override void AI() { 
 
-             FiringTimeLeft--;
+            FiringTimeLeft--;
             if (FiringTimeLeft == 0)
             {
                 Charge = 0;
@@ -234,46 +225,35 @@ namespace tsorcRevamp.Projectiles {
 
             SetLaserPosition(player);
             Vector2 endpoint = origin + projectile.velocity * Distance;
+            endpoint -= new Vector2(8, 8); //Offset endpoint so dust is centered on it, covering it better
             float distance = Vector2.Distance(endpoint, origin);
-            float velocity = -8f;
+            float velocity = -10f;
             Vector2 speed = ((endpoint - origin) / distance) * velocity;
             speed.X += Main.rand.Next(-1, 1);
             speed.Y += Main.rand.Next(-1, 1);
             int dust;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 8; i++)
             {
-                //dust = Dust.NewDust(endpoint, 20, 20, 6, Main.rand.Next(-10, 10), 0, 20, default, 3.0f);
-                //Main.dust[dust].noGravity = true;
-            }
-
-            dust = Dust.NewDust(endpoint, 3, 3, 127, speed.X + Main.rand.Next(-10, 10), speed.Y + Main.rand.Next(-10, 10), 20, default, 3.0f);
-            Main.dust[dust].noGravity = true;
-            if (Main.rand.Next(20) == 1)
+                dust = Dust.NewDust(endpoint, 16, 16, 127, speed.X * 1.2f + Main.rand.Next(-5, 5), speed.Y * 1.2f + Main.rand.Next(-5, 5), 20, default, 3.5f);
+                Main.dust[dust].noGravity = true;
+            }            
+            if (Main.rand.Next(2) == 1)
             {
-                dust = Dust.NewDust(endpoint, 3, 3, 130, speed.X, speed.Y, 20, default, 1.0f);
+                dust = Dust.NewDust(endpoint, 16, 16, 130, speed.X, speed.Y, 20, default, 1.0f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
             }
-            if (Main.rand.Next(30) == 1)
+            if (Main.rand.Next(3) == 1)
             {
                 dust = Dust.NewDust(endpoint, 30, 30, 130, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
-
-            //float hitscanBeamLength = PerformBeamHitscan(hostPrism, chargeRatio >= 1f);
-            //BeamLength = MathHelper.Lerp(BeamLength, hitscanBeamLength, BeamLengthChangeFactor);
-
-            // This Vector2 stores the beam's hitbox statistics. X = beam length. Y = beam width.
-            //Vector2 beamDims = new Vector2(projectile.velocity.Length() * BeamLength, projectile.width * projectile.scale);
-
 
             // If the game is rendering (i.e. isn't a dedicated server), make the beam disturb water.
             //if (Main.netMode != NetmodeID.Server)
             //{
             // ProduceWaterRipples(beamDims);
             //}
-
-
         }
 
         private void SetLaserPosition(Player player) {
