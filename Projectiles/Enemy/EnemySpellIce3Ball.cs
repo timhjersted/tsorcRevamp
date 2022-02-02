@@ -37,7 +37,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
 		}
 
         public override void Kill(int timeLeft) {
-			Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 30, 0.2f, .3f); //ice materialize - good
+			//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
 			int Icicle = ModContent.ProjectileType<EnemySpellIce3Icicle>();
 			Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 5, Icicle, projectile.damage, 3f, projectile.owner);
 			Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height * 2), 0, 5, Icicle, projectile.damage, 3f, projectile.owner);

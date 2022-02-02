@@ -813,7 +813,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //}
 
 
-            //Shielding
+            //Shielding Flame/Fire Attack
 
             //if (shielding || npc.ai[2] > 300 || )
            //{
@@ -839,7 +839,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             int num54 = Projectile.NewProjectile(npc.Center.X + (20f * npc.direction), npc.Center.Y, 8f * npc.direction, Main.rand.NextFloat(-1f, 0), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), 20, 0f, Main.myPlayer); 
                             Main.projectile[num54].timeLeft = 25;
-                        }
+                            //play breath sound
+                            if (Main.rand.Next(3) == 0)
+                            {
+                                Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, 0.3f, .1f); //flame thrower sound
+                            }
+                    }
                     }
 
                     if (npc.ai[2] > 530)

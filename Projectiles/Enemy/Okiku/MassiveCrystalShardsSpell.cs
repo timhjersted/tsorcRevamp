@@ -28,9 +28,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
         public override void Kill(int timeLeft) {
 			
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
-				
-				var Shards = ModContent.ProjectileType<MassiveCrystalShards>();
+				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
+				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 30, 0.5f, .1f); //ice materialize - good
+			var Shards = ModContent.ProjectileType<MassiveCrystalShards>();
 				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);
 				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 5), projectile.position.Y + (float)(projectile.height * 4), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);
 				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -3), projectile.position.Y + (float)(projectile.height * 7), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);

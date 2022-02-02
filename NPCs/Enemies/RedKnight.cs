@@ -171,7 +171,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                             //Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                             Projectile.NewProjectile((float)player.position.X - 10 + Main.rand.Next(10), (float)player.position.Y - 400f, (float)(-10 + Main.rand.Next(10)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
-                            Main.PlaySound(2, -1, -1, 5);
+                            Main.PlaySound(2, -1, -1, 5, 0.7f, -.01f);
                             //int FireAttack = Projectile... 
                             //Main.projectile[FireAttack].timeLeft = 15296;
                             npc.netUpdate = true;

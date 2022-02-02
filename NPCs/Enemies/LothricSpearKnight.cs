@@ -83,11 +83,14 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[npc.target];
-
+            //when close to enemy, grapple and mobility hindered
             if (npc.Distance(player.Center) < 600)
             {
-                //player.ZonePeaceCandle = true;
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
+            }
+            if (Main.hardMode && npc.Distance(player.Center) < 60)
+            {
+                player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60, false);
             }
 
             int lifePercentage = (npc.life * 100) / npc.lifeMax;

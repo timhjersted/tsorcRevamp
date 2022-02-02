@@ -448,6 +448,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (!oBored && shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
             {
 
+                Player player = Main.player[npc.target];
+                //when close to enemy, grapple and mobility hindered
+                if (npc.Distance(player.Center) < 600)
+                {
+                    player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
+                }
+                if (Main.hardMode && npc.Distance(player.Center) < 100)
+                {
+                    player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60, false);
+                }
+
 
                 if (comboDamage > 0)
                 {

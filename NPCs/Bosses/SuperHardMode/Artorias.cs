@@ -93,6 +93,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 		public override void AI()
 		{
+
+
+			Player player = Main.player[npc.target];
+
+			if (npc.Distance(player.Center) < 600)
+			{
+				
+				player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60, false);
+				player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
+				
+			}
+
+
 			despawnHandler.TargetAndDespawn(npc.whoAmI);
 			if (npc.HasBuff(ModContent.BuffType<Buffs.DispelShadow>()))
 			{
@@ -297,7 +310,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (customAi1 >= 10f) {
 
-					if ((customspawn2 < 2) && Main.rand.Next(1950) == 1) {
+					if ((customspawn2 < 24) && Main.rand.Next(1950) == 1) {
 						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
@@ -315,8 +328,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						npc.ai[1] = 1f;
 						npc.netUpdate = true;
 					}
-					if (Main.rand.Next(400) == 1) {
-						float num48 = 10f;
+					if (Main.rand.Next(400) == 1 && npc.Distance(player.Center) > 100) {
+						float num48 = 8f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 100 + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -329,7 +342,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 105;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y, 3, 0.2f, -.7f); //MAGIC INTERCEPT
+
 							npc.ai[1] = 1f;
 
 
@@ -339,8 +353,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						}
 						npc.netUpdate = true;
 					}
-					if (Main.rand.Next(100) == 1) {
-						float num48 = 13f;
+					if (Main.rand.Next(150) == 1 && npc.Distance(player.Center) > 100) {
+						float num48 = 10f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
 						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
@@ -353,7 +367,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 95, 0.3f, .8f); //xenopopper
+							//Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y, 3, 0.2f, .1f); //magic intercept
 							customAi1 = 1f;
 						}
 						npc.netUpdate = true;
@@ -375,8 +390,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						}
 						npc.netUpdate = true;
 					}
-					*/
-					if (Main.rand.Next(200) == 1) {
+					
+					if (Main.rand.Next(200) == 1 && npc.Distance(player.Center) > 100) {
 						float num48 = 8f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -390,12 +405,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 10;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y, 52, 0.2f, .1f); //shadowflame apparition
 							customAi1 = 1f;
 						}
 						npc.netUpdate = true;
 					}
-					if (Main.rand.Next(150) == 1) {
+					*/
+					if (Main.rand.Next(250) == 1 && npc.Distance(player.Center) > 100) {
 						float num48 = 9f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -409,12 +425,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightning3Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 93, 0.1f, .2f); //electric zap
 							customAi1 = 1f;
 						}
 						npc.netUpdate = true;
 					}
-					if (Main.rand.Next(120) == 1) {
+					if (Main.rand.Next(220) == 1 && npc.Distance(player.Center) > 100) {
 						float num48 = 8f;
 						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 650 + (npc.height / 2));
 						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -428,19 +444,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, ice3Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 40;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 71, 0.2f, .1f); //death cicle
 							customAi1 = 1f;
 						}
 						npc.netUpdate = true;
 					}
-					if (Main.rand.Next(200) == 1) {
+					if (Main.rand.Next(600) == 1 && npc.Distance(player.Center) > 300) {
 						num58 = Projectile.NewProjectile(npc.position.X + 20, npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num58].timeLeft = 400;
 						Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
 						Main.projectile[num58].ai[0] = npc.target;
 
-
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 93, 0.1f, .6f); //electric zap
+						
 						customAi1 = 1f;
 
 						npc.netUpdate = true;
@@ -459,7 +475,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightning4Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 92, 0.2f, -.2f); //electrosphere launch
 							customAi1 = 1f;
 						}
 						npc.netUpdate = true;
@@ -481,21 +497,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, shardsDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 4;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
+							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 30, 0.2f, -.3f); //ice materialize - good
 							npc.ai[3] = 0; ;
 						}
 						npc.netUpdate = true;
 					}
 
 
-					if (Main.rand.Next(250) == 1) {
+					if (Main.rand.Next(500) == 1 && npc.Distance(player.Center) > 300) {
 						num59 = Projectile.NewProjectile(npc.position.X + 20, npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num59].timeLeft = 500;
 						Main.projectile[num59].rotation = Main.rand.Next(700) / 100f;
 						Main.projectile[num59].ai[0] = npc.target;
 
 
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 93, 0.1f, -.1f); //electric zap
 						customAi1 = 1f;
 
 						npc.netUpdate = true;
@@ -507,7 +523,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
 
-				if (Main.rand.Next(350) == 1) {
+				if (Main.rand.Next(350) == 1 && npc.Distance(player.Center) > 100) {
 					float num48 = 8f;
 					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
@@ -521,7 +537,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 1;
 						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						//Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 30, 0.2f, .3f); //ice materialize - good
 						npc.ai[1] = 1f;
 					}
 					npc.netUpdate = true;
@@ -543,13 +560,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 300;
 						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 113, 0.2f, .2f); //deadly sphere
 						customAi1 = 1f;
 					}
 					npc.netUpdate = true;
 				}
-				if (Main.rand.Next(1000) == 1) {
-					float num48 = 11f;
+				if (Main.rand.Next(500) == 1 && npc.Distance(player.Center) > 100) {
+					float num48 = 7f;
 					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
 					float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -562,7 +579,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 60;
 						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 113, 0.2f, -.2f); //deadly sphere
 						customAi1 = 1f;
 					}
 					npc.netUpdate = true;

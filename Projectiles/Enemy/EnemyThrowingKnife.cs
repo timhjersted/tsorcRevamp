@@ -56,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             projectile.type = 0;
-            Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+            Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1, 0.5f, 0f);
             for (int i = 0; i < 10; i++)
             {
                 Dust.NewDust(projectile.position, projectile.width, projectile.height, 1, 0, 0, 0, default, 1f);

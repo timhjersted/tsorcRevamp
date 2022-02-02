@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (spawnInfo.player.ZoneUnderworldHeight || undergroundEvil)
 				{
-					if (Main.rand.Next(40) == 0)
+					if (Main.rand.Next(200) == 0)
 					{
 						return 1;
 					}
