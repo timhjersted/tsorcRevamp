@@ -62,21 +62,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			else return 0;
 		}
 
-		void DealtPlayer(Player player, double damage, NPC npc)
-		{
-			player.AddBuff(13, 3600, false); //battle
-			player.AddBuff(33, 3600, false); //weak
-			return;
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+			target.AddBuff(13, 3600, false); //battle
+			target.AddBuff(33, 3600, false); //weak
 		}
 
-
-
-
-
-
-		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
+			//tsorcRevampAIs.FighterAI(npc, 2.8f, 0.08f, enragePercent: 0.2f, enrageTopSpeed: 3.6f);
+			//tsorcRevampAIs.LeapAtPlayer(npc, 3, 3, 1);
+	
 			#region set up NPC's attributes & behaviors
 			// set parameters
 			//  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -721,7 +717,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			#endregion
 			//-------------------------------------------------------------------*/
 		}
-		#endregion
 
 		public override void NPCLoot()
 		{

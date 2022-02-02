@@ -40,6 +40,12 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 chance = 0.2f;
             }
+            
+            //Otherwise it spawns in the frozen ocean and gets stuck in the ceiling
+            if (spawnInfo.water)
+            {
+                chance = 0;
+            }
             return chance;
         }
 

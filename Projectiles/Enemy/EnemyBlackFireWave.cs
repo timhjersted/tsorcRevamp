@@ -30,21 +30,28 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void AI()
 		{
-			// Get the length of last frame's velocity
-			float lastLength = (float)Math.Sqrt((projectile.velocity.X * projectile.velocity.X + projectile.velocity.Y * projectile.velocity.Y));
+			for(int i = 0; i < Main.maxPlayers; i++)
+            {
+				if(Main.player[i] != null && Main.player[i].active)
+                {
+					if (Vector2.Distance(projectile.Center, Main.player[i].Center) < 300)
+					{
+						Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(projectile.Center, Main.player[i].Center, 1);
+						double angleDiff = UsefulFunctions.CompareAngles(projectile.velocity, vectorDiff);
 
-			// Determine projectile behavior
-			// Apply half-gravity & clamp downward speed
-			projectile.velocity.Y = projectile.velocity.Y > 16f ? 16f : projectile.velocity.Y + 0.1f;
+						if (angleDiff > MathHelper.Pi / 2)
+						{
+							projectile.Kill();
+							projectile.active = false;
+						}
+					}
+				}
+            }
 
-			if (projectile.velocity.X < 0f)
-			{    // Dampen left-facing horizontal velocity & clamp to minimum speed
-				projectile.velocity.X = projectile.velocity.X > -1f ? -1f : projectile.velocity.X + 0.01f;
-			}
-			else if (projectile.velocity.X > 0f)
-			{    // Dampen right-facing horizontal velocity & clamp to minimum speed
-				projectile.velocity.X = projectile.velocity.X < 1f ? 1f : projectile.velocity.X - 0.01f;
-			}
+			//Offset natural projectile gravity slightly to make it floatier (which means bigger arcs)
+			projectile.velocity.Y += 0.01f;
+
+			
 
 			// Align projectile facing with velocity normal
 			projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X) - 2.355f;
@@ -120,20 +127,20 @@ namespace tsorcRevamp.Projectiles.Enemy
 														// not sure if this will make it variate the damage(calling Main.DamageVar())
 			projectile.penetrate = 2;
 			projectile.width = projectile.width << 3;
-			projectile.height = projectile.width << 3;
+			projectile.height = projectile.height << 3;
+			projectile.position.X -= projectile.width / 2;
+			projectile.position.Y -= projectile.height / 2;
 
 			// do explosion
 			projectile.Damage();
 
 			// create glowing red embers that fill the explosion's radius
-			for (int i = 0; i < 30; i++)
+			for (int i = 0; i < 300; i++)
 			{
-				float velX = 2f - ((float)Main.rand.Next(20)) / 5f;
-				float velY = 2f - ((float)Main.rand.Next(20)) / 5f;
-				velX *= 4f;
-				velY *= 4f;
-				int p = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width >> 1), projectile.position.Y - (float)(projectile.height >> 1)), projectile.width, projectile.height, 54, velX, velY, 160, default(Color), 1.5f);
-				int p2 = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width >> 1), projectile.position.Y - (float)(projectile.height >> 1)), projectile.width, projectile.height, 58, velX, velY, 160, default(Color), 1.5f);
+				Vector2 projPosition = Main.rand.NextVector2Circular(projectile.width / 3, projectile.height / 3) + projectile.Center;
+				Vector2 projVelocity = Main.rand.NextVector2CircularEdge(5, 5);
+				Dust.NewDustPerfect(projPosition, 54, projVelocity, 160, default, 1.5f);
+				Dust.NewDustPerfect(projPosition, 58, projVelocity, 160, default, 1.5f);
 			}
 
 			// terminate projectile

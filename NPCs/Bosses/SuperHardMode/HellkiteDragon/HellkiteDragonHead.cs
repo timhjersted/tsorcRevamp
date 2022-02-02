@@ -159,11 +159,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public override void NPCLoot()
         {
-            npc.netUpdate = true;
-            Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hellkite Dragon Head Gore"), 1f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hellkite Dragon Head Gore"), 1f);
+            Gore.NewGore(npc.Center, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(npc.Center, npc.velocity, mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
 
             if (Main.expertMode)
             {

@@ -524,6 +524,24 @@ namespace tsorcRevamp {
 
             double c = a2 - a1;
 
+            //The largest angle between two points on a circle should be Pi radians at most
+            //If comparing them clockwise resulted in a bigger number, then compare them counterclockwise
+            //Also shift them both over by a quadrant to avoid comparing across the 0/TwoPi breakpoint
+            if(Math.Abs(c) > MathHelper.Pi)
+            {
+                a1 += MathHelper.PiOver2;
+                a2 += MathHelper.PiOver2;
+                if (a1 > MathHelper.TwoPi)
+                {
+                    a1 -= MathHelper.TwoPi;
+                }
+                if (a2 > MathHelper.TwoPi)
+                {
+                    a2 -= MathHelper.TwoPi;
+                }
+                c = a2 - a1;
+            }
+
             return Math.Abs(c);
         }
 

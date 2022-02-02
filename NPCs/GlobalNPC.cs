@@ -2051,8 +2051,9 @@ namespace tsorcRevamp.NPCs
         ///<param name="soundStyle">The style of sound to play when it shoots</param>
         public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int passiveSound = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, int soundType = 2, int soundStyle = 5)
         {
-            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, passiveSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
+            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, passiveSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
 
+            npc.aiStyle = -1;
             if (npc.confused)
             {
                 npc.ai[2] = 0f; // won't try to stop & aim if confused
