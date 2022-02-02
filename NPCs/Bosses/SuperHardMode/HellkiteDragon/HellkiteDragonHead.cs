@@ -78,54 +78,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             return false;
         }
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.player;
-            bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHoly;
-            bool AboveEarth = spawnInfo.spawnTileY < Main.worldSurface;
-            bool InBrownLayer = spawnInfo.spawnTileY >= Main.worldSurface && spawnInfo.spawnTileY < Main.rockLayer;
-            bool InGrayLayer = spawnInfo.spawnTileY >= Main.rockLayer && spawnInfo.spawnTileY < (Main.maxTilesY - 200) * 16;
-            bool InHell = spawnInfo.spawnTileY >= (Main.maxTilesY - 200) * 16;
-            bool Ocean = spawnInfo.spawnTileX < 3600 || spawnInfo.spawnTileX > (Main.maxTilesX - 100) * 16;
-            bool BeforeThreeAfterSeven = (spawnInfo.spawnTileX < Main.maxTilesX * 0.3f) || (spawnInfo.spawnTileX > Main.maxTilesX * 0.7f); //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?)
-            bool BeforeThree = spawnInfo.spawnTileX < Main.maxTilesX * 0.3f;
-            // these are all the regular stuff you get , now lets see......
-
-            if (tsorcRevampWorld.SuperHardMode && !BeforeThree && Main.bloodMoon && AboveEarth && Main.rand.Next(1000) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && BeforeThree && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && Main.bloodMoon && AboveEarth && Main.rand.Next(30) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && BeforeThree && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && Main.bloodMoon && Sky && Main.rand.Next(5) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Sky && Main.rand.Next(500) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && Sky && Main.bloodMoon && Main.rand.Next(150) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && Sky && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && Main.rand.Next(20) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && !Main.dayTime && InHell && Main.rand.Next(500) == 1) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<TheHunter>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HellkiteDragonHead>()) && !Main.dayTime && Main.rand.Next(200) == 1)
-
-            {
-                Main.NewText("The village is under attack!", 175, 75, 255);
-                Main.NewText("A Hellkite Dragon has come to feed...", 175, 75, 255);
-                return 1;
-            }
-
-            return 0;
-        }
-        #endregion
-
-
-
-
         NPCDespawnHandler despawnHandler;
         public static int hellkitePieceSeperation = -5;
         public override void AI()
@@ -221,6 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
                 if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
             }
         }

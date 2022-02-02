@@ -2417,7 +2417,7 @@ namespace tsorcRevamp.NPCs
                 do
                 {
                     teleportTarget = Main.rand.NextVector2Circular(range, range);
-                } while (teleportTarget.Length() < 5);
+                } while (teleportTarget.Length() < 10);
 
                 //Add the player's position to it to convert it to an actual tile coordinate
                 teleportTarget += Main.player[npc.target].position / 16;

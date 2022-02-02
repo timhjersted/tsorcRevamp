@@ -152,7 +152,8 @@ namespace tsorcRevamp
             LothricAmbush1,
             LothricAmbush2,
             SpawnMechanic,
-            SpawnWizard
+            SpawnWizard,
+            HellkiteDragonEvent
 
             //AncientDemonAmbush,
             //HellkiteDragonAttack
@@ -351,6 +352,9 @@ namespace tsorcRevamp
             LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
             LothricAmbush2.SetCustomDrops(new List<int>() { ModContent.ItemType<Items.Potions.RadiantLifegem>() }, new List<int>() { 5 });
 
+            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, "The village is under attack! A Hellkite Dragon has come to feed...", new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
+
+
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
@@ -399,8 +403,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush},
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
-
-
+                {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent}
             };
 
             ScriptedEventValues = new Dictionary<ScriptedEventType, bool>();
@@ -614,7 +617,13 @@ namespace tsorcRevamp
             typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null); 
             return true;   
         }
-       
+
+        public static bool SetNightCustomAction(Player player, ScriptedEvent thisEvent)
+        {
+            Main.dayTime = false;
+            Main.time = 0;
+            return true;
+        }
 
 
         //This is an example custom action that just changes the damage of an NPC's projectile. Most enemies will require a very small change for this to work with them (the word 'public' needs to be in front of the variable controlling that projectile's damage).
@@ -903,10 +912,16 @@ namespace tsorcRevamp
                         float speed = 2f;
                         if (!InactiveEvents[i].square)
                         {
+                            
                             //If the player is nearby, display some dust to make the region visible to them
                             //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
-                            if (InactiveEvents[i].visible && distance < 6000000)
+                            if ((InactiveEvents[i].visible && distance < 6000000) || InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000)
                             {
+                                if (InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())
+                                {
+                                    Main.NewText(distance);
+                                }
+
                                 float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
                                 for (int j = 0; j < dustPerTick; j++)
                                 {
