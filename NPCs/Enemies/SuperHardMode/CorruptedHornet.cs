@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.aiStyle = 5;
 			npc.timeLeft = 750;
 			npc.damage = 95;
-			npc.defense = 100;
+			npc.defense = 40;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.noGravity = true;
