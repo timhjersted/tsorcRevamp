@@ -919,7 +919,6 @@ namespace tsorcRevamp {
 
                 if (Main.netMode == NetmodeID.Server)
                 {
-                    UsefulFunctions.ServerText("Server recieved packet " + bonfireLocation);
                     NetMessage.SendData(MessageID.WorldData);
                 }
 

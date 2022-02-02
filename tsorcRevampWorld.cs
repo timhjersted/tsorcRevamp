@@ -155,8 +155,6 @@ namespace tsorcRevamp {
                     //Fuck it, i'm encoding each entry of slain as a Vector2. It's probably more sane than doing it byte by byte.
                     writer.WriteVector2(bonfire);
                 }
-
-                UsefulFunctions.ServerText("Server sent " + bonfireSize + "bonfires");
             }
         }
 
@@ -193,8 +191,6 @@ namespace tsorcRevamp {
                     LitBonfireList.Add(bonfire);
                 }
             }
-
-            Main.NewText("Client recieved " + bonfireSize + "bonfires");
         }
 
         public static bool JustPressed(Keys key) {
@@ -689,7 +685,6 @@ namespace tsorcRevamp {
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
                             Main.worldID = Main.rand.Next(9999999);
-                            UsefulFunctions.ServerText("Running initialization! New world ID is:" + Main.worldID);
                         }                        
 
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
