@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.friendly = false;
 			projectile.light = 0.8f;
 			projectile.penetrate = 3; //was 4, was causing curse buildup way too fast
-			projectile.tileCollide = false;
+			projectile.tileCollide = true;
 			aiType = 96;
 			projectile.magic = true;
 			projectile.hostile = true;

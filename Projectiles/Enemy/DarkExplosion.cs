@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -78,6 +79,33 @@ namespace tsorcRevamp.Projectiles.Enemy
 			target.AddBuff(39, 150, false); //cursed flames
 			target.AddBuff(30, 1800, false); //bleeding
 			target.AddBuff(33, 1800, false); //week
+		}
+
+		public static Texture2D texture;
+		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		{
+			if(texture == null || texture.IsDisposed)
+			{
+				texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkExplosion");
+			}
+			SpriteEffects spriteEffects = SpriteEffects.None;
+			if (projectile.spriteDirection == -1)
+			{
+				spriteEffects = SpriteEffects.FlipHorizontally;
+			}
+
+			//Get the premultiplied, properly transparent texture
+			int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+			int startY = frameHeight * projectile.frame;
+			Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+			Vector2 origin = sourceRectangle.Size() / 2f;
+			//origin.X = (float)(projectile.spriteDirection == 1 ? sourceRectangle.Width - 20 : 20);
+			Color drawColor = projectile.GetAlpha(lightColor);
+			Main.spriteBatch.Draw(texture,
+				projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
+				sourceRectangle, drawColor, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+
+			return false;
 		}
 	}
 }
