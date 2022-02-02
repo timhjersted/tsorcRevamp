@@ -725,7 +725,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		public override void NPCLoot()
 		{
-
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), Main.rand.Next(1, 3));
 			Dust.NewDust(npc.position, npc.width, npc.height, 4, 0.3f, 0.3f, 200, default(Color), 1f);
 			Dust.NewDust(npc.position, npc.height, npc.width, 4, 0.2f, 0.2f, 200, default(Color), 2f);
 			Dust.NewDust(npc.position, npc.width, npc.height, 4, 0.2f, 0.2f, 200, default(Color), 2f);
