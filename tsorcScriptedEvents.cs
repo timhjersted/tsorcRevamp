@@ -917,11 +917,6 @@ namespace tsorcRevamp
                             //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
                             if ((InactiveEvents[i].visible && distance < 6000000) || InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000)
                             {
-                                if (InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())
-                                {
-                                    Main.NewText(distance);
-                                }
-
                                 float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
                                 for (int j = 0; j < dustPerTick; j++)
                                 {

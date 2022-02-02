@@ -42,15 +42,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int phantomSeekerDamage = 58;
         int cometDamage = 50;
         int darkAstronomyDamage = 60;
-        int antimatterCannonDamage = 140;
+        int antimatterCannonDamage = 80;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = (int)(npc.damage / 2);
-            phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
-            cometDamage = (int)(cometDamage / 2);
-            darkAstronomyDamage = (int)(darkAstronomyDamage / 2);
-            antimatterCannonDamage = (int)(antimatterCannonDamage / 2);
+
         }
 
         int chargeDamage = 0;

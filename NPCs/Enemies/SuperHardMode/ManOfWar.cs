@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -38,10 +39,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.water) {
-                return 0.5f;
+
+            float chance = 0;
+
+            if (Main.hardMode && spawnInfo.water) {
+                    chance = 0.5f;
             }
-            return 0;
+            if(Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
+            {
+                chance *= 4;
+            }
+
+            return chance;
         }
         public override void OnHitPlayer(Player target, int damage, bool crit) {
             if (Main.rand.Next(2) == 0) {

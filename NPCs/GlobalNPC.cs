@@ -58,7 +58,8 @@ namespace tsorcRevamp.NPCs
 
 
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
-        {            
+        {
+
             if (tsorcRevampWorld.TheEnd)
             {
                 pool.Clear(); //stop NPC spawns in The End 
@@ -135,15 +136,15 @@ namespace tsorcRevamp.NPCs
             //ocean water (outer thirds of the map)
             if (spawnInfo.water && Main.hardMode && (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
             {
-                pool.Add(NPCID.SandsharkHallow, 0.3f); 
-                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.ManOfWar>(), 2f);
+                pool.Add(NPCID.SandsharkHallow, 0.3f);
             }
 
             //SUPER HARD MODE SECTION
             if (spawnInfo.player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.BoneLee, 0.05f); 
+                pool.Add(NPCID.BoneLee, 0.05f);
             }
+
             //mushroom
             if (spawnInfo.player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
             {
@@ -151,7 +152,7 @@ namespace tsorcRevamp.NPCs
             }
             if (spawnInfo.player.ZoneUnderworldHeight && !spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
-                pool.Add(NPCID.SolarCrawltipedeHead, 0.002f); 
+                pool.Add(NPCID.SolarCrawltipedeHead, 0.002f);
                 pool.Add(NPCID.SolarSroller, 0.5f); //.5 is 16%
                 pool.Add(NPCID.SolarCorite, 0.01f);
                 pool.Add(NPCID.SolarSpearman, 0.5f);
@@ -159,7 +160,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarSolenian, 1f);
             }
             //catacombs
-            if (spawnInfo.spawnTileType == TileID.BoneBlock  && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.spawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.5f); //.1 is 3%
@@ -174,7 +175,7 @@ namespace tsorcRevamp.NPCs
             //one of the outer thirds of the map
             if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
             {
-               //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
+                //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
             }
             // molten sky temple
             if (spawnInfo.player.ZoneUnderworldHeight && spawnInfo.spawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
@@ -185,6 +186,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.StardustSpiderBig, 0.6f);
                 pool.Add(NPCID.StardustSoldier, 1f);
             }
+
         }
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
