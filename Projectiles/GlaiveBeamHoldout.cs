@@ -13,41 +13,10 @@ namespace tsorcRevamp.Projectiles {
 		// The vanilla Last Prism is an animated item with 5 frames of animation. We copy that here.
 		private const int NumAnimationFrames = 11;
 
-		// This controls how many individual beams are fired by the Prism.
-		public const int NumBeams = 10;
 
 		// This value controls how many frames it takes for the Prism to reach "max charge". 60 frames = 1 second.
-		public const float MaxCharge = 300f;
+		public static float MaxCharge = 120f;
 
-
-		// These values place caps on the mana consumption rate of the Prism.
-		// When first used, the Prism consumes mana once every MaxManaConsumptionDelay frames.
-		// Every time mana is consumed, the pace becomes one frame faster, meaning mana consumption smoothly increases.
-		// When capped out, the Prism consumes mana once every MinManaConsumptionDelay frames.
-		private const float MaxManaConsumptionDelay = 15f;
-		private const float MinManaConsumptionDelay = 5f;
-
-		// This property encloses the internal AI variable projectile.ai[0]. It makes the code easier to read.
-		private float FrameCounter
-		{
-			get => projectile.ai[0];
-			set => projectile.ai[0] = value;
-		}
-
-		// This property encloses the internal AI variable projectile.ai[1].
-		private float NextManaFrame
-		{
-			get => projectile.ai[1];
-			set => projectile.ai[1] = value;
-		}
-
-		// This property encloses the internal AI variable projectile.localAI[0].
-		// localAI is not automatically synced over the network, but that does not cause any problems in this case.
-		private float ManaConsumptionRate
-		{
-			get => projectile.localAI[0];
-			set => projectile.localAI[0] = value;
-		}
 
 		public override void SetStaticDefaults()
 		{
@@ -232,10 +201,8 @@ namespace tsorcRevamp.Projectiles {
 
 			int damage = projectile.damage;
 			float knockback = projectile.knockBack;
-			for (int b = 0; b < NumBeams; ++b)
-			{
-				Projectile.NewProjectile(projectile.Center, beamVelocity, ModContent.ProjectileType<GlaiveBeamLaser>(), damage, knockback, projectile.owner, b, uuid);
-			}
+
+			Projectile.NewProjectile(projectile.Center, beamVelocity, ModContent.ProjectileType<GlaiveBeamLaser>(), damage, knockback, projectile.owner, 0, uuid);
 
 			// After creating the beams, mark the Prism as having an important network event. This will make Terraria sync its data to other players ASAP.
 			projectile.netUpdate = true;

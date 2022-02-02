@@ -8,8 +8,8 @@ using Terraria.Audio;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
-    //Intentionally no minimap icon, to keep it mysterious
-    //[AutoloadBossHead]
+
+    [AutoloadBossHead]
     class Blight : ModNPC {
         public override void SetStaticDefaults() {
             Main.npcFrameCount[npc.type] = 4;

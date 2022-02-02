@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles {
         //Fair warning: This is an absolute garbled mess right now, mostly as the result of experimentation.
         //Expect it to look pretty different in the future.
 
-        public const float MAX_CHARGE = GlaiveBeamHoldout.MaxCharge;
+        public static float MAX_CHARGE = GlaiveBeamHoldout.MaxCharge;
         private const float MOVE_DISTANCE = 20f;
         public const int FIRING_TIME = 120;
 

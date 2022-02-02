@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
     public class FocusedEnergyBeam : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Uses Tesla Bolts for ammo\n" +
-                        "Fires a single high damage beam that obliterates most enemies on contact...\n" +
+                        "Fires a single high damage beam that obliterates weaker enemies on contact...\n" +
                         "A weapon from a civilization not of this world...");
 
         }
@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.rare = ItemRarityID.Red;
             item.useAmmo = mod.ItemType("TeslaBolt");
             item.shootSpeed = 30;
-            item.useAnimation = 60;
-            item.useTime = 60;
+            item.useAnimation = 45;
+            item.useTime = 45;
             item.UseSound = SoundID.Item12;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.value = PriceByRarity.Red_10;

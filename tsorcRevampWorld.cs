@@ -687,13 +687,47 @@ namespace tsorcRevamp {
                             Main.worldID = Main.rand.Next(9999999);
                         }                        
 
+                        //Spawn in NPCs
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
                         {
-                            //Where she spawns doesn't matter so long as it's offscreen right? This removes the need for a reference to the player here
-                            NPC.NewNPC(4510, 737, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                            NPC.NewNPC(4510 * 16, 737 * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                         }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.Dwarf>()))
+                        {
+                            int npc = NPC.NewNPC(4301 * 16, 697 * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4301;
+                            Main.npc[npc].homeTileY = 697;
+                        }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.ShamanElder>()))
+                        {
+                            int npc = NPC.NewNPC(4124 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4124;
+                            Main.npc[npc].homeTileY = 690;
+                        }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianArcher>()))
+                        {
+                            int npc = NPC.NewNPC(4145 * 16, 682 * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4145;
+                            Main.npc[npc].homeTileY = 682;
+                        }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>()))
+                        {
+                            int npc = NPC.NewNPC(4370 * 16, 667 * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4370;
+                            Main.npc[npc].homeTileY = 667;
+                        }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
+                        {
+                            int npc = NPC.NewNPC(4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4176;
+                            Main.npc[npc].homeTileY = 690;
+                        }                        
                     }
-
                 }
                 else
                 {

@@ -8,6 +8,7 @@ using tsorcRevamp.Items;
 using tsorcRevamp.Buffs;
 using System;
 using Microsoft.Xna.Framework.Graphics;
+using tsorcRevamp.Projectiles;
 
 namespace tsorcRevamp {
     //Visuals
@@ -75,7 +76,7 @@ namespace tsorcRevamp {
                             heldBeam = (Projectiles.GlaiveBeamLaser)Main.projectile[i].modProjectile;
                             int textureFrames = 10;
                             int frameHeight = (int)texture.Height / textureFrames;
-                            int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / 300));
+                            int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / GlaiveBeamHoldout.MaxCharge));
                             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
 
                             //Get the offsets and shift the draw position based on them
