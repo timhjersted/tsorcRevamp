@@ -112,6 +112,8 @@ namespace tsorcRevamp.Tiles
             //Underworld, in ceiling left of WoF summoning pedestal above lava
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 5));
 
+            //Somewhere in the hallowed Caves
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7070, 1381, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
 
 
 
@@ -132,10 +134,6 @@ namespace tsorcRevamp.Tiles
 
             //Jungle Ruins after getting hook
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5470, 1093, 3, 3), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
-
-
-
-
         }
     }
 }
