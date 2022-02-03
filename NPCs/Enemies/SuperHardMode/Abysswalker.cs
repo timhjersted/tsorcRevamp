@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.knockBackResist = 0;
 			npc.aiStyle = 3;
 			npc.damage = 105;
-			npc.defense = 122;
+			npc.defense = 72;
 			npc.height = 40;
 			npc.lifeMax = 9023;
 			npc.scale = 1;

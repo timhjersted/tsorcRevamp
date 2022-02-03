@@ -85,7 +85,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			if (projectile.ai[1] < 1)
 			{
-				target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1800 / buffLengthMod, false);
+				target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300 / buffLengthMod, false);
 			}
 		}
 

@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (breathTimer > 360)
             {
                 UsefulFunctions.DustRing(npc.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
-                Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
+                Lighting.AddLight(npc.Center, Color.GreenYellow.ToVector3() * 5);
             }            
 
             if (breathTimer == 0)

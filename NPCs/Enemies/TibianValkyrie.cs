@@ -45,11 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-		int drownTimerMax = 2000;
-		int drownTimer = 2000;
-		int drowningRisk = 1200;
-
-
 		#region Spawn
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

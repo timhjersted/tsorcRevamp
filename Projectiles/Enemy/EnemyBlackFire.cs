@@ -8,11 +8,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
 	class EnemyBlackFire : ModProjectile
 	{
-
 		public override void SetStaticDefaults()
-		{
+		{			
 			DisplayName.SetDefault("Black Fire");
-
 		}
 		public override void SetDefaults()
 		{
@@ -20,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.height = 12;
 			projectile.scale = 1.5f;
 			projectile.alpha = 50;
-			projectile.aiStyle = -1;
+			projectile.aiStyle = 1;
 			projectile.timeLeft = 360;
 			projectile.friendly = false;
 			projectile.hostile = true;
@@ -28,29 +26,32 @@ namespace tsorcRevamp.Projectiles.Enemy
 			projectile.light = 0.8f;
 			projectile.magic = true;
 			projectile.tileCollide = true;
-			projectile.damage = 85;
 			projectile.knockBack = 9;
 		}
 		public override void AI()
 		{
-			//projectile.AI(true);
+			for(int i = 0; i < Main.maxPlayers; i++)
+            {
+				if(Main.player[i] != null && Main.player[i].active)
+                {
+					if (Vector2.Distance(projectile.Center, Main.player[i].Center) < 300)
+					{
+						Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(projectile.Center, Main.player[i].Center, 1);
+						double angleDiff = UsefulFunctions.CompareAngles(projectile.velocity, vectorDiff);
 
+						if (angleDiff > MathHelper.Pi / 2)
+						{
+							projectile.Kill();
+							projectile.active = false;
+						}
+					}
+				}
+            }
 
-			// Get the length of last frame's velocity
-			float lastLength = (float)Math.Sqrt((projectile.velocity.X * projectile.velocity.X + projectile.velocity.Y * projectile.velocity.Y));
+			//Offset natural projectile gravity slightly to make it floatier (which means bigger arcs)
+			projectile.velocity.Y += 0.01f;
 
-			// Determine projectile behavior
-			// Apply half-gravity & clamp downward speed
-			projectile.velocity.Y = projectile.velocity.Y > 16f ? 16f : projectile.velocity.Y + 0.1f;
-
-			if (projectile.velocity.X < 0f)
-			{    // Dampen left-facing horizontal velocity & clamp to minimum speed
-				projectile.velocity.X = projectile.velocity.X > -1f ? -1f : projectile.velocity.X + 0.01f;
-			}
-			else if (projectile.velocity.X > 0f)
-			{    // Dampen right-facing horizontal velocity & clamp to minimum speed
-				projectile.velocity.X = projectile.velocity.X < 1f ? 1f : projectile.velocity.X - 0.01f;
-			}
+			
 
 			// Align projectile facing with velocity normal
 			projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X) - 2.355f;
@@ -71,30 +72,26 @@ namespace tsorcRevamp.Projectiles.Enemy
 				Main.dust[particle2].noLight = true;
 				Main.dust[particle2].fadeIn = 3f;
 			}
-
-
-
-			
 		}
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-			target.AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240, false);
+			Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 240, false);
 		}
 
-        public override bool PreKill(int timeLeft)
+        public override void Kill(int timeLeft)
 		{
 			if (!projectile.active)
 			{
-				return true;
+				return;
 			}
 			projectile.timeLeft = 0;
-			//projectile.AI(false);
 
-			Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
+			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 14);
 
 			float len = 4f;
 			int flam = ModContent.ProjectileType<EnemyBlackFirelet>();
+			int damg = projectile.damage;
 			Vector2 dir = new Vector2(1f, 0f);
 
 			// determine how many flamelets to spew (5~8)
@@ -122,7 +119,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				velY *= len + var;
 
 				//if(projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width-5), projectile.position.Y + (float)(projectile.height-5), 0, 0, flam, 72, 0, projectile.owner);
-				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, velX, velY, flam, projectile.damage, 0, projectile.owner);
+				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, velX, velY, flam, damg, 0, projectile.owner);
 			}
 
 			// setup projectile for explosion
@@ -130,25 +127,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 														// not sure if this will make it variate the damage(calling Main.DamageVar())
 			projectile.penetrate = 2;
 			projectile.width = projectile.width << 3;
-			projectile.height = projectile.width << 3;
+			projectile.height = projectile.height << 3;
+			projectile.position.X -= projectile.width / 2;
+			projectile.position.Y -= projectile.height / 2;
 
 			// do explosion
 			projectile.Damage();
 
 			// create glowing red embers that fill the explosion's radius
-			for (int i = 0; i < 30; i++)
+			for (int i = 0; i < 300; i++)
 			{
-				float velX = 2f - ((float)Main.rand.Next(20)) / 5f;
-				float velY = 2f - ((float)Main.rand.Next(20)) / 5f;
-				velX *= 4f;
-				velY *= 4f;
-				int p = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width >> 1), projectile.position.Y - (float)(projectile.height >> 1)), projectile.width, projectile.height, 54, velX, velY, 160, default(Color), 1.5f);
-				int p2 = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width >> 1), projectile.position.Y - (float)(projectile.height >> 1)), projectile.width, projectile.height, 58, velX, velY, 160, default(Color), 1.5f);
+				Vector2 projPosition = Main.rand.NextVector2Circular(projectile.width / 3, projectile.height / 3) + projectile.Center;
+				Vector2 projVelocity = Main.rand.NextVector2CircularEdge(5, 5);
+				Dust.NewDustPerfect(projPosition, 54, projVelocity, 160, default, 1.5f);
+				Dust.NewDustPerfect(projPosition, 58, projVelocity, 160, default, 1.5f);
 			}
 
 			// terminate projectile
 			projectile.active = false;
-			return true;
 		}
 	}
 }
+

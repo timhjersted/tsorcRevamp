@@ -22,12 +22,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.aiStyle = 22;
 			npc.damage = 125;
 			npc.HitSound = SoundID.NPCHit1;
-			npc.defense = 170;
+			npc.defense = 70;
 			npc.noTileCollide = true;
 			npc.behindTiles = true;
 			npc.lavaImmune = true;
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-			npc.lifeMax = 30000;
+			npc.lifeMax = 14000;
 			npc.scale = 1.1f;
 			npc.knockBackResist = 0.2f;
 			npc.noGravity = true;

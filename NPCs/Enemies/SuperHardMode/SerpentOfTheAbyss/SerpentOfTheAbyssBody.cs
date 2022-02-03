@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             npc.aiStyle = 6;
             npc.timeLeft = 750;
             npc.damage = 105;
-            npc.defense = 158;
+            npc.defense = 58;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
             npc.lavaImmune = true;

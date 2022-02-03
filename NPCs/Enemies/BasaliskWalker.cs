@@ -122,9 +122,10 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		#endregion
 
-		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
-		public override void AI()  //  warrior ai
+		public override void AI()
 		{
+
+
 			#region set up NPC's attributes & behaviors
 			// set parameters
 			//  is_archer OR can_pass_doors OR shoot_and_walk, pick only 1.  They use the same ai[] vars (1&2)
@@ -1010,7 +1011,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			#endregion
 		}
-		#endregion
+
+
 
 		#region Find Frame
 		public override void FindFrame(int currentFrame)

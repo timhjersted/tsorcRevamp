@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.height = 48;
 			npc.aiStyle = 22;
 			npc.damage = 115;
-			npc.defense = 125;
+			npc.defense = 40;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
 			npc.lifeMax = 8000;
