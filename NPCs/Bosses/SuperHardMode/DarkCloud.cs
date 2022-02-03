@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         #endregion
 
         //If this is set to anything but -1, the boss will *only* use that attack ID
-        readonly int testAttack = -1;
+        readonly int testAttack = DarkCloudAttackID.DivineSpark;
         bool firstPhase = true;
         bool changingPhases = false;
 
@@ -478,7 +478,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     AttackModeCounter--;
                     if (AttackModeTally == 0)
                     {
-                        AttackModeTally = -90;
+                        AttackModeTally = -200;
                     }
                     else
                     {
@@ -488,11 +488,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         AttackModeTally = 1;
                     }
-                    DarkCloudParticleEffect(-18, 200, AttackModeTally * 3);
-                }
-                else
-                {
-                    DarkCloudParticleEffect(-18, 200, (110 - AttackModeCounter ) * 3);
+
+                    float factor = (AttackModeTally + 200f) / 200f;
+                    DarkCloudParticleEffect(-18 * factor, 200 * factor, AttackModeTally * 5);                    
                 }
             }
 

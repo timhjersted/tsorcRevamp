@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         float topSpeed = 14;
-        float homingStrength = 0.0001f;
+        float homingStrength = 0.005f;
         public override void AI()
         {
             if (!UsefulFunctions.IsTileReallySolid(projectile.Center / 16))
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles {
             if (projectile.ai[0] >= 0)
             {
                 Projectile target = Main.projectile[(int)projectile.ai[0]];
-                if (target != null && target.active)
+                if (target != null && target.active && target.type == ModContent.ProjectileType<ElfinTargeting>())
                 {
                     Vector2 homingDirection = Vector2.Normalize(target.Center - projectile.Center);
                     projectile.velocity = (projectile.velocity * (30 / homingStrength) + homingDirection * 14) / ((30 / homingStrength) + 1);
@@ -56,10 +56,18 @@ namespace tsorcRevamp.Projectiles {
                     {
                         projectile.velocity *= topSpeed / projectile.velocity.Length();
                     }
-
+                }
+                else
+                {
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<ElfinTargeting>())
+                        {
+                            projectile.ai[0] = Main.projectile[i].whoAmI;
+                        }
+                    }
                 }
             }
-            base.AI();
         }
 
         public override bool PreKill(int timeLeft)

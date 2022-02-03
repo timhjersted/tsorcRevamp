@@ -1510,7 +1510,7 @@ namespace tsorcRevamp
                 tsorcScriptedEvents.DisabledEvents.Add(this);
                 if(spawnedNPC != null)
                 {
-                    if (spawnedNPC.active)
+                    if (spawnedNPC.active && spawnedNPC.boss == false)
                     {
                         spawnedNPC.active = false;
                         for (int i = 0; i < 60; i++)

@@ -147,7 +147,7 @@ namespace tsorcRevamp.Projectiles {
         public int FiringTimeLeft = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("DefaultLaserName");
+            DisplayName.SetDefault("Laser");
 
         }
         public override void SetDefaults() {
