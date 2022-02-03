@@ -46,11 +46,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHoly))
 			{
-				chance = 0.1f; 
+				chance = 0.2f; 
 			}
 			if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHoly))
 			{
-				chance = 0.3f; 
+				chance = 0.36f; 
 			}
 			if (FrozenOcean && player.ZoneHoly)
             {
