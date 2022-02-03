@@ -28,6 +28,7 @@ namespace tsorcRevamp {
         public bool SilverSerpentRing = false;
         public bool DragonStone = false;
         public int SoulReaper = 5;
+        public bool TornWings = false;
         public bool Crippled = false;
 
         public bool DuskCrownRing = false;
@@ -204,6 +205,7 @@ namespace tsorcRevamp {
             supersonicLevel = 0;
             ConsSoulChanceMult = 0;
             SoulSickle = false;
+            TornWings = false;
             Crippled = false;
             ShadowWeight = false;
             ReflectionShiftEnabled = false;
@@ -576,7 +578,13 @@ namespace tsorcRevamp {
                     player.velocity.X = -speedCap;
                 }
             }
-
+            
+            if (TornWings)
+            {
+                player.wingTime = 0;
+                player.moveSpeed *= 0.8f;
+            }
+            
             if (Crippled) {
                 player.doubleJumpBlizzard = false;
                 player.doubleJumpCloud = false;
