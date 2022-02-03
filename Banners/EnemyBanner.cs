@@ -114,10 +114,10 @@ namespace tsorcRevamp.Banners {
                     item = "BarrowWightBanner";
                     break;
                 case 18:
-                    item = "BasaliskShifterBanner";
+                    item = "BasiliskShifterBanner";
                     break;
                 case 19:
-                    item = "BasaliskWalkerBanner";
+                    item = "BasiliskWalkerBanner";
                     break;
                 case 20:
                     item = "BlackKnightBanner";
@@ -257,7 +257,7 @@ namespace tsorcRevamp.Banners {
                     item = "BarrowWightPhantomBanner";
                     break;
                 case 65:
-                    item = "BasaliskHunterBanner";
+                    item = "BasiliskHunterBanner";
                     break;
                 case 66:
                     item = "CorruptedElementalBanner";
@@ -388,10 +388,10 @@ namespace tsorcRevamp.Banners {
                         type = "BarrowWight";
                         break;
                     case 18:
-                        type = "BasaliskShifter";
+                        type = "BasiliskShifter";
                         break;
                     case 19:
-                        type = "BasaliskWalker";
+                        type = "BasiliskWalker";
                         break;
                     case 20:
                         type = "BlackKnight";
@@ -529,7 +529,7 @@ namespace tsorcRevamp.Banners {
                         type = "BarrowWightPhantom";
                         break;
                     case 65:
-                        type = "BasaliskHunter";
+                        type = "BasiliskHunter";
                         break;
                     case 66:
                         type = "CorruptedElemental";
@@ -815,13 +815,13 @@ namespace tsorcRevamp.Banners {
             item.placeStyle = 17; //change when texture added
         }
     }
-    public class BasaliskShifterBanner : EnemyBanner
+    public class BasiliskShifterBanner : EnemyBanner
     {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Basalisk Shifter");
+            Tooltip.SetDefault("Nearby players get a bonus against: Basilisk Shifter");
         }
         public override void SetDefaults()
         {
@@ -829,13 +829,13 @@ namespace tsorcRevamp.Banners {
             item.placeStyle = 18; //change when texture added
         }
     }
-    public class BasaliskWalkerBanner : EnemyBanner
+    public class BasiliskWalkerBanner : EnemyBanner
     {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Basalisk Walker");
+            Tooltip.SetDefault("Nearby players get a bonus against: Basilisk Walker");
         }
         public override void SetDefaults()
         {
@@ -1480,13 +1480,13 @@ namespace tsorcRevamp.Banners {
             item.placeStyle = 64; //change when texture added
         }
     }
-    public class BasaliskHunterBanner : EnemyBanner
+    public class BasiliskHunter : EnemyBanner
     {
 
         public override string Texture => "tsorcRevamp/Banners/placeholder";
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Nearby players get a bonus against: Basalisk Hunter");
+            Tooltip.SetDefault("Nearby players get a bonus against: Basilisk Hunter");
         }
         public override void SetDefaults()
         {

@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    class BasaliskHunter : ModNPC
+    class BasiliskHunter : ModNPC
     {
         public override void SetDefaults()
         {
@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.value = 4620;
             npc.lavaImmune = true;
             banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.BasaliskHunterBanner>();
+            bannerItem = ModContent.ItemType<Banners.BasiliskHunter>();
 
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;

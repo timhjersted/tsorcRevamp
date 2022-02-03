@@ -45,7 +45,7 @@ namespace tsorcRevamp.Buffs {
         }
 
         public override bool ReApply(Player player, int time, int buffIndex) {
-            player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += Main.rand.Next(22, 36); //22-35, aka 3-4 hits before curse proc (projectiles now also inflict a bit of buildup; +5 in the case of bio spit from basalisks)
+            player.GetModPlayer<tsorcRevampPlayer>().CurseLevel += Main.rand.Next(22, 36); //22-35, aka 3-4 hits before curse proc (projectiles now also inflict a bit of buildup; +5 in the case of bio spit from basilisks)
             
             for (int i = 0; i < 10; i++)
             {
