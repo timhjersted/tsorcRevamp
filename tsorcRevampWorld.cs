@@ -34,6 +34,8 @@ namespace tsorcRevamp {
 
         public static List<Vector2> LitBonfireList;
 
+       
+
         public override void Initialize() {
             DownedVortex = false;
             DownedNebula = false;
@@ -857,6 +859,95 @@ namespace tsorcRevamp {
             }
 
             return false;
+        }
+
+        //Returns 0-12 for normal bosses, 13 including Gwyn
+        public static int SHMDowned
+        {
+            get
+            {
+                if(Slain == null)
+                {
+                    return 0;
+                }
+                return 0;
+
+                int count = 0;
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()))
+                {
+                    count++;
+                }
+                if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
+                {
+                    count++;
+                }
+
+                return count;
+            }
+        }
+
+        //Scaling formula
+        //Starts at 1 with no bosses dead, ramps up logarithmically to 2x with all but Gwyn dead
+        public static float SHMScale
+        {
+            get
+            {
+                return ((float)Math.Log(SHMDowned + 1, 5) * 0.35f) + 1;
+            }
+        }
+
+        //Less steep scaling formula, goes from 1 to 1.2
+        //For things that need more subtle tuning, like enemy movement and projectile speeds
+        public static float SubtleSHMScale
+        {
+            get
+            {
+                return ((float)Math.Log(SHMDowned + 1, 5) * 0.13f) + 1;
+            }
         }
     }
 }

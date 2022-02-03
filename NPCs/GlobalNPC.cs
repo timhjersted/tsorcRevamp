@@ -2008,8 +2008,8 @@ namespace tsorcRevamp.NPCs
     static class tsorcRevampAIs
     {
         ///<summary> 
-        ///Walking AI that can be configured to fire simple projectiles while walking, break doors, and jump at the player.
-        ///Uses up to three ai slots depending on configuration: npc.ai[1] is the projectile timer (only used if it has one), npc.ai[2] is door break progress (only used if it can break them), and npc.ai[3] is boredom
+        ///Walking AI that walks toward the player. Can be used with SimpleProjectile to fire projectiles, or LeapAtPlayer to leap when the player is close
+        ///Uses up to two ai slots depending on configuration: npc.ai[2] is door break progress (only used if it can break them) and npc.ai[3] is boredom
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="topSpeed">The max speed it can run at</param>
@@ -2053,6 +2053,19 @@ namespace tsorcRevamp.NPCs
         public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int passiveSound = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, int soundType = 2, int soundStyle = 5)
         {
             BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, passiveSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
+
+            //Apply scaling to SHM enemies
+            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+            {
+                if (!npc.boss)
+                {
+                    if (npc.modNPC.GetType().Namespace.Contains("SuperHardMode"))
+                    {
+                        projectileDamage = (int)(tsorcRevampWorld.SHMScale * projectileDamage);
+                        projectileVelocity = (int)(tsorcRevampWorld.SubtleSHMScale * projectileVelocity);
+                    }
+                }
+            }
 
             npc.aiStyle = -1;
             if (npc.confused)
@@ -2136,6 +2149,21 @@ namespace tsorcRevamp.NPCs
         //More complex "bored" check than simple velocity. Right now it can get bored if it takes too long doing things that require it to move slow.
         private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
+            //Apply scaling to SHM enemies
+            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+            {
+                if (!npc.boss)
+                {
+                    if (npc.modNPC.GetType().Namespace.Contains("SuperHardMode"))
+                    {
+                        topSpeed *= tsorcRevampWorld.SHMScale;
+                        acceleration *= tsorcRevampWorld.SubtleSHMScale;
+                        enrageTopSpeed *= tsorcRevampWorld.SHMScale;
+                    }
+                }
+            }
+
+
             //If it has a sound to play, roll a chance for playing it
             if (soundType > 0 && Main.rand.Next(soundFrequency) <= 0)
             {
@@ -2219,7 +2247,16 @@ namespace tsorcRevamp.NPCs
             }
 
             //Jumping and platform falling code, copied and edited from Firebomb Hollow
-            int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
+            int x_in_front;
+            if(npc.direction == -1)
+            {
+                x_in_front = (int)(npc.position.X / 16f) - 1;
+            }
+            else
+            {
+                x_in_front = (int)(npc.position.X + npc.width / 16f) + 1;
+            }
+
             int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
             int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
             bool standing_on_solid_tile = false;

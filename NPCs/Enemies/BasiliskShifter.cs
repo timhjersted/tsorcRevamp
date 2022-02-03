@@ -111,7 +111,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player player = Main.player[npc.target];
 			tsorcRevampAIs.FighterAI(npc, 1, 0.03f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.1f, enrageTopSpeed: 2);
-			
+
+			shotTimer++;
 			if (shotTimer >= 85)
 			{
 				Lighting.AddLight(npc.Center, Color.GreenYellow.ToVector3() * 1f);
