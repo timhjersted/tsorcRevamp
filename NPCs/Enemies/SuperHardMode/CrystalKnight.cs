@@ -44,10 +44,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			// these are all the regular stuff you get , now lets see......
 			float chance = 0;
 
-			if (tsorcRevampWorld.SuperHardMode && (FrozenOcean || player.ZoneHoly)){
-				chance = 1;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHoly))
+			{
+				chance = 0.1f; 
 			}
-			if(FrozenOcean && player.ZoneHoly)
+			if (tsorcRevampWorld.SuperHardMode && !spawnInfo.player.ZoneOverworldHeight && (FrozenOcean || player.ZoneHoly))
+			{
+				chance = 0.3f; 
+			}
+			if (FrozenOcean && player.ZoneHoly)
             {
 				chance *= 2;
             }
