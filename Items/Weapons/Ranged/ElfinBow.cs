@@ -54,14 +54,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            int randomness = 12;
+            int randomness = 1;
             int target = -1;
             if(thisProjectile != null && thisProjectile.type == ModContent.ProjectileType<Projectiles.ElfinTargeting>())
             {
                 target = thisProjectile.whoAmI;
-                randomness = 3;
             }
-            Vector2 projVel = Main.rand.NextVector2CircularEdge(randomness, randomness);
+
+            Vector2 projVel = new Vector2(speedX, speedY) + Main.rand.NextVector2CircularEdge(randomness, randomness);
             Projectile.NewProjectile(player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), item.damage, item.knockBack, Main.myPlayer, target);
             return false;
         }       

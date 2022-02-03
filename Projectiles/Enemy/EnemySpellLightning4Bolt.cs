@@ -10,11 +10,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
         public override void SetDefaults() {
-            projectile.width = 214;
-            projectile.height = 472;
             projectile.penetrate = 8;
             projectile.hostile = true;
             projectile.tileCollide = false;
+            projectile.width = 130;
+            projectile.height = 402;
+            drawOffsetX = -55;
+            drawOriginOffsetY = -30;
         }
         public override void AI() {
 
