@@ -1316,7 +1316,14 @@ namespace tsorcRevamp {
                 {
                     //Simplify them
                     mapString = mapString.TrimStart("MAP ".ToCharArray());
-                    musicString = musicString.TrimStart("MUSIC ".ToCharArray());
+                    if(musicString.Contains("MUSIC MOD "))
+                    {
+                        musicString = musicString.TrimStart("MUSIC MOD ".ToCharArray());
+                    }
+                    else
+                    {
+                        musicString = musicString.TrimStart("MUSIC ".ToCharArray());
+                    }
                     mapString = mapString.Replace(".", "");
                     musicString = musicString.Replace(".", "");
 

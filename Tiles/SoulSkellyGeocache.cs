@@ -113,7 +113,7 @@ namespace tsorcRevamp.Tiles
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3235, 1839, 2, 2), ItemID.HeartreachPotion, 5));
 
             //Somewhere in the hallowed Caves
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7070, 1381, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
+            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(7070, 1383, 2, 2), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1));
 
 
 

@@ -2416,8 +2416,8 @@ namespace tsorcRevamp.NPCs
                 return;
             }
 
-            //Try 1000 times at most
-            for (int i = 0; i < 1000; i++)
+            //Try 100 times at most
+            for (int i = 0; i < 100; i++)
             {
                 //Pick a random point to target. Make sure it's at least 5 blocks away from the player to avoid cheap hits.
                 Vector2 teleportTarget;
@@ -2486,7 +2486,7 @@ namespace tsorcRevamp.NPCs
             Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     TeleportNoEffects(npc, range, requireLineofSight);
                     if (!requireLineofSight || (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1)))
