@@ -2254,7 +2254,7 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                x_in_front = (int)(npc.position.X + npc.width / 16f) + 1;
+                x_in_front = (int)((npc.position.X + npc.width) / 16f) + 1;
             }
 
             int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
