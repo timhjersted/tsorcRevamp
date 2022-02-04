@@ -165,6 +165,8 @@ namespace tsorcRevamp {
 
         public List<int> ActivePermanentPotions;
 
+        public Vector2[] oldPos = new Vector2[10];
+
         public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
@@ -1135,7 +1137,12 @@ namespace tsorcRevamp {
                 }
             }
 
-
+            //shift everything in the array forward one slot, starting from the end
+            for (int i = oldPos.Length - 1; i > 0; i--) {
+                oldPos[i] = oldPos[i - 1];
+            }
+            //except the first slot
+            oldPos[0] = player.position;
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {

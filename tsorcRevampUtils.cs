@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -636,6 +637,14 @@ namespace tsorcRevamp {
             {
                 Main.maxRaining = Main.rand.Next(5, 30) * 0.01f;
             }
+        }
+
+        /// <summary>
+        /// Returns the character's position from (pos + 1) frames ago. Direct array access, beware out of bounds access
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 OldPos(this Player player, int pos) {
+            return player.GetModPlayer<tsorcRevampPlayer>().oldPos[pos];
         }
     }
 }
