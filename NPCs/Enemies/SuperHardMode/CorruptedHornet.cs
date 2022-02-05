@@ -26,19 +26,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.noGravity = true;
-			npc.lifeMax = 1811;
+			npc.lifeMax = 3000;
 			npc.scale = 1;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
 		}
 
-		int cursedFlameDamage = 60;
+		int cursedFlameDamage = 50;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			cursedFlameDamage = (int)(cursedFlameDamage / 2);
+			cursedFlameDamage = (int)(cursedFlameDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

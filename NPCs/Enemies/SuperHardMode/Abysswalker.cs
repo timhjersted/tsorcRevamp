@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.damage = 105;
 			npc.defense = 72;
 			npc.height = 40;
-			npc.lifeMax = 9023;
+			npc.lifeMax = 7000;
 			npc.scale = 1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
@@ -29,17 +29,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		}
 
 
-		int meteorDamage = 17;
-		int poisonBallDamage = 55;
-		int stormBallDamage = 60;
+		int poisonBallDamage = 27;
+		int stormBallDamage = 30;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			meteorDamage = (int)(meteorDamage / 2);
-			poisonBallDamage = (int)(poisonBallDamage / 2);
-			stormBallDamage = (int)(stormBallDamage / 2);
+			poisonBallDamage = (int)(poisonBallDamage * tsorcRevampWorld.SubtleSHMScale);
+			stormBallDamage = (int)(stormBallDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 

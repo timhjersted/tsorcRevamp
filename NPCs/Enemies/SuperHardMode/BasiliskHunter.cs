@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.defense = 90; //was 105
             npc.height = 54;
             npc.width = 54;
-            npc.lifeMax = 3500; //was 17000
+            npc.lifeMax = 5000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
             npc.value = 4620;
@@ -31,24 +31,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.buffImmune[BuffID.OnFire] = true;
         }
 
-        int meteorDamage = 17;
-        int cursedBreathDamage = 27;
-        int cursedFlamesDamage = 27;
+        int cursedBreathDamage = 20;
+        int cursedFlamesDamage = 20;
         int darkExplosionDamage = 35;
-        int disruptDamage = 65;
-        int bioSpitDamage = 50;
-        int bioSpitfinalDamage = 40;
+        int disruptDamage = 33;
+        int bioSpitDamage = 25;
+        int bioSpitfinalDamage = 20;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
-            meteorDamage = (int)(meteorDamage / 2);
-            cursedBreathDamage = (int)(cursedBreathDamage / 2);
-            darkExplosionDamage = (int)(darkExplosionDamage / 2);
-            disruptDamage = (int)(disruptDamage / 2);
-            bioSpitDamage = (int)(bioSpitDamage / 2);
-            bioSpitfinalDamage = (int)(bioSpitfinalDamage / 2);
+            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+            darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SubtleSHMScale);
+            disruptDamage = (int)(disruptDamage * tsorcRevampWorld.SubtleSHMScale);
+            bioSpitDamage = (int)(bioSpitDamage * tsorcRevampWorld.SubtleSHMScale);
+            bioSpitfinalDamage = (int)(bioSpitfinalDamage * tsorcRevampWorld.SubtleSHMScale);
         }
 
 

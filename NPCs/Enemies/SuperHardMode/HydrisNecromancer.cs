@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.defense = 75; //was 135
 			npc.height = 40;
 			npc.width = 20;
-			npc.lifeMax = 10000; //was 25k
+			npc.lifeMax = 8000;
 			npc.lavaImmune = true;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
@@ -34,12 +34,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		}
 
-		int deathStrikeDamage = 95; //was 55
+		int deathStrikeDamage = 65;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
+			deathStrikeDamage = (int)(deathStrikeDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		//Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.

@@ -22,17 +22,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.defense = 30;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
-			npc.lifeMax = 10700;
+			npc.lifeMax = 7000;
 			npc.knockBackResist = 0f;
 			npc.value = 3680;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.DarkKnightBanner>();
 		}
 
-		int stormWaveDamage = 45;
+		int stormWaveDamage = 35;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
+			stormWaveDamage = (int)(stormWaveDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

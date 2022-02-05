@@ -31,11 +31,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
 		}
 
-		int blackFireDamage = 45;
+		int blackFireDamage = 35;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
+			blackFireDamage = (int)(blackFireDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 

@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.behindTiles = true;
 			npc.lavaImmune = true;
 			npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-			npc.lifeMax = 14000;
+			npc.lifeMax = 9000;
 			npc.scale = 1.1f;
 			npc.knockBackResist = 0.2f;
 			npc.noGravity = true;
@@ -37,15 +37,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bannerItem = ModContent.ItemType<Banners.OolacileDemonBanner>();
 		}
 
-		int cursedBreathDamage = 38;
-		int bioSpitDamage = 45;
+		int cursedBreathDamage = 35;
+		int bioSpitDamage = 40;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			cursedBreathDamage = (int)(cursedBreathDamage / 2);
-			bioSpitDamage = (int)(bioSpitDamage / 2);
+			cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+			bioSpitDamage = (int)(bioSpitDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		//float customAi1;

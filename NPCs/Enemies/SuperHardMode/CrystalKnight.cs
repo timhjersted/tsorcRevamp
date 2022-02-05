@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.lavaImmune = true;
-			npc.lifeMax = 8000;
+			npc.lifeMax = 6000;
 			npc.scale = 0.9f;
 			npc.knockBackResist = 0;
 			npc.value = 7930;
@@ -30,10 +30,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bannerItem = ModContent.ItemType<Banners.CrystalKnightBanner>();
 		}
 
-		int crystalBoltDamage = 43;
+		int crystalBoltDamage = 30;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
+			crystalBoltDamage = (int)(crystalBoltDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)

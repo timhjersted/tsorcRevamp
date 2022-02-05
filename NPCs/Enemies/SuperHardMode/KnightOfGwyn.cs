@@ -18,7 +18,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.defense = 60;
             npc.height = 40;
             npc.width = 30;
-            npc.lifeMax = 25000;
+            npc.lifeMax = 18000;
             npc.scale = 1.2f;
             npc.HitSound = SoundID.NPCHit4;
             npc.DeathSound = SoundID.NPCDeath6;
@@ -47,17 +47,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage / 2);
-			holdBallDamage = (int)(holdBallDamage / 2);
-			energyBallDamage = (int)(energyBallDamage / 2);
-			lightPillarDamage = (int)(lightPillarDamage / 2);
-			blackBreathDamage = (int)(blackBreathDamage / 2);
-			lightning3Damage = (int)(lightning3Damage / 2);
-			ice3Damage = (int)(ice3Damage / 2);
-			phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
-			lightning4Damage = (int)(lightning4Damage / 2);
-			shardsDamage = (int)(shardsDamage / 2);
-			iceStormDamage = (int)(iceStormDamage / 2);
-			//gravityBallDamage = (int)(gravityBallDamage / 2);
+			holdBallDamage = (int)(holdBallDamage * tsorcRevampWorld.SubtleSHMScale);
+			energyBallDamage = (int)(energyBallDamage * tsorcRevampWorld.SubtleSHMScale);
+			lightPillarDamage = (int)(lightPillarDamage * tsorcRevampWorld.SubtleSHMScale);
+			blackBreathDamage = (int)(blackBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+			lightning3Damage = (int)(lightning3Damage * tsorcRevampWorld.SubtleSHMScale);
+			ice3Damage = (int)(ice3Damage * tsorcRevampWorld.SubtleSHMScale);
+			phantomSeekerDamage = (int)(phantomSeekerDamage * tsorcRevampWorld.SubtleSHMScale);
+			lightning4Damage = (int)(lightning4Damage * tsorcRevampWorld.SubtleSHMScale);
+			shardsDamage = (int)(shardsDamage * tsorcRevampWorld.SubtleSHMScale);
+			iceStormDamage = (int)(iceStormDamage * tsorcRevampWorld.SubtleSHMScale);
+			//gravityBallDamage = (int)(gravityBallDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		public override void OnHitPlayer(Player target, int damage, bool crit) {

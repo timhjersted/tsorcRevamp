@@ -48,17 +48,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.damage = (int)(npc.damage / 2);
-			holdBallDamage = (int)(holdBallDamage / 2);
-			energyBallDamage = (int)(energyBallDamage / 2);
-			lightPillarDamage = (int)(lightPillarDamage / 2);
-			blackBreathDamage = (int)(blackBreathDamage / 2);
-			lightning3Damage = (int)(lightning3Damage / 2);
-			ice3Damage = (int)(ice3Damage / 2);
-			phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
-			lightning4Damage = (int)(lightning4Damage / 2);
-			shardsDamage = (int)(shardsDamage / 2);
-			iceStormDamage = (int)(iceStormDamage / 2);
-			//gravityBallDamage = (int)(gravityBallDamage / 2);
 		}
 
 		public override void OnHitPlayer(Player target, int damage, bool crit) {

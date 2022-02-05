@@ -870,7 +870,6 @@ namespace tsorcRevamp {
                 {
                     return 0;
                 }
-                return 0;
 
                 int count = 0;
                 if (Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>()))
@@ -931,12 +930,12 @@ namespace tsorcRevamp {
         }
 
         //Scaling formula
-        //Starts at 1 with no bosses dead, ramps up logarithmically to 2x with all but Gwyn dead
+        //Starts at 0.7 with no bosses dead, ramps up logarithmically to 1.5x with all but Gwyn dead
         public static float SHMScale
         {
             get
             {
-                return ((float)Math.Log(SHMDowned + 1, 5) * 0.35f) + 1;
+                return ((float)Math.Log(SHMDowned + 1, 5) * 0.63f) + 1;
             }
         }
 

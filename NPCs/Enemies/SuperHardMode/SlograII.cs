@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.defense = 50;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
-            npc.lifeMax = 9200; //was 18k
+            npc.lifeMax = 6200;
             npc.knockBackResist = 0f;
             npc.value = 6000;
             banner = npc.type;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
-            tridentDamage = (int)(tridentDamage / 2);
+            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SubtleSHMScale);
         }
 
         float tridentTimer;

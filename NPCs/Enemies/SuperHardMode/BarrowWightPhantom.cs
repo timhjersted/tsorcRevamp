@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			dragonsBreathDamage = (int)(dragonsBreathDamage / 2);
+			dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		int breathCD = 45;

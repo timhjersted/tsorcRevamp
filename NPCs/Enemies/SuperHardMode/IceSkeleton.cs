@@ -14,18 +14,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.height = 40;
             npc.knockBackResist = .1f;
             npc.value = 1630;
-            npc.aiStyle = 3;
             npc.timeLeft = 750;
             npc.damage = 120;
             npc.defense = 73;
             npc.HitSound = SoundID.NPCHit2;
             npc.DeathSound = SoundID.NPCDeath2;
-            npc.lifeMax = 2611;
+            npc.lifeMax = 3000;
             npc.scale = 1;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.IceSkeletonBanner>();
         }
 
+        public override void AI()
+        {
+            tsorcRevampAIs.FighterAI(npc, 5, 0.1f, enragePercent: 0.95f, enrageTopSpeed: 10);
+            tsorcRevampAIs.LeapAtPlayer(npc, 5, 5, 4, 200);
+        }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -56,9 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
-            if (Main.rand.Next(2) == 0) {
-                target.AddBuff(BuffID.Frozen, 180);
-            }
+            target.AddBuff(BuffID.Frozen, 15);
         }
     }
 }

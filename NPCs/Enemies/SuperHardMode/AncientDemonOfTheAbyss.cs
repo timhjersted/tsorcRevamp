@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.width = 50;
 			npc.damage = 120;
 			npc.defense = 70;
-			npc.lifeMax = 46000;
+			npc.lifeMax = 30000;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
 
@@ -37,23 +37,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.buffImmune[BuffID.OnFire] = true;
 		}
 
-		int poisonFireDamage = 40;
-		int energyBeamDamage = 55;
-		int fireBreathDamage = 50;
-		int greatFireballDamage = 40;
-		int blackFireDamage = 50;
-		int greatAttackDamage = 75;
+		int poisonFireDamage = 20;
+		int energyBeamDamage = 23;
+		int fireBreathDamage = 25;
+		int greatFireballDamage = 20;
+		int blackFireDamage = 25;
+		int greatAttackDamage = 37;
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			poisonFireDamage = (int)(poisonFireDamage / 2);
-			energyBeamDamage = (int)(energyBeamDamage / 2);
-			fireBreathDamage = (int)(fireBreathDamage / 2);
-			greatFireballDamage = (int)(greatFireballDamage / 2);
-			blackFireDamage = (int)(blackFireDamage / 2);
-			greatAttackDamage = (int)(greatAttackDamage / 2);
+			poisonFireDamage = (int)(poisonFireDamage * tsorcRevampWorld.SubtleSHMScale);
+			energyBeamDamage = (int)(energyBeamDamage * tsorcRevampWorld.SubtleSHMScale);
+			fireBreathDamage = (int)(fireBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+			greatFireballDamage = (int)(greatFireballDamage * tsorcRevampWorld.SubtleSHMScale);
+			blackFireDamage = (int)(blackFireDamage * tsorcRevampWorld.SubtleSHMScale);
+			greatAttackDamage = (int)(greatAttackDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		//Spawns in Lower Cavern into the Underworld. Spawns more under 2.5/10th and again after 7.5/10th (Length). Spawns more in Hardmode. Will not spawn if there are more than 2 Town NPCs nearby (or if a Blood Moon).

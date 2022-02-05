@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.damage = 145;
             npc.defense = 50;
             npc.timeLeft = 22000;
-            npc.lifeMax = 21200;
+            npc.lifeMax = 14200;
             npc.scale = 1.1f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
@@ -38,16 +38,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.buffImmune[BuffID.Confused] = true;
         }
 
-        int breathDamage = 40;
-        int tridentDamage = 49;
+        int breathDamage = 20;
+        int tridentDamage = 25;
         int crystalFireDamage = 50;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
-            breathDamage = (int)(breathDamage / 2);
-            tridentDamage = (int)(tridentDamage / 2);
+            breathDamage = (int)(breathDamage * tsorcRevampWorld.SubtleSHMScale);
+            tridentDamage = (int)(tridentDamage * tsorcRevampWorld.SubtleSHMScale);
+            crystalFireDamage = (int)(crystalFireDamage * tsorcRevampWorld.SubtleSHMScale);
         }
 
         public int disrupterDamage = 65;

@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.defense = 40;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 8000;
+			npc.lifeMax = 5000;
 			npc.knockBackResist = 0;
 			npc.noGravity = true;
 			npc.noTileCollide = true;
@@ -34,10 +34,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
 		}
 
+		int breathDamage = 35;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
+			breathDamage = (int)(breathDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 		int breathCD = 45;
@@ -133,7 +135,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				if (breath)
 				{
 					float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-					int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), 0, 0f, Main.myPlayer);
+					int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
 					Main.projectile[num54].timeLeft = 30;
 					npc.netUpdate = true;
 

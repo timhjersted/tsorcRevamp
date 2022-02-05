@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             npc.damage = 170;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
-            npc.lifeMax = 20000; //20k, down from 120k
+            npc.lifeMax = 20000;
             npc.knockBackResist = 0;
             npc.lavaImmune = true;
             npc.scale = 1;
@@ -45,10 +45,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             }
         }
 
+        int cursedBreathDamage = 35;
+        int poisonFlamesDamage = 39;
+        int dragonMeteorDamage = 41;
+
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
+            cursedBreathDamage = (int)(cursedBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+            poisonFlamesDamage = (int)(poisonFlamesDamage * tsorcRevampWorld.SubtleSHMScale);
+            dragonMeteorDamage = (int)(dragonMeteorDamage * tsorcRevampWorld.SubtleSHMScale);
         }
         int[] bodyTypes;
 
@@ -88,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y + (20f * npc.direction), npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), 40, 0f, Main.myPlayer); //cursed dragons breath
+                    int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y + (20f * npc.direction), npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
                     Main.projectile[num54].timeLeft = 50;
                 }
 
@@ -104,7 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 for (int pcy = 0; pcy < 10; pcy++) {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), 47, 2f, Main.myPlayer); //9.9f was 14.9f
+                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), poisonFlamesDamage, 2f, Main.myPlayer); //9.9f was 14.9f
                     }
                 }
                 Main.PlaySound(SoundID.Item, -1, -1, 20);
@@ -114,7 +121,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), 50, 2f, Main.myPlayer); //dragon meteor
+                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), dragonMeteorDamage, 2f, Main.myPlayer); //dragon meteor
                     } 
                 }
                 Main.PlaySound(SoundID.Item, -1, -1, 20);

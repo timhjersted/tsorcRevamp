@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.width = 20;
             npc.damage = 105;
             npc.defense = 61; //was 211
-            npc.lifeMax = 17000; //was 35k
+            npc.lifeMax = 13000; //was 35k
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.value = 81870;
@@ -31,13 +31,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
         }
 
-        int poisonStrikeDamage = 80;
+        int poisonStrikeDamage = 40;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
-            poisonStrikeDamage = (int)(poisonStrikeDamage / 2);
+            poisonStrikeDamage = (int)(poisonStrikeDamage * tsorcRevampWorld.SubtleSHMScale);
         }
 
 

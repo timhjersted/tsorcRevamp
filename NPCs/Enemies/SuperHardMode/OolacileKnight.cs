@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.damage = 125;
             npc.defense = 70;
             npc.lavaImmune = true;
-            npc.lifeMax = 26000;
+            npc.lifeMax = 18000;
             npc.scale = 1.1f;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
@@ -35,17 +35,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npc.lavaImmune = true;
         }
 
-        int dragonsBreathDamage = 58;
-        int darkExplosionDamage = 75;
-        int earthTridentDamage = 50;
+        int dragonsBreathDamage = 39;
+        int darkExplosionDamage = 37;
+        int earthTridentDamage = 35;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
             npc.lifeMax = (int)(npc.lifeMax / 2);
             npc.damage = (int)(npc.damage / 2);
-            dragonsBreathDamage = (int)(dragonsBreathDamage / 2);
-            darkExplosionDamage = (int)(darkExplosionDamage / 2);
-            earthTridentDamage = (int)(earthTridentDamage / 2);
+            dragonsBreathDamage = (int)(dragonsBreathDamage * tsorcRevampWorld.SubtleSHMScale);
+            darkExplosionDamage = (int)(darkExplosionDamage * tsorcRevampWorld.SubtleSHMScale);
+            earthTridentDamage = (int)(earthTridentDamage * tsorcRevampWorld.SubtleSHMScale);
         }
 
 

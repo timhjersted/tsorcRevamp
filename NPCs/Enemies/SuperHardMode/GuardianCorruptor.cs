@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             npc.height = 124;
             npc.damage = 83;
             npc.defense = 50;
-            npc.lifeMax = 15000;
+            npc.lifeMax = 9000;
             npc.aiStyle = -1;
             npc.npcSlots = 3;
             npc.value = 18750;
@@ -200,12 +200,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             }
 
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && !Main.player[npc.target].dead) {
-                if (npc.justHit) {
-                    npc.localAI[0] = 0f;
-                }
+            if (Main.netMode != NetmodeID.MultiplayerClient && !Main.player[npc.target].dead && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) {               
                 npc.localAI[0] += 1f;
-                if (npc.localAI[0] == 180f) {
+                if (npc.localAI[0] == 30f) {
                     if (Collision.CanHitLine(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) {
                         int shotCount = 3;
                         Vector2 shotOrigin = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
@@ -217,7 +214,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
                         for (int i = 0; i < shotCount; i++) {
                             Vector2 shotDirection = new Vector2((distX * distAbs) / 1.5f, (distY * distAbs) / 1.5f);
                             int guardianSpit = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height / 2) + npc.velocity.Y), ModContent.NPCType<ViciousSpit>());
-                            Main.npc[guardianSpit].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(12 - (12 * i)));
+                            Main.npc[guardianSpit].velocity = 1.5f * shotDirection.RotatedBy(MathHelper.ToRadians(12 - (12 * i)));
                         }
                     }
                     npc.localAI[0] = 0f;
