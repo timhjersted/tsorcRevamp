@@ -112,9 +112,6 @@ namespace tsorcRevamp.NPCs.Enemies {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 1, false, -1);
             }
 
-            if (Main.rand.Next(20) == 0 && ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { //5% Legacy only, we have plenty of other enemies dropping them now
-                Item.NewItem(npc.getRect(), ItemID.IronskinPotion, Main.rand.Next(1, 2));
-            }
             if (Main.rand.Next(20) == 0) {
                 Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
             }
@@ -134,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrimsonPotion>());
             }
 
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode && Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
+            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), mod.ItemType("CharcoalPineResin"));
         }
     }
 }

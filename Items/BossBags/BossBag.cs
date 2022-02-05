@@ -456,15 +456,8 @@ namespace tsorcRevamp.Items.BossBags {
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Humanity>(), 3);
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.ReflectionShift>());
-                player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>());
-            }
-            else
-            {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DuskCrownRing>());
-            }
+            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.ReflectionShift>());
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.MoonlightGreatsword>());
         }
     }
     public class HellkiteBag : BossBag
@@ -720,8 +713,7 @@ namespace tsorcRevamp.Items.BossBags {
                 if (arg == ItemID.SkeletronBossBag) {
                     SublimeBoneDustOnFirstBag(NPCID.SkeletronHead, player);
                     SoulsOnFirstBag(NPCID.SkeletronHead, player);
-                    if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) player.QuickSpawnItem(ModContent.ItemType<Miakoda>());
-                    if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) player.QuickSpawnItem(ModContent.ItemType<MiakodaFull>());
+                    player.QuickSpawnItem(ModContent.ItemType<MiakodaFull>());
                 }
                 if (arg == ItemID.DestroyerBossBag) {
                     SoulsOnFirstBag(NPCID.TheDestroyer, player);

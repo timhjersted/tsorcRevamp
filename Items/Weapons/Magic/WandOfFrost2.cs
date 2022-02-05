@@ -5,8 +5,6 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     class WandOfFrost2 : ModItem {
 
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wand of Frost II");
             Tooltip.SetDefault("Reforged to reveal the full power of this ancient ice spell" +
@@ -22,11 +20,11 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 13f;
             item.magic = true;
             item.mana = 25;
-            item.useAnimation = LegacyMode ? 20 : 26;
-            item.autoReuse = LegacyMode ? false : true;
+            item.useAnimation = 26;
+            item.autoReuse = true;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = LegacyMode ? 20 : 26;
+            item.useTime = 26;
             item.value = PriceByRarity.Pink_5; 
             item.width = 30;
             item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();

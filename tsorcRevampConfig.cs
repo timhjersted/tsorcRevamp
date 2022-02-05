@@ -35,15 +35,6 @@ namespace tsorcRevamp {
         [DefaultValue(true)]
         public bool DeleteDroppedSoulsOnDeath { get; set; }
 
-        [Label("Legacy Mode")]
-        [BackgroundColor(60, 140, 80, 192)]
-        [Tooltip("Legacy mode disables new additions from the Revamp team.\nTurn this on if you want to play the original \nStory of Red Cloud experience as it was in tConfig. \nSome changes and improvements will not be disabled. \nRequires a reload. \nDefaults to Off")]
-        [DefaultValue(false)]
-        [ReloadRequired]
-        //todo items must be manually tagged as legacy. make sure we got them all
-        //todo before release, set this to constant and comment out the legacy mode block
-        public bool LegacyMode { get; set; }
-
         [Label("Boss Zen")]
         [BackgroundColor(60, 140, 80, 192)]
         [Tooltip("Boss Zen disables enemy spawns while a boss is alive.\nDefaults to On")]

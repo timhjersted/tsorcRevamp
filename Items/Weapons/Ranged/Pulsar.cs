@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 {
     public class Pulsar : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pulsar");

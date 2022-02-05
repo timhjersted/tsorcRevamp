@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (npc.ai[1] >= 10f)
 			{
 				npc.TargetClosest(true);
-				if ((Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)) || !(ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+				if ((Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)))
 				{
 					if (Main.rand.Next(70) == 1)
 					{
@@ -360,17 +360,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
 
-			//The "despawn if the player dies" code was unreachable in legacy.
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+			if (Main.player[npc.target].dead)
 			{
-				if (Main.player[npc.target].dead)
+				npc.velocity.Y += 0.20f;
+				if (npc.timeLeft > 10)
 				{
-					npc.velocity.Y += 0.20f;
-					if (npc.timeLeft > 10)
-					{
-						npc.timeLeft = 0;
-						return;
-					}
+					npc.timeLeft = 0;
+					return;
 				}
 			}
 		}

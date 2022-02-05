@@ -9,7 +9,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     class GreatSoulArrowStaff : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/SoulArrowStaff";
 
         public override void SetStaticDefaults()

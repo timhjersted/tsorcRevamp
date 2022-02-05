@@ -10,7 +10,6 @@ namespace tsorcRevamp.NPCs.Friendly
 	[AutoloadHead]
 	class EmeraldHerald : ModNPC
 	{
-		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Emerald Herald");

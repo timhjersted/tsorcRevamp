@@ -99,20 +99,14 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopCustomPrice = 120;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.FarronDart>());
-				shop.item[nextSlot].shopCustomPrice = 120;
-				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId; 
-				nextSlot++;
-			}
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.GlintstonePebble>());
-				shop.item[nextSlot].shopCustomPrice = 5;
-				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-				nextSlot++;
-			}
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.FarronDart>());
+			shop.item[nextSlot].shopCustomPrice = 120;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId; 
+			nextSlot++;
+			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.GlintstonePebble>());
+			shop.item[nextSlot].shopCustomPrice = 5;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+			nextSlot++;
 			shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Accessories.CosmicWatch>());
 			shop.item[nextSlot].shopCustomPrice = 250;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
@@ -137,13 +131,10 @@ namespace tsorcRevamp.NPCs.Friendly
 			shop.item[nextSlot].shopCustomPrice = 400;
 			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 			nextSlot++;
-			if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-			{
-				shop.item[nextSlot].SetDefaults(ItemID.MagicMirror);
-				shop.item[nextSlot].shopCustomPrice = 300;
-				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId; 
-				nextSlot++;
-			}
+			shop.item[nextSlot].SetDefaults(ItemID.MagicMirror);
+			shop.item[nextSlot].shopCustomPrice = 300;
+			shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId; 
+			nextSlot++;
 			if (NPC.downedBoss1)
 			{
 				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.Weapons.Magic.WandOfFire>());

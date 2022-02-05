@@ -4,6 +4,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Potions {
     public class ShockwavePotion : ModItem {
+
+        public override void SetStaticDefaults() {
+            Tooltip.SetDefault("Hold DOWN to increase fall speed \nCreate a damaging shockwave when you land \nwhich grows in strength based on distance fallen");
+        }
         public override void SetDefaults() {
             item.width = 24;
             item.height = 30;
@@ -18,18 +22,6 @@ namespace tsorcRevamp.Items.Potions {
             item.value = 5000;
             item.buffType = ModContent.BuffType<Buffs.Shockwave>();
             item.buffTime = 12600;
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Insert(3, new TooltipLine(mod, "RevampShockwave1", "Hold DOWN to increase fall speed."));
-                tooltips.Insert(4, new TooltipLine(mod, "RevampShockwave2", "Create a damaging shockwave when you land"));
-                tooltips.Insert(5, new TooltipLine(mod, "RevampShockwave3", "which grows in strength based on distance fallen."));
-            }
-            else {
-                tooltips.Insert(3, new TooltipLine(mod, "", "Enemies take damage when you land."));
-            }
-
         }
 
         public override void AddRecipes() {

@@ -6,8 +6,6 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Magic {
     public class Bolt2Tome : ModItem {
 
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Bolt 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans." +
@@ -19,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void SetDefaults() {
 
-            item.damage = LegacyMode ? 18 : 17;
+            item.damage = 17;
             item.height = 10;
             item.knockBack = 0f;
             item.autoReuse = true;
@@ -28,11 +26,11 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 7f;
             item.magic = true;
             item.noMelee = true;
-            item.mana = LegacyMode ? 20 : 20;
-            item.useAnimation = LegacyMode ? 22 : 30;
+            item.mana = 20;
+            item.useAnimation = 30;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = LegacyMode ? 22 : 30;
+            item.useTime = 30;
             item.value = PriceByRarity.Orange_3;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt2Ball>();

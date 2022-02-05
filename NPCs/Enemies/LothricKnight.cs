@@ -10,8 +10,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class LothricKnight : ModNPC //Don't look at the code, it's muy malo. Look at Lothric Spear Knight for a better example code management-wise
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         //AI 
         bool slashing = false;
         bool jumpSlashing = false;

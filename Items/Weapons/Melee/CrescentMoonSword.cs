@@ -7,8 +7,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class CrescentMoonSword : ModItem //Same DPS as the Ancient Blood Lance when at close range, less than half when only the projectile hits.
     {                                        //Projectile has same range as the Ancient Blood Lance
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crescent Moon Sword");

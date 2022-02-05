@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items.Potions
 {
     class Lifegem : ModItem
     {
-
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("\nSmall stone made up of crystallized souls" +

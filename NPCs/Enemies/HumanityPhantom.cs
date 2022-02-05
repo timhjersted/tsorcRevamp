@@ -9,7 +9,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class HumanityPhantom : ModNPC
 	{
-		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			Main.npcFrameCount[npc.type] = 8;

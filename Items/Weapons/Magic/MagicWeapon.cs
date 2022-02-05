@@ -6,8 +6,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 {
     public class MagicWeapon : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Magic Weapon");

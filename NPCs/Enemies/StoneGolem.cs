@@ -4,7 +4,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies {
     public class StoneGolem : ModNPC {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults() {
             Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GraniteGolem];
 

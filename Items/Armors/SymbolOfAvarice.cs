@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items.Armors
 
     public class SymbolOfAvarice : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Increases Dark soul absorption from defeated enemies by 40%"

@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items.Pets
 {
     class MiakodaNew : ModItem //think of ways to not make it mostly obsolete by the time it's obtained :(
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Miakoda - New Moon Form");

@@ -6,9 +6,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
     class Ice1Tome : ModItem {
-
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Ice 1 Tome");
             Tooltip.SetDefault("A lost beginner's tome" +
@@ -21,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost;
         public override void SetDefaults() {
-            item.damage = LegacyMode ? 10 : 11;
+            item.damage = 11;
             item.height = 10;
             item.knockBack = 0f;
             item.channel = true;
@@ -30,13 +27,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 9;
             item.magic = true;
             item.noMelee = true;
-            //item.mana = LegacyMode ? 5 : 8;
             item.mana = 8;
             storeManaCost = item.mana;
-            item.useAnimation = LegacyMode ? 10 : 19;
+            item.useAnimation = 19;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = LegacyMode ? 10 : 19;
+            item.useTime = 19;
             item.value = PriceByRarity.Green_2;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Ice1Ball>();

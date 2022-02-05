@@ -9,7 +9,6 @@ namespace tsorcRevamp.NPCs.Special
 {
     public class LeonhardPhase1 : ModNPC
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 
         NPCDespawnHandler despawnHandler;
         public int ThisNPC => ModContent.NPCType<NPCs.Special.LeonhardPhase1>();

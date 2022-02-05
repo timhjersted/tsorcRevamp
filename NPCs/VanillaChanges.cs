@@ -2631,10 +2631,7 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.Hornet || npc.type == NPCID.ManEater ||
                                 npc.type == NPCID.MossHornet ||
                                 (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
-                if (Main.rand.NextFloat() >= .33f && ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 66% chance in legacy
-                    Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
-                }
-                if (Main.rand.NextFloat() >= .66f && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { // 33% chance in revamped
+                if (Main.rand.NextFloat() >= .66f) { // 33% chance in revamped
                     Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
                 }
             }
@@ -2656,10 +2653,8 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
             }
             if (npc.type == NPCID.SkeletronHead && !Main.expertMode) {
-                if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>()); //dropping 2 together causes them to be difficult to separate
-                if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<Miakoda>());
-                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
                 if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
@@ -2674,16 +2669,16 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 1000);
             }
 
-            if (npc.netID == NPCID.GreenSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (npc.netID == NPCID.GreenSlime) {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
             }
 
-            if (npc.netID == NPCID.RedSlime && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            if (npc.netID == NPCID.RedSlime)
             {
                 Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 2);
             }
 
-            if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow) && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow)) {
                 if (Main.rand.Next(10) == 0) {
                     Item.NewItem(npc.getRect(), mod.ItemType("SymbolOfAvarice"));
                 }

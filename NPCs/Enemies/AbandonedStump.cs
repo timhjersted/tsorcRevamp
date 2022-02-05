@@ -7,7 +7,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class AbandonedStump : ModNPC // Renewable source of wood
 	{
-		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Abandoned Stump"); // A sore sight.

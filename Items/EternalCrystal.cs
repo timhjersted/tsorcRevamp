@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items
 {
     class EternalCrystal : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault($"[i:{item.type}][c/4949c2:A mysterious crystal][i:{item.type}]" +

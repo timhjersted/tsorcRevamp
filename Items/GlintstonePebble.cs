@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items
 {
     class GlintstonePebble : ModItem
     {
-
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("\nCrush in your hand to send out Glintstone Specks" +

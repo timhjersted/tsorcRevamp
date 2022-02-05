@@ -17,10 +17,8 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.statDefense += 20;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), player.velocity.X, player.velocity.Y, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
-                Lighting.AddLight(player.Center, .450f, .450f, .600f); 
-            }
+            Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), player.velocity.X, player.velocity.Y, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
+            Lighting.AddLight(player.Center, .450f, .450f, .600f); 
         }
     }
 }

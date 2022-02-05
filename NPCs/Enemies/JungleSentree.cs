@@ -7,7 +7,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class JungleSentree : ModNPC // Source of rich mahogany - drops extra wood when hit with axe - takes 2x damage from axes
 	{
-		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Jungle Sentree");

@@ -6,10 +6,10 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Potions {
     class HolyWarElixir : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Will make you invincible.");
+            Tooltip.SetDefault("Will make you invincible.\nCannot be used again for 60 seconds after wearing off.")
+                ;
         }
 
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults() {
             item.height = 62;
             item.consumable = true;
@@ -28,25 +28,15 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override bool CanUseItem(Player player) {
-            if (!LegacyMode) { //in revamp mode
-                if (player.HasBuff(ModContent.BuffType<Buffs.ElixirCooldown>())) {
-                    return false;
-                }
+            if (player.HasBuff(ModContent.BuffType<Buffs.ElixirCooldown>())) {
+                return false;
             }
             return base.CanUseItem(player);
         }
 
         public override bool UseItem(Player player) {
-            if (!LegacyMode) {
-                player.AddBuff(ModContent.BuffType<Buffs.ElixirCooldown>(), 4200);
-            }
+            player.AddBuff(ModContent.BuffType<Buffs.ElixirCooldown>(), 4200);
             return base.UseItem(player);
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            if (!LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "RevampCDNerf1", "Cannot be used again for 60 seconds after wearing off."));
-            }
         }
     }
 }

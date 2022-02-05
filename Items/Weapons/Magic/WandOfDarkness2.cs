@@ -21,8 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.useTime = 25;
             item.damage = 18;
             item.knockBack = 2.5f;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 5;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 4;
+            item.mana = 5;
             item.UseSound = SoundID.Item8;
             item.shootSpeed = 7;
             item.noMelee = true;

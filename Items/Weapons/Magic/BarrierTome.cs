@@ -15,8 +15,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
                                 "\nDoes not stack with Fog, Wall or Shield spells");
 
         }
-
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults()
         {
             item.stack = 1;
@@ -26,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             item.rare = ItemRarityID.Pink;
             item.magic = true;
             item.noMelee = true;
-            item.mana = LegacyMode ? 150 : 130;
+            item.mana = 130;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
             item.useTime = 20;
@@ -55,13 +53,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override bool CanUseItem(Player player)
         {
-            if (!LegacyMode)
-            { //in revamp mode
-                if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
-                {
-                    return false;
-                }
+
+            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+            {
+                return false;
             }
+            
             if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
             {
                 return false;

@@ -6,7 +6,6 @@ namespace tsorcRevamp.Items.Potions
 {
     public class SoulSiphonPotion : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Enemies drop 20% more Dark souls\n"

@@ -9,11 +9,9 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class AncientDragonLance : ModProjectile {
 
-		bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
 		public override void SetDefaults() {
-			projectile.width = LegacyMode ? 45 : 16;
-			projectile.height = LegacyMode ? 45 : 16;
+			projectile.width = 16;
+			projectile.height = 16;
 			projectile.aiStyle = 19;
 			projectile.penetrate = 3;
 			projectile.timeLeft = 3600;

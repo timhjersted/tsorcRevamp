@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 ) {
                 damage *= 4;
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>() && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                //please *DO* use this on a guardian corruptor! (but only in revamp mode)
+            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>()) {
+                //please *DO* use this on a guardian corruptor!
                 crit = false;
                 damage = 100074;//reduced to 99999 after defense
             } 

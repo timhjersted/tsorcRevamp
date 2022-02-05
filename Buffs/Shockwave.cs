@@ -6,7 +6,7 @@ namespace tsorcRevamp.Buffs {
     class Shockwave : ModBuff {
         public override void SetDefaults() {
             DisplayName.SetDefault("Shockwave");
-            Description.SetDefault(!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "Release a damaging shockwave when you land while holding DOWN." : "Enemies take damage when you land.");
+            Description.SetDefault("Release a damaging shockwave when you land while holding DOWN.");
             Main.debuff[Type] = false;
             Main.buffNoTimeDisplay[Type] = false;
         }

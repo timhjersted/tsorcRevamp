@@ -9,8 +9,6 @@ namespace tsorcRevamp.Items
 {
     class SoulShekel : BaseRarityItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("A mysterious coin formed out of dark souls" +

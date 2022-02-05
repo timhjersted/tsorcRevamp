@@ -9,8 +9,6 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class AncientBloodLance : ModProjectile {
 
-		bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
 		public override void SetDefaults() {
 			projectile.width = 45;
 			projectile.height = 45;

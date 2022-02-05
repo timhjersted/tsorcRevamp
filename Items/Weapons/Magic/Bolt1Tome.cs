@@ -5,9 +5,6 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic {
     public class Bolt1Tome : ModItem {
-
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Bolt 1 Tome");
             Tooltip.SetDefault("A lost beginner's tome" +
@@ -18,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.damage = LegacyMode ? 9 : 12;
+            item.damage = 12;
             item.height = 10;
             item.knockBack = 0f;
             item.autoReuse = true;
@@ -27,11 +24,11 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.shootSpeed = 6f;
             item.magic = true;
             item.noMelee = true;
-            item.mana = LegacyMode ? 5 : 9;
-            item.useAnimation = LegacyMode ? 15 : 27;
+            item.mana = 9;
+            item.useAnimation = 27;
             item.UseSound = SoundID.Item21;
             item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = LegacyMode ? 15 : 27;
+            item.useTime = 27;
             item.value = PriceByRarity.Blue_1;
             item.width = 34;
             item.shoot = ModContent.ProjectileType<Projectiles.Bolt1Ball>();

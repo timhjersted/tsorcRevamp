@@ -15,8 +15,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
                                 "\nDoes not stack with Barrier, Wall or Shield spells");
 
         }
-
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetDefaults()
         {
             item.stack = 1;
@@ -50,17 +48,15 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool UseItem(Player player) 
         {
-            player.AddBuff(ModContent.BuffType<Buffs.Fog>(), LegacyMode ? 600 : 900, false);
+            player.AddBuff(ModContent.BuffType<Buffs.Fog>(), 900, false);
             return true;
         }
         public override bool CanUseItem(Player player)
         {
-            if (!LegacyMode)
-            { //in revamp mode
-                if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
-                {
-                    return false;
-                }
+
+            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+            {
+                return false;
             }
             if (player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
             {
@@ -69,11 +65,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
             else
             {
                 return true;
-            }
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Add(new TooltipLine(mod, "FogTomeTip", "Legacy Mode: Duration reduced to 10 seconds"));
             }
         }
     }

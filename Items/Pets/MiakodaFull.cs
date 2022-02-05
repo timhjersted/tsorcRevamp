@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items.Pets
 {
     class MiakodaFull : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-        public override string Texture => "tsorcRevamp/Items/Pets/Miakoda";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Miakoda - Full Moon Form");

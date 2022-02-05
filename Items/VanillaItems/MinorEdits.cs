@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.VanillaItems {
     class MinorEdits : GlobalItem {
 
         public override void SetDefaults(Item item) {
-            if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (item.type == ItemID.StaffofRegrowth && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 item.createTile = -1; //block placing grass, thus allowing use
             }
             if (item.type == ItemID.DivingHelmet) {

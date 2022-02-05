@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.rarity = 3;
 			banner = npc.type;
 			bannerItem = ModContent.ItemType<Banners.WarlockBanner>();
-			if (!(Main.hardMode || ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+			if (!Main.hardMode)
 			{
 				npc.lifeMax = 2000;
 			}

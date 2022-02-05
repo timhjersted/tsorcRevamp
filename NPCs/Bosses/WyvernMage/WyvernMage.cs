@@ -156,86 +156,35 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             //end of W1k's Death code
 
+            #region revamped
 
-
-            //Firing storm bolt code
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            if (TeleportTimer == 10) //If the boss just teleported
             {
-                #region legacy
-                //beginning of Omnir's Ultima Weapon projectile code
-                npc.ai[3]++;
-
-                if (npc.ai[3] >= 80) //how often the crystal attack can happen in frames per second
+                if (Main.rand.Next(2) == 0 || !dragonAlive) //1 in 2 chance boss will use attack when it flies down on top of you if the dragon is alive
                 {
-
-                    if (Main.rand.Next(2) == 0) //1 in 2 chance boss will use attack when it flies down on top of you
-                    {
-                        float num48 = 0.9f;
-                        Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 220 + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
-                        {
-                            float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
-                            num51 = num48 / num51;
-                            speedX *= num51;
-                            speedY *= num51;
-                            int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>();//44;//0x37; //14;
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
-                            }
-                            Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
-                            npc.ai[3] = 0; ;
-                        }
-                    }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if (Main.rand.Next(35) == 0) //1 in 20 chance boss will summon an NPC
-                        {
-                            if (Main.rand.Next(80) == 0)
-                            {
-                                int Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
-                                Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                                Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
-                                Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                            }
-                        }
+                        float projectileSpeed = 3f;
+                        Vector2 startPos = npc.Center;
+                        startPos.Y -= 220;
+                        Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[npc.target].Center, projectileSpeed);
+                        Projectile.NewProjectile(startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer);
+                    }
+                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
+                }
+                    
+                if (Main.rand.Next(14) == 0 || (dragonAlive && Main.rand.Next(7) == 0)) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        Main.npc[Paraspawn].velocity.X = npc.velocity.X;
+                        Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        Main.npc[Paraspawn].velocity.X = npc.velocity.X;
                     }
                 }
-                #endregion legacy
-            }
-
-            #region revamped
-            else
-            {
-                if (TeleportTimer == 10) //If the boss just teleported
-                {
-                    if (Main.rand.Next(2) == 0 || !dragonAlive) //1 in 2 chance boss will use attack when it flies down on top of you if the dragon is alive
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            float projectileSpeed = 3f;
-                            Vector2 startPos = npc.Center;
-                            startPos.Y -= 220;
-                            Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[npc.target].Center, projectileSpeed);
-                            Projectile.NewProjectile(startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer);
-                        }
-                        Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
-                    }
-                    
-                    if (Main.rand.Next(14) == 0 || (dragonAlive && Main.rand.Next(7) == 0)) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
-                    {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
-                            Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                            Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
-                            Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                        }
-                    }
-                }               
-            }
+            }               
+            
             #endregion           
         }
 

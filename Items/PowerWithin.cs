@@ -7,8 +7,6 @@ namespace tsorcRevamp.Items
 {
     public class PowerWithin : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Harness the power of flame to actualize the inner-self" +

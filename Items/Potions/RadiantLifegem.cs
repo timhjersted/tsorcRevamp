@@ -8,7 +8,6 @@ namespace tsorcRevamp.Items.Potions
 {
     class RadiantLifegem : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("\nStone made up of crystallized souls" +

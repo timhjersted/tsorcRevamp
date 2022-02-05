@@ -10,8 +10,6 @@ using tsorcRevamp.Buffs;
 namespace tsorcRevamp.Items.Potions.PermanentPotions {
         //memory management is scary
     public abstract class PermanentPotion : ModItem {
-
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public abstract int PermanentID {
             get;
         }

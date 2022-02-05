@@ -8,8 +8,6 @@ namespace tsorcRevamp.Items
 {
     public class CharcoalPineResin : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Charcoal Pine Resin");

@@ -21,7 +21,6 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) { recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1); }
             recipe.AddIngredient(mod.GetItem("CovetousSilverSerpentRing"), 1);
             recipe.AddIngredient(mod.GetItem("SoulReaper2"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);

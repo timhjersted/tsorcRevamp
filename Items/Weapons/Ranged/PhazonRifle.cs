@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Weapons.Ranged {
     class PhazonRifle : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Three round burst");
+            Tooltip.SetDefault("Three round burst \nOnly the first shot consumes ammo\nPhazon rounds are extremely volatile");
         }
         public override void SetDefaults() {
             item.width = 50;
@@ -31,36 +31,16 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.useAmmo = AmmoID.Bullet;
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Only the first shot consumes ammo\nPhazon rounds are extremely volatile"));
-            }
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Beware; Phazon is EXTREMELY toxic."));
-            }
-        }
-
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                type = ModContent.ProjectileType<Projectiles.PhazonRound>();
-            }
+            type = ModContent.ProjectileType<Projectiles.PhazonRound>();
             return true;
         }
 
 
         public override bool ConsumeAmmo(Player player)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                return !(player.itemAnimation < item.useAnimation - 2); //consume 1 ammo instead of 3
-            }
-
-            return true;
+            return !(player.itemAnimation < item.useAnimation - 2); //consume 1 ammo instead of 3
         }
 
         public override Vector2? HoldoutOffset()

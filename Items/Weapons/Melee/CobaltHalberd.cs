@@ -6,7 +6,6 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
     public class CobaltHalberd : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
 	{
 		DisplayName.SetDefault("Cobalt Halberd");

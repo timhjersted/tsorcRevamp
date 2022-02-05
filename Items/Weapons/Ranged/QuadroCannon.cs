@@ -24,8 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             item.UseSound = SoundID.Item11;
             item.rare = ItemRarityID.Red;
             item.shoot = ProjectileID.PurificationPowder;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.shootSpeed = 10;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.shootSpeed = 14;
+            item.shootSpeed = 10;
             item.noMelee = true;
             item.value = PriceByRarity.Red_10;
             item.ranged = true;
@@ -55,36 +54,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             int ShotAmt = 4;
             int spread = 24;
             float spreadMult = 0.05f;
+            type = ModContent.ProjectileType<Projectiles.PhazonRound>();
 
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 15f;
+            if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
             {
-                type = ModContent.ProjectileType<Projectiles.PhazonRound>();
-
-                Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 15f;
-                if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
-                {
-                    position -= muzzleOffset;
-                }               
+                position -= muzzleOffset;
+            }               
                 
-                for (int i = 0; i < ShotAmt; i++)
-                {
-                    float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                    float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                    Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
-                    Main.PlaySound(SoundID.Item, -1, -1, 11);
-                }
-            }
-            else
+            for (int i = 0; i < ShotAmt; i++)
             {
-                for (int i = 0; i < ShotAmt; i++)
-                {
-                    float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                    float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                    Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
-                    Main.PlaySound(SoundID.Item, -1, -1, 11);
-                }
+                float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
+                float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
+                Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
+                Main.PlaySound(SoundID.Item, -1, -1, 11);
             }
-
+            
             return false;
         }
 

@@ -190,18 +190,14 @@ namespace tsorcRevamp
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
             if (player.HasBuff(ModContent.BuffType<Invincible>())) return false;
             /*
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
-            }
+            player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             */
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
 
         public override void OnHitAnything(float x, float y, Entity victim) {
             /*
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
-            }
+            player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             */
         }
 

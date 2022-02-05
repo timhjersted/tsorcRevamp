@@ -19,8 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             item.maxStack = 1;
             item.damage = 23;
             item.knockBack = 1;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 8;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) item.mana = 4;
+            item.mana = 8;
             item.UseSound = SoundID.Item20;
             item.shootSpeed = 14;
             item.noMelee = true;

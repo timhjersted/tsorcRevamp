@@ -7,8 +7,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 {
     public class Sentenza : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         { 
             DisplayName.SetDefault("Sentenza");

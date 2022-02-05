@@ -10,8 +10,6 @@ namespace tsorcRevamp.Items
 
     public class Darksign : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Consume to become the [c/6d8827:Bearer of the Curse]" +

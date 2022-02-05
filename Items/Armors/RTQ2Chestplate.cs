@@ -8,10 +8,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Body)]
     public class RTQ2Chestplate : ModItem
     {
-        bool LegacyMode = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("RTQ2 Chestplate");
+            Tooltip.SetDefault("+15% Magic Critical chance, +10% magic damage\nSet bonus: +15% magic damage, +60 mana");
         }
 
         public override void SetDefaults()
@@ -26,22 +26,9 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.magicCrit += 15;
-            if (!LegacyMode) {
-                player.magicDamage += 0.10f;
-            }
+            player.magicDamage += 0.10f;
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name !=  "SocialDesc");
-            if (ttindex != -1) {// if we find one
-                if (LegacyMode) {
-                    tooltips.Add(new TooltipLine(mod, "LegacyRTQ2Chest", "+15% Magic Critical chance.\nSet bonus: +15% magic damage, +60 mana, Space Gun Skill"));
-                }
-                else {
-                    tooltips.Add(new TooltipLine(mod, "RevampRTQ2Chest", "+15% Magic Critical chance, +10% magic damage\nSet bonus: +15% magic damage, +60 mana, Space Gun Skill"));
-                }
-            }
-        }
 
         public override void AddRecipes()
         {

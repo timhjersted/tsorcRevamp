@@ -54,14 +54,8 @@ namespace tsorcRevamp.Items {
             item.CloneDefaults(ItemID.MagicMirror);
             item.accessory = true;
             item.value = 25000;
-            if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                item.useTime = 90;
-                item.useAnimation = 90;
-            }
-            else {
-                item.useTime = 240;
-                item.useAnimation = 240;
-            }
+            item.useTime = 240;
+            item.useAnimation = 240;
 
         }
 
@@ -69,7 +63,8 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("Equip this in an accessory slot anywhere to create a new warp point." +
                                 "\nActivate by left-clicking the mirror in your toolbar." +
                                 "\nWarp point saves on quit." +
-                                "\nReduces defense to 0 and slows movement while equipped and setting your warp point.");
+                                "\nReduces defense to 0 and slows movement while equipped and setting your warp point." +
+                                "\nChannel time is four seconds and you cannot move during the channel.");
         }
         public override bool CanUseItem(Player player) {
 
@@ -91,7 +86,7 @@ namespace tsorcRevamp.Items {
         public override void UseStyle(Player player) {
             if (checkWarpLocation2(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY) || player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4 && (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode))
+                if (player.itemTime > (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4)
                 {
                     player.velocity = Vector2.Zero;
                     player.gravDir = 1;
@@ -110,7 +105,7 @@ namespace tsorcRevamp.Items {
                     Main.NewText("Picking up where you left off...", 255, 240, 20);
                     player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
                 }
-                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / (ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? 2 : 4))
+                else if (player.itemTime == (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 4)
                 {
                     Main.PlaySound(SoundID.Item60);
 
@@ -161,15 +156,13 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             Player player = Main.LocalPlayer;
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampMirrorNerf1", "Channel time is four seconds and you cannot move during the channel."));
-                    if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
-                        tooltips.Insert(ttindex + 2, new TooltipLine(mod, "BotCNerfedVillageMirror", "Will always take the [c/6d8827:Bearer of the Curse] to the center of the village"));
-                    }
+                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "BotCNerfedVillageMirror", "Will always take the [c/6d8827:Bearer of the Curse] to the center of the village"));
+                    
                 }
             }
         }

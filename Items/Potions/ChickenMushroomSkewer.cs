@@ -6,7 +6,6 @@ namespace tsorcRevamp.Items.Potions
 {
     class ChickenMushroomSkewer : ModItem
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Heals 125 HP and applies 30 seconds of Potion Sickness\n"

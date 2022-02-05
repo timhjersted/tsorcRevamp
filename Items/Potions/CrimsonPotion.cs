@@ -5,6 +5,10 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Potions {
     public class CrimsonPotion : ModItem {
 
+        public override void SetStaticDefaults() {
+            Tooltip.SetDefault("Enemies within a ten tile radius are inflicted with \nCrimson Burn, which quickly drains life");
+        }
+
         public override void SetDefaults() {
             item.width = 14;
             item.height = 24;
@@ -19,16 +23,6 @@ namespace tsorcRevamp.Items.Potions {
             item.value = 1000;
             item.buffType = ModContent.BuffType<Buffs.CrimsonDrain>();
             item.buffTime = 18000;
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode) {
-                tooltips.Insert(3, new TooltipLine(mod, "RevampCrimsonDrain1", "Enemies within a ten tile radius are inflicted with"));
-                tooltips.Insert(4, new TooltipLine(mod, "RevampCrimsonDrain2", "Crimson Burn, which quickly drains life"));
-            }
-            else {
-                tooltips.Insert(3, new TooltipLine(mod, "", "Enemies within a ten tile radius take damage"));
-            }
-
         }
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);

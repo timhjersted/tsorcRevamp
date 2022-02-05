@@ -12,8 +12,6 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override string Texture => "tsorcRevamp/NPCs/Enemies/LothricKnight"; // Here we're grabbing the original texture used by Lothric Knight, to save us needing another spritesheet taking up space (albeit very little)
 
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         //AI 
         bool slashing = false;
         bool jumpSlashing = false;

@@ -9,8 +9,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     class LothricSpearKnight : ModNPC
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[npc.type] = 20;

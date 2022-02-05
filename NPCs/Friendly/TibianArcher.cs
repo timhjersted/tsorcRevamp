@@ -136,13 +136,10 @@ namespace tsorcRevamp.NPCs.Friendly
 				shop.item[nextSlot].shopCustomPrice = 12;
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
-				if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-				{
-					shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>());
-					shop.item[nextSlot].shopCustomPrice = 12;
-					shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-					nextSlot++;
-				}
+				shop.item[nextSlot].SetDefaults(ModContent.ItemType<Items.ItemCrates.FrostburnArrowCrate>());
+				shop.item[nextSlot].shopCustomPrice = 12;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+				nextSlot++;
 			}
 			if (Main.hardMode)
 			{
@@ -154,13 +151,10 @@ namespace tsorcRevamp.NPCs.Friendly
 				shop.item[nextSlot].shopCustomPrice = 1;
 				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
 				nextSlot++;
-				if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-				{
-					shop.item[nextSlot].SetDefaults(ItemID.HellfireArrow);
-					shop.item[nextSlot].shopCustomPrice = 1;
-					shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
-					nextSlot++;
-				}
+				shop.item[nextSlot].SetDefaults(ItemID.HellfireArrow);
+				shop.item[nextSlot].shopCustomPrice = 1;
+				shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+				nextSlot++;
 			}
 
 		}

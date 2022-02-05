@@ -5,10 +5,9 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class PoisonbiteRing : ModItem {
         public override void SetStaticDefaults() {
-            string defString = ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? "" : "\n+3 defense";
             Tooltip.SetDefault("One of the infamous bite rings commissioned by Sir Arstor of Carim." +
 								"\nDespite the dreadful rumors surrounding its creation, this ring is an unmistakable asset," +
-								"\ndue to its ability to prevent becoming poisoned." + defString);
+                                "\ndue to its ability to prevent becoming poisoned.\n+3 defense");
         }
  
         public override void SetDefaults() {
@@ -31,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
  
         public override void UpdateEquip(Player player) {
 			player.buffImmune[BuffID.Poisoned] = true;
-            player.statDefense += ModContent.GetInstance<tsorcRevampConfig>().LegacyMode ? 0 : 3;
+            player.statDefense += 3;
         }
  
     }

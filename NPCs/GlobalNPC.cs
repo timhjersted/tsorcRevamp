@@ -365,7 +365,7 @@ namespace tsorcRevamp.NPCs
                 float chance = 0.01f + (0.0005f * Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().ConsSoulChanceMult);
                 //Main.NewText(chance);
 
-                if (!(npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail || npc.type == NPCID.EaterofWorldsHead) && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+                if (!(npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail || npc.type == NPCID.EaterofWorldsHead))
                 {
 
                     if ((enemyValue >= 1) && (enemyValue <= 200) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 200 dropping FadingSoul aka 1/75
@@ -741,12 +741,12 @@ namespace tsorcRevamp.NPCs
 
         public override void SetupShop(int type, Chest shop, ref int nextSlot)
         {
-            if (type == NPCID.Merchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            if (type == NPCID.Merchant)
             {
                 shop.item[nextSlot].SetDefaults(ItemID.Bottle); //despite being able to find the archeologist right after (who sells bottled water), it's nice to have
                 nextSlot++;
             }
-            if (type == NPCID.SkeletonMerchant && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            if (type == NPCID.SkeletonMerchant)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Firebomb>());
                 shop.item[nextSlot].shopCustomPrice = 5;
@@ -757,7 +757,7 @@ namespace tsorcRevamp.NPCs
                 shop.item[nextSlot].shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
                 nextSlot++;
             }
-            if (type == NPCID.GoblinTinkerer && !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
+            if (type == NPCID.GoblinTinkerer)
             {
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<Pulsar>());
                 shop.item[nextSlot].shopCustomPrice = 800;

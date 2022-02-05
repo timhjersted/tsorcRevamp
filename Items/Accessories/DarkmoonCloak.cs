@@ -12,7 +12,8 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Rapid mana regen, +15% magic crit & +15% magic dmg when health falls below 150\n" +
-                                "Provides Star Cloak, +5% magic crit & +5% magic damage boost normally");
+                                "Provides Star Cloak, +5% magic crit & +5% magic damage boost normally\n" +
+                                "Magic Imbues no longer need to go on cooldown");
         }
 
         public override void SetDefaults()
@@ -55,20 +56,6 @@ namespace tsorcRevamp.Items.Accessories {
                 player.starCloak = true;
                 player.magicCrit += 5;
                 player.magicDamage += .05f;
-            }
-        }
-
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-                if (ttindex != -1)
-                {// if we find one
-                    //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampDarkmoonCloak", "Magic Imbues no longer need to go on cooldown"));
-                }
             }
         }
 

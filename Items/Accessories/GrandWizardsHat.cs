@@ -18,29 +18,15 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-
-            if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-            {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(ItemID.SorcererEmblem, 1);
-                recipe.AddIngredient(ItemID.WizardHat, 1);
-                recipe.AddIngredient(ItemID.SoulofLight, 5);
-                recipe.AddIngredient(ItemID.SoulofNight, 5);
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
-                recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this, 1);
-                recipe.AddRecipe();
-            }
-            else
-            {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(ItemID.SorcererEmblem, 1);
-                recipe.AddIngredient(ItemID.WizardHat, 1);
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
-                recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this, 1);
-                recipe.AddRecipe();
-            }
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.SorcererEmblem, 1);
+            recipe.AddIngredient(ItemID.WizardHat, 1);
+            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(ItemID.SoulofNight, 5);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
         }
 
         public override void UpdateEquip(Player player) {

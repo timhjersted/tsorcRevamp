@@ -8,7 +8,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
 	public class CosmicCrystalLizard : ModNPC
 	{
-		public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Cosmic Crystal Lizard");

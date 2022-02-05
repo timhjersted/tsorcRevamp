@@ -10,8 +10,6 @@ namespace tsorcRevamp.NPCs.Enemies
 {
     public class RingedKnight : ModNPC //Do I win the award for messiest code 2022 yet?
     {
-        public override bool Autoload(ref string name) => !ModContent.GetInstance<tsorcRevampConfig>().LegacyMode;
-
         //AI 
         bool slashing = false;
         bool jumpSlashing = false;

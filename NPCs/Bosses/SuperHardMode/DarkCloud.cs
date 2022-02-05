@@ -2232,14 +2232,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
-                if (!ModContent.GetInstance<tsorcRevampConfig>().LegacyMode)
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
-                }
-                else
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
-                }
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
             }
             if (Main.tile[5810, 1670] != null)
             {
