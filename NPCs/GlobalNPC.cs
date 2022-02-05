@@ -116,18 +116,18 @@ namespace tsorcRevamp.NPCs
 
             }
             //shadow temple
-            if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe)
+            if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.Necromancer, 0.1f);
                 pool.Add(NPCID.NecromancerArmored, 0.2f);
             }
             //machine temple (in water)
-            if (spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe)
+            if (spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.GreenJellyfish, 1f);
             }
             //machine temple (not in water)
-            if (!spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe)
+            if (!spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.NecromancerArmored, 0.2f);
             }
