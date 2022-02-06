@@ -29,7 +29,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override bool PreKill(int timeLeft)
 		{
 			projectile.type = 0;
-			Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+			//
+			//Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
 			for (int i = 0; i < 10; i++)
 			{
 				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 1f); //6 is a flame dust
@@ -48,7 +49,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 			}
 			projectile.timeLeft = 0;
 			{
-				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
+				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 100, 0.1f, .09f); // flame wall, lasts a bit longer than flame
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
 				if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnemySpellAbyssPoisonStrike>(), projectile.damage, 1f, projectile.owner);
 				Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
 				int arg_1394_1 = projectile.width;

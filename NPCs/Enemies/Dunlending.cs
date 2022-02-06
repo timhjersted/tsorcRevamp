@@ -75,10 +75,10 @@ namespace tsorcRevamp.NPCs.Enemies {
                 else chance = 0.125f;
             }
             if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p)) {
-                if (Main.dayTime) chance = 0.067f;
-                else chance = 0.1f;
+                if (Main.dayTime && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson) chance = 0.067f;
+                if (!Main.dayTime && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson) chance = 0.1f;
             }
-            if (tsorcRevampWorld.SuperHardMode)
+            if (Main.hardMode)
             {
                 return chance /= 2;
             }

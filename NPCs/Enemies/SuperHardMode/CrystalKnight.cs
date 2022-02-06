@@ -69,9 +69,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		public override void AI()
 		{
-			tsorcRevampAIs.ArcherAI(npc, ModContent.ProjectileType<Projectiles.Enemy.EnemyCrystalKnightBolt>(), crystalBoltDamage, 14, 70, 2, 0.07f, canTeleport: true, lavaJumping: true);
+			// ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int passiveSound = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, int soundType = 2, int soundStyle = 5)
+			tsorcRevampAIs.ArcherAI(npc, ModContent.ProjectileType<Projectiles.Enemy.EnemyCrystalKnightBolt>(), crystalBoltDamage, 14, 70, 2, 0.07f, canTeleport: true, lavaJumping: true, soundType: 2, soundStyle: 30);
 		}
-
+		
 
 		public override void NPCLoot()
 		{

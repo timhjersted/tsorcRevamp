@@ -45,10 +45,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			bioSpitDamage = (int)(bioSpitDamage / 2);
 		}
 
-
-		int breathCD = 120;
+		int choice = 2;
+		float breathTimer = 60;
 		//int previous = 0;
-		bool breath = false;
+		//bool breath = false;
 
 		float shotTimer;
 		int chargeDamage = 0;
@@ -113,6 +113,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			tsorcRevampAIs.FighterAI(npc, 1, 0.03f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.1f, enrageTopSpeed: 2);
 
 			shotTimer++;
+			
 			if (shotTimer >= 85)
 			{
 				Lighting.AddLight(npc.Center, Color.GreenYellow.ToVector3() * 1f);
@@ -148,12 +149,14 @@ namespace tsorcRevamp.NPCs.Enemies
 						npc.velocity.Y = Main.rand.NextFloat(-10f, -4f);
 					}
 					//FOR FINAL
-					if (shotTimer >= 185 && Main.rand.Next(3) == 0 && npc.life <= 220)
+					if (shotTimer >= 185 && Main.rand.Next(2) == 0 && npc.life <= 220)
 					{
 						npc.velocity.Y = Main.rand.NextFloat(-10f, 3f);
 					}
 
+
 					//BREATH ATTACK
+					/*
 					if (shotTimer >= 110f && Main.rand.Next(20) == 0 && npc.Distance(player.Center) > 260 && npc.life >= 221)
 					{
 						npc.velocity.Y = Main.rand.NextFloat(-10f, -3f);
@@ -191,91 +194,128 @@ namespace tsorcRevamp.NPCs.Enemies
 							shotTimer = 1f;
 						}
 					}
+					*/
+				}
 
-					int choice = Main.rand.Next(2);
-					//PURPLE MAGIC LOB ATTACK; && Main.rand.Next(2) == 1
-					if (shotTimer >= 110f && npc.life >= 221 && choice == 0)
+			}
+
+
+
+
+			// NEW BREATH ATTACK 
+			breathTimer++;
+			if (breathTimer > 480 && Main.rand.Next(2) == 1 && shotTimer <= 99f && npc.life >= 221)
+			{
+				breathTimer = -60;
+				shotTimer = -60f;
+			}
+
+			if (breathTimer < 0)
+			{
+				npc.velocity.X = 0f;
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 9);
+					breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
+					Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+					npc.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
+				}
+			}
+
+			if (breathTimer > 360 && npc.life >= 221)
+			{
+				shotTimer = -60f;
+				UsefulFunctions.DustRing(npc.Center, (int)(48 * ((480 - breathTimer) / 120)), DustID.CursedTorch, 48, 4);
+				Lighting.AddLight(npc.Center, Color.GreenYellow.ToVector3() * 5);
+			}
+
+			if (breathTimer == 0)
+			{
+				shotTimer = 1f;
+				Projectile.NewProjectile(npc.Center.X, npc.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+			}
+
+			int choice = Main.rand.Next(4);
+			//PURPLE MAGIC LOB ATTACK; && Main.rand.Next(2) == 1
+			if (shotTimer >= 110f && npc.life >= 221 && choice <= 1)
+			{
+				bool clearSpace = true;
+				for (int i = 0; i < 15; i++)
+				{
+					if (UsefulFunctions.IsTileReallySolid((int)npc.Center.X / 16, ((int)npc.Center.Y / 16) - i))
 					{
+						clearSpace = false;
+					}
+				}
 
+				if (clearSpace)
+				{
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 5);
 
-						bool clearSpace = true;
-						for (int i = 0; i < 15; i++)
-						{
-							if (UsefulFunctions.IsTileReallySolid((int)npc.Center.X / 16, ((int)npc.Center.Y / 16) - i))
-							{
-								clearSpace = false;
-							}
-						}
+					speed.Y += Main.rand.NextFloat(-2f, -6f);
+					//speed += Main.rand.NextVector2Circular(-10, -8);
+					if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+					{
+						int lob = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
+						//Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
+						//DD2DrakinShot; DesertDjinnCurse; ProjectileID.DD2DrakinShot
+						//if (projectile_velocity <= 0f)
+						//{ Main.projectile[lob].tileCollide = false; }
+						//else if (projectile_velocity >= 1f)
+						//{ Main.projectile[lob].tileCollide = true; }
 
-						if (clearSpace)
-						{
-							Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 5);
+						//Main.projectile[lob].hostile = true;
+						//Main.projectile[num555].timeLeft = 300; //40
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.5f);
 
-							speed.Y += Main.rand.NextFloat(-2f, -6f);
-							//speed += Main.rand.NextVector2Circular(-10, -8);
-							if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
-							{
-								int lob = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
-								//ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
-								//DD2DrakinShot; DesertDjinnCurse; ProjectileID.DD2DrakinShot
-								//if (projectile_velocity <= 0f)
-								//{ Main.projectile[lob].tileCollide = false; }
-								//else if (projectile_velocity >= 1f)
-								//{ Main.projectile[lob].tileCollide = true; }
-
-								//Main.projectile[lob].hostile = true;
-								//Main.projectile[num555].timeLeft = 300; //40
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.5f);
-
-							}
-
-							if (shotTimer >= 154f)
-							{ 
-								shotTimer = 1f;
-							}
-						}
 					}
 
-					//NORMAL SPIT ATTACK
-					if (shotTimer >= 115f && npc.life >= 221 && choice >= 1)
+					if (shotTimer >= 154f)
 					{
-						if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
-						{
-							Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 9);
-
-							if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
-							{
-								int num555 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-								Main.projectile[num555].timeLeft = 300; //40
-								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.5f);
-								shotTimer = 1f;
-							}
-						}
-					}
-
-					//FINAL DESPERATE ATTACK
-					if (shotTimer >= 175f && Main.rand.Next(2) == 1 && npc.life <= 220)
-					{
-						int dust2 = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f);
-						Main.dust[dust2].noGravity = true;
-
-						Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 10);
-
-						if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
-						{
-							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-							//Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.1f);
-							//customAi1 = 1f;
-						}
-
-						if (shotTimer >= 206f)
-						{
-							shotTimer = 1f;
-						}
+						shotTimer = 1f;
 					}
 				}
 			}
+
+			//NORMAL SPIT ATTACK
+			if (shotTimer >= 115f && npc.life >= 221 && choice >= 2)
+			{
+				if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+				{
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 9);
+
+					if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+					{
+						int num555 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+						Main.projectile[num555].timeLeft = 300; //40
+						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.5f);
+						shotTimer = 1f;
+					}
+				}
+			}
+
+			//FINAL DESPERATE ATTACK
+			if (shotTimer >= 175f && Main.rand.Next(2) == 1 && npc.life <= 220)
+			{
+				int dust2 = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f);
+				Main.dust[dust2].noGravity = true;
+
+				Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 10);
+
+				if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+				{
+					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+					//Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
+					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.1f);
+					//customAi1 = 1f;
+				}
+
+				if (shotTimer >= 206f)
+				{
+					shotTimer = 1f;
+				}
+			}
+
 
 			//Knockback conditional
 			if (npc.life >= 221)

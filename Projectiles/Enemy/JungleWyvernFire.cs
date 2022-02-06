@@ -46,8 +46,17 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.Poisoned, 2400);
-            target.AddBuff(BuffID.Bleeding, 2400);
+            if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+            {
+                target.AddBuff(BuffID.Poisoned, 180);
+                target.AddBuff(BuffID.Bleeding, 180);
+            }
+
+            if (tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead))
+            {
+                target.AddBuff(BuffID.Poisoned, 2400);
+                target.AddBuff(BuffID.Bleeding, 2400);
+            }
         }
     }
 }

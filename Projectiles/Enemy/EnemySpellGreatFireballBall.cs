@@ -27,10 +27,32 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void AI()
 		{
-			if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f)
+			if ( Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f)//projectile.soundDelay == 0 &&
 			{
-				projectile.soundDelay = 10;
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+				//projectile.soundDelay = 10;
+				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34, 0.01f, 0f); // flamethrower
+
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 45, 0.4f, 0.7f); //inferno fork, almost same as fire (works)
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 60, 0.6f, 0.0f); //terra beam
+				// Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
+
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 81, 0.6f, 0f); //spawn slime mount, more like thunder flame burn
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 88, 0.6f, 0f); //meteor staff more bass and fire
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 100, 0.1f, 0f); // cursed flame wall, lasts a bit longer than flame
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 101, 0.6f, 0f); // crystal vilethorn - breaking crystal
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 104, 0.6f, 0f); //shadowflame 
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 106, 0.6f, 0f); //flask throw tink sound
+
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 109, 0.6f, 0.0f); //crystal serpent fire
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 110, 0.6f, -0.01f); //crystal serpent split, paper, thud, faint high squeel
+
+				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
+
 			}
 			int thisDust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
 			Main.dust[thisDust].noGravity = true;
@@ -40,7 +62,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreKill(int timeLeft)
         {
-			Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 100, 0.5f, 0f); // cursed flame wall, lasts a bit longer than flame
+																									  //Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
+																									  //Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
 			if (projectile.owner == Main.myPlayer)
 			{
 				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, 0, ModContent.ProjectileType<EnemySpellGreatFireball>(), projectile.damage, 6f, projectile.owner);

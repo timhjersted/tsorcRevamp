@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         bool chargeDamageFlag;
         int chargeDamage;
         bool breath;
-        int breathCD = 90;
+        int breathCD = 120;
 
         float boredResetT;
         float boredTimer;
@@ -266,12 +266,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     if (npc.localAI[2] >= 301 && npc.localAI[2] <= 395 && npc.Distance(player.Center) > 20 && npc.life >= 1001)
                     {
-
+                        //npc.ai[3]++;
                         if (npc.localAI[2] == 301)
                         {
                             Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 6, .01f, -.5f); //magic mirror
                         }
-                        //can_teleport = false;
+                        
                         npc.velocity.X = 0f;
                         npc.velocity.Y = 0f;
 
@@ -308,12 +308,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         breath = true;
                         Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y, 30, 0.8f, -.3f); //3, 21 demon; 3,30 nimbus
-
-
-
                     }
 
-                    if (breath) //&& Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)
+                    if (breath) 
                     {
 
                         npc.velocity.X = 0f;
@@ -335,43 +332,38 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-
                             int num54 = Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y /*+ (5f * npc.direction)*/, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 2), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer); //JungleWyvernFire      cursed dragons breath
-                                                                                                                                                                                                                                                                                                                                                                //Main.projectile[num54].timeLeft = 90;//was 25
-                                                                                                                                                                                                                                                                                                                                                                //Main.projectile[num54].scale = 1f;
-
                         }
                         npc.netUpdate = true;
 
                         if (Main.rand.Next(35) == 0)
                         {
-                            int num65 = Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                            //int num65 = Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-100, 100), npc.Center.Y + Main.rand.Next(-100, 100), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
                         }
                         breathCD--;
 
-                        //if (breathCD == 70)
-                        //{
-                        //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.8f, .1f); //3, 21 water }
-
-                        //if (breathCD == 30)
-                        //{ Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, 30, 20); }
-
-
-
+                        if (breathCD == 120)
+                        {
+                            tsorcRevampAIs.Teleport(npc, 15, true);
+                        }
+                        if (breathCD == 60)
+                        {
+                            tsorcRevampAIs.Teleport(npc, 15, true);
+                        }
+                        //
                     }
 
                     if (breathCD <= 0)
                     {
                         breath = false;
-                        breathCD = 90;
-
-
+                        breathCD = 160;
                         npc.localAI[2] = 1f;
-                        npc.ai[3] = -120f;
-                        //can_teleport = true;
+                        npc.localAI[1] = 1f;
+                        npc.ai[3] = 0; //Reset bored counter. No teleporting after breath attack
+
                     }
 
-                    // }
                 }
 
                 //TELEGRAPH DUSTS

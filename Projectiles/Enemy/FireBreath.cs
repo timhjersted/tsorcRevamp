@@ -29,7 +29,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override bool PreKill(int timeLeft)
         {
-            projectile.type = 102;
+            //projectile.type = 102; //makes cool explosion dust but also annoying exploding sound :/
+            Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34, 0.1f, -0.2f); //flamethrower
             return true;
         }
 

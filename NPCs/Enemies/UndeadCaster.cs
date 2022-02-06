@@ -38,10 +38,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
             float chance = 0;
             Player p = spawnInfo.player;
-            if (!Main.hardMode && p.ZoneRockLayerHeight && Main.dayTime) return 0.0285f;
-            if (!Main.hardMode && p.ZoneRockLayerHeight && !Main.dayTime) return 0.05f;
+            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.player.ZoneCrimson && Main.dayTime) return 0.0285f;
+            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.player.ZoneCrimson && !Main.dayTime) return 0.05f;
             if (!Main.hardMode && Sky(p) && !Main.dayTime) return 0.033f;
-            if (!Main.hardMode && (spawnInfo.player.ZoneRockLayerHeight && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) && !Main.dayTime) return 0.033f;
+            if (!Main.hardMode && (spawnInfo.player.ZoneRockLayerHeight && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) && !Main.dayTime) return 0.033f;
 
             return chance;
         }

@@ -774,7 +774,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (spawnInfo.player.townNPCs > 1f) return 0f;
 
-            if (spawnInfo.water) return 0f;
+            if (spawnInfo.water || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson) return 0f;
             if (spawnInfo.player.ZoneGlowshroom) return 0f;
 
             if (Main.hardMode && spawnInfo.lihzahrd) return 0.15f;

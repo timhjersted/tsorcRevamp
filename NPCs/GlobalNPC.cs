@@ -2613,7 +2613,7 @@ namespace tsorcRevamp.NPCs
                     {
                         npc.TargetClosest(true);
                         npc.velocity.Y = -7f;
-                        npc.localAI[1] = 161f;
+                        //npc.localAI[1] = 161f;
                     }
 
                     npc.netUpdate = true;

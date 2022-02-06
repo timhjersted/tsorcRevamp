@@ -34,6 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		#region AI
 		public override void AI()
 		{
+			
 			projectile.frameCounter++;
 			if (projectile.frameCounter > 3)
 			{

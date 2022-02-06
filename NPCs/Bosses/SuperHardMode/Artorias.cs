@@ -89,8 +89,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			if (npc.Distance(player.Center) < 600)
 			{
 				
-				player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60, false);
-				player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 2);
+				player.AddBuff(ModContent.BuffType<Buffs.TornWings>(), 60, false);
+				player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60, false);
 				
 			}
 
@@ -663,7 +663,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.WolfRing>());
-				//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>(), 4);
 			}

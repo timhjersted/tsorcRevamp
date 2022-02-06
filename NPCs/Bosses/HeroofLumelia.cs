@@ -469,6 +469,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						int Spawned3 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
 						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
 						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Main.PlaySound(3, -1, -1, 6, 0.3f, -.01f); //beast
 						wolfSpawned1 = true;
 
 					}
@@ -480,6 +481,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						
 						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
 						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Main.PlaySound(3, -1, -1, 6, 0.3f, -.02f); //beast
 						wolfSpawned2 = true;
 
 					}
@@ -490,6 +492,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.RedCloudHunter>(), 0);
 						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
 						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Main.PlaySound(3, -1, -1, 6, 0.3f, .01f); //beast
 						wolfSpawned3 = true;
 
 					}
@@ -600,9 +603,9 @@ namespace tsorcRevamp.NPCs.Bosses
 				//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
 				{
 					if(npc.velocity.Y == 0f)
-
-
-					{ npc.velocity.Y = Main.rand.NextFloat(-11f, -8f); }
+					{ 
+						npc.velocity.Y = Main.rand.NextFloat(-11f, -8f); 
+					}
 					
 
 					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 8); //0.4f, true, true																								
