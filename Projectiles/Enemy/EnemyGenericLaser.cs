@@ -217,6 +217,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     color = Color.White;
                 }
 
+                if(FiringTimeLeft <= 10)
+                {
+                    color *= FiringTimeLeft / 10f;
+                }
+
+
                 DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
                     projectile.velocity, (LaserTextureBody.Height - 1) * LaserSize, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, LaserLength, color, (int)MOVE_DISTANCE);
             }

@@ -54,14 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             CastLight = Main.rand.NextBool();
 
             Additive = true;
-            //ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer);
-
-            //Static bool that toggles. Ensures only 50% of projectiles survive, and that they're in order from first to last spawned
-            flipBool = !flipBool;
-            if (flipBool)
-            {
-            //    projectile.Kill();
-            }
+            //ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer);            
         }
 
         public static bool flipBool = false;
@@ -74,56 +67,100 @@ namespace tsorcRevamp.Projectiles.Enemy {
         Player targetPlayer;
         bool aimLeft = false;
         bool decided = false;
+        Vector2 simulatedVelocity;
         public override void AI()
         {
-            //Track the player and aim tangental 300 units next to them. Constrains their movement.
+            
             if (projectile.ai[0] >= 0)
             {
-                if (targetPlayer == null)
+                //Big beam. Swings towards the player
+                //Todo: Stop these from swinging back toward the player after passing them once
+                if(projectile.ai[0] >= 2000)
                 {
-                    targetPlayer = Main.player[(int)projectile.ai[0]];
-                    aimLeft = Main.rand.NextBool();
+                    FiringDuration = 90;
+                    if (targetPlayer == null)
+                    {
+                        targetPlayer = Main.player[(int)projectile.ai[0] - 2000];
+                        target = Main.player[(int)projectile.ai[0] - 2000].Center;// + Main.rand.NextVector2Circular(220,200);
+                    }
+
+                    if(FiringTimeLeft > 0)
+                    {
+                        simulatedVelocity += UsefulFunctions.GenerateTargetingVector(target, targetPlayer.Center, 0.5f);
+                        target += simulatedVelocity;
+                    }
+                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
                 }
-
-                
-
-                TelegraphTime = 180;
-                FiringDuration = 100;
-                MaxCharge = 180;
-
-                //All this is to say: Aim 300 units to the left or right of the player, no matter what angle it's shooting at them from
-                //Also, only track the player while it's charging. Once it starts firing its target point is locked in.
-                if (Charge <= MaxCharge - 1)
+                else if (projectile.ai[0] >= 1000)
                 {
-                    initialTarget = targetPlayer.Center;
-                   
+                    TileCollide = false;
+                    TelegraphTime = 60;
+                    FiringDuration = 15;
+                    MaxCharge = 60;
+                    if (target == Vector2.Zero)
+                    {
+                        target = Main.player[(int)projectile.ai[0] - 1000].Center;
+                        target += Main.player[(int)projectile.ai[0] - 1000].velocity * 48;
+                    }
+                    //Failsafe. If the boss charges too close to the focal point it causes the lasers to go haywire. This turns them off if that happens.
+                    if (projectile.Distance(target) < 400 || projectile.Distance(Main.player[(int)projectile.ai[0] - 1000].Center) < 400)
+                    {
+                        projectile.Kill();
+                    }
+                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+                    
+                    //Failsafe 2. If it is firing and the projectile's angle is too close to the "safe angle", don't fire. This stops lasers from sweeping across the safe area as the destroyer moves relative to it.
+                    if ((UsefulFunctions.CompareAngles(projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4 || UsefulFunctions.CompareAngles(-projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4))
+                    {
+                        projectile.Kill();
+                    }
                 }
-
-                target = UsefulFunctions.GenerateTargetingVector(projectile.Center, initialTarget, 1);
-                target.Normalize();
-                target *= 300;
-
-                if (aimLeft)
-                {
-                    target = target.RotatedBy(MathHelper.PiOver2);
-                }
+                //Track the player and aim tangental 300 units next to them. Constrains their movement.
                 else
                 {
-                    target = target.RotatedBy(-MathHelper.PiOver2);
-                }
+                    if (targetPlayer == null)
+                    {
+                        targetPlayer = Main.player[(int)projectile.ai[0]];
+                        aimLeft = Main.rand.NextBool();
+                    }
+                    TelegraphTime = 180;
+                    FiringDuration = 100;
+                    MaxCharge = 180;
 
-                target += initialTarget;
-                projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+                    //All this is to say: Aim 300 units to the left or right of the player, no matter what angle it's shooting at them from
+                    //Also, only track the player while it's charging. Once it starts firing its target point is locked in.
+                    if (Charge <= MaxCharge - 1)
+                    {
+                        initialTarget = targetPlayer.Center;
 
-                //Failsafe. If the boss charges *through* the circle, it causes the lasers to go haywire. This turns them off if that happens.
-                if (projectile.Distance(target) < 400 || projectile.Distance(targetPlayer.Center) < 400)
-                {
-                    projectile.Kill();
+                    }
+
+                    target = UsefulFunctions.GenerateTargetingVector(projectile.Center, initialTarget, 1);
+                    target.Normalize();
+                    target *= 300;
+
+                    if (aimLeft)
+                    {
+                        target = target.RotatedBy(MathHelper.PiOver2);
+                    }
+                    else
+                    {
+                        target = target.RotatedBy(-MathHelper.PiOver2);
+                    }
+
+                    target += initialTarget;
+                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+
+                    //Failsafe. If the boss charges *through* the circle, it causes the lasers to go haywire. This turns them off if that happens.
+                    if (projectile.Distance(target) < 400 || projectile.Distance(targetPlayer.Center) < 400)
+                    {
+                        projectile.Kill();
+                    }
                 }
             }
             
             //Projectile stays where it's spawned, and either fires at a point or at a small range around it
-            if (projectile.ai[0] == -1 || projectile.ai[0] == -2 || projectile.ai[0] == -3)
+            if (projectile.ai[0] == -1 || projectile.ai[0] == -2)
             {
                 if (projectile.ai[0] == -1)
                 {
@@ -147,13 +184,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     MaxCharge = 240;
                     decided = true;
                 }
-                if (projectile.ai[0] == -3)
-                {
-                    TileCollide = false;
-                    TelegraphTime = 60;
-                    FiringDuration = 15;
-                    MaxCharge = 60;
-                }
+                
 
                 //Make it sit where it spawned
                 FollowHost = false;
@@ -167,22 +198,10 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     Dust.NewDustPerfect(LaserOrigin, DustID.OrangeTorch, Main.rand.NextVector2Circular(-3, 3), Scale: 7).noGravity = true;
                 }
+                projectile.velocity.Normalize();
             }
-
-            //Projectile sticks to NPC, but only lasts a short time
-            //Disabled for reasons explained in VanillaChanges
-            /*
-            if (projectile.ai[0] == -4)
-            {
-                TelegraphTime = 240;
-                FiringDuration = 60;
-                MaxCharge = 240;
-                if (target == Vector2.Zero)
-                {
-                    target = Main.player[(int)projectile.ai[0]].Center;
-                }
-                projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
-            }*/
+            
+            
 
 
             base.AI();

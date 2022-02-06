@@ -113,7 +113,7 @@ namespace tsorcRevamp.Projectiles
 
 
             //Destroyer shoots true lasers instead of normal projectile lasers
-            if((projectile.type == ProjectileID.DeathLaser || projectile.type == ProjectileID.PinkLaser) && NPC.AnyNPCs(NPCID.TheDestroyer) && Main.netMode != NetmodeID.MultiplayerClient)
+            if(((projectile.type == ProjectileID.DeathLaser && NPCs.VanillaChanges.destroyerAttackIndex != 4) || projectile.type == ProjectileID.PinkLaser) && NPC.AnyNPCs(NPCID.TheDestroyer))
             {
                 projectile.Kill();                
             }

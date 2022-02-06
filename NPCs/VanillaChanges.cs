@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -2577,9 +2579,11 @@ namespace tsorcRevamp.NPCs {
 
 
         public static int destroyerAttackIndex = 0;
-        public static Vector2 safeAngle = new Vector2(1, 1);
+        public static Vector2 destroyerLaserSafeAngle = new Vector2(1, 1);
         public static int destroyerLaserCooldown = 0;
         public static int destroyerLaserCount = 0;
+        public static bool destroyerReachedHeight = false;
+        public static int destoyerChargeTimer = 0;
         public override void PostAI(NPC npc) {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye) {
                 if (Main.netMode == NetmodeID.SinglePlayer) {
@@ -2625,83 +2629,196 @@ namespace tsorcRevamp.NPCs {
             //There's a lot more i'd love to do once I actually edit the destroyers ai...
             if(npc.type == NPCID.TheDestroyerBody && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                
-                if(Main.GameUpdateCount % 600 == 0)
-                {                   
-                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-
-                    //Default style
-                    int style = npc.target;
-
-                    //Aim all directly at players position
-                    if (destroyerAttackIndex == 1)
+                if (destroyerAttackIndex != 3)
+                {
+                    if (destoyerChargeTimer == 0)
                     {
-                        style = -1;
+                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + (Main.player[npc.target].velocity * 45), 1);
+
+                        //Default style
+                        int style = npc.target;
+
+                        //Aim all directly at players position
+                        if (destroyerAttackIndex == 1)
+                        {
+                            style = -1;
+                        }
+
+                        //Aim in a spread around them
+                        if (destroyerAttackIndex == 2)
+                        {
+                            style = -2;
+                            projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(250, 250), 1);
+                        }
+
+                        //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
+                        if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2))
+                        {
+                            Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, style, npc.whoAmI);
+                        }
                     }
 
-                    //Aim in a spread around them
-                    if (destroyerAttackIndex == 2)
+                    //Fire lasers passively and randomly
+                    if (Main.GameUpdateCount % 90 == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340) && destroyerLaserCooldown == 0)
                     {
-                        style = -2; 
-                        projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(100, 100), 1);
-                    }
-
-                    //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
-                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, safeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, safeAngle) > MathHelper.PiOver4 / 2))
-                    {
-                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, style, npc.whoAmI);
+                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                        if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4))
+                        {
+                            Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
+                        }
                     }
                 }
-
-                //Fire lasers passively and randomly
-                if(Main.rand.Next(50) == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340) && destroyerLaserCooldown == 0)
+                else if (destoyerChargeTimer > 0 && destroyerReachedHeight && destoyerChargeTimer % 120 == 0 && Main.rand.NextBool())
                 {
-                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, safeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, safeAngle) > MathHelper.PiOver4 / 2))
-                    {
-                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, -3, npc.whoAmI);
-                        destroyerLaserCount--;
-                        if (destroyerLaserCount <= 0)
-                        {
-                            destroyerLaserCount = Main.rand.Next(10, 30); //Fires in bursts of 1-6 lasers
-                            destroyerLaserCooldown = 90;
+                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
+                    Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
+                }
+            }
 
+            
+
+            if(npc.type == NPCID.TheDestroyer)
+            {
+                destoyerChargeTimer++;
+                Main.NewText("Attack progress: " + destoyerChargeTimer);
+                Main.NewText("Attack index: " + destroyerAttackIndex);
+
+                if(destroyerAttackIndex == 3)
+                {
+                    if(npc.position.Y < Main.player[npc.target].position.Y - 350 && !destroyerReachedHeight)
+                    {
+                        destroyerReachedHeight = true;
+                        destoyerChargeTimer = -300;
+                    }
+                    else
+                    {
+                        npc.velocity.Y = -13;
+                    }
+
+                    //Don't do anything until it's set up
+                    if (destroyerReachedHeight)
+                    {
+                        float rotation = Main.GameUpdateCount % (MathHelper.TwoPi * 40);
+                        rotation /= 40;
+                        rotation -= MathHelper.Pi;
+
+                        npc.velocity.X = 15 * (float)Math.Cos(rotation);
+                        npc.velocity.Y = 15 * (float)Math.Sin(rotation);
+                        
+                        if(destoyerChargeTimer == 1040)
+                        {
+                            destroyerAttackIndex = 0;
+                            destoyerChargeTimer = -120;
+                            destroyerReachedHeight = false;
+
+                            //Clean up
+                            for(int i = 0; i < Main.maxProjectiles; i++)
+                            {
+                                if(Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>())
+                                {
+                                    Main.projectile[i].Kill();
+                                }
+                            }
                         }
+                    }                    
+                }
+                else
+                {
+                    //Change attacks
+                    if (destroyerLaserCooldown > 0)
+                    {
+                        destroyerLaserCooldown--;
+                    }
+                    if (destoyerChargeTimer >= 600)
+                    {
+                        destoyerChargeTimer = 0;
+                        destroyerAttackIndex++;
+                        if (destroyerAttackIndex >= 4)
+                        {
+                            destroyerAttackIndex = 0;
+                        }
+                    }
+                    if (Main.GameUpdateCount % 90 == 0)
+                    {
+                        destroyerLaserSafeAngle = Main.rand.NextVector2Circular(1, 1);
                     }
                 }
             }
 
             //Replace probe lasers too
-            if(npc.type == NPCID.Probe)
+            if (npc.type == NPCID.Probe)
             {
                 //Probes are *very* likely to shoot. If they're up, most laser will come from them
                 if (Main.rand.Next(60) == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340))
                 {
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, safeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, safeAngle) > MathHelper.PiOver4 / 2))
+                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2))
                     {
-                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, -1, npc.whoAmI);
+                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
                     }
-                }
-            }
-
-            if(npc.type == NPCID.TheDestroyer)
-            {
-                if(destroyerLaserCooldown > 0)
-                {
-                    destroyerLaserCooldown--;
-                }
-                if (Main.GameUpdateCount % 600 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    destroyerAttackIndex++;
-                    if (destroyerAttackIndex >= 3)
-                    {
-                        destroyerAttackIndex = 0;
-                    }
-                    safeAngle = Main.rand.NextVector2Circular(1, 1);
                 }
             }
         }
+
+        /* None of this works right, something about the way the game draws the destroyer is fucked up. The game always draws the second segment on *top* of anything else I draw...
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (npc.type == NPCID.TheDestroyer)
+            {
+                DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyer));
+                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[0]);
+            }
+            if (npc.type == NPCID.TheDestroyerBody)
+            {
+                DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerBody));
+                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[1]);
+            }
+            if (npc.type == NPCID.TheDestroyerTail)
+            {
+                DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerTail));
+                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[2]);
+            }
+
+            //return false;
+            return base.PreDraw(npc, spriteBatch, drawColor);
+        }
+
+        public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (npc.type == NPCID.TheDestroyer)
+            {
+                //DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyer));
+                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[0]);
+            }
+            if (npc.type == NPCID.TheDestroyerBody)
+            {
+                //DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerBody));
+                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[1]);
+            }
+            if (npc.type == NPCID.TheDestroyerTail)
+            {
+                //DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerTail));
+                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[2]);
+            }
+            base.PostDraw(npc, spriteBatch, drawColor);
+        }
+
+        public void DrawDestroyerGlow(NPC npc, SpriteBatch spriteBatch, Texture2D texture)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+            data.Apply(null);
+            SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Vector2 origin = sourceRectangle.Size() / 2f;
+            //spriteBatch.Draw(Main.destTexture[1], npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale, effects, 0f);
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale * 1.1f, effects, 0f);
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+
+        }*/
 
         public override bool CheckDead(NPC npc) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
