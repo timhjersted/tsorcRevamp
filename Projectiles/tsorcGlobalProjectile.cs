@@ -111,6 +111,12 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
+
+            //Destroyer shoots true lasers instead of normal projectile lasers
+            if((projectile.type == ProjectileID.DeathLaser || projectile.type == ProjectileID.PinkLaser) && NPC.AnyNPCs(NPCID.TheDestroyer) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                projectile.Kill();                
+            }
             return true;
         }
         public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit) {

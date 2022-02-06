@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -29,21 +30,55 @@ namespace tsorcRevamp.Projectiles.Enemy
             projectile.ignoreWater = true;
         }
 
-        #region AI
+        float size = 0;
+        int dustCount = 0;
+
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3)
+            if (size < 20 * 16)
             {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+                size += ((14 * 16) / 30f); //Increase to its full size (7 blocks) in half a second (30 ticks)
+                dustCount = (int)(2 * MathHelper.Pi * size / 10); //Spawn dust according to its size                
             }
-            if (projectile.frame >= 7)
+            else
             {
-                projectile.Kill();
+                //Fade out after reaching max radius, and then despawn
+                dustCount /= 2;
+                if(dustCount <= 0)
+                {
+                    projectile.Kill();
+                    return;
+                }
+            }
+
+            for (int j = 0; j < dustCount; j++)
+            {
+                Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
+                Vector2 dustPos = projectile.Center + dir;
+                dir.Normalize();
+                Vector2 dustVel = dir;
+                Dust.NewDustPerfect(dustPos, DustID.BlueCrystalShard, dustVel, 200).noGravity = true;
             }
         }
-        #endregion
+
+        //Circular collision
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            float distance = Vector2.Distance(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2());
+            if (distance < size && distance > size - 32)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            return false;
+        }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {

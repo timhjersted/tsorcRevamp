@@ -668,7 +668,7 @@ namespace tsorcRevamp.NPCs {
                 case (NPCID.TheDestroyer): {
                         npc.value = 200000;
                         npc.scale = 1.25f;
-                        npc.damage = Main.expertMode ? 85 /* x4 in expert */: 150; //legacy: 200, vanilla: 70
+                        npc.damage = Main.expertMode ? 50 /* x4 in expert */: 140; //legacy: 200, vanilla: 70
                         npc.defense = 10; //legacy: 50, vanilla: 0
                         break;
                     }
@@ -2575,6 +2575,11 @@ namespace tsorcRevamp.NPCs {
 
         #endregion
 
+
+        public static int destroyerAttackIndex = 0;
+        public static Vector2 safeAngle = new Vector2(1, 1);
+        public static int destroyerLaserCooldown = 0;
+        public static int destroyerLaserCount = 0;
         public override void PostAI(NPC npc) {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye) {
                 if (Main.netMode == NetmodeID.SinglePlayer) {
@@ -2587,6 +2592,113 @@ namespace tsorcRevamp.NPCs {
                         npc.HitEffect();
                         npc.active = false; 
                     }
+                }
+            }
+
+            if(npc.type == NPCID.SkeletronPrime)
+            {
+                int cooldown = 500;
+                if (!NPC.AnyNPCs(NPCID.PrimeLaser))
+                {
+                    cooldown -= 180; //320
+                }
+                if (!NPC.AnyNPCs(NPCID.PrimeCannon))
+                {
+                    cooldown -= 80; //240
+                }
+                if (!NPC.AnyNPCs(NPCID.PrimeVice))
+                {
+                    cooldown -= 60; //180
+                }
+                if (!NPC.AnyNPCs(NPCID.PrimeSaw))
+                {
+                    cooldown -= 60; //120
+                }
+
+                if (Main.GameUpdateCount % cooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                    Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, npc.target, npc.whoAmI);
+                }
+            }
+
+            //There's a lot more i'd love to do once I actually edit the destroyers ai...
+            if(npc.type == NPCID.TheDestroyerBody && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                
+                if(Main.GameUpdateCount % 600 == 0)
+                {                   
+                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+
+                    //Default style
+                    int style = npc.target;
+
+                    //Aim all directly at players position
+                    if (destroyerAttackIndex == 1)
+                    {
+                        style = -1;
+                    }
+
+                    //Aim in a spread around them
+                    if (destroyerAttackIndex == 2)
+                    {
+                        style = -2; 
+                        projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(100, 100), 1);
+                    }
+
+                    //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
+                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, safeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, safeAngle) > MathHelper.PiOver4 / 2))
+                    {
+                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, style, npc.whoAmI);
+                    }
+                }
+
+                //Fire lasers passively and randomly
+                if(Main.rand.Next(50) == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340) && destroyerLaserCooldown == 0)
+                {
+                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, safeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, safeAngle) > MathHelper.PiOver4 / 2))
+                    {
+                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, -3, npc.whoAmI);
+                        destroyerLaserCount--;
+                        if (destroyerLaserCount <= 0)
+                        {
+                            destroyerLaserCount = Main.rand.Next(10, 30); //Fires in bursts of 1-6 lasers
+                            destroyerLaserCooldown = 90;
+
+                        }
+                    }
+                }
+            }
+
+            //Replace probe lasers too
+            if(npc.type == NPCID.Probe)
+            {
+                //Probes are *very* likely to shoot. If they're up, most laser will come from them
+                if (Main.rand.Next(60) == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340))
+                {
+                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                    if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, safeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, safeAngle) > MathHelper.PiOver4 / 2))
+                    {
+                        Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, -1, npc.whoAmI);
+                    }
+                }
+            }
+
+            if(npc.type == NPCID.TheDestroyer)
+            {
+                if(destroyerLaserCooldown > 0)
+                {
+                    destroyerLaserCooldown--;
+                }
+                if (Main.GameUpdateCount % 600 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    destroyerAttackIndex++;
+                    if (destroyerAttackIndex >= 3)
+                    {
+                        destroyerAttackIndex = 0;
+                    }
+                    safeAngle = Main.rand.NextVector2Circular(1, 1);
                 }
             }
         }

@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			tsorcRevampAIs.FighterAI(npc, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3);
 
-			bool clearLineofSight = Collision.CanHit(npc.Center, npc.width, npc.height, Main.player[npc.target].Center, Main.player[npc.target].width, Main.player[npc.target].height);
+			bool clearLineofSight = Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1);
 			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, 2, 17, 0);
 			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, clearLineofSight, true, 2, 17);
 			if (poisonStrikeTimer >= 60)

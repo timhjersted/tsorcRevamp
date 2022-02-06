@@ -30,16 +30,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			bannerItem = ModContent.ItemType<Banners.TetsujinBanner>();
 		}
 
-		int meteorDamage = 38; //17
-		int breathDamage = 40; //33
-		int laserDamage = 44; //35
+		int laserDamage = 20; //17
+		int breathDamage = 20; //33
+		int blasterDamage = 22; //35
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
 			npc.lifeMax = (int)(npc.lifeMax / 2);
 			npc.damage = (int)(npc.damage / 2);
-			meteorDamage = (int)(meteorDamage / 2);
-			breathDamage = (int)(breathDamage / 2);
-			laserDamage = (int)(laserDamage / 2);
+			laserDamage = (int)(laserDamage * tsorcRevampWorld.SubtleSHMScale);
+			breathDamage = (int)(breathDamage * tsorcRevampWorld.SubtleSHMScale);
+			blasterDamage = (int)(blasterDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 
@@ -78,18 +78,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			return chance;
 		}
 		#endregion
-		#region AI
+
+
 		public override void AI()
 		{
-
 			if (Main.netMode != 1)
 			{
+				if (Main.GameUpdateCount % 240 == 0)
+				{
+					Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+					Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, npc.target, npc.whoAmI);
+				}
+
 				npc.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
 				if (npc.ai[1] >= 10f)
 				{
-
-
-
 					npc.TargetClosest(true);
 					if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 					{
@@ -140,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 								speedX *= num51;
 								speedY *= num51;
 								int type = ModContent.ProjectileType<Projectiles.Enemy.TetsujinLaser>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, laserDamage, 0f, Main.myPlayer);
+								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blasterDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 650;
 								Main.projectile[num54].aiStyle = 23;
 								Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 12);
@@ -366,10 +369,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						npc.velocity.Y = 2.5f;
 					}
 				}
-			}
-			return;
-		}
-        #endregion
+			}			
+        }
 
         public override void FindFrame(int frameHeight)
         {

@@ -1933,7 +1933,9 @@ namespace tsorcRevamp {
             ElfinArrow,
             ElfinTargeting,
             HumanityPhantom,
-            BarbarousThornBladeGlowmask
+            BarbarousThornBladeGlowmask,
+            RedLaser,
+            RedLaserTransparent
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -1979,6 +1981,8 @@ namespace tsorcRevamp {
                 {TransparentTextureType.ElfinTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinTargeting")},
                 {TransparentTextureType.HumanityPhantom, ModContent.GetTexture("tsorcRevamp/NPCs/Enemies/HumanityPhantom")},
                 {TransparentTextureType.BarbarousThornBladeGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow")},
+                {TransparentTextureType.RedLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/RedLaserBeam")},
+                {TransparentTextureType.RedLaserTransparent, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser")} //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
 
 
             };

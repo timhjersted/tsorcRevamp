@@ -98,13 +98,13 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool clearLineofSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
 
 			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, 2, 17, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, 2, 17);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, 2, 17);
 
 			if (poisonStrikeTimer >= 60)
 			{
 				Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
 			}
-			if (poisonStormTimer >= 90)
+			if (poisonStormTimer >= 240)
 			{
 				UsefulFunctions.DustRing(npc.Center, 32, DustID.CursedTorch, 12, 4);
 				Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);

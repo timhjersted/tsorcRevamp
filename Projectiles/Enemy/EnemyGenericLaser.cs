@@ -12,9 +12,9 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles.Enemy {
 
-    public class GenericLaser : ModProjectile {
+    public class EnemyGenericLaser : ModProjectile {
 
         //Generic laser class
         //Lets you easily create lasers of any size and color, and give them a variety of behaviors
@@ -27,9 +27,6 @@ namespace tsorcRevamp.Projectiles {
 
         //The source position of the laser. If FOLLOW_SOURCE is set to true, this will be ignored.
         public Vector2 LaserOrigin = new Vector2(0, 0);
-
-        //The target of the laser
-        public Vector2 LaserTarget = new Vector2(0, 0);
 
         //Should it stick to the center of the NPC or Projectile that spawned it, or just where it is spawned?
         public bool FollowHost = false;
@@ -44,6 +41,10 @@ namespace tsorcRevamp.Projectiles {
 
         //What color is the laser? Leave this blank if it has a custom texture
         public Color LaserColor = Color.White;
+
+        //Causes the targeting lasers to simply change in brightness instead of turn on and off
+        //Good to avoid causing headaches with a ton of lasers onscreen
+        public bool softFlicker = false;
 
         //How long should it telegraph its path with a targeting laser? This can be set to 0 for instant hits
         public int TelegraphTime = 60;
@@ -70,8 +71,17 @@ namespace tsorcRevamp.Projectiles {
         //Should it have a light color different than 'LaserColor'?
         public Color? lightColor = null;
 
+        //Should this laser be drawn with additive blending instead of normal?
+        public bool Additive = false;
+
+        //What transparency should it be drawn with? 0 > 1
+        public float LaserAlpha = 1;
+
+        //Should it be drawn with a shader?
+        public ArmorShaderData shader;
+
         //Should it play a vanilla sound?
-        public Terraria.Audio.LegacySoundStyle LaserSound = new Terraria.Audio.LegacySoundStyle(2, 60);
+        public Terraria.Audio.LegacySoundStyle LaserSound = SoundID.Item12.WithVolume(0.5f);
 
         //Should it play a custom sound? This overrides whatver LASER_SOUND is set to
         public string CustomSound = null;
@@ -88,6 +98,10 @@ namespace tsorcRevamp.Projectiles {
         public Rectangle LaserTextureBody = new Rectangle(0, 0, 46, 28);
         public Rectangle LaserTextureTail = new Rectangle(0, 30, 46, 28);
         public Rectangle LaserTextureHead = new Rectangle(0, 60, 46, 28);
+
+        public Rectangle LaserTargetingBody = new Rectangle(0, 0, 46, 28);
+        public Rectangle LaserTargetingTail = new Rectangle(0, 30, 46, 28);
+        public Rectangle LaserTargetingHead = new Rectangle(0, 60, 46, 28);
 
         //If it's animated, how many frames does it have?
         public int frameCount = 1;
@@ -164,45 +178,8 @@ namespace tsorcRevamp.Projectiles {
             LaserOrigin = ProjectileSource ? Main.projectile[HostIdentifier].position : Main.npc[HostIdentifier].position;
         }
 
-        //Terraria doesn't sync projectile id's. We need to find it somehow.
-        //This lets us tag the ai[1] of laser projectiles with an id so it can be found later by clients.
-        //The downside is that a new entry here is required for each new "category" of laser we add.
-        //Kinda hacky. Class needs to be reworked conceptually.
-        public enum GenericLaserID
-        {
-            DarkDivineSpark = 0,
-            DarkDivineSparkTargeting = 1,
-            AntiMatTargeting = 2,
-            AttradiesDarkLaser = 3,
-            SolarDetonator = 4,
-            StardustLaser = 5,
-        }
 
-        //Gets all lasers with a certain ID, optionally only those which are owned by a certain NPC
-        public static List<GenericLaser> GetLasersByID(GenericLaserID targetID, int laserHostIdentifier = -1)
-        {
-            List<GenericLaser> LaserList = new List<GenericLaser>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>())
-                {
-                    GenericLaser currentLaser = (GenericLaser)Main.projectile[i].modProjectile;
-                    if (currentLaser != null)
-                    {                        
-                        if ((int)currentLaser.NetworkID == (int)targetID)
-                        {
-                            if (laserHostIdentifier == -1 || laserHostIdentifier == currentLaser.HostIdentifier)
-                            {
-                                LaserList.Add(currentLaser);
-                            }
-                        }                        
-                    }
-                }
-            }
-            return LaserList;
-        }
-
-        //TODO: Test this more.
+        //Laser name customization. This doesn't work. *Yet.*
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             string deathMessage;
@@ -226,30 +203,74 @@ namespace tsorcRevamp.Projectiles {
             drawCacheProjsBehindNPCs.Add(index);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {
-            //LaserTextureBody.Height * LaserSize
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) 
+        {
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
+                Color color;
+                if (LaserTexture == TransparentTextureHandler.TransparentTextureType.GenericLaser)
+                {
+                    color = LaserColor;
+                }
+                else
+                {
+                    color = Color.White;
+                }
+
                 DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
-                    projectile.velocity, LaserTextureBody.Height * LaserSize, -1.57f, LaserSize, LaserLength, LaserColor, (int)MOVE_DISTANCE);
+                    projectile.velocity, (LaserTextureBody.Height - 1) * LaserSize, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, LaserLength, color, (int)MOVE_DISTANCE);
             }
-            else if(TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
+            else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
-                DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                    projectile.velocity, LaserTextureBody.Height * LaserSize / 2f, -1.57f, LaserSize / 2, LaserLength, LaserColor, (int)MOVE_DISTANCE);
+                Color color;
+                if (LaserTargetingTexture == TransparentTextureHandler.TransparentTextureType.GenericLaserTargeting)
+                {
+                    color = LaserColor;
+                }
+                else
+                {
+                    color = Color.White;
+                }
+
+                if (!softFlicker)
+                {
+                    if (Main.GameUpdateCount % 10 <= 5)
+                    {
+                        DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                            projectile.velocity, (LaserTextureBody.Height - 2) * 0.37f, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, LaserLength, color, (int)MOVE_DISTANCE);
+                    }
+                }
+                else
+                {
+                    color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
+
+                    DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                           projectile.velocity, (LaserTextureBody.Height - 2) * 0.37f, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, LaserLength, color, (int)MOVE_DISTANCE);
+
+                } 
             }
+
+
+            
             return false;
         }
 
-        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50) {
+        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50) {
+
+            
+            if (Additive && ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2)))
+            {
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            }
 
             float r = unit.ToRotation() + rotation;
-            Rectangle bodyFrame = LaserTextureBody;
-            bodyFrame.X = LaserTextureBody.Width * currentFrame;
-            Rectangle headFrame = LaserTextureHead;
-            headFrame.X *= LaserTextureHead.Width * currentFrame;
-            Rectangle tailFrame = LaserTextureTail;
-            tailFrame.X *= LaserTextureTail.Width * currentFrame;
+            Rectangle bodyFrame = bodyRect;
+            bodyFrame.X = bodyRect.Width * currentFrame;
+            Rectangle headFrame = headRect;
+            headFrame.X *= headRect.Width * currentFrame;
+            Rectangle tailFrame = tailRect;
+            tailFrame.X *= tailRect.Width * currentFrame;
 
             frameCounter++;
             if (frameCounter >= frameDuration)
@@ -262,21 +283,27 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
 
-            Vector2 startPos = start + (LaserTextureHead.Height / 2) * unit * scale;
-            spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, LaserColor, r, new Vector2(LaserTextureHead.Width * .5f, LaserTextureHead.Height * .5f), scale, 0, 0);
+            Vector2 startPos = start + (headRect.Height / 2) * unit * scale;
+            spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
             
-            float i = (LaserTextureBody.Height / 2 + LaserTextureHead.Height) * scale; //0;//( * 2) + 
+            float i = ((bodyRect.Height / 2) + headRect.Height) * scale;
             for (; i <= Distance; i += step) {
                 startPos = start + i * unit;    
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, bodyFrame, LaserColor, r, new Vector2(LaserTextureBody.Width * .5f, LaserTextureBody.Height * .5f), scale, 0, 0);               
+                spriteBatch.Draw(texture, startPos - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);               
             }            
             startPos = start + i * unit;
-            spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, LaserColor, r, new Vector2(LaserTextureTail.Width * .5f, LaserTextureTail.Height * .5f), scale, 0, 0);
+            spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
             
 
             if (CastLight)
             {
                 CastLights();
+            }
+
+            if (Additive && ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2)))
+            {
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
             }
         }
 
@@ -365,7 +392,7 @@ namespace tsorcRevamp.Projectiles {
                 {
                     //Smokey dust
                     int dust = Dust.NewDust(endpoint, 3, 3, 31, speed.X + Main.rand.Next(-10, 10), speed.Y + Main.rand.Next(-10, 10), 20, default, 1.0f);
-                    Main.dust[dust].noGravity = true;
+                    //Main.dust[dust].noGravity = true;
 
                     //Colored dust (WIP, currently just uses LaserDust)
                     if (Main.rand.Next(20) == 1)
@@ -454,11 +481,12 @@ namespace tsorcRevamp.Projectiles {
         }
 
         private void UpdateProjectile() {
-            Vector2 origin = GetOrigin();
-            Vector2 diff = LaserTarget - origin;
-            diff.Normalize();
-            projectile.velocity = diff;
-            projectile.direction = LaserTarget.X > origin.X ? 1 : -1;
+            //Vector2 origin = GetOrigin();
+            //Vector2 diff = LaserTarget - origin;
+            //d//iff.Normalize();
+            //projectile.velocity = diff;
+           // projectile.velocity = new Vector2(1, 0);
+            //projectile.direction = LaserTarget.X > origin.X ? 1 : -1;
         }
 
         private void CastLights() {
@@ -486,28 +514,20 @@ namespace tsorcRevamp.Projectiles {
             Vector2 unit = projectile.velocity * -1;
             Vector2 origin = GetOrigin();
             Vector2 dustPos = origin + projectile.velocity;
-            for (int i = 0; i < 2; ++i)
-            {
+            
 
-                float num1 = projectile.velocity.ToRotation() + (Main.rand.Next(2) == 1 ? -1.0f : 1.0f) * 1.57f;
-                float num2 = (float)(Main.rand.NextDouble() * 0.8f + 1.0f);
-                Vector2 dustVel = new Vector2((float)Math.Cos(num1) * num2, (float)Math.Sin(num1) * num2);
-                Dust dust = Main.dust[Dust.NewDust(dustPos, 0, 0, 226, dustVel.X, dustVel.Y)];
-                dust.noGravity = true;
-                dust.scale = 1.2f;
-                Dust.NewDustDirect(origin, 0, 0, LaserDust,
-                    -unit.X * Distance, -unit.Y * Distance, 255, Color.White, 10.0f);
-            }
-
-            for (int j = 0; j < 100; j++)
+            if (Charge >= MaxCharge)
             {
-                if (Main.rand.Next(5) == 0)
+                for (int j = 0; j < 100; j++)
                 {
-                    Vector2 offset = projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
-                    Dust dust = Main.dust[Dust.NewDust((origin + (projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, LaserDust, 0.0f, 0.0f, 125, Color.LightBlue, 4.0f)];
-                    dust.velocity = Vector2.Zero;
-                    dust.noGravity = true;
-                    dust.rotation = projectile.rotation;
+                    if (Main.rand.Next(5) == 0)
+                    {
+                        Vector2 offset = projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
+                        Dust dust = Main.dust[Dust.NewDust((origin + (projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, LaserDust, 0.0f, 0.0f, 125, Color.LightBlue, 4.0f)];
+                        dust.velocity = Vector2.Zero;
+                        dust.noGravity = true;
+                        dust.rotation = projectile.rotation;
+                    }
                 }
             }
         }
@@ -518,16 +538,16 @@ namespace tsorcRevamp.Projectiles {
             {
                 if (ProjectileSource)
                 {
-                    return Main.projectile[HostIdentifier].position + LaserOffset;
+                    return Main.projectile[HostIdentifier].Center + LaserOffset;
                 }
                 else
                 {
-                    return Main.npc[HostIdentifier].position + LaserOffset;
+                    return Main.npc[HostIdentifier].Center + LaserOffset;
                 }
             }
             else
             {                
-                return LaserOrigin + LaserOffset;                
+                return LaserOrigin + LaserOffset;
             }
         }
 

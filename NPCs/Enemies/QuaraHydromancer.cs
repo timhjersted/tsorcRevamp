@@ -67,12 +67,24 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		#endregion
 
+		int inkJetCooldown = 0;
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 2, 0.05f, canTeleport: true, lavaJumping: true);
-
+			tsorcRevampAIs.FighterAI(npc, 2, 0.05f, canTeleport: false, lavaJumping: true);
 			bool lineOfSight = Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, 2, 87); //2, 87 is bubble 2 sound
+			tsorcRevampAIs.SimpleProjectile(npc, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, 2, 87, 0); //2, 87 is bubble 2 sound
+
+			if (Main.GameUpdateCount % 600 == 0 && tsorcRevampWorld.SuperHardMode & Main.netMode != NetmodeID.MultiplayerClient)
+			{
+				Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, Main.myPlayer);
+				inkJetCooldown = 120;
+			}
+
+			if(inkJetCooldown > 0)
+            {
+				npc.velocity = Vector2.Zero;
+				inkJetCooldown--;
+            }
 
 
 			//projectile sound needs volume and pitch variables (the last two below)
@@ -115,7 +127,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				Lighting.AddLight(npc.Center, Color.Blue.ToVector3());
 
-				for (int j = 0; j < 30; j++)
+				for (int j = 0; j < bubbleTimer - 39; j++)
 				{
 					Vector2 dir = Main.rand.NextVector2CircularEdge(48, 64);
 					Vector2 dustPos = npc.Center + dir;
