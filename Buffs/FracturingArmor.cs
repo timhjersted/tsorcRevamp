@@ -15,6 +15,7 @@ namespace tsorcRevamp.Buffs {
         }
         public override void Update(Player player, ref int buffIndex) {
             player.statDefense -= player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor;
+            player.GetModPlayer<tsorcRevampPlayer>().HasFracturingArmor = true;
         }
 
         public override bool ReApply(Player player, int time, int buffIndex) {

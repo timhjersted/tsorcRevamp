@@ -96,6 +96,7 @@ namespace tsorcRevamp {
         public int chestPiggy = -1;
 
         public int FracturingArmor = 1;
+        public bool HasFracturingArmor = false;
 
         public int dragonMorphDamage = 45;
 
@@ -168,6 +169,8 @@ namespace tsorcRevamp {
 
         public Vector2[] oldPos = new Vector2[60];
 
+        public bool CowardsAffliction;
+
         public override void ResetEffects() {
             SilverSerpentRing = false;
             DragonStone = false;
@@ -190,7 +193,6 @@ namespace tsorcRevamp {
             souldroplooptimer = 0;
             souldroptimer = 0;
             SOADrain = false;
-            FracturingArmor = 1;
             MiakodaFull = false;
             MiakodaFullHeal1 = false;
             MiakodaCrescent = false;
@@ -219,6 +221,12 @@ namespace tsorcRevamp {
             StaminaReaper = 0;
 
             ActivePermanentPotions = new List<int>();
+            CowardsAffliction = false;
+
+            if (!HasFracturingArmor) {
+                FracturingArmor = 1;
+            }
+            HasFracturingArmor = false;
         }
 
         public override void PreUpdate() {
@@ -922,6 +930,14 @@ namespace tsorcRevamp {
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].fadeIn = 1f;
                 }
+            }
+
+            if (CowardsAffliction) {
+                if (player.lifeRegen > 0) {
+                    player.lifeRegen = 0;
+                }
+                player.lifeRegenTime = 0;
+                player.lifeRegen -= 240;
             }
         }
 
