@@ -166,7 +166,7 @@ namespace tsorcRevamp {
 
         public List<int> ActivePermanentPotions;
 
-        public Vector2[] oldPos = new Vector2[65535];
+        public Vector2[] oldPos = new Vector2[60];
 
         public override void ResetEffects() {
             SilverSerpentRing = false;
