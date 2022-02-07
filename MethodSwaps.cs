@@ -16,6 +16,7 @@ using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using On.Terraria.Utilities;
 using tsorcRevamp.UI;
+using Terraria.Graphics.Shaders;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -39,7 +40,7 @@ namespace tsorcRevamp {
 
             On.Terraria.Main.StartInvasion += BlockInvasions;
 
-            //On.Terraria.NPC.AI_037_Destroyer += DestroyerAIRevamp;
+            On.Terraria.NPC.AI_037_Destroyer += DestroyerAIRevamp;
 
             On.Terraria.Utilities.NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
 
@@ -1007,7 +1008,6 @@ namespace tsorcRevamp {
 
             if (npc.type >= 134 && npc.type <= 136)
             {
-                npc.velocity.Length();
                 if (npc.type == 134 || (npc.type != 134 && Main.npc[(int)npc.ai[1]].alpha < 128))
                 {
                     if (npc.alpha != 0)
@@ -1036,6 +1036,16 @@ namespace tsorcRevamp {
 
                 if (flag)
                 {
+                    //Slightly more dramatic death
+                    for (int j = 0; j < 4; j++)
+                    {
+                        Vector2 dustVel = npc.velocity + Main.rand.NextVector2Circular(14, 14);
+
+                        Dust.NewDustPerfect(npc.Center, DustID.Fire, dustVel, Scale: 6).noGravity = true;
+                        Dust thisDust = Dust.NewDustPerfect(npc.Center, 130, dustVel * 2f, Scale: 3.5f);
+                        thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+                    }
+
                     npc.life = 0;
                     npc.HitEffect();
                     npc.checkDead();
@@ -1057,6 +1067,7 @@ namespace tsorcRevamp {
                         if (j == num4)
                             num5 = 136;
 
+                        //Spawn probes
                         num2 = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)npc.height), num5, npc.whoAmI);
                         Main.npc[num2].ai[3] = npc.whoAmI;
                         Main.npc[num2].realLife = npc.whoAmI;
@@ -1064,38 +1075,6 @@ namespace tsorcRevamp {
                         Main.npc[num3].ai[0] = num2;
                         NetMessage.SendData(23, -1, -1, null, num2);
                         num3 = num2;
-                    }
-                }
-
-                if (npc.type == 135)
-                {
-                    npc.localAI[0] += Main.rand.Next(4);
-                    if (npc.localAI[0] >= (float)Main.rand.Next(1400, 26000))
-                    {
-                        npc.localAI[0] = 0f;
-                        npc.TargetClosest();
-                        if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
-                        {
-                            Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)(npc.height / 2));
-                            float num6 = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - vector.X + (float)Main.rand.Next(-20, 21);
-                            float num7 = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - vector.Y + (float)Main.rand.Next(-20, 21);
-                            float num8 = (float)Math.Sqrt(num6 * num6 + num7 * num7);
-                            num8 = 8f / num8;
-                            num6 *= num8;
-                            num7 *= num8;
-                            num6 += (float)Main.rand.Next(-20, 21) * 0.05f;
-                            num7 += (float)Main.rand.Next(-20, 21) * 0.05f;
-                            int num9 = 22;
-                            if (Main.expertMode)
-                                num9 = 18;
-
-                            int num10 = 100;
-                            vector.X += num6 * 5f;
-                            vector.Y += num7 * 5f;
-                            int num11 = Projectile.NewProjectile(vector.X, vector.Y, num6, num7, num10, num9, 0f, Main.myPlayer);
-                            Main.projectile[num11].timeLeft = 300;
-                            npc.netUpdate = true;
-                        }
                     }
                 }
             }

@@ -668,10 +668,14 @@ namespace tsorcRevamp.NPCs {
                     }
 
                 case (NPCID.TheDestroyer): {
+                        npc.lifeMax = 66666;
                         npc.value = 200000;
                         npc.scale = 1.25f;
                         npc.damage = Main.expertMode ? 50 /* x4 in expert */: 140; //legacy: 200, vanilla: 70
                         npc.defense = 10; //legacy: 50, vanilla: 0
+                        destroyerAttackIndex = 0; //These variables are static and global, since we don't have any way to attach extra data to the destroyers NPC instance itself
+                        destroyerChargeTimer = 0;
+                        destroyerUncurled = false;
                         break;
                     }
 
@@ -2580,10 +2584,11 @@ namespace tsorcRevamp.NPCs {
 
         public static int destroyerAttackIndex = 0;
         public static Vector2 destroyerLaserSafeAngle = new Vector2(1, 1);
-        public static int destroyerLaserCooldown = 0;
-        public static int destroyerLaserCount = 0;
         public static bool destroyerReachedHeight = false;
-        public static int destoyerChargeTimer = 0;
+        public static int destroyerChargeTimer = 0;
+        public static float destroyerRotation = 0;
+        public static bool destroyerUncurled = false;
+        
         public override void PostAI(NPC npc) {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye) {
                 if (Main.netMode == NetmodeID.SinglePlayer) {
@@ -2628,17 +2633,37 @@ namespace tsorcRevamp.NPCs {
 
             //There's a lot more i'd love to do once I actually edit the destroyers ai...
             if(npc.type == NPCID.TheDestroyerBody && Main.netMode != NetmodeID.MultiplayerClient)
-            {
+            {  
+                if (destroyerAttackIndex == 3 && destroyerReachedHeight)
+                {
+                    Vector2 dustPos = Main.npc[(int)npc.ai[3]].velocity;
+                    dustPos.Normalize();
+                    dustPos *= 48;
+                    dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
+                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Fire, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
+                }
                 if (destroyerAttackIndex != 3)
                 {
-                    if (destoyerChargeTimer == 0)
+                    if (destroyerChargeTimer == 0)
                     {
                         Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + (Main.player[npc.target].velocity * 45), 1);
 
-                        //Default style
-                        int style = npc.target;
+                        int style = -1;
 
-                        //Aim all directly at players position
+                        //Aims in a ring around the player to constrain their movement.
+                        //Impossible for any player other than the one being targeted to dodge, so it doesn't happen in multiplayer.
+                        if (destroyerAttackIndex == 0) {
+                           if(Main.netMode == NetmodeID.SinglePlayer && Main.player[npc.target].active)
+                            {
+                                style = npc.target;
+                            }
+                           else
+                            {
+                                style = -1;
+                            }
+                        }
+
+                        //Aim all directly at players position. This is the default, but it's also here purely for clarity. This code certainly needs more of it.
                         if (destroyerAttackIndex == 1)
                         {
                             style = -1;
@@ -2654,63 +2679,86 @@ namespace tsorcRevamp.NPCs {
                         //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
                         if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2))
                         {
-                            Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, style, npc.whoAmI);
+                            Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, style, npc.whoAmI);
                         }
                     }
 
                     //Fire lasers passively and randomly
-                    if (Main.GameUpdateCount % 90 == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340) && destroyerLaserCooldown == 0)
+                    if (Main.GameUpdateCount % 90 == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340))
                     {
                         Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
                         if (destroyerAttackIndex == 0 || (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4))
                         {
-                            Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
+                            Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
                         }
                     }
                 }
-                else if (destoyerChargeTimer > 0 && destroyerReachedHeight && destoyerChargeTimer % 120 == 0 && Main.rand.NextBool())
+                else if (destroyerChargeTimer > 0 && destroyerChargeTimer <= 860 && destroyerReachedHeight && destroyerChargeTimer % 120 == 0 && Main.rand.NextBool())
                 {
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
-                    Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 30, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
+                    Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 35, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
                 }
             }
 
             
 
             if(npc.type == NPCID.TheDestroyer)
-            {
-                destoyerChargeTimer++;
-                Main.NewText("Attack progress: " + destoyerChargeTimer);
-                Main.NewText("Attack index: " + destroyerAttackIndex);
-
-                if(destroyerAttackIndex == 3)
+            {                
+                destroyerChargeTimer++;
+                
+                if (destroyerAttackIndex == 3)
                 {
-                    if(npc.position.Y < Main.player[npc.target].position.Y - 350 && !destroyerReachedHeight)
+                    if (!destroyerReachedHeight)
                     {
-                        destroyerReachedHeight = true;
-                        destoyerChargeTimer = -300;
+                        Vector2 targetPoint = Main.player[npc.target].Center;
+                        targetPoint.Y -= 400;
+
+                        if (Vector2.Distance(npc.Center, targetPoint) < 40)
+                        {
+                            destroyerReachedHeight = true;
+                            destroyerRotation = MathHelper.Pi;
+                            destroyerChargeTimer = -300;
+                        }
+                        else
+                        {
+                            npc.velocity = Vector2.Lerp(npc.velocity, UsefulFunctions.GenerateTargetingVector(npc.Center, targetPoint, 10), 0.1f);
+                        }
                     }
+                    //Don't do anything until it's set up
                     else
                     {
-                        npc.velocity.Y = -13;
-                    }
+                        //Spawn dust
+                        Vector2 dustPos = npc.velocity;
+                        dustPos.Normalize();
+                        dustPos *= 48;
+                        dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
+                        Dust.NewDustPerfect(npc.Center + dustPos, DustID.Fire, npc.velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
-                    //Don't do anything until it's set up
-                    if (destroyerReachedHeight)
-                    {
-                        float rotation = Main.GameUpdateCount % (MathHelper.TwoPi * 40);
-                        rotation /= 40;
-                        rotation -= MathHelper.Pi;
-
-                        npc.velocity.X = 15 * (float)Math.Cos(rotation);
-                        npc.velocity.Y = 15 * (float)Math.Sin(rotation);
-                        
-                        if(destoyerChargeTimer == 1040)
+                        //Accelerate over time
+                        float factor = (400 + destroyerChargeTimer) / 400f;
+                        if (destroyerChargeTimer > 0)
                         {
-                            destroyerAttackIndex = 0;
-                            destoyerChargeTimer = -120;
-                            destroyerReachedHeight = false;
+                            factor = 1;
+                        }
 
+                        //Start slowing down near the end of the attack
+                        if (destroyerChargeTimer > 1040)
+                        {
+                            factor = 0.2f + (0.8f * (1100 - destroyerChargeTimer) / 60f);
+                        }
+
+                        //Rotate in a circle a decent distance from the player
+                        destroyerRotation += 0.09f * factor;
+                        npc.velocity = new Vector2(60 * factor, 0).RotatedBy(destroyerRotation);
+
+                        
+                        
+                        if(destroyerChargeTimer == 1100)
+                        {
+                            destroyerRotation = MathHelper.Pi;
+                            destroyerAttackIndex = 0;
+                            destroyerChargeTimer = -240;
+                            destroyerReachedHeight = false;
                             //Clean up
                             for(int i = 0; i < Main.maxProjectiles; i++)
                             {
@@ -2719,23 +2767,19 @@ namespace tsorcRevamp.NPCs {
                                     Main.projectile[i].Kill();
                                 }
                             }
-                        }
-                    }                    
+                        }                        
+                    }            
                 }
                 else
-                {
-                    //Change attacks
-                    if (destroyerLaserCooldown > 0)
+                {                    
+                    if (destroyerChargeTimer >= 600)
                     {
-                        destroyerLaserCooldown--;
-                    }
-                    if (destoyerChargeTimer >= 600)
-                    {
-                        destoyerChargeTimer = 0;
+                        destroyerUncurled = true;
+                        destroyerChargeTimer = 0;
                         destroyerAttackIndex++;
-                        if (destroyerAttackIndex >= 4)
+                        if (destroyerAttackIndex == 3)
                         {
-                            destroyerAttackIndex = 0;
+                            Main.NewText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
                         }
                     }
                     if (Main.GameUpdateCount % 90 == 0)
@@ -2745,8 +2789,8 @@ namespace tsorcRevamp.NPCs {
                 }
             }
 
-            //Replace probe lasers too
-            if (npc.type == NPCID.Probe)
+            //Replace probe lasers too, but only let them fire if it's not in mode 3
+            if (npc.type == NPCID.Probe && destroyerAttackIndex != 3)
             {
                 //Probes are *very* likely to shoot. If they're up, most laser will come from them
                 if (Main.rand.Next(60) == 0 && (destroyerAttackIndex == 0 || Main.GameUpdateCount % 600 > 340))
@@ -2760,65 +2804,109 @@ namespace tsorcRevamp.NPCs {
             }
         }
 
-        /* None of this works right, something about the way the game draws the destroyer is fucked up. The game always draws the second segment on *top* of anything else I draw...
+        //Something about the way the game draws the destroyer is fucked up, so instead of re-drawing it myself i'm just fucking with the way the game draws normally draws it
+        //This has to be done in a kinda convoluted way. We can't just end then begin the spritebatch every time we draw a piece
+        public static bool drawingDestroyer = false;
+        public static int lastNPCDrawn = 0;
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
         {
-            if (npc.type == NPCID.TheDestroyer)
+            //The game draws ever NPC based on their whoAmI, but counting *down*. So if it just counted *up* we know it just started drawing this frame and that we should re-start the spritebatch
+            if(npc.whoAmI > lastNPCDrawn)
             {
-                DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyer));
-                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[0]);
-            }
-            if (npc.type == NPCID.TheDestroyerBody)
-            {
-                DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerBody));
-                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[1]);
-            }
-            if (npc.type == NPCID.TheDestroyerTail)
-            {
-                DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerTail));
-                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[2]);
+                drawingDestroyer = false;
             }
 
-            //return false;
-            return base.PreDraw(npc, spriteBatch, drawColor);
+            lastNPCDrawn = npc.whoAmI;
+
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+            {
+                if (destroyerAttackIndex == 3 && !drawingDestroyer)
+                {
+                    spriteBatch.End();
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                    ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
+
+                    drawingDestroyer = true;
+
+                    //Wind up glow intensity as the boss warms up its attack
+                    float lerpPercent = (300 + destroyerChargeTimer) / 300f;
+                    if (destroyerChargeTimer >= 0)
+                    {
+                        lerpPercent = 1;
+                    }
+
+                    //Wind it down as it finishes the attack
+                    if (destroyerChargeTimer > 1040)
+                    {
+                        lerpPercent = 0.01f + ((1100 - destroyerChargeTimer) / 60f);
+                    }
+
+                    //Keep it barely glowing if the Destroyer is still trying to reach the proper height
+                    if (!destroyerReachedHeight)
+                    {
+                        lerpPercent = 0.01f;
+                    }
+
+                    data.UseColor(Color.Lerp(Color.Black, Color.OrangeRed, lerpPercent));
+                    data.Apply(null);
+                }
+                return true;
+            }
+            else
+            {
+                if (drawingDestroyer)
+                {
+                    spriteBatch.End();
+                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+                    drawingDestroyer = false;
+                }
+                return base.PreDraw(npc, spriteBatch, drawColor);
+            }
         }
 
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
         {
-            if (npc.type == NPCID.TheDestroyer)
-            {
-                //DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyer));
-                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[0]);
-            }
-            if (npc.type == NPCID.TheDestroyerBody)
-            {
-                //DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerBody));
-                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[1]);
-            }
-            if (npc.type == NPCID.TheDestroyerTail)
-            {
-                //DrawDestroyerGlow(npc, spriteBatch, ModContent.GetTexture("Terraria/NPC_" + NPCID.TheDestroyerTail));
-                DrawDestroyerGlow(npc, spriteBatch, Main.destTexture[2]);
-            }
             base.PostDraw(npc, spriteBatch, drawColor);
         }
 
-        public void DrawDestroyerGlow(NPC npc, SpriteBatch spriteBatch, Texture2D texture)
+        public void DrawDestroyerGlow(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Color drawColor)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
-            data.Apply(null);
             SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            //spriteBatch.Draw(Main.destTexture[1], npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale, effects, 0f);
-            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale * 1.1f, effects, 0f);
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Draw(Main.destTexture[1], npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale, effects, 0f);
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.Orange * 0.2f, npc.rotation, origin, npc.scale, effects, 0f);
+        }
 
-        }*/
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        {
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
+                    {
+                           Main.npc[i].immune[projectile.owner] = 5;                        
+                    }
+                }
+            }
+            base.OnHitByProjectile(npc, projectile, damage, knockback, crit);
+        }
+
+        public override void OnHitByItem(NPC npc, Player player, Item item, int damage, float knockback, bool crit)
+        {
+            if (npc.type == NPCID.TheDestroyer || npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type == NPCID.TheDestroyer || Main.npc[i].type == NPCID.TheDestroyerBody || Main.npc[i].type == NPCID.TheDestroyerTail)
+                    {
+                        Main.npc[i].immune[player.whoAmI] = 5;
+                    }
+                }
+            }
+            base.OnHitByItem(npc, player, item, damage, knockback, crit);
+        }
 
         public override bool CheckDead(NPC npc) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
@@ -2880,7 +2968,10 @@ namespace tsorcRevamp.NPCs {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
                 Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
+
+                
             }
+            
             if (npc.type == NPCID.SkeletronHead && !Main.expertMode) {
                 Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
                 Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());

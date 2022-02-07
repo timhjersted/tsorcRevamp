@@ -51,15 +51,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
             softFlicker = true;
             LaserSound = SoundID.Item12.WithVolume(0.5f);
 
-            CastLight = Main.rand.NextBool();
+            CastLight = Main.rand.NextBool(); //Literally the biggest performance hit of all of this lmfao
 
             Additive = true;
-            //ArmorShaderData data = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.LivingOceanDye), Main.LocalPlayer);            
         }
 
-        public static bool flipBool = false;
 
-        //This laser does almost nothing unique. As such its class is extremely simple: Just some parameters in its SetDefaults, and code in its AI to despawn half of them instead of firing (to avoid looking janky)
 
         Vector2 target;
         Vector2 initialTarget;
@@ -77,19 +74,37 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 //Todo: Stop these from swinging back toward the player after passing them once
                 if(projectile.ai[0] >= 2000)
                 {
-                    FiringDuration = 90;
-                    if (targetPlayer == null)
+                    if (Main.player[(int)projectile.ai[0] - 2000] != null && Main.player[(int)projectile.ai[0] - 2000].active)
                     {
-                        targetPlayer = Main.player[(int)projectile.ai[0] - 2000];
-                        target = Main.player[(int)projectile.ai[0] - 2000].Center;// + Main.rand.NextVector2Circular(220,200);
-                    }
+                        FiringDuration = 90;
+                        if (targetPlayer == null)
+                        {
+                            targetPlayer = Main.player[(int)projectile.ai[0] - 2000];
+                            target = Main.player[(int)projectile.ai[0] - 2000].Center;// + Main.rand.NextVector2Circular(220,200);
+                        }
 
-                    if(FiringTimeLeft > 0)
-                    {
-                        simulatedVelocity += UsefulFunctions.GenerateTargetingVector(target, targetPlayer.Center, 0.5f);
+                        if (FiringTimeLeft > 30)
+                        {
+                            float lastLength = simulatedVelocity.LengthSquared();
+                            simulatedVelocity += UsefulFunctions.GenerateTargetingVector(target, targetPlayer.Center, 0.5f);
+
+                            //Stop once it passes the player and starts slowing down to change directions
+                            if (lastLength > simulatedVelocity.LengthSquared())
+                            {
+                                FiringTimeLeft = 30;
+                            }                            
+                        }
+
+                        //Move target point according to velocity
                         target += simulatedVelocity;
+
+                        //Update projectile aim to aim at target point
+                        projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
                     }
-                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+                    else
+                    {
+                        projectile.Kill();
+                    }
                 }
                 else if (projectile.ai[0] >= 1000)
                 {
@@ -132,7 +147,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     if (Charge <= MaxCharge - 1)
                     {
                         initialTarget = targetPlayer.Center;
-
                     }
 
                     target = UsefulFunctions.GenerateTargetingVector(projectile.Center, initialTarget, 1);
@@ -200,9 +214,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
                 projectile.velocity.Normalize();
             }
-            
-            
-
 
             base.AI();
             if(Charge == MaxCharge - 1)
