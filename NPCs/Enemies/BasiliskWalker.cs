@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				bioSpitDamage = 35;
 			}
 
-			npc.HitSound = SoundID.NPCHit1;
+			npc.HitSound = SoundID.NPCHit29;
 			npc.DeathSound = SoundID.NPCDeath5;
 			npc.value = 400; //was 2000
 			npc.lavaImmune = true;
@@ -85,11 +85,17 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (spawnInfo.water) return 0f;
 
 			if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(24) == 1) return 1;
+			
 
 			//new chance to spawn in the corruption or crimson below ground (poison and cursed aren't activated until EoW and Skeletron respectively for balance; now we'll finally have a unique mod npc that fits well in these zones)
-			if (!Main.hardMode && Corruption && !Main.dayTime && !AboveEarth && Main.rand.Next(20) == 1) return 1;
+			if (!Main.hardMode && P.ZoneCorrupt && !Main.dayTime && !AboveEarth && Main.rand.Next(20) == 1) return 1;
 
-			if (!Main.hardMode && Corruption && Main.dayTime && !AboveEarth && Main.rand.Next(40) == 1) return 1;
+			if (!Main.hardMode && P.ZoneCorrupt && Main.dayTime && !AboveEarth && Main.rand.Next(40) == 1) return 1;
+
+			//higher chance to spawn in the crimson 
+			if (!Main.hardMode && P.ZoneCrimson && !Main.dayTime && Main.rand.Next(5) == 1) return 1;
+
+			if (!Main.hardMode && P.ZoneCrimson && Main.dayTime && Main.rand.Next(10) == 1) return 1;
 
 			//jungle or meteor
 			if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(10) == 1) return 1;

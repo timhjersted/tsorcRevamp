@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             projectile.timeLeft = 0;
             {
-                Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
+                Main.PlaySound(6, (int)projectile.position.X, (int)projectile.position.Y, 0, 0.3f, -4.7f); //grass cut slowed down
                 if (projectile.owner == Main.myPlayer)
 
                 {

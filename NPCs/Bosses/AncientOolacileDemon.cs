@@ -40,6 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses
 		int meteorDamage = 17;
 		int cultistFireDamage = 18;
 		int cultistMagicDamage = 25;
+		int cultistLightningDamage = 19;
 		int fireBreathDamage = 14;
 		int lostSoulDamage = 19;
 
@@ -55,6 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			meteorDamage = (int)(meteorDamage / 2);
 			cultistFireDamage = (int)(cultistFireDamage / 2);
 			cultistMagicDamage = (int)(cultistMagicDamage / 2);
+			cultistLightningDamage = (int)(cultistLightningDamage / 2);
 			fireBreathDamage = (int)(fireBreathDamage / 2);
 			lostSoulDamage = (int)(lostSoulDamage / 2);
 			greatFireballDamage = (int)(greatFireballDamage / 2);
@@ -273,7 +275,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			//tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], ProjectileID.LostSoulHostile, lostSoulDamage, 3, lineOfSight, true, 4, 9);
 			
 			//SPAWN FIRE LURKER
-			if ((spawnedDemons < 1) && npc.life <= 2500 && Main.rand.Next(3000) == 1)
+			if ((spawnedDemons < 2) && npc.life >= 2000 && Main.rand.Next(3000) == 1)
 			{
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
@@ -332,7 +334,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					{
 						int lob = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
 						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, -0.5f);
-						if (npc.localAI[1] >= 180f)
+						if (npc.localAI[1] >= 186f)
 						{ npc.localAI[1] = 1f; }
 					}
 					
@@ -360,7 +362,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 					}
 
-					if (npc.localAI[1] >= 170f)
+					if (npc.localAI[1] >= 175f)
 					{
 						npc.localAI[1] = 1f;
 					}
@@ -395,7 +397,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				//speed += Main.rand.NextVector2Circular(-10, -8);
 				if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
 					{
-						int lob = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistMagicDamage, 0f, Main.myPlayer);
+						int lob = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
 						//ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
 						//DesertDjinnCurse; ProjectileID.DD2DrakinShot
 

@@ -11,8 +11,8 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			npc.HitSound = SoundID.NPCHit26;
-			npc.DeathSound = SoundID.NPCDeath29;
+			npc.HitSound = SoundID.NPCHit29; //spider
+			npc.DeathSound = SoundID.NPCDeath29;//lizard
 			npc.damage = 26;
 			npc.lifeMax = 35;
 			npc.defense = 8;
@@ -85,8 +85,19 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				readyToFire = true;
 			}
-			tsorcRevampAIs.SimpleProjectile(npc, ref npc.ai[1], 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, readyToFire, true, 2, 65);
-			
+			tsorcRevampAIs.SimpleProjectile(npc, ref npc.ai[1], 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, readyToFire, true, 2, 63); //blowpipe
+																																								 //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, 0.3f); //fire
+
+			//TELEGRAPH DUSTS
+			if (npc.ai[1] >= 150 && npc.ai[1] <= 170)
+			{
+				Lighting.AddLight(npc.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(2) == 1)
+				{
+					Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, npc.velocity.X, npc.velocity.Y);
+					//Dust.NewDust(npc.position, npc.width, npc.height, DustID.EmeraldBolt, npc.velocity.X, npc.velocity.Y);
+				}
+			}
 		}
 
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)

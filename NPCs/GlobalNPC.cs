@@ -96,6 +96,9 @@ namespace tsorcRevamp.NPCs
             if (spawnInfo.player.ZoneCrimson && !Main.hardMode)
             {
                 pool.Add(NPCID.LacBeetle, 0.02f);
+                pool.Add(NPCID.Drippler, 0.1f); 
+                pool.Add(NPCID.BloodCrawler, 0.002f);
+                pool.Add(NPCID.BloodCrawlerWall, 0.002f);
             }
             //meteor
             if (spawnInfo.player.ZoneMeteor && !Main.hardMode)

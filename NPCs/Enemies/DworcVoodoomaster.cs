@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			npc.HitSound = SoundID.NPCHit26;
+			npc.HitSound = SoundID.NPCHit29;
 			npc.DeathSound = SoundID.NPCDeath29;
 			npc.damage = 20;
 			npc.lifeMax = 212;
@@ -97,8 +97,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			bool clearLineofSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
 
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, 2, 17, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, 2, 17);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, 2, 20, 0);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, 2, 100);
 
 			if (poisonStrikeTimer >= 60)
 			{

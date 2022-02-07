@@ -12,8 +12,8 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			npc.HitSound = SoundID.NPCHit26;
-			npc.DeathSound = SoundID.NPCDeath29;
+			npc.HitSound = SoundID.NPCHit29;
+			npc.DeathSound = SoundID.NPCDeath31;
 			npc.damage = 33;
 			npc.lifeMax = 1260;
 			npc.defense = 28;
@@ -74,8 +74,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			tsorcRevampAIs.FighterAI(npc, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3);
 
 			bool clearLineofSight = Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, 2, 17, 0);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, clearLineofSight, true, 2, 17);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, 2, 20, 0); 
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, clearLineofSight, true, 2, 100);//2,100 cursed firewall
 			if (poisonStrikeTimer >= 60)
 			{
 				Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);

@@ -20,8 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			npc.height = 40;
 			npc.lifeMax = 7000;
 			npc.scale = 1;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
+			npc.HitSound = SoundID.NPCHit29;
+			npc.DeathSound = SoundID.NPCDeath31;
 			npc.value = 12500;
 			npc.width = 18;
 			banner = npc.type;
@@ -79,8 +79,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			bool clearLineofSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
 
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, 2, 17);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, 2, 17);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, 2, 20);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, 2, 100);
 
 			if (poisonStrikeTimer >= 60)
 			{

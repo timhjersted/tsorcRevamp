@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetDefaults()
         {
-			npc.HitSound = SoundID.NPCHit26;
+			npc.HitSound = SoundID.NPCHit29;
 			npc.DeathSound = SoundID.NPCDeath29;
 			npc.damage = 30;
             npc.lifeMax = 25;

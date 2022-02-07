@@ -86,18 +86,34 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			strikeTimer++;
 			skeletonTimer++;
 			bool lineOfSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
-			tsorcRevampAIs.SimpleProjectile(npc, ref strikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, lineOfSight && Main.rand.NextBool(), false, 2, 17, 0);
-			if (tsorcRevampAIs.SimpleProjectile(npc, ref strikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, !lineOfSight, false, 2, 17, 0))
+			tsorcRevampAIs.SimpleProjectile(npc, ref strikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), deathStrikeDamage, 8, lineOfSight && Main.rand.NextBool(), false, 2, 17, 0);
+			if (tsorcRevampAIs.SimpleProjectile(npc, ref strikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0, !lineOfSight, false, 2, 17, 0))
 			{
 				npc.life += 10;
 				npc.HealEffect(10);
 				if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
 			}
 
-			if (npc.justHit)
+			//IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
+			//(WORKS WITH 2 TELEGRAPH DUSTS IN DRAW)
+			if (npc.justHit && strikeTimer <= 109 )
 			{
-				strikeTimer = 0;
+				if (Main.rand.Next(3) == 0)
+				{
+					strikeTimer = 110;
+				}
+				else
+                {
+					strikeTimer = 0;
+				}
 			}
+			if (npc.justHit && Main.rand.Next(18) == 1)
+			{
+				tsorcRevampAIs.Teleport(npc, 20, true);
+				strikeTimer = 70f;
+			}
+
+
 
 			if (skeletonTimer > 300 && lineOfSight)
 			{
@@ -112,7 +128,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 					}
 					else
 					{
-						spawnType = ModContent.NPCType<NPCs.Enemies.SuperHardMode.HydrisElemental>();
+						spawnType = ModContent.NPCType<NPCs.Enemies.SuperHardMode.HydrisElemental>(); //NPCID.ChaosElemental;
 					}
 
 					int spawnedNPC = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, spawnType, 0);
@@ -127,13 +143,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region DRAW
 		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
 		{
-			if (strikeTimer >= 105)
+			//BlACK DUST is used to show stunlock worked, PINK is used to show unstoppable attack incoming
+			//BLACK DUST
+			if (strikeTimer >= 60)
 			{
-				Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-				if (Main.rand.Next(3) == 1)
+				Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(2) == 1)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 41, npc.velocity.X, npc.velocity.Y); //41 is weird anti-gravity blue dust
-					Dust.NewDust(npc.position, npc.width, npc.height, 41, npc.velocity.X, npc.velocity.Y);
+					//Dust.NewDust(npc.position, npc.width, npc.height, 41, npc.velocity.X, npc.velocity.Y); //41 wassss weird anti-gravity blue dust but now I'm seeing grass clippings; not sure what happened
+					Dust.NewDust(npc.position, npc.width, npc.height, 54, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f); //54 is black smoke
+					Dust.NewDust(npc.position, npc.width, npc.height, 54, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 2f); 
+					
+				}
+			}
+			//PINK DUST
+			if (strikeTimer >= 110)
+			{
+				Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(2) == 1)
+				{
+					int pink = Dust.NewDust(npc.position, npc.width, npc.height, DustID.CrystalSerpent, npc.velocity.X, npc.velocity.Y, Scale: 1.5f);
+
+					Main.dust[pink].noGravity = true;
 				}
 			}
 		}
