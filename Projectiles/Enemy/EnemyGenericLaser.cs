@@ -126,6 +126,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
         //How long (in frames) should the laser fire once it is charged? Defaults to 2 seconds
         public int FiringDuration = 120;
 
+        //Flag used when drawing it to inform the laser it's being drawn in a context where the spritebatch is in Additive mode. Not really intended to be messed with lol
+        public bool AdditiveContext = false;
+
         //How long should each "segment" of the laser be? This value should pretty much be fine
         private const float MOVE_DISTANCE = 20f;
 
@@ -204,9 +207,17 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) 
-        {
+        {           
+
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
+                
+                //Additive lasers get drawn on their own outside the predraw hook in a specific context
+                if (Additive && !AdditiveContext)
+                {
+                    return false;
+                }
+
                 Color color;
                 if (LaserTexture == TransparentTextureHandler.TransparentTextureType.GenericLaser)
                 {
@@ -255,20 +266,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
                 } 
             }
-
-
             
             return false;
         }
 
-        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50) {
-
-            
-            if (Additive && ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2)))
-            {
-                spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            }
+        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50)
+        {            
 
             float r = unit.ToRotation() + rotation;
             Rectangle bodyFrame = bodyRect;
@@ -298,18 +301,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 spriteBatch.Draw(texture, startPos - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);               
             }            
             startPos = start + i * unit;
-            spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
-            
+            spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);            
 
             if (CastLight)
             {
                 CastLights();
-            }
-
-            if (Additive && ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2)))
-            {
-                spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
             }
         }
 

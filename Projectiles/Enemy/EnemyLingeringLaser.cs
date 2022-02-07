@@ -71,7 +71,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
             if (projectile.ai[0] >= 0)
             {
                 //Big beam. Swings towards the player
-                //Todo: Stop these from swinging back toward the player after passing them once
                 if(projectile.ai[0] >= 2000)
                 {
                     if (Main.player[(int)projectile.ai[0] - 2000] != null && Main.player[(int)projectile.ai[0] - 2000].active)
@@ -80,16 +79,21 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         if (targetPlayer == null)
                         {
                             targetPlayer = Main.player[(int)projectile.ai[0] - 2000];
-                            target = Main.player[(int)projectile.ai[0] - 2000].Center;// + Main.rand.NextVector2Circular(220,200);
+                            target = Main.player[(int)projectile.ai[0] - 2000].Center;
+
+
                         }
 
                         if (FiringTimeLeft > 30)
                         {
                             float lastLength = simulatedVelocity.LengthSquared();
                             simulatedVelocity += UsefulFunctions.GenerateTargetingVector(target, targetPlayer.Center, 0.5f);
-
+                            if (simulatedVelocity.HasNaNs())
+                            {
+                                simulatedVelocity = Vector2.Zero;
+                            }
                             //Stop once it passes the player and starts slowing down to change directions
-                            if (lastLength > simulatedVelocity.LengthSquared())
+                            if (simulatedVelocity == Vector2.Zero || lastLength > simulatedVelocity.LengthSquared())
                             {
                                 FiringTimeLeft = 30;
                             }                            

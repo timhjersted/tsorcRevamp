@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Graphics;
 using On.Terraria.Utilities;
 using tsorcRevamp.UI;
 using Terraria.Graphics.Shaders;
+using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp {
     class MethodSwaps {
@@ -55,6 +56,30 @@ namespace tsorcRevamp {
 
             On.Terraria.Player.HasUnityPotion += HasWormholePotion;
             On.Terraria.Player.TakeUnityPotion += ConsumeWormholePotion;
+
+            On.Terraria.Main.DrawProjectiles += DrawProjectilesPatch;
+        }
+
+        private static void DrawProjectilesPatch(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
+        {
+            orig(self);
+
+            //Draw all the additive lasers in one big batch
+            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            for(int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].modProjectile is EnemyGenericLaser)
+                {
+                    EnemyGenericLaser laser = (EnemyGenericLaser)Main.projectile[i].modProjectile;
+                    laser.AdditiveContext = true;
+                    if((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2))
+                    {
+                        laser.PreDraw(Main.spriteBatch, Lighting.GetColor((int)laser.projectile.Center.X / 16, (int)(laser.projectile.Center.Y / 16f)));
+                    }
+                    laser.AdditiveContext = false;
+                }
+            }
+            Main.spriteBatch.End();
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)
@@ -1037,7 +1062,7 @@ namespace tsorcRevamp {
                 if (flag)
                 {
                     //Slightly more dramatic death
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < 2; j++)
                     {
                         Vector2 dustVel = npc.velocity + Main.rand.NextVector2Circular(14, 14);
 
