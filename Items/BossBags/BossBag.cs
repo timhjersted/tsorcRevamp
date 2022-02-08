@@ -31,6 +31,28 @@ namespace tsorcRevamp.Items.BossBags {
     }
 
     #region PreHardMode
+
+    public class OolacileDemonBag : BossBag
+    {
+        public override int BossBagNPC => ModContent.NPCType<AncientOolacileDemon>();
+        public override void OpenBossBag(Player player)
+        {
+            var Slain = tsorcRevampWorld.Slain;
+            if (Slain.ContainsKey(ModContent.NPCType<AncientOolacileDemon>()))
+            { //if the boss has been killed
+                if (Slain[ModContent.NPCType<AncientOolacileDemon>()] == 0)
+                { //and the key value is 0
+                    VanillaBossBag.AddBossBagSouls(ModContent.NPCType<AncientOolacileDemon>(), player); //give the player souls
+                    Slain[ModContent.NPCType<AncientOolacileDemon>()] = 1; //set the value to 1
+                }
+            }
+
+            player.QuickSpawnItem(ModContent.ItemType<Items.StaminaVessel>(), 1);
+            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BandOfGreatCosmicPower>(), 1);
+            player.QuickSpawnItem(ItemID.CloudinaBottle, 1);
+            
+        }
+    }
     public class SlograBag : BossBag
     {
         public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Slogra>();

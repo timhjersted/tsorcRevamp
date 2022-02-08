@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			npc.scale = 1;
 			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath5;
-			npc.value = 10000;
+			npc.value = 56000;
 			npc.knockBackResist = 0.0f;
 			npc.lavaImmune = true;
 
@@ -472,13 +472,14 @@ namespace tsorcRevamp.NPCs.Bosses
 		}
         public override void NPCLoot()
 		{
-			//if not killed before
-			if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientOolacileDemon>())))
-			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BandOfGreatCosmicPower>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-			}
+			//if not killed before (has boss bag now)
+			//if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<AncientOolacileDemon>())))
+			//{
+				//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
+				//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.BandOfGreatCosmicPower>(), 1);
+				//Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
+				//Item.NewItem(npc.getRect(), ItemID.CloudinaBottle, 1);
+			//}
 
 			if (Main.rand.Next(99) < 40) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
 			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
