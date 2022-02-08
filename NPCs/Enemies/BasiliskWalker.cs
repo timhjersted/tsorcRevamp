@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 1, 0.03f, canTeleport: false, soundType: 26, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
+			tsorcRevampAIs.FighterAI(npc, 1, 0.03f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
 
 			bool clearLineOfSight = Collision.CanHitLine(npc.Center, 2, 2, Main.player[npc.target].Center, 2, 2);
 			if(tsorcRevampAIs.SimpleProjectile(npc, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && Main.rand.Next(15) != 0, true))

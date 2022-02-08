@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			}
 
 			//IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
-			//(WORKS WITH 2 TELEGRAPH DUSTS IN DRAW)
+			//(WORKS WITH 2 TELEGRAPH DUSTS IN DRAW, AT TIMER 60 AND 110)
 			if (npc.justHit && strikeTimer <= 109 )
 			{
 				if (Main.rand.Next(3) == 0)

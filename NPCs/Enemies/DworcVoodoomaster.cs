@@ -29,7 +29,10 @@ namespace tsorcRevamp.NPCs.Enemies
 			animationType = NPCID.Skeleton;
 			Main.npcFrameCount[npc.type] = 15;
 		}
-
+		public override void SetStaticDefaults()
+		{
+			DisplayName.SetDefault("Dworc Voodoo Master");
+		}
 		public override void NPCLoot()
 		{
 			Player player = Main.player[npc.target];
@@ -97,14 +100,25 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			bool clearLineofSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
 
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, 2, 20, 0);
+			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, 2, 20, 0);
 			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, 2, 100);
 
-			if (poisonStrikeTimer >= 60)
+			if (poisonStrikeTimer >= 60)//GREEN DUST
 			{
 				Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
 			}
-			if (poisonStormTimer >= 240)
+			
+			if (poisonStrikeTimer >= 110)//PINK DUST
+			{
+				Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(2) == 1)
+				{
+					int pink = Dust.NewDust(npc.position, npc.width, npc.height, DustID.CrystalSerpent, npc.velocity.X, npc.velocity.Y, Scale: 1.5f);
+
+					Main.dust[pink].noGravity = true;
+				}
+			}
+			if (poisonStormTimer >= 240)//SHRINKING CIRCLE DUST
 			{
 				UsefulFunctions.DustRing(npc.Center, 32, DustID.CursedTorch, 12, 4);
 				Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
@@ -112,6 +126,25 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					npc.velocity = Vector2.Zero;
 				}
+			}
+
+			//IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
+			//(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
+			if (npc.justHit && poisonStrikeTimer <= 109)
+			{
+				if (Main.rand.Next(3) == 0)
+				{
+					poisonStrikeTimer = 110;
+				}
+				else
+				{
+					poisonStrikeTimer = 0;
+				}
+			}
+			if (npc.justHit && Main.rand.Next(18) == 1)
+			{
+				tsorcRevampAIs.Teleport(npc, 20, true);
+				poisonStrikeTimer = 70f;
 			}
 
 			//Transparency. Higher alpha = more invisible

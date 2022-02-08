@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 			npc.localAI[1]++;
 			bool lineOfSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
-			tsorcRevampAIs.FighterAI(npc, 1, 0.1f, canTeleport: true, lavaJumping: true);
+			tsorcRevampAIs.FighterAI(npc, 1, 0.1f, canTeleport: false, lavaJumping: true);
 			tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 179, ProjectileID.CultistBossFireBallClone, cultistMagicDamage, 0.1f, Main.rand.Next(220) == 1, false, 2, 17);
 			tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 179, ProjectileID.CultistBossFireBall, cultistMagicDamage, 1, Main.rand.Next(20) == 1, false, 3, 34);
 			//tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 160, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 8, Main.rand.Next(2) == 1, false, 2, 34, 0);

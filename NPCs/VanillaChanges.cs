@@ -914,6 +914,7 @@ namespace tsorcRevamp.NPCs {
                         || npc.type == NPCID.SmallHeadacheSkeleton
                         || npc.type == NPCID.BigSlimedZombie
                         || npc.type == NPCID.RedSlime
+                        || npc.type == NPCID.BlueSlime
                         || npc.type == NPCID.GreenSlime
                         || npc.type == NPCID.TheGroom
                         || npc.type == NPCID.Unicorn
@@ -958,6 +959,7 @@ namespace tsorcRevamp.NPCs {
                         //|| npc.type == NPCID.WindyBalloon
                         || npc.type == NPCID.UmbrellaSlime
                         || npc.type == NPCID.ToxicSludge
+                        || npc.type == NPCID.BloodCrawlerWall
                         || npc.type == NPCID.BoundGoblin
                         || npc.type == NPCID.BoundMechanic
                         || npc.type == NPCID.BoundWizard) {
