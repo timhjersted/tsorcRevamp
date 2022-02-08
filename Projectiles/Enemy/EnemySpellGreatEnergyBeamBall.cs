@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				if (projectile.ai[1] == 0f)
 				{
 					projectile.ai[1] = 1f;
-					Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+					
 				}
 				projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + 1.57f;
 				if (projectile.velocity.Y > 16f)
@@ -57,7 +57,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 			}
 			projectile.timeLeft = 0;
 			{
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 93, 0.09f, 0f); //electric zap long
+				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
 				if (projectile.position.X + (float)(projectile.width / 2) > Main.player[projectile.owner].position.X + (float)(Main.player[projectile.owner].width / 2))
 				{
 					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -13), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), projectile.damage, 8f, projectile.owner);

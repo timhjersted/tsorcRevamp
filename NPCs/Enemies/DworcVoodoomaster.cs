@@ -193,6 +193,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
+				Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion, 1);
+				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), 1);
 			}
 		}
 		#endregion

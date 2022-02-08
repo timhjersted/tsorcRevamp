@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.width = 20;
 			npc.lifeMax = 2600;
 			npc.scale = 1.1f;
-			npc.HitSound = SoundID.NPCHit1;
+			npc.HitSound = SoundID.NPCHit37;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 6700;
 			npc.rarity = 3;
@@ -95,30 +95,86 @@ namespace tsorcRevamp.NPCs.Enemies
 		#endregion
 
 		float attackTimer = 0;
+		float bigAttackTimer = 0;
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 2.8f, 0.05f, .2f, canTeleport: true, lavaJumping: true);
+			bigAttackTimer++;
+			tsorcRevampAIs.FighterAI(npc, 1.8f, 0.03f, .2f, canTeleport: true, lavaJumping: true);
 
 			bool clearShot = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 1000;
 
-			tsorcRevampAIs.SimpleProjectile(npc, ref attackTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, clearShot && Main.rand.NextBool(), soundType: 2, soundStyle: 17);
-			tsorcRevampAIs.SimpleProjectile(npc, ref attackTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, clearShot, false, soundType: 2, soundStyle: 17);
+			if(tsorcRevampAIs.SimpleProjectile(npc, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBall>(), energyBallDamage, 8, clearShot && Main.rand.NextBool()))
+			{ Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 28, 0.2f, -0.8f); }
+			if(tsorcRevampAIs.SimpleProjectile(npc, ref bigAttackTimer, 250, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatEnergyBeamBall>(), greatEnergyBeamDamage, 8, clearShot, false))
+			{ //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 75, 0.2f, 0.2f);
+			  
+			 }
 			
-			if(tsorcRevampAIs.SimpleProjectile(npc, ref attackTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, !clearShot, false, soundType: 2, soundStyle: 17))
+			if(tsorcRevampAIs.SimpleProjectile(npc, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, !clearShot, false, soundType: 2, soundStyle: 17))
             {
 				npc.life += 10;
 				npc.HealEffect(10);
 				if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
 			}
+			//TELEGRAPHS
+			//BlACK DUST is used to show stunlock worked, PINK is used to show unstoppable attack incoming
+			//BLACK DUST
+			if (attackTimer >= 60)
+			{
+				
+				if (Main.rand.Next(2) == 1)
+				{
+					int black = Dust.NewDust(npc.position, npc.width, npc.height, 54, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f); //54 is black smoke
+					Main.dust[black].noGravity = true;
 
-			if (Main.rand.Next(230) == 1)
+				}
+			}
+			//PINK DUST
+			if (attackTimer >= 110)
+			{
+				Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 2f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				if (Main.rand.Next(2) == 1)
+				{
+					int pink = Dust.NewDust(npc.position, npc.width, npc.height, DustID.CrystalSerpent, npc.velocity.X, npc.velocity.Y, Scale: 1.5f);
+
+					Main.dust[pink].noGravity = true;
+				}
+			}
+
+			//IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
+			//(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
+			if (npc.justHit && attackTimer <= 109)
+			{
+				if (Main.rand.Next(3) == 0)
+				{
+					attackTimer = 110;
+				}
+				else
+				{
+					attackTimer = 0;
+				}
+			}
+			if (npc.justHit && Main.rand.Next(8) == 1)
+			{
+				tsorcRevampAIs.Teleport(npc, 20, true);
+				attackTimer = 70f;
+				npc.netUpdate = true;
+			}
+
+			//Transparency. Higher alpha = more invisible
+			if (npc.justHit)
 			{
 				npc.alpha = 0;
 				npc.netUpdate = true;
 			}
+			if (Main.rand.Next(230) == 1)
+			{
+				npc.alpha = 0; 
+				npc.netUpdate = true;
+			}
 			if (Main.rand.Next(150) == 1)
 			{
-				npc.alpha = 215;
+				npc.alpha = 230; 
 				npc.netUpdate = true;
 			}			
 
@@ -129,7 +185,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.IlluminantBat);
 			}
 
-			if (attackTimer > 60)
+			//BIG ATTACK DUST CIRCLE
+			if (bigAttackTimer > 180)
 			{
 				for (int j = 0; j < 10; j++)
 				{
@@ -148,7 +205,11 @@ namespace tsorcRevamp.NPCs.Enemies
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Warlock Gore 2"), 1.1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Warlock Gore 3"), 1.1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Warlock Gore 2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Warlock Gore 3"), 1.1f);			
+			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Warlock Gore 3"), 1.1f);
+
+			Item.NewItem(npc.getRect(), ItemID.LifeforcePotion, 1);
+			Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion, 1);
+			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), 3);
 		}
 		#endregion
 	}

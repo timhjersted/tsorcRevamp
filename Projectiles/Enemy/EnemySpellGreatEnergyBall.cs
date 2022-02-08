@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.ignoreWater = true;
         }
         public override void Kill(int timeLeft) {
-            Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 93, 0.2f, .1f); //electric zap
+            Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 94, 0.09f, .0f); // electric thud quick
             //Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height - 16), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyStrike>(), projectile.damage, 3f, projectile.owner);
             Vector2 projectilePos = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
