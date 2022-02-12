@@ -58,6 +58,19 @@ namespace tsorcRevamp {
             On.Terraria.Player.TakeUnityPotion += ConsumeWormholePotion;
 
             On.Terraria.Main.DrawProjectiles += DrawProjectilesPatch;
+
+            On.Terraria.Main.DrawNPCs += DrawNPCsPatch;
+        }
+
+        private static void DrawNPCsPatch(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+        {
+            orig(self, behindTiles);
+            if (NPCs.VanillaChanges.drawingDestroyer)
+            {
+                NPCs.VanillaChanges.drawingDestroyer = false;
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
+            }
         }
 
         private static void DrawProjectilesPatch(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
@@ -65,7 +78,7 @@ namespace tsorcRevamp {
             orig(self);
 
             //Draw all the additive lasers in one big batch
-            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             for(int i = 0; i < Main.maxProjectiles; i++)
             {
                 if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].modProjectile is EnemyGenericLaser)
@@ -79,7 +92,7 @@ namespace tsorcRevamp {
                     laser.AdditiveContext = false;
                 }
             }
-            Main.spriteBatch.End();
+            Main.spriteBatch.End();            
         }
 
         private static void PotionBagLootAllPatch(On.Terraria.UI.ChestUI.orig_LootAll orig)
@@ -1077,6 +1090,8 @@ namespace tsorcRevamp {
                 }
             }
 
+
+            //Spawn segments
             if (Main.netMode != 1)
             {
                 if (npc.ai[0] == 0f && npc.type == 134)
@@ -1104,6 +1119,29 @@ namespace tsorcRevamp {
                 }
             }
 
+            float num17 = 16f;
+            bool flag2 = false;
+            if (Main.dayTime || Main.player[npc.target].dead)
+            {
+                flag2 = false;
+                npc.velocity.Y += 1f;
+                if ((double)npc.position.Y > Main.worldSurface * 16.0)
+                {
+                    npc.velocity.Y += 1f;
+                    num17 = 32f;
+                }
+
+                if ((double)npc.position.Y > Main.rockLayer * 16.0)
+                {
+                    for (int n = 0; n < 200; n++)
+                    {
+                        if (Main.npc[n].aiStyle == npc.aiStyle)
+                            Main.npc[n].active = false;
+                    }
+                }
+            }
+
+            
             int num12 = (int)(npc.position.X / 16f) - 1;
             int num13 = (int)((npc.position.X + (float)npc.width) / 16f) + 2;
             int num14 = (int)(npc.position.Y / 16f) - 1;
@@ -1120,7 +1158,6 @@ namespace tsorcRevamp {
             if (num15 > Main.maxTilesY)
                 num15 = Main.maxTilesY;
 
-            bool flag2 = false;
             if (!flag2)
             {
                 Vector2 vector2 = default(Vector2);
@@ -1178,26 +1215,6 @@ namespace tsorcRevamp {
                 npc.localAI[1] = 0f;
             }
 
-            float num17 = 16f;
-            if (Main.dayTime || Main.player[npc.target].dead)
-            {
-                flag2 = false;
-                npc.velocity.Y += 1f;
-                if ((double)npc.position.Y > Main.worldSurface * 16.0)
-                {
-                    npc.velocity.Y += 1f;
-                    num17 = 32f;
-                }
-
-                if ((double)npc.position.Y > Main.rockLayer * 16.0)
-                {
-                    for (int n = 0; n < 200; n++)
-                    {
-                        if (Main.npc[n].aiStyle == npc.aiStyle)
-                            Main.npc[n].active = false;
-                    }
-                }
-            }
 
             float num18 = 0.1f;
             float num19 = 0.15f;
@@ -1379,6 +1396,11 @@ namespace tsorcRevamp {
 
             if (((npc.velocity.X > 0f && npc.oldVelocity.X < 0f) || (npc.velocity.X < 0f && npc.oldVelocity.X > 0f) || (npc.velocity.Y > 0f && npc.oldVelocity.Y < 0f) || (npc.velocity.Y < 0f && npc.oldVelocity.Y > 0f)) && !npc.justHit)
                 npc.netUpdate = true;
+            
+
+
+
+            
         }
 
 

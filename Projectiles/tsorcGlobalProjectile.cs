@@ -114,9 +114,18 @@ namespace tsorcRevamp.Projectiles
 
 
             //Destroyer shoots true lasers instead of normal projectile lasers
-            if(((projectile.type == ProjectileID.DeathLaser && NPCs.VanillaChanges.destroyerAttackIndex != 4) || projectile.type == ProjectileID.PinkLaser) && NPC.AnyNPCs(NPCID.TheDestroyer))
+            //Probe lasers are replaced with true lasers. This is actually an enormous nerf because they were not telegraphed and were hard to see before.
+            if (NPC.AnyNPCs(NPCID.TheDestroyer))
             {
-                projectile.Kill();                
+                if (projectile.type == ProjectileID.DeathLaser)
+                {
+                    projectile.Kill();
+                }
+                if (projectile.type == ProjectileID.PinkLaser)
+                {
+                    Projectile.NewProjectile(projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -2, projectile.owner);
+                    projectile.Kill();
+                }
             }
             return true;
         }

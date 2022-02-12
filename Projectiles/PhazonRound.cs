@@ -60,11 +60,12 @@ namespace tsorcRevamp.Projectiles {
 
         public override bool PreKill(int timeLeft)
         {
+            Collision.HitTiles(projectile.position + projectile.velocity, projectile.velocity, projectile.width, projectile.height);
+            Main.PlaySound(SoundID.Item10, projectile.Center);
+
             for (int i = 0; i < 2; i++)
-            {
-                
-                Projectile.NewProjectile(projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, projectile.damage / 4, 0.5f, projectile.owner);
-                
+            {               
+                Projectile.NewProjectile(projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, projectile.damage / 4, 0.5f, projectile.owner);                
             }
 
             projectile.penetrate = 20;

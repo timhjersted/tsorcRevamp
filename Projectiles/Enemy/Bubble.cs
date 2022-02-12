@@ -20,8 +20,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
         Vector2 initialVelocity;
-        float rotation;
-        bool increasing;
         public override void AI()
         {
             Dust.NewDustPerfect(projectile.Center, 29, null, 200, default, 3).noGravity = true;
@@ -35,13 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             rotation /= 10;
             rotation -= MathHelper.Pi;
 
-            //projectile.velocity = initialVelocity;
             Vector2 distortion;
-            //distortion.X = 5 * (float)Math.Cos(rotation);
-            //if(distortion.X < 0)
-            {
-            //    distortion.X *= -1;
-            }
             distortion.X = 0;
             distortion.Y = 5 * (float)Math.Sin(rotation);
             projectile.velocity = initialVelocity + distortion;

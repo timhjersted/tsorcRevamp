@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public bool ProjectileSource = false;
 
         //The name the laser will display if it kills the player
-        public string LaserName = "Laser";
+        public string LaserName = "DefaultLaserName";
 
         //The source position of the laser. If FOLLOW_SOURCE is set to true, this will be ignored.
         public Vector2 LaserOrigin = new Vector2(0, 0);
@@ -41,10 +41,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         //What color is the laser? Leave this blank if it has a custom texture
         public Color LaserColor = Color.White;
-
-        //Causes the targeting lasers to simply change in brightness instead of turn on and off
-        //Good to avoid causing headaches with a ton of lasers onscreen
-        public bool softFlicker = false;
 
         //How long should it telegraph its path with a targeting laser? This can be set to 0 for instant hits
         public int TelegraphTime = 60;
@@ -98,7 +94,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public Rectangle LaserTextureBody = new Rectangle(0, 0, 46, 28);
         public Rectangle LaserTextureTail = new Rectangle(0, 30, 46, 28);
         public Rectangle LaserTextureHead = new Rectangle(0, 60, 46, 28);
-
+        
         public Rectangle LaserTargetingBody = new Rectangle(0, 0, 46, 28);
         public Rectangle LaserTargetingTail = new Rectangle(0, 30, 46, 28);
         public Rectangle LaserTargetingHead = new Rectangle(0, 60, 46, 28);
@@ -164,7 +160,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public int FiringTimeLeft = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser");
+            DisplayName.SetDefault("DefaultLaserName");
 
         }
         public override void SetDefaults() {
@@ -181,33 +177,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
             LaserOrigin = ProjectileSource ? Main.projectile[HostIdentifier].position : Main.npc[HostIdentifier].position;
         }
 
-
-        //Laser name customization. This doesn't work. *Yet.*
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            string deathMessage;
-            if (ProjectileSource)
-            {
-                //??? What kind of index does ByOther want? Tile? Projectile? Why can't these just take a name...
-                deathMessage = Terraria.DataStructures.PlayerDeathReason.ByOther(projectile.whoAmI).GetDeathText(target.name).ToString();
-            }
-            else
-            {
-                //ByProjectile... doesn't work either. It's PVP only I think? Its first parameter "byplayerindex" specifies the index for the player who landed the final blow...
-                deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(target.whoAmI, projectile.whoAmI).GetDeathText(target.name).ToString();
-            }
-            deathMessage = deathMessage.Replace("DefaultLaserName", LaserName);
-            //target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), damage, 1);
-        }      
-
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
             // Add this projectile to the list of projectiles that will be drawn BEFORE tiles and NPC are drawn. This makes the projectile appear to be BEHIND the tiles and NPC.
             drawCacheProjsBehindNPCs.Add(index);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) 
-        {           
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
 
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
@@ -235,7 +212,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
 
                 DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
-                    projectile.velocity, (LaserTextureBody.Height - 1) * LaserSize, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, LaserLength, color, (int)MOVE_DISTANCE);
+                    projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, color);
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
@@ -248,30 +225,22 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     color = Color.White;
                 }
+                
+                color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
 
-                if (!softFlicker)
-                {
-                    if (Main.GameUpdateCount % 10 <= 5)
-                    {
-                        DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                            projectile.velocity, (LaserTextureBody.Height - 2) * 0.37f, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, LaserLength, color, (int)MOVE_DISTANCE);
-                    }
-                }
-                else
-                {
-                    color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
-
-                    DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                           projectile.velocity, (LaserTextureBody.Height - 2) * 0.37f, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, LaserLength, color, (int)MOVE_DISTANCE);
-
-                } 
+                
+                DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                        projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
             
             return false;
         }
 
-        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50)
-        {            
+        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, Color color = default)
+        {           
+
+            //Defines an area where laser segments should actually draw, 100 pixels larger on each side than the screen
+            Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
 
             float r = unit.ToRotation() + rotation;
             Rectangle bodyFrame = bodyRect;
@@ -292,31 +261,51 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
             }
 
-            Vector2 startPos = start + (headRect.Height / 2) * unit * scale;
-            spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
-            
-            float i = ((bodyRect.Height / 2) + headRect.Height) * scale;
-            for (; i <= Distance; i += step) {
-                startPos = start + i * unit;    
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);               
-            }            
-            startPos = start + i * unit;
-            spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);            
-
-            if (CastLight)
+            Vector2 startPos = start;
+            if (screenRect.Contains(startPos.ToPoint()))
             {
-                CastLights();
+                spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
+            }
+            startPos += (unit * (headRect.Height) * scale);
+
+            float i = 0;
+            for (; i <= Distance; i += (bodyFrame.Height) * scale)
+            {
+                Vector2 drawStart = startPos + i * unit;
+                if (screenRect.Contains(drawStart.ToPoint()))
+                {
+                    spriteBatch.Draw(texture, drawStart - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
+                }
+            }
+            i -= (LaserTextureBody.Height) * scale;
+            i += (LaserTextureTail.Height + 3) * scale; //Slightly fudged, need to find out why the laser tail is still misaligned for certain texture sizes
+            startPos = startPos + i * unit;
+
+            if (screenRect.Contains(startPos.ToPoint()))
+            {
+                spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
             }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-            if (FiringTimeLeft <= 0 || !IsAtMaxCharge || TargetingMode != 0) return false;            
+            if (FiringTimeLeft <= 0 || !IsAtMaxCharge || TargetingMode != 0)
+            {
+                return false;
+            }
 
-            Vector2 unit = projectile.velocity;
             float point = 0f;
             Vector2 origin = GetOrigin();
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
-                origin + unit * Distance, 22, ref point);
+                origin + projectile.velocity * Distance, 22, ref point);
+        }
+
+        public override bool CanHitPlayer(Player target)
+        {
+            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, projectile.whoAmI).GetDeathText(target.name).ToString();
+            deathMessage = deathMessage.Replace("DefaultLaserName", LaserName);
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), projectile.damage * 4, 1);
+
+            return false;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -376,10 +365,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
             if (TelegraphTime + Charge < MaxCharge) return;
 
+            if (CastLight)
+            {
+                CastLights();
+            }
             if (LineDust)
             {
                 SpawnDusts();
             }
+
             SetLaserPosition();
             if (projectile.tileCollide)
             {
