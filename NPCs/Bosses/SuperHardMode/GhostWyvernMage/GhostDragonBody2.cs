@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -26,6 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.value = 10000;
+            npc.alpha = 190;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -89,8 +91,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), fireDamage, 0f, Main.myPlayer);
-                    Timer = -1200 - Main.rand.Next(1200);
+                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.LostSoulHostile, fireDamage, 0f, Main.myPlayer);
+                    Timer = -1200 - Main.rand.Next(200);
                 }
             }
 
@@ -99,8 +101,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //	int dust = Dust.NewDust(new Vector2((float) npc.position.X, (float) npc.position.Y), npc.width, npc.height, 62, 0, 0, //100, Color.White, 2.0f);
             //	Main.dust[dust].noGravity = true;
             //}
+        }
 
-
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1.7f);
+            return true;
+        }
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            //GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1.1f);
         }
     }
 }

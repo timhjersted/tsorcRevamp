@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -20,12 +21,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.timeLeft = 750;
             npc.damage = 85;
             npc.defense = 25;
-            npc.HitSound = SoundID.NPCHit4;
+            npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath10;
             npc.lifeMax = 35000;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.value = 10000;
+            npc.alpha = 100;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -47,6 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             return false;
         }
         int Timer = -Main.rand.Next(800);
+        int Timer2 = -Main.rand.Next(200);
 
         public override bool CheckActive()
         {
@@ -62,6 +65,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, -2f, 15f, 0.23f, true, false);
 
             Timer++;
+            Timer2++;
 
             if (!Main.npc[(int)npc.ai[1]].active)
             {
@@ -84,15 +88,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             {
                 if (Main.netMode != 2)
                 {
-                    float num48 = 2f;
+                    float num48 = 1f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width / 2), npc.position.Y + (npc.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), fireDamage, 0f, Main.myPlayer);
-                    Timer = -1200 - Main.rand.Next(1400);
+                     //int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.VortexLightning, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
+                    int num55 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.CultistBossIceMist, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
+                    Timer = -100 - Main.rand.Next(1400);
                 }
             }
+        }
 
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1.5f);
+            return true;
+        }
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            //GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture);
         }
     }
 }

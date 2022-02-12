@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
-    [AutoloadBossHead]
-    class WyvernMageShadow : ModNPC
+    
+    class MageShadow : ModNPC
     {
         public override void SetDefaults()
         {
@@ -17,24 +17,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             animationType = 29;
             npc.aiStyle = 0;
             npc.damage = 90;
-            npc.defense = 56;
+            npc.defense = 96;
             npc.height = 44;
             npc.timeLeft = 22500;
-            npc.lifeMax = 200000;
+            npc.lifeMax = 1;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath5;
             npc.noGravity = false;
             npc.noTileCollide = false;
-            npc.boss = true;
+            npc.alpha = 249;
+            
             npc.lavaImmune = true;
-            npc.value = 660000;
+            npc.value = 0;
             npc.width = 28;
             npc.knockBackResist = 0.2f;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.MageShadowBag>();
-            despawnHandler = new NPCDespawnHandler("The Wyvern Mage's imprisoned shadow breaks free...", Color.DarkCyan, DustID.Demonite);
+            
         }
 
 
@@ -49,26 +49,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             lightningDamage = (int)(lightningDamage / 2);
         }
 
-        //float customAi1;
-        bool OptionSpawned = false;
-        int OptionId = 0;
+       
 
 
         #region AI
-        NPCDespawnHandler despawnHandler;
+        
         public override void AI()
         {
-            despawnHandler.TargetAndDespawn(npc.whoAmI);
-            if (OptionSpawned == false)
-            {
-                OptionId = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>(), npc.whoAmI);
-                if (Main.netMode == 2 && OptionId < 200)
-                {
-                    NetMessage.SendData(23, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
-                }
-                Main.npc[OptionId].velocity.Y = -10;
-                OptionSpawned = true;
-            }
+            
+           
 
             npc.netUpdate = false;
             npc.ai[0]++; // Timer Scythe
@@ -78,22 +67,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             // npc.ai[2]++; // Shots
 
-            if (npc.life > 3000)
+            if (npc.life < 51)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, Type: DustID.PurpleTorch, npc.velocity.X, npc.velocity.Y, 150, Color.Purple, 1f);
+                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, Type: DustID.MagicMirror, npc.velocity.X, npc.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (npc.life <= 3000)
-            {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, Type: DustID.PurpleTorch, npc.velocity.X, npc.velocity.Y, 100, Color.BlueViolet, 2f);
-                Main.dust[dust].noGravity = true;
-            }
+            
 
             if (Main.netMode != 2)
             {
                 if (npc.ai[0] >= 7 && npc.ai[2] < 3)
                 {
-                    float num48 = 4f;
+                    float num48 = 1f;
                     Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
                     int type = ModContent.ProjectileType<Projectiles.Enemy.FrozenSawII>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
@@ -104,9 +89,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
             }
 
-            
-                  
-                
 
             if (npc.ai[1] >= 10)
             {
@@ -133,8 +115,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 npc.position.X = Pt.position.X + (float)((600 * Math.Cos(npc.ai[3])) * -1);
                 npc.position.Y = Pt.position.Y - 45 + (float)((30 * Math.Sin(npc.ai[3])) * -1);
 
-                float MinDIST = 200f;
-                float MaxDIST = 600f;
+                float MinDIST = 400f;
+                float MaxDIST = 700f;
                 Vector2 Diff = npc.position - Pt.position;
                 if (Diff.Length() > MaxDIST)
                 {
@@ -221,16 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     }
                 }
 
-                if (Main.rand.Next(20) == 0) //1 in 20 chance boss will summon an NPC
-                {
-                    int Random = Main.rand.Next(80);
-                    int Paraspawn = 0;
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                    Main.npc[Paraspawn].velocity.X = npc.velocity.X; 
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                    Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                    npc.active = true;
-                }
+                
             }
 
             npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
@@ -294,29 +267,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         public override void NPCLoot()
         {
             Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 1"), 1f);
-            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 2"), 1f);
-            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
-            Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Undead Caster Gore 3"), 1f);
-
-            //Only drop the loot if the dragon is already dead. If it's not, then the dragon will drop it instead.
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()))
+            if (npc.life <= 0)
             {
-                if (Main.expertMode)
+                for (int num36 = 0; num36 < 50; num36++)
                 {
-                    npc.DropBossBags();
+                    {
+                        Color color = new Color();
+                        int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                        Main.dust[dust].noGravity = true;
+                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                        Main.dust[dust].noGravity = true;
+                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                        Main.dust[dust].noGravity = true;
+                        dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height * 4, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+                        Main.dust[dust].noGravity = true;
+                    }
                 }
-                else
-                {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.RingOfPower>());
-                }
-            } else
-            {
-                Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
-                tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()] = 1;
             }
         }
         #endregion
@@ -329,7 +295,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            //GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 0.5f);
+            GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1f);
         }
 
     }

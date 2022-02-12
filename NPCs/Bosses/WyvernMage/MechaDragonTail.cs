@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 			npc.timeLeft = 1750;
 			npc.damage = 70;
 			npc.defense = 0;
-			npc.HitSound = SoundID.NPCHit4;
+			npc.HitSound = SoundID.NPCHit1;
 			npc.DeathSound = SoundID.NPCDeath10;
 			npc.lifeMax = 91000000;
 			npc.noGravity = true;
@@ -62,8 +62,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 				npc.active = false;
 			}
 
-			Color color = new Color();
-			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y + 10), npc.width, npc.height, 6, 0, 0, 100, color, 1.0f);
+			//Color color = new Color();
+			//int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y + 10), npc.width, npc.height, 6, 0, 0, 100, color, 1.0f);
+			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, Type: DustID.WhiteTorch, 0, 0, 100, Color.White, 2.0f);
 			Main.dust[dust].noGravity = true;
 		}
 

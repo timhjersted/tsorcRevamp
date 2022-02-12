@@ -99,8 +99,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
 			if (Main.rand.Next(2) == 0)
 			{
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, 0, 0, 100, Color.White, 2.0f);
-				Main.dust[dust].noGravity = true;
+				//int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, 0, 0, 100, Color.White, 2.0f);
+				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, Type: DustID.WhiteTorch, 0, 0, 100, Color.White, 2.0f);
+				//Main.dust[dust].noGravity = true;
 			}
 		}
 

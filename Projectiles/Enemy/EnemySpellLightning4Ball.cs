@@ -24,7 +24,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
             if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
                 projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+                //Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+                Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 9, 0.1f, 0.3f);
             }
             int num47 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 15, 0f, 0f, 100, default, 2f);
             Dust expr_2684 = Main.dust[num47];

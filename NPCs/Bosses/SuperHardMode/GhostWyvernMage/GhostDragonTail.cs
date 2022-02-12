@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -26,6 +27,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.value = 10000;
+            npc.alpha = 190;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -79,9 +81,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //}
 
             //Color color = new Color();
-            //int dust = Dust.NewDust(new Vector2((float) npc.position.X, (float) npc.position.Y+10), npc.width, npc.height, 6, 0, 0, 100, //color, 1.0f);
-            //Main.dust[dust].noGravity = true;
+            int dust1 = Dust.NewDust(new Vector2((float) npc.position.X, (float) npc.position.Y), npc.width, npc.height, Type:DustID.Snow, 0, 0, 100, Color.White, 1.0f);//npc.position.Y+10
+            Main.dust[dust1].noGravity = true;
 
         }
+
+        public static Texture2D texture;
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1.5f);
+            return true;
+        }
+        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            //GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture);
+        }
+
     }
 }
