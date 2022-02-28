@@ -111,9 +111,9 @@ namespace tsorcRevamp.NPCs
             //golem temple
             if (spawnInfo.spawnTileType == TileID.LihzahrdBrick && spawnInfo.lihzahrd && Main.hardMode)
             {
-                pool.Add(NPCID.DiabolistRed, 0.2f);
+                pool.Add(NPCID.DiabolistRed, 0.15f);
                 pool.Add(NPCID.DiabolistWhite, 0.1f);
-                pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.2f);
+                pool.Add(ModContent.NPCType<Enemies.RingedKnight>(), 0.25f);
                 pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.05f);
                 pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.05f);
 
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs
             if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.Necromancer, 0.1f);
-                pool.Add(NPCID.NecromancerArmored, 0.2f);
+                pool.Add(NPCID.NecromancerArmored, 0.05f);
             }
             //machine temple (in water)
             if (spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
@@ -132,7 +132,7 @@ namespace tsorcRevamp.NPCs
             //machine temple (not in water)
             if (!spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
-                pool.Add(NPCID.NecromancerArmored, 0.2f);
+                pool.Add(NPCID.NecromancerArmored, 0.1f);
             }
             //sky
             if (spawnInfo.player.ZoneSkyHeight && Main.hardMode)
