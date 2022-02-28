@@ -849,7 +849,7 @@ namespace tsorcRevamp
         public static float CheckSoulsMultiplier(Player player) {
             float multiplier = 1f;
             if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
-                multiplier += 0.25f;
+                multiplier += 0.20f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
                 multiplier += 0.2f;

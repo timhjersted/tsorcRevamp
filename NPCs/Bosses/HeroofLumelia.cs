@@ -1001,31 +1001,16 @@ namespace tsorcRevamp.NPCs.Bosses
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
 
-			if (Main.rand.Next(99) < 80) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-			
-			
+			if (Main.rand.Next(99) < 90) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
 			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
-			if (Main.rand.Next(99) < 70) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-			if (Main.rand.Next(99) < 80) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-			if (Main.rand.Next(99) < 90) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
 			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.ObsidianSkinPotion, 1);
 			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 3);
 			Item.NewItem(npc.getRect(), ItemID.ArcheryPotion, 1);
 			Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
 
-			//if not killed before
-			if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>())))
-			{ 
-				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 10000); //Then drop the souls
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.StaminaVessel>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(4, 8));
-			}
-			//if the boss has been killed once
-			if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
-			{ 
-				Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 3500); //Then drop the souls
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 15));
-			}
 		}
 		#endregion
 

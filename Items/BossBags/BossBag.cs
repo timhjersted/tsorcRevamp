@@ -155,6 +155,39 @@ namespace tsorcRevamp.Items.BossBags {
         }
     }
 
+    public class HeroofLumeliaBag : BossBag
+    {
+        public override int BossBagNPC => ModContent.NPCType<HeroofLumelia>();
+        public override void OpenBossBag(Player player)
+        {
+            var Slain = tsorcRevampWorld.Slain;
+            if (Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
+            {
+                if (Slain[ModContent.NPCType<HeroofLumelia>()] == 0)
+                {
+                    VanillaBossBag.AddBossBagSouls(ModContent.NPCType<HeroofLumelia>(), player);
+                    Slain[ModContent.NPCType<HeroofLumelia>()] = 1;
+                }
+            }
+
+            //if not killed before
+            if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>())))
+            {
+                player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), 10000); //Then drop the souls
+                player.QuickSpawnItem(ModContent.ItemType<Items.StaminaVessel>());
+                player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.CovetousSilverSerpentRing>());
+                player.QuickSpawnItem(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 20));
+            }
+            //if the boss has been killed once
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<HeroofLumelia>()))
+            {
+                player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), 3500); //Then drop the souls
+                player.QuickSpawnItem(ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(10, 15));
+            }
+            
+        }
+    }
+
     public class AttraidiesBag : BossBag {
 		public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>();
 		public override void OpenBossBag(Player player) {

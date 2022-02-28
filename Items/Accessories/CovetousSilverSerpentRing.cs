@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
                                 "\nOne of the 4 Kings of Arradius was said to wear this ring" + 
-                                "\nIncreases the number of souls dropped by fallen creatures by 25%" + 
+                                "\nIncreases the number of souls dropped from fallen creatures by 20% but reduces defense by 15" + 
                                 "\nThe ring glows with a bright white light");
         }
 
@@ -15,11 +15,13 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 24;
             item.height = 22;
             item.accessory = true;
+            item.defense = -15;
             item.value = PriceByRarity.LightRed_4; //prohibitively expensive soul cost
             item.rare = ItemRarityID.LightRed;
         }
 
-        public override void AddRecipes() {
+        /*
+         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
@@ -27,6 +29,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
+        */
 
         public override void UpdateEquip(Player player) {
             player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing = true;
