@@ -41,8 +41,17 @@ namespace tsorcRevamp.Items.Weapons {
 		}
 
 		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
-			tsorcRevampWorld.SuperHardMode = true;
 			Main.NewText(player.position / 16);
+
+
+			Vector2 projVel = new Vector2(speedX, speedY);
+			projVel.Normalize();
+			Projectile.NewProjectile(player.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
+
+
+			/*
+			 tsorcRevampWorld.SuperHardMode = true;
+
 			int projType = ModContent.ProjectileType<Projectiles.IdealArrow>();
 			for (float i = 0.1f; i < 19; i *= 1.01f)
 			{
@@ -60,7 +69,7 @@ namespace tsorcRevamp.Items.Weapons {
 					Projectile.NewProjectile(player.Center, trajectory, projType, damage, knockBack, Main.myPlayer);
 					i++;
 				}
-			}
+			}*/
 
 			return false;
 		}
@@ -93,7 +102,7 @@ namespace tsorcRevamp.Items.Weapons {
 
         public override bool CanUseItem(Player player)
         {
-			if (player.name == "Zeodexic" || player.name.Contains("Sam") || player.name == "Chroma TSORC test")
+			//if (player.name == "Zeodexic" || player.name.Contains("Sam") || player.name == "Chroma TSORC test")
 			{
 				return true;
 			}

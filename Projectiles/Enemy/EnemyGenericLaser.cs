@@ -76,14 +76,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
         //Should it be drawn with a shader?
         public ArmorShaderData shader;
 
-        //Should it play a vanilla sound?
+        //Should it play a sound? Set to 'null' to disable
         public Terraria.Audio.LegacySoundStyle LaserSound = SoundID.Item12.WithVolume(0.5f);
-
-        //Should it play a custom sound? This overrides whatver LASER_SOUND is set to
-        public string CustomSound = null;
-
-        //What volume should it play the sound at?
-        public float LaserVolume = 10f;
 
         //Does it have a custom texture?
         public TransparentTextureHandler.TransparentTextureType LaserTexture = TransparentTextureHandler.TransparentTextureType.GenericLaser;
@@ -346,16 +340,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             projectile.position = origin + projectile.velocity * MOVE_DISTANCE;
             projectile.timeLeft = 2;
 
-            UpdateProjectile();
 
-            if(FiringTimeLeft > 0)
-            {
-                FiringTimeLeft--;
-                if (FiringTimeLeft == 0)
-                {
-                    projectile.Kill();
-                }
-            }
+            
             
             ChargeLaser();
             if (LaserDust != 0)
@@ -418,7 +404,10 @@ namespace tsorcRevamp.Projectiles.Enemy {
             //}
         }
 
-        private void SetLaserPosition() {
+        private void SetLaserPosition()
+        {
+            Vector2 origin = GetOrigin();
+            Vector2 start = origin + projectile.velocity * Distance;
             for (Distance = MOVE_DISTANCE; Distance <= LaserLength; Distance += 50f)
             {
                 if (!TileCollide)
@@ -426,8 +415,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     Distance = LaserLength;
                     break;
                 }
-                Vector2 origin = GetOrigin();
-                var start = origin + projectile.velocity * Distance;
                 if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
                 {
                     Distance -= 5f;
@@ -449,41 +436,32 @@ namespace tsorcRevamp.Projectiles.Enemy {
             shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, projectile.rotation);
         }
 
-        private void ChargeLaser() {
+        public void ChargeLaser() {
             if (Charge < MaxCharge || MaxCharge == 0) {
                 Charge++;
                 //Only play the sound once, on the frame it hits max charge
                 if(Charge == MaxCharge || MaxCharge == 0)
                 {
-                    if (CustomSound == null)
+                    if (LaserSound != null)
                     {
-                        Main.PlaySound(LaserSound.WithVolume(LaserVolume));
+                        Main.PlaySound(LaserSound);
                     }
-                    else
-                    {
-                        if (LaserSound != null)
-                        {
-                            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, CustomSound).WithVolume(LaserVolume));
-                        }
-                    }
-
                     //Then, set it to fire for the FIRING_TIME frames
                     FiringTimeLeft = FiringDuration;
                     MaxCharge = -1;
                 }
             }
-            Vector2 dustVelocity = Vector2.UnitX * 18f;
-            dustVelocity = dustVelocity.RotatedBy(projectile.rotation - 1.57f);      
+
+            if (FiringTimeLeft > 0)
+            {
+                FiringTimeLeft--;
+                if (FiringTimeLeft == 0)
+                {
+                    projectile.Kill();
+                }
+            }
         }
 
-        private void UpdateProjectile() {
-            //Vector2 origin = GetOrigin();
-            //Vector2 diff = LaserTarget - origin;
-            //d//iff.Normalize();
-            //projectile.velocity = diff;
-           // projectile.velocity = new Vector2(1, 0);
-            //projectile.direction = LaserTarget.X > origin.X ? 1 : -1;
-        }
 
         private void CastLights() {
             // Cast a light along the line of the laser

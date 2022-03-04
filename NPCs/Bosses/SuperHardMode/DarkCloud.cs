@@ -193,7 +193,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 else
                 {
                     CurrentMove  = new DarkCloudMove(DragoonLanceMove, DragoonLanceAttack, DarkCloudAttackID.DragoonLance, "Dragoon Lance");
-                    CurrentMoveDebug();
                 }
                 AttackModeCounter++;
             }
@@ -204,57 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }        
 
-        //Temp function for until I can solve this once and for all.
-        void CurrentMoveDebug()
-        {
-            if (Main.netMode == NetmodeID.Server)
-            {
-                //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
-                //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
-                //More importantly, it will also lets us know for sure what is happening.
-                UsefulFunctions.ServerText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
-                UsefulFunctions.ServerText("Relevant data: Netmode: Server nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
-                if (ActiveMoveList != null)
-                {
-                    UsefulFunctions.ServerText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
-                }
-                else
-                {
-                    UsefulFunctions.ServerText("ActiveMoveList :" + "NULL!", Color.Red);
-                }
-            }
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                //Current guess for what happened: Latency high enough that the "phase change" grace period of 3 seconds isn't long enough to sync everything
-                //This will act as a failsafe in that case, giving it a "default" move to fall back to while it waits to sync.
-                //More importantly, it will also lets us know for sure what is happening.
-                Main.NewText("tsorcRevamp WARNING: High-latency connection interfering with boss AI!", Color.Orange);
-                Main.NewText("Relevant data: Netmode: Client nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
-                if (ActiveMoveList != null)
-                {
-                    Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
-                }
-                else
-                {
-                    Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
-                }
-            }
-            if (Main.netMode == NetmodeID.SinglePlayer)
-            {
-                //This shouldn't happen. It's never happened during testing. The same *was* supposed to be true of the above too, though. I'm adding it just in-case.
-                Main.NewText("tsorcRevamp ERROR: Dark Cloud Move not set! Please report this!!", Color.Red);
-                Main.NewText("Relevant data: nextAttack: " + ((ActiveMoveList != null) ? ActiveMoveList[NextAttackMode].Name : "NULL!") + " firstPhase: " + firstPhase + " AttackModeCounter: " + AttackModeCounter, Color.Yellow);
-                if (ActiveMoveList != null)
-                {
-                    Main.NewText("ActiveMoveList :" + ActiveMoveList, Color.Yellow);
-                }
-                else
-                {
-                    Main.NewText("ActiveMoveList :" + "NULL!", Color.Red);
-                }
-
-            }
-        }
+       
         //Randomly pick a new unused attack and reset attack variables
         void ChangeAttacks()
         {           
@@ -275,10 +224,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         Main.NewText("Move failed to set! NextAttackMode " + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
                     }
-                }
-                if(CurrentMove == null)
-                {
-                    CurrentMoveDebug();
                 }
 
                 //If there's no moves left in the list, refill it   
@@ -1460,6 +1405,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackModeCounter == 1200)
             {
+                for(int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if(Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>())
+                    {
+                        Main.projectile[i].Kill();
+                    }
+                }
                 ChangeAttacks();
             }
         }

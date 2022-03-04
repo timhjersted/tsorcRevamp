@@ -2651,7 +2651,7 @@ namespace tsorcRevamp.NPCs {
                     dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
                     Dust.NewDustPerfect(npc.Center + dustPos, DustID.Fire, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
-                    if (destroyerChargeTimer > 0 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
+                    if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
                     {
                         Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
                         Projectile.NewProjectile(npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 35, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
@@ -2698,7 +2698,7 @@ namespace tsorcRevamp.NPCs {
                 }
 
                 
-                if (Main.GameUpdateCount % 90 == 0 && (destroyerAttackIndex == 0))
+                if (Main.GameUpdateCount % 60 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
                 {
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
                     if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4)
@@ -2810,7 +2810,7 @@ namespace tsorcRevamp.NPCs {
                             }
                         }
 
-                        //Moving square array
+                        //Moving square array                        
                         if (destroyerAttackIndex == 1)
                         {
                             if (destroyerChargeTimer % 290 == 1 && destroyerChargeTimer < 580)
@@ -2882,7 +2882,7 @@ namespace tsorcRevamp.NPCs {
                                 }
                             }
                         }
-
+                        
                         if (destroyerChargeTimer >= 600)
                         {
                             destroyerJustSpawned = false;
@@ -2893,7 +2893,7 @@ namespace tsorcRevamp.NPCs {
                                 Main.NewText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
                             }
                         }
-                        if (Main.GameUpdateCount % 90 == 0)
+                        if (Main.GameUpdateCount % 60 == 0)
                         {
                             destroyerLaserSafeAngle = Main.rand.NextVector2Circular(1, 1);
                         }
