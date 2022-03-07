@@ -109,6 +109,9 @@ namespace tsorcRevamp
         //This name is what the event handler uses to save an event, and marks them as unique.
         public enum ScriptedEventType
         {
+            LitchKing,
+            TheHunter,
+            TheRage,
             AODE,
             GoblinWizardWMF,
             GoblinWizardClouds,
@@ -168,6 +171,15 @@ namespace tsorcRevamp
             Player player = Main.LocalPlayer;
 
             //ScriptedEvent[YourEventType] = new ScriptedEvent(position, detection radius, [NPC ID = -1], [Dust = 31], [save event: false], [visible detection range: false], [text to display: none], [text color: none], [custom condition: none], [custom scripted action: none], [only run action once: false]);
+
+            //LITCH KING
+            ScriptedEvent LitchKing = new ScriptedEvent(new Vector2(364, 1897), 40, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>(), DustID.GoldFlame, true, true, "The Litch King awakens!", Color.Gold, false);
+
+            //THE HUNTER
+            ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, "The hunt begins...", Color.DarkGreen, false);
+
+            //THE RAGE
+            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1872), 60, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.GoldFlame, true, true, "The Rage awakens!", Color.Red, false);
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
             ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), DustID.GoldFlame, true, true, "You foolish human... pitiful arrogance...", Color.MediumPurple, false);
@@ -363,6 +375,9 @@ namespace tsorcRevamp
             //Every enum and ScriptedEvent has to get paired up here
             ScriptedEventDict = new Dictionary<ScriptedEventType, ScriptedEvent>(){
 
+                {ScriptedEventType.LitchKing, LitchKing},
+                {ScriptedEventType.TheHunter, TheHunter},
+                {ScriptedEventType.TheRage, TheRage},
                 {ScriptedEventType.AODE, AODE},
                 {ScriptedEventType.GoblinWizardWMF, GoblinWizardWMF},
                 {ScriptedEventType.GoblinWizardClouds, GoblinWizardClouds},
