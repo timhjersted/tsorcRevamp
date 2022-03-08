@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.VenusMagnum);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
+            recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

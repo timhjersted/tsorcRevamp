@@ -35,9 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("QuadroCannon"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 3);
+            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 30);
-            recipe.AddIngredient(mod.GetItem("SoulOfBlight"), 1);
+            //recipe.AddIngredient(mod.GetItem("SoulOfBlight"), 1);
             recipe.AddIngredient(mod.GetItem("SoulOfChaos"), 1);
             recipe.AddIngredient(mod.GetItem("CursedSoul"), 90);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 280000);

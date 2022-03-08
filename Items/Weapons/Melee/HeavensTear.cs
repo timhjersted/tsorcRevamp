@@ -9,8 +9,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
 	public override void SetStaticDefaults()
 	{
 		DisplayName.SetDefault("Heaven's Tear");
-            Tooltip.SetDefault("'Heaven splits with each swing'\n" +
-                                "Does 2x damage to mages and ghosts...");
+            Tooltip.SetDefault("'Heaven splits with each swing'\n");
+                                //"Does 2x damage to mages and ghosts...");
 
 	}
 
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             item.maxStack = 1;
             item.damage = 1000;
             item.knockBack = (float)10;
-            item.scale = (float)1.1;
+            item.scale = (float)1;
             item.UseSound = SoundID.Item1;
             item.rare = ItemRarityID.Red;
             item.shootSpeed = (float)14; 
@@ -46,8 +46,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
             //recipe.AddIngredient(mod.GetItem("EnchantedMorningStar", 1);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("CursedSoul"), 20);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 15);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90000);
+            recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 120000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

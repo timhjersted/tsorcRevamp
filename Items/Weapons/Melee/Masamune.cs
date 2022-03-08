@@ -28,9 +28,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.SoulofLight, 3);
+            //recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(mod.GetItem("Murassame"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 3);
+            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("BlueTitanite"), 10);
             recipe.AddIngredient(mod.GetItem("GhostWyvernSoul"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 250000);

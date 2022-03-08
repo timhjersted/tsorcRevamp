@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             item.knockBack = 5;
             item.autoReuse = true;
             item.melee = true;
-            item.scale = 1.1f;
+            item.scale = 1f;
             item.useAnimation = 23;
             item.UseSound = SoundID.Item1;
             item.useStyle = ItemUseStyleID.SwingThrow;
@@ -34,6 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<DungeonMage>()
                 || target.type == ModContent.NPCType<DemonSpirit>()
                 || target.type == ModContent.NPCType<ShadowMage>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.AbysmalOolacileSorcerer>()
                 || target.type == ModContent.NPCType<AttraidiesIllusion>()
                 || target.type == ModContent.NPCType<AttraidiesManifestation>()
                 || target.type == ModContent.NPCType<CrazedDemonSpirit>()
@@ -55,8 +57,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("OldAxe"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 3);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 115000);
+            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
