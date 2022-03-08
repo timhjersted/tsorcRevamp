@@ -20,8 +20,8 @@ namespace tsorcRevamp.Buffs {
 
         public override bool ReApply(Player player, int time, int buffIndex) {
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor < 30) {
-                player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor += 1;
+            if (player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor < 65) {
+                player.GetModPlayer<tsorcRevampPlayer>().FracturingArmor += 4;
             }
             return false;
         }

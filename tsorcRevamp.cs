@@ -1936,7 +1936,8 @@ namespace tsorcRevamp {
             BarbarousThornBladeGlowmask,
             RedLaser,
             RedLaserTransparent,
-            Lightning
+            Lightning,
+            BulletHellLaser
         }          
         
         //All textures with transparency will have to get run through this function to get premultiplied
@@ -1985,6 +1986,7 @@ namespace tsorcRevamp {
                 {TransparentTextureType.RedLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/RedLaserBeam")},
                 {TransparentTextureType.RedLaserTransparent, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser")}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
                 {TransparentTextureType.Lightning, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike")},
+                {TransparentTextureType.BulletHellLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser")}
 
             };
 
