@@ -196,15 +196,19 @@ namespace tsorcRevamp.Items.BossBags {
                 if (Slain[BossBagNPC] == 0) {
                     VanillaBossBag.EstusFlaskShardOnFirstBag(BossBagNPC, player);
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
-					Slain[BossBagNPC] = 1;
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.TheEnd>());
+                    player.QuickSpawnItem(ItemID.Picksaw);
+                    Slain[BossBagNPC] = 1;
 				}
 			}
-            player.QuickSpawnItem(ModContent.ItemType<Items.TheEnd>());
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
+            
+            
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 2000);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.BloomShards>());
-            player.QuickSpawnItem(ItemID.Picksaw);
+            
+            
         }
 	}
     public class KrakenBag : BossBag
@@ -243,11 +247,11 @@ namespace tsorcRevamp.Items.BossBags {
                 {
                     player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
                     Slain[BossBagNPC] = 1;
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>()); //Because the Shaman Elder says she drops them
@@ -266,11 +270,11 @@ namespace tsorcRevamp.Items.BossBags {
                 {
                     player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
                     Slain[BossBagNPC] = 1;
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.FairyInABottle>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
@@ -291,12 +295,12 @@ namespace tsorcRevamp.Items.BossBags {
                     player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), (int)(50000 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                     //VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    //player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
                     Slain[BossBagNPC] = 1;
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
         }
     }
@@ -310,13 +314,13 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
             player.QuickSpawnItem(ItemID.MidnightRainbowDye, 5);
         }
@@ -396,6 +400,7 @@ namespace tsorcRevamp.Items.BossBags {
             { //if the boss has been killed
                 if (Slain[ModContent.NPCType<Chaos>()] == 0)
                 { //and the key value is 0
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
                     VanillaBossBag.AddBossBagSouls(ModContent.NPCType<Chaos>(), player); //give the player souls
                     Slain[ModContent.NPCType<Chaos>()] = 1; //set the value to 1
                 }
@@ -408,7 +413,6 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 3000);
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfChaos>(), 3);
         }
     }
@@ -422,6 +426,7 @@ namespace tsorcRevamp.Items.BossBags {
             { //if the boss has been killed
                 if (Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()] == 0)
                 { //and the key value is 0
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
                     VanillaBossBag.AddBossBagSouls(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), player); //give the player souls
                     Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()] = 1; //set the value to 1
                 }
@@ -461,6 +466,7 @@ namespace tsorcRevamp.Items.BossBags {
             { //if the boss has been killed
                 if (Slain[ModContent.NPCType<AbysmalOolacileSorcerer>()] == 0)
                 { //and the key value is 0
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
                     VanillaBossBag.AddBossBagSouls(ModContent.NPCType<AbysmalOolacileSorcerer>(), player); //give the player souls
                     Slain[ModContent.NPCType<AbysmalOolacileSorcerer>()] = 1; //set the value to 1
                 }
@@ -483,14 +489,15 @@ namespace tsorcRevamp.Items.BossBags {
             { //if the boss has been killed
                 if (Slain[ModContent.NPCType<Artorias>()] == 0)
                 { //and the key value is 0
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
                     VanillaBossBag.AddBossBagSouls(ModContent.NPCType<Artorias>(), player); //give the player souls
                     Slain[ModContent.NPCType<Artorias>()] = 1; //set the value to 1
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
+            
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 5000);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.WolfRing>());
-            //player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
+            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfArtorias>(), 4);
             player.QuickSpawnItem(ModContent.ItemType<BossItems.DarkMirror>());
         }
@@ -545,13 +552,14 @@ namespace tsorcRevamp.Items.BossBags {
             { //if the boss has been killed
                 if (Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()] == 0)
                 { //and the key value is 0
+                    player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
                     VanillaBossBag.AddBossBagSouls(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), player); //give the player souls
                     Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()] = 1; //set the value to 1
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 7000);
-            player.QuickSpawnItem(ModContent.ItemType<Items.BequeathedSoul>(), 2);
+            player.QuickSpawnItem(ModContent.ItemType<Items.BequeathedSoul>(), 3);
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
             player.QuickSpawnItem(ModContent.ItemType<Items.PurgingStone>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonWings>());
@@ -579,7 +587,7 @@ namespace tsorcRevamp.Items.BossBags {
             if (Main.rand.Next(20) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.RingOfPower>());
             if (Main.rand.NextFloat() <= .08f) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.GoldenHairpin>());
             if (Main.rand.NextFloat() <= .15f) player.QuickSpawnItem(ModContent.ItemType<GuardianSoul>());
-            if (Main.rand.Next(2) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.BossItems.DarkMirror>());
+            //if (Main.rand.Next(2) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.BossItems.DarkMirror>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.CovenantOfArtorias>());
             player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), 2500);
         }

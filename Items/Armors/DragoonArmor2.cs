@@ -44,8 +44,8 @@ namespace tsorcRevamp.Items.Armors {
             recipe.AddIngredient(mod.GetItem("DragoonArmor"), 1);
             recipe.AddIngredient(mod.GetItem("DragoonCloak"), 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
-            recipe.AddIngredient(mod.GetItem("Humanity"), 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
+            recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
