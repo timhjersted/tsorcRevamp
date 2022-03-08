@@ -11,10 +11,11 @@ namespace tsorcRevamp.Items.Accessories {
     public class SpikedIronShield : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Everyone will stay away from you'" +
-                                "\n-30% Movement Speed, Thorns Buff" +
-                                "\nCan be upgraded with an Obsidian Shield and 10000 Dark Souls" +
-                                "\nReduces damage taken by 6 % ");
+            Tooltip.SetDefault("'Everyone will stay away from you'" +
+                             "\nReduces damage taken by 7% and gives thorn buff" +
+                             "\nbut also reduces non-melee damage by 25%" +
+                             "\nCan be upgraded with an Obsidian Shield and 10000 Dark Souls");
+                                
         }
 
         public override void SetDefaults() {
@@ -27,9 +28,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.moveSpeed -= 0.3f;
+            
             player.thorns = 1f;
-            player.endurance += 0.06f;
+            player.endurance += 0.07f;
+            player.rangedDamage -= 0.25f;
+            player.magicDamage -= 0.25f;
+            player.minionDamage -= 0.25f;
         }
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);

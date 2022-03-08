@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Accessories {
     public class AncientDemonShield : ModItem {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Powerful, but slows movement by 25%" +
-                               "\nGreat Shield that grants immunity to knockback and gives thorns effect" +
+            Tooltip.SetDefault("Powerful, but reduces non-melee damage by 30%" +
+                               "\nGreat Shield that reduces damage taken by 8%, grants immunity to knockback and gives thorns buff" +
                                "\nAlso provides immunity to fire blocks");
         }
 
@@ -24,10 +24,12 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.noKnockback = true;
-            player.moveSpeed -= 0.25f;
+            player.rangedDamage -= 0.3f;
+            player.magicDamage -= 0.3f;
+            player.minionDamage -= 0.3f;
             player.thorns = 1f;
             player.fireWalk = true;
-            player.endurance += 0.06f;
+            player.endurance += 0.08f;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
@@ -35,7 +37,7 @@ namespace tsorcRevamp.Items.Accessories {
             int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name !=  "SocialDesc" && !t.Name.Contains("Prefix"));
             if (ttindex != -1) {// if we find one
                 //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampShieldDR", "Reduces damage taken by 6%"));
+                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampShieldDR", "Reduces damage taken by 8%"));
             }
         }
 

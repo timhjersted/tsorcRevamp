@@ -9,11 +9,10 @@ namespace tsorcRevamp.Items.Accessories {
 
     public class IronShield : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Greater defense at the cost of mobility" +
-                                "\nMovement Speed -40%. Unequip to regain maximum jumping abilities." +
-                                "\nVery useful when low on life and survival is essential." +
-                                "\nCan be upgraded with 2000 Dark Souls (increased movement speed, thorns buff)." +
-                                "\nReduces damage taken by 6% ");
+            Tooltip.SetDefault("Greater defense for melee warriors" +
+                                "\nReduces damage taken by 6% " +
+                                "\nbut also reduces non-melee damage by 20%." +
+                                "\nCan be upgraded with 2000 Dark Souls.");
         }
 
         public override void SetDefaults() {
@@ -26,8 +25,10 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.moveSpeed -= 0.4f;
             player.endurance += 0.06f;
+            player.rangedDamage -= 0.2f;
+            player.magicDamage -= 0.2f;
+            player.minionDamage -= 0.2f;
         }
 
         public override void AddRecipes() {
