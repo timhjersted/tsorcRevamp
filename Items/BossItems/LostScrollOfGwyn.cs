@@ -43,15 +43,18 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
+                recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
+                recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
+                recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
+                recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
     }
 }

@@ -10,9 +10,9 @@ namespace tsorcRevamp.Items.BossItems {
     class MindCube : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Summons the Mindflayer King \n" +
+            Tooltip.SetDefault("Summons Attraidies, the Mindflayer King \n" +
                 "This is it. The final battle. \n" +
-                "Item is not consumed on use");
+                "Item is not consumed on use. To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.");
         }
 
         public override void SetDefaults() {
@@ -45,8 +45,12 @@ namespace tsorcRevamp.Items.BossItems {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.LightShard, 99);
-            recipe.AddIngredient(ItemID.DarkShard, 99);
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                recipe.AddIngredient(ItemID.LightShard, 99);
+                recipe.AddIngredient(ItemID.DarkShard, 99);
+            }
             recipe.AddIngredient(mod.GetItem("CrestOfFire"), 1);
             recipe.AddIngredient(mod.GetItem("CrestOfWater"), 1);
             recipe.AddIngredient(mod.GetItem("CrestOfEarth"), 1);

@@ -28,16 +28,21 @@ namespace tsorcRevamp.Items.BossItems {
             return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()));
         }
 
+        
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Topaz, 300);
-            recipe.AddIngredient(mod.GetItem("DyingWindShard"), 100);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 35);
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(mod.GetItem("DyingWindShard"), 100);
+                recipe.AddIngredient(mod.GetItem("RedTitanite"), 5);
+                recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 5);
+                recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
+        */
     }
 }

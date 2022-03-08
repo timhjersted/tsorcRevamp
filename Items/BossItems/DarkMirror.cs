@@ -141,7 +141,6 @@ namespace tsorcRevamp.Items.BossItems {
                 recipe.AddIngredient(ItemID.MagicMirror, 1);
                 recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 10);
                 recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 15);
-                recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
                 recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 recipe.SetResult(this, 1);

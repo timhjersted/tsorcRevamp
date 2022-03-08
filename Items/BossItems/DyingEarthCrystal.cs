@@ -33,13 +33,18 @@ namespace tsorcRevamp.Items.BossItems {
             return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()));
         }
 
+       
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Emerald, 300);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 10);
+                recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
+       
     }
 }

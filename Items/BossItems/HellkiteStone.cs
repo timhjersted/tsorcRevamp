@@ -42,13 +42,15 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("RedTitanite"), 1);
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            { 
+                ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.GetItem("RedTitanite"), 3);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
+            }
         }
     }
 }

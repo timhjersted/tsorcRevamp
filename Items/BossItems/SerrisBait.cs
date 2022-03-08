@@ -34,13 +34,16 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.SharkFin, 99);
-            recipe.AddIngredient(ItemID.Goldfish, 99);
-            recipe.AddIngredient(ItemID.ShadowScale, 99);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(ItemID.MythrilOre, 30);
+                recipe.AddIngredient(ItemID.SharkFin, 1);
+                recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
     }
 }

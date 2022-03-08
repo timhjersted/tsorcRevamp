@@ -7,11 +7,10 @@ namespace tsorcRevamp.Items.BossItems {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wing of the Ghost Wyvern");
-            Tooltip.SetDefault("Summons the Wyvern Mage Shadow from The Abyss.\n" +
-                "The Wyvern Mage, once killed at your hands, has only grown more powerful since being\n" +
-                "transformed into his undead shadow form when he escaped to The Abyss.\n" +
-                "If you cannot defeat the Wyvern Mage Shadow after several tries, it would\n" +
-                "be wise to try later when you've become stronger and possess greater abilities.");
+            Tooltip.SetDefault("Frees the Wyvern Mage's Shadow from its Glass Prison.\n" +
+                "The Wyvern Mage once created a shadow form of himself, cursed by the powers of the Abyss\n" +
+                "It was so hideous that the Mage imprisoned his shadow self in a massive glass cage, enchanted by dark magic\n");
+               
         }
 
         public override void SetDefaults() {
@@ -44,13 +43,16 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("WingOfTheFallen"), 1);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 20);
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(mod.GetItem("WingOfTheFallen"), 1);
+                recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 20);
+                recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
     }
 }

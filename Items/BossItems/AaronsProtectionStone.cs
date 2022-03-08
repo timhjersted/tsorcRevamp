@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items.BossItems
         {
             Tooltip.SetDefault("The volcanic stoned etched in Aaron's image" +
                                 "\nSaid to protect the one who carries it in times of despair" +
-                                "\nUse this at the top of The Temple Shrine of The Wall in case your first effort" +
-                                "\ndoes not succeed. (Use it don't drop it in lava.)" +
-                                "\nBut first: save, quit and reload before each time you resummon him.");
+                                "\nUse this at the top of The Temple Shrine of The Wall if your first attempt" +
+                                "\ndoes not succeed. (Use it don't drop it in lava.)"); //+
+                                //"\nBut first: save, quit and reload before each time you resummon him.");
         }
         public override void SetDefaults()
         {
@@ -43,8 +43,7 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.GuideVoodooDoll, 1);
-            recipe.AddIngredient(ItemID.SoulofFright, 3);
+            recipe.AddIngredient(ItemID.GuideVoodooDoll, 6);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

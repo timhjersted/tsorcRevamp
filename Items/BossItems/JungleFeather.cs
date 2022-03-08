@@ -40,13 +40,16 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Feather);
-            recipe.AddIngredient(ItemID.ShadowScale, 99);
-            recipe.AddIngredient(ItemID.JungleSpores, 99);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(ItemID.Feather);
+                recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddIngredient(ItemID.Bone, 12);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this);
+                recipe.AddRecipe();
+            }
         }
     }
 }

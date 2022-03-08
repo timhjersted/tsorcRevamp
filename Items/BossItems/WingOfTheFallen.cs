@@ -31,21 +31,24 @@ namespace tsorcRevamp.Items.BossItems {
                 Main.NewText("The Wyvern Mage is not present in this dimension... Retry at night.", 175, 75, 255);
             }
             else {
-                Main.NewText("It was a mistake to come here, Red... ", 175, 75, 255);
+                Main.NewText("It was a mistake to summon me... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
             }
             return true;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.SoulofFlight, 15);
-            recipe.AddIngredient(ItemID.Feather, 99);
-            recipe.AddIngredient(ItemID.ShadowScale, 99);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                recipe.AddIngredient(ItemID.SoulofFlight, 15);
+                recipe.AddIngredient(ItemID.Feather, 13);
+                recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
     }
 }

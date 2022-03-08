@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.BossItems {
     class WateryEgg : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Summons The Sorrow \n" + "Must be sacrificed at a Demon Alter Deep below the Frozen Ocean");
+            Tooltip.SetDefault("Summons The Sorrow \n" + "Must be used near the ocean");
         }
 
         public override void SetDefaults() {
@@ -37,13 +37,17 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Coral, 99);
-            recipe.AddIngredient(ItemID.Waterleaf, 99);
-            recipe.AddIngredient(ItemID.ShadowScale, 99);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                ModRecipe recipe = new ModRecipe(mod);
+                
+                recipe.AddIngredient(ItemID.MythrilOre, 30);
+                recipe.AddIngredient(ItemID.Coral, 1);
+                recipe.AddIngredient(ItemID.ShadowScale, 1);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
+            }
         }
     }
 }
