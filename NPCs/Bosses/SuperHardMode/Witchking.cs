@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npc.aiStyle = 3;
             npc.height = 45;
             npc.width = 30;
-            npc.damage = 100;
+            npc.damage = 150;
             npc.defense = 10;
             npc.lifeMax = 60000;
             npc.scale = 1.05f;
@@ -317,7 +317,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region Projectiles
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
             if (customAi1 >= 10f) {
-                if ((customspawn1 < 24) && Main.rand.Next(1000) == 1) { //was 2 and 900
+                if ((customspawn1 < 36) && Main.rand.Next(800) == 1) { //was 2 and 900
                     int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;

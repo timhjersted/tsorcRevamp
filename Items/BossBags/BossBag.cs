@@ -223,16 +223,18 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
-                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
-                    VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.GoldenHairpin>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>());
+                    //Added Barrow Blade so the player is more likely to get it before encountering the Witchking
+                    VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    
                     Slain[BossBagNPC] = 1;
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.FairyInABottle>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>());
-            //Added Barrow Blade so the player is more likely to get it before encountering the Witchking
+            
 
 
         }
@@ -248,15 +250,18 @@ namespace tsorcRevamp.Items.BossBags {
                 if (Slain[BossBagNPC] == 0)
                 {
                     player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
-                    VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.FairyInABottle>(), 1);
                     player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>()); //Because the Shaman Elder says she drops them
+                    VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>());
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>()); //Because the Shaman Elder says she drops them
+            
+            
 
         }
     }
@@ -270,6 +275,9 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>(), 1);
                     player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
@@ -277,10 +285,8 @@ namespace tsorcRevamp.Items.BossBags {
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.FairyInABottle>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ForgottenGaiaSword>(), 1); 
+            
+            
         }
     }
     
@@ -297,7 +303,6 @@ namespace tsorcRevamp.Items.BossBags {
                     player.QuickSpawnItem(ModContent.ItemType<StaminaVessel>());
                     player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), (int)(50000 * tsorcRevampPlayer.CheckSoulsMultiplier(player)));
                     //VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
-                    //player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
                     Slain[BossBagNPC] = 1;
                 }
             }
@@ -316,7 +321,7 @@ namespace tsorcRevamp.Items.BossBags {
             {
                 if (Slain[BossBagNPC] == 0)
                 {
-                    //player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>(), 1);
+                  
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
                     Slain[BossBagNPC] = 1;
                 }
@@ -355,7 +360,7 @@ namespace tsorcRevamp.Items.BossBags {
     #region SuperHardMode
     public class GwynBag : BossBag
     {
-        public override int BossBagNPC => ModContent.NPCType<TheHunter>();
+        public override int BossBagNPC => ModContent.NPCType<Gwyn>();
         public override void OpenBossBag(Player player)
         {
             var Slain = tsorcRevampWorld.Slain;
@@ -435,7 +440,7 @@ namespace tsorcRevamp.Items.BossBags {
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
             player.QuickSpawnItem(ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.RingOfPower>());
+            
         }
     }
     public class GhostWyvernBag : BossBag
@@ -581,19 +586,22 @@ namespace tsorcRevamp.Items.BossBags {
                 if (Slain[ModContent.NPCType<Witchking>()] == 0)
                 { //and the key value is 0
                     player.QuickSpawnItem(ModContent.ItemType<Items.GuardianSoul>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.RingOfPower>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingHelmet>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingTop>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingBottoms>());
+                    player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.CovenantOfArtorias>());
                     VanillaBossBag.AddBossBagSouls(ModContent.NPCType<Witchking>(), player); //give the player souls
                     Slain[ModContent.NPCType<Witchking>()] = 1; //set the value to 1
                 }
             }
-            player.QuickSpawnItem(ModContent.ItemType<BrokenStrangeMagicRing>());
-            if (Main.rand.NextFloat() <= .12f) player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>());
-            if (Main.rand.Next(10) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingHelmet>());
-            if (Main.rand.Next(10) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingTop>());
-            if (Main.rand.Next(10) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingBottoms>());
-            if (Main.rand.Next(20) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.RingOfPower>());
-            if (Main.rand.NextFloat() <= .08f) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.GoldenHairpin>());
-            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.CovenantOfArtorias>());
-            player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), 2500);
+            if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                player.QuickSpawnItem(ModContent.ItemType<BrokenStrangeMagicRing>());
+            }
+            if (Main.rand.NextFloat() <= .4f) player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>());
+            
+            player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), 5000);
         }
     }
     #endregion
