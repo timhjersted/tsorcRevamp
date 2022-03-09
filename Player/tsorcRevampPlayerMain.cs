@@ -229,6 +229,8 @@ namespace tsorcRevamp
                 player.statLifeMax -= 20;
             }
 
+            
+
             bool onePlayerAlive = false;
             for(int i = 0; i < Main.maxPlayers; i++)
             {
@@ -240,10 +242,26 @@ namespace tsorcRevamp
 
             if (!onePlayerAlive)
             {
-                NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+                if (NPC.AnyNPCs(NPCID.LunarTowerSolar))
+                {
+                    NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
+                    Main.NewText("The Solar Pillar returns to full strength...", Color.OrangeRed);
+                }
+                if (NPC.AnyNPCs(NPCID.LunarTowerStardust))
+                {
+                    NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
+                    Main.NewText("The Stardust Pillar returns to full strength...", Color.Cyan);
+                }
+                if (NPC.AnyNPCs(NPCID.LunarTowerVortex))
+                {
+                    NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
+                    Main.NewText("The Vortex Pillar returns to full strength...", Color.Teal);
+                }
+                if (NPC.AnyNPCs(NPCID.LunarTowerNebula))
+                {
+                    NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
+                    Main.NewText("The Nebula Pillar returns to full strength...", Color.Pink);
+                }
             }
         }
 

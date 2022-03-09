@@ -88,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			}
 			if (poisonStormTimer >= 90)
 			{
-				UsefulFunctions.DustRing(npc.Center, 32, DustID.BlueCrystalShard, 12, 4);
+				UsefulFunctions.DustRing(npc.Center, 181 - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);
 				Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
 				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 				{

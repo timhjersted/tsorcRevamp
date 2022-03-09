@@ -1850,8 +1850,8 @@ namespace tsorcRevamp {
                                 {
                                     if (!stardustNotif)
                                     {
-                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.LightBlue);
-                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.LightBlue);
+                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.Cyan);
+                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.Cyan);
                                         stardustNotif = true;
                                     }
                                 }

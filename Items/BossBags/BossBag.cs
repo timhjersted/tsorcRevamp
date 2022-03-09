@@ -571,7 +571,7 @@ namespace tsorcRevamp.Items.BossBags {
     }
     public class WitchkingBag : BossBag
     {
-        public override int BossBagNPC => ModContent.NPCType<TheHunter>();
+        public override int BossBagNPC => ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>();
         public override void OpenBossBag(Player player)
         {
             var Slain = tsorcRevampWorld.Slain;
@@ -591,8 +591,6 @@ namespace tsorcRevamp.Items.BossBags {
             if (Main.rand.Next(10) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Armors.WitchkingBottoms>());
             if (Main.rand.Next(20) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.RingOfPower>());
             if (Main.rand.NextFloat() <= .08f) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.GoldenHairpin>());
-            //if (Main.rand.NextFloat() <= .10f) player.QuickSpawnItem(ModContent.ItemType<GuardianSoul>());
-            //if (Main.rand.Next(2) == 0) player.QuickSpawnItem(ModContent.ItemType<Items.BossItems.DarkMirror>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.CovenantOfArtorias>());
             player.QuickSpawnItem(ModContent.ItemType<DarkSoul>(), 2500);
         }

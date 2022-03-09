@@ -3206,8 +3206,8 @@ namespace tsorcRevamp.NPCs {
             #region Pillar ModWorld bools
             if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedVortex = true;
             if (npc.type == NPCID.LunarTowerNebula) tsorcRevampWorld.DownedNebula = true;
-            if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedStardust = true;
-            if (npc.type == NPCID.LunarTowerVortex) tsorcRevampWorld.DownedSolar = true;
+            if (npc.type == NPCID.LunarTowerStardust) tsorcRevampWorld.DownedStardust = true;
+            if (npc.type == NPCID.LunarTowerSolar) tsorcRevampWorld.DownedSolar = true;
             #endregion
         }
 

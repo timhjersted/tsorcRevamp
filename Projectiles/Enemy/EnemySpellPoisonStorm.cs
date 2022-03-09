@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(24, 900, false);
+            target.AddBuff(BuffID.Poisoned, 900, false);
         }
     }
 }

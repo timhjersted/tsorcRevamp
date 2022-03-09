@@ -193,6 +193,26 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.StardustSoldier, 1f);
             }
 
+
+            if (spawnInfo.player.ZoneTowerSolar || spawnInfo.player.ZoneTowerNebula || spawnInfo.player.ZoneTowerStardust || spawnInfo.player.ZoneTowerVortex || spawnInfo.player.ZoneOldOneArmy || Main.invasionType != 0)
+            {
+                List<int> blockedNPCs = new List<int>();
+
+                foreach(int id in pool.Keys)
+                {
+                    ModNPC modNPC = NPCLoader.GetNPC(id);
+
+                    if (modNPC != null && modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+                    {
+                        blockedNPCs.Add(id);
+                    }
+                }
+
+                foreach(int id in blockedNPCs)
+                {
+                    pool.Remove(id);
+                }
+            }
         }
 
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
@@ -2381,7 +2401,7 @@ namespace tsorcRevamp.NPCs
                     {
                         //If the npc is an archer, try to teleport somewhere it has line of sight to the player
                         Teleport(npc, 40, true);
-                        npc.ai[3] = 0;
+                        npc.ai[3] = -30;
                     }
                 }
             }
@@ -2418,22 +2438,30 @@ namespace tsorcRevamp.NPCs
         ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
         public static bool SimpleProjectile(NPC npc, ref float timer, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, int soundType = 0, int soundStyle = 0, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
         {
-            if (incrementTimer) {
-                timer++;
-            }
-            if (timer >= timerCap && actuallyFire)
+            if(npc.ai[3] < 0)
             {
                 timer = 0;
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+            }
+            else
+            {
+                if (incrementTimer &&  timer < timerCap)
                 {
-                    Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
-                    Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer, ai0, ai1);
+                    timer++;
                 }
-                if(soundType > 0)
+                if (timer >= timerCap && actuallyFire)
                 {
-                    Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
+                    timer = 0;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
+                        Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer, ai0, ai1);
+                    }
+                    if (soundType > 0)
+                    {
+                        Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
+                    }
+                    return true;
                 }
-                return true;
             }            
 
             return false;

@@ -106,7 +106,7 @@ namespace tsorcRevamp.Items.Weapons {
 			{
 				return true;
 			}
-			return false;
+			//return false;
 		}
 	}
 }

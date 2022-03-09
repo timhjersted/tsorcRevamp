@@ -43,6 +43,5 @@ namespace tsorcRevamp.Items.BossItems {
                 recipe.AddRecipe();
             }
         }
-        */
     }
 }

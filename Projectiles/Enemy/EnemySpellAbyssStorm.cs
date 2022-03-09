@@ -35,9 +35,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void AI()
         {
-            if (size < 20 * 16)
+            if (size < 60 * 16)
             {
-                size += ((14 * 16) / 30f); //Increase to its full size (7 blocks) in half a second (30 ticks)
+                size += ((60 * 16) / 45f);
                 dustCount = (int)(2 * MathHelper.Pi * size / 10); //Spawn dust according to its size                
             }
             else
