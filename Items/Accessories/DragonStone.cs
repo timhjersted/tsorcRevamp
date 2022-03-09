@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class DragonStone : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Provides immunity to most flying creatures and darkness." +
-                                "\nPluis immunity to knockback and fire blocks.");
+            Tooltip.SetDefault("Raises damage dealt by 5% and provides immunity to" +
+                                "\nmost flying creatures, lava, catching on fire, knockback, and fire blocks.");
         }
 
         public override void SetDefaults() {
@@ -17,19 +17,23 @@ namespace tsorcRevamp.Items.Accessories {
             item.rare = ItemRarityID.LightRed;
         }
 
-        public override void AddRecipes() {
+        /*public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.SoulofFlight, 70);
+            recipe.AddIngredient(mod.GetItem("RedTitanite"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
+        */
 
         public override void UpdateEquip(Player player) {
-            player.buffImmune[BuffID.Darkness] = true;
+            player.allDamage += 0.05f;
             player.noKnockback = true;
             player.fireWalk = true;
+            player.lavaImmune = true;
+            player.buffImmune[BuffID.OnFire] = true;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragonStone = true;
         }
 

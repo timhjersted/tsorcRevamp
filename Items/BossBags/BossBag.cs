@@ -414,7 +414,6 @@ namespace tsorcRevamp.Items.BossBags {
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
             player.QuickSpawnItem(ModContent.ItemType<Items.Potions.HolyWarElixir>());
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
             player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 3000);
             player.QuickSpawnItem(ModContent.ItemType<Items.SoulOfChaos>(), 3);
         }
@@ -541,9 +540,11 @@ namespace tsorcRevamp.Items.BossBags {
                 }
             }
             player.QuickSpawnItem(ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
-            player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 4000); 
+            player.QuickSpawnItem(ModContent.ItemType<Items.DarkSoul>(), 4000);
+            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
+            player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonStone> ());
             player.QuickSpawnItem(ModContent.ItemType<Items.BossItems.HellkiteStone>(), 1);
-            if (Main.rand.Next(99) < 10) player.QuickSpawnItem(ModContent.ItemType<Items.Accessories.DragonStone>());
+            
         }
     }
     public class SeathBag : BossBag

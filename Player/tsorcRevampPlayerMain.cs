@@ -601,6 +601,9 @@ namespace tsorcRevamp
                     || NT == NPCID.GraniteFlyer
                     || NT == NPCID.FlyingAntlion
                     || NT == NPCID.DesertDjinn
+                    || NT == NPCID.WyvernHead
+                    || NT == NPCID.Harpy
+                    || NT == NPCID.CultistDragonHead
                     || NT == NPCID.SandElemental)
                 {
                     damage = 0;

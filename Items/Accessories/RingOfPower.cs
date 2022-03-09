@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("A great ring of power gifted to men." +
 								"\nCasts darkness and battle potion effects on wearer." + 
-								"\nNo knockback, +50 percent critical chance. ");
+								"\n+25% critical chance. ");
         }
  
         public override void SetDefaults() {
@@ -22,9 +22,9 @@ namespace tsorcRevamp.Items.Accessories {
 			player.noKnockback = true;
 			player.AddBuff(22, 500, false); //Darkness
 			player.AddBuff(13, 500, false); //Battle Potion
-			player.rangedCrit += 50;
-			player.meleeCrit += 50;
-			player.magicCrit += 50;
+			player.rangedCrit += 25;
+			player.meleeCrit += 25;
+			player.magicCrit += 25;
         }
  
     }

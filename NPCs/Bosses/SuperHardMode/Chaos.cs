@@ -449,7 +449,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.HiRyuuSpear>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3000);
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
 				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfChaos>(), 3);

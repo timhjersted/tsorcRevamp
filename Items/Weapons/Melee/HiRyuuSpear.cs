@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 68;
+            item.damage = 128; //was 78
             item.knockBack = 7f;
 
             item.useStyle = ItemUseStyleID.HoldingOut;
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         }
 
-        public override void AddRecipes() {
+        /*public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.AdamantiteGlaive);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 32000);
@@ -41,5 +41,6 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();
         }
+        */
     }
 }

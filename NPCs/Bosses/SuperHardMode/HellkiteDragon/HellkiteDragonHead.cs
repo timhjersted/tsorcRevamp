@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
                 Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
-                if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
+                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
             }
         }
     }
