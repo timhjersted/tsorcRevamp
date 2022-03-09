@@ -531,8 +531,13 @@ namespace tsorcRevamp.NPCs
         {
             Player player = Main.LocalPlayer;
 
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
+                NPCLoader.blockLoot.Add(ItemID.MechanicalEye);
+                NPCLoader.blockLoot.Add(ItemID.MechanicalSkull);
+                NPCLoader.blockLoot.Add(ItemID.MechanicalWorm);
+
                 if (npc.type == NPCID.ChaosElemental)
                 {
                     NPCLoader.blockLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
