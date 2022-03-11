@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npc.buffImmune[BuffID.OnFire] = true;
             banner = npc.type;
             bannerItem = ModContent.ItemType<Banners.RedKnightofArtoriasBanner>();
+            despawnHandler = new NPCDespawnHandler("The Red Knight has slain you...", Color.Red, DustID.RedTorch);
 
             if (!Main.hardMode)
             {
@@ -49,6 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 npc.boss = true;
             }
         }
+
+        NPCDespawnHandler despawnHandler;
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
@@ -98,6 +101,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
+            if (!Main.hardMode)
+            {
+                despawnHandler.TargetAndDespawn(npc.whoAmI);
+            }
             tsorcRevampAIs.FighterAI(npc, 2, 0.05f, 0.2f, true, 10, false, 0, 1000, 0.5f, 4, true);
 
 

@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public Player Target
         {
             get => Main.player[npc.target];
-        }        
+        }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
@@ -740,7 +740,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 p.velocity += gravCounter;
                 if (distance < 1900)
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(45));
+                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(25));
                 }
                 else
                 {
@@ -781,23 +781,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (AttackModeCounter == 1210)
             {
                 ChangeAttacks(); 
-            }
-        }
-
-        void DivineSparkThirdsMove()
-        {
-            //Scrapped for now, would require a lot of effort to make it interesting to dodge and to get the visuals passable. Might revisit later.
-            if (AttackModeCounter == 0)
-            {
-                TeleportToArenaCenter();
-            }
-            //Split the screen up into thirds, centered on dark cloud.
-            //Telegraph the order in which each third will be attacked somehow
-            //Then fire the divine spark across each, one at a time in rapid sequence
-            //Must be dodged by waiting near an edge, then dashing from one third to another between shots
-            if (AttackModeCounter == 300)
-            {
-                ChangeAttacks();
             }
         }
 
@@ -1407,8 +1390,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for(int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if(Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyArrowOfBard>())
+                    if(Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>())
                     {
+                        for (int j = 0; j < 3; j++)
+                        {
+                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.FireworkFountain_Green, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
+                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.ShadowbeamStaff, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
+                        }
                         Main.projectile[i].Kill();
                     }
                 }
@@ -1691,8 +1679,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     attackAngle += MathHelper.ToRadians((180f / boltCount) * ((AttackModeCounter - 120) / 120f));
                     Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle);
-                    Projectile.NewProjectileDirect(npc.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                    Projectile.NewProjectileDirect(npc.Center, -attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                    for(int i = 0; i < 5; i++)
+                    {
+                        Projectile.NewProjectileDirect(npc.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                    }
                 }
             }
 

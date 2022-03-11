@@ -27,23 +27,14 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud {
             }
 
             if (Main.rand.Next(10) == 0) {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.MagicMirror, projectile.velocity.X, projectile.velocity.Y, 100, default(Color), 2f);
-                Main.dust[dust].noLight = true;
+                Dust.NewDustPerfect(projectile.Center, DustID.MagicMirror, projectile.velocity * 0.5f, 100, default, 2f).noLight = true;
             }
             if (Main.rand.Next(10) == 0)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.ShadowbeamStaff, projectile.velocity.X, projectile.velocity.Y, 100, default(Color), 2f);
-                Main.dust[dust].noLight = true;
+                Dust.NewDustPerfect(projectile.Center, DustID.ShadowbeamStaff, projectile.velocity * 0.5f, 100, default, 2f).noLight = true;
             }
 
-            if (projectile.ai[1] >= 20f) {
-                projectile.velocity.Y = projectile.velocity.Y + 0.2f;
-            }
             projectile.rotation += 0.3f * (float)projectile.direction;
-            if (projectile.velocity.Y > 16f) {
-                projectile.velocity.Y = 16f;
-                return;
-            }
         }
 
         public override bool OnTileCollide(Vector2 CollideVel) {
