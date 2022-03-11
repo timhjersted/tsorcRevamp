@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("GoldenHairpin"), 1);
             recipe.AddIngredient(mod.GetItem("GemBox"), 1);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 60);
+            recipe.AddIngredient(mod.GetItem("CursedSoul"), 30);
             recipe.AddIngredient(mod.GetItem("SoulOfBlight"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 400000);
             recipe.AddTile(TileID.DemonAltar);

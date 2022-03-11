@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(mod.GetItem("BlueTearstoneRing"), 1);
             recipe.AddIngredient(mod.GetItem("BlueTitanite"), 5);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 40000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

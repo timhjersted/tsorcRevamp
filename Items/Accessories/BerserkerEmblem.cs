@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Accessories {
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.WarriorEmblem, 1);
-            recipe.AddIngredient(ItemID.SoulofLight, 5);
+            recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(ItemID.SoulofNight, 5);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
             recipe.AddTile(TileID.DemonAltar);

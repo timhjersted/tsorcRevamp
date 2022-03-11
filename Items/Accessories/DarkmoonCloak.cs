@@ -30,8 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
-            recipe.AddIngredient(ItemID.SoulofNight, 2);
-            recipe.AddIngredient(ItemID.SoulofLight, 2);
+            recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

@@ -6,7 +6,7 @@ namespace tsorcRevamp.Items.Accessories {
     public class CovetousSoulSerpentRing : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
-                                "\nIncreases the number of Dark Souls dropped by fallen creatures by 50%" +
+                                "\nIncreases the number of Dark Souls dropped by fallen creatures by 50%. Defense reduced by 40." +
                                 "\nAll souls are drawn to the wearer from a large distance" +
                                 "\nThe ring glows with a bright white light");
         }
@@ -15,6 +15,7 @@ namespace tsorcRevamp.Items.Accessories {
             item.width = 24;
             item.height = 22;
             item.accessory = true;
+            item.defense = -40;
             item.value = PriceByRarity.Pink_5;
             item.rare = ItemRarityID.Pink;
         }

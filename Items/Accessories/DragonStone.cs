@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class DragonStone : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Raises damage dealt by 5% and provides immunity to" +
+            Tooltip.SetDefault("Imbues swords with fire, raises damage dealt by 5% and provides immunity to" +
                                 "\nmost flying creatures, lava, catching on fire, knockback, and fire blocks.");
         }
 
@@ -34,6 +34,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.fireWalk = true;
             player.lavaImmune = true;
             player.buffImmune[BuffID.OnFire] = true;
+            player.AddBuff(BuffID.WeaponImbueFire, 60, false);
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragonStone = true;
         }
 

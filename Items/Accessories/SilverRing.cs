@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class SilverRing : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Grants 3 defense");
+            Tooltip.SetDefault("Grants 4 defense");
         }
 
         public override void SetDefaults() {
@@ -18,14 +18,15 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.SilverBar, 10);
+            recipe.AddIngredient(ItemID.SilverBar, 2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
         public override void UpdateEquip(Player player) {
-            player.statDefense += 3;
+            player.statDefense += 4;
         }
 
     }

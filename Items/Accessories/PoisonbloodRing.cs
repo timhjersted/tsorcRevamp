@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(mod.GetItem("PoisonbiteRing"), 1);
 			recipe.AddIngredient(mod.GetItem("BloodbiteRing"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

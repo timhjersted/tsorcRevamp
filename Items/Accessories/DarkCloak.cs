@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Accessories {
     public class DarkCloak : ModItem {
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Dark Cloak gives +15 Defense when health falls below 150" +
+            Tooltip.SetDefault("Dark Cloak gives +15 defense when health falls below 150" +
                                 "\n+5 defense normally");
         }
 

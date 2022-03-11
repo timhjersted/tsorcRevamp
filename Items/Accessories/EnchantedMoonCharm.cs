@@ -98,7 +98,7 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void AddRecipes() {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.SoulofLight, 10);
+            recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ItemID.MoonCharm, 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
             recipe.AddTile(TileID.DemonAltar);

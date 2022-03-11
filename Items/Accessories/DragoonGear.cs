@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories {
 
             recipe.AddIngredient(mod.GetItem("DragoonBoots"), 1);
             recipe.AddIngredient(mod.GetItem("DragonHorn"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
