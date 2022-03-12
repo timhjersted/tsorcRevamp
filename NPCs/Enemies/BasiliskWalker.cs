@@ -93,15 +93,19 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (!Main.hardMode && P.ZoneCorrupt && Main.dayTime && !AboveEarth && Main.rand.Next(20) == 1) return 1;
 
 			//higher chance to spawn in the crimson 
-			if (!Main.hardMode && P.ZoneCrimson && !Main.dayTime && Main.rand.Next(4) == 1) return 1;
+			if (!Main.hardMode && P.ZoneCrimson && !Main.dayTime && Main.rand.Next(5) == 1) return 1;
 
-			if (!Main.hardMode && P.ZoneCrimson && Main.dayTime && Main.rand.Next(8) == 1) return 1;//10 is 3%, 5 is 6%
+			if (!Main.hardMode && P.ZoneCrimson && Main.dayTime && Main.rand.Next(10) == 1) return 1;//10 is 3%, 5 is 6%
 
-			//jungle or meteor
-			if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && (InBrownLayer || InGrayLayer) && Main.rand.Next(4) == 1) return 1;
+			//meteor not desert
+			if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && !P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.Next(5) == 1) return 1;
 
-			if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && InGrayLayer && Main.rand.Next(8) == 1) return 1; //was 60
+			if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && !P.ZoneUndergroundDesert && InGrayLayer && Main.rand.Next(10) == 1) return 1; 
+			//meteor and desert
+			if (!Main.hardMode && Meteor && !Dungeon && !Main.dayTime && P.ZoneUndergroundDesert && (InBrownLayer || InGrayLayer) && Main.rand.Next(12) == 1) return 1;
 
+			if (!Main.hardMode && Meteor && !Dungeon && Main.dayTime && P.ZoneUndergroundDesert && InGrayLayer && Main.rand.Next(24) == 1) return 1; 
+			//jungle
 			if (!Main.hardMode && Jungle && Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(80) == 1) return 1; //was 200
 
 			if (!Main.hardMode && Jungle && !Main.dayTime && !Dungeon && InGrayLayer && Main.rand.Next(60) == 1) return 1; //was 850
@@ -147,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			//JUSTHIT CODE
 			Player player2 = Main.player[npc.target];
-			if (npc.justHit && npc.Distance(player2.Center) < 100)
+			if (npc.justHit && npc.Distance(player2.Center) < 150)
 			{
 				shotTimer = 40f;
 			}
