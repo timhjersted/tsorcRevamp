@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneOverworldHeight && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(120) == 0)
+			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneOverworldHeight && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(140) == 0)
 			{
 				if(Main.rand.Next(2) == 0)
                 {
@@ -68,25 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				return 1f;
 			}
 
-			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(160) == 0)
-			{
-				if (Main.rand.Next(2) == 0)
-				{
-					Main.NewText("You hear foot steps...", 175, 75, 255);
-				}
-				return 1f;
-			}
-
-			if (Main.hardMode && (spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneUndergroundDesert || spawnInfo.player.ZoneDesert) && Main.rand.Next(180) == 0)
-			{
-				if (Main.rand.Next(2) == 0)
-				{
-					Main.NewText("You hear foot steps...", 175, 75, 255);
-				}
-				return 1f;
-			}
-
-			if (Main.hardMode && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(120) == 0)
+			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(200) == 0)
 			{
 				if (Main.rand.Next(2) == 0)
 				{
@@ -95,7 +77,27 @@ namespace tsorcRevamp.NPCs.Enemies
 				return 1f;
 			}
 
-			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneOverworldHeight && Main.rand.Next(120) == 0)
+			if (Main.hardMode && Main.dayTime && spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && Main.rand.Next(400) == 0)
+			{
+				if (Main.rand.Next(2) == 0)
+				{
+					Main.NewText("You hear foot steps...", 175, 75, 255);
+				}
+				return 1f;
+			}
+
+			if (Main.hardMode && (spawnInfo.player.ZoneDungeon || spawnInfo.player.ZoneHoly || spawnInfo.player.ZoneSnow || spawnInfo.player.ZoneUndergroundDesert || spawnInfo.player.ZoneDesert) && Main.rand.Next(250) == 0)
+			{
+				if (Main.rand.Next(2) == 0)
+				{
+					Main.NewText("An assassin is tracking your position...", 175, 75, 255);
+				}
+				return 1f;
+			}
+
+			
+
+			if (Main.hardMode && !Main.dayTime && spawnInfo.player.ZoneOverworldHeight && Main.rand.Next(400) == 0)
 			{
 				if (Main.rand.Next(2) == 0)
 				{

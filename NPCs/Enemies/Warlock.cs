@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			npc.height = 40;
 			npc.width = 20;
 			npc.lifeMax = 2600;
-			npc.scale = 1.1f;
+			npc.scale = 1f;
 			npc.HitSound = SoundID.NPCHit37;
 			npc.DeathSound = SoundID.NPCDeath1;
 			npc.value = 6700;
@@ -83,8 +83,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			if (Main.hardMode && (oCavern || oUnderground || Jungle))
 			{
-				if (Main.rand.Next(180) == 1) return 1;
-				else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.3f || spawnInfo.spawnTileX > Main.maxTilesX * 0.7f) && Main.rand.Next(150) == 1)
+				if (Main.rand.Next(400) == 1) return 1;
+				else if ((spawnInfo.spawnTileX < Main.maxTilesX * 0.3f || spawnInfo.spawnTileX > Main.maxTilesX * 0.7f) && Main.rand.Next(200) == 1)
 				{
 					Main.NewText("A Warlock is hunting you... ", 175, 75, 255);
 					return 1;
