@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.BossItems
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.GuideVoodooDoll, 6);
+            recipe.AddIngredient(ItemID.GuideVoodooDoll, 3);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

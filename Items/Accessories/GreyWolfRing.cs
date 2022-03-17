@@ -28,7 +28,6 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(mod.GetItem("WolfRing"), 1);
 			recipe.AddIngredient(mod.GetItem("BandOfSupremeCosmicPower"), 1);
 			recipe.AddIngredient(mod.GetItem("PoisonbloodRing"), 1);
-			recipe.AddIngredient(mod.GetItem("Humanity"), 20);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
@@ -42,8 +41,9 @@ namespace tsorcRevamp.Items.Accessories {
 			player.buffImmune[BuffID.BrokenArmor] = true;
 			player.buffImmune[BuffID.Bleeding] = true;
 			player.buffImmune[BuffID.Poisoned] = true;
+            
 
-			if(Main.bloodMoon) { // Apparently this is the flag used in the Abyss?
+            if (Main.bloodMoon) { // Apparently this is the flag used in the Abyss?
 				player.statDefense += 7;
 			}
         }
