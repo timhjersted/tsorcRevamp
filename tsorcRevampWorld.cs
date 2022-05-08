@@ -103,8 +103,7 @@ namespace tsorcRevamp {
             CustomMap = worldStateList.Contains("CustomMap");
 
             //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
-            if(Main.tile[7102, 137].type == 54 && Main.tile[7103, 137].type == 357 && Main.tile[7104, 136].type == 357 && Main.tile[7105, 136].type == 197)
-            {
+            if (Framing.GetTileSafely(7102, 137).type == 54 && Framing.GetTileSafely(7103, 137).type == 357 && Framing.GetTileSafely(7104, 136).type == 357 && Framing.GetTileSafely(7105, 136).type == 197) {
                 CustomMap = true;
             }
 

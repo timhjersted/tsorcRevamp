@@ -1,5 +1,5 @@
 displayName = The Story of Red Cloud Revamped
 author = Zeodexic, Vibrent, ChromaEquinox, RecursiveCollapse
-version = 0.8.5
+version = 0.8.5.1
 homepage = https://discord.gg/kSptDbe
 
