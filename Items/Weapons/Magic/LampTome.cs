@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
             foreach (int buffType in player.buffType) {
 
-                if (buffType == BuffID.Darkness) {
+                if (buffType == BuffID.Darkness || buffType == BuffID.Blackout || buffType == BuffID.Obstructed) {
                     player.DelBuff(buffIndex);
                 }
                 buffIndex++;
