@@ -87,8 +87,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             if (Main.hardMode && P.townNPCs > 2f && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Artorias>()) && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<SeathTheScalelessHead>()) && !Main.dayTime && Main.rand.Next(1000) == 1)
             {
-                Main.NewText("The village is under attack!", 175, 75, 255);
-                Main.NewText("Seath the Scaleless has come to destroy all...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("The village is under attack!", 175, 75, 255);
+                UsefulFunctions.BroadcastText("Seath the Scaleless has come to destroy all...", 175, 75, 255);
                 return 1;
             }
             return 0;
@@ -130,7 +130,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                         {
                             secondCrystalSpawned = true;
                         }
-                        UsefulFunctions.ServerText("Seath calls upon a Primordial Crystal...", Color.Cyan);
+                        UsefulFunctions.BroadcastText("Seath calls upon a Primordial Crystal...", Color.Cyan);
                     }
 
                     if (!finalCrystalsSpawned && npc.life <= (npc.lifeMax / 6))
@@ -141,7 +141,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                             Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
                         }
                         finalCrystalsSpawned = true;
-                        UsefulFunctions.ServerText("Seath calls upon his final Primordial Crystals...", Color.Cyan);
+                        UsefulFunctions.BroadcastText("Seath calls upon his final Primordial Crystals...", Color.Cyan);
                     }
                 }
             }

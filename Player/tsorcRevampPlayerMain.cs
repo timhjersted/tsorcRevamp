@@ -245,22 +245,22 @@ namespace tsorcRevamp
                 if (NPC.AnyNPCs(NPCID.LunarTowerSolar))
                 {
                     NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;
-                    Main.NewText("The Solar Pillar returns to full strength...", Color.OrangeRed);
+                    UsefulFunctions.BroadcastText("The Solar Pillar returns to full strength...", Color.OrangeRed);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerStardust))
                 {
                     NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
-                    Main.NewText("The Stardust Pillar returns to full strength...", Color.Cyan);
+                    UsefulFunctions.BroadcastText("The Stardust Pillar returns to full strength...", Color.Cyan);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerVortex))
                 {
                     NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
-                    Main.NewText("The Vortex Pillar returns to full strength...", Color.Teal);
+                    UsefulFunctions.BroadcastText("The Vortex Pillar returns to full strength...", Color.Teal);
                 }
                 if (NPC.AnyNPCs(NPCID.LunarTowerNebula))
                 {
                     NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
-                    Main.NewText("The Nebula Pillar returns to full strength...", Color.Pink);
+                    UsefulFunctions.BroadcastText("The Nebula Pillar returns to full strength...", Color.Pink);
                 }
             }
         }

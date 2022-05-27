@@ -304,7 +304,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Player nT = Main.player[npc.target];
                 if (Main.rand.Next(8) == 0)
                 {
-                    Main.NewText("Death!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
                 }
 
                 for (int pcy = 0; pcy < 3; pcy++)
@@ -343,7 +343,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-             
+
 
 
 

@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			Main.npc[Previous].active = false;
 			if (!(NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1))
 			{
-				Main.NewText("Serris has transformed!", Color.Cyan);
+				UsefulFunctions.BroadcastText("Serris has transformed!", Color.Cyan);
 				NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)npc.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
 			}
 			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris Gore 1"), 1f);

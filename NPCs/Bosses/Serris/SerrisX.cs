@@ -282,8 +282,8 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 
         public override void NPCLoot()
-		{		
-			Main.NewText("Serris falls...", Color.Cyan);
+		{
+			UsefulFunctions.BroadcastText("Serris falls...", Color.Cyan);
 
 			if (!(NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || (NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) > 1))) {
 

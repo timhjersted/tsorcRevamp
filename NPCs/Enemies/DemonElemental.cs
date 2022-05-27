@@ -453,7 +453,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 
-			//Main.NewText("A demon elemental has faded from existence...", 175, 75, 255);
+			//UsefulFunctions.BroadcastText("A demon elemental has faded from existence...", 175, 75, 255);
 
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore1"), 1.1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore2"), 1.1f);

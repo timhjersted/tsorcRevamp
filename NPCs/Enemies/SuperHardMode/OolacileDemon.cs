@@ -512,7 +512,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			//{
 
-			//			Main.NewText("You have been cursed!");
+			//			UsefulFunctions.BroadcastText("You have been cursed!");
 			//	player.statLifeMax -= 20;
 			//}
 		}

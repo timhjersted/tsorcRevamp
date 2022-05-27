@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
                 return 1;
             }
 
@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
                 return 1;
             }
 
@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened! ", 175, 75, 255);
-                Main.NewText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A Great Red Knight of the Abyss is now hunting you...", 175, 75, 255);
                 return 1;
             }
 
@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             {
                 //Main.NewText("A portal from The Abyss has been opened!", 175, 75, 255);
-                Main.NewText("A Great Red Knight of the Abyss has come to destroy you..", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A Great Red Knight of the Abyss has come to destroy you..", 175, 75, 255);
                 return 1;
             }
 
@@ -299,7 +299,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                   Player nT = Main.player[npc.target];
                   if (Main.rand.Next(8) == 0)
                   {
-                      Main.NewText("Death!", 175, 75, 255);
+                      UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
                   }
 
                   for (int pcy = 0; pcy < 3; pcy++)
@@ -317,7 +317,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 if (Main.rand.Next(180) == 0)
                 {
-                    Main.NewText("Death!", 175, 75, 255);
+                    UsefulFunctions.BroadcastText("Death!", 175, 75, 255);
                 }
                 //ULTIMATE DEATH ATTACK - BLANKET OF FIRE ABOVE PLAYER THAT CURSES
                 //Player player = Main.player[npc.target];

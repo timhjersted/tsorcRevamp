@@ -833,9 +833,9 @@ namespace tsorcRevamp {
 
                     if (Main.dayTime)
                     {
-                        UsefulFunctions.ServerText("You shift time forward and a new day begins...", new Color(175, 75, 255));
+                        UsefulFunctions.BroadcastText("You shift time forward and a new day begins...", new Color(175, 75, 255));
                     }
-                    else UsefulFunctions.ServerText("You shift time forward and a new night begins...", new Color(175, 75, 255));
+                    else UsefulFunctions.BroadcastText("You shift time forward and a new night begins...", new Color(175, 75, 255));
 
                     NetMessage.SendData(MessageID.WorldData);
                 }
@@ -853,7 +853,7 @@ namespace tsorcRevamp {
                 int count = reader.ReadInt32();
                 if (Main.netMode == NetmodeID.Server)
                 {
-                    UsefulFunctions.ServerText("Dropping " + count + "souls");
+                    UsefulFunctions.BroadcastText("Dropping " + count + "souls");
                     //You can not drop items in a stack larger than 32766 in multiplayer, because the stack size gets converted to a short when syncing
                     while (count > 32000)
                     {
@@ -1804,8 +1804,8 @@ namespace tsorcRevamp {
                                 {
                                     if (!vortexNotif)
                                     {
-                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.Teal);
-                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.Teal);
+                                        UsefulFunctions.BroadcastText("The power of this monolith is bound to Attraidies", Color.Teal);
+                                        UsefulFunctions.BroadcastText("Defeating him and returning here may allow you to release it...", Color.Teal);
                                         vortexNotif = true;
                                     }
                                 }
@@ -1827,8 +1827,8 @@ namespace tsorcRevamp {
                                 {
                                     if (!nebulaNotif)
                                     {
-                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.Pink);
-                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.Pink);
+                                        UsefulFunctions.BroadcastText("The power of this monolith is bound to Attraidies", Color.Pink);
+                                        UsefulFunctions.BroadcastText("Defeating him and returning here may allow you to release it...", Color.Pink);
                                         nebulaNotif = true;
                                     }
                                 }
@@ -1850,8 +1850,8 @@ namespace tsorcRevamp {
                                 {
                                     if (!stardustNotif)
                                     {
-                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.Cyan);
-                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.Cyan);
+                                        UsefulFunctions.BroadcastText("The power of this monolith is bound to Attraidies", Color.Cyan);
+                                        UsefulFunctions.BroadcastText("Defeating him and returning here may allow you to release it...", Color.Cyan);
                                         stardustNotif = true;
                                     }
                                 }
@@ -1873,8 +1873,8 @@ namespace tsorcRevamp {
                                 {
                                     if (!solarNotif)
                                     {
-                                        Main.NewText("The power of this monolith is bound to Attraidies", Color.OrangeRed);
-                                        Main.NewText("Defeating him and returning here may allow you to release it...", Color.OrangeRed);
+                                        UsefulFunctions.BroadcastText("The power of this monolith is bound to Attraidies", Color.OrangeRed);
+                                        UsefulFunctions.BroadcastText("Defeating him and returning here may allow you to release it...", Color.OrangeRed);
                                         solarNotif = true;
                                     }
                                 }

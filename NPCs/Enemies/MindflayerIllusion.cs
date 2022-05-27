@@ -248,19 +248,13 @@ namespace tsorcRevamp.NPCs.Enemies {
             Item.NewItem(npc.getRect(), ItemID.Heart);
             Item.NewItem(npc.getRect(), ItemID.Heart); //no it cant be a stack of 2. it has to be 2 stacks of 1
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
-        }
 
-        #region Gore
-        public override void HitEffect(int hitDirection, double damage) {
-            if (npc.life <= 0) {
-                Main.NewText("Hahahahaha! I'm going to destroy you, Red...", 150, 150, 150);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 1"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores / Mindflayer Gore 2"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 2"), 1);
-                Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
-            }
+            UsefulFunctions.BroadcastText("Hahahahaha! I'm going to destroy you, Red...", 150, 150, 150);
+            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 1"), 1f);
+            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores / Mindflayer Gore 2"), 1f);
+            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
+            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 2"), 1);
+            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);
         }
-        #endregion
     }
 }

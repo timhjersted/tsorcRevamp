@@ -79,10 +79,10 @@ namespace tsorcRevamp.NPCs.Bosses
 			//	return 0;
 			//}
 
-			//if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(500) == 1) { Main.NewText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
-			//if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(350) == 1) { Main.NewText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
+			//if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(500) == 1) { UsefulFunctions.BroadcastText("A hero from Lumelia has come to kill you for unleashing darkness upon the world... ", 175, 75, 255); return 1; }//why tim xD -- haha, no more preHM spawn with the new lore
+			//if (Main.hardMode && !(P.ZoneCorrupt || P.ZoneCrimson || tsorcRevampWorld.SuperHardMode) && P.ZoneOverworldHeight && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(350) == 1) { UsefulFunctions.BroadcastText("A hero from Lumelia has come seeking justice for their slain brother, Aaron...", 175, 75, 255); return 1; }
 			//if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneSnow && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && Main.rand.Next(300) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying Aaron... ", 175, 75, 255); return 1; }
-			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(500) == 1) { Main.NewText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
+			if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && P.ZoneOverworldHeight && P.ZoneDesert && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()) && !(P.ZoneCorrupt || P.ZoneCrimson) && !P.ZoneBeach && Main.rand.Next(500) == 1) { UsefulFunctions.BroadcastText("'You killed my brother!' A hero from Lumelia has come to kill you for slaying his kin... ", 175, 75, 255); return 1; }
 
 			return 0;
 		}
@@ -542,7 +542,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				
 					if (Main.rand.Next(4) == 0)
 					{
-						Main.NewText("Archers nearby!", 175, 75, 255);
+						UsefulFunctions.BroadcastText("Archers nearby!", 175, 75, 255);
 					}
 
 					for (int pcy = 0; pcy < 10; pcy++)
@@ -562,8 +562,8 @@ namespace tsorcRevamp.NPCs.Bosses
 					Player nT = Main.player[npc.target];
 
 					if (Main.rand.Next(4) == 0)
-					{ 
-						Main.NewText("Archers in the trees!", 175, 75, 255);
+					{
+						UsefulFunctions.BroadcastText("Archers in the trees!", 175, 75, 255);
 					}
 
 					for (int pcy = 0; pcy < 12; pcy++)

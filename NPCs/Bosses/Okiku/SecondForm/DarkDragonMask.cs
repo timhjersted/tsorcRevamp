@@ -147,6 +147,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                     Main.player[npc.target].buffTime[i] = 0;
                     if (Main.netMode != NetmodeID.Server && Main.myPlayer == npc.target)
                     {
+                        //This one can stay a NewText because it already checks != server and does need to run only for that one player
                         Main.NewText("What a horrible night to have your Gravitation buff dispelled...", 150, 150, 150);
                     }
                     break;
@@ -182,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
-                UsefulFunctions.ServerText("??????????????????? A booming laughter echoes all around you!", new Color(175, 75, 255));
+                UsefulFunctions.BroadcastText("??????????????????? A booming laughter echoes all around you!", new Color(175, 75, 255));
             }
         }
 

@@ -2890,7 +2890,7 @@ namespace tsorcRevamp.NPCs {
                             destroyerAttackIndex++;
                             if (destroyerAttackIndex == 3)
                             {
-                                Main.NewText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
+                                UsefulFunctions.BroadcastText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
                             }
                         }
                         if (Main.GameUpdateCount % 60 == 0)

@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 			if (spawnInfo.player.ZoneJungle && !NPC.AnyNPCs(mod.NPCType("DoctorJones")) && !NPC.AnyNPCs(mod.NPCType("Archaeologist")) && Main.rand.Next(10) == 0)
 			{
-				Main.NewText("The spirit of adventure is nearby...", 255, 255, 0);
+				UsefulFunctions.BroadcastText("The spirit of adventure is nearby...", 255, 255, 0);
 				return 1f;
 			}
 			return chance;

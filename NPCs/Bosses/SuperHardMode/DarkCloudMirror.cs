@@ -327,8 +327,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.3f, 0.3f, 200, default(Color), 1f);
             Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
             Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);        
-            Main.NewText("Just a reflection...", Color.Blue);
+            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            UsefulFunctions.BroadcastText("Just a reflection...", Color.Blue);
         }
 
         #region Debuffs

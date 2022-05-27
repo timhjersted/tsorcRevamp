@@ -351,8 +351,8 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.rand.Next(100) < 60) Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion, 2);
 			if (Main.rand.Next(100) < 10) Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1);
 			if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ItemID.ShinePotion, 1);
-			
-			Main.NewText("The Attraidies Illusion has been defeated...", 150, 150, 150);
+
+			UsefulFunctions.BroadcastText("The Attraidies Illusion has been defeated...", 150, 150, 150);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 1"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 2"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Mindflayer Gore 3"), 1f);

@@ -294,27 +294,25 @@ namespace tsorcRevamp {
         }
 
         ///<summary> 
-        ///Broadcasts a message from the server to all players. Safe to use in singleplayer, where it simply defaults to a NewText() instead.
+        ///Broadcasts a message from the server to all players. Safe to use in either multiplayer or singleplayer contexts, where it simply defaults to a NewText() instead.
+        ///It does nothing when run on a multiplayer client, as that would make it spam a new copy of the message for every client that runs it. Use NewText() for client-only code like items!
         ///</summary>         
         ///<param name="text">String containing the text</param>
-        public static void ServerText(string text)
+        public static void BroadcastText(string text)
         {
-            if (Main.netMode == NetmodeID.Server)
-            {
-                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Yellow);
-            }
-            if (Main.netMode == NetmodeID.SinglePlayer)
-            {
-                Main.NewText(text);
-            }
+            BroadcastText(text, Color.Yellow);
+        }
+        public static void BroadcastText(string text, int r, int g, int b)
+        {
+            BroadcastText(text, new Color(r, g, b));
         }
 
         ///<summary> 
-        ///Broadcasts a message from the server to all players. Safe to use in singleplayer, where it simply defaults to a NewText() instead.
+        ///Now in technicolor!
         ///</summary>         
         ///<param name="text">String containing the text</param>
         ///<param name="color">Color of the text</param>
-        public static void ServerText(string text, Color color)
+        public static void BroadcastText(string text, Color color)
         {
             if (Main.netMode == NetmodeID.Server)
             {

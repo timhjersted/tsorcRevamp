@@ -356,22 +356,17 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
-        {
-            if (npc.life <= 0)
-            {
-                for (int j = 0; j < 50; j++)
-                {
-                    int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 16, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 200, Color.Salmon, 2.5f);
-                    Main.dust[dust].noGravity = true;
-                }
-                Main.NewText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
-            }
-        }
 
         public override void NPCLoot()
         {
+            for (int j = 0; j < 50; j++)
+            {
+                int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 16, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 200, Color.Salmon, 2.5f);
+                Main.dust[dust].noGravity = true;
+            }
+
             Player player = Main.player[npc.target];
+            UsefulFunctions.BroadcastText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
 
             Item.NewItem(npc.getRect(), mod.ItemType("HealingElixir"));
 

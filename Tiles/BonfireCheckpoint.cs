@@ -434,7 +434,7 @@ namespace tsorcRevamp.Tiles
 				//new bonfire lit sound
 				Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/bonfire-lit"), 0.2f, 0.0f);
 				//Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
-				Main.NewText("Bonfire lit!", 250, 110, 90);
+				UsefulFunctions.BroadcastText("Bonfire lit!", 250, 110, 90);
 
 				if (tsorcRevampWorld.LitBonfireList == null)
 				{
@@ -442,7 +442,7 @@ namespace tsorcRevamp.Tiles
 				}
 				if(tsorcRevampWorld.LitBonfireList.Count == 1)
                 {
-					Main.NewText("Open your minimap near a bonfire to instantly teleport to any other lit ones in the world!", Color.Red);
+					UsefulFunctions.BroadcastText("Open your minimap near a bonfire to instantly teleport to any other lit ones in the world!", Color.Red);
                 }
 				tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));
 

@@ -78,14 +78,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (tsorcRevampWorld.SuperHardMode && Dungeon && Main.rand.Next(60) == 1)
 
             {
-                Main.NewText("A Taurus Knight is close... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A Taurus Knight is close... ", 175, 75, 255);
                 return 1;
             }
 
             if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.Next(30) == 1)
 
             {
-                Main.NewText("A Taurus Knight is close... ", 175, 75, 255);
+                UsefulFunctions.BroadcastText("A Taurus Knight is close... ", 175, 75, 255);
                 return 1;
             }
 

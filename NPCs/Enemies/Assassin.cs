@@ -62,7 +62,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if(Main.rand.Next(2) == 0)
                 {
-					Main.NewText("An assassin is tracking your position...", 175, 75, 255);
+					UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
 				}
 				
 				return 1f;
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (Main.rand.Next(2) == 0)
 				{
-					Main.NewText("You hear a bow draw...", 175, 75, 255);
+					UsefulFunctions.BroadcastText("You hear a bow draw...", 175, 75, 255);
 				}
 				return 1f;
 			}
@@ -81,7 +81,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (Main.rand.Next(2) == 0)
 				{
-					Main.NewText("You hear foot steps...", 175, 75, 255);
+					UsefulFunctions.BroadcastText("You hear foot steps...", 175, 75, 255);
 				}
 				return 1f;
 			}
@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (Main.rand.Next(2) == 0)
 				{
-					Main.NewText("An assassin is tracking your position...", 175, 75, 255);
+					UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
 				}
 				return 1f;
 			}
@@ -101,31 +101,31 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (Main.rand.Next(2) == 0)
 				{
-					Main.NewText("You are being hunted...", 175, 75, 255);
+					UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
 				}
 				return 1f;
 			}
-			
+
 			//SUPER-HM
 
 			/*if (ModWorld.superHardmode && !Main.dayTime && !Corruption && !Ocean && AboveEarth && Main.rand.Next(30) == 1)
 
 			{
-				Main.NewText("An assassin is nearby...", 175, 75, 255);
+				UsefulFunctions.BroadcastText("An assassin is nearby...", 175, 75, 255);
 				return true;
 			}
 
 			if (ModWorld.superHardmode && Main.dayTime && !Corruption && !Ocean && Jungle && AboveEarth && Main.rand.Next(30) == 1)
 
 			{
-				Main.NewText("An assassin is nearby...", 175, 75, 255);
+				UsefulFunctions.BroadcastText("An assassin is nearby...", 175, 75, 255);
 				return true;
 			}
 
 			if (ModWorld.superHardmode && !Corruption && !Ocean && Jungle && InGrayLayer && Main.rand.Next(20) == 1)
 
 			{
-				Main.NewText("An assassin is tracking your position...", 175, 75, 255);
+				UsefulFunctions.BroadcastText("An assassin is tracking your position...", 175, 75, 255);
 				return true;
 			}*/
 

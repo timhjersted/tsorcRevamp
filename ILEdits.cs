@@ -214,7 +214,7 @@ namespace tsorcRevamp {
         //Stick this into a section of code you are trying to *avoid* running to let you know for sure if it still is (if so you messed up skipping it, if not you edited the wrong section)
         internal static void DebugDelegate()
         {
-            Main.NewText("Hello! I am running!!");
+            UsefulFunctions.BroadcastText("Hello! I am running!!");
         }
 
         /*

@@ -2006,14 +2006,7 @@ namespace tsorcRevamp.NPCs
                     {
                         if (despawnText != null)
                         {
-                            if (Main.netMode == NetmodeID.SinglePlayer)
-                            {
-                                Main.NewText(despawnText, despawnTextColor);
-                            }
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                UsefulFunctions.ServerText(despawnText, despawnTextColor);
-                            }
+                            UsefulFunctions.BroadcastText(despawnText, despawnTextColor);
                         }
                         despawnTime = 240;
                     }

@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 1000)
 			{
 				npc.defense = 9999;
-				if (holdTimer <= 0)
+				if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
 				{
 					Main.NewText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
 					holdTimer = 200;
@@ -387,11 +387,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					{
 						if (chaosHealed == 0)
 						{
-							UsefulFunctions.ServerText("Chaos has begun to heal itself...", Color.Yellow);
+							UsefulFunctions.BroadcastText("Chaos has begun to heal itself...", Color.Yellow);
 						}
 						else
                         {
-							UsefulFunctions.ServerText("Chaos continues to heal itself...", Color.Yellow);
+							UsefulFunctions.BroadcastText("Chaos continues to heal itself...", Color.Yellow);
 						}
 						npc.life += npc.lifeMax / 6;
 						if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;

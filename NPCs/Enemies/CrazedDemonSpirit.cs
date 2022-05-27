@@ -435,7 +435,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void NPCLoot()
 		{
 
-			Main.NewText("A lost spirit has been freed from its curse...", 175, 75, 255);
+			UsefulFunctions.BroadcastText("A lost spirit has been freed from its curse...", 175, 75, 255);
 
 			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
 			if (npc.life <= 0)

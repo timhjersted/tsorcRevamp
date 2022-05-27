@@ -119,12 +119,16 @@ namespace tsorcRevamp.NPCs.Friendly
 					Main.npcChatText = $"If you happen to find another Estus Flask Shard, bring it to me. So that I may ease your burden.";
 					int ShardItemIndex = Main.LocalPlayer.FindItem(ModContent.ItemType<Items.EstusFlaskShard>());
 
-					if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5) 
-					{ 
+					if (Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5)
+					{
 						Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax += 1;
 						if (Main.LocalPlayer.inventory[ShardItemIndex].stack == 1) { Main.LocalPlayer.inventory[ShardItemIndex].TurnToAir(); }
 						else Main.LocalPlayer.inventory[ShardItemIndex].stack--;
-						Main.NewText("Estus Flask size increased! Max charges: " + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
+
+						if (Main.netMode != NetmodeID.Server)
+						{
+							Main.NewText("Estus Flask size increased! Max charges: " + Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax, Color.OrangeRed);
+						}
 					}
 					return;
 				}
@@ -211,8 +215,11 @@ namespace tsorcRevamp.NPCs.Friendly
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
 					Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.Lifegem>(), 10);
-					Main.NewText("Estus Flask acquired! Use it by pressing the Quick Heal hotkey. The Estus Flask is a reusable healing item that can be refilled at bonfires", Color.OrangeRed);
 
+					if (Main.netMode != NetmodeID.Server)
+					{
+						Main.NewText("Estus Flask acquired! Use it by pressing the Quick Heal hotkey. The Estus Flask is a reusable healing item that can be refilled at bonfires", Color.OrangeRed);
+					}
 					if (Main.netMode == NetmodeID.MultiplayerClient)
 					{
 						Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);

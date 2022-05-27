@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             } else
             {
 
-                Main.NewText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
+                UsefulFunctions.BroadcastText("The souls of " + npc.GivenOrTypeName + " have been released!", 175, 255, 75);
                 tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()] = 1;
             }
         }

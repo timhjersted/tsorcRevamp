@@ -212,11 +212,11 @@ namespace tsorcRevamp.Tiles
 				{
 					if (Main.rand.Next(3) == 0)
 					{
-						Main.NewText("...What do you want?", 120, 190, 240);
+						UsefulFunctions.BroadcastText("...What do you want?", 120, 190, 240);
 					}
 					else if (Main.rand.Next(2) == 0)
 					{
-						Main.NewText("Heh, heh, heh, heh...", 120, 190, 240);
+						UsefulFunctions.BroadcastText("Heh, heh, heh, heh...", 120, 190, 240);
 						for (int b = 0; b < 12; b++)
 						{
 							Projectile.NewProjectile(new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 15, 2f);
@@ -224,19 +224,19 @@ namespace tsorcRevamp.Tiles
 					}
 					else
 					{
-						Main.NewText("Leave me alone - before I use my 'special attack' on you", 120, 190, 240);
+						UsefulFunctions.BroadcastText("Leave me alone - before I use my 'special attack' on you", 120, 190, 240);
 					}
 				}
 
 				if (sansannoyed == 12) //after clicking 12 times, gives accessory
 				{
-					Main.NewText("Fine. Here. Take it and leave.", 255, 90, 90);
+					UsefulFunctions.BroadcastText("Fine. Here. Take it and leave.", 255, 90, 90);
 					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("RingOfTheBlueEye"), 1); 
 				}
 
 				if (sansannoyed > 12)
 				{
-					Main.NewText("I said get out of here!", 255, 40, 40);
+					UsefulFunctions.BroadcastText("I said get out of here!", 255, 40, 40);
 					for (int b = 0; b < 25; b++)
 					{
 						Projectile.NewProjectile(new Vector2(i * 16 + 10, j * 16 + 10), new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -6), ModContent.ProjectileType<Projectiles.BoneHostile>(), 25, 2f);

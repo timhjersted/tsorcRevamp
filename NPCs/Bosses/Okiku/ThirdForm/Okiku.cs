@@ -105,18 +105,17 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 phaseTime = 90;
                 phaseStarted = false;
                 Initialized = true;
+
+                UsefulFunctions.BroadcastText("You've done well, Red. But it's not over yet.", new Color(150, 150, 150));
             }
 
             for (int i = 0; i < 10; i++) {
                 if (Main.player[npc.target].buffType[i] == 18) {
                     Main.player[npc.target].buffType[i] = 0;
                     Main.player[npc.target].buffTime[i] = 0;
-                    if (Main.netMode == NetmodeID.SinglePlayer) {
-                        Main.NewText("You've done well, Red. But it's not over yet.", 150, 150, 150);
-                    }
-                    if(Main.netMode == NetmodeID.Server)
+                    if (Main.netMode != NetmodeID.Server && Main.myPlayer == npc.target)
                     {
-                        UsefulFunctions.ServerText("You've done well, Red. But it's not over yet.", new Color(150, 150, 150));
+                        Main.NewText("What a horrible night to have your Gravitation buff dispelled...", 150, 150, 150);
                     }
                     break;
                 }

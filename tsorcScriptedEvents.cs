@@ -594,7 +594,7 @@ namespace tsorcRevamp
             Dust.NewDust(player.position, 30, 30, DustID.GreenFairy, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 255);
             if (thisEvent.eventTimer > 900)
             {
-                Main.NewText("The example scripted event ends...", Color.Green);
+                UsefulFunctions.BroadcastText("The example scripted event ends...", Color.Green);
                 thisEvent.endEvent = true;
                 return true;
             }
@@ -608,7 +608,7 @@ namespace tsorcRevamp
             //Spawning meteors:
             if (Main.rand.Next(200) == 0)
             {
-                Main.NewText("Artorias rains fire from the Abyss...", Color.Gold);
+                UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < 10; i++)
                 {
                     Projectile.NewProjectile((float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), thisEvent.spawnedNPC.damage / 4, 2f, Main.myPlayer);
@@ -880,7 +880,7 @@ namespace tsorcRevamp
                     }
                     else
                     {
-                        Main.NewText("ERROR: Failed to convert string " + eventTypeStrings[i] + "to enum. Please report this!! You can do so in our discord: https://discord.gg/kSptDbe", Color.Red);
+                        UsefulFunctions.BroadcastText("ERROR: Failed to convert string " + eventTypeStrings[i] + "to enum. Please report this!! You can do so in our discord: https://discord.gg/kSptDbe", Color.Red);
                     }               
                 }
             }
@@ -1369,14 +1369,7 @@ namespace tsorcRevamp
                 }
                 if (eventText != "default")
                 {
-                    if (Main.netMode == NetmodeID.SinglePlayer)
-                    {
-                        Main.NewText(eventText, eventTextColor);
-                    }
-                    else if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(eventText), eventTextColor);
-                    }
+                    UsefulFunctions.BroadcastText(eventText, eventTextColor);
                 }
             }
 

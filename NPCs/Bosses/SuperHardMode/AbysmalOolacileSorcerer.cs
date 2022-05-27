@@ -332,7 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		#region Gore
 		public override void NPCLoot()
 		{
-			Main.NewText("A darkness has been lifted from the world...", 150, 150, 150);
+			UsefulFunctions.BroadcastText("A darkness has been lifted from the world...", 150, 150, 150);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Oolacile Sorcerer Gore 1"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Oolacile Sorcerer Gore 2"), 1f);
 			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Oolacile Sorcerer Gore 3"), 1f);

@@ -667,13 +667,13 @@ namespace tsorcRevamp {
                     //Stuff that should be done by every client that joins
                     if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        Main.NewText("Custom map detected. Adventure Mode auto-enabled.", Color.GreenYellow);
+                        UsefulFunctions.BroadcastText("Custom map detected. Adventure Mode auto-enabled.", Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = true;
                     }
                     if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                     {
-                        Main.NewText("Warning!! The setting 'Adventure Mode: Recipes and Items' is disabled!!", Color.OrangeRed);
-                        Main.NewText("Having this off can break progression and parts of the map, please enable this setting and reload mods!", Color.OrangeRed);
+                        UsefulFunctions.BroadcastText("Warning!! The setting 'Adventure Mode: Recipes and Items' is disabled!!", Color.OrangeRed);
+                        UsefulFunctions.BroadcastText("Having this off can break progression and parts of the map, please enable this setting and reload mods!", Color.OrangeRed);
                     }
 
                     //Stuff that should only be done by either a solo player or the server
@@ -735,13 +735,13 @@ namespace tsorcRevamp {
                     //Stuff that should only be done if they're *not* on the custom map
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
                     {
-                        Main.NewText("Randomly-generated map detected. Adventure Mode auto-disabled.", Color.GreenYellow);
+                        UsefulFunctions.BroadcastText("Randomly-generated map detected. Adventure Mode auto-disabled.", Color.GreenYellow);
                         ModContent.GetInstance<tsorcRevampConfig>().AdventureMode = false;
                     }
                     if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                     {
-                        Main.NewText("Warning!! The setting 'Adventure Mode: Recipes and Items' is enabled!!", Color.OrangeRed);
-                        Main.NewText("This is intended for the custom map and can break randomly generated worlds! To prevent issues, please disable this setting and reload mods!", Color.OrangeRed);
+                        UsefulFunctions.BroadcastText("Warning!! The setting 'Adventure Mode: Recipes and Items' is enabled!!", Color.OrangeRed);
+                        UsefulFunctions.BroadcastText("This is intended for the custom map and can break randomly generated worlds! To prevent issues, please disable this setting and reload mods!", Color.OrangeRed);
                     }
                 }
             }
@@ -804,29 +804,13 @@ namespace tsorcRevamp {
             Color c = new Color(255f, 255f, 60f);
             if (tsorcRevampWorld.SuperHardMode)
             {
-                if (Main.netMode == 0)
-                {
-                    Main.NewText("The portal from The Abyss has closed!", c);
-                    Main.NewText("The world has been healed. Attraidies' sway over the world has finally ended!", c);
-                }
-                else if (Main.netMode == 2)
-                {
-                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The portal from The Abyss has closed!"), c);
-                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The world has been healed. Attraidies' sway over the world has finally ended!"), c);
-                }
+                UsefulFunctions.BroadcastText("The portal from The Abyss has closed!", c);
+                UsefulFunctions.BroadcastText("The world has been healed. Attraidies' sway over the world has finally ended!", c);
             }
             else
             {
-                if (Main.netMode == 0)
-                {
-                    Main.NewText("You have vanquished the final guardian...", c);
-                    Main.NewText("The portal from The Abyss remains closed. All is at peace...", c);
-                }
-                else if (Main.netMode == 2)
-                {
-                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("You have vanquished the final guardian..."), c);
-                    NetTextModule.SerializeServerMessage(NetworkText.FromLiteral("The portal from The Abyss remains closed. All is at peace..."), c);
-                }
+                UsefulFunctions.BroadcastText("You have vanquished the final guardian...", c);
+                UsefulFunctions.BroadcastText("The portal from The Abyss remains closed. All is at peace...", c);
             }
             
             //These are outside of the if statements just so players can still disable hardmode or superhardmode if they happen to activate them again.

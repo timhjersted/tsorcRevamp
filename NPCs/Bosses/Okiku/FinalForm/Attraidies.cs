@@ -332,7 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     npc.position.Y -= 800;
 
                     //Gives the player infinite flight for the duration of the attack. Sticks around for a bit afterward as a bonus.                
-                    Main.NewText("You suddenly feel weightless...", Color.DeepSkyBlue);
+                    UsefulFunctions.BroadcastText("You suddenly feel weightless...", Color.DeepSkyBlue);
                     Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);                    
                 }
 
@@ -733,41 +733,23 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             if (!tsorcRevampWorld.SuperHardMode) {
 
-                if (Main.netMode == NetmodeID.SinglePlayer) {
-                    Main.NewText("A portal from The Abyss has been opened!");
-                    Main.NewText("Artorias, the Ancient Knight of the Abyss has entered this world!...");
-                    Main.NewText("You must seek out the Shaman Elder...");
-
-                }
-                else if (Main.netMode == NetmodeID.Server) {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("A portal from The Abyss has been opened!"), new Color(255, 255, 60));
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Artorias, the Ancient Knight of the Abyss has entered this world!"), new Color(255, 255, 60));
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("You must seek out the Shaman Elder..."), new Color(255, 255, 60));
-                }
-
+                UsefulFunctions.BroadcastText("A portal from The Abyss has been opened!", new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText("Artorias, the Ancient Knight of the Abyss has entered this world!...", new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder...", new Color(255, 255, 60));
 
                 Main.hardMode = true;
                 tsorcRevampWorld.SuperHardMode = true;
                 tsorcRevampWorld.TheEnd = false;
-
             }
 
             else {
 
-                if (Main.netMode == NetmodeID.SinglePlayer) {
-                    Main.NewText("The portal from The Abyss remains open...");
-                    Main.NewText("You must seek out the Shaman Elder...");
-
-                }
-                else if (Main.netMode == NetmodeID.Server) {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The portal from The Abyss remains open..."), new Color(255, 255, 60));
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("You must seek out the Shaman Elder..."), new Color(255, 255, 60));
-                }
+                UsefulFunctions.BroadcastText("The portal from The Abyss remains open...", new Color(255, 255, 60));
+                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder...", new Color(255, 255, 60));                
 
                 tsorcRevampWorld.SuperHardMode = true;
                 Main.hardMode = true;
                 tsorcRevampWorld.TheEnd = false;
-
             }
         }
     }

@@ -80,28 +80,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(20) == 1)
 
             {
-                Main.NewText("An ancient warrior has come to banish you from existence...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("An ancient warrior has come to banish you from existence...", 175, 75, 255);
                 return 1;
             }
 
             if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(15) == 1)
 
             {
-                Main.NewText("You are being hunted...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
                 return 1;
             }
 
             if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(20) == 1)
 
             {
-                Main.NewText("You are being hunted...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
                 return 1;
             }
 
             if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<OolacileKnight>()) && Main.rand.Next(30) == 1)
 
             {
-                Main.NewText("You are being hunted...", 175, 75, 255);
+                UsefulFunctions.BroadcastText("You are being hunted...", 175, 75, 255);
                 return 1;
             }
 

@@ -127,16 +127,6 @@ namespace tsorcRevamp.UI
         private void RightClickedPotionSlot(UIMouseEvent evt, UIElement listeningElement)
         {
             //listeningElement.
-        }
-
-        private void ButtonSetSpawnClicked(UIMouseEvent evt, UIElement listeningElement)
-        {
-
-            Main.NewText("Pressed!", 255, 240, 20, false);
-            PotionBagUI.Left.Set((Main.screenWidth - 160) / 2, 0f);
-            PotionBagUI.Top.Set((Main.screenHeight + 120) / 2, 0f);
-            PotionBagUI.Width.Set(160f, 0f);
-            PotionBagUI.Height.Set(64f, 0f);
-        }
+        }       
     }
 }

@@ -388,7 +388,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 			if (npc.life <= 0)
 			{
-				Main.NewText("The sorcerer of Oolacile has been defeated...", 150, 150, 150);
+				UsefulFunctions.BroadcastText("The sorcerer of Oolacile has been defeated...", 150, 150, 150);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Oolacile Sorcerer Gore 1"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Oolacile Sorcerer Gore 2"), 1f);
 				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Oolacile Sorcerer Gore 3"), 1f);

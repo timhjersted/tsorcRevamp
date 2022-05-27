@@ -2183,7 +2183,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     ActuatePyramid();
                 }
             }
-            Main.NewText("You have subsumed your shadow...", Color.Blue);
+            UsefulFunctions.BroadcastText("You have subsumed your shadow...", Color.Blue);
         }
 
         #region Debuffs
