@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items
             item.width = 14;
             item.height = 22;
             item.maxStack = 99999;
-            item.value = 0;
+            item.value = 1;
             item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
         }
