@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedX *= num51;
 							speedY *= num51;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 60;
 							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							NPC.ai[1] = 1f;
@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedY *= num51;
 							//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 9;
 							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedY *= num51;
 							//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 19;
 							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -215,7 +215,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (Main.tile[num259, num269] == null)
 				{
-					Main.tile[num259, num269] = new Tile();
+					Main.tile[num259, num269].ClearTile();
 				}
 				if ((Main.tile[num259, num269].HasTile && Main.tileSolid[(int)Main.tile[num259, num269].TileType]) || Main.tile[num259, num269].liquid > 0)
 				{

@@ -18,6 +18,7 @@ using Terraria.Localization;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using tsorcRevamp.UI;
+using Terraria.GameContent;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -229,14 +230,14 @@ namespace tsorcRevamp {
                             for (int i = x + 1 - 1; i < x + 1 + 2; i++) {
                                 for (int j = y + 1 - 3; j < y + 1 + 1; j++) {
                                     if (Main.tile[i, j] == null) {
-                                        Main.tile[i, j] = new Tile();
+                                        Main.tile[i, j].ClearTile();
                                     }
                                     if (Main.tile[i, j].HasTile) {
                                         flag = false;
                                     }
                                 }
                                 if (Main.tile[i, y + 1 + 1] == null) {
-                                    Main.tile[i, y + 1 + 1] = new Tile();
+                                    Main.tile[i, y + 1 + 1].ClearTile();
                                 }
                             }
                             if (flag) {
@@ -286,14 +287,14 @@ namespace tsorcRevamp {
                         for (int i = x - 1; i < x + 1; i++) {
                             for (int j = y - 1; j < y + 1; j++) {
                                 if (Main.tile[i, j] == null) {
-                                    Main.tile[i, j] = new Tile();
+                                    Main.tile[i, j].ClearTile();
                                 }
                                 if (Main.tile[i, j].HasTile) {
                                     flag = false;
                                 }
                             }
                             if (Main.tile[i, y + 1] == null) {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag) {
@@ -346,7 +347,7 @@ namespace tsorcRevamp {
                             {
                                 if (Main.tile[i, j] == null)
                                 {
-                                    Main.tile[i, j] = new Tile();
+                                    Main.tile[i, j].ClearTile();
                                 }
                                 if (Main.tile[i, j].HasTile)
                                 {
@@ -355,7 +356,7 @@ namespace tsorcRevamp {
                             }
                             if (Main.tile[i, y + 1] == null)
                             {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag)
@@ -405,7 +406,7 @@ namespace tsorcRevamp {
                         {
                             if (Main.tile[i, y] == null)
                             {
-                                Main.tile[i, y] = new Tile();
+                                Main.tile[i, y].ClearTile();
                             }
                             if (Main.tile[i, y].HasTile)
                             {
@@ -413,7 +414,7 @@ namespace tsorcRevamp {
                             }
                             if (Main.tile[i, y + 1] == null)
                             {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag)
@@ -459,7 +460,7 @@ namespace tsorcRevamp {
                         {
                             if (Main.tile[i, y] == null)
                             {
-                                Main.tile[i, y] = new Tile();
+                                Main.tile[i, y].ClearTile();
                             }
                             if (Main.tile[i, y].HasTile)
                             {
@@ -467,7 +468,7 @@ namespace tsorcRevamp {
                             }
                             if (Main.tile[i, y + 1] == null)
                             {
-                                Main.tile[i, y + 1] = new Tile();
+                                Main.tile[i, y + 1].ClearTile();
                             }
                         }
                         if (flag)
@@ -630,13 +631,13 @@ namespace tsorcRevamp {
             return BonfireList;
         }
 
-        Texture2D SHMSun1 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
-        Texture2D SHMSun2 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun2");
-        Texture2D SHMSun3 = ModContent.GetTexture("tsorcRevamp/Textures/SHMSun1");
-        Texture2D SHMMoon = ModContent.GetTexture("tsorcRevamp/Textures/SHMMoon");
-        Texture2D VanillaSun1 = ModContent.GetTexture("Terraria/Sun");
-        Texture2D VanillaSun2 = ModContent.GetTexture("Terraria/Sun2");
-        Texture2D VanillaSun3 = ModContent.GetTexture("Terraria/Sun3");
+        Texture2D SHMSun1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
+        Texture2D SHMSun2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun2");
+        Texture2D SHMSun3 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
+        Texture2D SHMMoon = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMMoon");
+        Texture2D VanillaSun1 = (Texture2D)ModContent.Request<Texture2D>("Terraria/Sun");
+        Texture2D VanillaSun2 = (Texture2D)ModContent.Request<Texture2D>("Terraria/Sun2");
+        Texture2D VanillaSun3 = (Texture2D)ModContent.Request<Texture2D>("Terraria/Sun3");
         List<Texture2D> VanillaMoonTextures;
 
         //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely
@@ -769,30 +770,31 @@ namespace tsorcRevamp {
                     //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
                     NetMessage.SendData(MessageID.WorldData);
                 }
+
             }
             if (!Main.dedServ) {
                 if (SuperHardMode) {
-                    for (int i = 0; i < Main.moonTexture.Length; i++) {
-                        Main.moonTexture[i] = SHMMoon;
+                    for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                        TextureAssets.Moon[i] = SHMMoon;
                     }
-                    Main.sunTexture = SHMSun1;
-                    Main.sun2Texture = SHMSun2;
-                    Main.sun3Texture = SHMSun3;
+                    TextureAssets.Sun = SHMSun1;
+                    TextureAssets.Sun2 = SHMSun2;
+                    TextureAssets.Sun3 = SHMSun3;
                 }
                 if (TheEnd) { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
-                    Main.sunTexture = VanillaSun1;
-                    Main.sun2Texture = VanillaSun2;
-                    Main.sun3Texture = VanillaSun3;
+                    TextureAssets.Sun = VanillaSun1;
+                    TextureAssets.Sun2 = VanillaSun2;
+                    TextureAssets.Sun3 = VanillaSun3;
                     if (VanillaMoonTextures == null)
                     {
                         VanillaMoonTextures = new List<Texture2D>();
-                        for (int i = 0; i < Main.moonTexture.Length; i++)
+                        for (int i = 0; i < TextureAssets.Moon.Length; i++)
                         {
-                            VanillaMoonTextures.Add(ModContent.GetTexture("Terraria/Moon_" + i));
+                            VanillaMoonTextures.Add((Texture2D)ModContent.Request<Texture2D>("Terraria/Moon_" + i));
                         }
                     }
-                    for (int i = 0; i < Main.moonTexture.Length; i++) {
-                        Main.moonTexture[i] = VanillaMoonTextures[i];
+                    for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                        TextureAssets.Moon[i] = VanillaMoonTextures[i];
                     }
                 }
             }

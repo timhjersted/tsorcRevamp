@@ -139,7 +139,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         {
             if (texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/SolarDetonator");
+                texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/SolarDetonator");
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)

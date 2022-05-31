@@ -146,7 +146,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			{
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					int num54 = Projectile.NewProjectile(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), 22, 0f, Main.myPlayer); //cursed dragons breath
+					int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), 22, 0f, Main.myPlayer); //cursed dragons breath
 					
 					//These won't work in multiplayer (projectile id's, timeleft, scale, etc are not synced), but it's not that big a deal
 					Main.projectile[num54].timeLeft = 10;

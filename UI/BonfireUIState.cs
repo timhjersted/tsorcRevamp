@@ -30,7 +30,7 @@ namespace tsorcRevamp.UI {
 
             // Next, we create another UIElement that we will place. Since we will be calling `BonfireUI.Append(ButtonSetSpawn);`, Left and Top are relative to the top left of the BonfireUI UIElement. 
             // By properly nesting UIElements, we can position things relatively to each other easily.
-            Texture2D buttonSetSpawnTexture = ModContent.GetTexture("tsorcRevamp/UI/ButtonSetSpawn");
+            Texture2D buttonSetSpawnTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonSetSpawn");
             tsorcUIHoverTextButton ButtonSetSpawn = new tsorcUIHoverTextButton(buttonSetSpawnTexture, "Set Spawn");
             ButtonSetSpawn.Left.Set(10, 0f);
             ButtonSetSpawn.Top.Set(10, 0f);
@@ -40,7 +40,7 @@ namespace tsorcRevamp.UI {
             ButtonSetSpawn.OnClick += new MouseEvent(ButtonSetSpawnClicked);
             BonfireUI.Append(ButtonSetSpawn);
 
-            Texture2D buttonPiggyBankTexture = ModContent.GetTexture("tsorcRevamp/UI/ButtonPiggyBank");
+            Texture2D buttonPiggyBankTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonPiggyBank");
             tsorcUIHoverTextButton ButtonPiggyBank = new tsorcUIHoverTextButton(buttonPiggyBankTexture, "Access Piggy Bank");
             ButtonPiggyBank.Left.Set(58, 0f);
             ButtonPiggyBank.Top.Set(10, 0f);
@@ -49,7 +49,7 @@ namespace tsorcRevamp.UI {
             ButtonPiggyBank.OnClick += new MouseEvent(ButtonPiggyBankClicked);
             BonfireUI.Append(ButtonPiggyBank);
 
-            Texture2D buttonSafeTexture = ModContent.GetTexture("tsorcRevamp/UI/ButtonSafe");
+            Texture2D buttonSafeTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonSafe");
             tsorcUIHoverTextButton ButtonSafe = new tsorcUIHoverTextButton(buttonSafeTexture, "Access Safe");
             ButtonSafe.Left.Set(106, 0f);
             ButtonSafe.Top.Set(10, 0f);

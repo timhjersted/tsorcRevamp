@@ -268,7 +268,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			{
 				if (Main.tile[centeredXInTiles, tileIterator] == null)
 				{
-					Main.tile[centeredXInTiles, tileIterator] = new Tile();
+					Main.tile[centeredXInTiles, tileIterator].ClearTile();
 				}
 				if ((Main.tile[centeredXInTiles, tileIterator].HasTile && Main.tileSolid[(int)Main.tile[centeredXInTiles, tileIterator].TileType]) || Main.tile[centeredXInTiles, tileIterator].liquid > 0)
 				{

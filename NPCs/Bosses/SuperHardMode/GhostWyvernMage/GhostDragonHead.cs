@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         {
             if (texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture(npc.ModNPC.Texture);
+                texture = (Texture2D)ModContent.Request<Texture2D>(npc.ModNPC.Texture);
             }
             
                 spriteBatch.End();

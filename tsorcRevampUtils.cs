@@ -239,7 +239,7 @@ namespace tsorcRevamp {
 
             if(texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture(projectile.ModProjectile.Texture);
+                texture = (Texture2D)ModContent.Request<Texture2D>(projectile.ModProjectile.Texture);
             }
 
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];

@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.CursedDragonsBreath>(), dragonsBreathDamage, 0f, Main.myPlayer);
                     NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
                 }
             }
@@ -144,7 +144,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (breathTimer == 0)
             {
-                Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
             }
 
 

@@ -318,7 +318,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         Lighting.AddLight(NPC.Center, Color.YellowGreen.ToVector3() * 3f);
                         //float num48 = 3f;
                         //float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-                        //int num54 = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+                        //int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
                         //Main.projectile[num54].timeLeft = 100;
 
                         //
@@ -332,14 +332,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int num54 = Projectile.NewProjectile(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer); //JungleWyvernFire      cursed dragons breath
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y /*+ (5f * npc.direction)*/, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 2), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 2), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer); //JungleWyvernFire      cursed dragons breath
                         }
                         NPC.netUpdate = true;
 
                         if (Main.rand.Next(35) == 0)
                         {
-                            //int num65 = Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
-                            Projectile.NewProjectile(NPC.Center.X + Main.rand.Next(-100, 100), NPC.Center.Y + Main.rand.Next(-100, 100), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
+                            //int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + Main.rand.Next(-100, 100), NPC.Center.Y + Main.rand.Next(-100, 100), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
                         }
                         breathCD--;
 
@@ -405,7 +405,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             //speed += Main.rand.NextVector2Circular(-10, -8);
                             if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                             {
-                                int lob = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
+                                int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
                                 //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
                                 //DesertDjinnCurse; ProjectileID.DD2DrakinShot
 
@@ -427,7 +427,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
 
                         Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6f, 1.06f, true, true);
-                        Projectile.NewProjectile(NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.8f, -.2f); //wobble
 
 
@@ -452,7 +452,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
                         }
@@ -463,7 +463,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
                         //Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, [target], [speed], [projectile gravity], [should it aim high ?], [what happens if enemy is too far away to hit ?]);
                         //Then use projectileVelocity as "velocity" when you call NewProjectile, like
-                        //Projectile.NewProjectile(npc.Center, projectileVelocity, ModContent.ProjectileType <[your projectile] > (), damage, knockBack, Main.myPlayer);
+                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center, projectileVelocity, ModContent.ProjectileType <[your projectile] > (), damage, knockBack, Main.myPlayer);
 
                         //Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, player, 6, true, true, false);
                         NPC.netUpdate = true;
@@ -476,7 +476,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.5f); //fire
                         }
 
@@ -513,7 +513,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         speed += Main.rand.NextVector2Circular(-6, -2);
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
-                            Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
                                                                                                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
                         }
@@ -542,7 +542,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
                     breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-                    Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedFlamesDamage, 0f, Main.myPlayer);
                     npc.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
                 }
             }
@@ -555,7 +555,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (breathTimer == 0)
             {
-                Projectile.NewProjectile(npc.Center.X, npc.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
             }*/
         }
 

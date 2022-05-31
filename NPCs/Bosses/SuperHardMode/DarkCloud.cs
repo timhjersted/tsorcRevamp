@@ -529,13 +529,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Spawn the targeting lasers one by one
                 if ((AttackModeCounter % turnLength) % Math.Round((chargeTime * 0.8) / 5) == 0 && AttackModeCounter % turnLength <= (chargeTime * 0.8))
                 {
-                    Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
                 }
 
                 //Spawn the big laser
                 if (AttackModeCounter % turnLength == chargeTime)
                 {
-                    Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
                 }
             }
 
@@ -1104,7 +1104,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 {
                                     velocity.Y *= -1;
                                 }
-                                Projectile.NewProjectileDirect(NPC.Center, velocity, ModContent.ProjectileType<DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                             }
                         }
 
@@ -1442,7 +1442,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
                 }
             }
 
@@ -1553,17 +1553,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter >= 60 && AttackModeCounter < 180 && ((AttackModeCounter) % 5 == 0))
             {
-                Projectile.NewProjectile(NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
             if (AttackModeCounter >= 180 && AttackModeCounter < 300 && ((AttackModeCounter - 2) % 5 == 0))
             {
-                Projectile.NewProjectile(NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
             if (AttackModeCounter >= 300 && AttackModeCounter < 420 && ((AttackModeCounter) % 5 == 0))
             {
-                Projectile.NewProjectile(NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
         }        
@@ -1578,7 +1578,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter % 4 == 0)
             {
-                Projectile.NewProjectile(NPC.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, NPC.whoAmI, 1200 - AttackModeCounter);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, NPC.whoAmI, 1200 - AttackModeCounter);
             }
         }
         
@@ -1662,7 +1662,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 attackVel = new Vector2(speed, 0);
                         float tally = (AttackModeCounter - 40) / 20;
                         attackVel = attackVel.RotatedBy(MathHelper.TwoPi * (i / boltCount) + MathHelper.ToRadians(15 * tally));
-                        Projectile.NewProjectileDirect(NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                     }
                 }                
             }
@@ -1681,7 +1681,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle);
                     for(int i = 0; i < 5; i++)
                     {
-                        Projectile.NewProjectileDirect(NPC.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
@@ -1704,9 +1704,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         count++; 
                         Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle + MathHelper.ToRadians(15 * count));
-                        Projectile.NewProjectileDirect(NPC.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(NPC.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
 
                     }
                 }                
@@ -1722,7 +1722,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     for (int i = 0; i < 13; i++)
                     {
                         Vector2 offset = (i - 7) * new Vector2(1.05f, 1.05f);
-                        Projectile.NewProjectile(NPC.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
                     }
                 }
                 else
@@ -1732,7 +1732,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Target.Center, 5 + i, 0.05f, true, false);
                         if (velocity != Vector2.Zero)
                         {
-                            Projectile.NewProjectile(NPC.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
                         }
                     }
                 }
@@ -1754,9 +1754,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackModeCounter % 300 == 299)
             {
-                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
-                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
-                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
             }
         }
 
@@ -1943,12 +1943,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
+        static Texture2D darkCloudTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if(darkCloudTexture == null || darkCloudTexture.IsDisposed)
             {
-                darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
+                darkCloudTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
             }
             Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[NPC.type]);
             Vector2 origin = sourceRectangle.Size() / 2f;
@@ -1974,12 +1974,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         #region Draw Functions
-        static Texture2D darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
+        static Texture2D darkSparkTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
         public void DivineSparkDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (darkSparkTexture == null || darkSparkTexture.IsDisposed)
             {
-                darkSparkTexture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
+                darkSparkTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark");
             }
             float targetPoint;
             if ((AttackModeCounter % turnLength) > chargeTime && (AttackModeCounter % turnLength) < turnLength)
@@ -2015,12 +2015,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.spriteBatch.Draw(darkSparkTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, SpriteEffects.None, 0f);
         }
 
-        static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
+        static Texture2D antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
         public void AntiMatDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (antimatTexture == null || darkSparkTexture.IsDisposed)
             {
-                antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
+                antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
             }
             float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
@@ -2037,12 +2037,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Main.spriteBatch.Draw(antimatTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, theseEffects, 0f);
         }
 
-        static Texture2D cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
+        static Texture2D cernosTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
         public void ArrowRainDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             if (cernosTexture == null || darkSparkTexture.IsDisposed)
             {
-                cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
+                cernosTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
             }
             float targetPoint = arrowRainTargetingVector.ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 80 == 20))
@@ -2213,8 +2213,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].TileType == TileID.HangingLanterns)
                     {
-                        Main.tile[Lanterns[i, 0], Lanterns[i, 1]] = new Tile();
-                        Main.tile[Lanterns[i, 0], Lanterns[i, 1] + 1] = new Tile();
+                        Main.tile[Lanterns[i, 0], Lanterns[i, 1]].ClearTile();
+                        Main.tile[Lanterns[i, 0], Lanterns[i, 1] + 1].ClearTile();
                         //WorldGen.KillTile(Lanterns[i, 0], Lanterns[i, 1], noItem: true);
                         //WorldGen.KillTile(Lanterns[i, 0], Lanterns[i, 1] + 1, noItem: true);
                     }
@@ -2225,10 +2225,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     if (Main.tile[Bulbs[i, 0], Bulbs[i, 1]].TileType == TileID.PlanteraBulb)
                     {
-                        Main.tile[Bulbs[i, 0], Bulbs[i, 1]] = new Tile();
-                        Main.tile[Bulbs[i, 0], Bulbs[i, 1] - 1] = new Tile();
-                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1]] = new Tile();
-                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1] - 1] = new Tile();
+                        Main.tile[Bulbs[i, 0], Bulbs[i, 1]].ClearTile();
+                        Main.tile[Bulbs[i, 0], Bulbs[i, 1] - 1].ClearTile();
+                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1]].ClearTile();
+                        Main.tile[Bulbs[i, 0] + 1, Bulbs[i, 1] - 1].ClearTile();
 
                         //WorldGen.PlaceTile(Bulbs[i, 0], Bulbs[i, 1], TileID.Meteorite);
                     }
@@ -2237,12 +2237,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Harpy statues
                 for(int i = 0; i < 2; i++)
                 {
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1]] = new Tile();
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 1] = new Tile();
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 2] = new Tile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1]] = new Tile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 1] = new Tile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 2] = new Tile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1]].ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 1] .ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 2] .ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1]] .ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 1] .ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 2] .ClearTile();
                 }
 
                 //Base of the pyramid
@@ -2540,7 +2540,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             npc_center.X += npc_to_target_x;  //  initial projectile position includes one tick of initial movement
                             npc_center.Y += npc_to_target_y;  //  initial projectile position includes one tick of initial movement
                             if (Main.netMode != 1)  //  is server
-                                Projectile.NewProjectile(npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, meteorDamage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, meteorDamage, 0f, Main.myPlayer);
 
                             if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
                             {
@@ -2705,7 +2705,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 6;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2729,7 +2729,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 700;
                             Main.projectile[num54].aiStyle = 23;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2761,7 +2761,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellHoldBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 105;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2785,7 +2785,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyDragoonLance>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 700;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2809,7 +2809,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 600;
                             Main.projectile[num54].aiStyle = 23;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2834,7 +2834,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedY *= num51;
                             //int damage = 80;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 450;
                             Main.projectile[num54].aiStyle = 23;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2857,7 +2857,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddonBlastBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, armageddonDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, armageddonDamage, 0f, Main.myPlayer);
                             //Main.projectile[num54].timeLeft = 0;
                             Main.projectile[num54].aiStyle = 23;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2881,7 +2881,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGravity1Ball>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 40;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2902,7 +2902,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 270;
                             Main.projectile[num54].aiStyle = 23;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2923,7 +2923,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 600;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2955,7 +2955,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.ShadowShot>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, shadowShotDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, shadowShotDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 200;
                             Main.projectile[num54].aiStyle = 23; //was 23
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -2977,7 +2977,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 0;//was 70
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -3003,7 +3003,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 1300;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -3026,7 +3026,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormWave>(); //44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, stormWaveDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, stormWaveDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 1300;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -3050,7 +3050,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>(); //44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 1300;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -3100,25 +3100,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f); // 16 pix in front of edge
                                                                                                                                          //  create? 5 tile high stack in front
                 if (Main.tile[x_in_front, y_above_feet] == null)
-                    Main.tile[x_in_front, y_above_feet] = new Tile();
+                    Main.tile[x_in_front, y_above_feet] .ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 1] .ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 2] .ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 3] .ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                    Main.tile[x_in_front, y_above_feet + 1] .ClearTile();
                 //  create? 2 other tiles farther in front
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1] .ClearTile();
 
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1] .ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && can_pass_doors)
                 { // tile in front is active, is door and NPC can pass doors: trying to break door
@@ -3257,7 +3257,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             bool dark_caster = false; // not a fighter type AI...
                             if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
                                 safe_to_stand = false;
-                            else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
+                            else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
                                 safe_to_stand = false;
 
                             if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))

@@ -192,25 +192,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 int num32 = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f);
                 int num33 = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f);
                 if (Main.tile[num32, num33] == null) {
-                    Main.tile[num32, num33] = new Tile();
+                    Main.tile[num32, num33].ClearTile();
                 }
                 if (Main.tile[num32, num33 - 1] == null) {
-                    Main.tile[num32, num33 - 1] = new Tile();
+                    Main.tile[num32, num33 - 1].ClearTile();
                 }
                 if (Main.tile[num32, num33 - 2] == null) {
-                    Main.tile[num32, num33 - 2] = new Tile();
+                    Main.tile[num32, num33 - 2].ClearTile();
                 }
                 if (Main.tile[num32, num33 - 3] == null) {
-                    Main.tile[num32, num33 - 3] = new Tile();
+                    Main.tile[num32, num33 - 3].ClearTile();
                 }
                 if (Main.tile[num32, num33 + 1] == null) {
-                    Main.tile[num32, num33 + 1] = new Tile();
+                    Main.tile[num32, num33 + 1].ClearTile();
                 }
                 if (Main.tile[num32 + NPC.direction, num33 - 1] == null) {
-                    Main.tile[num32 + NPC.direction, num33 - 1] = new Tile();
+                    Main.tile[num32 + NPC.direction, num33 - 1].ClearTile();
                 }
                 if (Main.tile[num32 + NPC.direction, num33 + 1] == null) {
-                    Main.tile[num32 + NPC.direction, num33 + 1] = new Tile();
+                    Main.tile[num32 + NPC.direction, num33 + 1].ClearTile();
                 }
                 if (Main.tile[num32, num33 - 1].HasTile && Main.tile[num32, num33 - 1].TileType == 10 && flag3) {
                     NPC.ai[2] += 1f;
@@ -341,7 +341,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         speedX *= num51;
                         speedY *= num51;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.BlackBreath>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 40;
                         Main.projectile[num54].aiStyle = 1;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);

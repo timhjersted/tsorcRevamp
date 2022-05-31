@@ -1748,12 +1748,12 @@ namespace tsorcRevamp.NPCs
                 pos.X += npc.velocity.X;
                 int tileX = (int)((pos.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 1) * offset)) / 16f);
                 int tileY = (int)((pos.Y + (float)npc.height - 1f) / 16f);
-                if (Main.tile[tileX, tileY] == null) Main.tile[tileX, tileY] = new Tile();
-                if (Main.tile[tileX, tileY - 1] == null) Main.tile[tileX, tileY - 1] = new Tile();
-                if (Main.tile[tileX, tileY - 2] == null) Main.tile[tileX, tileY - 2] = new Tile();
-                if (Main.tile[tileX, tileY - 3] == null) Main.tile[tileX, tileY - 3] = new Tile();
-                if (Main.tile[tileX, tileY + 1] == null) Main.tile[tileX, tileY + 1] = new Tile();
-                if (Main.tile[tileX - offset, tileY - 3] == null) Main.tile[tileX - offset, tileY - 3] = new Tile();
+                if (Main.tile[tileX, tileY] == null) Main.tile[tileX, tileY].ClearTile();
+                if (Main.tile[tileX, tileY - 1] == null) Main.tile[tileX, tileY - 1].ClearTile();
+                if (Main.tile[tileX, tileY - 2] == null) Main.tile[tileX, tileY - 2].ClearTile();
+                if (Main.tile[tileX, tileY - 3] == null) Main.tile[tileX, tileY - 3].ClearTile();
+                if (Main.tile[tileX, tileY + 1] == null) Main.tile[tileX, tileY + 1].ClearTile();
+                if (Main.tile[tileX - offset, tileY - 3] == null) Main.tile[tileX - offset, tileY - 3].ClearTile();
                 if ((float)(tileX * 16) < pos.X + (float)npc.width && (float)(tileX * 16 + 16) > pos.X && ((Main.tile[tileX, tileY].HasUnactuatedTile && !Main.tile[tileX, tileY].TopSlope && !Main.tile[tileX, tileY - 1].TopSlope && Main.tileSolid[(int)Main.tile[tileX, tileY].TileType] && !Main.tileSolidTop[(int)Main.tile[tileX, tileY].TileType]) || (Main.tile[tileX, tileY - 1].IsHalfBlock && Main.tile[tileX, tileY - 1].HasUnactuatedTile)) && (!Main.tile[tileX, tileY - 1].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 1].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 1].TileType] || (Main.tile[tileX, tileY - 1].IsHalfBlock && (!Main.tile[tileX, tileY - 4].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 4].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 4].TileType]))) && (!Main.tile[tileX, tileY - 2].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 2].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 2].TileType]) && (!Main.tile[tileX, tileY - 3].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 3].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 3].TileType]) && (!Main.tile[tileX - offset, tileY - 3].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX - offset, tileY - 3].TileType]))
                 {
                     float tileWorldY = (float)(tileY * 16);
@@ -1783,19 +1783,19 @@ namespace tsorcRevamp.NPCs
                 if (leapReq > 1)
                 { x2 = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f); } // 16 pix in front of edge
                 if (Main.tile[x2, y2] == null)
-                    Main.tile[x2, y2] = new Tile();
+                    Main.tile[x2, y2].ClearTile();
                 if (Main.tile[x2, y2 - 1] == null)
-                    Main.tile[x2, y2 - 1] = new Tile();
+                    Main.tile[x2, y2 - 1].ClearTile();
                 if (Main.tile[x2, y2 - 2] == null)
-                    Main.tile[x2, y2 - 2] = new Tile();
+                    Main.tile[x2, y2 - 2].ClearTile();
                 if (Main.tile[x2, y2 - 3] == null)
-                    Main.tile[x2, y2 - 3] = new Tile();
+                    Main.tile[x2, y2 - 3].ClearTile();
                 if (Main.tile[x2, y2 + 1] == null)
-                    Main.tile[x2, y2 + 1] = new Tile();
+                    Main.tile[x2, y2 + 1].ClearTile();
                 if (Main.tile[x2 + npc.direction, y2 - 1] == null)
-                    Main.tile[x2 + npc.direction, y2 - 1] = new Tile();
+                    Main.tile[x2 + npc.direction, y2 - 1].ClearTile();
                 if (Main.tile[x2 + npc.direction, y2 + 1] == null)
-                    Main.tile[x2 + npc.direction, y2 + 1] = new Tile();
+                    Main.tile[x2 + npc.direction, y2 + 1].ClearTile();
                 Main.tile[x2, y2 + 1].IsHalfBlock;
                 if (Main.tile[x2, y2 - 1].HasUnactuatedTile && (Main.tile[x2, y2 - 1].TileType == 10 || Main.tile[x2, y2 - 1].TileType == 388) && knockPower != 0)
                 {

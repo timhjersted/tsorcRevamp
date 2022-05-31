@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 if (NPC.ai[0] >= 5 && NPC.ai[2] < 3)
                 {
                     Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
-                    Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
                     NPC.ai[0] = 0;

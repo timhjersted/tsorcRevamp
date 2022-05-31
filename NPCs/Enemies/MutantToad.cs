@@ -186,31 +186,31 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.tile[num32, num33] == null)
 				{
-					Main.tile[num32, num33] = new Tile();
+					Main.tile[num32, num33].ClearTile();
 				}
 				if (Main.tile[num32, num33 - 1] == null)
 				{
-					Main.tile[num32, num33 - 1] = new Tile();
+					Main.tile[num32, num33 - 1].ClearTile();
 				}
 				if (Main.tile[num32, num33 - 2] == null)
 				{
-					Main.tile[num32, num33 - 2] = new Tile();
+					Main.tile[num32, num33 - 2].ClearTile();
 				}
 				if (Main.tile[num32, num33 - 3] == null)
 				{
-					Main.tile[num32, num33 - 3] = new Tile();
+					Main.tile[num32, num33 - 3].ClearTile();
 				}
 				if (Main.tile[num32, num33 + 1] == null)
 				{
-					Main.tile[num32, num33 + 1] = new Tile();
+					Main.tile[num32, num33 + 1].ClearTile();
 				}
 				if (Main.tile[num32 + NPC.direction, num33 - 1] == null)
 				{
-					Main.tile[num32 + NPC.direction, num33 - 1] = new Tile();
+					Main.tile[num32 + NPC.direction, num33 - 1].ClearTile();
 				}
 				if (Main.tile[num32 + NPC.direction, num33 + 1] == null)
 				{
-					Main.tile[num32 + NPC.direction, num33 + 1] = new Tile();
+					Main.tile[num32 + NPC.direction, num33 + 1].ClearTile();
 				}
 				if (Main.tile[num32, num33 - 1].HasTile && Main.tile[num32, num33 - 1].TileType == 10 && flag3)
 				{

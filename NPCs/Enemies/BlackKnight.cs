@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (spearTexture == null || spearTexture.IsDisposed)
 			{
 				//spearTexture = mod.GetTexture("Projectiles/Enemy/BlackKnightsSpear");
-				spearTexture = ModContent.GetTexture("Terraria/Projectile_508");
+				spearTexture = (Texture2D)ModContent.Request<Texture2D>("Terraria/Projectile_508");
 			}
 			if (NPC.ai[2] >= 165)
 			{

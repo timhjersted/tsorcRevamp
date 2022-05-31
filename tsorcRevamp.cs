@@ -20,6 +20,7 @@ using System.Net;
 using System.Reflection;
 using System.ComponentModel;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 
 namespace tsorcRevamp {
 
@@ -114,15 +115,15 @@ namespace tsorcRevamp {
 
             if (!Main.dedServ) {
                 Main.instance.LoadNPC(NPCID.TheDestroyer);
-                Main.npcTexture[NPCID.TheDestroyer] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_134");
+                TextureAssets.Npc[NPCID.TheDestroyer] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_134");
                 Main.instance.LoadNPC(NPCID.TheDestroyerBody);
-                Main.npcTexture[NPCID.TheDestroyerBody] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_135");
+                TextureAssets.Npc[NPCID.TheDestroyerBody] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_135");
                 Main.instance.LoadNPC(NPCID.TheDestroyerTail);
-                Main.npcTexture[NPCID.TheDestroyerTail] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_136");
+                TextureAssets.Npc[NPCID.TheDestroyerTail] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_136");
                 Main.instance.LoadGore(156);
-                Main.goreTexture[156] = GetTexture("NPCs/Bosses/TheDestroyer/Gore_156");
+                TextureAssets.Gore[156] = GetTexture("NPCs/Bosses/TheDestroyer/Gore_156");
                 Main.instance.LoadNPC(NPCID.Probe);
-                Main.npcTexture[NPCID.Probe] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_139");
+                TextureAssets.Npc[NPCID.Probe] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_139");
             }
 
             UpdateCheck();
@@ -654,11 +655,12 @@ namespace tsorcRevamp {
             IgnoredTiles = null;
             tsorcRevampWorld.Slain = null;
             //the following sun and moon texture changes are failsafes. they should be set back to default in PreSaveAndQuit 
-            Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
-            Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
-            Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
-            for (int i = 0; i < Main.moonTexture.Length; i++) {
-                Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+            TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun", ReLogic.Content.AssetRequestMode.ImmediateLoad);
+            TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
+            TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
+            
+            for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i);
             }
             DarkSoulCounterUIState.ConfigInstance = null;
 
@@ -701,11 +703,11 @@ namespace tsorcRevamp {
         }
 
         public override void PreSaveAndQuit() {
-            Main.sunTexture = ModContent.GetTexture("Terraria/Sun");
-            Main.sun2Texture = ModContent.GetTexture("Terraria/Sun2");
-            Main.sun3Texture = ModContent.GetTexture("Terraria/Sun3");
-            for (int i = 0; i < Main.moonTexture.Length; i++) {
-                Main.moonTexture[i] = ModContent.GetTexture("Terraria/Moon_" + i);
+            TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun");
+            TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
+            TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
+            for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i);
             }
         }
 
@@ -1874,47 +1876,47 @@ namespace tsorcRevamp {
             //Generates the dictionary of textures
             TransparentTextures = new Dictionary<TransparentTextureType, Texture2D>()
             {
-                {TransparentTextureType.PhasedMatterBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast")},
-                {TransparentTextureType.AntiGravityBlast, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
-                {TransparentTextureType.EnemyPlasmaOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
-                {TransparentTextureType.ManaShield, ModContent.GetTexture("tsorcRevamp/Projectiles/ManaShield")},
-                {TransparentTextureType.CrazedOrb, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
-                {TransparentTextureType.MasterBuster, ModContent.GetTexture("tsorcRevamp/Projectiles/MasterBuster")},
-                {TransparentTextureType.AntiMaterialRound, ModContent.GetTexture("tsorcRevamp/Projectiles/AntiMaterialRound")},
-                {TransparentTextureType.GlaiveBeam, ModContent.GetTexture("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
-                {TransparentTextureType.GlaiveBeamItemGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
-                {TransparentTextureType.GlaiveBeamHeldGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")},
-                {TransparentTextureType.GenericLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaser")},
-                {TransparentTextureType.GenericLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/GenericLaserTargeting")},
-                {TransparentTextureType.DarkLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
-                {TransparentTextureType.DarkLaserTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
-                {TransparentTextureType.PulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
-                {TransparentTextureType.GWPulsarGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")},
-                {TransparentTextureType.PolarisGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask")},
-                {TransparentTextureType.ToxicCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/ToxicCatalyzer_Glowmask")},
-                {TransparentTextureType.VirulentCatalyzerGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask")},
-                {TransparentTextureType.BiohazardGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask")},
-                {TransparentTextureType.HealingElixirGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Potions/HealingElixir_Glowmask")},
-                {TransparentTextureType.DarkDivineSpark, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark")},
-                {TransparentTextureType.ShatteredMoonlightGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask")},
-                {TransparentTextureType.GreySlashGlowmask, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask")},
-                {TransparentTextureType.UltimaWeapon, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponTransparent")},
-                {TransparentTextureType.UltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask")},
-                {TransparentTextureType.DarkUltimaWeapon, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon")},
-                {TransparentTextureType.DarkUltimaWeaponGlowmask, ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask")},
-                {TransparentTextureType.ReflectionShift, ModContent.GetTexture("tsorcRevamp/Items/Accessories/ReflectionShift")},
-                {TransparentTextureType.PhazonRound, ModContent.GetTexture("tsorcRevamp/Projectiles/PhazonRound")},
-                {TransparentTextureType.MoonlightGreatsword, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword")},
-                {TransparentTextureType.MoonlightGreatswordGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")},
-                {TransparentTextureType.EstusFlask, ModContent.GetTexture("tsorcRevamp/Textures/EstusFlask_drinking")},
-                {TransparentTextureType.ElfinArrow, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinArrow")},
-                {TransparentTextureType.ElfinTargeting, ModContent.GetTexture("tsorcRevamp/Projectiles/ElfinTargeting")},
-                {TransparentTextureType.HumanityPhantom, ModContent.GetTexture("tsorcRevamp/NPCs/Enemies/HumanityPhantom")},
-                {TransparentTextureType.BarbarousThornBladeGlowmask, ModContent.GetTexture("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow")},
-                {TransparentTextureType.RedLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/RedLaserBeam")},
-                {TransparentTextureType.RedLaserTransparent, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser")}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
-                {TransparentTextureType.Lightning, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike")},
-                {TransparentTextureType.BulletHellLaser, ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser")}
+                {TransparentTextureType.PhasedMatterBlast, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/PhasedMatterBlast")},
+                {TransparentTextureType.AntiGravityBlast, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/AntiGravityBlast")},
+                {TransparentTextureType.EnemyPlasmaOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyPlasmaOrb")},
+                {TransparentTextureType.ManaShield, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ManaShield")},
+                {TransparentTextureType.CrazedOrb, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/CrazedOrb")},
+                {TransparentTextureType.MasterBuster, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/MasterBuster")},
+                {TransparentTextureType.AntiMaterialRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/AntiMaterialRound")},
+                {TransparentTextureType.GlaiveBeam, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GlaiveBeamLaser")},
+                {TransparentTextureType.GlaiveBeamItemGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeam_Glowmask")},
+                {TransparentTextureType.GlaiveBeamHeldGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GlaiveBeamHeld_Glowmask")},
+                {TransparentTextureType.GenericLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaser")},
+                {TransparentTextureType.GenericLaserTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/GenericLaserTargeting")},
+                {TransparentTextureType.DarkLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaser")},
+                {TransparentTextureType.DarkLaserTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Okiku/DarkLaserTargeting")},
+                {TransparentTextureType.PulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Pulsar_Glowmask")},
+                {TransparentTextureType.GWPulsarGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/GWPulsar_Glowmask")},
+                {TransparentTextureType.PolarisGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Polaris_Glowmask")},
+                {TransparentTextureType.ToxicCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/ToxicCatalyzer_Glowmask")},
+                {TransparentTextureType.VirulentCatalyzerGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/VirulentCatalyzer_Glowmask")},
+                {TransparentTextureType.BiohazardGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Ranged/Biohazard_Glowmask")},
+                {TransparentTextureType.HealingElixirGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Potions/HealingElixir_Glowmask")},
+                {TransparentTextureType.DarkDivineSpark, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkDivineSpark")},
+                {TransparentTextureType.ShatteredMoonlightGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ShatteredMoonlight_Glowmask")},
+                {TransparentTextureType.GreySlashGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/GreySlash_Glowmask")},
+                {TransparentTextureType.UltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponTransparent")},
+                {TransparentTextureType.UltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/UltimaWeaponGlowmask")},
+                {TransparentTextureType.DarkUltimaWeapon, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeapon")},
+                {TransparentTextureType.DarkUltimaWeaponGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkUltimaWeaponGlowmask")},
+                {TransparentTextureType.ReflectionShift, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Accessories/ReflectionShift")},
+                {TransparentTextureType.PhazonRound, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/PhazonRound")},
+                {TransparentTextureType.MoonlightGreatsword, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword")},
+                {TransparentTextureType.MoonlightGreatswordGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/MoonlightGreatsword_Glowmask")},
+                {TransparentTextureType.EstusFlask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/EstusFlask_drinking")},
+                {TransparentTextureType.ElfinArrow, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinArrow")},
+                {TransparentTextureType.ElfinTargeting, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/ElfinTargeting")},
+                {TransparentTextureType.HumanityPhantom, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/HumanityPhantom")},
+                {TransparentTextureType.BarbarousThornBladeGlowmask, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Items/Weapons/Melee/BarbarousThornBlade_Glow")},
+                {TransparentTextureType.RedLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/RedLaserBeam")},
+                {TransparentTextureType.RedLaserTransparent, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyRedLaser")}, //A transparent and non-transparent version of this exists because the current focused energy beam laser projectile stacks a lot of beam midsections on top of each other, which fucks up transparency
+                {TransparentTextureType.Lightning, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/EnemyLightningStrike")},
+                {TransparentTextureType.BulletHellLaser, (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Enemy/Gwyn/BulletHellLaser")}
 
             };
 

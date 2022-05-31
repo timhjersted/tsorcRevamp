@@ -53,9 +53,9 @@ namespace tsorcRevamp.UI
 				float chargesPercentage = (float)chargesCurrent / chargesMax;
 				chargesPercentage = Utils.Clamp(chargesPercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
 
-				Texture2D textureFull = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_full");
-				Texture2D textureEmpty = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_empty");
-				Texture2D textureCharges = ModContent.GetTexture("tsorcRevamp/UI/EstusFlask_charges");
+				Texture2D textureFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_full");
+				Texture2D textureEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_empty");
+				Texture2D textureCharges = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/EstusFlask_charges");
 
 				int frameHeight = textureCharges.Height / chargesFrameCount;
 				int frame;

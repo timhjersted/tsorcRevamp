@@ -92,8 +92,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                     //int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.VortexLightning, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
-                    int num55 = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.CultistBossIceMist, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
+                     //int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.VortexLightning, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
+                    int num55 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ProjectileID.CultistBossIceMist, fireDamage, 0f, Main.myPlayer); //ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>()
                     Timer = -100 - Main.rand.Next(1400);
                 }
             }

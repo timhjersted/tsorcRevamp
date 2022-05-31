@@ -365,7 +365,7 @@ namespace tsorcRevamp.NPCs.Bosses
 							npc_center.X += npc_to_target_x;  //  initial projectile position includes one tick of initial movement
 							npc_center.Y += npc_to_target_y;  //  initial projectile position includes one tick of initial movement
 							if (Main.netMode != 1)  //  is server
-								Projectile.NewProjectile(npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, projectile_damage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, projectile_damage, 0f, Main.myPlayer);
 
 							if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
 							{
@@ -547,8 +547,8 @@ namespace tsorcRevamp.NPCs.Bosses
 
 					for (int pcy = 0; pcy < 10; pcy++)
 					{
-						//Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-						Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 800f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
+						//Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 800f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
 						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
 						
 						NPC.netUpdate = true;
@@ -568,7 +568,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 					for (int pcy = 0; pcy < 12; pcy++)
 					{
-						Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(400), (float)nT.position.Y - 900f, (float)(-50 + Main.rand.Next(100)) / 10, 9.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(400), (float)nT.position.Y - 900f, (float)(-50 + Main.rand.Next(100)) / 10, 9.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
 						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
 						
 						NPC.netUpdate = true;
@@ -590,7 +590,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					speed += Main.rand.NextVector2Circular(-4, -2);
 					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						//customAi1 = 132f;
 					}
@@ -612,7 +612,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					speed += Main.rand.NextVector2Circular(-4, -2);
 					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						//customAi1 = 132f;
 					}
@@ -630,7 +630,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				speed += Main.player[NPC.target].velocity / 2;
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-							Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+							Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
 							Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 
 							//go to smoke bomb attack
@@ -675,7 +675,7 @@ namespace tsorcRevamp.NPCs.Bosses
 											//speed2 += Main.player[npc.target].velocity / 2;
 											if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
 											{
-												Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
+												Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
 												Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
 												customAi1 = 1f;
 											}
@@ -719,25 +719,25 @@ namespace tsorcRevamp.NPCs.Bosses
 					x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f); // 16 pix in front of edge
 																																		 //  create? 5 tile high stack in front
 				if (Main.tile[x_in_front, y_above_feet] == null)
-					Main.tile[x_in_front, y_above_feet] = new Tile();
+					Main.tile[x_in_front, y_above_feet].ClearTile();
 
 				if (Main.tile[x_in_front, y_above_feet - 1] == null)
-					Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+					Main.tile[x_in_front, y_above_feet - 1].ClearTile();
 
 				if (Main.tile[x_in_front, y_above_feet - 2] == null)
-					Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+					Main.tile[x_in_front, y_above_feet - 2].ClearTile();
 
 				if (Main.tile[x_in_front, y_above_feet - 3] == null)
-					Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+					Main.tile[x_in_front, y_above_feet - 3].ClearTile();
 
 				if (Main.tile[x_in_front, y_above_feet + 1] == null)
-					Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+					Main.tile[x_in_front, y_above_feet + 1].ClearTile();
 				//  create? 2 other tiles farther in front
 				if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-					Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+					Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
 
 				if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-					Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+					Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
 
 				if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && can_pass_doors)
 				{ // tile in front is active, is door and NPC can pass doors: trying to break door

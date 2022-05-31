@@ -93,10 +93,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 NPC.velocity.Y = -7;
                 if (genericTimer2 == 15) {
                     if (left) {
-                        Projectile.NewProjectile(vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
                     }
                     else {
-                        Projectile.NewProjectile(vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5, ModContent.ProjectileType<CrazedOrb>(), 56, 0f, Main.myPlayer);
                     }
                     genericTimer2 = 0;
                 }
@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     if (subPhase == 0) 
                     {
                         for (int num36 = 0; num36 < 9; num36++) {
-                            Projectile.NewProjectile(vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<ShadowOrb>(), 50, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + num36)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + num36)) * 3), ModContent.ProjectileType<ShadowOrb>(), 50, 0f, Main.myPlayer);
                         }
                         genericTimer2 = 0;
                     }
@@ -154,7 +154,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 if (genericTimer2 >= 20) {
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     rotation += Main.rand.Next(-50, 50) / 100;
-                    Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 50, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * 0.5) * -1), (float)((Math.Sin(rotation) * 0.5) * -1), ModContent.ProjectileType<PhasedMatterBlast>(), 50, 0f, Main.myPlayer);
                     genericTimer2 = 0;
                 }
             }

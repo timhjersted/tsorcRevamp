@@ -384,7 +384,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     Tackle *= speedMod;
 
                     NPC.velocity = Tackle;
-                    Projectile.NewProjectile(NPC.position, Vector2.Zero, ModContent.ProjectileType<TackleProjectile>(), TackleDamage, 1, Main.myPlayer, TackleInterval / 2, NPC.whoAmI);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<TackleProjectile>(), TackleDamage, 1, Main.myPlayer, TackleInterval / 2, NPC.whoAmI);
                 }
 
                 if (AI_Timer > TackleInterval * 2 && NPC.velocity != Vector2.Zero) {
@@ -451,7 +451,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                         //center line aimed at the player
                         //alert: one-liner gore
                         Vector2 shot = toPlayer.RotatedBy(MathHelper.ToRadians(0 - (((float)(SpreadAngle / (BulletCount - 1))) * i)));
-                        Projectile.NewProjectile(pos, shot, ModContent.ProjectileType<FarronHailSpawner>(), FarronHailDamage, 1, Main.myPlayer, 0, VolleyInterval);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, shot, ModContent.ProjectileType<FarronHailSpawner>(), FarronHailDamage, 1, Main.myPlayer, 0, VolleyInterval);
                     }
                 }
             }
@@ -470,7 +470,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
 
             else { AI_Timer++; }
             if (AI_Timer == 1 && Main.netMode != NetmodeID.MultiplayerClient) {
-                Projectile.NewProjectile(NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, NPC.whoAmI, NPC.whoAmI);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, NPC.whoAmI, NPC.whoAmI);
             }
 
             if (AI_Timer == 60) {
@@ -530,7 +530,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1); //alternates -1 and 1
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - (ARENA_HEIGHT / 3)),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
@@ -548,7 +548,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 3f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
@@ -566,7 +566,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X + (ARENA_WIDTH / 25f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.5f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
@@ -584,7 +584,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X, NPC.Center.Y - ARENA_HEIGHT / 3f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
@@ -602,7 +602,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.5f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
@@ -620,7 +620,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 4; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.2f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
@@ -637,7 +637,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
-                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(
+                        BulletHellSpawner spawner = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), 
                             new Vector2(NPC.Center.X, NPC.Center.Y - ARENA_HEIGHT / 2.5f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),

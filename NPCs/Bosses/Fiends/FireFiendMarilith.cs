@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			{
 				if (Main.tile[num259, num269] == null)
 				{
-					Main.tile[num259, num269] = new Tile();
+					Main.tile[num259, num269].ClearTile();
 				}
 				if ((Main.tile[num259, num269].HasTile && Main.tileSolid[(int)Main.tile[num259, num269].TileType]) || Main.tile[num259, num269].liquid > 0)
 				{

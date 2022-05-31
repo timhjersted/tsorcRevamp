@@ -428,7 +428,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             npc_center.X += npc_to_target_x;  //  initial projectile position includes one tick of initial movement
                             npc_center.Y += npc_to_target_y;  //  initial projectile position includes one tick of initial movement
                             if (Main.netMode != NetmodeID.MultiplayerClient)  //  is server
-                                Projectile.NewProjectile(npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, projectile_damage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), npc_center.X, npc_center.Y, npc_to_target_x, npc_to_target_y, projectile_id, projectile_damage, 0f, Main.myPlayer);
 
                             if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
                             {
@@ -568,7 +568,7 @@ namespace tsorcRevamp.NPCs.Bosses
                                 speedX *= num51;
                                 speedY *= num51;
                                 int type = ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>();//44;//0x37; //14;
-                                int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
+                                int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 600;
                                 Main.projectile[num54].aiStyle = 1;
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -613,25 +613,25 @@ namespace tsorcRevamp.NPCs.Bosses
                     x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f); // 16 pix in front of edge
                                                                                                                                          //  create? 5 tile high stack in front
                 if (Main.tile[x_in_front, y_above_feet] == null)
-                    Main.tile[x_in_front, y_above_feet] = new Tile();
+                    Main.tile[x_in_front, y_above_feet].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 1].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 2].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 3].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                    Main.tile[x_in_front, y_above_feet + 1].ClearTile();
                 //  create? 2 other tiles farther in front
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
 
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && can_pass_doors)
                 { // tile in front is active, is door and NPC can pass doors: trying to break door

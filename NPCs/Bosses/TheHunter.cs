@@ -101,11 +101,11 @@ namespace tsorcRevamp.NPCs.Bosses
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int projIndex = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
+                            int projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
                             Main.projectile[projIndex].timeLeft = 50;
-                            projIndex = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
+                            projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
                             Main.projectile[projIndex].timeLeft = 50;
-                            projIndex = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
+                            projIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, sproutDamage, 0f, Main.myPlayer);
                             Main.projectile[projIndex].timeLeft = 50;
                         }
                         NPC.ai[1] = -90;
@@ -165,11 +165,11 @@ namespace tsorcRevamp.NPCs.Bosses
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 50;
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation + 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 50;
-                        num54 = Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.X, (float)((Math.Sin(rotation - 0.4) * num48) * -1) + Main.player[NPC.target].velocity.Y, type, (int)(sproutDamage * invulnDamageMult), 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 50;
                     }
                     NPC.ai[1] = -90;

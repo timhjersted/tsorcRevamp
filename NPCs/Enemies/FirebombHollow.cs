@@ -327,37 +327,37 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (Main.tile[x_in_front, y_above_feet] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet] = new Tile();
+                        Main.tile[x_in_front, y_above_feet].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 1] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 1].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 2] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 2].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 3] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 3].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet + 1] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                        Main.tile[x_in_front, y_above_feet + 1].ClearTile();
                     }
                     //  create? 2 other tiles farther in front
                     if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
                     {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
                     }
 
                     if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
                     {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
                     }
 
                     else // standing on solid tile but not in front of a passable door

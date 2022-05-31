@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					Vector2 overshoot = new Vector2(0, -240);
 					Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center + overshoot, 12, 0.035f);
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 0f, Main.myPlayer, 1, NPC.target);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 0f, Main.myPlayer, 1, NPC.target);
 				}
 				
 				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 17);

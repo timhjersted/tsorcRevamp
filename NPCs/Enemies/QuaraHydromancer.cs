@@ -76,7 +76,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.GameUpdateCount % 600 == 0 && tsorcRevampWorld.SuperHardMode & Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, Main.myPlayer);
+				Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), bubbleDamage, 0, Main.myPlayer);
 				inkJetCooldown = 120;
 			}
 

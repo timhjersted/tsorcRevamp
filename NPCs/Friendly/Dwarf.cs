@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.Localization;
 using System.Collections.Generic;
 using static tsorcRevamp.Tiles.SweatyCyclopsForge;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -199,7 +200,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset)
         {
-            item = Main.itemTexture[ModContent.ItemType<Items.Weapons.Melee.ForgottenAxe>()];
+            item = (Texture2D)TextureAssets.Item[ModContent.ItemType<Items.Weapons.Melee.ForgottenAxe>()];
             itemSize = 36;
         }
 

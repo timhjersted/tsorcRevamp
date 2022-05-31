@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num54 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y + (20f * NPC.direction), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
+                    int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y + (20f * NPC.direction), NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<CursedDragonsBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //cursed dragons breath
                     Main.projectile[num54].timeLeft = 50;
                 }
 
@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 for (int pcy = 0; pcy < 10; pcy++) {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), poisonFlamesDamage, 2f, Main.myPlayer); //9.9f was 14.9f
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), poisonFlamesDamage, 2f, Main.myPlayer); //9.9f was 14.9f
                     }
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
@@ -121,7 +121,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), dragonMeteorDamage, 2f, Main.myPlayer); //dragon meteor
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), dragonMeteorDamage, 2f, Main.myPlayer); //dragon meteor
                     } 
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);

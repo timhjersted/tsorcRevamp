@@ -263,7 +263,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if ((Main.GameUpdateCount % 60) < 1) {
                     for (int i = 0; i < 5; i++) {
-                        num54 = Projectile.NewProjectile(new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer); //Phantom Seeker
+                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), ModContent.ProjectileType<Projectiles.PhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer); //Phantom Seeker
                         Main.projectile[num54].timeLeft = 400;
                         Main.projectile[num54].rotation = Main.rand.Next(700) / 100f;
                         Main.projectile[num54].ai[0] = NPC.target;
@@ -287,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             posX -= 1200;
                         }
                      }**/
-                    num54 = Projectile.NewProjectile(posX, Main.player[NPC.target].position.Y - 650, 0, 5, ModContent.ProjectileType<Projectiles.Comet>(), cometDamage, 0f, Main.myPlayer); //Comet
+                    num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), posX, Main.player[NPC.target].position.Y - 650, 0, 5, ModContent.ProjectileType<Projectiles.Comet>(), cometDamage, 0f, Main.myPlayer); //Comet
                     Main.projectile[num54].ai[1] = 5.5f; //Velocity
                 }
             }
@@ -299,7 +299,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if ((Main.GameUpdateCount % 60) < 1) {
                     for (int i = 0; i < 3; i++) {
-                        num54 = Projectile.NewProjectile(new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.PhantomSpiral>(), darkAstronomyDamage, 0f, Main.myPlayer); //Phantom Spiral
+                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + 20, NPC.position.Y + 50), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.PhantomSpiral>(), darkAstronomyDamage, 0f, Main.myPlayer); //Phantom Spiral
                         Main.projectile[num54].timeLeft = 1000;
                         Main.projectile[num54].rotation = Main.rand.Next(700) / 100f;
                         Main.projectile[num54].ai[0] = NPC.whoAmI;
@@ -321,7 +321,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         int s = Main.rand.Next(2, 10);
                         float m = (float)Math.Sin(j) * -s;
                         float n = (float)Math.Cos(j) * -s;
-                        num54 = Projectile.NewProjectile(new Vector2(NPC.position.X + Main.rand.Next(-25, 25), NPC.position.Y + Main.rand.Next(50, 150)), new Vector2(m, n), ModContent.ProjectileType<Projectiles.Comet>(), antimatterCannonDamage, 0f, Main.myPlayer); //Antimatter Cannon
+                        num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(NPC.position.X + Main.rand.Next(-25, 25), NPC.position.Y + Main.rand.Next(50, 150)), new Vector2(m, n), ModContent.ProjectileType<Projectiles.Comet>(), antimatterCannonDamage, 0f, Main.myPlayer); //Antimatter Cannon
                         Main.projectile[num54].scale = (Main.rand.Next(50, 100)) / 75f;
                         Main.projectile[num54].timeLeft = 300;
                         Main.projectile[num54].ai[1] = 10; //Velocity

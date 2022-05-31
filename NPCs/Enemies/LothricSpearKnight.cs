@@ -297,37 +297,37 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (Main.tile[x_in_front, y_above_feet] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet] = new Tile();
+                        Main.tile[x_in_front, y_above_feet].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 1] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 1].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 2] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 2].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 3] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 3].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet + 1] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                        Main.tile[x_in_front, y_above_feet + 1].ClearTile();
                     }
                     //  create? 2 other tiles farther in front
                     if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
                     {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
                     }
 
                     if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
                     {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
                     }
 
                     else // standing on solid tile but not in front of a passable door
@@ -448,7 +448,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 34)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithPitchVariance(.3f), NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = 5;
                     }
@@ -456,7 +456,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 50)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithPitchVariance(.3f), NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = 5;
                     }
@@ -464,7 +464,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 77)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithPitchVariance(.3f), NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = 5;
                     }
@@ -474,7 +474,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 34)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithPitchVariance(.3f), NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = -5;
                     }
@@ -482,7 +482,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 50)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithPitchVariance(.3f), NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 25, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = -5;
                     }
@@ -490,7 +490,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (AI_Timer == 76)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithPitchVariance(.3f), NPC.Center);
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 10, 5, Main.myPlayer, NPC.whoAmI, 3)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-46, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 10, 5, Main.myPlayer, NPC.whoAmI, 3)];
                         stab.timeLeft = 6;
                         stab.velocity.X = -5;
                     }
@@ -575,7 +575,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.velocity.Y += 4f;
                     if (NPC.direction == 1)
                     {
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 35, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 35, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
 
                         power = (Math.Abs(NPC.Center.X - player.Center.X) / 16) * 4 / 10;
@@ -583,7 +583,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     else 
                     {
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(-28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 35, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 35, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
 
                         power = (Math.Abs(NPC.Center.X - player.Center.X) / 16) * 4 / 10;
@@ -655,24 +655,24 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.direction == 1) 
                     { 
                         NPC.velocity.X += 8.5f; 
-                        //Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, npc.whoAmI, 0)];
+                        //Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, npc.whoAmI, 0)];
                     }
                     else 
                     { 
                         NPC.velocity.X -= 8.5f;
-                        //Projectile stab = Main.projectile[Projectile.NewProjectile(npc.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, npc.whoAmI, 0)];
+                        //Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, npc.whoAmI, 0)];
                     }
                 }
                 if (AI_Timer >= 30 && AI_Timer < 56)
                 {
                     if (NPC.direction == 1)
                     {
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
                     }
                     else
                     {
-                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, NPC.whoAmI, 0)];
+                        Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
                     }
                 }

@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     projVelocity = projVelocity.RotatedBy(MathHelper.ToRadians(15) * ShotCount);
 
                     //Fire it
-                    Projectile.NewProjectile(startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
                 OrbTimer = 0;
@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         Vector2 startPos = NPC.Center;
                         startPos.Y -= 220;
                         Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[NPC.target].Center, projectileSpeed);
-                        Projectile.NewProjectile(startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer);
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
                 }

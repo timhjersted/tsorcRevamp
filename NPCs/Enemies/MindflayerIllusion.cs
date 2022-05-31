@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         speedY *= num51;
                         int damage = 8;//(int) (14f * npc.scale);
                         int type = ModContent.ProjectileType<Projectiles.Enemy.TheOracle>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 200;
                         Main.projectile[num54].aiStyle = 4;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         speedY *= num51;
                         int damage = 13;//(int) (14f * npc.scale);
                         int type = ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer, Main.player[NPC.target].whoAmI);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer, Main.player[NPC.target].whoAmI);
                         Main.projectile[num54].timeLeft = 500;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
                         NPC.ai[3] = 0; ;

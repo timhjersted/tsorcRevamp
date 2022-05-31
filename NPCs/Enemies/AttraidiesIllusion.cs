@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedY *= num51;
                         int damage = 7;
                         int type = ModContent.ProjectileType<TheOracle>();
-                        int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                         NPC.ai[0] = 0;
@@ -283,7 +283,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         speedY *= num51;
                         int damage = 12;
                         int type = ModContent.ProjectileType<ScrewAttack>();
-                        int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 540;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
                         NPC.ai[3] = 0; ;

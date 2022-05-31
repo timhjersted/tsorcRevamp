@@ -454,7 +454,7 @@ namespace tsorcRevamp.Tiles
 					{
 						if (Main.tile[l, m] == null)
 						{
-							Main.tile[l, m] = new Tile();
+							Main.tile[l, m].ClearTile();
 						}
 						if (Main.tile[l, m].HasTile && Main.tile[l, m].TileType == Type)
 						{

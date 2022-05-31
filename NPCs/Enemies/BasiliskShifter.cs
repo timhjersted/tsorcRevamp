@@ -132,7 +132,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (Main.rand.Next(200) == 1 && NPC.Distance(player3.Center) > 190)
 					{
 						Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 4f, 1.06f, true, true);
-						Projectile.NewProjectile(NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
 						//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
 																									  //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -179,10 +179,10 @@ namespace tsorcRevamp.NPCs.Enemies
 						{
 							Lighting.AddLight(npc.Center, Color.BlueViolet.ToVector3() * 2f);
 							float rotation = (float)Math.Atan2(npc.Center.Y - Main.player[npc.target].Center.Y, npc.Center.X - Main.player[npc.target].Center.X);
-							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 7) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //7 was 15
+							Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, (float)((Math.Cos(rotation) * 7) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer); //7 was 15
 							if (Main.rand.Next(30) == 0)
 							{
-								Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + Main.rand.Next(-500, 500), npc.Center.Y + Main.rand.Next(-500, 500), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
 							}
 
 							breathCD--;
@@ -217,7 +217,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
 					breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
-					Projectile.NewProjectile(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
 					NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
 				}
 			}
@@ -232,7 +232,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (breathTimer == 0)
 			{
 				shotTimer = 1f;
-				Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
+				Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.DarkExplosion>(), darkExplosionDamage, 0f, Main.myPlayer);
 			}
 
 			int choice = Main.rand.Next(4);
@@ -256,8 +256,8 @@ namespace tsorcRevamp.NPCs.Enemies
 					//speed += Main.rand.NextVector2Circular(-10, -8);
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						int lob = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
-						//Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
+						int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, bioSpitDamage, 0f, Main.myPlayer);
+						//Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>(), bioSpitDamage, 0f, Main.myPlayer);
 						//DD2DrakinShot; DesertDjinnCurse; ProjectileID.DD2DrakinShot
 						//if (projectile_velocity <= 0f)
 						//{ Main.projectile[lob].tileCollide = false; }
@@ -286,7 +286,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						int num555 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+						int num555 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
 						Main.projectile[num555].timeLeft = 300; //40
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 						shotTimer = 1f;
@@ -304,7 +304,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 				if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 				{
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
 					//Terraria.Audio.SoundEngine.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
 					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.1f);
 					//customAi1 = 1f;

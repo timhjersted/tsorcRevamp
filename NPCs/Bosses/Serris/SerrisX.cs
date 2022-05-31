@@ -112,7 +112,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 					}
 					if (extraProjs)
 					{
@@ -120,10 +120,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						{
 							if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Projectile.NewProjectile(vector8.X, vector8.Y, speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y, -speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y, speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y, -speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 							}
 							projRotate = false;
 						}
@@ -131,10 +131,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						{
 							if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Projectile.NewProjectile(vector8.X, vector8.Y, speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y, -speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y, 0, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y, 0, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, -speed, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 0, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, 0, -speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 							}
 							projRotate = true;
 						}
@@ -173,7 +173,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						{
 							if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 							}
 						}
 					}
@@ -189,16 +189,16 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
-							Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+							Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 						}
 						if (projRotate)
 						{
 							if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Projectile.NewProjectile(vector8.X - spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X + spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X - spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X + spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 							}
 							projRotate = false;
 						}
@@ -206,10 +206,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						{
 							if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Projectile.NewProjectile(vector8.X - spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X + spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-								Projectile.NewProjectile(vector8.X, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + spread, vector8.Y, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y + spread, speedX, speedY, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 							}
 						projRotate = true;
 						}

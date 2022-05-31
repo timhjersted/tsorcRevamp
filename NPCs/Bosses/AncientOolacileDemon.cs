@@ -233,8 +233,8 @@ namespace tsorcRevamp.NPCs.Bosses
 						Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
 						breathVel += Main.rand.NextVector2Circular(-1.5f, 1.5f);
 					
-						//Projectile.NewProjectile(npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-						Projectile.NewProjectile(NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
+						//Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X + (5 * npc.direction), npc.Center.Y, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (5 * NPC.direction), NPC.Center.Y - 40f, breathVel.X, breathVel.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
 						NPC.ai[3] = 0; //Reset bored counter. No teleporting mid-breath attack
 						NPC.localAI[1] = -50;
 					}
@@ -256,7 +256,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				NPC.localAI[1] = -150;
 				//npc.TargetClosest(true);
 				NPC.velocity.X = 0f;
-				//Projectile.NewProjectile(npc.Center.X, npc.Center.Y / 2, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
+				//Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y / 2, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
 			}
 
 			//PLAYER RUNNING AWAY? SPAWN DesertDjinnCurse, 
@@ -264,7 +264,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			if (Main.rand.Next(110) == 1 && NPC.Distance(player3.Center) > 700)
 			{
 				Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
-				Projectile.NewProjectile(NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
+				Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
 				//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
 																							  //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
@@ -314,7 +314,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						//speed += Main.rand.NextVector2Circular(-10, -8);
 						if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 						{
-							int lob2 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
+							int lob2 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
 			
 
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
@@ -332,7 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					//speed += Main.rand.NextVector2Circular(-10, -8);
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						int lob = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
+						int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 						if (NPC.localAI[1] >= 186f)
 						{ NPC.localAI[1] = 1f; }
@@ -357,7 +357,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					//speed.Y += Main.rand.NextFloat(2f, -2f); //just added
 				if (Main.rand.Next(3) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
 					}
@@ -375,7 +375,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					speed.Y += Main.rand.NextFloat(2f, -2f);
 					if (Main.rand.Next(2) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.5f); //fire
 					}
 
@@ -397,7 +397,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				//speed += Main.rand.NextVector2Circular(-10, -8);
 				if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						int lob = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
+						int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.CultistBossLightningOrb, cultistLightningDamage, 0f, Main.myPlayer);
 						//ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
 						//DesertDjinnCurse; ProjectileID.DD2DrakinShot
 
@@ -438,7 +438,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					speed.Y += Main.rand.NextFloat(3f, -3f); //just added
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), fireBreathDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), fireBreathDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
 																																																		//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
 						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
 					}

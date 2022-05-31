@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				{
 					if (Vector2.Distance(Main.player[NPC.target].Center, NPC.Center) > 500)
 					{
-						Projectile.NewProjectile(vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), PoisonFlamesDamage, 0f, Main.myPlayer); //enemy cursed flamess
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)(Math.Cos(rotation) * (double)num48 * -1.0), (float)(Math.Sin(rotation) * (double)num48 * -1.0), ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>(), PoisonFlamesDamage, 0f, Main.myPlayer); //enemy cursed flamess
 					}
 				}
 				Timer = -200 - Main.rand.Next(200);

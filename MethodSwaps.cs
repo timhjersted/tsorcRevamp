@@ -701,7 +701,7 @@ namespace tsorcRevamp {
         internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY) {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.tileSign[Main.tile[myX, myY].TileType]) {
                 if (Main.tile[myX, myY] == null) {
-                    Main.tile[myX, myY] = new Tile();
+                    Main.tile[myX, myY] .ClearTile();
                 }
                 if (!Main.tile[myX, myY].HasTile) {
                     return;
@@ -936,8 +936,8 @@ namespace tsorcRevamp {
                 if (staminaPercentage < 1f && !drawPlayer.dead)
                 {
                     float abovePlayer = 45f; //how far above the player should the bar be?
-                    Texture2D barFill = ModContent.GetTexture("tsorcRevamp/Textures/StaminaBar_full");
-                    Texture2D barEmpty = ModContent.GetTexture("tsorcRevamp/Textures/StaminaBar_empty");
+                    Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
+                    Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
 
                     //this is the position on the screen. it should remain relatively constant unless the window is resized
                     Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
@@ -1001,9 +1001,9 @@ namespace tsorcRevamp {
                 if ((cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) && !drawPlayer.dead) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
                 {
                     float abovePlayer = 82f; //how far above the player should the bar be?
-                    Texture2D meterFull = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_full");
-                    Texture2D powerfulMeterFull = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_powerfulFull");
-                    Texture2D meterEmpty = ModContent.GetTexture("tsorcRevamp/Textures/CurseMeter_empty");
+                    Texture2D meterFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_full");
+                    Texture2D powerfulMeterFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_powerfulFull");
+                    Texture2D meterEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_empty");
 
 
                     //this is the position on the screen. it should remain relatively constant unless the window is resized

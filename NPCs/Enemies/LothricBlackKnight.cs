@@ -313,37 +313,37 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (Main.tile[x_in_front, y_above_feet] == null)
                 {
-                    Main.tile[x_in_front, y_above_feet] = new Tile();
+                    Main.tile[x_in_front, y_above_feet].ClearTile();
                 }
 
                 if (Main.tile[x_in_front, y_above_feet - 1] == null)
                 {
-                    Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 1].ClearTile();
                 }
 
                 if (Main.tile[x_in_front, y_above_feet - 2] == null)
                 {
-                    Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 2].ClearTile();
                 }
 
                 if (Main.tile[x_in_front, y_above_feet - 3] == null)
                 {
-                    Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                    Main.tile[x_in_front, y_above_feet - 3].ClearTile();
                 }
 
                 if (Main.tile[x_in_front, y_above_feet + 1] == null)
                 {
-                    Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                    Main.tile[x_in_front, y_above_feet + 1].ClearTile();
                 }
                 //  create? 2 other tiles farther in front
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
                 {
-                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
                 }
 
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
                 {
-                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
                 }
 
                 else // standing on solid tile but not in front of a passable door
@@ -443,11 +443,11 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(20, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
 
                         }
@@ -456,12 +456,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         {
                             if (!standing_on_solid_tile)
                             {
-                                Projectile.NewProjectile(NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -66), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
 
                             }
                             else
                             {
-                                Projectile.NewProjectile(NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-2, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.2f), 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
                         }
                     }
@@ -580,12 +580,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile.NewProjectile(NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(24, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
 
                         else
                         {
-                            Projectile.NewProjectile(NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-8, -20), new Vector2(0, 4f), projSlash, (int)(damage * 1.4f), 5, Main.myPlayer, NPC.whoAmI, 0);
                         }
                     }
                     if (NPC.ai[1] > 470 && NPC.ai[1] < 489)
@@ -657,14 +657,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         if (NPC.direction == 1)
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X += 10.5f;
                             NPC.velocity.Y -= 2f;
                         }
 
                         else
                         {
-                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
+                            Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-44, -2), new Vector2(0, 0), projStab, (int)(damage * 1.5f), 5, Main.myPlayer, NPC.whoAmI, 0)];
                             NPC.velocity.X -= 10.5f;
                             NPC.velocity.Y -= 2f;
                         }

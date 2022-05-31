@@ -90,7 +90,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
 					rotation += Main.rand.Next(-50, 50) / 100; if (Main.netMode == NetmodeID.MultiplayerClient)
 					{
-						Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), CrystalFireDamage, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), ModContent.ProjectileType<Projectiles.Enemy.CrystalFire>(), CrystalFireDamage, Main.myPlayer);
 					}
 					Timer = -1200 - Main.rand.Next(1400);
 				}

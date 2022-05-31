@@ -139,12 +139,12 @@ namespace tsorcRevamp.Projectiles {
             return false;
         }
 
-        static Texture2D chainTexture = ModContent.GetTexture(ChainTexturePath);
+        static Texture2D chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath);
         public override bool PreDraw(ref Color lightColor)
         {
             if (chainTexture == null || chainTexture.IsDisposed)
             {
-                chainTexture = ModContent.GetTexture(ChainTexturePath);
+                chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath);
             }
             var player = Main.player[Projectile.owner];
 

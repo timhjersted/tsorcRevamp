@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			if (DarkBeadShotTimer >= 12 && DarkBeadShotCounter < 5)
 			{
 				Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
-				Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
+				Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
 				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 				DarkBeadShotTimer = 0;
 				DarkBeadShotCounter++;
@@ -194,7 +194,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
 					projVelocity.Y -= 520;
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
 					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 25);
 					NPCSpawningTimer = 1f;
 					SecondAttackCounter = 0;
@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				if (Main.rand.Next(16) == 1)
 				{
 					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
 					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 					NPCSpawningTimer = 1f;
 				}

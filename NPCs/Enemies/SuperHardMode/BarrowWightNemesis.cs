@@ -135,7 +135,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				if (breath)
 				{
 					float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-					int num54 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
+					int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 15) * -1), (float)((Math.Sin(rotation) * 15) * -1), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 0f, Main.myPlayer);
 					Main.projectile[num54].timeLeft = 30;
 					NPC.netUpdate = true;
 

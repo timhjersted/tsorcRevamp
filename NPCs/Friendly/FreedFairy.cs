@@ -10,6 +10,7 @@ using tsorcRevamp.Items.Weapons.Magic;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Localization;
 using System.Collections.Generic;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -49,8 +50,8 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			int num = 1;
 			if (!Main.dedServ)
-			{
-				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+			{				
+				num = ((Texture2D)TextureAssets.Npc[NPC.type]).Height / Main.npcFrameCount[NPC.type];
 			}
 			if (NPC.velocity.X < 0)
 			{

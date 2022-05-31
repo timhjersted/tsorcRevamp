@@ -7,6 +7,7 @@ using tsorcRevamp.Items.Weapons.Melee;
 using tsorcRevamp.Items.Armors;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Localization;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.NPCs.Friendly {
 	[AutoloadHead]
@@ -187,7 +188,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
         public override void DrawTownAttackSwing(ref Texture2D item, ref int itemSize, ref float scale, ref Vector2 offset) {
-			item = Main.itemTexture[ModContent.ItemType<OldBroadsword>()];
+			item = (Texture2D)TextureAssets.Item[ModContent.ItemType<OldBroadsword>()];
 			scale = .8f;
 			itemSize = 36;
         }

@@ -6,6 +6,7 @@ using Terraria.ObjectData;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.DataStructures;
 using Steamworks;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.Tiles
 {
@@ -68,12 +69,14 @@ namespace tsorcRevamp.Tiles
 			Texture2D texture;
 			if (Main.canDrawColorTile(i, j))
 			{
+				//No such thing as TextureAssets.TileAlt???
 				texture = Main.tileAltTexture[Type, (int)tile.TileColor];
 			}
 			else
 			{
-				texture = Main.tileTexture[Type];
+				texture = TextureAssets.Tile[Type];
 			}
+
 			Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);
 			if (Main.drawToScreen)
 			{

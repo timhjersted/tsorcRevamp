@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 //while (breathCD > 0) {
                 //for (int pcy = 0; pcy < 10; pcy++) {
-                Projectile.NewProjectile(NPC.position.X + (float)NPC.width / 2f, NPC.position.Y + (float)NPC.height / 2f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width / 2f, NPC.position.Y + (float)NPC.height / 2f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                 //}
                 NPC.netUpdate = true; //new
                 breathCD--;
@@ -110,8 +110,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
-                    //Projectile.NewProjectile((float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 4.5f, ProjectileID.Fireball, flameRainDamage, 2f, Main.myPlayer); //6.5 too fast
+                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 600 + Main.rand.Next(1200), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 6.5f, ModContent.ProjectileType<Projectiles.Enemy.FlameRain>(), flameRainDamage, 2f, Main.myPlayer);
                     Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
                     NPC.netUpdate = true; //new
                 }
@@ -120,8 +120,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             {
                 for (int pcy = 0; pcy < 10; pcy++)
                 {
-                    //Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
-                    Projectile.NewProjectile((float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
+                    //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 200 + Main.rand.Next(500), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / Main.rand.Next(3, 10), 5.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //8.9f is speed, 4.9 too slow, (float)nT.position.Y - 400f starts projectile closer above the player vs 500?
                     Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
                     NPC.netUpdate = true; //new
                 }

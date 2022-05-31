@@ -154,11 +154,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     {
                         if (left)
                         {
-                            Projectile.NewProjectile(center, new Vector2(-6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5), ModContent.ProjectileType<CrazedOrb>(), 55, 0f, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), center, new Vector2(-6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5), ModContent.ProjectileType<CrazedOrb>(), 55, 0f, 0);
                         }
                         else
                         {
-                            Projectile.NewProjectile(center, new Vector2(6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5), ModContent.ProjectileType<CrazedOrb>(), 55, 0f, 0);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), center, new Vector2(6 + Main.rand.Next(-1, 1), Main.rand.Next(-10, 10) / 5), ModContent.ProjectileType<CrazedOrb>(), 55, 0f, 0);
                         }
                     }
                     genericTimer2 = 0;
@@ -192,7 +192,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                             int randomrot = Main.rand.Next(-20, 20) / 2;
                             for (int i = 0; i < 9; i++)
                             {
-                                Projectile.NewProjectile(center.X, center.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + i)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + i)) * 3), ModContent.ProjectileType<ObscureSaw>(), 65, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), center.X, center.Y, (float)Math.Sin(randomrot + ((360 / 13) * (1 + i)) * 3), (float)Math.Cos(randomrot + ((360 / 13) * (1 + i)) * 3), ModContent.ProjectileType<ObscureSaw>(), 65, 0f, Main.myPlayer);
                             }
                         }
                         genericTimer2 = 0;
@@ -204,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                             int randomrot = Main.rand.Next(-20, 20) / 2;
                             for (int i = 0; i < 6; i++)
                             {
-                                Projectile.NewProjectile(center, new Vector2((float)Math.Sin(randomrot + ((360 / 10) * (1 + i))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + i))) * 6), ModContent.ProjectileType<CrazyOrb>(), 45, 0f, Main.myPlayer, NPC.target);
+                                Projectile.NewProjectile(NPC.GetSource_FromThis(), center, new Vector2((float)Math.Sin(randomrot + ((360 / 10) * (1 + i))) * 6, (float)Math.Cos(randomrot + ((360 / 10) * (1 + i))) * 6), ModContent.ProjectileType<CrazyOrb>(), 45, 0f, Main.myPlayer, NPC.target);
                             }
                         }
                         genericTimer2 = -200;
@@ -232,7 +232,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     {
                         float rotation = (float)Math.Atan2(center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         rotation += Main.rand.Next(-50, 50) / 100;
-                        int num54 = Projectile.NewProjectile(center, new Vector2((float)(Math.Cos(rotation) * 0.5 * -1), (float)((Math.Sin(rotation) * 0.5) * -1)), ModContent.ProjectileType<ObscureSaw>(), 65, 0f, 0);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), center, new Vector2((float)(Math.Cos(rotation) * 0.5 * -1), (float)((Math.Sin(rotation) * 0.5) * -1)), ModContent.ProjectileType<ObscureSaw>(), 65, 0f, 0);
                     }
                     genericTimer2 = 0;
                 }
@@ -256,7 +256,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     {
                         rotation = (float)Math.Atan2(center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         rotation += Main.rand.Next(-50, 50) / 100;
-                        Projectile.NewProjectile(new Vector2(center.X + Main.rand.Next(-100, 100), center.Y + Main.rand.Next(-100, 100)), new Vector2((float)((Math.Cos(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1), (float)((Math.Sin(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1)), ModContent.ProjectileType<PoisonSmog>(), 18, 0f, 0);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), new Vector2(center.X + Main.rand.Next(-100, 100), center.Y + Main.rand.Next(-100, 100)), new Vector2((float)((Math.Cos(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1), (float)((Math.Sin(rotation) * (0.5f + (Main.rand.Next(-3, 3) / 10))) * -1)), ModContent.ProjectileType<PoisonSmog>(), 18, 0f, 0);
                     }
                     genericTimer2 = 0;
                 }

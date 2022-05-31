@@ -243,7 +243,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 					{
 
 						float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-						int num54 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y - 5, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
+						int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 5, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), cursedBreathDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 30;
 						NPC.netUpdate = true;
 
@@ -265,7 +265,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 					//if (Main.rand.Next(35) == 0) 
 					//	{
-					//		int num65 = Projectile.NewProjectile(npc.Center.X+Main.rand.Next(-500,500), npc.Center.Y+Main.rand.Next(-500,500), 0, 0, "Dark Explosion", 70, 0f, Main.myPlayer);
+					//		int num65 = Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X+Main.rand.Next(-500,500), npc.Center.Y+Main.rand.Next(-500,500), 0, 0, "Dark Explosion", 70, 0f, Main.myPlayer);
 					//	}
 
 					if (Main.rand.Next(40) == 1)
@@ -281,7 +281,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							speedX *= num51;
 							speedY *= num51;
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							Main.projectile[num54].aiStyle = 1;
 							Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20);

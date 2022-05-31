@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Special
                         dust2.noGravity = true;
                     }
 
-                    Projectile.NewProjectile(NPC.TopRight + new Vector2(-6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<Projectiles.ShatteredMoonlight>(), 8, 0, 0, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.TopRight + new Vector2(-6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<Projectiles.ShatteredMoonlight>(), 8, 0, 0, 2);
                 }
                 else
                 {
@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Special
                         dust2.noGravity = true;
                     }
 
-                    Projectile.NewProjectile(NPC.position + new Vector2(6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<Projectiles.ShatteredMoonlight>(), 8, 0, 0, 2);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position + new Vector2(6, 8), new Vector2(leftOrRightVel, Main.rand.Next(-3, -2)), ModContent.ProjectileType<Projectiles.ShatteredMoonlight>(), 8, 0, 0, 2);
                 }
             }
         }
@@ -260,37 +260,37 @@ namespace tsorcRevamp.NPCs.Special
                     int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
                     if (Main.tile[x_in_front, y_above_feet] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet] = new Tile();
+                        Main.tile[x_in_front, y_above_feet].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 1] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 1] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 1].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 2] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 2] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 2].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet - 3] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet - 3] = new Tile();
+                        Main.tile[x_in_front, y_above_feet - 3].ClearTile();
                     }
 
                     if (Main.tile[x_in_front, y_above_feet + 1] == null)
                     {
-                        Main.tile[x_in_front, y_above_feet + 1] = new Tile();
+                        Main.tile[x_in_front, y_above_feet + 1].ClearTile();
                     }
                     //  create? 2 other tiles farther in front
                     if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
                     {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
+                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
                     }
 
                     if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
                     {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
+                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
                     }
 
                     else // standing on solid tile but not in front of a passable door
@@ -351,12 +351,12 @@ namespace tsorcRevamp.NPCs.Special
                     {
                         if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
                         {
-                            Projectile.NewProjectile(NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
                         }
 
                         else //If moving at extreme speeds, use this higher damage projectile
                         {
-                            Projectile.NewProjectile(NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 12, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 12, 0f, Main.myPlayer, 0, NPC.whoAmI);
                         }
                     }
 
@@ -364,12 +364,12 @@ namespace tsorcRevamp.NPCs.Special
                     {
                         if (Math.Abs(NPC.velocity.X) < 4.5f) //If not moving at extreme speed, use this proj
                         {
-                            Projectile.NewProjectile(NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 8, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 8, 0f, Main.myPlayer, 0, NPC.whoAmI);
                         }
 
                         else //If moving at extreme speeds, use this higher damage projectile
                         {
-                            Projectile.NewProjectile(NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + spawnPosition, velocity, ModContent.ProjectileType<Projectiles.Enemy.GreySlash>(), 10, 0f, Main.myPlayer, 0, NPC.whoAmI);
                         }
                     }
                     NPC.ai[1] = 0; //Reset timer
@@ -460,12 +460,12 @@ namespace tsorcRevamp.NPCs.Special
                                 {
                                     if (NPC.direction == 1)
                                     {
-                                        Projectile.NewProjectile(NPC.Center + new Vector2(0, -14), new Vector2(9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
                                     }
 
                                     else
                                     {
-                                        Projectile.NewProjectile(NPC.Center + new Vector2(0, -14), new Vector2(-9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-9, Main.rand.Next(-4, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
                                     }
                                 }
 
@@ -473,12 +473,12 @@ namespace tsorcRevamp.NPCs.Special
                                 {
                                     if (NPC.direction == 1)
                                     {
-                                        Projectile.NewProjectile(NPC.Center + new Vector2(0, -14), new Vector2(7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
                                     }
 
                                     else
                                     {
-                                        Projectile.NewProjectile(NPC.Center + new Vector2(0, -14), new Vector2(-7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-7, Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
                                     }
                                 }
 
@@ -486,12 +486,12 @@ namespace tsorcRevamp.NPCs.Special
                                 {
                                     if (NPC.direction == 1)
                                     {
-                                        Projectile.NewProjectile(NPC.Center + new Vector2(0, -14), new Vector2(5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
                                     }
 
                                     else
                                     {
-                                        Projectile.NewProjectile(NPC.Center + new Vector2(0, -14), new Vector2(-5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
+                                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(0, -14), new Vector2(-5, Main.rand.Next(-2, -1)), ModContent.ProjectileType<Projectiles.Enemy.EnemyFirebomb>(), 20, 0);
                                     }
                                 }
 

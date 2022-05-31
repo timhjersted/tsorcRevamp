@@ -50,12 +50,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 		}
 
 		//This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
-		static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
+		static Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ice1Ball");
 		public override bool PreDraw(ref Color lightColor)
 		{
 			if (texture == null || texture.IsDisposed)
 			{
-				texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
+				texture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Projectiles/Ice1Ball");
 			}
 			SpriteEffects spriteEffects = SpriteEffects.None;
 			if (Projectile.spriteDirection == -1)

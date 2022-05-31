@@ -110,25 +110,25 @@ namespace tsorcRevamp.NPCs.Bosses
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             //Fire a projectile right at the player
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, velocity.X, velocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
                             //Rotate it further to fire the shots angled away from the player
                             Vector2 angledVelocity = velocity.RotatedBy(Math.PI / 6);
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             angledVelocity = velocity.RotatedBy(-Math.PI / 6);
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
                             //And again the more offset shots
                             angledVelocity = velocity.RotatedBy(Math.PI / 3);
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             angledVelocity = velocity.RotatedBy(-Math.PI / 3);
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
 
                             //And once mroe for the most offset shots
                             angledVelocity = velocity.RotatedBy(Math.PI / 1.8);
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             angledVelocity = velocity.RotatedBy(-Math.PI / 1.8);
-                            Projectile.NewProjectile(vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, angledVelocity.X, angledVelocity.Y, type, waterTrailsDamage, 0f, Main.myPlayer, phasedBullets);
                             //Could this all have been a for loop? Yeah. Easier to read like this though, imo.
                         }
                         NPC.ai[1] = -180;
@@ -183,15 +183,15 @@ namespace tsorcRevamp.NPCs.Bosses
                     //yes do it manually. im not using a loop. i don't care //Understandable, have a nice day.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.4) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.4) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.8) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation + 0.8) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 
-                        Projectile.NewProjectile(vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.8) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 80, (float)((Math.Cos(rotation - 0.8) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -1), type, (int)(waterTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
                     }
                     NPC.ai[1] = -180;
                 }

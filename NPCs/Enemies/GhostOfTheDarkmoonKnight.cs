@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         static Texture2D spearTexture;
-        static Texture2D darkKnightGlow = ModContent.GetTexture("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
+        static Texture2D darkKnightGlow = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
 
             int spriteWidth = NPC.frame.Width; //use same number as ini frameCount

@@ -101,9 +101,9 @@ namespace tsorcRevamp.NPCs.Bosses
 						int type = ModContent.ProjectileType<FireTrails>();
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
 						float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-						Projectile.NewProjectile(vector8.X + 500, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-						Projectile.NewProjectile(vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-						Projectile.NewProjectile(vector8.X - 500, vector8.Y - 100, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 500, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - 500, vector8.Y - 100, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
 						NPC.ai[1] = -90;
 						//Added some dust so the projectiles aren't just appearing out of thin air
 						for (int num36 = 0; num36 < 20; num36++)
@@ -168,9 +168,9 @@ namespace tsorcRevamp.NPCs.Bosses
 					int type = ModContent.ProjectileType<FireTrails>();
 					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
 					float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-					Projectile.NewProjectile(vector8.X + 300, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-					Projectile.NewProjectile(vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-					Projectile.NewProjectile(vector8.X - 300, vector8.Y - 100, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 300, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X - 300, vector8.Y - 100, (float)((Math.Cos(rotation - 0.2) * num48) * -1), (float)((Math.Sin(rotation - 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
 					NPC.ai[1] = -90;
 					//Added some dust so the projectiles aren't just appearing out of thin air
 					for (int num36 = 0; num36 < 20; num36++)

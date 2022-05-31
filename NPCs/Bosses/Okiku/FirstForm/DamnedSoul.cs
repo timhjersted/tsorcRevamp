@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 						Vector2 position = new Vector2(NPC.position.X + (float)(NPC.width / 2), NPC.position.Y + (float)(NPC.height / 2));
 						float rotation2 = (float)Math.Atan2(position.Y - (Main.player[NPC.target].position.Y + (float)Main.player[NPC.target].height * 0.5f), position.X - (Main.player[NPC.target].position.X + (float)Main.player[NPC.target].width * 0.5f));
 						rotation2 += (float)(Main.rand.Next(-50, 50) / 100);
-						Projectile.NewProjectile(position.X, position.Y, (float)(Math.Cos(rotation2) * (double)speed * -1.0), (float)(Math.Sin(rotation2) * (double)speed * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), position.X, position.Y, (float)(Math.Cos(rotation2) * (double)speed * -1.0), (float)(Math.Sin(rotation2) * (double)speed * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
 					}
 					NPC.ai[3] = -200 - Main.rand.Next(200);
 				}
@@ -98,7 +98,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 						Vector2 position = new Vector2(NPC.position.X + (float)(NPC.width / 2), NPC.position.Y + (float)(NPC.height / 2));
 						float rotation = (float)Math.Atan2(position.Y - (Main.player[NPC.target].position.Y + (float)Main.player[NPC.target].height * 0.5f), position.X - (Main.player[NPC.target].position.X + (float)Main.player[NPC.target].width * 0.5f));
 						rotation += (float)(Main.rand.Next(-50, 50) / 100);
-						int projectile = Projectile.NewProjectile(position.X, position.Y, (float)(Math.Cos(rotation) * (double)speed * -1.0), (float)(Math.Sin(rotation) * (double)speed * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
+						int projectile = Projectile.NewProjectile(NPC.GetSource_FromThis(), position.X, position.Y, (float)(Math.Cos(rotation) * (double)speed * -1.0), (float)(Math.Sin(rotation) * (double)speed * -1.0), ModContent.ProjectileType<ObscureShot>(), ObscureShotDamage, 0f, Main.myPlayer);
 						Main.projectile[projectile].scale = 3f;
 					}
 					NPC.ai[3] = -50 - Main.rand.Next(50);

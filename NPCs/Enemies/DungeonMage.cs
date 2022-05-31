@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                     int damage = 18;
                     int type = ModContent.ProjectileType<Projectiles.Enemy.PoisonFlames>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    int proj = Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
+                    int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
                     Main.projectile[proj].timeLeft = 120;
 
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         speedY *= num51;
                         int damage = 25;
                         int type = ModContent.ProjectileType<Projectiles.Enemy.MiracleSprouter>();
-                        int num54 = Projectile.NewProjectile(myPos.X, myPos.Y, speedX, speedY, type, damage, 0f, NPC.whoAmI);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), myPos.X, myPos.Y, speedX, speedY, type, damage, 0f, NPC.whoAmI);
                         Main.projectile[num54].timeLeft = 110;
                         Main.projectile[num54].velocity.X = speedX;
                         Main.projectile[num54].velocity.Y = speedY;

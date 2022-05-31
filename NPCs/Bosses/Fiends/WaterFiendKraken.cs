@@ -182,14 +182,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					{
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
 						projVector = projVector.RotatedBy(offset);
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType >= 6 && projectileType != 9)
 					{
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
 						projVector = projVector.RotatedBy(offset);
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType == 9)
@@ -197,7 +197,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
 						projVector = projVector.RotatedBy(offset);
 						projVector += (Main.player[NPC.target].velocity / 2);
-						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType != 9)
@@ -236,7 +236,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 						Vector2 projCenter = Target.Center;
 						projCenter += Main.rand.NextVector2CircularEdge(500, 500);
 
-						Projectile.NewProjectile(projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
 					}
 					chamberFlooded = !chamberFlooded;
 					radius = 0;
@@ -274,20 +274,20 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				if (projType < 5)
 				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
 					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				if (projType >= 5 && projType < 8)
 				{
 
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
 					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				if (projType >= 8)
 				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
-					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				projType = Main.rand.Next(10);
@@ -408,7 +408,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
 				Vector2 projCenter = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius) + NPC.Center;
 				Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[NPC.target].Center, 10);
-				Projectile.NewProjectile(projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, NPC.target);
+				Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, NPC.target);
 			}
 
 			int waterJetCooldown = 160;
@@ -417,7 +417,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				Vector2 projCenter = Target.Center;
 				projCenter += Main.rand.NextVector2CircularEdge(500, 500);
 
-				Projectile.NewProjectile(projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
+				Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
 			}
 
 			if (MoveCounter > 800)

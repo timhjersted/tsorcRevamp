@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Special
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile.NewProjectile(NPC.Center, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0, Main.myPlayer, 1);
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Barrier>(), 0, 0, Main.myPlayer, 1);
                 }
             }
 

@@ -366,7 +366,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                         int type = ModContent.ProjectileType<ShadowOrb>();
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, ShadowOrbDamage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, ShadowOrbDamage, 0f, Main.myPlayer);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
                         ShadowShotCount++;
                         NPC.netUpdate = true; //new
@@ -385,7 +385,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         speedX *= num51;
                         speedY *= num51;
                         int type = ModContent.ProjectileType<MassiveCrystalShardsSpell>();//44;//0x37; //14;
-                        int num54 = Projectile.NewProjectile(startPos.X, startPos.Y, speedX, speedY, type, CrystalShardsDamage, 0f, Main.myPlayer);
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, speedX, speedY, type, CrystalShardsDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 80;
                         Main.projectile[num54].aiStyle = 0;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
@@ -416,7 +416,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             speedX *= num51;
                             speedY *= num51;
                             int type = ModContent.ProjectileType<EnemySuddenDeathBall>();//44;//0x37; //14;
-                            int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, DeathBallDamage, 0f, Main.myPlayer);
+                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, DeathBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 10;
                             Main.projectile[num54].aiStyle = 1;
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -437,7 +437,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             //The first projectile, which he fires into the sky in clumps and is mostly for visual effect (still does damage, though)
                             Vector2 position = NPC.position + new Vector2(Main.rand.Next(-20, 20), Main.rand.Next(-20, 20));
                             Vector2 velocity = new Vector2(Main.rand.Next(-2, 2), -50);
-                            Projectile blackFire = Projectile.NewProjectileDirect(position, velocity, ModContent.ProjectileType<EnemyBlackFireVisual>(), BlackFireDamage, .5f, Main.myPlayer);
+                            Projectile blackFire = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, velocity, ModContent.ProjectileType<EnemyBlackFireVisual>(), BlackFireDamage, .5f, Main.myPlayer);
                             blackFire.timeLeft = 20;
                         }
                     }
@@ -448,7 +448,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         Vector2 position = Main.player[NPC.target].position + new Vector2(Main.rand.Next(-1400, 1400), -700);
                         //Very similar to normal Black Fire, but phases through blocks until it reaches the player's height.
                         //Also the explosion doesn't do damage (for obvious reasons)
-                        Projectile.NewProjectileDirect(position, new Vector2(0, 5), ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, .5f, Main.myPlayer, NPC.target);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, new Vector2(0, 5), ModContent.ProjectileType<EnemyAttraidiesBlackFire>(), BlackFireDamage, .5f, Main.myPlayer, NPC.target);
                     }
                 }
                 #endregion
@@ -466,7 +466,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             Vector2 position = NPC.position;
                             Vector2 velocity = vagueVelocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5));
                             int firingDelay = (int)(329 - TeleportTimer);
-                            Projectile.NewProjectileDirect(position, velocity, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, Main.myPlayer, NPC.target, firingDelay);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, velocity, ModContent.ProjectileType<StardustShot>(), StardustLaserDamage, .5f, Main.myPlayer, NPC.target, firingDelay);
                         }
                     }
                 }
@@ -479,11 +479,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     {
                         if (TeleportTimer % 60 == 0)
                         {
-                            Projectile.NewProjectileDirect(NPC.position, Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.position + new Vector2(10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.position + new Vector2(-10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.position + new Vector2(0, 10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                            Projectile.NewProjectileDirect(NPC.position + new Vector2(0, -10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(-10, 0), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, 10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                            Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, -10), Vector2.Zero, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
                         }
                     }
                     else
@@ -494,11 +494,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             {
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
                                 Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
-                                Projectile.NewProjectileDirect(NPC.position, velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.position + new Vector2(10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.position + new Vector2(-10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.position + new Vector2(0, 10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
-                                Projectile.NewProjectileDirect(NPC.position + new Vector2(0, -10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(-10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, 10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
+                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(0, -10), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
                             }
                         }
                     }
@@ -511,7 +511,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     if (AttackModeCounter % 45 == 0 && AttackModeCounter < 730)
                     {
                         Vector2 position = Main.player[NPC.target].position + Main.rand.NextVector2Square(-600, 600);
-                        Projectile.NewProjectileDirect(position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
                     }                    
                 }
                 #endregion
@@ -528,11 +528,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 {
                     if (AttackModeCounter % 2 == 0 && AttackModeCounter > 120)
                     {
-                        Projectile.NewProjectileDirect(NPC.Center, Main.rand.NextVector2CircularEdge(8, 8), ModContent.ProjectileType<ObscureShot>(), DarkLaserDamage, .5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Main.rand.NextVector2CircularEdge(8, 8), ModContent.ProjectileType<ObscureShot>(), DarkLaserDamage, .5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 5)
                     {
-                       Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
+                       Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
                     }                   
                 }
                 #endregion

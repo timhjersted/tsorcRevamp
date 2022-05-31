@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				if (Main.GameUpdateCount % 240 == 0)
 				{
 					Vector2 projVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 1);
-					Projectile.NewProjectile(NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, NPC.target, NPC.whoAmI);
+					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, NPC.target, NPC.whoAmI);
 				}
 
 				NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						{
 
 							float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
-							int num54 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, (float)((Math.Cos(rotation) * 25) * -1), (float)((Math.Sin(rotation) * 25) * -1), ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), breathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 40;
 							NPC.netUpdate = true;
 
@@ -143,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 								speedX *= num51;
 								speedY *= num51;
 								int type = ModContent.ProjectileType<Projectiles.Enemy.TetsujinLaser>();//44;//0x37; //14;
-								int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blasterDamage, 0f, Main.myPlayer);
+								int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blasterDamage, 0f, Main.myPlayer);
 								Main.projectile[num54].timeLeft = 650;
 								Main.projectile[num54].aiStyle = 23;
 								Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 12);

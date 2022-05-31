@@ -160,7 +160,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 					if ((knifetimer > 80) && (Main.rand.Next(70) == 0) && Main.netMode != NetmodeID.MultiplayerClient) //Having this timer allows at least 80 ticks between next knife thrown
 					{
-						Projectile.NewProjectile(NPC.Center, new Vector2(Main.rand.Next(3, 6), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.Next(3, 6), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
 						knifetimer = 0;
 					}
 					else if (NPC.velocity.X < -4f) //max vel
@@ -181,7 +181,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 					if ((knifetimer > 80) && (Main.rand.Next(70) == 0) && Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						Projectile.NewProjectile(NPC.Center, new Vector2(Main.rand.Next(-6, -3), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(Main.rand.Next(-6, -3), Main.rand.Next(-3, -1)), ModContent.ProjectileType<Projectiles.ThrowingKnifeHostile>(), 8, 4);
 						knifetimer = 0;
 					}
 					else if (NPC.velocity.X > 4f) //max vel
