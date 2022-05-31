@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles {
 
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
                 Projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
 
             if (Main.myPlayer == Projectile.owner && Projectile.ai[0] == 0f) {

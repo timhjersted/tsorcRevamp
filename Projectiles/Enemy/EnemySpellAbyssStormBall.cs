@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
 			{
 				Projectile.soundDelay = 10;
-				Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
 			}
 			Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
 			int arg_2675_1 = Projectile.width;
@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void Kill(int timeLeft)
 		{
-			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+			Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 			Projectile.NewProjectile(Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<EnemySpellAbyssStorm>(), Projectile.damage, 8f, Projectile.owner);
 
 			Dust.NewDustDirect(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f).noGravity = true;

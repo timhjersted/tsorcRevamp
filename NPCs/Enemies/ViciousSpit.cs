@@ -43,7 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
             if (NPC.ai[0] == 2f) {
                 NPC.position += NPC.velocity;
-                Main.PlaySound(SoundID.NPCKilled, (int)NPC.position.X, (int)NPC.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCKilled, (int)NPC.position.X, (int)NPC.position.Y, 9);
                 for (int i = 0; i < 20; i++) {
                     int spawnDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y + 2f), NPC.width, NPC.height, 26, 0f, 0f, 100, default, 1.8f);
                     Main.dust[spawnDust].velocity += NPC.velocity;

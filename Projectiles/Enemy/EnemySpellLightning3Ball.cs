@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
                 Projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
             int num47 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.MagicMirror, 0f, 0f, 100, default, 2f);
             Main.dust[num47].velocity *= 0.3f;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override void Kill(int timeLeft)
         {
 
-            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

@@ -138,7 +138,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			if (Main.rand.Next(100) == 0 && (Math.Abs(NPC.velocity.X) > 3 || Math.Abs(NPC.velocity.Y) > 3) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 500) //I'm assuming 1 in 2020 was a typo
 			{
 				breath = true;
-				Main.PlaySound(SoundID.Item, NPC.position, 20);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, NPC.position, 20);
 			}
 
 
@@ -158,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 			{
 				breath = false;
 				breathCD = 100;
-				Main.PlaySound(SoundID.Item, NPC.position, 20);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, NPC.position, 20);
 			}
 
 			if (NPC.velocity.X < 0f)

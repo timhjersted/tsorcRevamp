@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 0f, Main.myPlayer, 1, NPC.target);
 				}
 				
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 17);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				
 			}
 		}

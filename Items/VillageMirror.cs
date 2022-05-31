@@ -107,7 +107,7 @@ namespace tsorcRevamp.Items {
                 }
                 else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
                 {
-                    Main.PlaySound(SoundID.Item60);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
 
 
                     for (int dusts = 0; dusts < 70; dusts++)

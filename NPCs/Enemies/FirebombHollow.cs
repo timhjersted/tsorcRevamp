@@ -453,7 +453,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (AI_State_Timer_1 == 45)
                 {
-                    Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
                     Vector2 difference = Main.player[NPC.target].Center - NPC.Center; //Distance between player center and npc center
                     Vector2 velocity = new Vector2(0.1f, 0).RotatedBy(difference.ToRotation()); //Give it velocity so it can face the right direction
                     Vector2 throwpower = (Main.player[NPC.target].Center - NPC.Center) / 30;

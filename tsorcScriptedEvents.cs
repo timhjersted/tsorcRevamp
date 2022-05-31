@@ -739,7 +739,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.eventTimer == 1)
             {
-                Main.PlaySound(SoundID.Grass, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, player.Center);
             }
             if (thisEvent.eventTimer < 20)
             {
@@ -812,7 +812,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.eventTimer == 1)
             {
-                Main.PlaySound(SoundID.Grass, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass, player.Center);
             }
             if (thisEvent.eventTimer < 20)
             {

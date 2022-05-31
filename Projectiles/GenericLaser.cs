@@ -434,13 +434,13 @@ namespace tsorcRevamp.Projectiles {
                 {
                     if (CustomSound == null)
                     {
-                        Main.PlaySound(LaserSound.WithVolume(LaserVolume));
+                        Terraria.Audio.SoundEngine.PlaySound(LaserSound.WithVolume(LaserVolume));
                     }
                     else
                     {
                         if (LaserSound != null)
                         {
-                            Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, CustomSound).WithVolume(LaserVolume));
+                            Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, CustomSound).WithVolume(LaserVolume));
                         }
                     }
 

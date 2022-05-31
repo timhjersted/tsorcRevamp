@@ -78,7 +78,7 @@ namespace tsorcRevamp.Items
 
             if (player.itemTime == 1)
             {
-                Main.PlaySound(SoundID.Item100.WithVolume(1f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100.WithVolume(1f), player.position); // Plays sound.
 
                 player.AddBuff(ModContent.BuffType<Buffs.PowerWithin>(), 1800); //30s
 

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.BossItems {
                 Main.NewText("Slogra only awakens at night.", 175, 75, 255);
             }
             else {
-                Main.PlaySound(SoundID.Roar, -1, -1, 0);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, -1, -1, 0);
                 NPC.NewNPC((int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
                 NPC.NewNPC((int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
             }

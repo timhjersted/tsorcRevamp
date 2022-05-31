@@ -120,7 +120,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
+			Terraria.Audio.SoundEngine.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
 			damage = target.defense + Projectile.damage;
 			if (Projectile.penetrate <= 0)
 			{

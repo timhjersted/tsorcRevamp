@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles {
         public override void AI() {
             if (Projectile.type == 96 && Projectile.localAI[0] == 0f) {
                 Projectile.localAI[0] = 1f;
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
             }
             int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 3f);
             Main.dust[num40].noGravity = true;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override bool OnTileCollide(Vector2 CollideVel) {
-            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             Projectile.ai[0] += 1f;
             if (Projectile.ai[0] >= 6f) {
                 Projectile.position += Projectile.velocity;

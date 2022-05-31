@@ -118,7 +118,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //Fire rain and disruptor
                 if (projectileTimer > 225)
                 {
-                    Main.PlaySound(2, -1, -1, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
                     if (Main.rand.NextBool())
                         for (int pcy = 0; pcy < 10; pcy++)
                         {

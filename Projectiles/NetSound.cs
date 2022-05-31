@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles {
             Projectile.ignoreWater = true;
         }
         public override void AI() {
-            Main.PlaySound((int)Projectile.velocity.X,
+            Terraria.Audio.SoundEngine.PlaySound((int)Projectile.velocity.X,
                 (int)Main.player[Projectile.owner].position.X,
                 (int)Main.player[Projectile.owner].position.Y,
                 (int)Projectile.velocity.Y);

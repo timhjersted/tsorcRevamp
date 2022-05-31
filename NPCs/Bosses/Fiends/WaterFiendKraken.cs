@@ -183,14 +183,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
 						projVector = projVector.RotatedBy(offset);
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType >= 6 && projectileType != 9)
 					{
 						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
 						projVector = projVector.RotatedBy(offset);
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType == 9)
 					{
@@ -198,7 +198,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 						projVector = projVector.RotatedBy(offset);
 						projVector += (Main.player[NPC.target].velocity / 2);
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType != 9)
 					{
@@ -275,20 +275,20 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				if (projType >= 5 && projType < 8)
 				{
 
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
-					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				if (projType >= 8)
 				{
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				projType = Main.rand.Next(10);
 			}

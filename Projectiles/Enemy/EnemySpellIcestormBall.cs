@@ -20,9 +20,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
                 Projectile.soundDelay = 10;
-                //Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
-                Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.8f, 0f); //ice materialize - good
-                //Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.8f, 0f); //ice materialize - good
+                //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 120, 0.3f, .1f); //ice mist howl sounds crazy
             }
             int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
             Main.dust[thisDust].noGravity = true;

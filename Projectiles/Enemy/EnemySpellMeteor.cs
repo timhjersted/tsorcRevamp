@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				if (Projectile.ai[1] == 0f)
 				{
 					Projectile.ai[1] = 1f;
-					Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
 				}
 				Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
 				if (Projectile.velocity.Y > 16f)
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			{
 				for (int num40 = 0; num40 < 10; num40++)
 				{
-					Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 					Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
 					int arg_1394_1 = Projectile.width;
 					int arg_1394_2 = Projectile.height;

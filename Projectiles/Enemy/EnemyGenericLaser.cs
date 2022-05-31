@@ -444,7 +444,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     if (LaserSound != null)
                     {
-                        Main.PlaySound(LaserSound);
+                        Terraria.Audio.SoundEngine.PlaySound(LaserSound);
                     }
                     //Then, set it to fire for the FIRING_TIME frames
                     FiringTimeLeft = FiringDuration;

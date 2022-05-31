@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (NPC.direction == -1) //right-facing bump
 					{
 						NPC.velocity += new Vector2(-1f, 0);
-						//if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						//if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
 						if (coinsdropped < 10)
 						{
 							coinsdropped++;
@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (NPC.direction == 1) //left-facing bump
 					{
 						NPC.velocity += new Vector2(1f, 0);
-						//if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
+						//if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
 						if (coinsdropped < 10)
 						{
 							coinsdropped++;
@@ -208,7 +208,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					if (NPC.alpha > 254)
 					{
 						NPC.life = 0;
-						if (!Main.dedServ) Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Escaped").WithVolume(0.7f), NPC.Center);
+						if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Escaped").WithVolume(0.7f), NPC.Center);
 						NPC.netUpdate = true;
 					}
 				}

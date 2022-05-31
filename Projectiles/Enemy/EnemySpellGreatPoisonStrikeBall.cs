@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
             {
-                Main.PlaySound(6, (int)Projectile.position.X, (int)Projectile.position.Y, 0, 0.3f, -4.7f); //grass cut slowed down
+                Terraria.Audio.SoundEngine.PlaySound(6, (int)Projectile.position.X, (int)Projectile.position.Y, 0, 0.3f, -4.7f); //grass cut slowed down
                 if (Projectile.owner == Main.myPlayer)
 
                 {

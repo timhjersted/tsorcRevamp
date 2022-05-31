@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 
 		public override void AI()
 		{
-			if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ChickenBokbok").WithVolume(.8f).WithPitchVariance(.3f), NPC.Center);
+			if (!Main.dedServ && (Main.rand.Next(360) == 0)) Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ChickenBokbok").WithVolume(.8f).WithPitchVariance(.3f), NPC.Center);
 		}
 		public override void FindFrame(int frameHeight)
 		{

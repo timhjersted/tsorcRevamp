@@ -94,15 +94,15 @@ namespace tsorcRevamp.Projectiles
                 int option = Main.rand.Next(3);
                 if (option == 0)
                 {
-                    Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetUno").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetUno").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
                 }
                 else if (option == 1)
                 {
-                    Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetDos").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetDos").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
                 }
                 else if (option == 2)
                 {
-                    Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetTres").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/RicochetTres").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
                 }
             }
         }

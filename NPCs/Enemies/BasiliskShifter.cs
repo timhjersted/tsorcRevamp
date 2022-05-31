@@ -133,9 +133,9 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 4f, 1.06f, true, true);
 						Projectile.NewProjectile(NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
-						//Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
-																									  //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
+																									  //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 						shotTimer = 1f;
 
 						NPC.netUpdate = true;
@@ -171,8 +171,8 @@ namespace tsorcRevamp.NPCs.Enemies
 						if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
 						{
 							breath = true;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, 0.2f, 0.2f); //flamethrower
-																										 //Main.PlaySound(2, -1, -1, 20);
+							Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, 0.2f, 0.2f); //flamethrower
+																										 //Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
 						}
 
 						if (breath)
@@ -266,7 +266,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 						//Main.projectile[lob].hostile = true;
 						//Main.projectile[num555].timeLeft = 300; //40
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
 					}
 
@@ -288,7 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						int num555 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
 						Main.projectile[num555].timeLeft = 300; //40
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 						shotTimer = 1f;
 					}
 				}
@@ -305,8 +305,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 				{
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
-					//Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
-					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.1f);
+					//Terraria.Audio.SoundEngine.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
+					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.1f);
 					//customAi1 = 1f;
 				}
 
@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//MAKE SOUND WHEN JUMPING/HOVERING
 			if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
 			{
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.2f, .1f);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.2f, .1f);
 			}
 
 			//TELEGRAPH DUSTS

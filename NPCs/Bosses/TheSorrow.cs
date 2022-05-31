@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         }
 
                         int type = ModContent.ProjectileType<WaterTrail>();
-                        Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                         
                         //Get the vector that points from the NPC to the player
                         Vector2 difference = Main.player[NPC.target].Center - NPC.Center;
@@ -178,7 +178,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     float num48 = 13f;
                     float invulnDamageMult = 1.2f;
                     int type = ModContent.ProjectileType<WaterTrail>();
-                    Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     //yes do it manually. im not using a loop. i don't care //Understandable, have a nice day.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

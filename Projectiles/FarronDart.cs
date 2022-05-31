@@ -162,7 +162,7 @@ namespace tsorcRevamp.Projectiles
                 Main.dust[dust].noGravity = true;
             }
 
-            Main.PlaySound(SoundID.NPCHit3.WithVolume(.35f), Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3.WithVolume(.35f), Projectile.position);
 
         }
     }

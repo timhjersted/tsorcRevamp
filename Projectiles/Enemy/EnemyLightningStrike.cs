@@ -261,7 +261,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 if (!branch)
                 {
                     dustCount = 15;
-                    Main.PlaySound(4, currentBranch[currentBranch.Count - 1], 43);
+                    Terraria.Audio.SoundEngine.PlaySound(4, currentBranch[currentBranch.Count - 1], 43);
                 }
                 if (branchCollided)
                 {

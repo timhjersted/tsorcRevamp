@@ -151,7 +151,7 @@ namespace TerraUI.Objects {
         /// <param name="item2">second item</param>
         public void Swap(ref Item item1, ref Item item2) {
             UIUtils.SwitchItems(ref item1, ref item2);
-            Main.PlaySound(SoundID.Grab);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             Recipe.FindRecipes();
         }
 
@@ -160,7 +160,7 @@ namespace TerraUI.Objects {
         /// </summary>
         public void ToggleVisibility() {
             ItemVisible = !ItemVisible;
-            Main.PlaySound(SoundID.MenuTick);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
         }
 
         /// <summary>

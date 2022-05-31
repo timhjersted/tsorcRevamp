@@ -90,14 +90,14 @@ namespace tsorcRevamp.NPCs.Enemies
 			//projectile sound needs volume and pitch variables (the last two below)
 			//if (bubbleTimer >= 80)
 			//{
-			//	Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 87, 0.2f, -0.1f); // water2 sound
+			//	Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 87, 0.2f, -0.1f); // water2 sound
 			//}
 
 
 			//PLAY CREATURE SOUND
 			if (Main.rand.Next(1000) == 1)
 			{
-				Main.PlaySound(23, (int)NPC.position.X, (int)NPC.position.Y, 0, 0.3f, -0.3f); // water sound
+				Terraria.Audio.SoundEngine.PlaySound(23, (int)NPC.position.X, (int)NPC.position.Y, 0, 0.3f, -0.3f); // water sound
 			}
 
 

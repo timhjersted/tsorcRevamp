@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[dust].noGravity = true;
         }
         public override void Kill(int timeLeft) {
-            Main.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1, .6f);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1, .6f);
             for (int i = 0; i < 10; i++) {
                 Vector2 projPosition = new Vector2(Projectile.position.X, Projectile.position.Y);
                 Dust.NewDust(projPosition, Projectile.width, Projectile.height, 245, 0f, 0f, 0, default, 1f);

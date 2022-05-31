@@ -84,7 +84,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 				TimeLock = false;
 				NPC.ai[0] = 2;
-				Main.PlaySound(15, (int)NPC.position.X, (int)NPC.position.Y, 0);
+				Terraria.Audio.SoundEngine.PlaySound(15, (int)NPC.position.X, (int)NPC.position.Y, 0);
 				NPC.netUpdate = true;
 			}
 

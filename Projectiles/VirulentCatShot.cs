@@ -129,7 +129,7 @@ namespace tsorcRevamp.Projectiles
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), Projectile.Center);
+			Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), Projectile.Center);
 			for (int d = 0; d < 20; d++)
 			{
 				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
@@ -141,7 +141,7 @@ namespace tsorcRevamp.Projectiles
 		}
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), Projectile.Center);
+			Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), Projectile.Center);
 			for (int d = 0; d < 20; d++)
 			{
 				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
@@ -156,7 +156,7 @@ namespace tsorcRevamp.Projectiles
 
 		public override void Kill(int timeLeft)
 		{
-			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f), Projectile.Center);
+			Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9.WithVolume(.4f), Projectile.Center);
 			for (int d = 0; d < 20; d++)
 			{
 				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1.2f, Projectile.velocity.Y * 1.2f, 30, default(Color), 1f);

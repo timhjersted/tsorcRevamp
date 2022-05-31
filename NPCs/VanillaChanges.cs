@@ -1037,7 +1037,7 @@ namespace tsorcRevamp.NPCs {
                 if (npc.localAI[3] >= (float)(600 + Main.rand.Next(1000)))
                 {
                     npc.localAI[3] = -Main.rand.Next(200);
-                    Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 10);
+                    Terraria.Audio.SoundEngine.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 10);
                 }
                 Main.wof = npc.whoAmI;
                 int num335 = (int)(npc.position.X / 16f);
@@ -1597,7 +1597,7 @@ namespace tsorcRevamp.NPCs {
                                 dust78.fadeIn = 1f;
                                 dust78.scale = 1.5f + Main.rand.NextFloat() + (float)num479 * 0.13f;
                             }
-                            Main.PlaySound(3, position6, Utils.SelectRandom<int>(Main.rand, 1, 18));
+                            Terraria.Audio.SoundEngine.PlaySound(3, position6, Utils.SelectRandom<int>(Main.rand, 1, 18));
                         }
                     }
                     if (Main.rand.Next(3) != 0 && npc.ai[1] < 150f) {
@@ -1607,7 +1607,7 @@ namespace tsorcRevamp.NPCs {
                         dust79.velocity.Y = Math.Abs(dust79.velocity.Y) * 0.25f;
                     }
                     if (npc.ai[1] % 60f == 1f) {
-                        Main.PlaySound(4, npc.Center, 22);
+                        Terraria.Audio.SoundEngine.PlaySound(4, npc.Center, 22);
                     }
                     if (npc.ai[1] >= 180f) {
                         npc.life = 0;
@@ -1633,10 +1633,10 @@ namespace tsorcRevamp.NPCs {
                             break;
                     }
                     if (flag98 != npc.dontTakeDamage) {
-                        Main.PlaySound(SoundID.NPCDeath58, npc.position);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58, npc.position);
                     }
                     else if (npc.ai[3] == 1f) {
-                        Main.PlaySound(SoundID.NPCDeath3, npc.position);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath3, npc.position);
                     }
                     npc.ai[3]++;
                     if (npc.ai[3] > 120f) {
@@ -2096,7 +2096,7 @@ namespace tsorcRevamp.NPCs {
                                     NetMessage.SendData(23, -1, -1, null, num711);
                                 }
                             }
-                            Main.PlaySound(3, (int)position.X, (int)position.Y);
+                            Terraria.Audio.SoundEngine.PlaySound(3, (int)position.X, (int)position.Y);
                             for (int m = 0; m < 10; m++) {
                                 Dust.NewDust(position, 20, 20, 5, vector112.X * 0.4f, vector112.Y * 0.4f);
                             }
@@ -2220,7 +2220,7 @@ namespace tsorcRevamp.NPCs {
                         npc.ai[2] = 0f;
                     }
                     else {
-                        Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y);
+                        Terraria.Audio.SoundEngine.PlaySound(3, (int)npc.position.X, (int)npc.position.Y);
                         for (int num844 = 0; num844 < 2; num844++) {
                             Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
                             Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
@@ -2229,7 +2229,7 @@ namespace tsorcRevamp.NPCs {
                         for (int num855 = 0; num855 < 20; num855++) {
                             Dust.NewDust(npc.position, npc.width, npc.height, 5, (float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f);
                         }
-                        Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+                        Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
                     }
                 }
                 Dust.NewDust(npc.position, npc.width, npc.height, 5, (float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f);
@@ -2328,7 +2328,7 @@ namespace tsorcRevamp.NPCs {
                 }
             }
             else if (npc.ai[1] == 1f) {
-                Main.PlaySound(36, (int)npc.position.X, (int)npc.position.Y, 0);
+                Terraria.Audio.SoundEngine.PlaySound(36, (int)npc.position.X, (int)npc.position.Y, 0);
                 npc.rotation = num1243;
                 float num922 = 6.8f;
                 if (Main.expertMode && npc.ai[3] == 1f) {
@@ -2497,7 +2497,7 @@ namespace tsorcRevamp.NPCs {
             }
             else if (npc.ai[1] == 4f) {
                 if (npc.ai[2] == 0f) {
-                    Main.PlaySound(36, (int)npc.position.X, (int)npc.position.Y, -1);
+                    Terraria.Audio.SoundEngine.PlaySound(36, (int)npc.position.X, (int)npc.position.Y, -1);
                 }
                 float num1121 = num910;
                 npc.ai[2] += 1f;

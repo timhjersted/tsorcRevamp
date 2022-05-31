@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                     }
                 }
             }
-            Main.PlaySound(SoundID.Item98);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item98);
             return false;
         }
 

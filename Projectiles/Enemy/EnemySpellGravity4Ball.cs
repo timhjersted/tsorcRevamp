@@ -18,7 +18,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override void AI() {
             if (Projectile.ai[1] == 0f) {
                 Projectile.ai[1] = 1f;
-                //Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
             }
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
             if (Projectile.velocity.Y > 16f) {
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
             Projectile.timeLeft = 0;
             {
-                //Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
                 if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16)), new Vector2(0, 0), ModContent.ProjectileType<EnemySpellGravity4Strike>(), 1, 3f, Projectile.owner);
                 Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);

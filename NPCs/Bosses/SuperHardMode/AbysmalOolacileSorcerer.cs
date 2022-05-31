@@ -183,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			{
 				Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
 				Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 				DarkBeadShotTimer = 0;
 				DarkBeadShotCounter++;
 			}
@@ -195,7 +195,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
 					projVelocity.Y -= 520;
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 25);
+					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 25);
 					NPCSpawningTimer = 1f;
 					SecondAttackCounter = 0;
 				}
@@ -204,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 					NPCSpawningTimer = 1f;
 				}
 			}
@@ -214,7 +214,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		{
 			if ((TeleportTimer >= 200 && NPC.life > NPC.lifeMax / 4) || (TeleportTimer >= 120 && NPC.life <= NPC.lifeMax / 4))
 			{
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
 				for (int i = 0; i < 10; i++)
 				{
 					int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 27, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);

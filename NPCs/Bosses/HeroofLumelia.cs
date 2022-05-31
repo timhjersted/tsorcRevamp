@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
 			bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
 
-			int sound_type = 0; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
+			int sound_type = 0; // Parameter for Terraria.Audio.SoundEngine.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
 			int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
 			float acceleration = .05f;  //  how fast it can speed up
@@ -186,7 +186,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				{
 					NPC.velocity *= 0f; // stop moving
 					NPC.ai[3] = 0f; // reset boredom to 0
-					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
 					Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
 					float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
 					float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
@@ -232,7 +232,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			if ((!hates_light || !Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0) && NPC.ai[3] < (float)boredom_time)
 			{   // not fleeing light & not bored
 				if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-					Main.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
+					Terraria.Audio.SoundEngine.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
 				if (!canDrown)
 				{
 					NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
@@ -469,7 +469,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						int Spawned3 = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-						Main.PlaySound(3, -1, -1, 6, 0.3f, -.01f); //beast
+						Terraria.Audio.SoundEngine.PlaySound(3, -1, -1, 6, 0.3f, -.01f); //beast
 						wolfSpawned1 = true;
 
 					}
@@ -481,7 +481,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-						Main.PlaySound(3, -1, -1, 6, 0.3f, -.02f); //beast
+						Terraria.Audio.SoundEngine.PlaySound(3, -1, -1, 6, 0.3f, -.02f); //beast
 						wolfSpawned2 = true;
 
 					}
@@ -492,7 +492,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						int Spawned2 = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.RedCloudHunter>(), 0);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-						Main.PlaySound(3, -1, -1, 6, 0.3f, .01f); //beast
+						Terraria.Audio.SoundEngine.PlaySound(3, -1, -1, 6, 0.3f, .01f); //beast
 						wolfSpawned3 = true;
 
 					}
@@ -549,7 +549,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					{
 						//Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
 						Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 800f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-						Main.PlaySound(2, -1, -1, 5);
+						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
 						
 						NPC.netUpdate = true;
 						
@@ -569,7 +569,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					for (int pcy = 0; pcy < 12; pcy++)
 					{
 						Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(400), (float)nT.position.Y - 900f, (float)(-50 + Main.rand.Next(100)) / 10, 9.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
-						Main.PlaySound(2, -1, -1, 5);
+						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
 						
 						NPC.netUpdate = true;
 						
@@ -591,7 +591,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						//customAi1 = 132f;
 					}
 					
@@ -613,7 +613,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						//customAi1 = 132f;
 					}
 
@@ -631,7 +631,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 							Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 
 							//go to smoke bomb attack
 							customAi1 = 200f;
@@ -676,7 +676,7 @@ namespace tsorcRevamp.NPCs.Bosses
 											if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
 											{
 												Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
-												Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
+												Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
 												customAi1 = 1f;
 											}
 								}
@@ -934,7 +934,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					NPC.life--;
 					if (NPC.life <= 0)
 					{
-						Main.PlaySound(4, (int)NPC.position.X, (int)NPC.position.Y, 1);
+						Terraria.Audio.SoundEngine.PlaySound(4, (int)NPC.position.X, (int)NPC.position.Y, 1);
 						NPC.NPCLoot();
 						NPC.netUpdate = true;
 					}

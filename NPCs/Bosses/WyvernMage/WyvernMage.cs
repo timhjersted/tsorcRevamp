@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     //Fire it
                     Projectile.NewProjectile(startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
                 }
-                Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
                 OrbTimer = 0;
                 ShotCount++;
             }
@@ -170,7 +170,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(startPos, Main.player[NPC.target].Center, projectileSpeed);
                         Projectile.NewProjectile(startPos.X, startPos.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer);
                     }
-                    Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
                 }
                     
                 if (Main.rand.Next(14) == 0 || (dragonAlive && Main.rand.Next(7) == 0)) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
 
             NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 13);
 
-            Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
             TeleportTimer = 0;
             ShotCount = 0;
             for (int i = 0; i < 10; i++)

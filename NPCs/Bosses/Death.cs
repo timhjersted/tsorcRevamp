@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if ((NPC.ai[1] >= 150 && NPC.life > 2000) || (NPC.ai[1] >= 100 && NPC.life <= 2000))
             {
-                Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
                 for (int i = 0; i < 10; i++)
                 {
                     Color color = new Color();

@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Special
                 NPC.life = 1;
                 NPC.dontTakeDamage = true;
                 NPC.ai[1] = 0;
-                Main.PlaySound(SoundID.Shatter, NPC.Center); 
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter, NPC.Center); 
                 int leftOrRightVel = Main.rand.Next(-1, 1);
                 if (leftOrRightVel == 0) { leftOrRightVel = 1; }
 
@@ -218,7 +218,7 @@ namespace tsorcRevamp.NPCs.Special
                         dust2.noGravity = true;
                     }
 
-                    Main.PlaySound(SoundID.Item81.WithPitchVariance(.3f), NPC.position);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item81.WithPitchVariance(.3f), NPC.position);
                     if (Framing.GetTileSafely((int)player.position.X / 16, ((int)player.position.Y - 5 * 16) / 16).HasTile && Main.tileSolid[Framing.GetTileSafely((int)player.position.X / 16, ((int)player.position.Y - 5 * 16) / 16).TileType])
                     {
                         if (player.direction == 1) { NPC.position = player.position + new Vector2(-4 * 16, 0); }
@@ -342,7 +342,7 @@ namespace tsorcRevamp.NPCs.Special
 
                 if (NPC.ai[1] >= 30 && NPC.Distance(player.Center) < 75 && !throwing) //If 30 ticks or more have passed, and player is within slash range
                 {
-                    Main.PlaySound(SoundID.Item71.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play Death Sickle sound
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item71.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play Death Sickle sound
                     Vector2 difference = Main.player[NPC.target].Center - NPC.Center; //Distance between player center and npc center
                     Vector2 spawnPosition = new Vector2(34, 0).RotatedBy(difference.ToRotation()); //34 is the distance we will spawn the projectile away from npc.Center
                     Vector2 velocity = new Vector2(0.1f, 0).RotatedBy(difference.ToRotation()); //Give it velocity so it can face the right direction
@@ -454,7 +454,7 @@ namespace tsorcRevamp.NPCs.Special
 
                             if (NPC.ai[2] == 45)
                             {
-                                Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
 
                                 if (Math.Abs(NPC.Center.X - player.Center.X) > 14 * 16) //If player is far
                                 {

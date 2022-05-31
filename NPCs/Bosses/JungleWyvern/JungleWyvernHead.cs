@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			if (Main.rand.Next(240) == 0) //was 120
 			{
 				breath = true;
-				Main.PlaySound(SoundID.Item, -1, -1, 20);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
 				NPC.netUpdate = true;
 			}
 
@@ -136,7 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 			{
 				breath = false;
 				breathCD = 100;
-				Main.PlaySound(SoundID.Item, -1, -1, 20);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
 			}
 
 			if (NPC.velocity.X < 0f) {

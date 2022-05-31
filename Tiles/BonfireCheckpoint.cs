@@ -156,7 +156,7 @@ namespace tsorcRevamp.Tiles
 							if (boneDustEffectTimer == 1)
 							{
 
-								Main.PlaySound(SoundID.Item20, new Vector2(i * 16 + 25, j * 16 + 32));
+								Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, new Vector2(i * 16 + 25, j * 16 + 32));
 
 								for (int q = 0; q < 30; q++)
 								{
@@ -315,7 +315,7 @@ namespace tsorcRevamp.Tiles
 
 									if (bonfireEffectTimer == 28 && (player.velocity.X == 0 && player.velocity.Y == 0))//blast
 									{
-										Main.PlaySound(SoundID.Item20, new Vector2(i * 16 + 25, j * 16 + 32));
+										Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, new Vector2(i * 16 + 25, j * 16 + 32));
 
 										for (int q = 0; q < 30; q++)
 										{
@@ -432,8 +432,8 @@ namespace tsorcRevamp.Tiles
 			if (tile.TileFrameY / 74 == 0)
 			{
 				//new bonfire lit sound
-				Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/bonfire-lit"), 0.2f, 0.0f);
-				//Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
+				Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/bonfire-lit"), 0.2f, 0.0f);
+				//Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
 				UsefulFunctions.BroadcastText("Bonfire lit!", 250, 110, 90);
 
 				if (tsorcRevampWorld.LitBonfireList == null)
@@ -492,13 +492,13 @@ namespace tsorcRevamp.Tiles
 				if (!BonfireUIState.Visible)
 				{
 					BonfireUIState.Visible = true;
-					Main.PlaySound(SoundID.MenuOpen);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuOpen);
 
 				}
 				else
 				{
 					BonfireUIState.Visible = false;
-					Main.PlaySound(SoundID.MenuClose);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuClose);
 				}
 			}
 			return true;

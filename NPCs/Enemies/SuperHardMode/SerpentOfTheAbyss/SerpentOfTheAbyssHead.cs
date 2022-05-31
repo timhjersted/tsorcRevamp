@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             //190 was 90
             if (Main.rand.Next(190) == 0) {
                 breath = true;
-                Main.PlaySound(SoundID.Item, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
                 NPC.netUpdate = true;
             }
 
@@ -105,7 +105,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             if (breathCD <= 0) {
                 breath = false;
                 breathCD = 120;
-                Main.PlaySound(SoundID.Item, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
             }
             if (Main.rand.Next(940) == 0) {
                 for (int pcy = 0; pcy < 10; pcy++) {
@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                         Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 400f, (float)(-80 + Main.rand.Next(160)) / 10, 10.9f, ModContent.ProjectileType<PoisonFlames>(), poisonFlamesDamage, 2f, Main.myPlayer); //9.9f was 14.9f
                     }
                 }
-                Main.PlaySound(SoundID.Item, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
             }
             if (Main.rand.Next(2760) == 0) {
                 for (int pcy = 0; pcy < 10; pcy++)
@@ -124,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
                         Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(1600), (float)nT.position.Y - 300f, (float)(-40 + Main.rand.Next(80)) / 10, 9.5f, ModContent.ProjectileType<DragonMeteor>(), dragonMeteorDamage, 2f, Main.myPlayer); //dragon meteor
                     } 
                 }
-                Main.PlaySound(SoundID.Item, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 20);
             }
             if (Main.rand.Next(60) == 0) {
                 int d = Dust.NewDust(NPC.position, NPC.width, NPC.height, 6, NPC.velocity.X / 4f, NPC.velocity.Y / 4f, 100, default(Color), 1f);

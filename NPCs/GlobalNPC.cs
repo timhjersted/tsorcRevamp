@@ -839,7 +839,7 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
 
                         p.timeLeft = 2;
 
@@ -876,7 +876,7 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
 
                         //Main.NewText(pitch);
                         p.timeLeft = 2;
@@ -914,7 +914,7 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
 
                         p.timeLeft = 2;
 
@@ -1397,7 +1397,7 @@ namespace tsorcRevamp.NPCs
                         if (distSoundDelay < 10f) { distSoundDelay = 10f; }
                         if (distSoundDelay > 20f) { distSoundDelay = 20f; }
                         npc.soundDelay = (int)distSoundDelay;
-                        Main.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 1);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 1);
                     }
                     dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
                     float absPlayerCenterX = Math.Abs(playerCenterX);
@@ -2151,7 +2151,7 @@ namespace tsorcRevamp.NPCs
                         }
                         if (soundType > 0)
                         {
-                            Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
+                            Terraria.Audio.SoundEngine.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
                         }
                     }
 
@@ -2206,7 +2206,7 @@ namespace tsorcRevamp.NPCs
             //If it has a sound to play, roll a chance for playing it
             if (soundType > 0 && Main.rand.Next(soundFrequency) <= 0)
             {
-                Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, 1);
             }
 
             //If we can enrage, do that
@@ -2456,7 +2456,7 @@ namespace tsorcRevamp.NPCs
                     }
                     if (soundType > 0)
                     {
-                        Main.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
+                        Terraria.Audio.SoundEngine.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
                     }
                     return true;
                 }
@@ -2567,7 +2567,7 @@ namespace tsorcRevamp.NPCs
         public static void Teleport(NPC npc, float range = 50, bool requireLineofSight = true)
         {
             Vector2 oldPosition = npc.Center;
-            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+            Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < 100; i++)
@@ -2579,7 +2579,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
-            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+            Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
 
             Vector2 newPosition = npc.Center;
 

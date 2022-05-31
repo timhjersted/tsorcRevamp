@@ -156,8 +156,8 @@ namespace tsorcRevamp.NPCs.Bosses
 			//play creature sounds
 			if (Main.rand.Next(1700) == 1)
 			{
-				Main.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/low-dragon-growl"), 0.5f, 0.0f);
-				//Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
+				Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/low-dragon-growl"), 0.5f, 0.0f);
+				//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
 			}
 
 			NPC.localAI[1]++;
@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 			if (breathTimer == 470)
 			{
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 103, 0.6f, 0f); //shadowflame hex (little beasty)
 			}
 
 				if (breathTimer < 0)
@@ -227,7 +227,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						//play breath sound
 						if (Main.rand.Next(3) == 0)
 						{
-							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.3f, .1f); //flame thrower
+							Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.3f, .1f); //flame thrower
 						}
 
 						Vector2 breathVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].OldPos(9), 9);
@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
 			if (breathTimer == 361)
 			{
-				Main.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/breath1"), 0.5f, 0.0f);
+				Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/breath1"), 0.5f, 0.0f);
 			}
 				if (breathTimer > 360 )
 			{
@@ -265,9 +265,9 @@ namespace tsorcRevamp.NPCs.Bosses
 			{
 				Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8f, 1.06f, true, true);
 				Projectile.NewProjectile(NPC.Center, projectileVelocity, ProjectileID.DesertDjinnCurse, lostSoulDamage, 7f, Main.myPlayer);
-				//Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
-																							  //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+				//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
+																							  //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
 				NPC.localAI[1] = 1f;
 
 				NPC.netUpdate = true;
@@ -317,7 +317,7 @@ namespace tsorcRevamp.NPCs.Bosses
 							int lob2 = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
 			
 
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
 						}
 						if (NPC.localAI[1] >= 195f)
@@ -333,7 +333,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						int lob = Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, fireBreathDamage, 0f, Main.myPlayer);
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 						if (NPC.localAI[1] >= 186f)
 						{ NPC.localAI[1] = 1f; }
 					}
@@ -358,7 +358,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				if (Main.rand.Next(3) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
 					}
 
@@ -376,7 +376,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (Main.rand.Next(2) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.Fireball, cultistFireDamage, 3f, Main.myPlayer); //5f was 0f in the example that works
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.5f); //fire
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.5f); //fire
 					}
 
 					if (NPC.localAI[1] >= 190f) //was 126
@@ -401,7 +401,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						//ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
 						//DesertDjinnCurse; ProjectileID.DD2DrakinShot
 
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
 					}
 					//if (npc.localAI[1] >= 161f)
@@ -439,8 +439,8 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.JungleWyvernFire>(), fireBreathDamage, 0f, Main.myPlayer); //5f was 0f in the example that works
-																																																		//Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
+																																																		//Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
 					}
 
 					if (NPC.localAI[1] >= 185f) //was 206

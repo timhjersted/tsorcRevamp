@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles {
             }
             Projectile.timeLeft = 0;
             {
-                Main.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
                 for (int i = 0; i < 10; i++) {
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
                     int arg_92_1 = Projectile.width;

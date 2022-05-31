@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
 				if (Main.tile[tileX, tileY].HasTile && Main.tileSolid[(int)Main.tile[tileX, tileY].TileType]) // tile exists and is solid
 				{
 					hitTile = true;
-					Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
+					Terraria.Audio.SoundEngine.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
 				}
 			} else
             {
@@ -140,7 +140,7 @@ namespace tsorcRevamp.Projectiles
 
                     if (Projectile.tileCollide)
 					{
-						Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
+						Terraria.Audio.SoundEngine.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
 						Projectile.Kill();
                     }
 				}
@@ -176,13 +176,13 @@ namespace tsorcRevamp.Projectiles
 		public override bool OnTileCollide(Vector2 oldVelocity)
         {
 			Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
-			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+			Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 			return true;
         }
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
+			Terraria.Audio.SoundEngine.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
 			damage = target.defense + Projectile.damage;
 			if (Projectile.penetrate <= 0)
 			{

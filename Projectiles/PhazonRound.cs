@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles {
         public override bool PreKill(int timeLeft)
         {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
-            Main.PlaySound(SoundID.Item10, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
 
             for (int i = 0; i < 2; i++)
             {               

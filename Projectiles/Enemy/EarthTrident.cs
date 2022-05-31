@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.type = ProjectileID.WoodenArrowHostile;
 
-            Main.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
             for (int i = 0; i < 10; i++)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1f);

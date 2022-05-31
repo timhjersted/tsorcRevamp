@@ -153,12 +153,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<TheOracle>();
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
-                        Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                         NPC.ai[0] = 0;
                         NPC.ai[2]++;
                     }
                 }
-                if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh2").WithVolume(1.1f), NPC.Center);
+                if (!Main.dedServ && (Main.rand.Next(360) == 0)) Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh2").WithVolume(1.1f), NPC.Center);
             }
 
             if (NPC.ai[1] >= 35)
@@ -169,7 +169,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if ((NPC.ai[1] >= 280 && NPC.life > 300) || (NPC.ai[1] >= 200 && NPC.life <= 300))
             {
-                Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<ScrewAttack>();
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 540;
-                        Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
                         NPC.ai[3] = 0; ;
                     }
                 }

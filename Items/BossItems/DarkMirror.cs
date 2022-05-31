@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items.BossItems {
                 }
                 else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
                 {
-                    Main.PlaySound(SoundID.Item60);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
 
                     //destroy grapples
                     player.grappling[0] = -1;

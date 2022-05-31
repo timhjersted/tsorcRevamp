@@ -91,7 +91,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 string[] ReadySoundChoices = new string[] { "Sounds/Custom/MiakodaChaaa", "Sounds/Custom/MiakodaChao", "Sounds/Custom/MiakodaDootdoot", "Sounds/Custom/MiakodaHi", "Sounds/Custom/MiakodaOuuee" };
                 string ReadySound = Main.rand.Next(ReadySoundChoices);
-                Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f * MiakodaVol).WithPitchVariance(.2f), Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, ReadySound).WithVolume(.4f * MiakodaVol).WithPitchVariance(.2f), Projectile.Center);
             }
 
             if (modPlayer.MiakodaCrescentDust2) //splash effect and sound once player gets crit+heal.
@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles.Pets
                 {
                     string[] AmgerySoundChoices = new string[] { "Sounds/Custom/MiakodaScream", "Sounds/Custom/MiakodaChaoExcl", "Sounds/Custom/MiakodaUwuu" };
                     string AmgerySound = Main.rand.Next(AmgerySoundChoices);
-                    Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, AmgerySound).WithVolume(.6f * MiakodaVol).WithPitchVariance(.2f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, AmgerySound).WithVolume(.6f * MiakodaVol).WithPitchVariance(.2f), Projectile.Center);
                 }
 
                 for (int d = 0; d < 90; d++)

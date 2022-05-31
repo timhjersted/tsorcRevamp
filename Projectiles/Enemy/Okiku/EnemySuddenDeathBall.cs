@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         public override void AI() {
             if (Projectile.ai[1] == 0f) {
                 Projectile.ai[1] = 1f;
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
             if (Projectile.velocity.Y > 16f) {
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         #region Kill
         public override void Kill(int timeLeft) {
 
-            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<EnemySuddenDeathStrike>(), 0, 3f, Projectile.owner);
             Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
             int arg_1394_1 = Projectile.width;

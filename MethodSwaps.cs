@@ -290,7 +290,7 @@ namespace tsorcRevamp {
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, this handles all of it.
         private static void UsePotion(Item item, Player player)
         {
-            Main.PlaySound(item.UseSound, player.position);
+            Terraria.Audio.SoundEngine.PlaySound(item.UseSound, player.position);
             if (item.potion)
             {
                 if (item.type == 227)
@@ -337,7 +337,7 @@ namespace tsorcRevamp {
                 player.AddBuff(item.buffType, buffTime);
             }
 
-            Main.PlaySound(item.UseSound, player.position);
+            Terraria.Audio.SoundEngine.PlaySound(item.UseSound, player.position);
 
             if (ItemLoader.ConsumeItem(item, player))
                 item.stack--;
@@ -1293,7 +1293,7 @@ namespace tsorcRevamp {
                         num24 = 20f;
 
                     npc.soundDelay = (int)num24;
-                    Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y);
+                    Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y);
                 }
 
                 num22 = (float)Math.Sqrt(num20 * num20 + num21 * num21);

@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		/*
 		public override bool PreKill(int timeLeft)
 		{
-			Main.PlaySound(6, (int)projectile.position.X, (int)projectile.position.Y, 0, 0.04f, 0f);//grass cut / acid singe sound
+			Terraria.Audio.SoundEngine.PlaySound(6, (int)projectile.position.X, (int)projectile.position.Y, 0, 0.04f, 0f);//grass cut / acid singe sound
 			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
 			Dust.NewDust(projectile.position, projectile.width, projectile.height, 71, 0.3f, 0.3f, 200, default, 1f);
 			Dust.NewDust(projectile.position, projectile.height, projectile.width, 71, 0.2f, 0.2f, 200, default, 2f);

@@ -163,7 +163,7 @@ namespace tsorcRevamp.Projectiles {
             if (shouldMakeSound) {
                 Projectile.netUpdate = true;
                 Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
-                Main.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y);
             }
 
             return false;

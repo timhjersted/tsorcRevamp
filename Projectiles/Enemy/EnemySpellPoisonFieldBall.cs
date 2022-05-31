@@ -25,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			
 			Projectile.timeLeft = 0;
 			
-			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+			Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 			
 			Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonField>(), Projectile.damage, 1f, Projectile.owner);
 			Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);

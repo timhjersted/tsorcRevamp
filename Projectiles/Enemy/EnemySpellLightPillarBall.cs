@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             if (Projectile.aiStyle == 1) {
                 if (Projectile.ai[1] == 0f) {
                     Projectile.ai[1] = 1f;
-                    Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
                 }
                 Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
                 if (Projectile.velocity.Y > 16f) {
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void Kill(int timeLeft) {
             if (Main.rand.NextBool(1)) {
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
                 if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width * -9), Projectile.position.Y + (float)(Projectile.height - 0.5f)), new Vector2(0, 0), ModContent.ProjectileType<EnemySpellLightPillar>(), Projectile.damage, 8f, Projectile.owner);
                 Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);

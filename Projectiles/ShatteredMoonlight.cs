@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
             if (playSound && p.soundDelay == 0)
             {
                 p.soundDelay = 8;
-                Main.PlaySound(2, (int)p.position.X, (int)p.position.Y, 7);
+                Terraria.Audio.SoundEngine.PlaySound(2, (int)p.position.X, (int)p.position.Y, 7);
             }
             if (ai[0] == 0f)
             {
@@ -203,7 +203,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.timeLeft = 0;
 
                 {
-                    Main.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+                    Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
                     Item.NewItem(Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
                     for (int i = 0; i < 10; i++)
                     {

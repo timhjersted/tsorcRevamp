@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using tsorcRevamp.NPCs.Friendly;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 
 namespace tsorcRevamp.UI
 {
@@ -36,7 +38,7 @@ namespace tsorcRevamp.UI
 			if (!_vanillaItemSlot.Item.IsAir)
 			{
 				// QuickSpawnClonedItem will preserve mod data of the item. QuickSpawnItem will just spawn a fresh version of the item, losing the prefix.
-				Main.LocalPlayer.QuickSpawnClonedItem(_vanillaItemSlot.Item, _vanillaItemSlot.Item.stack);
+				Main.LocalPlayer.QuickSpawnClonedItem(Main.LocalPlayer.GetSource_Misc("¯\\_(ツ)_/¯"), _vanillaItemSlot.Item, _vanillaItemSlot.Item.stack);
 				// Now that we've spawned the item back onto the player, we reset the item by turning it into air.
 				_vanillaItemSlot.Item.TurnToAir();
 			}
@@ -65,7 +67,7 @@ namespace tsorcRevamp.UI
 			base.DrawSelf(spriteBatch);
 
 			// This will hide the crafting menu similar to the reforge menu. For best results this UI is placed before "Vanilla: Inventory" to prevent 1 frame of the craft menu showing.
-			Main.HidePlayerCraftingMenu = true;
+			Main.hidePlayerCraftingMenu = true;
 
 			// Here we have a lot of code. This code is mainly adapted from the vanilla code for the reforge option.
 			// This code draws "Place an item here" when no item is in the slot and draws the reforge cost and a reforge button when an item is in the slot.
@@ -98,19 +100,21 @@ namespace tsorcRevamp.UI
 					coinsText = coinsText + "[c/" + Colors.AlphaDarken(Colors.CoinCopper).Hex3() + ":" + coins[0] + " " + Language.GetTextValue("LegacyInterface.18") + "] ";
 				}
 				ItemSlot.DrawSavings(Main.spriteBatch, slotX + 130, Main.instance.invBottom, true);
-				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, costText, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
-				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, coinsText, new Vector2(slotX + 50 + Main.fontMouseText.MeasureString(costText).X, (float)slotY), Color.White, 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, costText, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, coinsText, new Vector2(slotX + 50 + FontAssets.MouseText.Value.MeasureString(costText).X, (float)slotY), Color.White, 0f, Vector2.Zero, Vector2.One, -1f, 2f);
 				int reforgeX = slotX + 70;
 				int reforgeY = slotY + 40;
 				bool hoveringOverReforgeButton = Main.mouseX > reforgeX - 15 && Main.mouseX < reforgeX + 15 && Main.mouseY > reforgeY - 15 && Main.mouseY < reforgeY + 15 && !PlayerInput.IgnoreMouseInterface;
-				Texture2D reforgeTexture = Main.reforgeTexture[hoveringOverReforgeButton ? 1 : 0];
+				Texture2D reforgeTexture = TextureAssets.Reforge[hoveringOverReforgeButton ? 1 : 0].Value;
 				Main.spriteBatch.Draw(reforgeTexture, new Vector2(reforgeX, reforgeY), null, Color.White, 0f, reforgeTexture.Size() / 2f, 0.8f, SpriteEffects.None, 0f);
 				if (hoveringOverReforgeButton)
 				{
 					Main.hoverItemName = Language.GetTextValue("LegacyInterface.19");
 					if (!tickPlayed)
 					{
-						Main.PlaySound(SoundID.MenuTick, -1, -1, 1, 1f, 0f);
+						if (Main.LocalPlayer.whoAmI == Main.myPlayer) {
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick, Main.LocalPlayer.position);
+						}
 					}
 					tickPlayed = true;
 					Main.LocalPlayer.mouseInterface = true;
@@ -132,8 +136,11 @@ namespace tsorcRevamp.UI
 						_vanillaItemSlot.Item.favorited = favorited;
 						_vanillaItemSlot.Item.stack = stack;
 						ItemLoader.PostReforge(_vanillaItemSlot.Item);
-						ItemText.NewText(_vanillaItemSlot.Item, _vanillaItemSlot.Item.stack, true, false);
-						Main.PlaySound(SoundID.Item37, -1, -1);
+						PopupText.NewText(PopupTextContext.ItemReforge, _vanillaItemSlot.Item, _vanillaItemSlot.Item.stack, true, false);
+
+                        if (Main.LocalPlayer.whoAmI == Main.myPlayer) {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37, Main.LocalPlayer.position); 
+                        }
 					}
 				}
 				else
@@ -144,7 +151,7 @@ namespace tsorcRevamp.UI
 			else
 			{
 				string message = "Place an item here to bless";
-				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, Main.fontMouseText, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+				ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, message, new Vector2(slotX + 50, slotY), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
 			}
 		}
 	}

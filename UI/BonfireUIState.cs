@@ -67,7 +67,7 @@ namespace tsorcRevamp.UI {
 
         private void ButtonSetSpawnClicked(UIMouseEvent evt, UIElement listeningElement) {
             Player player = Main.LocalPlayer;
-            Main.PlaySound(SoundID.MenuTick, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick, player.Center);
             int spawnX = (int)((player.position.X + player.width / 2.0) / 16.0);
             int spawnY = (int)((player.position.Y + player.height) / 16.0);
 
@@ -96,7 +96,7 @@ namespace tsorcRevamp.UI {
         private void ButtonPiggyBankClicked(UIMouseEvent evt, UIElement listeningElement) {
             Player player = Main.LocalPlayer;
             //Tile tile = Main.tile
-            Main.PlaySound(SoundID.Item59);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item59);
 
             bool anyBanks = false;
             foreach (Projectile projectile in Main.projectile) {
@@ -123,7 +123,7 @@ namespace tsorcRevamp.UI {
         private void ButtonSafeClicked(UIMouseEvent evt, UIElement listeningElement) {
             bool anySafes = false;
             Player player = Main.player[Main.myPlayer];
-            Main.PlaySound(SoundID.MenuOpen, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuOpen, player.Center);
 
             foreach (Projectile projectile in Main.projectile) {
                 if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI) {

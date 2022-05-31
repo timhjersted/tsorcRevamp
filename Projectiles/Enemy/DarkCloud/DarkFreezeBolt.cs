@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud {
         public override void AI() {
             if (Projectile.type == 96 && Projectile.localAI[0] == 0f) {
                 Projectile.localAI[0] = 1f;
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
             }
 
             if (Main.rand.Next(10) == 0) {
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud {
         }
 
         public override bool OnTileCollide(Vector2 CollideVel) {
-            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             Projectile.ai[0] += 1f;
             
             Projectile.velocity *= 0.5f;

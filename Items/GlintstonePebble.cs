@@ -88,8 +88,8 @@ namespace tsorcRevamp.Items
 
             if (player.itemTime == 1)
             {
-                Main.PlaySound(SoundID.Item27.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
-                Main.PlaySound(SoundID.Item29.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
 
                 for (int i = 0; i < 30; i++)
                 {

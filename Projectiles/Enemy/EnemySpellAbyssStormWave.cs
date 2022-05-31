@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void Kill(int timeLeft)
 		{
-			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+			Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 			Projectile.NewProjectile(Projectile.Center.X , Projectile.Center.Y, 0, 0, ModContent.ProjectileType<EnemySpellAbyssStorm>(), Projectile.damage, 8f, Projectile.owner);
 			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
 			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);

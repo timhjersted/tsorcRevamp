@@ -344,7 +344,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 40;
                         Main.projectile[num54].aiStyle = 1;
-                        Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                         customAi1 = 1f;
                     }
                     NPC.netUpdate = true;

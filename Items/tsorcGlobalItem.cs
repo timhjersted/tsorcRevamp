@@ -264,12 +264,12 @@ namespace tsorcRevamp.Items {
 			}
 
 			if (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) {
-				Main.PlaySound(SoundID.NPCHit44.WithVolume(.3f), target.position);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit44.WithVolume(.3f), target.position);
 			}
 
 			if (modPlayer.CrystalMagicWeapon)
 			{
-				Main.PlaySound(SoundID.Item27.WithVolume(.3f), target.position);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27.WithVolume(.3f), target.position);
 			}
 		}
 
@@ -341,8 +341,8 @@ namespace tsorcRevamp.Items {
 							itemText += " (" + item.stack + ")";
 						}
 						CombatText.NewText(player.Hitbox, Color.Purple, itemText);
-						Main.PlaySound(SoundID.Grab);
-						Main.PlaySound(SoundID.Item, Style: 8);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, Style: 8);
 						return false;
 					}
 				}
@@ -358,8 +358,8 @@ namespace tsorcRevamp.Items {
 						itemText += " (" + item.stack + ")";
 					}
 					CombatText.NewText(player.Hitbox, Color.Purple, itemText);
-					Main.PlaySound(SoundID.Grab);
-					Main.PlaySound(SoundID.Item, Style: 8);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, Style: 8);
 					return false;
 				}
 			}

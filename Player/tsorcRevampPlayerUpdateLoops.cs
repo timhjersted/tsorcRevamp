@@ -263,12 +263,12 @@ namespace tsorcRevamp {
                         Player.chest = -1;
                         Main.playerInventory = true;
                         PotionBagUIState.Visible = true;
-                        Main.PlaySound(SoundID.MenuOpen);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuOpen);
                     }
                     else
                     {
                         PotionBagUIState.Visible = false;
-                        Main.PlaySound(SoundID.MenuClose);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuClose);
                     }
                 }
             }
@@ -652,7 +652,7 @@ namespace tsorcRevamp {
                     }
                     FallDist = (int)((Player.position.Y - fallStartY) / 16);
                     if (FallDist > 5) {
-                        Main.PlaySound(SoundID.Item, (int)Player.Center.X, (int)Player.Center.Y, 14);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Player.Center.X, (int)Player.Center.Y, 14);
                         for (int i = -9; i < 10; i++) { //19 projectiles
                             Vector2 shotDirection = new Vector2(0f, -16f);
                             int shockwaveShot = Projectile.NewProjectile(Player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);

@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.BossItems {
 
 
 		public override bool? UseItem(Player player) {
-			Main.PlaySound(SoundID.Roar, player.position, 0);
+			Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, player.position, 0);
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - (16*12), ModContent.NPCType<SoulOfCinder>());
 			}

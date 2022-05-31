@@ -23,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override bool PreKill(int timeLeft)
 		{
-			Main.PlaySound(6, (int)Projectile.position.X, (int)Projectile.position.Y, 0, 0.04f, 0f);//grass cut / acid singe sound
+			Terraria.Audio.SoundEngine.PlaySound(6, (int)Projectile.position.X, (int)Projectile.position.Y, 0, 0.04f, 0f);//grass cut / acid singe sound
 			int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
 			Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.3f, 0.3f, 200, default, 1f);
 			Dust.NewDust(Projectile.position, Projectile.height, Projectile.width, 71, 0.2f, 0.2f, 200, default, 2f);
@@ -36,12 +36,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override void AI()
 		{
 			//Custom sound, not vanilla sound:
-			//Main.PlaySound(SoundLoader.customSoundType, (int)position.X, (int)position.Y, mod.GetSoundSlot(SoundType.Custom, "Sounds/Custom/[INSERTSOUNDEFFECTHERE]"));
+			//Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)position.X, (int)position.Y, mod.GetSoundSlot(SoundType.Custom, "Sounds/Custom/[INSERTSOUNDEFFECTHERE]"));
 
 			Projectile.rotation += 1f;
 			if (Main.rand.Next(3) == 0)
 			{
-				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34); //try 5 (faint woosh), 20, was 17
+				//Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34); //try 5 (faint woosh), 20, was 17
 				int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
 				Main.dust[dust].noGravity = false;
 			}

@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                     Vector2 projectileVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 2);
                     Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projectileVelocity.X, projectileVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.FrozenSaw>(), frozenSawDamage, 0f, Main.myPlayer);
 
-                    Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
                     NPC.ai[0] = 0;
                     NPC.ai[2]++;
                 }
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
             if ((NPC.ai[1] >= 200 && NPC.life > 2000) || (NPC.ai[1] >= 120 && NPC.life <= 2000))
             {
-                Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);

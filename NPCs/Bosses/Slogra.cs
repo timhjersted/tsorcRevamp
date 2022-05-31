@@ -177,7 +177,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             Vector2 projPos = NPC.Center + dir * dustRadius * 16;
                             int spawned = NPC.NewNPC((int)projPos.X, (int)projPos.Y, NPCID.BurningSphere, 0);
                             Main.npc[spawned].damage = burningSphereDamage;
-                            Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2));
+                            Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2));
                             if (Main.netMode == NetmodeID.Server)
                             {
                                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);
@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses
             bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
             bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
 
-            int sound_type = 26; // Parameter for Main.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
+            int sound_type = 26; // Parameter for Terraria.Audio.SoundEngine.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
             int sound_frequency = 2000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
             float acceleration = .09f;  //  how fast it can speed up
@@ -281,7 +281,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     NPC.velocity *= 0f; // stop moving
                     NPC.ai[3] = 0f; // reset boredom to 0
-                    Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
                     Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
                     float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
                     float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
@@ -327,7 +327,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if ((!hates_light || !Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0) && NPC.ai[3] < (float)boredom_time)
             {  // not fleeing light & not bored
                 if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-                    Main.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
+                    Terraria.Audio.SoundEngine.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
             }
             else if (!is_archer || NPC.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
             {               
@@ -571,7 +571,7 @@ namespace tsorcRevamp.NPCs.Bosses
                                 int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 600;
                                 Main.projectile[num54].aiStyle = 1;
-                                Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                                 customAi1 = 1f;
                             }
                             NPC.netUpdate = true;

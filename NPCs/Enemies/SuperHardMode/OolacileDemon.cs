@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			//		{
 			//			npc.velocity *= 0f; // stop moving
 			//			npc.ai[3] = 0f; // reset boredom to 0
-			//			Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+			//			Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
 			//			Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
 			//			float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
 			//			float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
@@ -237,7 +237,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 					if (Main.rand.Next(1200) == 0)
 					{
 						breath = true;
-						//Main.PlaySound(2, -1, -1, 20);
+						//Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
 					}
 					if (breath)
 					{
@@ -258,7 +258,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 					{
 						breath = false;
 						breathCD = 60;
-						Main.PlaySound(2, -1, -1, 20);
+						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
 					}
 
 
@@ -284,7 +284,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20);
+							Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20);
 
 							//customAi1 = 1f;
 						}

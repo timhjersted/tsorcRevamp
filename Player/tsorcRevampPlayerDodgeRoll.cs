@@ -265,19 +265,19 @@ namespace tsorcRevamp {
 				int choice = Main.rand.Next(4);
 				if (choice == 0)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.0f); //0.1f is volume, 1f is 100%, .1f is 10%; the last variable is pitch. -.8f to .8f is a lot
+					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.0f); //0.1f is volume, 1f is 100%, .1f is 10%; the last variable is pitch. -.8f to .8f is a lot
 				}
 				else if (choice == 1)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll2"), 0.1f, 0.0f);
+					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll2"), 0.1f, 0.0f);
 				}
 				else if (choice == 2)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.4f);
+					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.4f);
 				}
 				else if (choice == 3)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.2f);
+					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.2f);
 				}
 
 			}

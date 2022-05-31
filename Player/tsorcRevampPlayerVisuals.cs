@@ -209,7 +209,7 @@ namespace tsorcRevamp {
                     //If they didn't have enough mana for the shield last frame but do now, play a sound to let them know it's back up
                     if (!modPlayer.shieldUp) {
                         //Soundtype Item SoundStyle 28 is powerful magic cast
-                        Main.PlaySound(SoundID.Item, modPlayer.Player.position, 28);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, modPlayer.Player.position, 28);
                         modPlayer.shieldUp = true;
                     }
 
@@ -234,7 +234,7 @@ namespace tsorcRevamp {
                 else {
                     if (modPlayer.shieldUp) {
                         //Soundtype Item SoundStyle 60 is the Terra Beam
-                        Main.PlaySound(SoundID.Item, modPlayer.Player.position, 60);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, modPlayer.Player.position, 60);
                         modPlayer.shieldUp = false;
                     }
                     //If the player doesn't have enough mana to tank a hit, then draw particle effects to indicate their mana is too low for it to function.

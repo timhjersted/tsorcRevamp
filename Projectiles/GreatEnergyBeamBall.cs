@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles {
 			}
 			Projectile.timeLeft = 0;
 			{
-				Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 				if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2)) {
 					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 14f), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<GreatEnergyBeam>(), (int)(55 * (Main.player[Projectile.owner].magicDamage)), 8f, Projectile.owner);
 				}

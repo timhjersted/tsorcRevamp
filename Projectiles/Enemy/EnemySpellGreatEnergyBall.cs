@@ -17,8 +17,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.ignoreWater = true;
         }
         public override void Kill(int timeLeft) {
-            Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 94, 0.09f, .0f); // electric thud quick
-            //Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 94, 0.09f, .0f); // electric thud quick
+            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyStrike>(), Projectile.damage, 3f, Projectile.owner);
             Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
             int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);

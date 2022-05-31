@@ -49,7 +49,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override bool OnTileCollide(Vector2 CollideVel) {
-            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             Projectile.ai[0] += 1f;
             if (Projectile.ai[0] >= 3f) {
                 Projectile.position += Projectile.velocity;

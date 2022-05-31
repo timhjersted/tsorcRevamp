@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>();//44;//0x37; //14;
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkBeadDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 550;
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						NPC.ai[0] = 0;
 						NPC.ai[2]++;
 					}
@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			if ((NPC.ai[1] >= 280 && NPC.life > 300) || (NPC.ai[1] >= 120 && NPC.life <= 300)) //300 increases the time between teleports
 			{
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
 				for (int num36 = 0; num36 < 10; num36++)
 				{
 					int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 27, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Purple, 1f);
@@ -283,7 +283,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, darkOrbDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 600;
 						Main.projectile[num54].aiStyle = 4;
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 25);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 25);
 						NPC.ai[3] = 0;
 					}
 
@@ -309,7 +309,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, seekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 750;
 						//Main.projectile[num54].aiStyle=1;
-						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						NPC.ai[1] = 1f;
 					}
 					NPC.netUpdate = true;

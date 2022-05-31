@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles {
 
 			if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
 				Projectile.soundDelay = 10;
-				Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
 			}
 			Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
 			int arg_2675_1 = Projectile.width;
@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles {
 			}
 			Projectile.timeLeft = 0;
 			{
-				Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 				if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2)) {
 					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
 				}

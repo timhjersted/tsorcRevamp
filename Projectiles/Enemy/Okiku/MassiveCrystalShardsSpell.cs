@@ -28,8 +28,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
         public override void Kill(int timeLeft) {
 			
-				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
-				Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.5f, .1f); //ice materialize - good
+				//Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.5f, .1f); //ice materialize - good
 			var Shards = ModContent.ProjectileType<MassiveCrystalShards>();
 				Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);
 				Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 5), Projectile.position.Y + (float)(Projectile.height * 4), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);

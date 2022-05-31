@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				readyToFire = true;
 			}
 			tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.ai[1], 180, ModContent.ProjectileType<Projectiles.Enemy.ArcherBolt>(), 9, 8, readyToFire, true, 2, 63); //blowpipe
-																																								 //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, 0.3f); //fire
+																																								 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, 0.3f); //fire
 
 			//TELEGRAPH DUSTS
 			if (NPC.ai[1] >= 150 && NPC.ai[1] <= 170)

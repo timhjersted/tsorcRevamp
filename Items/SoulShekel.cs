@@ -64,7 +64,7 @@ namespace tsorcRevamp.Items
             }            
             if (openSlot)
             {
-                Main.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
             }
             return true;
         }

@@ -67,7 +67,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
 					projVector += Main.rand.NextVector2Circular(5, 5);
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning4Ball>(), lightningDamage, 0f, Main.myPlayer, Main.rand.Next(30, 180));
-					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(220) == 1)
@@ -77,7 +77,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					projVector += Main.rand.NextVector2Circular(7, 7);
 					projVector += Main.player[NPC.target].velocity / 2;
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.Okiku.PhasedMatterBlast>(), antiMatterBlastDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					NPC.ai[1] = 1f;						
 				}
 				if (Main.rand.Next(20) == 1)
@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					projVector += Main.rand.NextVector2Circular(3, 3);
 					projVector += Main.player[NPC.target].velocity / 2;
 					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), crazedPurpleCrushDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					NPC.ai[1] = 1f;						
 				}				
 			}

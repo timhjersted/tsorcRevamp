@@ -96,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Pets {
             p.tileInteractionHappened = true;
             p.releaseUseTile = false;
             if (p.chest == ChestType) {
-                Main.PlaySound(UseSound);
+                Terraria.Audio.SoundEngine.PlaySound(UseSound);
                 p.chest = -1;
                 SetWhoAmI(p.GetModPlayer<tsorcRevampPlayer>(), -1);
                 Recipe.FindRecipes();
@@ -111,7 +111,7 @@ namespace tsorcRevamp.Projectiles.Pets {
             p.talkNPC = -1;
             Main.npcShop = 0;
             Main.playerInventory = true;
-            Main.PlaySound(UseSound);
+            Terraria.Audio.SoundEngine.PlaySound(UseSound);
             Recipe.FindRecipes();
 
 

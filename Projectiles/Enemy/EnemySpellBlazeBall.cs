@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region Kill
         public override void Kill(int timeLeft)
         {            
-            Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             
             Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
             Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);

@@ -159,7 +159,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("ResentfulSeedling").Type));
 					}
 						//play sound, make dust
-						Main.PlaySound(SoundID.Item8);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
 						for (int i = 0; i < 60; i++)
 						{
 							Dust dust = Main.dust[Dust.NewDust(NPC.Center, 2, 2, 110, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 0, default(Color), 1f)]; //glowy nature dust

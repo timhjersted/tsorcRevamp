@@ -219,10 +219,10 @@ namespace tsorcRevamp
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             Projectile.NewProjectile(Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
-            //Main.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
+            //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
             //you died sound
-            Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/you-died"), 0.3f, 0.0f);
+            Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/you-died"), 0.3f, 0.0f);
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 200)
             {
@@ -300,8 +300,8 @@ namespace tsorcRevamp
                                 {
                                     NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
                                 }
-                                Main.PlaySound(SoundID.Grab);
-                                Main.PlaySound(SoundID.Item, Style: 8);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, Style: 8);
                                 return true;
                             }
                         }
@@ -316,8 +316,8 @@ namespace tsorcRevamp
                             {
                                 NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
                             }
-                            Main.PlaySound(SoundID.Grab);
-                            Main.PlaySound(SoundID.Item, Style: 8);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, Style: 8);
                             return true;
                         }
                     }
@@ -335,8 +335,8 @@ namespace tsorcRevamp
                             {
                                 Player.inventory[i].stack += item.stack;
                                 item.TurnToAir();                                
-                                Main.PlaySound(SoundID.Grab);
-                                Main.PlaySound(SoundID.Item, Style: 8);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, Style: 8);
                                 return true;
                             }
                         }
@@ -345,8 +345,8 @@ namespace tsorcRevamp
                         {
                             Player.inventory[emptySlot.Value] = item.DeepClone();
                             item.TurnToAir(); 
-                            Main.PlaySound(SoundID.Grab);
-                            Main.PlaySound(SoundID.Item, Style: 8);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, Style: 8);
                             return true;
                         }
                     }
@@ -405,7 +405,7 @@ namespace tsorcRevamp
                             Player.statLife = Player.statLifeMax2;
                         }
 
-                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30.WithVolume(.7f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -422,7 +422,7 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -439,7 +439,7 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
 
-                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item81.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -469,7 +469,7 @@ namespace tsorcRevamp
                             Player.statLife = Player.statLifeMax2;
                         }
 
-                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30.WithVolume(.7f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -486,7 +486,7 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -503,7 +503,7 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
 
-                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item81.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -903,7 +903,7 @@ namespace tsorcRevamp
                 if ((oldChest != bankID && oldChest != -1) || num17 < Player.chestX - Player.tileRangeX || num17 > Player.chestX + Player.tileRangeX + 1 || num18 < Player.chestY - Player.tileRangeY || num18 > Player.chestY + Player.tileRangeY + 1) {
                     whoAmI = -1;
                     if (Player.chest != -1) {
-                        Main.PlaySound(useSound);
+                        Terraria.Audio.SoundEngine.PlaySound(useSound);
                     }
 
                     if (oldChest != bankID)

@@ -255,7 +255,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //MAKE SOUND WHEN JUMPING/HOVERING
                 if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
                 {
-                    Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.4f, .1f);
+                    Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.4f, .1f);
                 }
 
                 if (NPC.localAI[2] >= 300 && NPC.life >= 1000)
@@ -269,7 +269,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         //npc.ai[3]++;
                         if (NPC.localAI[2] == 301)
                         {
-                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 6, .01f, -.5f); //magic mirror
+                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 6, .01f, -.5f); //magic mirror
                         }
                         
                         NPC.velocity.X = 0f;
@@ -278,8 +278,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (Main.rand.Next(2) == 0) //was 12
                         {
 
-                            //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 46, .05f, -.2f); //hydra
-                            // Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, .03f, -.2f); //flamethrower
+                            //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 46, .05f, -.2f); //hydra
+                            // Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 34, .03f, -.2f); //flamethrower
                         }
 
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
@@ -307,7 +307,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (NPC.localAI[2] == 396)
                     {
                         breath = true;
-                        Main.PlaySound(3, (int)NPC.position.X, (int)NPC.position.Y, 30, 0.8f, -.3f); //3, 21 demon; 3,30 nimbus
+                        Terraria.Audio.SoundEngine.PlaySound(3, (int)NPC.position.X, (int)NPC.position.Y, 30, 0.8f, -.3f); //3, 21 demon; 3,30 nimbus
                     }
 
                     if (breath) 
@@ -326,7 +326,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         //play breath sound
                         if (Main.rand.Next(3) == 0)
                         {
-                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.3f, .1f); //flame thrower
+                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.3f, .1f); //flame thrower
                         }
 
                         float rotation = (float)Math.Atan2(NPC.Center.Y - Main.player[NPC.target].Center.Y, NPC.Center.X - Main.player[NPC.target].Center.X);
@@ -409,7 +409,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
                                 //DesertDjinnCurse; ProjectileID.DD2DrakinShot
 
-                                Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+                                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
                             }
                             if (NPC.localAI[1] >= 154f)
@@ -428,7 +428,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 6f, 1.06f, true, true);
                         Projectile.NewProjectile(NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), disruptDamage, 5f, Main.myPlayer);
-                        Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.8f, -.2f); //wobble
+                        Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.8f, -.2f); //wobble
 
 
                         NPC.localAI[1] = 1f;
@@ -453,7 +453,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
 
                         }
 
@@ -477,7 +477,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.5f); //fire
+                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.5f); //fire
                         }
 
                         if (NPC.localAI[1] >= 145f) //was 126
@@ -514,8 +514,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                                                                                                                                                                                                            //Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
-                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
+                                                                                                                                                                                                            //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
+                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
                         }
 
                         if (NPC.localAI[1] >= 195f) //was 206

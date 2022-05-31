@@ -315,7 +315,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 105;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							NPC.ai[1] = 1f;
 
 
@@ -339,7 +339,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
 						NPC.netUpdate = true;
@@ -355,7 +355,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightPillarDamage, 0f, Main.myPlayer, NPC.direction);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
 						NPC.netUpdate = true;
@@ -374,7 +374,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 10;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
 						NPC.netUpdate = true;
@@ -393,7 +393,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightning3Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
 						NPC.netUpdate = true;
@@ -412,7 +412,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, ice3Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 40;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
 						NPC.netUpdate = true;
@@ -424,7 +424,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						Main.projectile[num58].ai[0] = NPC.target;
 
 
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						customAi1 = 1f;
 
 						NPC.netUpdate = true;
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightning4Damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 300;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
 						NPC.netUpdate = true;
@@ -465,7 +465,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, shardsDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 4;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
 							NPC.ai[3] = 0; ;
 						}
 						NPC.netUpdate = true;
@@ -479,7 +479,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						Main.projectile[num59].ai[0] = NPC.target;
 
 
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						customAi1 = 1f;
 
 						NPC.netUpdate = true;
@@ -505,7 +505,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 1;
 						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						NPC.ai[1] = 1f;
 					}
 					NPC.netUpdate = true;
@@ -527,7 +527,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, energyBallDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 300;
 						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						customAi1 = 1f;
 					}
 					NPC.netUpdate = true;
@@ -546,7 +546,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 60;
 						Main.projectile[num54].aiStyle = 1;
-						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						customAi1 = 1f;
 					}
 					NPC.netUpdate = true;

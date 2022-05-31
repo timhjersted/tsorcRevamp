@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override bool PreKill(int timeLeft)
         {
 			Projectile.type = 102;
-			//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
+			//Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
 			return true;
         }
 	}

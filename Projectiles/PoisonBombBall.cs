@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles {
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
                 Projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
             for (int d = 0; d < 2; d++)
             {
@@ -64,7 +64,7 @@ namespace tsorcRevamp.Projectiles {
             }
             Projectile.timeLeft = 0;
             {
-                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
                 Projectile.NewProjectile(Projectile.position.X + Projectile.width, Projectile.position.Y + Projectile.height, 0, 0, ModContent.ProjectileType<PoisonField2>(), Projectile.damage, 1f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.position.X + Projectile.width * 4, Projectile.position.Y + Projectile.height, 0, 0, ModContent.ProjectileType<PoisonField2>(), Projectile.damage, 1f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.position.X + Projectile.width * -2, Projectile.position.Y + Projectile.height, 0, 0, ModContent.ProjectileType<PoisonField2>(), Projectile.damage, 1f, Projectile.owner);

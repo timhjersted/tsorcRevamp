@@ -125,17 +125,17 @@ namespace tsorcRevamp.NPCs.Enemies
 			bool clearLineOfSight = Collision.CanHitLine(NPC.Center, 2, 2, Main.player[NPC.target].Center, 2, 2);
 			if(tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && Main.rand.Next(15) != 0, true))
             {
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.3f); //fire
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.3f); //fire
 			}
 			if (tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, clearLineOfSight, false))
 			{
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
 			}
 
 			//MAKE SOUND WHEN JUMPING/HOVERING
 			if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
 			{
-				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.2f, .1f);
+				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.2f, .1f);
 			}
 
 			//TELEGRAPH DUSTS

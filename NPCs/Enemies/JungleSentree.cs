@@ -170,7 +170,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 
 					//play sound, make dust
-					Main.PlaySound(SoundID.Item76, NPC.Center);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item76, NPC.Center);
 					for (int i = 0; i < 30; i++)
 					{
 						Dust dust = Main.dust[Dust.NewDust(new Vector2((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y)), 2, 2, 18, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 0, default(Color), 1f)]; //glowy nature dust
@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					if (Main.rand.Next(3) == 0)
 					{
-						Main.PlaySound(SoundID.Item97, NPC.Center);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item97, NPC.Center);
 						int npcIndex = -1;
 						//NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height - 118) + npc.velocity.Y), NPCID.LittleHornetLeafy);
 						npcIndex = NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.LittleHornetLeafy);
@@ -194,7 +194,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 					else
 					{
-						Main.PlaySound(SoundID.Item76, NPC.Center);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item76, NPC.Center);
 						int npcIndex2 = -1;
 
 						npcIndex2 = NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.JungleBat);

@@ -23,7 +23,7 @@ namespace tsorcRevamp.Sounds.Custom
 				soundInstance = sound.CreateInstance();
 				soundInstance.Volume = volume * volumeFactor;
 				soundInstance.Pan = pan;
-				Main.PlaySoundInstance(soundInstance);
+				Terraria.Audio.SoundEngine.PlaySoundInstance(soundInstance);
 				return soundInstance;
 			}
 			else if (soundInstance.State == SoundState.Stopped)
@@ -32,7 +32,7 @@ namespace tsorcRevamp.Sounds.Custom
 
 				soundInstance.Volume = volume * volumeFactor;
 				soundInstance.Pan = pan;
-				Main.PlaySoundInstance(soundInstance);
+				Terraria.Audio.SoundEngine.PlaySoundInstance(soundInstance);
 				return soundInstance;
 			}
 

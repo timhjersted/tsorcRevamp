@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (AI_State == State_Idle)
 			{
-				if (!Main.dedServ) Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/CosmicSparkle"), NPC.Center);
+				if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/CosmicSparkle"), NPC.Center);
 				
 				NPC.TargetClosest(true);
 				AI_Timer++;
@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 				if (AI_Timer == 37)
 				{
-					Main.PlaySound(SoundID.Item82, NPC.Center);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item82, NPC.Center);
 				}
 				if (AI_Timer == 128)
 				{

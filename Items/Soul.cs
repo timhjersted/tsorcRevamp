@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
 using System.Reflection;
+using Terraria.Audio;
 
 namespace tsorcRevamp.Items {
 
@@ -82,7 +83,7 @@ namespace tsorcRevamp.Items {
         {
             foreach (TooltipLine line2 in list)
             {
-                if (line2.mod == "Terraria" && line2.Name == "ItemName")
+                if (line2.Mod == "Terraria" && line2.Name == "ItemName")
                 {
                     line2.OverrideColor = BaseColor.RarityExample;
                 }
@@ -91,7 +92,11 @@ namespace tsorcRevamp.Items {
 
         public override bool OnPickup(Player player)
         {
-            Main.PlaySound(SoundID.NPCDeath52.WithVolume(.15f).WithPitchVariance(.3f), player.position); // Plays sound.
+
+            SoundStyle PickupSound = SoundID.NPCDeath52;
+            PickupSound.Volume = 0.15f;
+            PickupSound.PitchVariance = 0.3f;
+            SoundEngine.PlaySound(PickupSound, player.position); // Plays sound.
 
             int quantity = Item.stack / 50;
 
@@ -121,8 +126,8 @@ namespace tsorcRevamp.Items {
             else {
                 modPlayer.SoulSlot.Item.stack += Item.stack;
             }
-            Main.PlaySound(7, (int)player.position.X, (int)player.position.Y);
-            ItemText.NewText(Item, Item.stack);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab, new Vector2(player.position.X, player.position.Y));
+            PopupText.NewText(PopupTextContext.RegularItemPickup, Item, Item.stack);
             return false;
         }
 

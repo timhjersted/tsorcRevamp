@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         float num48 = 14f;
 
                         int type = ModContent.ProjectileType<MiracleSprouter>();
-                        Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                         float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -161,7 +161,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     float num48 = 22f;
                     float invulnDamageMult = 1.2f;
                     int type = ModContent.ProjectileType<MiracleSprouter>();
-                    Main.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
                     float rotation = (float)Math.Atan2(vector8.Y - 80 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

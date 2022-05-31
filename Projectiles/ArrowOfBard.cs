@@ -29,7 +29,7 @@ namespace tsorcRevamp.Projectiles {
 
         public override void Kill(int timeLeft) {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
-            Main.PlaySound(SoundID.Dig, Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
         }
     }
 

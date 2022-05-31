@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles
 
             if (Projectile.localAI[0] == 0f)
             {
-                Main.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item91.Style, .7f, -0.7f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item91.Style, .7f, -0.7f);
                 Projectile.localAI[0] += 1f;
             }
 
@@ -60,7 +60,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            Main.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item10.Style, .8f, -0.25f);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item10.Style, .8f, -0.25f);
             for (int d = 0; d < 30; d++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 111, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), .75f);
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item10.Style, .8f, -0.25f);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item10.Style, .8f, -0.25f);
             for (int d = 0; d < 30; d++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 111, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), .75f);
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item10.Style, .4f, -0.25f);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item10.Style, .4f, -0.25f);
             for (int d = 0; d < 30; d++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 111, Projectile.velocity.X * 1.2f, Projectile.velocity.Y * 1.2f, 30, default(Color), .75f);

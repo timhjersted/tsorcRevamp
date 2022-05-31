@@ -56,7 +56,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                     int type = ModContent.ProjectileType<FrozenSaw>();
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     Projectile.NewProjectile(vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
-                    Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
                     NPC.ai[0] = 0;
                     NPC.ai[2]++;
                 }
@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
 
             if ((NPC.ai[1] >= 200 && NPC.life > 1000) || (NPC.ai[1] >= 120 && NPC.life <= 1000)) {
-                Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++) {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);
                     Main.dust[dust].noGravity = false;

@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>();//44;//0x37; //14;
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, lightningDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 60;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							NPC.ai[1] = 1f;
 						}
 						NPC.netUpdate = true;
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, antiMatterBlastDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 9;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							NPC.ai[1] = 1f;
 						}
 						NPC.netUpdate = true;
@@ -139,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 19;
-							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							NPC.ai[1] = 1f;
 						}
 						NPC.netUpdate = true;
