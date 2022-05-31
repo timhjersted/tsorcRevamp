@@ -93,7 +93,6 @@ namespace tsorcRevamp.Items
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 
-
             Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);
             Texture2D texture = Mod.GetTexture("Items/SoulShekel_InWorld");
             var myrectangle = texture.Frame(1, 8, 0, itemframe);
