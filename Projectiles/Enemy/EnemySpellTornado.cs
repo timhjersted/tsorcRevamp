@@ -10,19 +10,19 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetDefaults()
         {
-            projectile.width = 100;
-            projectile.height = 280;
-            Main.projFrames[projectile.type] = 12;
+            Projectile.width = 100;
+            Projectile.height = 280;
+            Main.projFrames[Projectile.type] = 12;
             drawOriginOffsetX = 160;
             drawOriginOffsetY = 10;
-            projectile.hostile = true;
-            projectile.penetrate = 50;
-            projectile.scale = 1.3f;
-            projectile.magic = true;
-            projectile.light = 1f;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 1200;
+            Projectile.hostile = true;
+            Projectile.penetrate = 50;
+            Projectile.scale = 1.3f;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.light = 1f;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 1200;
         }
         int spinPlayer = 0;
         int spinCooldown = 0;
@@ -32,43 +32,43 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region AI
         public override void AI()
         {
-            projectile.rotation = 0;
+            Projectile.rotation = 0;
             spinCooldown--;
             maxSpeed = 7;
-            if (Main.player[(int)projectile.ai[0]] != null || Main.player[(int)projectile.ai[0]].active)
+            if (Main.player[(int)Projectile.ai[0]] != null || Main.player[(int)Projectile.ai[0]].active)
             {
-                projectile.velocity += UsefulFunctions.GenerateTargetingVector(projectile.Center, Main.player[(int)projectile.ai[0]].Center, 0.3f);
-                if(projectile.velocity.X > maxSpeed)
+                Projectile.velocity += UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 0.3f);
+                if(Projectile.velocity.X > maxSpeed)
                 {
-                    projectile.velocity.X = maxSpeed;
+                    Projectile.velocity.X = maxSpeed;
                 }
-                if (projectile.velocity.X < -maxSpeed)
+                if (Projectile.velocity.X < -maxSpeed)
                 {
-                    projectile.velocity.X = -maxSpeed;
+                    Projectile.velocity.X = -maxSpeed;
                 }
-                if (projectile.velocity.Y > maxSpeed)
+                if (Projectile.velocity.Y > maxSpeed)
                 {
-                    projectile.velocity.Y = maxSpeed;
+                    Projectile.velocity.Y = maxSpeed;
                 }
-                if (projectile.velocity.Y < -maxSpeed)
+                if (Projectile.velocity.Y < -maxSpeed)
                 {
-                    projectile.velocity.Y = -maxSpeed;
+                    Projectile.velocity.Y = -maxSpeed;
                 }
             }
 
 
-            Dust.NewDust(projectile.position, projectile.width, projectile.height, 31, -projectile.velocity.X, -projectile.velocity.Y);
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 31, -Projectile.velocity.X, -Projectile.velocity.Y);
             if (!Main.dedServ)
             {
-                projectile.frameCounter++;
-                if (projectile.frameCounter > 3)
+                Projectile.frameCounter++;
+                if (Projectile.frameCounter > 3)
                 {
-                    projectile.frame++;
-                    projectile.frameCounter = 0;
+                    Projectile.frame++;
+                    Projectile.frameCounter = 0;
                 }
-                if(projectile.frame >= 12)
+                if(Projectile.frame >= 12)
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
             }
         }

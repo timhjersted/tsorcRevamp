@@ -5,19 +5,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ForgottenMurakumo : ModItem {
 
         public override void SetDefaults() {
-            item.autoReuse = true;
-            item.rare = ItemRarityID.Pink;
-            item.damage = 45;
-            item.height = 72;
-            item.knockBack = 7;
-            item.autoReuse = true;
-            item.melee = true;
-            item.useAnimation = 16;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.Pink_5;
-            item.width = 48;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Pink;
+            Item.damage = 45;
+            Item.height = 72;
+            Item.knockBack = 7;
+            Item.autoReuse = true;
+            Item.melee = true;
+            Item.useAnimation = 16;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.Pink_5;
+            Item.width = 48;
         }
     }
 }

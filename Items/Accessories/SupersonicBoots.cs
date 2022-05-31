@@ -15,31 +15,31 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 32;
-            item.height = 28;
-            item.accessory = true;
-            item.value = PriceByRarity.Orange_3;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 32;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpectreBoots, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 7000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 7000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe(); 
 
-            ModRecipe recipe2 = new ModRecipe(mod);
+            Recipe recipe2 = new Recipe(Mod);
             recipe2.AddIngredient(ItemID.LightningBoots, 1);
-            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 7000);
+            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 7000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.SetResult(this, 1);
             recipe2.AddRecipe();
 
-            ModRecipe recipe3 = new ModRecipe(mod);
+            Recipe recipe3 = new Recipe(Mod);
             recipe3.AddIngredient(ItemID.FrostsparkBoots, 1);
-            recipe3.AddIngredient(mod.GetItem("DarkSoul"), 7000);
+            recipe3.AddIngredient(Mod.GetItem("DarkSoul"), 7000);
             recipe3.AddTile(TileID.DemonAltar);
             recipe3.SetResult(this, 1);
             recipe3.AddRecipe();

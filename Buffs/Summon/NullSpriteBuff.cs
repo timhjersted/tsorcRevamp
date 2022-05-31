@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Buffs.Summon {
     public class NullSpriteBuff : ModBuff {
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Null Sprite");
             Description.SetDefault("The null sprite will fight for you");
             Main.buffNoSave[Type] = true;

@@ -14,19 +14,19 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
-            item.damage = 22;
-            item.width = 36;
-            item.height = 36;
-            item.knockBack = 6.5f;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = .9f;
-            item.useAnimation = 23;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = 4000;
+            Item.damage = 22;
+            Item.width = 36;
+            Item.height = 36;
+            Item.knockBack = 6.5f;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.scale = .9f;
+            Item.useAnimation = 23;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = 4000;
         }
 
         public override void HoldItem(Player player)

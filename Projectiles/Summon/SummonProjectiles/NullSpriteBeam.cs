@@ -11,24 +11,24 @@ namespace tsorcRevamp.Projectiles.Summon.SummonProjectiles {
         }
 
 		public override void SetDefaults() {
-			projectile.width = 4;
-			projectile.height = 4;
-			projectile.friendly = true;
-			projectile.minion = true;
-			projectile.penetrate = 5;
-			projectile.extraUpdates = 100;
-			projectile.timeLeft = 180;
-			projectile.usesLocalNPCImmunity = true;
-			projectile.localNPCHitCooldown = -1;
+			Projectile.width = 4;
+			Projectile.height = 4;
+			Projectile.friendly = true;
+			Projectile.minion = true;
+			Projectile.penetrate = 5;
+			Projectile.extraUpdates = 100;
+			Projectile.timeLeft = 180;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = -1;
 		}
 
 		public override void AI() {
-			projectile.localAI[0] += 1f;
-			if (projectile.localAI[0] > 9f) {
+			Projectile.localAI[0] += 1f;
+			if (Projectile.localAI[0] > 9f) {
 				for (int i = 0; i < 4; i++) {
-					Vector2 projectilepos = projectile.position;
-					projectilepos -= projectile.velocity * (i * 0.25f);
-					projectile.alpha = 255;
+					Vector2 projectilepos = Projectile.position;
+					projectilepos -= Projectile.velocity * (i * 0.25f);
+					Projectile.alpha = 255;
 					int num448 = Dust.NewDust(projectilepos, 1, 1, 227);
 					Main.dust[num448].noGravity = true;
 					Main.dust[num448].position = projectilepos;

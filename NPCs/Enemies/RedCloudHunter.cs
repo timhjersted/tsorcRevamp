@@ -15,39 +15,39 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void SetDefaults()
 		{
 			aiType = NPCID.SkeletonArcher;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.damage = 52;
-			npc.lifeMax = 1150;
-			npc.scale = 0.9f;
-			npc.defense = 30;
-			npc.value = 6500;
-			npc.width = 18;
-			npc.aiStyle = -1;
-			npc.height = 48;
-			npc.knockBackResist = 0.6f;
-			npc.rarity = 3;
-			banner = npc.type;
-			npc.buffImmune[BuffID.Confused] = true;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.damage = 52;
+			NPC.lifeMax = 1150;
+			NPC.scale = 0.9f;
+			NPC.defense = 30;
+			NPC.value = 6500;
+			NPC.width = 18;
+			NPC.aiStyle = -1;
+			NPC.height = 48;
+			NPC.knockBackResist = 0.6f;
+			NPC.rarity = 3;
+			banner = NPC.type;
+			NPC.buffImmune[BuffID.Confused] = true;
 			bannerItem = ModContent.ItemType<Banners.RedCloudHunterBanner>();
 
 			animationType = NPCID.SkeletonArcher;
-			Main.npcFrameCount[npc.type] = 20;
+			Main.npcFrameCount[NPC.type] = 20;
 
 			if (Main.hardMode)
 			{
-				npc.defense = 14;
-				npc.value = 3500;
-				npc.damage = 40;
+				NPC.defense = 14;
+				NPC.value = 3500;
+				NPC.damage = 40;
 				archerBoltDamage = 65;
 			}
 
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				npc.lifeMax = 1750;
-				npc.defense = 40;
-				npc.value = 3700;
-				npc.damage = 70;
+				NPC.lifeMax = 1750;
+				NPC.defense = 40;
+				NPC.value = 3700;
+				NPC.damage = 70;
 				archerBoltDamage = 85;
 			}
 
@@ -55,15 +55,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
-			npc.defense = (int)(npc.defense * (2 / 3));
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
+			NPC.defense = (int)(NPC.defense * (2 / 3));
 			archerBoltDamage = (int)(archerBoltDamage / 2);
 		}
 
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
 		}
 
 		float customAi1;
@@ -79,25 +79,25 @@ namespace tsorcRevamp.NPCs.Enemies
 			float chance = 0f;
 
 
-			if (!Main.hardMode && spawnInfo.player.ZoneDungeon) return 0.02f;
+			if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.02f;
 
-			if (Main.hardMode && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneBeach && spawnInfo.player.ZoneJungle) return 0.05f;
-			if (Main.hardMode && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.09f;
-			if (Main.hardMode && spawnInfo.player.ZoneOverworldHeight && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneBeach || spawnInfo.player.ZoneJungle)) return 0.0125f;
+			if (Main.hardMode && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneBeach && spawnInfo.Player.ZoneJungle) return 0.05f;
+			if (Main.hardMode && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.09f;
+			if (Main.hardMode && spawnInfo.Player.ZoneOverworldHeight && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneJungle)) return 0.0125f;
 
-			if (Main.hardMode && spawnInfo.lihzahrd) return 0.15f;
+			if (Main.hardMode && spawnInfo.Lihzahrd) return 0.15f;
 
-			if (tsorcRevampWorld.SuperHardMode && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.13f;
-			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneOverworldHeight && (spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson)) return 0.1f;
-			if (tsorcRevampWorld.SuperHardMode && (spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneUndergroundDesert)) return 0.13f;
-			if (tsorcRevampWorld.SuperHardMode && spawnInfo.player.ZoneDungeon) return 0.01f; //.08% is 4.28%
+			if (tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.13f;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && (spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.1f;
+			if (tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert)) return 0.13f;
+			if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon) return 0.01f; //.08% is 4.28%
 			return chance;
 		}
 		#endregion
 
 		public override void AI()
 		{
-			tsorcRevampAIs.ArcherAI(npc, ProjectileID.FlamingArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f);			
+			tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 22, 13, 100, 2, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 2.6f);			
 		}
 
 		#region Gore
@@ -106,25 +106,25 @@ namespace tsorcRevamp.NPCs.Enemies
 			for (int i = 0; i < 5; i++)
 			{
 				int dustType = 5;
-				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+				int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
 				Dust dust = Main.dust[dustIndex];
 				dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.06f;
 				dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.06f;
 				dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
 				dust.noGravity = true;
 			}
-			if (npc.life <= 0)
+			if (NPC.life <= 0)
 			{
 				for (int i = 0; i < 25; i++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
 				}
 
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 1"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 2"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Red Cloud Hunter Gore 3"), 1f);
 			}
 		}
 		#endregion

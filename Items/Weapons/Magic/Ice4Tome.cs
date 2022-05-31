@@ -16,25 +16,25 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost4;
         public override void SetDefaults() {
-            item.damage = 120;
-            item.height = 10;
-            item.knockBack = 0f;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Lime;
-            item.channel = true;
-            item.autoReuse = true;
-            item.shootSpeed = 11;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 100;
-            storeManaCost4 = item.mana;
-            item.useAnimation = 20;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 20;
-            item.value = PriceByRarity.Lime_7;
-            item.width = 34;
-            item.shoot = ModContent.ProjectileType<Projectiles.Ice4Ball>();
+            Item.damage = 120;
+            Item.height = 10;
+            Item.knockBack = 0f;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Lime;
+            Item.channel = true;
+            Item.autoReuse = true;
+            Item.shootSpeed = 11;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 100;
+            storeManaCost4 = Item.mana;
+            Item.useAnimation = 20;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 20;
+            Item.value = PriceByRarity.Lime_7;
+            Item.width = 34;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Ice4Ball>();
         }
 
         public override bool CanUseItem(Player player)
@@ -50,9 +50,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("Ice3Tome"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 80000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("Ice3Tome"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

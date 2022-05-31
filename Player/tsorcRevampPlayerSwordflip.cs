@@ -127,12 +127,12 @@ namespace tsorcRevamp
 
 		private bool TryStartSwordflip()
 		{
-			bool isLocal = player.whoAmI == Main.myPlayer;
+			bool isLocal = Player.whoAmI == Main.myPlayer;
 
 			//TODO re-enable sword flip once it's fixed
-			if (isLocal && wantsSwordflipTimer <= 0f && /*tsorcRevamp.SwordflipKey.JustPressed*/ false && !player.mouseInterface && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
+			if (isLocal && wantsSwordflipTimer <= 0f && /*tsorcRevamp.SwordflipKey.JustPressed*/ false && !Player.mouseInterface && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 40)
 			{
-				QueueSwordflip(0.25f, (sbyte)KeyDirection(player));
+				QueueSwordflip(0.25f, (sbyte)KeyDirection(Player));
 			}
 
 			if (!forceSwordflip)
@@ -150,34 +150,34 @@ namespace tsorcRevamp
 				}
 
 				//Don't allow dodging on mounts and during item use.
-				if ((player.mount != null && player.mount.Active) /*|| player.itemAnimation > 0*/)
+				if ((Player.mount != null && Player.mount.Active) /*|| player.itemAnimation > 0*/)
 				{
 					return false;
 				}
 			}
 
 			wantsSwordflipTimer = 0f;
-			player.grappling[0] = -1;
-			player.grapCount = 0;
+			Player.grappling[0] = -1;
+			Player.grapCount = 0;
 			for (int p = 0; p < 1000; p++)
 			{
-				if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7)
+				if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7)
 				{
 					Main.projectile[p].Kill();
 				}
 			}
 
-			player.eocHit = 1;
+			Player.eocHit = 1;
 
 			isSwordflipping = true;
-			player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 40;
-			player.immune = true;
-			player.immuneTime = 15;
-			swordflipStartRot = player.GetModPlayer<tsorcRevampPlayer>().rotation;
-			swordflipItemRotation = player.itemRotation;
+			Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 40;
+			Player.immune = true;
+			Player.immuneTime = 15;
+			swordflipStartRot = Player.GetModPlayer<tsorcRevampPlayer>().rotation;
+			swordflipItemRotation = Player.itemRotation;
 			swordflipTime = 0f;
-			swordflipDirectionVisual = (sbyte)player.direction;
-			swordflipDirection = wantedSwordflipDir != 0 ? wantedSwordflipDir : (sbyte)player.direction;
+			swordflipDirectionVisual = (sbyte)Player.direction;
+			swordflipDirection = wantedSwordflipDir != 0 ? wantedSwordflipDir : (sbyte)Player.direction;
 			swordflipCooldown = SwordflipDefaultCooldown;
 
 			if (!isLocal)
@@ -193,9 +193,9 @@ namespace tsorcRevamp
 		}
 		private void UpdateSwordflip()
 		{
-			Item item = player.HeldItem;
+			Item item = Player.HeldItem;
 			wantsSwordflipTimer = SwordflipStepTowards(wantsSwordflipTimer, 0f, (float)1 / 60);
-			noSwordflip |= player.mount.Active;
+			noSwordflip |= Player.mount.Active;
 
 			if (noSwordflip)
 			{
@@ -205,8 +205,8 @@ namespace tsorcRevamp
 				return;
 			}
 
-			bool onGround = OnGround(player);
-			ref float rotation = ref player.GetModPlayer<tsorcRevampPlayer>().rotation;
+			bool onGround = OnGround(Player);
+			ref float rotation = ref Player.GetModPlayer<tsorcRevampPlayer>().rotation;
 
 			//Attempt to initiate a dodgeroll if the player isn't doing one already.
 			if (!isSwordflipping && !TryStartSwordflip())
@@ -220,17 +220,17 @@ namespace tsorcRevamp
 				float newVelX = (onGround ? 6f : 12f) * swordflipDirection;
 				float newVelY = (onGround ? -8f : 0f);
 
-				if (Math.Abs(player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(player.velocity.X))
+				if (Math.Abs(Player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(Player.velocity.X))
 				{
-					player.velocity.X = newVelX;
+					Player.velocity.X = newVelX;
 				}
-				if (player.velocity.Y > newVelY /*|| Math.Sign(newVelY) != Math.Sign(player.velocity.Y)*/)
+				if (Player.velocity.Y > newVelY /*|| Math.Sign(newVelY) != Math.Sign(player.velocity.Y)*/)
 				{
-					player.velocity.Y = newVelY;
+					Player.velocity.Y = newVelY;
 				}
 			}
 
-			player.pulley = false;
+			Player.pulley = false;
 
 			//Apply rotations & direction
 			forcedItemRotation = swordflipItemRotation;
@@ -252,38 +252,38 @@ namespace tsorcRevamp
 			}*/
 			if (swordflipTime <= SwordflipTimeMax - 5)
 			{
-				player.itemAnimation = player.itemAnimationMax;
+				Player.itemAnimation = Player.itemAnimationMax;
 				//item.noMelee = true;
 				//item.useAnimation = (int)(28);
 			}
 			if (swordflipTime >= SwordflipTimeMax - 5)
 			{
-				player.itemAnimation = player.itemAnimationMax - 1;
+				Player.itemAnimation = Player.itemAnimationMax - 1;
 				//item.noMelee = true;
 				//item.useAnimation = (int)(28);
 			}
 			if (swordflipTime >= SwordflipTimeMax)
 			{
-				player.itemAnimation = player.itemAnimationMax;
+				Player.itemAnimation = Player.itemAnimationMax;
 				noMelee = item.noMelee;
 				item.noMelee = true;
 				item.useAnimation = (int)(28);
 			}
 			if (swordflipTime >= SwordflipTimeMax * 0.6f)
 			{
-				player.velocity.X *= 0.9f;
+				Player.velocity.X *= 0.9f;
 			}
 			if (swordflipTime >= SwordflipTimeMax)
 			{
 				isSwordflipping = false;
-				player.eocDash = 0;
+				Player.eocDash = 0;
 				item.noMelee = noMelee;
 
 				//forceSyncControls = true;
 			}
 			else
 			{
-				player.runAcceleration = 0f;
+				Player.runAcceleration = 0f;
 			}
 		}
 	}

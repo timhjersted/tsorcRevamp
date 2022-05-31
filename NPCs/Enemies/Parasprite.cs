@@ -9,20 +9,20 @@ using static tsorcRevamp.SpawnHelper;
 namespace tsorcRevamp.NPCs.Enemies {
     class Parasprite : ModNPC {
         public override void SetDefaults() {
-            npc.width = 12;
-            npc.height = 12;
-            npc.aiStyle = 22;
-            npc.damage = 30;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 5;
-            npc.friendly = false;
-            npc.noTileCollide = false;
-            npc.noGravity = true;
-            npc.knockBackResist = 0;
-            npc.value = 50;
-            Main.npcFrameCount[npc.type] = 7;
-            banner = npc.type;
+            NPC.width = 12;
+            NPC.height = 12;
+            NPC.aiStyle = 22;
+            NPC.damage = 30;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.lifeMax = 5;
+            NPC.friendly = false;
+            NPC.noTileCollide = false;
+            NPC.noGravity = true;
+            NPC.knockBackResist = 0;
+            NPC.value = 50;
+            Main.npcFrameCount[NPC.type] = 7;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.ParaspriteBanner>();
         }
         int spriteColor;
@@ -31,11 +31,11 @@ namespace tsorcRevamp.NPCs.Enemies {
 
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            bool underground = (spawnInfo.player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
+            bool underground = (spawnInfo.Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
             float chance = 0;
-            Player p = spawnInfo.player;
+            Player p = spawnInfo.Player;
 
-            if (spawnInfo.player.ZoneHoly && underground && NPC.downedBoss3) { //it's spawning on the surface for some reason too
+            if (spawnInfo.Player.ZoneHallow && underground && NPC.downedBoss3) { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
             if (Main.hardMode && Sky(p) && NoSpecialBiome(p)) {
@@ -45,9 +45,9 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override void AI() { // some stuff has been shuffled around, since there's only 1 parasprite enemy instead of 4 (lol)
-            npc.velocity.Y += Main.rand.Next(-10, 10) / 8;
-            npc.velocity.X += Main.rand.Next(-10, 10) / 20;
-            if (npc.ai[3] == 0) { // check if a sprite is allowed to spawn copies (see below)
+            NPC.velocity.Y += Main.rand.Next(-10, 10) / 8;
+            NPC.velocity.X += Main.rand.Next(-10, 10) / 20;
+            if (NPC.ai[3] == 0) { // check if a sprite is allowed to spawn copies (see below)
                 timer++;
                 if (timer >= 300) {
                     int totalParasprites = 0;
@@ -60,8 +60,8 @@ namespace tsorcRevamp.NPCs.Enemies {
                         int spawner = Main.rand.Next(2); // decide if a sprite is allowed to spawn more copies. only 1 in 2 parasprites can spawn copies, for lag reduction...
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int NewSprite = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<Parasprite>(), 0, 0, 0, 0, spawner);
-                            Main.npc[NewSprite].velocity.X = -npc.velocity.X * 2;
+                            int NewSprite = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Parasprite>(), 0, 0, 0, 0, spawner);
+                            Main.npc[NewSprite].velocity.X = -NPC.velocity.X * 2;
                         }
                     }
                     timer = 0 - Main.rand.Next(200); // ...but they can spawn copies more frequently to make up for it
@@ -77,16 +77,16 @@ namespace tsorcRevamp.NPCs.Enemies {
             return true;
         }
         public override void FindFrame(int frameHeight) { // and this feels like magic
-            npc.frameCounter++;
-            if (npc.frameCounter == 2) {
-                npc.frame.Y = spriteColor * frameHeight;
+            NPC.frameCounter++;
+            if (NPC.frameCounter == 2) {
+                NPC.frame.Y = spriteColor * frameHeight;
             }
-            if (npc.frameCounter == 4) {
-                npc.frame.Y = (spriteColor + 1) * frameHeight;
-                npc.frameCounter = 0;
+            if (NPC.frameCounter == 4) {
+                NPC.frame.Y = (spriteColor + 1) * frameHeight;
+                NPC.frameCounter = 0;
             }
-            if (npc.velocity.X < 0) { npc.spriteDirection = -1; }
-            if (npc.velocity.X > 0) { npc.spriteDirection = 1; }
+            if (NPC.velocity.X < 0) { NPC.spriteDirection = -1; }
+            if (NPC.velocity.X > 0) { NPC.spriteDirection = 1; }
         }
     }
 }

@@ -8,28 +8,28 @@ namespace tsorcRevamp.Items.Ammo {
 
         public override void SetDefaults() {
 
-            item.stack = 1;
-            item.consumable = true;
-            item.ammo = item.type; //this is what defines a custom ammo type. now we can call mod.ItemType("Bolt") as useAmmo for weapons
-            item.damage = 7;
-            item.height = 28;
-            item.knockBack = (float)3;
-            item.maxStack = 2000;
-            item.ranged = true;
-            item.scale = (float)1;
-            item.shootSpeed = (float)3.5f;
-            item.useAnimation = 100;
-            item.useTime = 100;
-            item.value = 10;
-            item.width = 10;
-            item.shoot = ModContent.ProjectileType<Projectiles.Bolt>(); //dont forget to make it shoot a projectile
+            Item.stack = 1;
+            Item.consumable = true;
+            Item.ammo = Item.type; //this is what defines a custom ammo type. now we can call mod.ItemType("Bolt") as useAmmo for weapons
+            Item.damage = 7;
+            Item.height = 28;
+            Item.knockBack = (float)3;
+            Item.maxStack = 2000;
+            Item.ranged = true;
+            Item.scale = (float)1;
+            Item.shootSpeed = (float)3.5f;
+            Item.useAnimation = 100;
+            Item.useTime = 100;
+            Item.value = 10;
+            Item.width = 10;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt>(); //dont forget to make it shoot a projectile
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
 
             recipe.AddIngredient(ItemID.Wood, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 10);

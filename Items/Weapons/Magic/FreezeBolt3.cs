@@ -11,29 +11,29 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 12;
-            item.useTime = 12;
-            item.damage = 150;
-            item.knockBack = 8;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item21;
-            item.rare = ItemRarityID.Cyan;
-            item.shootSpeed = 11;
-            item.mana = 12;
-            item.value = PriceByRarity.Cyan_9;
-            item.magic = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt>();
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 12;
+            Item.useTime = 12;
+            Item.damage = 150;
+            Item.knockBack = 8;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item21;
+            Item.rare = ItemRarityID.Cyan;
+            Item.shootSpeed = 11;
+            Item.mana = 12;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.magic = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("FreezeBolt2"), 1);
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 150000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("FreezeBolt2"), 1);
+            recipe.AddIngredient(Mod.GetItem("SoulOfAttraidies"), 1);
+            recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 10);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 150000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -10,15 +10,15 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 26;
-            item.height = 26;
-            item.accessory = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 26;
+            Item.height = 26;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         /*public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ItemID.SoulofFlight, 70);
             recipe.AddIngredient(mod.GetItem("RedTitanite"), 1);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);

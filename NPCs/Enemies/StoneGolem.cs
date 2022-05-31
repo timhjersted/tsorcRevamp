@@ -5,19 +5,19 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Enemies {
     public class StoneGolem : ModNPC {
         public override void SetStaticDefaults() {
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GraniteGolem];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GraniteGolem];
 
         }
         public override void SetDefaults() {
-            npc.CloneDefaults(NPCID.GraniteGolem);
+            NPC.CloneDefaults(NPCID.GraniteGolem);
             aiType = NPCID.GraniteGolem;
-            npc.damage = 20;
-            npc.lifeMax = 60;
-            npc.defense = 14;
-            npc.value = 250;
-            npc.knockBackResist = 0.35f;
+            NPC.damage = 20;
+            NPC.lifeMax = 60;
+            NPC.defense = 14;
+            NPC.value = 250;
+            NPC.knockBackResist = 0.35f;
             animationType = NPCID.GraniteGolem;
-            banner = npc.type;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
         }
 
@@ -25,12 +25,12 @@ namespace tsorcRevamp.NPCs.Enemies {
             return SpawnCondition.Cavern.Chance * 0.15f;
         }
 
-        public override void NPCLoot() {
-            Item.NewItem(npc.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
-            Item.NewItem(npc.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
-            if (Main.rand.Next(6) == 0) Item.NewItem(npc.getRect(), ItemID.EndurancePotion);
-            if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(15) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+        public override void OnKill() {
+            Item.NewItem(NPC.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
+            Item.NewItem(NPC.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
+            if (Main.rand.Next(6) == 0) Item.NewItem(NPC.getRect(), ItemID.EndurancePotion);
+            if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
 
 
 

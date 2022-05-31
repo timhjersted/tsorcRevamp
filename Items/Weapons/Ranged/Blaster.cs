@@ -16,41 +16,41 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            item.damage = 20;
-            item.ranged = true;
-            item.crit = 4;
-            item.width = 44;
-            item.height = 24;
-            item.useTime = 24;
-            item.useAnimation = 24;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noMelee = true;
-            item.knockBack = 3f;
-            item.value = 20000;
-            item.scale = 0.7f;
-            item.rare = ItemRarityID.Blue;
-            item.shoot = mod.ProjectileType("BlasterShot");
-            item.shootSpeed = 14f;
+            Item.damage = 20;
+            Item.ranged = true;
+            Item.crit = 4;
+            Item.width = 44;
+            Item.height = 24;
+            Item.useTime = 24;
+            Item.useAnimation = 24;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.knockBack = 3f;
+            Item.value = 20000;
+            Item.scale = 0.7f;
+            Item.rare = ItemRarityID.Blue;
+            Item.shoot = Mod.Find<ModProjectile>("BlasterShot").Type;
+            Item.shootSpeed = 14f;
         }
 
         public override void AddRecipes()
         {
 
 
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1200);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1200);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
 
-            recipe = new ModRecipe(mod);
+            recipe = new Recipe(Mod);
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.LeadBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1200);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1200);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             return new Vector2(2, 2);
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
 
             Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 20f;

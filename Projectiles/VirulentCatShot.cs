@@ -11,31 +11,31 @@ namespace tsorcRevamp.Projectiles
 		public override string Texture => "tsorcRevamp/Projectiles/ToxicCatShot";
 		public override void SetStaticDefaults()
 		{
-			Main.projFrames[projectile.type] = 2;
+			Main.projFrames[Projectile.type] = 2;
 		}
 		public override void SetDefaults()
 		{
 
-			projectile.width = 10;
-			projectile.height = 10;
-			projectile.friendly = true;
-			projectile.ranged = true;
-			projectile.tileCollide = true;
-			projectile.timeLeft = 125;
-			projectile.penetrate = 3;
-			projectile.usesLocalNPCImmunity = true;
-			projectile.localNPCHitCooldown = -1; 
+			Projectile.width = 10;
+			Projectile.height = 10;
+			Projectile.friendly = true;
+			Projectile.DamageType = DamageClass.Ranged;
+			Projectile.tileCollide = true;
+			Projectile.timeLeft = 125;
+			Projectile.penetrate = 3;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = -1; 
 
 			drawOffsetX = -2;
 			drawOriginOffsetY = -2;
 		}
 
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(ref Color lightColor)
 		{
-			Texture2D texture = Main.projectileTexture[projectile.type];
+			Texture2D texture = Main.projectileTexture[Projectile.type];
 
-			spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame * 16, 10, 16), Color.White, projectile.rotation, new Vector2(7, 8), projectile.scale, SpriteEffects.None, 0);
+			Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 16, 10, 16), Color.White, Projectile.rotation, new Vector2(7, 8), Projectile.scale, SpriteEffects.None, 0);
 
 			return false;
 		}
@@ -46,15 +46,15 @@ namespace tsorcRevamp.Projectiles
 			float rotationsPerSecond = 3f;
 			bool rotateClockwise = true;
 			//The rotation is set here
-			projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 30f);
+			Projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 30f);
 
-			Lighting.AddLight(projectile.position, 0.2496f, 0.4584f, 0.130f);
+			Lighting.AddLight(Projectile.position, 0.2496f, 0.4584f, 0.130f);
 
-			if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 120 && projectile.timeLeft <= 123)
+			if (Projectile.owner == Main.myPlayer && Projectile.timeLeft >= 120 && Projectile.timeLeft <= 123)
 			{
 				for (int d = 0; d < 2; d++)
 				{
-					Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X - 7, projectile.position.Y - 7), 24, 24, 75, projectile.velocity.X * .5f, projectile.velocity.Y * .5f, 100, default(Color), .8f)];
+					Dust dust = Main.dust[Dust.NewDust(new Vector2(Projectile.position.X - 7, Projectile.position.Y - 7), 24, 24, 75, Projectile.velocity.X * .5f, Projectile.velocity.Y * .5f, 100, default(Color), .8f)];
 					dust.noGravity = true;
 				}
 			}
@@ -66,39 +66,39 @@ namespace tsorcRevamp.Projectiles
 		}
 		private void NormalAI()
 		{
-			projectile.damage = 1;
+			Projectile.damage = 1;
 		}
 
 		private int virucattimer;
 		private void StickyAI()
 		{
 			// These 2 could probably be moved to the ModifyNPCHit hook, but in vanilla they are present in the AI
-			projectile.ignoreWater = true; // Make sure the projectile ignores water
-			projectile.tileCollide = false; // Make sure the projectile doesn't collide with tiles anymore
+			Projectile.ignoreWater = true; // Make sure the projectile ignores water
+			Projectile.tileCollide = false; // Make sure the projectile doesn't collide with tiles anymore
 			const int aiFactor = 10; // Change this factor to change the 'lifetime' of this sticking javelin //These are seconds. Keep debuff duration to same duration as is set here.
-			projectile.localAI[0] += 1f;
+			Projectile.localAI[0] += 1f;
 
 			/*if (projectile.timeLeft > 2)
 			{
 				projectile.timeLeft = 100;
 			}*/
 
-			projectile.rotation = projectile.velocity.ToRotation();
+			Projectile.rotation = Projectile.velocity.ToRotation();
 			// Every 30 ticks, the javelin will perform a hit effect
-			bool hitEffect = projectile.localAI[0] % 30f == 0f;
+			bool hitEffect = Projectile.localAI[0] % 30f == 0f;
 			int projTargetIndex = (int)TargetWhoAmI;
 
-			if (projectile.localAI[0] >= 60 * aiFactor || projTargetIndex < 0 || projTargetIndex >= 200)
+			if (Projectile.localAI[0] >= 60 * aiFactor || projTargetIndex < 0 || projTargetIndex >= 200)
 			{ // If the index is past its limits, kill it
-				projectile.Kill();
+				Projectile.Kill();
 			}
 
 			else if (Main.npc[projTargetIndex].active && !Main.npc[projTargetIndex].dontTakeDamage)
 			{ // If the target is active and can take damage
 			  // Set the projectile's position relative to the target's center
-				projectile.Center = Main.npc[projTargetIndex].Center - projectile.velocity * 2.5f;
+				Projectile.Center = Main.npc[projTargetIndex].Center - Projectile.velocity * 2.5f;
 				//projectile.rotation = Main.npc[projTargetIndex].Center;
-				projectile.gfxOffY = Main.npc[projTargetIndex].gfxOffY;
+				Projectile.gfxOffY = Main.npc[projTargetIndex].gfxOffY;
 				if (hitEffect)
 				{ // Perform a hit effect here
 					Main.npc[projTargetIndex].HitEffect(0, 1.0);
@@ -107,7 +107,7 @@ namespace tsorcRevamp.Projectiles
 
 			else
 			{ // Otherwise, kill the projectile
-				projectile.Kill();
+				Projectile.Kill();
 			}
 
 			//ANIMATION
@@ -116,23 +116,23 @@ namespace tsorcRevamp.Projectiles
 				virucattimer = 0;
 			}
 
-			if (++projectile.frameCounter >= 20) //ticks spent on each frame
+			if (++Projectile.frameCounter >= 20) //ticks spent on each frame
 			{
-				projectile.frameCounter = 0;
+				Projectile.frameCounter = 0;
 
-				if (++projectile.frame >= 2)
+				if (++Projectile.frame >= 2)
 				{
-					projectile.frame = 0;
+					Projectile.frame = 0;
 				}
 			}
 		}
 
 		public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 		{
-			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), projectile.Center);
+			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), Projectile.Center);
 			for (int d = 0; d < 20; d++)
 			{
-				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
 				Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
 				Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
 				Main.dust[dust].noGravity = true;
@@ -141,10 +141,10 @@ namespace tsorcRevamp.Projectiles
 		}
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), projectile.Center);
+			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f), Projectile.Center);
 			for (int d = 0; d < 20; d++)
 			{
-				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
 				Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
 				Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
 				Main.dust[dust].noGravity = true;
@@ -156,10 +156,10 @@ namespace tsorcRevamp.Projectiles
 
 		public override void Kill(int timeLeft)
 		{
-			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f), projectile.Center);
+			Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f), Projectile.Center);
 			for (int d = 0; d < 20; d++)
 			{
-				int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1.2f, projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
+				int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1.2f, Projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
 				Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
 				Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
 				Main.dust[dust].noGravity = true;
@@ -187,15 +187,15 @@ namespace tsorcRevamp.Projectiles
 		// Are we sticking to a target?
 		public bool IsStickingToTarget
 		{
-			get => projectile.ai[0] == 1f;
-			set => projectile.ai[0] = value ? 1f : 0f;
+			get => Projectile.ai[0] == 1f;
+			set => Projectile.ai[0] = value ? 1f : 0f;
 		}
 
 		// Index of the current target
 		public int TargetWhoAmI
 		{
-			get => (int)projectile.ai[1];
-			set => projectile.ai[1] = value;
+			get => (int)Projectile.ai[1];
+			set => Projectile.ai[1] = value;
 		}
 
 		private const int MAX_STICKY_JAVELINS = 10; // This is the max. amount of javelins being able to attach
@@ -205,14 +205,14 @@ namespace tsorcRevamp.Projectiles
 		{
 			IsStickingToTarget = true; // we are sticking to a target
 			TargetWhoAmI = target.whoAmI; // Set the target whoAmI
-			projectile.timeLeft = 600;
-			projectile.velocity =
-				(target.Center - projectile.Center) *
+			Projectile.timeLeft = 600;
+			Projectile.velocity =
+				(target.Center - Projectile.Center) *
 				0.75f; // Change velocity based on delta center of targets (difference between entity centers)
-			projectile.netUpdate = true; // netUpdate this javelin
+			Projectile.netUpdate = true; // netUpdate this javelin
 			target.AddBuff(ModContent.BuffType<Buffs.ViruCatDrain>(), 600); // Adds the ExampleJavelin debuff for a very small DoT
 
-			projectile.damage = 0; // Makes sure the sticking javelins do not deal damage anymore
+			Projectile.damage = 0; // Makes sure the sticking javelins do not deal damage anymore
 
 
 			// It is recommended to split your code into separate methods to keep code clean and clear
@@ -231,11 +231,11 @@ namespace tsorcRevamp.Projectiles
 			for (int i = 0; i < Main.maxProjectiles; i++) // Loop all projectiles
 			{
 				Projectile currentProjectile = Main.projectile[i];
-				if (i != projectile.whoAmI // Make sure the looped projectile is not the current javelin
+				if (i != Projectile.whoAmI // Make sure the looped projectile is not the current javelin
 					&& currentProjectile.active // Make sure the projectile is active
 					&& currentProjectile.owner == Main.myPlayer // Make sure the projectile's owner is the client's player
-					&& currentProjectile.type == projectile.type // Make sure the projectile is of the same type as this javelin
-					&& currentProjectile.modProjectile is VirulentCatShot javelinProjectile // Use a pattern match cast so we can access the projectile like an ExampleJavelinProjectile
+					&& currentProjectile.type == Projectile.type // Make sure the projectile is of the same type as this javelin
+					&& currentProjectile.ModProjectile is VirulentCatShot javelinProjectile // Use a pattern match cast so we can access the projectile like an ExampleJavelinProjectile
 					&& javelinProjectile.IsStickingToTarget // the previous pattern match allows us to use our properties
 					&& javelinProjectile.TargetWhoAmI == target.whoAmI)
 				{

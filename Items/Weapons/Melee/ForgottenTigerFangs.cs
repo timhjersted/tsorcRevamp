@@ -8,25 +8,25 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.rare = ItemRarityID.Cyan;
-            item.damage = 150;
-            item.height = 12;
-            item.knockBack = 3;
-            item.melee = true;
-            item.useAnimation = 8;
-            item.useTime = 8;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Cyan_9;
-            item.width = 18;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Cyan;
+            Item.damage = 150;
+            Item.height = 12;
+            Item.knockBack = 3;
+            Item.melee = true;
+            Item.useAnimation = 8;
+            Item.useTime = 8;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.width = 18;
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ForgottenKaiserKnuckles"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 80000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("ForgottenKaiserKnuckles"), 1);
+            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

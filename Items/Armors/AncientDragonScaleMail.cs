@@ -15,18 +15,18 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 8;
-            item.value = 1200000;
-            item.rare = ItemRarityID.Green;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 8;
+            Item.value = 1200000;
+            Item.rare = ItemRarityID.Green;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.MythrilChainmail, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3500);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3500);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

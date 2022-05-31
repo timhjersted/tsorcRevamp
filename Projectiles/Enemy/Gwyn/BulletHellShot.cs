@@ -14,17 +14,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
             DisplayName.SetDefault("Lightning Spear");
         }
         public override void SetDefaults() {
-            projectile.width = 32;
-            projectile.height = 32;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.timeLeft = 225;
-            projectile.tileCollide = false;
-            projectile.aiStyle = -1;
-            projectile.light = 0.7f;
+            Projectile.width = 32;
+            Projectile.height = 32;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.timeLeft = 225;
+            Projectile.tileCollide = false;
+            Projectile.aiStyle = -1;
+            Projectile.light = 0.7f;
         }
         public override void AI() {
-            projectile.rotation = projectile.velocity.ToRotation();
+            Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) {

@@ -12,22 +12,22 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void SetDefaults() {
-            item.width = 14;
-            item.height = 24;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item3;
-            item.maxStack = 30;
-            item.consumable = true;
-            item.rare = ItemRarityID.Blue;
-            item.value = 300000;
-            item.buffType = ModContent.BuffType<Buffs.ArmorDrug>();
-            item.buffTime = 10800;
+            Item.width = 14;
+            Item.height = 24;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item3;
+            Item.maxStack = 30;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = 300000;
+            Item.buffType = ModContent.BuffType<Buffs.ArmorDrug>();
+            Item.buffTime = 10800;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             int currentBuff = 0;
             foreach (int buffType in player.buffType)
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Sapphire, 5);
             recipe.AddIngredient(ItemID.SoulofNight, 4);

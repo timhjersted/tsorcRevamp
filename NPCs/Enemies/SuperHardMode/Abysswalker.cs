@@ -10,21 +10,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 5;
-			Main.npcFrameCount[npc.type] = 15;
+			NPC.npcSlots = 5;
+			Main.npcFrameCount[NPC.type] = 15;
 			animationType = 21;
-			npc.knockBackResist = 0;
-			npc.aiStyle = 3;
-			npc.damage = 105;
-			npc.defense = 72;
-			npc.height = 40;
-			npc.lifeMax = 7000;
-			npc.scale = 1;
-			npc.HitSound = SoundID.NPCHit29;
-			npc.DeathSound = SoundID.NPCDeath31;
-			npc.value = 12500;
-			npc.width = 18;
-			banner = npc.type;
+			NPC.knockBackResist = 0;
+			NPC.aiStyle = 3;
+			NPC.damage = 105;
+			NPC.defense = 72;
+			NPC.height = 40;
+			NPC.lifeMax = 7000;
+			NPC.scale = 1;
+			NPC.HitSound = SoundID.NPCHit29;
+			NPC.DeathSound = SoundID.NPCDeath31;
+			NPC.value = 12500;
+			NPC.width = 18;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.AbysswalkerBanner>();
 		}
 
@@ -34,8 +34,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 			poisonBallDamage = (int)(poisonBallDamage * tsorcRevampWorld.SubtleSHMScale);
 			stormBallDamage = (int)(stormBallDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player player = spawnInfo.player;			
+			Player player = spawnInfo.Player;			
 
 			// these are all the regular stuff you get , now lets see......
 			float chance = 0;
@@ -75,58 +75,58 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		float poisonStormTimer = 0;
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 2f, 0.05f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 3);
+			tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 3);
 
-			bool clearLineofSight = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
+			bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, 2, 20);
-			tsorcRevampAIs.SimpleProjectile(npc, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, 2, 100);
+			tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, 2, 20);
+			tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, 2, 100);
 
 			if (poisonStrikeTimer >= 60)
 			{
-				Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Ichor, 0, 0).noGravity = true;
+				Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Ichor, 0, 0).noGravity = true;
 			}
 			if (poisonStormTimer >= 90)
 			{
-				UsefulFunctions.DustRing(npc.Center, 181 - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);
-				Lighting.AddLight(npc.Center, Color.Orange.ToVector3() * 5);
-				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+				UsefulFunctions.DustRing(NPC.Center, 181 - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);
+				Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
+				if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
 				{
-					npc.velocity = Vector2.Zero;
+					NPC.velocity = Vector2.Zero;
 				}
 			}
 
 			//Transparency. Higher alpha = more invisible
-			if (npc.justHit)
+			if (NPC.justHit)
 			{
-				npc.alpha = 0;
+				NPC.alpha = 0;
 			}
 			if (Main.rand.Next(200) == 1)
 			{
-				npc.alpha = 0;
+				NPC.alpha = 0;
 			}
 			if (Main.rand.Next(50) == 1)
 			{
-				npc.alpha = 210;
+				NPC.alpha = 210;
 			}
 			if (Main.rand.Next(250) == 1)
 			{
-				npc.life += 5;
-				if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-				npc.netUpdate = true;
+				NPC.life += 5;
+				if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+				NPC.netUpdate = true;
 			}
 		}
 
 		#region Gore
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Voodoomaster Gore 1"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Voodoomaster Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
 
-			if (Main.rand.Next(99) < 10) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>(), 4 + Main.rand.Next(3));
+			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>(), 4 + Main.rand.Next(3));
 		}
 		#endregion
 

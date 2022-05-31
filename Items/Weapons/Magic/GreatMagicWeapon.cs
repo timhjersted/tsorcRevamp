@@ -20,26 +20,26 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 120;
-            item.UseSound = SoundID.Item82;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useTime = 34;
-            item.useAnimation = 34;
-            item.value = 100000;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.LightRed;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 120;
+            Item.UseSound = SoundID.Item82;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 34;
+            Item.useAnimation = 34;
+            Item.value = 100000;
 
         }
 
         public override void AddRecipes() //recipe/progression subject to change
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("MagicWeapon"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("MagicWeapon"));
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 10000);
             recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddTile(TileID.DemonAltar);
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 

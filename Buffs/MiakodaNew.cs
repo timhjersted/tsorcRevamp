@@ -6,7 +6,7 @@ namespace tsorcRevamp.Buffs
 {
     class MiakodaNew : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Miakoda - New Moon Form");
             Description.SetDefault("An ancient being freed from Skeletron.");

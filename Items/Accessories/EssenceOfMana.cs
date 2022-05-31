@@ -11,18 +11,18 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 10;
-            item.accessory = true;
-            item.height = 12;
-            item.maxStack = 1;
-            item.value = PriceByRarity.Blue_1;
-            item.rare = ItemRarityID.Blue;
+            Item.width = 10;
+            Item.accessory = true;
+            Item.height = 12;
+            Item.maxStack = 1;
+            Item.value = PriceByRarity.Blue_1;
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.ManaCrystal, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 6000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

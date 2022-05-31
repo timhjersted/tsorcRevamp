@@ -20,42 +20,42 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
         }
 
         public override void SetDefaults() {
-            npc.boss = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.netAlways = true;
-            npc.friendly = false;
-            npc.damage = 1;
-            npc.defense = 90;
-            npc.lifeMax = 500000;
-            npc.width = npc.height = 40;
-            npc.npcSlots = 50;
-            npc.knockBackResist = 0f;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.netAlways = true;
+            NPC.friendly = false;
+            NPC.damage = 1;
+            NPC.defense = 90;
+            NPC.lifeMax = 500000;
+            NPC.width = NPC.height = 40;
+            NPC.npcSlots = 50;
+            NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler("You have fallen before the Lord of Cinder...", Color.OrangeRed, 6);
         }
 
         private float AI_State {
-            get => npc.ai[0];
-            set => npc.ai[0] = value;
+            get => NPC.ai[0];
+            set => NPC.ai[0] = value;
         }
 
         private float AI_Timer { //usually +1 per frame during phases
-            get => npc.ai[1];
-            set => npc.ai[1] = value;
+            get => NPC.ai[1];
+            set => NPC.ai[1] = value;
         }
 
         private float AI_Misc { //miscellaneous tracking inside phases
-            get => npc.ai[2];
-            set => npc.ai[2] = value;
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
         }
 
         private float AI_State_Counter { //+1 every phase change 
-            get => npc.ai[3];
-            set => npc.ai[3] = value;
+            get => NPC.ai[3];
+            set => NPC.ai[3] = value;
         }
         private float LOCALAI_Just_Spawned {
-            get => npc.localAI[0];
-            set => npc.localAI[0] = value;
+            get => NPC.localAI[0];
+            set => NPC.localAI[0] = value;
         }
 
         private enum States {
@@ -90,16 +90,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
 
         public override void AI() {
             bool expertMode = Main.expertMode;
-            bool halfLife = npc.life <= npc.lifeMax / 2;
+            bool halfLife = NPC.life <= NPC.lifeMax / 2;
             bool DontTakeDamage = false;
             bool DisableHoming = false;
 
-            if (despawnHandler.TargetAndDespawn(npc.whoAmI)) {
+            if (despawnHandler.TargetAndDespawn(NPC.whoAmI)) {
                 InterruptCurrentPhase();
             }
 
             if (halfLife) {
-                npc.defense = (int)(npc.defDefense * 0.65f);
+                NPC.defense = (int)(NPC.defDefense * 0.65f);
             }
 
             if (LOCALAI_Just_Spawned == 0f) {
@@ -176,8 +176,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 ReturnToIdle();
             }
 
-            npc.dontTakeDamage = DontTakeDamage;
-            npc.chaseable = !DisableHoming;
+            NPC.dontTakeDamage = DontTakeDamage;
+            NPC.chaseable = !DisableHoming;
 
 
         }
@@ -209,29 +209,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
         }
 
         public override void SendExtraAI(BinaryWriter writer) {
-            writer.Write(npc.dontTakeDamage);
-            writer.Write(npc.chaseable);
+            writer.Write(NPC.dontTakeDamage);
+            writer.Write(NPC.chaseable);
             writer.WriteVector2(ArenaCenter);
             writer.Write(BulletHell);
         }
         public override void ReceiveExtraAI(BinaryReader reader) {
-            npc.dontTakeDamage = reader.ReadBoolean();
-            npc.chaseable = reader.ReadBoolean();
+            NPC.dontTakeDamage = reader.ReadBoolean();
+            NPC.chaseable = reader.ReadBoolean();
             ArenaCenter = reader.ReadVector2();
             BulletHell = reader.ReadBoolean();
         }
 
         private void State_Spawning(ref bool DontTakeDamage, ref bool DisableHoming) {
-            npc.alpha -= 5;
-            if (npc.alpha < 0) {
-                npc.alpha = 0;
+            NPC.alpha -= 5;
+            if (NPC.alpha < 0) {
+                NPC.alpha = 0;
             }
             AI_Timer += 1f;
 
             if (AI_Timer == 45) {
                 for (int j = 0; j < 96; j++) {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(5, 5);
-                    Vector2 dustPos = npc.Center + dir;
+                    Vector2 dustPos = NPC.Center + dir;
                     Vector2 dustVel = new Vector2(5, 0).RotatedBy(dir.ToRotation());
                     Dust dust = Dust.NewDustPerfect(dustPos, DustID.Firework_Red, dustVel, 100);
                     dust.noGravity = true;
@@ -241,17 +241,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             if (AI_Timer >= 75) {
                 AI_State = 0f;
                 AI_Timer = 0f;
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
 
             DontTakeDamage = true;
             DisableHoming = true;
         }
         private void State_Idle(bool halfLife) {
-            Player player = Main.player[npc.target];
-            int targetDirection = Math.Sign(player.Center.X - npc.Center.X);
+            Player player = Main.player[NPC.target];
+            int targetDirection = Math.Sign(player.Center.X - NPC.Center.X);
             if (targetDirection != 0) {
-                npc.direction = (npc.spriteDirection = targetDirection);
+                NPC.direction = (NPC.spriteDirection = targetDirection);
             }
             AI_Timer += 1f;
 
@@ -262,15 +262,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
 
             if (AI_Timer == 1) {
                 int maxValue = 6;
-                if (npc.life < npc.lifeMax / 3) {
+                if (NPC.life < NPC.lifeMax / 3) {
                     maxValue = 4;
                 }
-                if (npc.life < npc.lifeMax / 4) {
+                if (NPC.life < NPC.lifeMax / 4) {
                     maxValue = 3;
                 }
 
                 AI_Misc = Main.rand.Next(maxValue);
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
             if (AI_Timer >= IdleTime) {
                 /* at the end of every phase, AI_State_Counter is incremented by 1 (in ReturnToIdle())
@@ -287,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 }
 
                 if (statePicker == (int)States.Idle) {
-                    Vector2 toPlayer = new Vector2(player.Center.X, player.Center.Y - 192) - npc.Center;
+                    Vector2 toPlayer = new Vector2(player.Center.X, player.Center.Y - 192) - NPC.Center;
                     float movementTimer = (float)Math.Ceiling(toPlayer.Length() / 30f);
                     if (movementTimer == 0f) { //div0 protection
                         movementTimer = 1f;
@@ -295,26 +295,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     AI_State = (float)States.Movement;
                     AI_Timer = movementTimer * 1.35f; //movement has deceleration near the target, so time is increased to compensate
                     AI_Misc = 0;
-                    npc.velocity = toPlayer / movementTimer; //longer distances = more velocity, but also longer timer. they balance out
+                    NPC.velocity = toPlayer / movementTimer; //longer distances = more velocity, but also longer timer. they balance out
 
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
 
                 }
                 else {
                     AI_Timer = 0;
                     AI_State = statePicker;
                     AI_Misc = 0;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
         }
         private void State_Movement() {
-            Player player = Main.player[npc.target];
+            Player player = Main.player[NPC.target];
             //is there air friction for NPCs even if you dont explicitly add it?
-            npc.velocity.X *= 1.075f;
-            Vector2 toPlayer = player.Center - npc.Center;
+            NPC.velocity.X *= 1.075f;
+            Vector2 toPlayer = player.Center - NPC.Center;
             if (toPlayer.Length() < 16 * 20) {
-                npc.velocity *= 0.9f;
+                NPC.velocity *= 0.9f;
             }
             //AI_Timer is set to a positive integer at the end of any idle phase that preceeds a movement phase, so decrement instead of incrementing
             AI_Timer -= 1f;
@@ -336,15 +336,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 TackleInterval = 18;
             }
 
-            Player player = Main.player[npc.target];
-            Vector2 toPlayer = Vector2.Normalize(player.Center - npc.Center + player.velocity * 10f);
+            Player player = Main.player[NPC.target];
+            Vector2 toPlayer = Vector2.Normalize(player.Center - NPC.Center + player.velocity * 10f);
 
             //delay the first tackle
             if (AI_Timer == 0 && AI_Misc == 0) {
                 for (int i = 0; i < 64; i++) {
                     //and make a ring of dust to announce we're in tackle phase
                     Vector2 dir = Main.rand.NextVector2CircularEdge(64, 64);
-                    Vector2 dustPos = npc.Center + dir;
+                    Vector2 dustPos = NPC.Center + dir;
                     Dust.NewDustPerfect(dustPos, DustID.RuneWizard, dir / 4f, 200).noGravity = true;
 
                 }
@@ -355,7 +355,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             if (AI_Misc < TackleCount + 1) {
                 AI_Timer += 1f;
                 if (AI_Timer == TackleInterval) {
-                    npc.velocity = Vector2.Zero;
+                    NPC.velocity = Vector2.Zero;
                 }
 
                 if (AI_Timer > TackleInterval && AI_Timer < TackleInterval * 2.5) {
@@ -363,7 +363,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     float speed = 2;
                     for (int i = 0; i < 8; i++) {
                         Vector2 dir = toPlayer.RotatedByRandom(2.35); //135 degrees
-                        Vector2 dustPos = npc.Center + dir * dustRadius;
+                        Vector2 dustPos = NPC.Center + dir * dustRadius;
                         Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
 
                         Dust dust = Dust.NewDustPerfect(dustPos, 106, dustVel, 0, new Color(255, 0, 0), 1f);
@@ -377,18 +377,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     Tackle *= TackleSpeed;
 
                     //speed up the dash if the target is too far away...
-                    float speedMod = ((player.Center - npc.Center).Length() / 650f);
+                    float speedMod = ((player.Center - NPC.Center).Length() / 650f);
 
                     //...but not to more than 130% speed
                     speedMod = MathHelper.Clamp(speedMod, 1, 1.3f);
                     Tackle *= speedMod;
 
-                    npc.velocity = Tackle;
-                    Projectile.NewProjectile(npc.position, Vector2.Zero, ModContent.ProjectileType<TackleProjectile>(), TackleDamage, 1, Main.myPlayer, TackleInterval / 2, npc.whoAmI);
+                    NPC.velocity = Tackle;
+                    Projectile.NewProjectile(NPC.position, Vector2.Zero, ModContent.ProjectileType<TackleProjectile>(), TackleDamage, 1, Main.myPlayer, TackleInterval / 2, NPC.whoAmI);
                 }
 
-                if (AI_Timer > TackleInterval * 2 && npc.velocity != Vector2.Zero) {
-                    npc.velocity.X *= 1.075f;
+                if (AI_Timer > TackleInterval * 2 && NPC.velocity != Vector2.Zero) {
+                    NPC.velocity.X *= 1.075f;
                 }
 
                 if (AI_Timer > TackleInterval * 3) {
@@ -398,7 +398,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                             break;
                         }
                     }
-                    npc.velocity *= 0.7f;
+                    NPC.velocity *= 0.7f;
 
                 }
 
@@ -415,7 +415,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
 
         }
         private void State_FarronHail(bool expertMode, bool halfLife) {
-            Player player = Main.player[npc.target];
+            Player player = Main.player[NPC.target];
             const float VELOCITY = 24;
             const int VOLLEY_COUNT = 9;
             int VolleyInterval = 35;
@@ -433,14 +433,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
 
             if (AI_Misc < 90) {
                 //AI_Misc but accessors cant be passed as reference
-                ToArenaCenterWithDust(ref npc.ai[2], DustID.Clentaminator_Cyan, DustShapes.Plus);
+                ToArenaCenterWithDust(ref NPC.ai[2], DustID.Clentaminator_Cyan, DustShapes.Plus);
             }
 
             else { AI_Timer++; }
 
             if (AI_Timer % VolleyInterval == (VolleyInterval - 5)) {
 
-                Vector2 pos = new Vector2(npc.Center.X, npc.Center.Y - 64);
+                Vector2 pos = new Vector2(NPC.Center.X, NPC.Center.Y - 64);
                 Vector2 toPlayer = (Vector2.Normalize(player.Center - pos)) * VELOCITY;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
@@ -465,12 +465,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
 
             if (AI_Misc < 90) {
                 //AI_Misc but accessors cant be passed as reference
-                ToArenaCenterWithDust(ref npc.ai[2], DustID.Clentaminator_Purple, DustShapes.X);
+                ToArenaCenterWithDust(ref NPC.ai[2], DustID.Clentaminator_Purple, DustShapes.X);
             }
 
             else { AI_Timer++; }
             if (AI_Timer == 1 && Main.netMode != NetmodeID.MultiplayerClient) {
-                Projectile.NewProjectile(npc.Center, npc.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, npc.whoAmI, npc.whoAmI);
+                Projectile.NewProjectile(NPC.Center, NPC.velocity, ModContent.ProjectileType<Projectiles.Enemy.Gwyn.SwordOfLordGwyn>(), 69, 0.5f, NPC.whoAmI, NPC.whoAmI);
             }
 
             if (AI_Timer == 60) {
@@ -479,7 +479,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                         Main.projectile[i].Kill();
                     }
                 }
-                Main.NewText("hnere " + npc.whoAmI);
+                Main.NewText("hnere " + NPC.whoAmI);
                 ReturnToIdle();
             }
         }
@@ -498,26 +498,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                 AI_Misc++;
                 if (AI_Misc >= 0 && AI_Misc < 15) {
                     float AlphaMod = (AI_Misc) / 15f;
-                    npc.alpha = (int)(AlphaMod * 255f);
+                    NPC.alpha = (int)(AlphaMod * 255f);
 
                 }
 
                 else if (AI_Misc == 15) {
-                    npc.alpha = 255;
-                    npc.Center = new Vector2(ArenaCenter.X, ArenaCenter.Y + (ARENA_HEIGHT / 3));
+                    NPC.alpha = 255;
+                    NPC.Center = new Vector2(ArenaCenter.X, ArenaCenter.Y + (ARENA_HEIGHT / 3));
                 }
 
                 else if (AI_Misc >= 16 && AI_Misc < 30) {
                     for (int i = 0; i < 10; i++) {
                         Vector2 velocity = MakeDustShape(DustShapes.Circle, i);
-                        Dust.NewDustPerfect(npc.Center, DustID.Clentaminator_Green, velocity).noGravity = true;
+                        Dust.NewDustPerfect(NPC.Center, DustID.Clentaminator_Green, velocity).noGravity = true;
 
                     }
                 }
 
                 else if (AI_Misc >= 30 && AI_Misc < 60) {
                     float AlphaMod = (AI_Misc - 30f) / 15f;
-                    npc.alpha = 255 - (int)(AlphaMod * 255f);
+                    NPC.alpha = 255 - (int)(AlphaMod * 255f);
                 }
             }
 
@@ -531,11 +531,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1); //alternates -1 and 1
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X + (ARENA_WIDTH / 1.8f * flipflop), npc.Center.Y - (ARENA_HEIGHT / 3)),
+                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - (ARENA_HEIGHT / 3)),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 15;
                         spawner.lifespan = 420;
                         spawner.shotVelocity = shotVelocity;
@@ -549,11 +549,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X + (ARENA_WIDTH / 1.8f * flipflop), npc.Center.Y - ARENA_HEIGHT / 3f),
+                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 3f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 15;
                         spawner.lifespan = 420;
                         spawner.shotVelocity = shotVelocity;
@@ -567,11 +567,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X + (ARENA_WIDTH / 25f * flipflop), npc.Center.Y - ARENA_HEIGHT / 2.5f),
+                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 25f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.5f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 12;
                         spawner.lifespan = 300;
                         spawner.shotVelocity = shotVelocity;
@@ -585,11 +585,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X, npc.Center.Y - ARENA_HEIGHT / 3f),
+                            new Vector2(NPC.Center.X, NPC.Center.Y - ARENA_HEIGHT / 3f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 6;
                         spawner.lifespan = 390;
                         spawner.shotVelocity = shotVelocity;
@@ -603,11 +603,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X + (ARENA_WIDTH / 1.8f * flipflop), npc.Center.Y - ARENA_HEIGHT / 2.5f),
+                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.5f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 12;
                         spawner.lifespan = 420;
                         spawner.shotVelocity = shotVelocity;
@@ -621,11 +621,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 4; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X + (ARENA_WIDTH / 1.8f * flipflop), npc.Center.Y - ARENA_HEIGHT / 2.2f),
+                            new Vector2(NPC.Center.X + (ARENA_WIDTH / 1.8f * flipflop), NPC.Center.Y - ARENA_HEIGHT / 2.2f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 21; //there are four spawners this time!
                         spawner.lifespan = 200;
                         spawner.shotVelocity = shotVelocity;
@@ -638,11 +638,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     for (int i = 0; i < 2; i++) {
                         int flipflop = (((i % 2) * 2) - 1);
                         BulletHellSpawner spawner = Projectile.NewProjectileDirect(
-                            new Vector2(npc.Center.X, npc.Center.Y - ARENA_HEIGHT / 2.5f),
+                            new Vector2(NPC.Center.X, NPC.Center.Y - ARENA_HEIGHT / 2.5f),
                             Vector2.Zero,
                             ModContent.ProjectileType<BulletHellSpawner>(),
                             ShotDamage,
-                            2).modProjectile as BulletHellSpawner;
+                            2).ModProjectile as BulletHellSpawner;
                         spawner.shotInterval = 3; //it's gamer time
                         spawner.lifespan = 200;
                         spawner.shotVelocity = shotVelocity;
@@ -660,8 +660,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             AI_Misc = 0;
             AI_State_Counter += 1;
 
-            npc.velocity = Vector2.Zero;
-            npc.netUpdate = true;
+            NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
         }
         private void InterruptCurrentPhase() {
             //ReturnToIdle minus the idle phase change and state counter increment
@@ -669,8 +669,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             AI_Timer = 0;
             AI_Misc = 0;
 
-            npc.velocity = Vector2.Zero;
-            npc.netUpdate = true;
+            NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
         }
         private int StateChange(bool halfLife) {
             if (AI_State_Counter % 2 == 0) {
@@ -735,26 +735,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             timer++;
             if (timer >= 0 && timer < 15) {
                 float AlphaMod = (timer) / 15f;
-                npc.alpha = (int)(AlphaMod * 255f);
+                NPC.alpha = (int)(AlphaMod * 255f);
 
             }
 
             else if (timer == 15) {
-                npc.alpha = 255;
-                npc.Center = ArenaCenter;
+                NPC.alpha = 255;
+                NPC.Center = ArenaCenter;
             }
 
             else if (timer >= 16 && timer < 30) {
                 for (int i = 0; i < 10; i++) {
                     Vector2 velocity = MakeDustShape(shape, i);
-                    Dust.NewDustPerfect(npc.Center, dustType, velocity).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, dustType, velocity).noGravity = true;
 
                 }
             }
 
             else if (timer >= 30 && timer < 60) {
                 float AlphaMod = (timer - 30f) / 15f;
-                npc.alpha = 255 - (int)(AlphaMod * 255f);
+                NPC.alpha = 255 - (int)(AlphaMod * 255f);
             }
         }
         private Vector2 MakeDustShape(DustShapes shape, int iteration = 0) {
@@ -778,12 +778,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             return velocity;
         }
         private void Init() {
-            Player target = Main.player[npc.target];
+            Player target = Main.player[NPC.target];
             if (ArenaCenter.Length() < 1 || ArenaCenter == null) {
                 if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                     ArenaCenter = ARENA_LOCATION_ADVENTURE;
                     //if the door is open
-                    if (Framing.GetTileSafely(778, 1243).active() && Framing.GetTileSafely(778, 1243).inActive()) {
+                    if (Framing.GetTileSafely(778, 1243).HasTile && Framing.GetTileSafely(778, 1243).IsActuated) {
                         //trigger the switch to close the door and turn on the lights
                         Wiring.TripWire(782, 1241, 1, 1);
                     }
@@ -796,12 +796,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
             if (TaggedPlayers == null) {
                 TaggedPlayers = new List<Player>();
             }
-            npc.alpha = 255;
-            npc.Center = ArenaCenter;
-            npc.rotation = 0f;
+            NPC.alpha = 255;
+            NPC.Center = ArenaCenter;
+            NPC.rotation = 0f;
             if (Main.netMode != NetmodeID.MultiplayerClient) {
                 AI_State = (float)States.Spawning;
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
         }
     }

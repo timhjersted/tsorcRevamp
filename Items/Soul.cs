@@ -11,26 +11,26 @@ namespace tsorcRevamp.Items {
     public abstract class Soul : ModItem {
         //theres too many souls in this mod, im not making individual files for all of them 
         public override void SetStaticDefaults() {
-            Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(5, 4));
-            ItemID.Sets.AnimatesAsSoul[item.type] = true;
-            ItemID.Sets.ItemIconPulse[item.type] = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 4));
+            ItemID.Sets.AnimatesAsSoul[Item.type] = true;
+            ItemID.Sets.ItemIconPulse[Item.type] = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
         }
 
         public override void SetDefaults() {
             Item refItem = new Item();
             refItem.SetDefaults(ItemID.SoulofSight);
-            item.width = refItem.width;
-            item.height = refItem.height;
-            item.maxStack = 999999;
-            item.value = 1;
-            item.rare = ItemRarityID.Lime;
+            Item.width = refItem.width;
+            Item.height = refItem.height;
+            Item.maxStack = 999999;
+            Item.value = 1;
+            Item.rare = ItemRarityID.Lime;
         }
 
         public override bool GrabStyle(Player player) { //make pulling souls through walls more consistent
-            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            item.velocity = item.velocity + movement;
+            Item.velocity = Item.velocity + movement;
             return true;
         }
 
@@ -43,10 +43,10 @@ namespace tsorcRevamp.Items {
     {
 
         public override void SetStaticDefaults() {
-            Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(5, 4));
-            ItemID.Sets.AnimatesAsSoul[item.type] = true;
-            ItemID.Sets.ItemIconPulse[item.type] = true;
-            ItemID.Sets.ItemNoGravity[item.type] = true;
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 4));
+            ItemID.Sets.AnimatesAsSoul[Item.type] = true;
+            ItemID.Sets.ItemIconPulse[Item.type] = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
             Tooltip.SetDefault("Soul of a fallen creature." + 
                 "\nCan be used at Demon Altars to forge new weapons, items, and armors.");
         }
@@ -54,18 +54,18 @@ namespace tsorcRevamp.Items {
         {
             Item refItem = new Item();
             refItem.SetDefaults(ItemID.SoulofSight);
-            item.width = refItem.width;
-            item.height = refItem.height;
-            item.maxStack = 999999;
-            item.value = 1;
-            item.rare = ItemRarityID.Lime;
+            Item.width = refItem.width;
+            Item.height = refItem.height;
+            Item.maxStack = 999999;
+            Item.value = 1;
+            Item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
         }
         public override bool GrabStyle(Player player)
         { //make pulling souls through walls more consistent
-            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            item.velocity = item.velocity + movement;
+            Item.velocity = Item.velocity + movement;
             return true;
         }
 
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.15f, 0.6f, 0.32f);
+            Lighting.AddLight(Item.Center, 0.15f, 0.6f, 0.32f);
 
         }
         public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> list)
@@ -84,7 +84,7 @@ namespace tsorcRevamp.Items {
             {
                 if (line2.mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.overrideColor = BaseColor.RarityExample;
+                    line2.OverrideColor = BaseColor.RarityExample;
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Items {
         {
             Main.PlaySound(SoundID.NPCDeath52.WithVolume(.15f).WithPitchVariance(.3f), player.position); // Plays sound.
 
-            int quantity = item.stack / 50;
+            int quantity = Item.stack / 50;
 
             if (quantity > 10)
             {
@@ -116,13 +116,13 @@ namespace tsorcRevamp.Items {
             }
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
-                modPlayer.SoulSlot.Item = item.Clone();
+                modPlayer.SoulSlot.Item = Item.Clone();
             }
             else {
-                modPlayer.SoulSlot.Item.stack += item.stack;
+                modPlayer.SoulSlot.Item.stack += Item.stack;
             }
             Main.PlaySound(7, (int)player.position.X, (int)player.position.Y);
-            ItemText.NewText(item, item.stack);
+            ItemText.NewText(Item, Item.stack);
             return false;
         }
 
@@ -140,7 +140,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.93f, 0.1f, 0.45f);
+            Lighting.AddLight(Item.Center, 0.93f, 0.1f, 0.45f);
         }
     }
     public class SoulOfAttraidies : Soul {
@@ -152,7 +152,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.93f, 0.1f, 0.45f);
+            Lighting.AddLight(Item.Center, 0.93f, 0.1f, 0.45f);
         }
     }
 
@@ -164,7 +164,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.9f, 0.9f, 0.9f);
+            Lighting.AddLight(Item.Center, 0.9f, 0.9f, 0.9f);
         }
 
     }
@@ -176,7 +176,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.9f, 0.9f, 0.9f);
+            Lighting.AddLight(Item.Center, 0.9f, 0.9f, 0.9f);
         }
 
     }
@@ -189,7 +189,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.70f, 0.20f, 0.13f);
+            Lighting.AddLight(Item.Center, 0.70f, 0.20f, 0.13f);
         }
 
     }
@@ -205,7 +205,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.33f, 0.75f, 0.70f);
+            Lighting.AddLight(Item.Center, 0.33f, 0.75f, 0.70f);
         }
 
     }
@@ -218,7 +218,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.28f, 0.33f, 0.75f);
+            Lighting.AddLight(Item.Center, 0.28f, 0.33f, 0.75f);
         }
 
     }
@@ -229,7 +229,7 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("Soul of a cursed being.");
         }
         public override void PostUpdate() {
-            Lighting.AddLight(item.Center, 0.85f, 0f, 0f);
+            Lighting.AddLight(Item.Center, 0.85f, 0f, 0f);
         }
     }
     public class SoulOfLife : Soul
@@ -243,7 +243,7 @@ namespace tsorcRevamp.Items {
 
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, Color.Green.ToVector3());
+            Lighting.AddLight(Item.Center, Color.Green.ToVector3());
         }
     }
 }

@@ -8,20 +8,20 @@ namespace tsorcRevamp.NPCs.Friendly {
 	{
 		public override void SetStaticDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 14;
+			Main.npcFrameCount[NPC.type] = 14;
 		}
 		public override void SetDefaults()
 		{
-			npc.knockBackResist = 0;
-			npc.aiStyle = 66; //buggy ai. You are what you eat
-			npc.height = 28;
-			npc.width = 20;
-			npc.lifeMax = 5;
-			npc.damage = 0;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 30;
-			banner = npc.type;
+			NPC.knockBackResist = 0;
+			NPC.aiStyle = 66; //buggy ai. You are what you eat
+			NPC.height = 28;
+			NPC.width = 20;
+			NPC.lifeMax = 5;
+			NPC.damage = 0;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.value = 30;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.ChickenBanner>();
 		}
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -29,88 +29,88 @@ namespace tsorcRevamp.NPCs.Friendly {
 			return SpawnCondition.TownGeneralCritter.Chance * 0.2f;
 		}
 
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DeadChicken>());
+			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
 		}
 
 		public override void AI()
 		{
-			if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ChickenBokbok").WithVolume(.8f).WithPitchVariance(.3f), npc.Center);
+			if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ChickenBokbok").WithVolume(.8f).WithPitchVariance(.3f), NPC.Center);
 		}
 		public override void FindFrame(int frameHeight)
 		{
-			npc.spriteDirection = npc.direction;
-			if (npc.life > 0)
+			NPC.spriteDirection = NPC.direction;
+			if (NPC.life > 0)
 			{
-				npc.frameCounter += 1;
+				NPC.frameCounter += 1;
 			}
-			if (npc.velocity.X != 0 && npc.velocity.Y == 0)
+			if (NPC.velocity.X != 0 && NPC.velocity.Y == 0)
 			{
-				if (npc.frameCounter < 10)
+				if (NPC.frameCounter < 10)
 				{
-					npc.frame.Y = 0 * frameHeight;
+					NPC.frame.Y = 0 * frameHeight;
 				}
-				else if (npc.frameCounter < 20)
+				else if (NPC.frameCounter < 20)
 				{
-					npc.frame.Y = 1 * frameHeight;
+					NPC.frame.Y = 1 * frameHeight;
 				}
-				else if (npc.frameCounter < 30)
+				else if (NPC.frameCounter < 30)
 				{
-					npc.frame.Y = 2 * frameHeight;
+					NPC.frame.Y = 2 * frameHeight;
 				}
-				else if (npc.frameCounter < 40)
+				else if (NPC.frameCounter < 40)
 				{
-					npc.frame.Y = 3 * frameHeight;
+					NPC.frame.Y = 3 * frameHeight;
 				}
-				else if (npc.frameCounter < 50)
+				else if (NPC.frameCounter < 50)
 				{
-					npc.frame.Y = 4 * frameHeight;
+					NPC.frame.Y = 4 * frameHeight;
 				}
-				else if (npc.frameCounter < 60)
+				else if (NPC.frameCounter < 60)
 				{
-					npc.frame.Y = 5 * frameHeight;
+					NPC.frame.Y = 5 * frameHeight;
 				}
-				else if (npc.frameCounter < 70)
+				else if (NPC.frameCounter < 70)
 				{
-					npc.frame.Y = 6 * frameHeight;
+					NPC.frame.Y = 6 * frameHeight;
 				}
-				else if (npc.frameCounter < 80)
+				else if (NPC.frameCounter < 80)
 				{
-					npc.frame.Y = 7 * frameHeight;
+					NPC.frame.Y = 7 * frameHeight;
 				}
-				else if (npc.frameCounter < 90)
+				else if (NPC.frameCounter < 90)
 				{
-					npc.frame.Y = 8 * frameHeight;
+					NPC.frame.Y = 8 * frameHeight;
 				}
-				else if (npc.frameCounter < 100)
+				else if (NPC.frameCounter < 100)
 				{
-					npc.frame.Y = 9 * frameHeight;
+					NPC.frame.Y = 9 * frameHeight;
 				}
-				else if (npc.frameCounter < 110)
+				else if (NPC.frameCounter < 110)
 				{
-					npc.frame.Y = 10 * frameHeight;
+					NPC.frame.Y = 10 * frameHeight;
 				}
-				else if (npc.frameCounter < 120)
+				else if (NPC.frameCounter < 120)
 				{
-					npc.frame.Y = 11 * frameHeight;
+					NPC.frame.Y = 11 * frameHeight;
 				}
-				else if (npc.frameCounter < 130)
+				else if (NPC.frameCounter < 130)
 				{
-					npc.frame.Y = 12 * frameHeight;
+					NPC.frame.Y = 12 * frameHeight;
 				}
-				else if (npc.frameCounter < 140)
+				else if (NPC.frameCounter < 140)
 				{
-					npc.frame.Y = 13 * frameHeight;
+					NPC.frame.Y = 13 * frameHeight;
 				}
 				else
 				{
-					npc.frameCounter = 0;
+					NPC.frameCounter = 0;
 				}
 			}
 			else
 			{
-				npc.frame.Y = 0;
+				NPC.frame.Y = 0;
 			}
 		}
 	}

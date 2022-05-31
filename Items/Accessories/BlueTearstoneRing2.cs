@@ -14,19 +14,19 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 24;
-            item.accessory = true;
-            item.value = PriceByRarity.Purple_11;
-            item.rare = ItemRarityID.Purple;
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("BlueTearstoneRing"), 1);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 5);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("BlueTearstoneRing"), 1);
+            recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 5);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

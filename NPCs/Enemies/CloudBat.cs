@@ -10,22 +10,22 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cloud Bat");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GiantBat];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GiantBat];
         }
 
         public override void SetDefaults()
         {
-            npc.CloneDefaults(NPCID.CaveBat);
+            NPC.CloneDefaults(NPCID.CaveBat);
             animationType = NPCID.GiantBat;
             aiType = NPCID.CaveBat;
-            npc.lifeMax = 35;
-            npc.damage = 45;
-            npc.scale = 1f;
-            npc.knockBackResist = .55f;
-            npc.value = 350;
-            npc.defense = 5;
-            npc.buffImmune[BuffID.Confused] = true;
-            banner = npc.type;
+            NPC.lifeMax = 35;
+            NPC.damage = 45;
+            NPC.scale = 1f;
+            NPC.knockBackResist = .55f;
+            NPC.value = 350;
+            NPC.defense = 5;
+            NPC.buffImmune[BuffID.Confused] = true;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -50,20 +50,20 @@ namespace tsorcRevamp.NPCs.Enemies
             for (int i = 0; i < 15; i++)
             {
                 int dustType = 16;
-                int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
                 Dust dust = Main.dust[dustIndex];
                 dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.04f;
                 dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.04f;
                 dust.scale *= .8f + Main.rand.Next(-30, 31) * 0.01f;
                 dust.noGravity = true;
             }
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 16, Main.rand.Next(-2, 2), Main.rand.Next(-2, 2), 70, default(Color), .8f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 16, Main.rand.Next(-2, 2), Main.rand.Next(-2, 2), 70, default(Color), .8f);
                 }
-                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/Cloud Bat Gore"), 1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Cloud Bat Gore"), 1f);
             }
         }
     }

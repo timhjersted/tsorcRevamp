@@ -20,14 +20,14 @@ namespace tsorcRevamp.NPCs.Friendly {
 		};
         public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Shaman Elder");
-			Main.npcFrameCount[npc.type] = 25;
-			NPCID.Sets.ExtraFramesCount[npc.type] = 10;
-			NPCID.Sets.AttackFrameCount[npc.type] = 5;
-			NPCID.Sets.DangerDetectRange[npc.type] = 600;
-			NPCID.Sets.AttackType[npc.type] = 2; //magic
-			NPCID.Sets.AttackTime[npc.type] = 22;
-			NPCID.Sets.AttackAverageChance[npc.type] = 30;
-			NPCID.Sets.HatOffsetY[npc.type] = 4;
+			Main.npcFrameCount[NPC.type] = 25;
+			NPCID.Sets.ExtraFramesCount[NPC.type] = 10;
+			NPCID.Sets.AttackFrameCount[NPC.type] = 5;
+			NPCID.Sets.DangerDetectRange[NPC.type] = 600;
+			NPCID.Sets.AttackType[NPC.type] = 2; //magic
+			NPCID.Sets.AttackTime[NPC.type] = 22;
+			NPCID.Sets.AttackAverageChance[NPC.type] = 30;
+			NPCID.Sets.HatOffsetY[NPC.type] = 4;
 		}
 		public override string TownNPCName() {
 			string name = Names[Main.rand.Next(Names.Count)]; //pick a random name from the list
@@ -35,17 +35,17 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
 		public override void SetDefaults() {
-			npc.townNPC = true;
-			npc.friendly = true;
-			npc.width = 18;
-			npc.height = 40;
-			npc.aiStyle = 7;
-			npc.damage = 90;
-			npc.defense = 15;
-			npc.lifeMax = 1000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 0.5f;
+			NPC.townNPC = true;
+			NPC.friendly = true;
+			NPC.width = 18;
+			NPC.height = 40;
+			NPC.aiStyle = 7;
+			NPC.damage = 90;
+			NPC.defense = 15;
+			NPC.lifeMax = 1000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 0.5f;
 			animationType = NPCID.Guide;
 			
 		}
@@ -55,11 +55,11 @@ namespace tsorcRevamp.NPCs.Friendly {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
                 Vector2 shamanWarpPoint = new Vector2(108, 524.4f) * 16;
                 if (tsorcRevampWorld.SuperHardMode) {
-                    if (Vector2.Distance(npc.Center, shamanWarpPoint) > 200) {
-                        npc.Center = shamanWarpPoint;
+                    if (Vector2.Distance(NPC.Center, shamanWarpPoint) > 200) {
+                        NPC.Center = shamanWarpPoint;
                     }
 
-                    npc.velocity.X = 0;
+                    NPC.velocity.X = 0;
                 } 
             }
 		}
@@ -225,12 +225,12 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
 		public override void HitEffect(int hitDirection, double damage) {
-			if (base.npc.life <= 0) {
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Shaman Elder Gore 1"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
+			if (base.NPC.life <= 0) {
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Shaman Elder Gore 1"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
 			}
 		}
 

@@ -6,29 +6,29 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/OldLongbow";
         public override void SetDefaults() {
 
-            item.damage = 16;
-            item.height = 66;
-            item.width = 16;
-            item.ranged = true;
-            item.knockBack = 4f;
-            item.maxStack = 1;
-            item.noMelee = true;
-            item.rare = ItemRarityID.Blue;
-            item.scale = 0.9f;
-            item.shoot = AmmoID.Arrow;
-            item.shootSpeed = 13f;
-            item.useAmmo = AmmoID.Arrow;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.UseSound = SoundID.Item5;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = PriceByRarity.Blue_1;
+            Item.damage = 16;
+            Item.height = 66;
+            Item.width = 16;
+            Item.ranged = true;
+            Item.knockBack = 4f;
+            Item.maxStack = 1;
+            Item.noMelee = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.scale = 0.9f;
+            Item.shoot = AmmoID.Arrow;
+            Item.shootSpeed = 13f;
+            Item.useAmmo = AmmoID.Arrow;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.UseSound = SoundID.Item5;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = PriceByRarity.Blue_1;
 
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldLongbow"));
-            recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("OldLongbow"));
+            recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

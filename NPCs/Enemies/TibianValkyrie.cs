@@ -12,36 +12,36 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Tibian Valkyrie");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.Skeleton];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Skeleton];
         }
 
         public override void SetDefaults()
         {
             animationType = NPCID.Skeleton;
-            npc.aiStyle = -1;
-            npc.height = 40;
-            npc.width = 20;
-            npc.lifeMax = 90;
-            npc.damage = 28;
-            npc.scale = 1f;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-            npc.knockBackResist = .5f;
-            npc.value = 250;
-            npc.defense = 4;
-			banner = npc.type;
+            NPC.aiStyle = -1;
+            NPC.height = 40;
+            NPC.width = 20;
+            NPC.lifeMax = 90;
+            NPC.damage = 28;
+            NPC.scale = 1f;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.knockBackResist = .5f;
+            NPC.value = 250;
+            NPC.defense = 4;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
 		}
 
-        public override void NPCLoot()
+        public override void OnKill()
         {
-            Item.NewItem(npc.getRect(), ItemID.Torch);
-            Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), Main.rand.Next(20, 76));
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldHalberd>(), 1, false, -1);
-            if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldDoubleAxe>(), 1, false, -1);
-            if (Main.rand.Next(2) == 0) Item.NewItem(npc.getRect(), ItemID.Diamond);
-            if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DeadChicken>());
+            Item.NewItem(NPC.getRect(), ItemID.Torch);
+            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), Main.rand.Next(20, 76));
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldHalberd>(), 1, false, -1);
+            if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.OldDoubleAxe>(), 1, false, -1);
+            if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ItemID.Diamond);
+            if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
         }
 
 
@@ -51,21 +51,21 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0;
 
-			if (spawnInfo.invasion)
+			if (spawnInfo.Invasion)
 			{
 				chance = 0;
 				return chance;
 			}
 
-			if (spawnInfo.player.townNPCs > 0f) return 0f;
-			if (spawnInfo.player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.player.ZoneCrimson && !Main.dayTime) return 0.0427f;
-			if (spawnInfo.player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.player.ZoneCrimson && Main.dayTime) return 0.038f;
+			if (spawnInfo.Player.townNPCs > 0f) return 0f;
+			if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && !Main.dayTime) return 0.0427f;
+			if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && Main.dayTime) return 0.038f;
 
-			if (!Main.hardMode && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneJungle)
+			if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneJungle)
 			{
-				if (!spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && Main.dayTime) return 0.0433f;
-				if (!spawnInfo.player.ZoneDungeon && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight) && !Main.dayTime) return 0.0555f;
-				if (spawnInfo.player.ZoneDungeon && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight)) return 0.03857f;
+				if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime) return 0.0433f;
+				if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime) return 0.0555f;
+				if (spawnInfo.Player.ZoneDungeon && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.03857f;
 			}
 			return chance;
 		}
@@ -74,28 +74,28 @@ namespace tsorcRevamp.NPCs.Enemies
 		float spearTimer = 0;
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 1.65f, 0.11f, enragePercent: 0.5f, enrageTopSpeed: 2.4f);
-			tsorcRevampAIs.SimpleProjectile(npc, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0), soundType: 2, soundStyle: 17);
+			tsorcRevampAIs.FighterAI(NPC, 1.65f, 0.11f, enragePercent: 0.5f, enrageTopSpeed: 2.4f);
+			tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 10, 8, Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0), soundType: 2, soundStyle: 17);
 
-			if (npc.justHit)
+			if (NPC.justHit)
 			{
 				spearTimer = 150;
 			}			
 		}
 
-		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 		{
 			if (spearTimer >= 150)
 			{
-				Texture2D spearTexture = mod.GetTexture("NPCs/Enemies/TibianValkyrie_Spear");
-				SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-				if (npc.spriteDirection == -1)
+				Texture2D spearTexture = Mod.GetTexture("NPCs/Enemies/TibianValkyrie_Spear");
+				SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+				if (NPC.spriteDirection == -1)
 				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 76, 58), drawColor, npc.rotation, new Vector2(38, 34), npc.scale, effects, 0);
+					spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 76, 58), drawColor, NPC.rotation, new Vector2(38, 34), NPC.scale, effects, 0);
 				}
 				else
 				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(npc.frame.X, npc.frame.Y, 76, 58), drawColor, npc.rotation, new Vector2(38, 34), npc.scale, effects, 0);
+					spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 76, 58), drawColor, NPC.rotation, new Vector2(38, 34), NPC.scale, effects, 0);
 				}
 			}
 		}
@@ -107,25 +107,25 @@ namespace tsorcRevamp.NPCs.Enemies
 			for (int i = 0; i < 5; i++)
 			{
 				int dustType = 5;
-				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+				int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
 				Dust dust = Main.dust[dustIndex];
 				dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.06f;
 				dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.06f;
 				dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
 				dust.noGravity = true;
 			}
-			if (npc.life <= 0)
+			if (NPC.life <= 0)
 			{
 				for (int i = 0; i < 25; i++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
 				}
 
-				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 3"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 1"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 2"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 3"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 2"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2(Main.rand.Next(-30, 31) * 0.2f, Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Valkyrie Gore 3"), 1f);
 			}
 		}
 		#endregion

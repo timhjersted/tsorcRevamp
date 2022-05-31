@@ -25,15 +25,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override string Texture => base.Texture;
 
         public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.hide = true;
-            projectile.timeLeft = 999;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hide = true;
+            Projectile.timeLeft = 999;
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
@@ -77,7 +77,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     if (Main.player[i].active && !Main.player[i].dead)
                     {
                         float point = 0;
-                        if (Collision.CheckAABBvLineCollision(Main.player[i].Hitbox.TopLeft(), Main.player[i].Hitbox.Size(), origin, origin + projectile.velocity * Distance, 120, ref point))
+                        if (Collision.CheckAABBvLineCollision(Main.player[i].Hitbox.TopLeft(), Main.player[i].Hitbox.Size(), origin, origin + Projectile.velocity * Distance, 120, ref point))
                         {
                             Main.player[i].AddBuff(ModContent.BuffType<Buffs.ThermalRise>(), 220);
                         }
@@ -85,12 +85,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
             }
             
-            if (projectile.ai[0] >= 0)
+            if (Projectile.ai[0] >= 0)
             {
                 //Big beam. Swings towards the player
-                if(projectile.ai[0] >= 2000)
+                if(Projectile.ai[0] >= 2000)
                 {
-                    if (Main.player[(int)projectile.ai[0] - 2000] != null && Main.player[(int)projectile.ai[0] - 2000].active)
+                    if (Main.player[(int)Projectile.ai[0] - 2000] != null && Main.player[(int)Projectile.ai[0] - 2000].active)
                     {
                         LaserName = "Channeled Laser";
                         FiringDuration = 90;
@@ -98,8 +98,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         LaserDust = DustID.OrangeTorch;
                         if (targetPlayer == null)
                         {
-                            targetPlayer = Main.player[(int)projectile.ai[0] - 2000];
-                            target = Main.player[(int)projectile.ai[0] - 2000].Center;
+                            targetPlayer = Main.player[(int)Projectile.ai[0] - 2000];
+                            target = Main.player[(int)Projectile.ai[0] - 2000].Center;
 
 
                         }
@@ -123,16 +123,16 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         target += simulatedVelocity;
 
                         //Update projectile aim to aim at target point
-                        projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+                        Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
                     }
                     else
                     {
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
                 }
 
                 //Little beams that it passively spams
-                else if (projectile.ai[0] >= 1000)
+                else if (Projectile.ai[0] >= 1000)
                 {
                     TileCollide = false;
                     TelegraphTime = 60;
@@ -142,20 +142,20 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
                     if (target == Vector2.Zero)
                     {
-                        target = Main.player[(int)projectile.ai[0] - 1000].Center;
-                        target += Main.player[(int)projectile.ai[0] - 1000].velocity * 48;
+                        target = Main.player[(int)Projectile.ai[0] - 1000].Center;
+                        target += Main.player[(int)Projectile.ai[0] - 1000].velocity * 48;
                     }
                     //Failsafe. If the boss charges too close to the focal point it causes the lasers to go haywire. This turns them off if that happens.
-                    if (projectile.Distance(target) < 400 || projectile.Distance(Main.player[(int)projectile.ai[0] - 1000].Center) < 400)
+                    if (Projectile.Distance(target) < 400 || Projectile.Distance(Main.player[(int)Projectile.ai[0] - 1000].Center) < 400)
                     {
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
-                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
                     
                     //Failsafe 2. If it is firing and the projectile's angle is too close to the "safe angle", don't fire. This stops lasers from sweeping across the safe area as the destroyer moves relative to it.
-                    if ((UsefulFunctions.CompareAngles(projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4 || UsefulFunctions.CompareAngles(-projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4))
+                    if ((UsefulFunctions.CompareAngles(Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4 || UsefulFunctions.CompareAngles(-Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.PiOver4))
                     {
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
                 }
                 //Track the player and aim tangental 300 units next to them. Constrains their movement.
@@ -163,7 +163,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     if (targetPlayer == null)
                     {
-                        targetPlayer = Main.player[(int)projectile.ai[0]];
+                        targetPlayer = Main.player[(int)Projectile.ai[0]];
                         aimLeft = Main.rand.NextBool();
                     }
                     TelegraphTime = 180;
@@ -178,7 +178,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         initialTarget = targetPlayer.Center;
                     }
 
-                    target = UsefulFunctions.GenerateTargetingVector(projectile.Center, initialTarget, 1);
+                    target = UsefulFunctions.GenerateTargetingVector(Projectile.Center, initialTarget, 1);
                     target.Normalize();
                     target *= 300;
 
@@ -192,30 +192,30 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     }
 
                     target += initialTarget;
-                    projectile.velocity = UsefulFunctions.GenerateTargetingVector(projectile.Center, target, 1);
+                    Projectile.velocity = UsefulFunctions.GenerateTargetingVector(Projectile.Center, target, 1);
 
                     //Failsafe. If the boss charges *through* the circle, it causes the lasers to go haywire. This turns them off if that happens.
-                    if (projectile.Distance(target) < 400 || projectile.Distance(targetPlayer.Center) < 400)
+                    if (Projectile.Distance(target) < 400 || Projectile.Distance(targetPlayer.Center) < 400)
                     {
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
                 }
             }
             
             //Projectile stays where it's spawned, and either fires at a point or at a small range around it
-            if (projectile.ai[0] == -1 || projectile.ai[0] == -2 || projectile.ai[0] == -3)
+            if (Projectile.ai[0] == -1 || Projectile.ai[0] == -2 || Projectile.ai[0] == -3)
             {
                 //Make it sit where it spawned
                 FollowHost = false;
                 if (initialPosition == Vector2.Zero)
                 {
-                    initialPosition = projectile.Center;
+                    initialPosition = Projectile.Center;
                 }
 
                 LaserOrigin = initialPosition;
 
                 //Circle of lasers
-                if (projectile.ai[0] == -3)
+                if (Projectile.ai[0] == -3)
                 {
                     TelegraphTime = 120;
                     FiringDuration = 120;
@@ -226,7 +226,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
                     if (FiringTimeLeft > 0)
                     {
-                        projectile.velocity = projectile.velocity.RotatedBy((2f/3f) * MathHelper.Pi / 210f);
+                        Projectile.velocity = Projectile.velocity.RotatedBy((2f/3f) * MathHelper.Pi / 210f);
                     }
 
                     for (int i = 0; i < 5; i++)
@@ -244,7 +244,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         Dust.NewDustPerfect(LaserOrigin + offset, DustID.OrangeTorch, velocity, Scale: 3).noGravity = true;
                     }
                 }
-                if (projectile.ai[0] == -2)
+                if (Projectile.ai[0] == -2)
                 {                    
                     TelegraphTime = 60;
                     FiringDuration = 10;
@@ -254,7 +254,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
 
                 //Square moving array
-                if (projectile.ai[0] == -1)
+                if (Projectile.ai[0] == -1)
                 {                    
                     TelegraphTime = 150;
                     FiringDuration = 120;
@@ -269,7 +269,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     LaserColor = Color.Red * 5;
                 }
 
-                projectile.velocity.Normalize();
+                Projectile.velocity.Normalize();
             }            
 
             base.AI();
@@ -286,9 +286,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            if ((projectile.ai[0] == -3 || projectile.ai[0] == -2 || projectile.ai[0] == -1) && !IsAtMaxCharge)
+            if ((Projectile.ai[0] == -3 || Projectile.ai[0] == -2 || Projectile.ai[0] == -1) && !IsAtMaxCharge)
             {
 
                 Color color;
@@ -306,7 +306,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 for(int i = 0; i < 10; i++)
                 {
                     DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                            projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
+                            Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
                 }
             }
             else
@@ -327,15 +327,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
             float point = 0f;
             Vector2 origin = GetOrigin();
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
-                origin + projectile.velocity * Distance, 22, ref point);
+                origin + Projectile.velocity * Distance, 22, ref point);
         }
 
         public override bool CanHitPlayer(Player target)
         {
 
-            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, projectile.whoAmI).GetDeathText(target.name).ToString();
+            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
             deathMessage = deathMessage.Replace("Laser", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), projectile.damage * 4, 1);
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }

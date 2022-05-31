@@ -15,21 +15,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 10;
-			Main.npcFrameCount[npc.type] = 16;
+			NPC.npcSlots = 10;
+			Main.npcFrameCount[NPC.type] = 16;
 			animationType = 28;
-			npc.aiStyle = 3;
-			npc.height = 40;
-			npc.width = 20;
+			NPC.aiStyle = 3;
+			NPC.height = 40;
+			NPC.width = 20;
 			music = 12;
-			npc.damage = 105;
-			npc.defense = 90;
-			npc.lifeMax = 500000;
-			npc.knockBackResist = 0;
-			npc.boss = true;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 800000;
+			NPC.damage = 105;
+			NPC.defense = 90;
+			NPC.lifeMax = 500000;
+			NPC.knockBackResist = 0;
+			NPC.boss = true;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.value = 800000;
 			bossBag = ModContent.ItemType<Items.BossBags.GwynBag>();
 			despawnHandler = new NPCDespawnHandler("You have fallen before the Lord of Cinder...", Color.OrangeRed, 6);
 		}
@@ -53,8 +53,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 			deathBallDamage = (int)(deathBallDamage / 2);
 			phantomSeekerDamage = (int)(phantomSeekerDamage / 2);
 			armageddonBallDamage = (int)(armageddonBallDamage / 2);
@@ -109,131 +109,131 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				fireBreathDamage = 10000;
 				iceStormDamage = 10000;
 				gravityBallDamage = 10000;
-				npc.damage = 10000;
+				NPC.damage = 10000;
 			}
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
 			int num58;
-			int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Red, 2f);
+			int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Red, 2f);
 			Main.dust[dust].noGravity = true;
 
 			bool flag2 = false;
 			int num5 = 60;
 			bool flag3 = true;
-			if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
+			if (NPC.velocity.Y == 0f && (NPC.velocity.X == 0f && NPC.direction < 0))
 			{
-				npc.velocity.Y -= 8f;
-				npc.velocity.X -= 2f;
+				NPC.velocity.Y -= 8f;
+				NPC.velocity.X -= 2f;
 			}
-			else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
+			else if (NPC.velocity.Y == 0f && (NPC.velocity.X == 0f && NPC.direction > 0))
 			{
-				npc.velocity.Y -= 8f;
-				npc.velocity.X += 2f;
+				NPC.velocity.Y -= 8f;
+				NPC.velocity.X += 2f;
 			}
-			if (npc.velocity.Y == 0f && ((npc.velocity.X > 0f && npc.direction < 0) || (npc.velocity.X < 0f && npc.direction > 0)))
+			if (NPC.velocity.Y == 0f && ((NPC.velocity.X > 0f && NPC.direction < 0) || (NPC.velocity.X < 0f && NPC.direction > 0)))
 			{
 				flag2 = true;
 			}
-			if (npc.position.X == npc.oldPosition.X || npc.ai[3] >= (float)num5 || flag2)
+			if (NPC.position.X == NPC.oldPosition.X || NPC.ai[3] >= (float)num5 || flag2)
 			{
-				npc.ai[3] += 1f;
+				NPC.ai[3] += 1f;
 			}
 			else
 			{
-				if ((double)Math.Abs(npc.velocity.X) > 0.9 && npc.ai[3] > 0f)
+				if ((double)Math.Abs(NPC.velocity.X) > 0.9 && NPC.ai[3] > 0f)
 				{
-					npc.ai[3] -= 1f;
+					NPC.ai[3] -= 1f;
 				}
 			}
-			if (npc.ai[3] > (float)(num5 * 10))
+			if (NPC.ai[3] > (float)(num5 * 10))
 			{
-				npc.ai[3] = 0f;
+				NPC.ai[3] = 0f;
 			}
-			if (npc.justHit)
+			if (NPC.justHit)
 			{
-				npc.ai[3] = 0f;
+				NPC.ai[3] = 0f;
 			}
-			if (npc.ai[3] == (float)num5)
+			if (NPC.ai[3] == (float)num5)
 			{
-				npc.netUpdate = true;
+				NPC.netUpdate = true;
 			}
-			if ((!Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0 || npc.type == 26 || npc.type == 27 || npc.type == 28 || npc.type == 31 || npc.type == 47 || npc.type == 67 || npc.type == 73 || npc.type == 77 || npc.type == 78 || npc.type == 79 || npc.type == 80 || npc.type == 110 || npc.type == 111 || npc.type == 120) && npc.ai[3] < (float)num5)
+			if ((!Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0 || NPC.type == 26 || NPC.type == 27 || NPC.type == 28 || NPC.type == 31 || NPC.type == 47 || NPC.type == 67 || NPC.type == 73 || NPC.type == 77 || NPC.type == 78 || NPC.type == 79 || NPC.type == 80 || NPC.type == 110 || NPC.type == 111 || NPC.type == 120) && NPC.ai[3] < (float)num5)
 			{
-				if ((npc.type == 3 || npc.type == 21 || npc.type == 31 || npc.type == 77 || npc.type == 110 || npc.type == 132) && Main.rand.Next(1000) == 0)
+				if ((NPC.type == 3 || NPC.type == 21 || NPC.type == 31 || NPC.type == 77 || NPC.type == 110 || NPC.type == 132) && Main.rand.Next(1000) == 0)
 				{
-					Main.PlaySound(14, (int)npc.position.X, (int)npc.position.Y, 1);
+					Main.PlaySound(14, (int)NPC.position.X, (int)NPC.position.Y, 1);
 				}
-				if ((npc.type == 78 || npc.type == 79 || npc.type == 80) && Main.rand.Next(500) == 0)
+				if ((NPC.type == 78 || NPC.type == 79 || NPC.type == 80) && Main.rand.Next(500) == 0)
 				{
-					Main.PlaySound(26, (int)npc.position.X, (int)npc.position.Y, 1);
+					Main.PlaySound(26, (int)NPC.position.X, (int)NPC.position.Y, 1);
 				}
 			}
 			else
 			{
-				if (npc.velocity.X == 0f)
+				if (NPC.velocity.X == 0f)
 				{
-					if (npc.velocity.Y == 0f)
+					if (NPC.velocity.Y == 0f)
 					{
-						npc.ai[0] += 1f;
-						if (npc.ai[0] >= 2f)
+						NPC.ai[0] += 1f;
+						if (NPC.ai[0] >= 2f)
 						{
-							npc.direction *= -1;
-							npc.spriteDirection = npc.direction;
-							npc.ai[0] = 0f;
+							NPC.direction *= -1;
+							NPC.spriteDirection = NPC.direction;
+							NPC.ai[0] = 0f;
 						}
 					}
 				}
 				else
 				{
-					npc.ai[0] = 0f;
+					NPC.ai[0] = 0f;
 				}
-				if (npc.direction == 0)
+				if (NPC.direction == 0)
 				{
-					npc.direction = 1;
+					NPC.direction = 1;
 				}
 			}
-			if (npc.velocity.X < -1.5f || npc.velocity.X > 1.5f)
+			if (NPC.velocity.X < -1.5f || NPC.velocity.X > 1.5f)
 			{
-				if (npc.velocity.Y == 0f)
+				if (NPC.velocity.Y == 0f)
 				{
-					npc.velocity *= 0.8f;
+					NPC.velocity *= 0.8f;
 				}
 			}
 			else
 			{
-				if (npc.velocity.X < 1.5f && npc.direction == 1)
+				if (NPC.velocity.X < 1.5f && NPC.direction == 1)
 				{
-					npc.velocity.X = npc.velocity.X + 0.07f;
-					if (npc.velocity.X > 1.5f)
+					NPC.velocity.X = NPC.velocity.X + 0.07f;
+					if (NPC.velocity.X > 1.5f)
 					{
-						npc.velocity.X = 1.5f;
+						NPC.velocity.X = 1.5f;
 					}
 				}
 				else
 				{
-					if (npc.velocity.X > -1.5f && npc.direction == -1)
+					if (NPC.velocity.X > -1.5f && NPC.direction == -1)
 					{
-						npc.velocity.X = npc.velocity.X - 0.07f;
-						if (npc.velocity.X < -1.5f)
+						NPC.velocity.X = NPC.velocity.X - 0.07f;
+						if (NPC.velocity.X < -1.5f)
 						{
-							npc.velocity.X = -1.5f;
+							NPC.velocity.X = -1.5f;
 						}
 					}
 				}
 			}
 			bool flag4 = false;
-			if (npc.velocity.Y == 0f)
+			if (NPC.velocity.Y == 0f)
 			{
-				int num29 = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-				int num30 = (int)npc.position.X / 16;
-				int num31 = (int)(npc.position.X + (float)npc.width) / 16;
+				int num29 = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
+				int num30 = (int)NPC.position.X / 16;
+				int num31 = (int)(NPC.position.X + (float)NPC.width) / 16;
 				for (int l = num30; l <= num31; l++)
 				{
 					if (Main.tile[l, num29] == null)
 					{
 						return;
 					}
-					if (Main.tile[l, num29].active() && Main.tileSolid[(int)Main.tile[l, num29].type])
+					if (Main.tile[l, num29].HasTile && Main.tileSolid[(int)Main.tile[l, num29].TileType])
 					{
 						flag4 = true;
 						break;
@@ -242,11 +242,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			}
 			if (flag4)
 			{
-				int num32 = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f);
-				int num33 = (int)((npc.position.Y + (float)npc.height - 15f) / 16f);
-				if (npc.type == 109)
+				int num32 = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f);
+				int num33 = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f);
+				if (NPC.type == 109)
 				{
-					num32 = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f);
+					num32 = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f);
 				}
 				if (Main.tile[num32, num33] == null)
 				{
@@ -268,33 +268,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					Main.tile[num32, num33 + 1] = new Tile();
 				}
-				if (Main.tile[num32 + npc.direction, num33 - 1] == null)
+				if (Main.tile[num32 + NPC.direction, num33 - 1] == null)
 				{
-					Main.tile[num32 + npc.direction, num33 - 1] = new Tile();
+					Main.tile[num32 + NPC.direction, num33 - 1] = new Tile();
 				}
-				if (Main.tile[num32 + npc.direction, num33 + 1] == null)
+				if (Main.tile[num32 + NPC.direction, num33 + 1] == null)
 				{
-					Main.tile[num32 + npc.direction, num33 + 1] = new Tile();
+					Main.tile[num32 + NPC.direction, num33 + 1] = new Tile();
 				}
-				if (Main.tile[num32, num33 - 1].active() && Main.tile[num32, num33 - 1].type == 10 && flag3)
+				if (Main.tile[num32, num33 - 1].HasTile && Main.tile[num32, num33 - 1].TileType == 10 && flag3)
 				{
-					npc.ai[2] += 1f;
-					npc.ai[3] = 0f;
-					if (npc.ai[2] >= 60f)
+					NPC.ai[2] += 1f;
+					NPC.ai[3] = 0f;
+					if (NPC.ai[2] >= 60f)
 					{
-						npc.velocity.X = 0.5f * (float)(-(float)npc.direction);
-						npc.ai[1] += 1f;
-						npc.ai[2] = 0f;
+						NPC.velocity.X = 0.5f * (float)(-(float)NPC.direction);
+						NPC.ai[1] += 1f;
+						NPC.ai[2] = 0f;
 						bool flag5 = false;
-						if (npc.ai[1] >= 10f)
+						if (NPC.ai[1] >= 10f)
 						{
 							flag5 = true;
-							npc.ai[1] = 10f;
+							NPC.ai[1] = 10f;
 						}
 						WorldGen.KillTile(num32, num33 - 1, true, false, false);
 						if ((Main.netMode != 1 || !flag5) && flag5 && Main.netMode != 1)
 						{
-							if (npc.type == 26)
+							if (NPC.type == 26)
 							{
 								WorldGen.KillTile(num32, num33 - 1, false, false, false);
 								if (Main.netMode == 2)
@@ -304,15 +304,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							}
 							else
 							{
-								bool flag6 = WorldGen.OpenDoor(num32, num33, npc.direction);
+								bool flag6 = WorldGen.OpenDoor(num32, num33, NPC.direction);
 								if (!flag6)
 								{
-									npc.ai[3] = (float)num5;
-									npc.netUpdate = true;
+									NPC.ai[3] = (float)num5;
+									NPC.netUpdate = true;
 								}
 								if (Main.netMode == 2 && flag6)
 								{
-									NetMessage.SendData(19, -1, -1, null, 0, (float)num32, (float)num33, (float)npc.direction, 0);
+									NetMessage.SendData(19, -1, -1, null, 0, (float)num32, (float)num33, (float)NPC.direction, 0);
 								}
 							}
 						}
@@ -320,49 +320,49 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 				else
 				{
-					if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
+					if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
 					{
-						if (Main.tile[num32, num33 - 2].active() && Main.tileSolid[(int)Main.tile[num32, num33 - 2].type])
+						if (Main.tile[num32, num33 - 2].HasTile && Main.tileSolid[(int)Main.tile[num32, num33 - 2].TileType])
 						{
-							if (Main.tile[num32, num33 - 3].active() && Main.tileSolid[(int)Main.tile[num32, num33 - 3].type])
+							if (Main.tile[num32, num33 - 3].HasTile && Main.tileSolid[(int)Main.tile[num32, num33 - 3].TileType])
 							{
-								npc.velocity.Y = -8f;
-								npc.netUpdate = true;
+								NPC.velocity.Y = -8f;
+								NPC.netUpdate = true;
 							}
 							else
 							{
-								npc.velocity.Y = -7f;
-								npc.netUpdate = true;
+								NPC.velocity.Y = -7f;
+								NPC.netUpdate = true;
 							}
 						}
 						else
 						{
-							if (Main.tile[num32, num33 - 1].active() && Main.tileSolid[(int)Main.tile[num32, num33 - 1].type])
+							if (Main.tile[num32, num33 - 1].HasTile && Main.tileSolid[(int)Main.tile[num32, num33 - 1].TileType])
 							{
-								npc.velocity.Y = -6f;
-								npc.netUpdate = true;
+								NPC.velocity.Y = -6f;
+								NPC.netUpdate = true;
 							}
 							else
 							{
-								if (Main.tile[num32, num33].active() && Main.tileSolid[(int)Main.tile[num32, num33].type])
+								if (Main.tile[num32, num33].HasTile && Main.tileSolid[(int)Main.tile[num32, num33].TileType])
 								{
-									npc.velocity.Y = -5f;
-									npc.netUpdate = true;
+									NPC.velocity.Y = -5f;
+									NPC.netUpdate = true;
 								}
 								else
 								{
-									if (npc.directionY < 0 && npc.type != 67 && (!Main.tile[num32, num33 + 1].active() || !Main.tileSolid[(int)Main.tile[num32, num33 + 1].type]) && (!Main.tile[num32 + npc.direction, num33 + 1].active() || !Main.tileSolid[(int)Main.tile[num32 + npc.direction, num33 + 1].type]))
+									if (NPC.directionY < 0 && NPC.type != 67 && (!Main.tile[num32, num33 + 1].HasTile || !Main.tileSolid[(int)Main.tile[num32, num33 + 1].TileType]) && (!Main.tile[num32 + NPC.direction, num33 + 1].HasTile || !Main.tileSolid[(int)Main.tile[num32 + NPC.direction, num33 + 1].TileType]))
 									{
-										npc.velocity.Y = -8f;
-										npc.velocity.X = npc.velocity.X * 1.5f;
-										npc.netUpdate = true;
+										NPC.velocity.Y = -8f;
+										NPC.velocity.X = NPC.velocity.X * 1.5f;
+										NPC.netUpdate = true;
 									}
 									else
 									{
 										if (flag3)
 										{
-											npc.ai[1] = 0f;
-											npc.ai[2] = 0f;
+											NPC.ai[1] = 0f;
+											NPC.ai[2] = 0f;
 										}
 									}
 								}
@@ -375,8 +375,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			{
 				if (flag3)
 				{
-					npc.ai[1] = 0f;
-					npc.ai[2] = 0f;
+					NPC.ai[1] = 0f;
+					NPC.ai[2] = 0f;
 				}
 			}
 			#endregion
@@ -388,22 +388,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				if (Main.rand.Next(80) == 1)
 				{
 					chargeDamageFlag = true;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-					npc.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
-					npc.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
-					npc.ai[1] = 1f;
-					npc.netUpdate = true;
+					Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+					NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
+					NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
+					NPC.ai[1] = 1f;
+					NPC.netUpdate = true;
 				}
 				if (chargeDamageFlag == true)
 				{
-					npc.damage = 150;
+					NPC.damage = 150;
 					chargeDamage++;
 				}
 				if (chargeDamage >= 106)
 				{
 					chargeDamageFlag = false;
-					npc.damage = 105;
+					NPC.damage = 105;
 					chargeDamage = 0;
 				}
 
@@ -413,15 +413,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			#region Projectiles
 			if (Main.netMode != 1)
 			{
-				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+				customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
 				if (customAi1 >= 10f)
 				{
 					if ((customspawn1 < 16) && Main.rand.Next(200) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Hellbat, 0);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Hellbat, 0);
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-						npc.ai[0] = 20 - Main.rand.Next(80);
+						NPC.ai[0] = 20 - Main.rand.Next(80);
 						customspawn1 += 1f;
 						if (Main.netMode == 2)
 						{
@@ -430,10 +430,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					}
 					if ((customspawn2 < 5) && Main.rand.Next(350) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.BlackKnight>(), 0);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.BlackKnight>(), 0);
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-						npc.ai[0] = 20 - Main.rand.Next(80);
+						NPC.ai[0] = 20 - Main.rand.Next(80);
 						customspawn2 += 1f;
 						if (Main.netMode == 2)
 						{
@@ -443,10 +443,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 					if ((customspawn3 < 1) && Main.rand.Next(550) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<SwordOfLordGwyn>(), 0);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SwordOfLordGwyn>(), 0);
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-						npc.ai[0] = 20 - Main.rand.Next(80);
+						NPC.ai[0] = 20 - Main.rand.Next(80);
 						customspawn3 += 1f;
 						if (Main.netMode == 2)
 						{
@@ -457,10 +457,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					if (Main.rand.Next(100) == 1)
 					{
 						float num48 = 10f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -470,33 +470,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(200) == 1)
 					{
-						num58 = Projectile.NewProjectile(this.npc.position.X + 20, this.npc.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
+						num58 = Projectile.NewProjectile(this.NPC.position.X + 20, this.NPC.position.Y + 50, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), ModContent.ProjectileType<Projectiles.Enemy.BurningPhantomSeeker>(), phantomSeekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num58].timeLeft = 460;
 						Main.projectile[num58].rotation = Main.rand.Next(700) / 100f;
-						Main.projectile[num58].ai[0] = this.npc.target;
+						Main.projectile[num58].ai[0] = this.NPC.target;
 
 
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						customAi1 = 1f;
 
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(900) == 1)
 					{
 						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -506,29 +506,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, armageddonBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 0;
 							Main.projectile[num54].aiStyle = -1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(220) == 1)
 					{
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-						npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
-						npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
-						npc.ai[1] = 1f;
-						npc.netUpdate = true;
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+						NPC.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
+						NPC.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
+						NPC.ai[1] = 1f;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(250) == 1)
 					{
 						float num48 = 18f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 100 + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 100 + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -538,24 +538,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 115;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							NPC.ai[1] = 1f;
 
 
 
 
 
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(500) == 1)
 					{
 						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -565,19 +565,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 100;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(150) == 1)
 					{
 						float num48 = 15f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -587,19 +587,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireballBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 90;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(150) == 1)
 					{
 						float num48 = 15f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -609,19 +609,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireballBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 90;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(60) == 1)
 					{
 						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -631,19 +631,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blazeBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 0;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							NPC.ai[1] = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(200) == 1)
 					{
 						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -653,19 +653,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, blackBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 10;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(400) == 1)
 					{
 						float num48 = 13f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 1000 + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1000 + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -675,19 +675,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, purpleCrushDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 600;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(26) == 1)
 					{
 						float num48 = 14f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 400 + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 400 + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -697,19 +697,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 3000;
 							Main.projectile[num54].aiStyle = 23; //was 23
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(66) == 1) //might remove
 					{
 						float num48 = 14f;
-						Vector2 vector8 = new Vector2(npc.position.X - 1800 + (npc.width * 0.5f), npc.position.Y - 600 + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X - 1800 + (NPC.width * 0.5f), NPC.position.Y - 600 + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -719,19 +719,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 200;
 							Main.projectile[num54].aiStyle = 23; //was 23
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(66) == 1) // might remove
 					{
 						float num48 = 14f;
-						Vector2 vector8 = new Vector2(npc.position.X + 1800 + (npc.width * 0.5f), npc.position.Y - 600 + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + 1800 + (NPC.width * 0.5f), NPC.position.Y - 600 + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -741,19 +741,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 200;
 							Main.projectile[num54].aiStyle = 23; //was 23
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(250) == 1)
 					{
 						float num48 = 8f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -763,10 +763,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 0;//was 70
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-							npc.ai[1] = 1f;
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+							NPC.ai[1] = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 
@@ -774,10 +774,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					if (Main.rand.Next(305) == 1)
 					{
 						float num48 = 7f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -787,19 +787,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, fireBreathDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 1900;
 							Main.projectile[num54].aiStyle = 23;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 
 					if (Main.rand.Next(800) == 1)
 					{
 						float num48 = 12f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -809,10 +809,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 60;
 							Main.projectile[num54].aiStyle = 1;
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 				}
 
@@ -820,23 +820,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			}
 			#endregion
 			#region Phase Through Walls
-			if ((Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)))
+			if ((Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
 			{
-				npc.noTileCollide = false;
-				npc.noGravity = false;
+				NPC.noTileCollide = false;
+				NPC.noGravity = false;
 			}
-			if ((!Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height)))
+			if ((!Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height)))
 			{
-				npc.noTileCollide = true;
-				npc.noGravity = true;
-				npc.velocity.Y = 0f;
-				if (npc.position.Y > Main.player[npc.target].position.Y)
+				NPC.noTileCollide = true;
+				NPC.noGravity = true;
+				NPC.velocity.Y = 0f;
+				if (NPC.position.Y > Main.player[NPC.target].position.Y)
 				{
-					npc.velocity.Y -= 3f;
+					NPC.velocity.Y -= 3f;
 				}
-				if (npc.position.Y < Main.player[npc.target].position.Y)
+				if (NPC.position.Y < Main.player[NPC.target].position.Y)
 				{
-					npc.velocity.Y += 8f;
+					NPC.velocity.Y += 8f;
 				}
 			}
 			#endregion
@@ -869,24 +869,24 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		}
 
 		#region Gore
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 1"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
 
 			if (Main.expertMode)
 			{
-				npc.DropBossBags();
+				NPC.DropBossBags();
 			}
 			else
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DraxEX>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Epilogue>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.EssenceOfTerraria>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DraxEX>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Epilogue>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.EssenceOfTerraria>());
 			}
 
 			tsorcRevampWorld.InitiateTheEnd();

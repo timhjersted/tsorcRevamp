@@ -11,7 +11,7 @@ namespace tsorcRevamp.Buffs {
         }
 
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Crimson Burn");
             Description.SetDefault("Your flesh is burning");
         }

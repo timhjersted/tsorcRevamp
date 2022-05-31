@@ -9,18 +9,18 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("A contract for a dwarf guard.\n" + "Will summon a dwarf to guard a piece of property.");
         }
         public override void SetDefaults() {
-            item.width = 18;
-            item.height = 18;
-            item.consumable = true;
-            item.maxStack = 1;
-            item.value = 10000;
-            item.rare = ItemRarityID.Pink;
-            item.useTime = 5;
-            item.useAnimation = 5;
-            item.scale = 1f;
-            item.useStyle = ItemUseStyleID.HoldingUp;
+            Item.width = 18;
+            Item.height = 18;
+            Item.consumable = true;
+            Item.maxStack = 1;
+            Item.value = 10000;
+            Item.rare = ItemRarityID.Pink;
+            Item.useTime = 5;
+            Item.useAnimation = 5;
+            Item.scale = 1f;
+            Item.useStyle = ItemUseStyleID.HoldUp;
         }
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             NPC.SpawnOnPlayer(Main.myPlayer, ModContent.NPCType<NPCs.Friendly.DwarvenGuard>());
             return true;
         }

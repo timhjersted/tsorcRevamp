@@ -124,7 +124,7 @@ namespace tsorcRevamp.UI
 						reforgeItem = reforgeItem.CloneWithModdedDataFrom(_vanillaItemSlot.Item);
 						// This is the main effect of this slot. Giving the Blessed prefix 100% of the time. All for a constant 1 gold. Useless, but informative.
 
-						reforgeItem.Prefix(ModContent.GetInstance<tsorcRevamp>().PrefixType("Blessed"));
+						reforgeItem.Prefix(ModContent.GetInstance<tsorcRevamp>().Find<ModPrefix>("Blessed").Type);
 
 						_vanillaItemSlot.Item = reforgeItem.Clone();
 						_vanillaItemSlot.Item.position.X = Main.LocalPlayer.position.X + (float)(Main.LocalPlayer.width / 2) - (float)(_vanillaItemSlot.Item.width / 2);

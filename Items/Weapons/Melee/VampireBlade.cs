@@ -10,25 +10,25 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Tooltip.SetDefault("Heals the player when dealing damage to enemies");
         }
         public override void SetDefaults() {
-            item.width = 40;
-            item.height = 40;
-            item.autoReuse = true;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 27;
-            item.useTime = 23;
-            item.damage = 42;
-            item.knockBack = 2;
-            item.scale = 1.1f;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.LightRed;
-            item.value = PriceByRarity.LightRed_4;
-            item.melee = true;
+            Item.width = 40;
+            Item.height = 40;
+            Item.autoReuse = true;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 27;
+            Item.useTime = 23;
+            Item.damage = 42;
+            Item.knockBack = 2;
+            Item.scale = 1.1f;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.LightRed;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.melee = true;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.AdamantiteBar, 25);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

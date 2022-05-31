@@ -10,37 +10,37 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetDefaults()
         {
-			npc.HitSound = SoundID.NPCHit29;
-			npc.DeathSound = SoundID.NPCDeath29;
-			npc.damage = 30;
-            npc.lifeMax = 25;
-            npc.defense = 12;
-			npc.value = 250;
-			npc.width = 18;
-			npc.aiStyle = -1;
-			npc.height = 40;
-			npc.knockBackResist = 0.1f;
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
-			banner = npc.type;
+			NPC.HitSound = SoundID.NPCHit29;
+			NPC.DeathSound = SoundID.NPCDeath29;
+			NPC.damage = 30;
+            NPC.lifeMax = 25;
+            NPC.defense = 12;
+			NPC.value = 250;
+			NPC.width = 18;
+			NPC.aiStyle = -1;
+			NPC.height = 40;
+			NPC.knockBackResist = 0.1f;
+			NPC.buffImmune[BuffID.Poisoned] = true;
+			NPC.buffImmune[BuffID.OnFire] = true;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.DworcFleshhunterBanner>();
 
 			animationType = NPCID.Skeleton;
-            Main.npcFrameCount[npc.type] = 15;
+            Main.npcFrameCount[NPC.type] = 15;
         }
 
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			if (Main.rand.Next(100) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>(), 1, false, -1);
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.RegenerationPotion);
-			if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ItemID.ShinePotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.SpelunkerPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.SwiftnessPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.WaterWalkingPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ItemID.BattlePotion);
+			if (Main.rand.Next(100) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>(), 1, false, -1);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion);
+			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.getRect(), ItemID.ShinePotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.SpelunkerPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.SwiftnessPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.WaterWalkingPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.BattlePotion);
 		}
 		
 		//Spawns in the Jungle, mostly Underground and in the Cavern.
@@ -50,19 +50,19 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			float chance = 0f;
 
-			if (spawnInfo.player.ZoneDungeon)
+			if (spawnInfo.Player.ZoneDungeon)
 			{
 				return 0f;
 			}
-			else if (!Main.hardMode && spawnInfo.player.ZoneJungle && spawnInfo.player.ZoneOverworldHeight)
+			else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneOverworldHeight)
 			{
 				return 0.125f;
 			}
-			else if (Main.dayTime && !Main.hardMode && spawnInfo.player.ZoneJungle && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight))
+			else if (Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
 			{
 				return 0.17f;
 			}
-			else if (!Main.dayTime && !Main.hardMode && spawnInfo.player.ZoneJungle && (spawnInfo.player.ZoneDirtLayerHeight || spawnInfo.player.ZoneRockLayerHeight))
+			else if (!Main.dayTime && !Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
 			{
 				return 0.2f;
 			}
@@ -74,8 +74,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 3.2f, 0.1f);
-			tsorcRevampAIs.LeapAtPlayer(npc, 2, 5, 0.01f, 64);			
+			tsorcRevampAIs.FighterAI(NPC, 3.2f, 0.1f);
+			tsorcRevampAIs.LeapAtPlayer(NPC, 2, 5, 0.01f, 64);			
 		}
 
 		#region Gore
@@ -84,25 +84,25 @@ namespace tsorcRevamp.NPCs.Enemies
 			for (int i = 0; i < 5; i++)
 			{
 				int dustType = 5;
-				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+				int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
 				Dust dust = Main.dust[dustIndex];
 				dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.06f;
 				dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.06f;
 				dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
 				dust.noGravity = true;
 			}
-			if (npc.life <= 0)
+			if (NPC.life <= 0)
 			{
 				for (int i = 0; i < 25; i++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
 				}
 
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 1"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 1"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 2"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dworc Gore 3"), 1f);
 			}
 		}
 		#endregion

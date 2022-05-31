@@ -15,14 +15,14 @@ namespace tsorcRevamp.Items.BossItems {
 
         }
         public override void SetDefaults() {
-            item.width = 12;
-            item.height = 12;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 5;
-            item.useTime = 5;
+            Item.width = 12;
+            Item.height = 12;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 5;
+            Item.useTime = 5;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
 
             if (Main.netMode == NetmodeID.SinglePlayer)
@@ -67,9 +67,9 @@ namespace tsorcRevamp.Items.BossItems {
             }
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Bone, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

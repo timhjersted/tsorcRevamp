@@ -5,22 +5,22 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ShadowSickle : ModItem {
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Blue;
-            item.damage = 16;
-            item.width = 32;
-            item.height = 32;
-            item.knockBack = 5;
-            item.melee = true;
-            item.scale = 1.1f;
-            item.useAnimation = 18;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = 13500;
+            Item.rare = ItemRarityID.Blue;
+            Item.damage = 16;
+            Item.width = 32;
+            Item.height = 32;
+            Item.knockBack = 5;
+            Item.melee = true;
+            Item.scale = 1.1f;
+            Item.useAnimation = 18;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = 13500;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.DemoniteBar, 10);
             recipe.AddIngredient(ItemID.ShadowScale, 6);
             recipe.AddTile(TileID.Anvils);

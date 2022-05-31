@@ -9,31 +9,31 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.width = 48;
-            item.height = 72;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.damage = 140;
-            item.knockBack = 9;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Red;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Red_10;
-            item.melee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
-            item.shootSpeed = 13f;
+            Item.width = 48;
+            Item.height = 72;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.damage = 140;
+            Item.knockBack = 9;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Red;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Red_10;
+            Item.melee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
+            Item.shootSpeed = 13f;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             //recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(mod.GetItem("Murassame"), 1);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("BlueTitanite"), 10);
-            recipe.AddIngredient(mod.GetItem("GhostWyvernSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 250000);
+            recipe.AddIngredient(Mod.GetItem("Murassame"), 1);
+            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 10);
+            recipe.AddIngredient(Mod.GetItem("GhostWyvernSoul"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 250000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

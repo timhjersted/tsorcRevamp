@@ -16,21 +16,21 @@ namespace tsorcRevamp.Items.Weapons.Melee
         }
         public override void SetDefaults()
         {
-            item.damage = 36;
-            item.melee = true;
-            item.width = 44;
-            item.height = 44;
-            item.useTime = 17;
-            item.useAnimation = 17;
-            item.useStyle = ItemUseStyleID.Stabbing;
-            item.knockBack = 3.5f;
-            item.value = 25000;
-            item.rare = ItemRarityID.Orange;
-            item.scale = .9f;
-            item.autoReuse = true;
-            item.useTurn = false;
-            item.shoot = 0;
-            item.UseSound = SoundID.Item7;
+            Item.damage = 36;
+            Item.melee = true;
+            Item.width = 44;
+            Item.height = 44;
+            Item.useTime = 17;
+            Item.useAnimation = 17;
+            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.knockBack = 3.5f;
+            Item.value = 25000;
+            Item.rare = ItemRarityID.Orange;
+            Item.scale = .9f;
+            Item.autoReuse = true;
+            Item.useTurn = false;
+            Item.shoot = 0;
+            Item.UseSound = SoundID.Item7;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -42,29 +42,29 @@ namespace tsorcRevamp.Items.Weapons.Melee
             if (player.altFunctionUse == 2)
             {
 
-                item.useStyle = 1;
-                item.shoot = ModContent.ProjectileType<Projectiles.Briar>();
-                item.shootSpeed = 8.5f;
-                item.useTime = 34;
-                item.useAnimation = 34;
-                item.UseSound = SoundID.Item1;
+                Item.useStyle = 1;
+                Item.shoot = ModContent.ProjectileType<Projectiles.Briar>();
+                Item.shootSpeed = 8.5f;
+                Item.useTime = 34;
+                Item.useAnimation = 34;
+                Item.UseSound = SoundID.Item1;
 
             }
 
             else
             {
-                item.useStyle = 3;
-                item.shoot = 0;
-                item.useTime = 17;
-                item.useAnimation = 17;
-                item.useTurn = false;
-                item.UseSound = SoundID.Item7;
+                Item.useStyle = 3;
+                Item.shoot = 0;
+                Item.useTime = 17;
+                Item.useAnimation = 17;
+                Item.useTurn = false;
+                Item.UseSound = SoundID.Item7;
             }
 
             return base.CanUseItem(player);
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             //damage = (int)(damage * .85f);
             float numberProjectiles = 3; //Main.rand.Next(3); // 3, 4, or 5 shots
@@ -107,7 +107,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             }
             if (baseTexture == null || baseTexture.IsDisposed)
             {
-                baseTexture = Main.itemTexture[item.type];
+                baseTexture = Main.itemTexture[Item.type];
             }
 
             spriteBatch.Draw(baseTexture, position, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), drawColor, 0f, origin, scale, SpriteEffects.None, 0.1f);
@@ -123,18 +123,18 @@ namespace tsorcRevamp.Items.Weapons.Melee
             }
             if (baseTexture == null || baseTexture.IsDisposed)
             {
-                baseTexture = Main.itemTexture[item.type];
+                baseTexture = Main.itemTexture[Item.type];
             }
 
-            spriteBatch.Draw(baseTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
-            spriteBatch.Draw(glowTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(baseTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(glowTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);
 
             return false;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.YellowTail>());
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);

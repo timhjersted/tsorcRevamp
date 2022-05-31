@@ -11,26 +11,26 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 	{
 		public override void SetDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 1;
+			Main.npcFrameCount[NPC.type] = 1;
 			animationType = 10;
-			npc.netAlways = true;
-			npc.npcSlots = 3;
-			npc.width = 40;
-			npc.height = 40;
-			npc.boss = true;
-			npc.aiStyle = 6;
-			npc.defense = 20;
-			npc.timeLeft = 22500;
-			npc.damage = 310;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lifeMax = 120000;
-			npc.knockBackResist = 0;
-			npc.lavaImmune = true;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.behindTiles = true;
-			npc.value = 40000;
+			NPC.netAlways = true;
+			NPC.npcSlots = 3;
+			NPC.width = 40;
+			NPC.height = 40;
+			NPC.boss = true;
+			NPC.aiStyle = 6;
+			NPC.defense = 20;
+			NPC.timeLeft = 22500;
+			NPC.damage = 310;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath5;
+			NPC.lifeMax = 120000;
+			NPC.knockBackResist = 0;
+			NPC.lavaImmune = true;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.behindTiles = true;
+			NPC.value = 40000;
 			despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
 			drawOffsetY = 15;
 			
@@ -51,16 +51,16 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.damage = (int)(npc.damage * 1.3 / 2);
-			npc.defense = npc.defense += 12;
+			NPC.damage = (int)(NPC.damage * 1.3 / 2);
+			NPC.defense = NPC.defense += 12;
 		}
 
 		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<LichKingSerpentHead>(), bodyTypes, ModContent.NPCType<LichKingSerpentTail>(), 45, .8f, 22, 0.25f, false, false, false, true, true);
+			tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<LichKingSerpentHead>(), bodyTypes, ModContent.NPCType<LichKingSerpentTail>(), 45, .8f, 22, 0.25f, false, false, false, true, true);
 		}
 
 		private static int ClosestSegment(NPC head, params int[] segmentIDs)
@@ -87,8 +87,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 		public override bool SpecialNPCLoot()
 		{
-			int closestSegmentID = ClosestSegment(npc, ModContent.NPCType<LichKingSerpentBody>(), ModContent.NPCType<LichKingSerpentTail>());
-			npc.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
+			int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<LichKingSerpentBody>(), ModContent.NPCType<LichKingSerpentTail>());
+			NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 			return false;
 		}
 		public override bool CheckActive()
@@ -99,26 +99,26 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		{
 			potionType = ItemID.SuperHealingPotion;
 		}
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-			if (npc.life <= 0)
+			Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+			if (NPC.life <= 0)
 			{
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Head Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
-				Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Lich King Serpent Tail Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Head Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Body Gore"), 1f);
+				Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Lich King Serpent Tail Gore"), 1f);
 			}
 
-			if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+			if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
 			}
 		}
 	}

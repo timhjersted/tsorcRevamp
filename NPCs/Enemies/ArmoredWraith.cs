@@ -10,41 +10,41 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Armored Wraith");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.Wraith];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.Wraith];
         }
 
         public override void SetDefaults()
         {
-            npc.CloneDefaults(NPCID.Wraith);
+            NPC.CloneDefaults(NPCID.Wraith);
             animationType = NPCID.Wraith;
             aiType = NPCID.CaveBat;
-            npc.lifeMax = 75;
-            npc.damage = 48;
-            npc.scale = 1f;
-            npc.knockBackResist = 0;
-            npc.value = 500;
-            npc.defense = 25;
-            npc.alpha = 100;
-            npc.lavaImmune = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Poisoned] = true;
-            npc.buffImmune[BuffID.CursedInferno] = true;
-            banner = npc.type;
+            NPC.lifeMax = 75;
+            NPC.damage = 48;
+            NPC.scale = 1f;
+            NPC.knockBackResist = 0;
+            NPC.value = 500;
+            NPC.defense = 25;
+            NPC.alpha = 100;
+            NPC.lavaImmune = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.ArmoredWraithBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneOverworldHeight)
+            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight)
             {
                 chance = .04f;
             }
-            if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneDirtLayerHeight)
+            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneDirtLayerHeight)
             {
                 chance = .033f;
             }
-            if (spawnInfo.player.ZoneMeteor && !Main.dayTime && spawnInfo.player.ZoneRockLayerHeight)
+            if (spawnInfo.Player.ZoneMeteor && !Main.dayTime && spawnInfo.Player.ZoneRockLayerHeight)
             {
                 chance = .04f;
             }
@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Enemies
             for (int i = 0; i < 25; i++)
             {
                 int dustType = 109;
-                int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
                 Dust dust = Main.dust[dustIndex];
                 dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.04f;
                 dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.04f;
@@ -73,11 +73,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 dust.noGravity = false;
                 dust.alpha = 120;
             }
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int i = 0; i < 40; i++) // I'm not convinced this is actually working
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 109, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 120, default(Color), .8f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 109, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 120, default(Color), .8f);
                 }
             }
         }

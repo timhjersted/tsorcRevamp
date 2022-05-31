@@ -17,11 +17,11 @@ namespace tsorcRevamp.Items.Armors {
                 "\nLife regen is dispelled if defense is higher than 60.");
         }
         public override void SetDefaults() {
-            item.width = 18;
-            item.height = 12;
-            item.value = 50000;
-            item.rare = ItemRarityID.Orange;
-            item.defense = 5;
+            Item.width = 18;
+            Item.height = 12;
+            Item.value = 50000;
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 5;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Armors {
             }
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<ShadowNinjaMask>());
             recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>());
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 5);

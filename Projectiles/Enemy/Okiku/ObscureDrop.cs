@@ -7,34 +7,34 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Okiku {
     public class ObscureDrop : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 15;
-            projectile.height = 15;
-            projectile.aiStyle = 1;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 300;
+            Projectile.width = 15;
+            Projectile.height = 15;
+            Projectile.aiStyle = 1;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 300;
         }
         public override bool PreKill(int timeLeft) {
-            projectile.type = 44; //killpretendtype
+            Projectile.type = 44; //killpretendtype
             return true;
         }
         public override bool PreAI() {
-            if (projectile.velocity.Y < 0) {
-                projectile.alpha = 50;
+            if (Projectile.velocity.Y < 0) {
+                Projectile.alpha = 50;
                 if (Main.rand.Next(2) == 0) {
-                    int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 62, 0, 0, 200, Color.White, 2.0f);
+                    int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 200, Color.White, 2.0f);
                     Main.dust[dust].noGravity = true;
                 }
             }
             else {
-                projectile.alpha = 10;
+                Projectile.alpha = 10;
                 if (Main.rand.Next(2) == 0) {
-                    int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
+                    int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
                     Main.dust[dust].noGravity = true;
                 }
             }
 
-            if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;           
+            if (Projectile.velocity.Y < 10) Projectile.velocity.Y += 0.1f;           
 
             return true;
         }
@@ -53,25 +53,25 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
         //This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
         static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureDrop");
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (texture == null || texture.IsDisposed)
             {
                 texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Enemy/Okiku/ObscureDrop");
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (projectile.spriteDirection == -1)
+            if (Projectile.spriteDirection == -1)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-            int startY = frameHeight * projectile.frame;
+            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.spriteBatch.Draw(texture,
-                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+            Main.Main.EntitySpriteDraw(texture,
+                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
 
             return false;
         }

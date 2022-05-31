@@ -15,35 +15,35 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            projectile.aiStyle = 1;
-            projectile.width = 16;
-            projectile.height = 16;
+            Projectile.aiStyle = 1;
+            Projectile.width = 16;
+            Projectile.height = 16;
             //projectile.noGravity = true;
-            projectile.hostile = true;
-            projectile.light = 1;
-            projectile.magic = true;
-            projectile.penetrate = 1;
-            projectile.tileCollide = false;
+            Projectile.hostile = true;
+            Projectile.light = 1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = 1;
+            Projectile.tileCollide = false;
         }
 
        
         #region Kill
         public override void Kill(int timeLeft)
         {            
-            Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
+            Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * (Main.rand.Next(50))), projectile.position.Y + (float)(projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), projectile.damage, 5f, projectile.owner);
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * (Main.rand.Next(50))), projectile.position.Y + (float)(projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), projectile.damage, 5f, projectile.owner);
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * (Main.rand.Next(50))), projectile.position.Y + (float)(projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), projectile.damage, 5f, projectile.owner);
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * (Main.rand.Next(50))), projectile.position.Y + (float)(projectile.height * (Main.rand.Next(60))), (Main.rand.Next(30)), (Main.rand.Next(30)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), projectile.damage, 5f, projectile.owner);
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * (Main.rand.Next(50))), projectile.position.Y + (float)(projectile.height * (Main.rand.Next(60))), (Main.rand.Next(30)), (Main.rand.Next(30)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), projectile.damage, 5f, projectile.owner);
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * (Main.rand.Next(50))), projectile.position.Y + (float)(projectile.height * (Main.rand.Next(60))), (Main.rand.Next(30)), (Main.rand.Next(30)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), projectile.damage, 5f, projectile.owner);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), ((Main.rand.Next(30)) * -1), ((Main.rand.Next(30)) * -1), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), (Main.rand.Next(30)), (Main.rand.Next(30)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), (Main.rand.Next(30)), (Main.rand.Next(30)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * (Main.rand.Next(50))), Projectile.position.Y + (float)(Projectile.height * (Main.rand.Next(60))), (Main.rand.Next(30)), (Main.rand.Next(30)), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlaze>(), Projectile.damage, 5f, Projectile.owner);
 
-            Dust.NewDustDirect(new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y), projectile.width, projectile.height, 15, 0, 0, 100, default, 2f).noGravity = true;
-            Dust.NewDustDirect(new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y), projectile.width, projectile.height, 15, 0, 0, 100, default, 1f).noGravity = true;
+            Dust.NewDustDirect(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f).noGravity = true;
+            Dust.NewDustDirect(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 1f).noGravity = true;
                         
-            projectile.type = 15;
-            projectile.active = false;
+            Projectile.type = 15;
+            Projectile.active = false;
         }
         #endregion
     }

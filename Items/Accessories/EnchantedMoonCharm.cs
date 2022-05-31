@@ -14,19 +14,19 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-			item.value = PriceByRarity.LightRed_4;
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 30;
-            item.useTime = 30;
-            item.accessory = true;
-			item.defense = 10;
+            Item.rare = ItemRarityID.LightRed;
+			Item.value = PriceByRarity.LightRed_4;
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.accessory = true;
+			Item.defense = 10;
         }
 
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
 			Main.moonPhase++;
 			if (Main.moonPhase >= 8) Main.moonPhase = 0;
 			if (Main.netMode == NetmodeID.SinglePlayer) {
@@ -97,10 +97,10 @@ namespace tsorcRevamp.Items.Accessories {
 		}
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(ItemID.MoonCharm, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -11,31 +11,31 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 	{
 		public override void SetDefaults()
 		{
-			npc.scale = 1;
-			npc.npcSlots = 10;
-			Main.npcFrameCount[npc.type] = 8;
-			npc.width = 120;
-			npc.height = 160;
-			npc.damage = 95;
-			npc.defense = 40;
-			npc.aiStyle = 22;
-			npc.alpha = 100;
-			npc.scale = 1.2f;
+			NPC.scale = 1;
+			NPC.npcSlots = 10;
+			Main.npcFrameCount[NPC.type] = 8;
+			NPC.width = 120;
+			NPC.height = 160;
+			NPC.damage = 95;
+			NPC.defense = 40;
+			NPC.aiStyle = 22;
+			NPC.alpha = 100;
+			NPC.scale = 1.2f;
 			animationType = -1;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 90000;
-			npc.timeLeft = 22500;
-			npc.friendly = false;
-			npc.noTileCollide = true;
-			npc.noGravity = true;
-			npc.knockBackResist = 0f;
-			npc.lavaImmune = true;
-			npc.boss = true;
-			npc.value = 600000;
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.CursedInferno] = true;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath6;
+			NPC.lifeMax = 90000;
+			NPC.timeLeft = 22500;
+			NPC.friendly = false;
+			NPC.noTileCollide = true;
+			NPC.noGravity = true;
+			NPC.knockBackResist = 0f;
+			NPC.lavaImmune = true;
+			NPC.boss = true;
+			NPC.value = 600000;
+			NPC.buffImmune[BuffID.Poisoned] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.LichBag>();
 			despawnHandler = new NPCDespawnHandler("Earth Fiend Lich returns to the ground...", Color.DarkGreen, DustID.GreenFairy);
 
@@ -46,8 +46,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 		public float ProjectileTimer
 		{
-			get => npc.ai[1];
-			set => npc.ai[1] = value;
+			get => NPC.ai[1];
+			set => NPC.ai[1] = value;
 		}
 		bool OptionSpawned = false;
 		int OptionId = 0;
@@ -57,22 +57,22 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		//We can override this even further on a per-NPC basis here
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.damage = (int)(npc.damage * 1.3 / 2);
-			npc.defense = npc.defense += 12;
+			NPC.damage = (int)(NPC.damage * 1.3 / 2);
+			NPC.defense = NPC.defense += 12;
 		}
 
 		#region AI
 		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
+			Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0.25f);
 
 			if (OptionSpawned == false)
 			{
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					OptionId = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<LichKingDisciple>(), npc.whoAmI);
+					OptionId = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingDisciple>(), NPC.whoAmI);
 					Main.npc[OptionId].velocity.Y = -10;
 					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
 				}
@@ -80,89 +80,89 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			}
 
 			bool flag25 = false;
-			ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+			ProjectileTimer += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
 			if (ProjectileTimer >= 10f && Main.netMode != NetmodeID.MultiplayerClient)
 			{				
 				if (Main.rand.Next(90) == 1)
 				{
-					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projVector += Main.rand.NextVector2Circular(20, 20);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 					ProjectileTimer = 1f;						
 				}
 				if (Main.rand.Next(20) == 1)
 				{
-					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
 					projVector += Main.rand.NextVector2Circular(10, 10);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.TheOracle>(), oracleDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 					ProjectileTimer = 1f;					
 				}				
 			}
 
 
-			if (npc.justHit)
+			if (NPC.justHit)
 			{
-				npc.ai[2] = 0f;
+				NPC.ai[2] = 0f;
 			}
-			if (npc.ai[2] >= 0f)
+			if (NPC.ai[2] >= 0f)
 			{
 				int num258 = 16;
 				bool flag26 = false;
 				bool flag27 = false;
-				if (npc.position.X > npc.ai[0] - (float)num258 && npc.position.X < npc.ai[0] + (float)num258)
+				if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
 				{
 					flag26 = true;
 				}
 				else
 				{
-					if ((npc.velocity.X < 0f && npc.direction > 0) || (npc.velocity.X > 0f && npc.direction < 0))
+					if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
 					{
 						flag26 = true;
 					}
 				}
 				num258 += 24;
-				if (npc.position.Y > npc.ai[1] - (float)num258 && npc.position.Y < npc.ai[1] + (float)num258)
+				if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
 				{
 					flag27 = true;
 				}
 				if (flag26 && flag27)
 				{
-					npc.ai[2] += 1f;
-					if (npc.ai[2] >= 30f && num258 == 16)
+					NPC.ai[2] += 1f;
+					if (NPC.ai[2] >= 30f && num258 == 16)
 					{
 						flag25 = true;
 					}
-					if (npc.ai[2] >= 60f)
+					if (NPC.ai[2] >= 60f)
 					{
-						npc.ai[2] = -200f;
-						npc.direction *= -1;
-						npc.velocity.X = npc.velocity.X * -1f;
-						npc.collideX = false;
+						NPC.ai[2] = -200f;
+						NPC.direction *= -1;
+						NPC.velocity.X = NPC.velocity.X * -1f;
+						NPC.collideX = false;
 					}
 				}
 				else
 				{
-					npc.ai[0] = npc.position.X;
-					npc.ai[1] = npc.position.Y;
-					npc.ai[2] = 0f;
+					NPC.ai[0] = NPC.position.X;
+					NPC.ai[1] = NPC.position.Y;
+					NPC.ai[2] = 0f;
 				}
 			}
 			else
 			{
-				npc.ai[2] += 1f;
-				if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
+				NPC.ai[2] += 1f;
+				if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
 				{
-					npc.direction = -1;
+					NPC.direction = -1;
 				}
 				else
 				{
-					npc.direction = 1;
+					NPC.direction = 1;
 				}
 			}
-			int num259 = (int)((npc.position.X + (float)(npc.width / 2)) / 16f) + npc.direction * 2;
-			int num260 = (int)((npc.position.Y + (float)npc.height) / 16f);
+			int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
+			int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
 			bool flag28 = true;
 			//bool flag29; //What is this? It doesn't seem to do anything, so i'm commenting it out.
 			int num261 = 3;
@@ -172,7 +172,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				{
 					Main.tile[num259, num269] = new Tile();
 				}
-				if ((Main.tile[num259, num269].active() && Main.tileSolid[(int)Main.tile[num259, num269].type]) || Main.tile[num259, num269].liquid > 0)
+				if ((Main.tile[num259, num269].HasTile && Main.tileSolid[(int)Main.tile[num259, num269].TileType]) || Main.tile[num259, num269].liquid > 0)
 				{
 					//if (num269 <= num260 + 1)
 					//{
@@ -189,127 +189,127 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			}
 			if (flag28)
 			{
-				npc.velocity.Y = npc.velocity.Y + 0.1f;
-				if (npc.velocity.Y > 3f)
+				NPC.velocity.Y = NPC.velocity.Y + 0.1f;
+				if (NPC.velocity.Y > 3f)
 				{
-					npc.velocity.Y = 3f;
+					NPC.velocity.Y = 3f;
 				}
 			}
 			else
 			{
-				if (npc.directionY < 0 && npc.velocity.Y > 0f)
+				if (NPC.directionY < 0 && NPC.velocity.Y > 0f)
 				{
-					npc.velocity.Y = npc.velocity.Y - 0.1f;
+					NPC.velocity.Y = NPC.velocity.Y - 0.1f;
 				}
-				if (npc.velocity.Y < -4f)
+				if (NPC.velocity.Y < -4f)
 				{
-					npc.velocity.Y = -4f;
-				}
-			}
-			if (npc.collideX)
-			{
-				npc.velocity.X = npc.oldVelocity.X * -0.4f;
-				if (npc.direction == -1 && npc.velocity.X > 0f && npc.velocity.X < 1f)
-				{
-					npc.velocity.X = 1f;
-				}
-				if (npc.direction == 1 && npc.velocity.X < 0f && npc.velocity.X > -1f)
-				{
-					npc.velocity.X = -1f;
+					NPC.velocity.Y = -4f;
 				}
 			}
-			if (npc.collideY)
+			if (NPC.collideX)
 			{
-				npc.velocity.Y = npc.oldVelocity.Y * -0.25f;
-				if (npc.velocity.Y > 0f && npc.velocity.Y < 1f)
+				NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
+				if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
 				{
-					npc.velocity.Y = 1f;
+					NPC.velocity.X = 1f;
 				}
-				if (npc.velocity.Y < 0f && npc.velocity.Y > -1f)
+				if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
 				{
-					npc.velocity.Y = -1f;
+					NPC.velocity.X = -1f;
+				}
+			}
+			if (NPC.collideY)
+			{
+				NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
+				if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
+				{
+					NPC.velocity.Y = 1f;
+				}
+				if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
+				{
+					NPC.velocity.Y = -1f;
 				}
 			}
 			float num270 = 2f;
-			if (npc.direction == -1 && npc.velocity.X > -num270)
+			if (NPC.direction == -1 && NPC.velocity.X > -num270)
 			{
-				npc.velocity.X = npc.velocity.X - 0.1f;
-				if (npc.velocity.X > num270)
+				NPC.velocity.X = NPC.velocity.X - 0.1f;
+				if (NPC.velocity.X > num270)
 				{
-					npc.velocity.X = npc.velocity.X - 0.1f;
+					NPC.velocity.X = NPC.velocity.X - 0.1f;
 				}
 				else
 				{
-					if (npc.velocity.X > 0f)
+					if (NPC.velocity.X > 0f)
 					{
-						npc.velocity.X = npc.velocity.X + 0.05f;
+						NPC.velocity.X = NPC.velocity.X + 0.05f;
 					}
 				}
-				if (npc.velocity.X < -num270)
+				if (NPC.velocity.X < -num270)
 				{
-					npc.velocity.X = -num270;
+					NPC.velocity.X = -num270;
 				}
 			}
 			else
 			{
-				if (npc.direction == 1 && npc.velocity.X < num270)
+				if (NPC.direction == 1 && NPC.velocity.X < num270)
 				{
-					npc.velocity.X = npc.velocity.X + 0.1f;
-					if (npc.velocity.X < -num270)
+					NPC.velocity.X = NPC.velocity.X + 0.1f;
+					if (NPC.velocity.X < -num270)
 					{
-						npc.velocity.X = npc.velocity.X + 0.1f;
+						NPC.velocity.X = NPC.velocity.X + 0.1f;
 					}
 					else
 					{
-						if (npc.velocity.X < 0f)
+						if (NPC.velocity.X < 0f)
 						{
-							npc.velocity.X = npc.velocity.X - 0.05f;
+							NPC.velocity.X = NPC.velocity.X - 0.05f;
 						}
 					}
-					if (npc.velocity.X > num270)
+					if (NPC.velocity.X > num270)
 					{
-						npc.velocity.X = num270;
+						NPC.velocity.X = num270;
 					}
 				}
 			}
-			if (npc.directionY == -1 && (double)npc.velocity.Y > -1.5)
+			if (NPC.directionY == -1 && (double)NPC.velocity.Y > -1.5)
 			{
-				npc.velocity.Y = npc.velocity.Y - 0.04f;
-				if ((double)npc.velocity.Y > 1.5)
+				NPC.velocity.Y = NPC.velocity.Y - 0.04f;
+				if ((double)NPC.velocity.Y > 1.5)
 				{
-					npc.velocity.Y = npc.velocity.Y - 0.05f;
+					NPC.velocity.Y = NPC.velocity.Y - 0.05f;
 				}
 				else
 				{
-					if (npc.velocity.Y > 0f)
+					if (NPC.velocity.Y > 0f)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.03f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.03f;
 					}
 				}
-				if ((double)npc.velocity.Y < -1.5)
+				if ((double)NPC.velocity.Y < -1.5)
 				{
-					npc.velocity.Y = -1.5f;
+					NPC.velocity.Y = -1.5f;
 				}
 			}
 			else
 			{
-				if (npc.directionY == 1 && (double)npc.velocity.Y < 1.5)
+				if (NPC.directionY == 1 && (double)NPC.velocity.Y < 1.5)
 				{
-					npc.velocity.Y = npc.velocity.Y + 0.04f;
-					if ((double)npc.velocity.Y < -1.5)
+					NPC.velocity.Y = NPC.velocity.Y + 0.04f;
+					if ((double)NPC.velocity.Y < -1.5)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.05f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.05f;
 					}
 					else
 					{
-						if (npc.velocity.Y < 0f)
+						if (NPC.velocity.Y < 0f)
 						{
-							npc.velocity.Y = npc.velocity.Y - 0.03f;
+							NPC.velocity.Y = NPC.velocity.Y - 0.03f;
 						}
 					}
-					if ((double)npc.velocity.Y > 1.5)
+					if ((double)NPC.velocity.Y > 1.5)
 					{
-						npc.velocity.Y = 1.5f;
+						NPC.velocity.Y = 1.5f;
 					}
 				}
 			}
@@ -323,34 +323,34 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}
-			if (npc.velocity.X < 0)
+			if (NPC.velocity.X < 0)
 			{
-				npc.spriteDirection = -1;
-			}
-			else
-			{
-				npc.spriteDirection = 1;
-			}
-			npc.rotation = npc.velocity.X * 0.08f;
-			npc.frameCounter += 1.0;
-			if (npc.frameCounter >= 4.0)
-			{
-				npc.frame.Y = npc.frame.Y + num;
-				npc.frameCounter = 0.0;
-			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
-			{
-				npc.frame.Y = 0;
-			}
-			if (npc.ai[3] == 0)
-			{
-				npc.alpha = 0;
+				NPC.spriteDirection = -1;
 			}
 			else
 			{
-				npc.alpha = 200;
+				NPC.spriteDirection = 1;
+			}
+			NPC.rotation = NPC.velocity.X * 0.08f;
+			NPC.frameCounter += 1.0;
+			if (NPC.frameCounter >= 4.0)
+			{
+				NPC.frame.Y = NPC.frame.Y + num;
+				NPC.frameCounter = 0.0;
+			}
+			if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+			{
+				NPC.frame.Y = 0;
+			}
+			if (NPC.ai[3] == 0)
+			{
+				NPC.alpha = 0;
+			}
+			else
+			{
+				NPC.alpha = 200;
 			}
 		}
 		#endregion
@@ -362,26 +362,26 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		{
 			potionType = ItemID.SuperHealingPotion;
 		}
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 1"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Earth Fiend Lich Gore 2"), 1f);
 
 			if (Main.expertMode)
 			{
-				npc.DropBossBags();
+				NPC.DropBossBags();
 			}
 			else
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
-				if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
+				if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
 				{
-					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
 				}
 			}
 		}

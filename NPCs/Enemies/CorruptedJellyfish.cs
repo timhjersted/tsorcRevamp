@@ -10,22 +10,22 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Corrupted Jellyfish");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.PinkJellyfish];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PinkJellyfish];
         }
 
         public override void SetDefaults()
         {
-            npc.CloneDefaults(NPCID.PinkJellyfish);
+            NPC.CloneDefaults(NPCID.PinkJellyfish);
             animationType = NPCID.PinkJellyfish;
             aiType = NPCID.PinkJellyfish;
-            npc.lifeMax = 118;
-            npc.damage = 35;
-            npc.scale = 1f;
-            npc.knockBackResist = .7f;
-            npc.value = 380;
-            npc.defense = 40;
-            npc.buffImmune[BuffID.Confused] = true;
-            banner = npc.type;
+            NPC.lifeMax = 118;
+            NPC.damage = 35;
+            NPC.scale = 1f;
+            NPC.knockBackResist = .7f;
+            NPC.value = 380;
+            NPC.defense = 40;
+            NPC.buffImmune[BuffID.Confused] = true;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.CorruptedJellyfishBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (Main.hardMode /*|| ModWorld.superHardmode*/)
             {
-                if ((spawnInfo.player.ZoneCorrupt && spawnInfo.water) && (spawnInfo.player.ZoneRockLayerHeight || spawnInfo.player.ZoneDirtLayerHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
+                if ((spawnInfo.Player.ZoneCorrupt && spawnInfo.Water) && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
                 {
                     chance = .25f;
                 }
@@ -54,18 +54,18 @@ namespace tsorcRevamp.NPCs.Enemies
             for (int i = 0; i < 15; i++)
             {
                 int dustType = 98;
-                int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
                 Dust dust = Main.dust[dustIndex];
                 dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.04f;
                 dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.04f;
                 dust.scale *= .8f + Main.rand.Next(-30, 31) * 0.01f;
                 dust.noGravity = true;
             }
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust.NewDust(npc.position, npc.width, npc.height, 98, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 70, default(Color), .8f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 98, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 70, default(Color), .8f);
                 }
             }
         }

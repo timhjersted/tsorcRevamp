@@ -27,17 +27,17 @@ namespace tsorcRevamp.Items {
 
         public override void SetDefaults()
         {
-            item.width = 21;
-            item.height = 21;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Lime;
+            Item.width = 21;
+            Item.height = 21;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Lime;
         }
 
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
 		{
             Main.PlaySound(4, -1, -1, 43);
 			Main.worldID = VariousConstants.CUSTOM_MAP_WORLD_ID;

@@ -12,36 +12,36 @@ namespace tsorcRevamp.Items.Potions
                                 + "Consumable souls' drop chance is increased by 50%\n"
                                 + "Soul pickup range greatly increased");
 
-            ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
+            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }
 
         public override void SetDefaults()
         {
-            item.width = 20;
-            item.height = 30;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useAnimation = 17;
-            item.useTime = 17;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item3;
-            item.maxStack = 99;
-            item.consumable = true;
-            item.rare = ItemRarityID.Lime;
-            item.value = 5000;
-            item.buffType = ModContent.BuffType<Buffs.SoulSiphon>();
-            item.buffTime = 25200;
+            Item.width = 20;
+            Item.height = 30;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useAnimation = 17;
+            Item.useTime = 17;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item3;
+            Item.maxStack = 99;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Lime;
+            Item.value = 5000;
+            Item.buffType = ModContent.BuffType<Buffs.SoulSiphon>();
+            Item.buffTime = 25200;
         }
         public override void PostUpdate()
         {
-            Lighting.AddLight(item.Center, 0.3f, 0.7f, 0.12f);
+            Lighting.AddLight(Item.Center, 0.3f, 0.7f, 0.12f);
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BottledWater);
             recipe.AddIngredient(ItemID.Bone, 5);
-            recipe.AddIngredient(mod.ItemType("EphemeralDust"), 20);
-            recipe.AddIngredient(mod.ItemType("LostUndeadSoul"));
+            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("LostUndeadSoul").Type);
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

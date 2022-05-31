@@ -16,15 +16,15 @@ namespace tsorcRevamp.Items.VanillaItems {
                 || item.type == ItemID.FlaskofParty
                 || item.type == ItemID.FlaskofPoison
                 ) {
-                tooltips.Insert(3, new TooltipLine(mod, "", "Adds 10% melee damage"));
+                tooltips.Insert(3, new TooltipLine(Mod, "", "Adds 10% melee damage"));
             }
             if (item.type == ItemID.FlaskofFire)
             {
-                tooltips.Insert(4, new TooltipLine(mod, "", "All fire damage does 2x damage to woody enemies"));
+                tooltips.Insert(4, new TooltipLine(Mod, "", "All fire damage does 2x damage to woody enemies"));
             }
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Deathweed, 1);
             recipe.AddIngredient(ItemID.Fireblossom, 4);

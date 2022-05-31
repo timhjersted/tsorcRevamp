@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,28 +11,28 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Tooltip.SetDefault("Three round burst \nOnly the first shot consumes ammo\nPhazon rounds are extremely volatile");
         }
         public override void SetDefaults() {
-            item.width = 50;
-            item.height = 18;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 12;
-            item.useTime = 4;
-            item.maxStack = 1;
-            item.damage = 25;
-            item.knockBack = 0f;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item31;
-            item.rare = ItemRarityID.LightPurple;
-            item.shoot = ProjectileID.PurificationPowder;
-            item.shootSpeed = 7;
-            item.useAmmo = 14;
-            item.noMelee = true;
-            item.value = PriceByRarity.LightPurple_6;
-            item.ranged = true;
-            item.reuseDelay = 11;
-            item.useAmmo = AmmoID.Bullet;
+            Item.width = 50;
+            Item.height = 18;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 12;
+            Item.useTime = 4;
+            Item.maxStack = 1;
+            Item.damage = 25;
+            Item.knockBack = 0f;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item31;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.shoot = ProjectileID.PurificationPowder;
+            Item.shootSpeed = 7;
+            Item.useAmmo = 14;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.ranged = true;
+            Item.reuseDelay = 11;
+            Item.useAmmo = AmmoID.Bullet;
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             type = ModContent.ProjectileType<Projectiles.PhazonRound>();
             return true;
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override bool ConsumeAmmo(Player player)
         {
-            return !(player.itemAnimation < item.useAnimation - 2); //consume 1 ammo instead of 3
+            return !(player.itemAnimation < Item.useAnimation - 2); //consume 1 ammo instead of 3
         }
 
         public override Vector2? HoldoutOffset()
@@ -50,11 +51,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.ClockworkAssaultRifle);
             recipe.AddIngredient(ItemID.MeteoriteBar, 30);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 15000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 15000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

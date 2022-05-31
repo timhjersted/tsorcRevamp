@@ -10,21 +10,21 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Pink;
-            item.damage = 20;
-            item.height = 26;
-            item.knockBack = 4;
-            item.melee = true;
-            item.autoReuse = true;
-            item.useAnimation = 27;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.Pink_5;
-            item.width = 26;
+            Item.rare = ItemRarityID.Pink;
+            Item.damage = 20;
+            Item.height = 26;
+            Item.knockBack = 4;
+            Item.melee = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 27;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.Pink_5;
+            Item.width = 26;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             if (Main.rand.Next(5) == 0) {
                 Projectile.NewProjectile(player.position.X, player.position.Y, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Bolt2Ball>(), 20, 2.0f, player.whoAmI);
             }

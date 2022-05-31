@@ -6,15 +6,15 @@ namespace tsorcRevamp.Items.Ammo {
     public class TeslaBolt : ModItem {
 
         public override void SetDefaults() {
-            item.consumable = true;
-            item.ranged = true;
-            item.width = 14;
-            item.height = 20;
-            item.maxStack = 9999;
-            item.scale = 1f;
-            item.value = 3;
-            item.ammo = item.type;
-            item.shoot = ModContent.ProjectileType<Projectiles.RedLaserBeam>();
+            Item.consumable = true;
+            Item.ranged = true;
+            Item.width = 14;
+            Item.height = 20;
+            Item.maxStack = 9999;
+            Item.scale = 1f;
+            Item.value = 3;
+            Item.ammo = Item.type;
+            Item.shoot = ModContent.ProjectileType<Projectiles.RedLaserBeam>();
         }
     }
 }

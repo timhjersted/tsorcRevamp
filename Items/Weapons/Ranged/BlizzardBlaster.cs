@@ -15,16 +15,16 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         static readonly int RADIUS = 300;
         static readonly float WIDTH = (RADIUS / 500f); //idk it just works (tm)
         public override void SetDefaults() {
-            item.damage = 77;
-            item.useTime = 26;
-            item.useAnimation = 26;
-            item.autoReuse = true;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.ranged = true;
-            item.shoot = ModContent.ProjectileType<BlizzardBlasterShot>();
-            item.shootSpeed = 10f; //unused
-            item.value = PriceByRarity.Pink_5;
-            item.rare = ItemRarityID.Pink;
+            Item.damage = 77;
+            Item.useTime = 26;
+            Item.useAnimation = 26;
+            Item.autoReuse = true;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.ranged = true;
+            Item.shoot = ModContent.ProjectileType<BlizzardBlasterShot>();
+            Item.shootSpeed = 10f; //unused
+            Item.value = PriceByRarity.Pink_5;
+            Item.rare = ItemRarityID.Pink;
             //item.UseSound = SoundID.Item98;
         }
 
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddIngredient(ItemID.CobaltBar, 12);
             recipe.AddTile(TileID.DemonAltar);
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddRecipe();
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
             float aimRotation = (player.Center - Main.MouseWorld).ToRotation();
             List<NPC> targetList = FindTargets(player);
             for (int i = 0; i < 24; i++) {
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                 targetList.Sort((NPC a, NPC b) => (int)(Vector2.Distance(a.Center, player.Center) - Vector2.Distance(b.Center, player.Center)));
                 for (int j = 0; j < targetList.Count; j++) {
                     int projectile = Projectile.NewProjectile(player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
-                    BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].modProjectile as BlizzardBlasterShot;
+                    BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].ModProjectile as BlizzardBlasterShot;
                     BlizzardBlasterShot.target = targetList[j];
                     if (j >= 5) {
                         break;
@@ -139,15 +139,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void SetDefaults() {
-            projectile.width = 1;
-            projectile.height = 1;
-            projectile.friendly = true;
-            projectile.ranged = true;
-            projectile.timeLeft = 3;
-            projectile.tileCollide = true;
-            projectile.ignoreWater = false;
-            projectile.usesIDStaticNPCImmunity = true;
-            projectile.idStaticNPCHitCooldown = 10;
+            Projectile.width = 1;
+            Projectile.height = 1;
+            Projectile.friendly = true;
+            Projectile.ranged = true;
+            Projectile.timeLeft = 3;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = false;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 10;
         }
 
         public override void SetStaticDefaults() {
@@ -155,8 +155,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AI() {
-            if (target == null) projectile.Kill();
-            else projectile.Center = target.Center;
+            if (target == null) Projectile.Kill();
+            else Projectile.Center = target.Center;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {

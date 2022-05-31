@@ -10,19 +10,19 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.maxStack = 1;
-            item.consumable = false;
-            item.rare = ItemRarityID.LightRed;
-            item.consumable = false;
+            Item.width = 28;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.maxStack = 1;
+            Item.consumable = false;
+            Item.rare = ItemRarityID.LightRed;
+            Item.consumable = false;
         }
 
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>())) {
                 return false;
             }
@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.BossItems {
         public override void AddRecipes() {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                ModRecipe recipe = new ModRecipe(mod);
+                Recipe recipe = new Recipe(Mod);
                 recipe.AddIngredient(ItemID.Feather);
                 recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddIngredient(ItemID.Bone, 12);

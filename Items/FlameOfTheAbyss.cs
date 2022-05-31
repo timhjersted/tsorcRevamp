@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.width = 14;
-            item.height = 16;
-            item.rare = ItemRarityID.Orange;
-            item.value = 50000;
-            item.maxStack = 250;
+            Item.width = 14;
+            Item.height = 16;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = 50000;
+            Item.maxStack = 250;
         }
     }
 }

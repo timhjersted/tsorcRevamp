@@ -10,20 +10,20 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nDoes up to 8x damage to mages");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Green;
-            item.damage = 20;
-            item.height = 36;
-            item.knockBack = 5;
-            item.maxStack = 1;
-            item.melee = true;
-            item.autoReuse = true;
-            item.scale = 1f;
-            item.useAnimation = 20;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 20;
-            item.value = PriceByRarity.Green_2;
-            item.width = 36;
+            Item.rare = ItemRarityID.Green;
+            Item.damage = 20;
+            Item.height = 36;
+            Item.knockBack = 5;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.autoReuse = true;
+            Item.scale = 1f;
+            Item.useAnimation = 20;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 20;
+            Item.value = PriceByRarity.Green_2;
+            Item.width = 36;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             //todo add mod NPCs to this list
@@ -62,9 +62,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             }
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.LightsBane);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

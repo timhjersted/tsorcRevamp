@@ -21,26 +21,26 @@ namespace tsorcRevamp.Items.Weapons {
 		}
 		
 		public override void SetDefaults() {
-			item.damage = 999999;
-			item.knockBack = 4;
-			item.crit = 4;
-			item.width = 30;
-			item.height = 30;
-			item.useTime = 20;
-			item.useAnimation = 20;
-			item.UseSound = SoundID.Item11;
-			item.useTurn = true;
-			item.noMelee = true;
-			item.magic = true;
-			item.autoReuse = true;
-			item.value = 10000;
-			item.useStyle = ItemUseStyleID.HoldingOut;
-			item.rare = ItemRarityID.Green;
-			item.shootSpeed = 24f;
-			item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
+			Item.damage = 999999;
+			Item.knockBack = 4;
+			Item.crit = 4;
+			Item.width = 30;
+			Item.height = 30;
+			Item.useTime = 20;
+			Item.useAnimation = 20;
+			Item.UseSound = SoundID.Item11;
+			Item.useTurn = true;
+			Item.noMelee = true;
+			Item.magic = true;
+			Item.autoReuse = true;
+			Item.value = 10000;
+			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.rare = ItemRarityID.Green;
+			Item.shootSpeed = 24f;
+			Item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
 		}
 
-		public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+		public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
 			Main.NewText(player.position / 16);
 
 

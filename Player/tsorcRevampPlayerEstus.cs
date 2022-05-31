@@ -72,15 +72,15 @@ namespace tsorcRevamp
 
 		public override void PostUpdateBuffs()
 		{
-			if (player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) 
-				&& estusChargesCurrent != estusChargesMax && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift) //When the player visits a bonfire, restore charges
+			if (Player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && !Main.npc.Any(n => n?.active == true && n.boss && n != Main.npc[200]) 
+				&& estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift) //When the player visits a bonfire, restore charges
 			{
 				estusChargesCurrent = estusChargesMax;
-				Main.PlaySound(SoundID.Item20.WithVolume(0.8f), player.position);
+				Main.PlaySound(SoundID.Item20.WithVolume(0.8f), Player.position);
 
 				for (int i = 0; i <= 15; i++)
 				{
-					int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
+					int z = Dust.NewDust(Player.position, Player.width, Player.height, 270, 0f, 0f, 120, default(Color), 1f);
 					Main.dust[z].noGravity = true;
 					Main.dust[z].velocity *= 2.75f;
 					Main.dust[z].fadeIn = 1.3f;
@@ -90,7 +90,7 @@ namespace tsorcRevamp
 					Main.dust[z].velocity = vectorother;
 					vectorother.Normalize();
 					vectorother *= 25f;
-					Main.dust[z].position = player.Center - vectorother;
+					Main.dust[z].position = Player.Center - vectorother;
 				}
 			}
 		}
@@ -115,7 +115,7 @@ namespace tsorcRevamp
 		{
 			UpdateDrinkingEstus();
 
-			if (isDrinking && (player.HeldItem.type == ItemID.Umbrella || player.HeldItem.type == ItemID.BreathingReed))
+			if (isDrinking && (Player.HeldItem.type == ItemID.Umbrella || Player.HeldItem.type == ItemID.BreathingReed))
 			{
 				return false;
 			}
@@ -152,22 +152,22 @@ namespace tsorcRevamp
 			//Force player body frame to be Use3, this includes the players arm (drinking position)
 			if (estusDrinkTimer >= estusDrinkTimerMax * 0.4f)
 			{
-				player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
+				Player.GetModPlayer<tsorcRevampPlayer>().forcedBodyFrame = PlayerFrames.Use2;
 			}
 
 			//Slow player for whole duration of action
-			player.velocity.X *= 0.9f;
-			player.velocity.Y *= 0.9f;
-			player.eocHit = 0;
+			Player.velocity.X *= 0.9f;
+			Player.velocity.Y *= 0.9f;
+			Player.eocHit = 0;
 
 			if (estusDrinkTimer >= estusDrinkTimerMax) //Once finished drinking:
             {
-				Main.PlaySound(SoundID.Item20.WithVolume(0.5f), player.position);
-				Main.PlaySound(SoundID.Item3, player.position);
+				Main.PlaySound(SoundID.Item20.WithVolume(0.5f), Player.position);
+				Main.PlaySound(SoundID.Item3, Player.position);
 
 				for (int i = 0; i <= 15; i++)
 				{
-					int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
+					int z = Dust.NewDust(Player.position, Player.width, Player.height, 270, 0f, 0f, 120, default(Color), 1f);
 					Main.dust[z].noGravity = true;
 					Main.dust[z].velocity *= 2.75f;
 					Main.dust[z].fadeIn = 1.3f;
@@ -177,13 +177,13 @@ namespace tsorcRevamp
 					Main.dust[z].velocity = vectorother;
 					vectorother.Normalize();
 					vectorother *= 25f;
-					Main.dust[z].position = player.Center - vectorother;
+					Main.dust[z].position = Player.Center - vectorother;
 				}
 
 				isDrinking = false; //No longer drinking
 				estusChargesCurrent--; //Remove a charge
 				estusDrinkTimer = 0; //Set the timer back to 0
-				player.HealEffect(estusHealthGain); //Show green heal text equal to health gain
+				Player.HealEffect(estusHealthGain); //Show green heal text equal to health gain
 				isEstusHealing = true; //Commence healing process
 				//kplayer.eocDash = 0;
 			}
@@ -197,19 +197,19 @@ namespace tsorcRevamp
 
 				//Main.NewText(estusHealthPerTick);
 
-				if (estusHealingTimer <= estusHealingTimerMax && player.statLife < player.statLifeMax2) //If the timer is less or equal to timer max and player hp is not at max
+				if (estusHealingTimer <= estusHealingTimerMax && Player.statLife < Player.statLifeMax2) //If the timer is less or equal to timer max and player hp is not at max
 				{
 
 					estusHealthPerTick += estusHealthGain / estusHealingTimerMax; //Heal this much each tick
 
 					if (estusHealthPerTick > (int)estusHealthPerTick)
 					{
-						player.statLife += (int)estusHealthPerTick;
+						Player.statLife += (int)estusHealthPerTick;
 						estusHealthPerTick -= (int)estusHealthPerTick;
 					}
 
 
-						int z = Dust.NewDust(player.position, player.width, player.height, 270, 0f, 0f, 120, default(Color), 1f);
+						int z = Dust.NewDust(Player.position, Player.width, Player.height, 270, 0f, 0f, 120, default(Color), 1f);
 						Main.dust[z].noGravity = true;
 						Main.dust[z].velocity *= 2.75f;
 						Main.dust[z].fadeIn = 1.3f;
@@ -219,7 +219,7 @@ namespace tsorcRevamp
 						Main.dust[z].velocity = vectorother;
 						vectorother.Normalize();
 						vectorother *= 25f;
-						Main.dust[z].position = player.Center - vectorother;
+						Main.dust[z].position = Player.Center - vectorother;
 
 				}
 

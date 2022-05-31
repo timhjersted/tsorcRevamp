@@ -5,28 +5,28 @@ namespace tsorcRevamp.Projectiles {
     class GreatFireball : ModProjectile {
 
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 9;
+            Main.projFrames[Projectile.type] = 9;
         }
 
         public override void SetDefaults() {
-            projectile.width = 150;
-            projectile.height = 150;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.penetrate = 50;
-            projectile.timeLeft = 360;
+            Projectile.width = 150;
+            Projectile.height = 150;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = 50;
+            Projectile.timeLeft = 360;
         }
 
         public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3) {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 9) {
-                projectile.Kill();
+            if (Projectile.frame >= 9) {
+                Projectile.Kill();
                 return;
             }
         }

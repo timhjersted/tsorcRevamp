@@ -671,34 +671,34 @@ namespace tsorcRevamp {
             CrossModTiles = new List<int>();
             Mod MagicStorage = ModLoader.GetMod("MagicStorage");
             if (MagicStorage != null) {
-                CrossModTiles.Add(MagicStorage.TileType("CraftingAccess"));
-                CrossModTiles.Add(MagicStorage.TileType("RemoteAccess"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageAccess"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageComponent"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageHeart"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageUnit"));
-                CrossModTiles.Add(MagicStorage.TileType("StorageConnector"));
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("CraftingAccess").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("RemoteAccess").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageAccess").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageComponent").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageHeart").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageUnit").Type);
+                CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageConnector").Type);
 
             }
 
             Mod MagicStorageExtra = ModLoader.GetMod("MagicStorageExtra");
             if (MagicStorageExtra != null) {
-                CrossModTiles.Add(MagicStorageExtra.TileType("CraftingAccess"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("CreativeStorageUnit"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("RemoteAccess"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageAccess"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageComponent"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageHeart"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageUnit"));
-                CrossModTiles.Add(MagicStorageExtra.TileType("StorageConnector"));
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("CraftingAccess").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("CreativeStorageUnit").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("RemoteAccess").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageAccess").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageComponent").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageHeart").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageUnit").Type);
+                CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("StorageConnector").Type);
             }
             #endregion
             //--------
             #region PlaceAllowedModTiles list
             PlaceAllowedModTiles = new List<int>()
             {
-                TileType("EnemyBannerTile"),
-                TileType("SweatyCyclopsForge")
+                Find<ModTile>("EnemyBannerTile").Type,
+                Find<ModTile>("SweatyCyclopsForge").Type
 
             };
 
@@ -761,7 +761,7 @@ namespace tsorcRevamp {
             }
         }
         public override void AddRecipes() {
-            ModRecipeHelper.AddModRecipes();
+            RecipeHelper.AddRecipes();
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
                 RecipeHelper.EditRecipes(); 
@@ -769,7 +769,7 @@ namespace tsorcRevamp {
         }
 
         public override void AddRecipeGroups() {
-            ModRecipeHelper.AddRecipeGroups();
+            RecipeHelper.AddRecipeGroups();
         }
 
         public override void PreSaveAndQuit() {
@@ -1655,22 +1655,22 @@ namespace tsorcRevamp {
 
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged) {
 
-            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
 
-                if (Main.tile[x, y - 1].type == TileID.Statues)
+                if (Main.tile[x, y - 1].TileType == TileID.Statues)
                 {
                     return false;
                 }
 
-                bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
-                bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
-                bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
-                bool above = !Main.tile[x, y + 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].type);
+                bool right = !Main.tile[x + 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].TileType);
+                bool left = !Main.tile[x - 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].TileType);
+                bool below = !Main.tile[x, y - 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].TileType);
+                bool above = !Main.tile[x, y + 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].TileType);
                 if (x < 10 || x > Main.maxTilesX - 10) {//sanity
                     return false;
                 }
@@ -1706,30 +1706,30 @@ namespace tsorcRevamp {
 
         public override bool CanExplode(int x, int y, int type) {
 
-            if (Main.tile[x, y - 1].type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+            if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
             }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                if (Main.tile[x, y - 1].type == TileID.Statues)
+                if (Main.tile[x, y - 1].TileType == TileID.Statues)
                 {
                     return false;
                 }
-                bool right = !Main.tile[x + 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].type);
-                bool left = !Main.tile[x - 1, y].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].type);
-                bool below = !Main.tile[x, y - 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].type);
-                bool above = !Main.tile[x, y + 1].active() || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].type);
+                bool right = !Main.tile[x + 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x + 1, y].TileType);
+                bool left = !Main.tile[x - 1, y].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x - 1, y].TileType);
+                bool below = !Main.tile[x, y - 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y - 1].TileType);
+                bool above = !Main.tile[x, y + 1].HasTile || tsorcRevamp.IgnoredTiles.Contains(Main.tile[x, y + 1].TileType);
                 bool CanDestroy = false;
                 if (type == TileID.Ebonsand || type == TileID.Amethyst || type == TileID.ShadowOrbs) { //shadow temple / corruption chasm stuff that gets blown up
                     CanDestroy = true;
                 }
 
                 //check cankilltiles stuff
-                if ((right && left) || (above && below) || tsorcRevamp.KillAllowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].active())) {
+                if ((right && left) || (above && below) || tsorcRevamp.KillAllowed.Contains(type) || (x < 10 || x > Main.maxTilesX - 10) || (y < 10 || y > Main.maxTilesY - 10) || (!Main.tile[x, y].HasTile)) {
                     CanDestroy = true;
                 }
-                if (Main.tileDungeon[Main.tile[x, y].type]
+                if (Main.tileDungeon[Main.tile[x, y].TileType]
                     || type == TileID.Silver
                     || type == TileID.Cobalt
                     || type == TileID.Mythril
@@ -1784,9 +1784,9 @@ namespace tsorcRevamp {
                 var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
                 var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
-                if (Main.tile[i, j].type == TileID.LunarMonolith && distance <= 800f && !player.dead && Main.tile[i, j].frameY > 54) { //frameY > 54 means enabled
+                if (Main.tile[i, j].TileType == TileID.LunarMonolith && distance <= 800f && !player.dead && Main.tile[i, j].TileFrameY > 54) { //frameY > 54 means enabled
                     
-                        int style = Main.tile[i, j].frameX / 36;
+                        int style = Main.tile[i, j].TileFrameX / 36;
                     switch (style)
                     {
                         case 0:

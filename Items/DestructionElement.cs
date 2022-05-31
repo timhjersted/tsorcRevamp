@@ -12,17 +12,17 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.width = 32;
-            item.height = 32;
-            item.rare = ItemRarityID.Red;
-            item.value = 350000;
-            item.maxStack = 99;
+            Item.width = 32;
+            Item.height = 32;
+            Item.rare = ItemRarityID.Red;
+            Item.value = 350000;
+            Item.maxStack = 99;
         }
 
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[item.type];
+            Texture2D texture = Main.itemTexture[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;

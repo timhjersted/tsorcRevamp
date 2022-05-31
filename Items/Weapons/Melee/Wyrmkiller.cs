@@ -10,25 +10,25 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nDoes 8x damage against flying beasts.");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Green;
-            item.damage = 46;
-            item.height = 32;
-            item.knockBack = 5;
-            item.melee = true;
-            item.scale = .9f;
-            item.useAnimation = 21;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = 140000;
-            item.width = 32;
+            Item.rare = ItemRarityID.Green;
+            Item.damage = 46;
+            Item.height = 32;
+            Item.knockBack = 5;
+            Item.melee = true;
+            Item.scale = .9f;
+            Item.useAnimation = 21;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = 140000;
+            Item.width = 32;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.GoldBroadsword, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

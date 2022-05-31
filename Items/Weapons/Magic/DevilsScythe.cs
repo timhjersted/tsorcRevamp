@@ -11,25 +11,25 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Casts a hellfire scythe.");
         }
         public override void SetDefaults() {
-            item.width = 26;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.damage = 40;
-            item.knockBack = 5;
-            item.scale = 0.9f;
-            item.UseSound = SoundID.Item8;
-            item.crit = 8;
-            item.rare = ItemRarityID.Orange;
-            item.mana = 14;
-            item.noMelee = true;
-            item.value = PriceByRarity.Orange_3;
-            item.magic = true;
+            Item.width = 26;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.damage = 40;
+            Item.knockBack = 5;
+            Item.scale = 0.9f;
+            Item.UseSound = SoundID.Item8;
+            Item.crit = 8;
+            Item.rare = ItemRarityID.Orange;
+            Item.mana = 14;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Orange_3;
+            Item.magic = true;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             float num48 = .6f;
             float speedX = ((Main.mouseX + Main.screenPosition.X) - (player.position.X + player.width * 0.5f));
             float speedY = ((Main.mouseY + Main.screenPosition.Y) - (player.position.Y + player.height * 0.5f));
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.DemonScythe, 1);
             recipe.AddIngredient(ItemID.HellstoneBar, 30);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);

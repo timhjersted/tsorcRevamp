@@ -74,44 +74,44 @@ namespace tsorcRevamp {
 			//UpdateSwordflip();
 
 			//Stop umbrella and other things from working
-			if (isDodging && player.HeldItem.type == ItemID.Umbrella) {
+			if (isDodging && Player.HeldItem.type == ItemID.Umbrella) {
 				return false;
 			}
 
-			Item item = player.HeldItem;
+			Item item = Player.HeldItem;
 
             #region BotC Stamina Usage
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
-				if (item.damage >= 1 && item.useAnimation * 0.8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.itemAnimation == player.itemAnimationMax - 1)
+				if (item.damage >= 1 && item.useAnimation * 0.8f > Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && Player.itemAnimation == Player.itemAnimationMax - 1)
                 {
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
 				}
 
 				// Stamina drain for most (hopefully) swords and spears
-				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
+				if (item.damage >= 1 && item.melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc 
 					|| item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .8f);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * .8f);
 				}
 
 				// Stamina drain for boomerangs
-				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
+				if (item.damage >= 1 && item.melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * 1f);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * 1f);
 				}
 
 				// Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.
-				if (item.damage >= 1 && item.melee && player.itemAnimation == player.itemAnimationMax - 1 && item.pick != 0 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
+				if (item.damage >= 1 && item.melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick != 0 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * player.meleeSpeed * .2f);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * .2f);
 				}
 
 				// Stamina drain for flails and yoyos
-				if (item.damage >= 1 && item.useStyle == ItemUseStyleID.HoldingOut && item.melee && player.itemAnimation != 0
+				if (item.damage >= 1 && item.useStyle == ItemUseStyleID.Shoot && item.melee && Player.itemAnimation != 0
 					&& (item.type != ItemID.Spear && item.type != ItemID.Trident && item.type != ItemID.TheRottedFork && item.type != ItemID.Swordfish && item.type != ItemID.DarkLance
 					&& item.type != ItemID.CobaltNaginata && item.type != ItemID.PalladiumPike && item.type != ItemID.MythrilHalberd && item.type != ItemID.OrichalcumHalberd
 					&& item.type != ItemID.AdamantiteGlaive && item.type != ItemID.TitaniumTrident && item.type != ItemID.Gungnir && item.type != ItemID.ChlorophytePartisan
@@ -127,52 +127,52 @@ namespace tsorcRevamp {
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.OrcishHalberd>() && item.type != ModContent.ItemType<Items.Weapons.Melee.ReforgedOldHalberd>()
 					&& item.type != ModContent.ItemType<Items.Weapons.Melee.ForgottenPolearm>()))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.6f; // Drain .6 stamina/tick
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 0.6f; // Drain .6 stamina/tick
 				}
 
 				// Ranged
-				if (item.damage >= 1 && item.ranged && player.itemAnimation == player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
+				if (item.damage >= 1 && item.ranged && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 					
 				}
 
 				// Magic & Throwing
-				if (item.damage >= 1 && (item.magic || item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
+				if (item.damage >= 1 && (item.magic || item.thrown) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				// Summoner
-				if (item.damage >= 1 && item.summon && player.itemAnimation == player.itemAnimationMax - 1)
+				if (item.damage >= 1 && item.summon && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				// Classless? Just in case? 
-				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && player.itemAnimation == player.itemAnimationMax - 1)
+				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
-				if (item.type == ItemID.Harpoon && player.itemAnimation == 1)
+				if (item.type == ItemID.Harpoon && Player.itemAnimation == 1)
                 {
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 14f;
 				}
 
-				if (player.itemAnimation != 0 && (item.type == ItemID.PiranhaGun || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>() || item.type == ItemID.LastPrism || item.type == ItemID.DD2PhoenixBow || item.type == ItemID.Phantasm))
+				if (Player.itemAnimation != 0 && (item.type == ItemID.PiranhaGun || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || item.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>() || item.type == ItemID.LastPrism || item.type == ItemID.DD2PhoenixBow || item.type == ItemID.Phantasm))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .8f;
 				}
 
-				if (player.itemAnimation != 0 && (item.type == ItemID.LaserMachinegun))
+				if (Player.itemAnimation != 0 && (item.type == ItemID.LaserMachinegun))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
 				}
 
-				if (player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()))
+				if (Player.itemAnimation != 0 && (item.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()))
 				{
-					player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .5f;
 				}
 			}
 
@@ -220,12 +220,12 @@ namespace tsorcRevamp {
 		}
 
 		private bool TryStartDodgeroll() {
-			bool isLocal = player.whoAmI == Main.myPlayer;
+			bool isLocal = Player.whoAmI == Main.myPlayer;
 
-			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !player.mouseInterface 
-				&& player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking
-				&& !player.HasBuff(BuffID.Frozen) && !player.HasBuff(ModContent.BuffType<Buffs.Hold>()) && !player.HasBuff(BuffID.Stoned)) {
-				QueueDodgeroll(0.25f, (sbyte)KeyDirection(player));
+			if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface 
+				&& Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking
+				&& !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Buffs.Hold>()) && !Player.HasBuff(BuffID.Stoned)) {
+				QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player));
 			}
 
 			if (!forceDodgeroll) {
@@ -240,21 +240,21 @@ namespace tsorcRevamp {
 				}
 
 				//Don't allow dodging on mounts and during item use.
-				if ((player.mount != null && player.mount.Active) || player.itemAnimation > 0) {
+				if ((Player.mount != null && Player.mount.Active) || Player.itemAnimation > 0) {
 					return false;
 				}
 			}
 
 			wantsDodgerollTimer = 0f;
-			player.grappling[0] = -1;
-			player.grapCount = 0;
+			Player.grappling[0] = -1;
+			Player.grapCount = 0;
 			for (int p = 0; p < 1000; p++) {
-				if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7) {
+				if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 7) {
 					Main.projectile[p].Kill();
 				}
 			}
 
-			player.eocHit = 1;
+			Player.eocHit = 1;
 
 			isDodging = true;
 
@@ -265,31 +265,31 @@ namespace tsorcRevamp {
 				int choice = Main.rand.Next(4);
 				if (choice == 0)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.0f); //0.1f is volume, 1f is 100%, .1f is 10%; the last variable is pitch. -.8f to .8f is a lot
+					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.0f); //0.1f is volume, 1f is 100%, .1f is 10%; the last variable is pitch. -.8f to .8f is a lot
 				}
 				else if (choice == 1)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll2"), 0.1f, 0.0f);
+					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll2"), 0.1f, 0.0f);
 				}
 				else if (choice == 2)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.4f);
+					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.4f);
 				}
 				else if (choice == 3)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.2f);
+					Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.2f);
 				}
 
 			}
 			//only subtract stamina on a successful roll
-			player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
-			player.immune = true;
-			player.immuneTime = DodgeImmuneTime;
-			dodgeStartRot = player.GetModPlayer<tsorcRevampPlayer>().rotation;
-			dodgeItemRotation = player.itemRotation;
+			Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 30;
+			Player.immune = true;
+			Player.immuneTime = DodgeImmuneTime;
+			dodgeStartRot = Player.GetModPlayer<tsorcRevampPlayer>().rotation;
+			dodgeItemRotation = Player.itemRotation;
 			dodgeTime = 0f;
-			dodgeDirectionVisual = (sbyte)player.direction;
-			dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)player.direction;
+			dodgeDirectionVisual = (sbyte)Player.direction;
+			dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
 			dodgeCooldown = DodgeDefaultCooldown;
 
 			if (!isLocal) {
@@ -299,9 +299,9 @@ namespace tsorcRevamp {
 				ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
 				rollPacket.Write((byte)tsorcPacketID.SyncPlayerDodgeroll);
 				rollPacket.Write(false);
-				rollPacket.Write((byte)player.whoAmI);
+				rollPacket.Write((byte)Player.whoAmI);
 				rollPacket.Write(wantedDodgerollDir);
-				rollPacket.WriteVector2(player.velocity);
+				rollPacket.WriteVector2(Player.velocity);
 				rollPacket.Send();
 			}
 
@@ -310,7 +310,7 @@ namespace tsorcRevamp {
 		private void UpdateDodging() {
 			wantsDodgerollTimer = StepTowards(wantsDodgerollTimer, 0f, (float)1 / 60);
 
-			noDodge |= player.mount.Active;
+			noDodge |= Player.mount.Active;
 
 			if (noDodge) {
 				isDodging = false;
@@ -319,8 +319,8 @@ namespace tsorcRevamp {
 				return;
 			}
 
-			bool onGround = OnGround(player);
-			ref float rotation = ref player.GetModPlayer<tsorcRevampPlayer>().rotation;
+			bool onGround = OnGround(Player);
+			ref float rotation = ref Player.GetModPlayer<tsorcRevampPlayer>().rotation;
 
 			//Attempt to initiate a dodgeroll if the player isn't doing one already.
 			if (!isDodging && !TryStartDodgeroll()) {
@@ -331,13 +331,13 @@ namespace tsorcRevamp {
 
 				float newVelX = (onGround ? 12f : 8f) * dodgeDirection;
 
-				if (Math.Abs(player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(player.velocity.X)) {
-					player.velocity.X = newVelX;
+				if (Math.Abs(Player.velocity.X) < Math.Abs(newVelX) || Math.Sign(newVelX) != Math.Sign(Player.velocity.X)) {
+					Player.velocity.X = newVelX;
 				}
 
 			}
 
-			player.pulley = false;
+			Player.pulley = false;
 
 			//Apply rotations & direction
 			forcedItemRotation = dodgeItemRotation;
@@ -351,17 +351,17 @@ namespace tsorcRevamp {
 			dodgeTime += 1f / 60f;
 
 			if (dodgeTime >= DodgeTimeMax * 0.6f) {
-				player.velocity.X *= 0.85f;
+				Player.velocity.X *= 0.85f;
             }
 
 			if (dodgeTime >= DodgeTimeMax) {
 				isDodging = false;
-				player.eocDash = 0;
+				Player.eocDash = 0;
 
 				//forceSyncControls = true;
 			}
 			else {
-				player.runAcceleration = 0f;
+				Player.runAcceleration = 0f;
 			}
 		}
 	}

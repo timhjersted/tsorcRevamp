@@ -13,7 +13,7 @@ namespace tsorcRevamp.Tiles
 {
 	public class BonfireCheckpoint : ModTile
 	{
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			Main.tileFrameImportant[Type] = true;
 
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Tiles
 
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
-			if (Main.tile[i, j].frameY >= 74)
+			if (Main.tile[i, j].TileFrameY >= 74)
 			{
 				r = 0.7f;
 				g = 0.4f;
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Tiles
 			var pos = new Vector2(i + 0.5f, j); // the + .5f makes the effect reach from equal distance to left and right
 			var distance = Math.Abs(Vector2.Distance(player.Center, (pos * 16)));
 
-			if (Main.tile[i, j].frameY >= 74 && distance <= 80f && !player.dead)
+			if (Main.tile[i, j].TileFrameY >= 74 && distance <= 80f && !player.dead)
 			{
 				player.AddBuff(ModContent.BuffType<Buffs.Bonfire>(), 30);
 			}
@@ -132,10 +132,10 @@ namespace tsorcRevamp.Tiles
 
 			if (!Main.gamePaused && Main.instance.IsActive && (!Lighting.UpdateEveryFrame || Main.rand.NextBool(4)))
 			{
-				short frameX = tile.frameX;
-				short frameY = tile.frameY;
+				short frameX = tile.TileFrameX;
+				short frameY = tile.TileFrameY;
 
-				if (tile.frameY >= 74 && /*player.velocity.X == 0 && player.velocity.Y == 0 &&*/ player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f)
+				if (tile.TileFrameY >= 74 && /*player.velocity.X == 0 && player.velocity.Y == 0 &&*/ player.HasBuff(ModContent.BuffType<Buffs.Bonfire>()) && distance < 120f)
 				{
 					int style = frameY / 74; 
 
@@ -394,7 +394,7 @@ namespace tsorcRevamp.Tiles
 			Texture2D texture;
 			if (Main.canDrawColorTile(i, j))
 			{
-				texture = Main.tileAltTexture[Type, (int)tile.color()];
+				texture = Main.tileAltTexture[Type, (int)tile.TileColor];
 			}
 			else
 			{
@@ -405,14 +405,14 @@ namespace tsorcRevamp.Tiles
 			{
 				zero = Vector2.Zero;
 			}
-			int height = tile.frameY % animationFrameHeight == 54 ? 18 : 16;
+			int height = tile.TileFrameY % animationFrameHeight == 54 ? 18 : 16;
 			int animate = 0;
-			if (tile.frameY >= 74)
+			if (tile.TileFrameY >= 74)
 			{
 				animate = Main.tileFrame[Type] * animationFrameHeight;
 			}
-			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX, tile.frameY + animate, 16, height), Lighting.GetColor(i, j), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(mod.GetTexture("Tiles/BonfireCheckpoint_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX, tile.frameY + animate, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY + animate, 16, height), Lighting.GetColor(i, j), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(Mod.GetTexture("Tiles/BonfireCheckpoint_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY + animate, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
 			return false;
 		}
@@ -425,14 +425,14 @@ namespace tsorcRevamp.Tiles
 			player.showItemIcon2 = ModContent.ItemType<BonfirePlaceable>();
 		}
 
-		public override bool NewRightClick(int i, int j)
+		public override bool RightClick(int i, int j)
 		{
 			Player player = Main.LocalPlayer;
 			Tile tile = Main.tile[i, j];
-			if (tile.frameY / 74 == 0)
+			if (tile.TileFrameY / 74 == 0)
 			{
 				//new bonfire lit sound
-				Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/bonfire-lit"), 0.2f, 0.0f);
+				Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/bonfire-lit"), 0.2f, 0.0f);
 				//Main.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
 				UsefulFunctions.BroadcastText("Bonfire lit!", 250, 110, 90);
 
@@ -446,8 +446,8 @@ namespace tsorcRevamp.Tiles
                 }
 				tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));
 
-				int x = i - Main.tile[i, j].frameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
-				int y = j - Main.tile[i, j].frameY / 18 % 4; // 4 because it is 4 blocks tall
+				int x = i - Main.tile[i, j].TileFrameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
+				int y = j - Main.tile[i, j].TileFrameY / 18 % 4; // 4 because it is 4 blocks tall
 				for (int l = x; l < x + 3; l++)             // this chunk of code basically makes it so that when you right click one tile, 
 				{              // because 3x4 tile         // it counts as the whole 3x4 tile, not 4 individual tiles that can all be clicked
 					for (int m = y; m < y + 4; m++)         //Code taken from VoidMonolith - example mod
@@ -456,15 +456,15 @@ namespace tsorcRevamp.Tiles
 						{
 							Main.tile[l, m] = new Tile();
 						}
-						if (Main.tile[l, m].active() && Main.tile[l, m].type == Type)
+						if (Main.tile[l, m].HasTile && Main.tile[l, m].TileType == Type)
 						{
-							if (Main.tile[l, m].frameY < 74)
+							if (Main.tile[l, m].TileFrameY < 74)
 							{
-								Main.tile[l, m].frameY += 74;
+								Main.tile[l, m].TileFrameY += 74;
 							}
 							else
 							{
-								Main.tile[l, m].frameY -= 74;
+								Main.tile[l, m].TileFrameY -= 74;
 							}
 						}
 						
@@ -486,7 +486,7 @@ namespace tsorcRevamp.Tiles
 				//Tell the server to sync the list to the clients
 				NetMessage.SendData(MessageID.WorldData);
 			}
-			else if (tile.frameY / 74 >= 1)
+			else if (tile.TileFrameY / 74 >= 1)
 			{
 				//Main.NewText("Open/Close UI", 250, 80, 60);
 				if (!BonfireUIState.Visible)
@@ -516,9 +516,9 @@ namespace tsorcRevamp.Tiles
 
 			public override void SetDefaults()
 			{
-				item.CloneDefaults(ItemID.Bookcase);
-				item.createTile = ModContent.TileType<BonfireCheckpoint>();
-				item.placeStyle = 0;
+				Item.CloneDefaults(ItemID.Bookcase);
+				Item.createTile = ModContent.TileType<BonfireCheckpoint>();
+				Item.placeStyle = 0;
 			}
 
 			public override bool CanUseItem(Player player)

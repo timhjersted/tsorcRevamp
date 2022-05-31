@@ -13,11 +13,11 @@ namespace tsorcRevamp.Items.Armors {
                 "\n+5% ranged crit otherwise");
         }
         public override void SetDefaults() {
-            item.width = 18;
-            item.height = 12;
-            item.value = 35000;
-            item.rare = ItemRarityID.Orange;
-            item.defense = 3;
+            Item.width = 18;
+            Item.height = 12;
+            Item.value = 35000;
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 3;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.NecroHelmet);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);

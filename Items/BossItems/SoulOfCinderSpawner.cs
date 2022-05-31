@@ -10,13 +10,13 @@ namespace tsorcRevamp.Items.BossItems {
     	public override bool Autoload(ref string name) => false;
 
 		public override void SetDefaults() {
-			item.width = 40;
-			item.height = 40;
-			item.useAnimation = 45;
-			item.useTime = 45;
-			item.useStyle = ItemUseStyleID.HoldingUp;
-			item.consumable = false;
-			item.rare = ItemRarityID.Expert;
+			Item.width = 40;
+			Item.height = 40;
+			Item.useAnimation = 45;
+			Item.useTime = 45;
+			Item.useStyle = ItemUseStyleID.HoldUp;
+			Item.consumable = false;
+			Item.rare = ItemRarityID.Expert;
 		}
 
 		public override bool CanUseItem(Player player) {
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.BossItems {
 		}
 
 
-		public override bool UseItem(Player player) {
+		public override bool? UseItem(Player player) {
 			Main.PlaySound(SoundID.Roar, player.position, 0);
 			if (Main.netMode != NetmodeID.MultiplayerClient) {
 				NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - (16*12), ModContent.NPCType<SoulOfCinder>());

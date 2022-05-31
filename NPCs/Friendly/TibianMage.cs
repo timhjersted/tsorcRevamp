@@ -15,14 +15,14 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Tibian Mage");
-			Main.npcFrameCount[npc.type] = 26;
-			NPCID.Sets.ExtraFramesCount[npc.type] = 10;
-			NPCID.Sets.AttackFrameCount[npc.type] = 5;
-			NPCID.Sets.DangerDetectRange[npc.type] = 450; // keep this low for melee
-			NPCID.Sets.AttackType[npc.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
-			NPCID.Sets.AttackTime[npc.type] = 25;
-			NPCID.Sets.AttackAverageChance[npc.type] = 10;
-			NPCID.Sets.HatOffsetY[npc.type] = 4;
+			Main.npcFrameCount[NPC.type] = 26;
+			NPCID.Sets.ExtraFramesCount[NPC.type] = 10;
+			NPCID.Sets.AttackFrameCount[NPC.type] = 5;
+			NPCID.Sets.DangerDetectRange[NPC.type] = 450; // keep this low for melee
+			NPCID.Sets.AttackType[NPC.type] = 1; // 0 is throwing, 1 is shooting, 2 is magic, 3 is melee
+			NPCID.Sets.AttackTime[NPC.type] = 25;
+			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
+			NPCID.Sets.HatOffsetY[NPC.type] = 4;
 		}
 
 		public static List<string> Names = new List<string> {
@@ -37,17 +37,17 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void SetDefaults()
 		{
-			npc.townNPC = true;
-			npc.friendly = true;
-			npc.width = 18;
-			npc.height = 40;
-			npc.aiStyle = 7;
-			npc.damage = 50;
-			npc.defense = 25;
-			npc.lifeMax = 1000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 0.3f;
+			NPC.townNPC = true;
+			NPC.friendly = true;
+			NPC.width = 18;
+			NPC.height = 40;
+			NPC.aiStyle = 7;
+			NPC.damage = 50;
+			NPC.defense = 25;
+			NPC.lifeMax = 1000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 0.3f;
 			animationType = NPCID.Guide;
 		}
 
@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		int weaponChoice;
 		public override void AI()
 		{
-			if (Main.rand.Next(40) == 0 && npc.frame.Y < 1170)
+			if (Main.rand.Next(40) == 0 && NPC.frame.Y < 1170)
 			// only change weapons if we're not in attack animation frames
 			// 1170 is before the start of the first attack frame but after the start of the previous animation frame
 			// in other words: arbitrary, but close enough
@@ -206,13 +206,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void HitEffect(int hitDirection, double damage)
 		{
-			if (base.npc.life <= 0) //even though npcs are immortal
+			if (base.NPC.life <= 0) //even though npcs are immortal
 			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Mage Gore 1"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Mage Gore 2"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Mage Gore 2"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Mage Gore 3"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Mage Gore 3"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Mage Gore 1"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Mage Gore 2"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Mage Gore 2"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Mage Gore 3"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Mage Gore 3"));
 			}
 		}
 

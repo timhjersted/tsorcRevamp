@@ -18,14 +18,14 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Orange;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 60;
-            item.useAnimation = 60;
-            item.value = 15000;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Orange;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 60;
+            Item.useAnimation = 60;
+            Item.value = 15000;
 
         }
 
@@ -47,14 +47,14 @@ namespace tsorcRevamp.Items
         {
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
                 player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 60);
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 60);
             }
 
-            if (player.itemTime < (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime < (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
             {
-                item.useStyle = ItemUseStyleID.HoldingUp;
+                Item.useStyle = ItemUseStyleID.HoldUp;
 
                 if (Main.rand.Next(2) == 0)
                 {
@@ -71,9 +71,9 @@ namespace tsorcRevamp.Items
                 }
             }
 
-            if (player.itemTime >= (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime >= (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
             {
-                item.useStyle = ItemUseStyleID.HoldingOut;
+                Item.useStyle = ItemUseStyleID.Shoot;
             }
 
             if (player.itemTime == 1)

@@ -6,7 +6,7 @@ namespace tsorcRevamp.Buffs
     class MagicImbueCooldown : ModBuff
     {
 
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Magic Imbue Cooldown");
             Description.SetDefault("You cannot use any magical weapon imbues!");

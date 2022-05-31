@@ -10,10 +10,10 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.height = 12;
-            item.width = 24;
-            item.maxStack = 30;
-            item.value = 2;
+            Item.height = 12;
+            Item.width = 24;
+            Item.maxStack = 30;
+            Item.value = 2;
         }
     }
 }

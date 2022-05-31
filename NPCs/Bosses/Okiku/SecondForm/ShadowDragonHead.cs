@@ -16,18 +16,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
 		public override void SetDefaults()
 		{
-			npc.width = 42;
-			npc.height = 42;
-			npc.aiStyle = 6;
-			npc.damage = 90;
-			npc.defense = 19;
-			npc.boss = true;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.lifeMax = 12600;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 0f;
+			NPC.width = 42;
+			NPC.height = 42;
+			NPC.aiStyle = 6;
+			NPC.damage = 90;
+			NPC.defense = 19;
+			NPC.boss = true;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.lifeMax = 12600;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 0f;
 			despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
 
 			drawOffsetY = 45;
@@ -57,12 +57,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
 		public override void AI()
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<ShadowDragonHead>(), bodyTypes, ModContent.NPCType<ShadowDragonTail>(), 25, 0f, 16f, 0.33f, true, false, true, false, false);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
+			tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ShadowDragonHead>(), bodyTypes, ModContent.NPCType<ShadowDragonTail>(), 25, 0f, 16f, 0.33f, true, false, true, false, false);
 
 			if (Main.rand.Next(3) == 0)
 			{
-				int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 62, 0.8f, 0f, 100, Color.White, 2f);
+				int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 62, 0.8f, 0f, 100, Color.White, 2f);
 				Main.dust[dust].noGravity = true;
 			}			
 		}
@@ -72,8 +72,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 		{
 			return false;
 		}
-        public override void NPCLoot() {
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 500);
+        public override void OnKill() {
+			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 500);
         }
     }
 }

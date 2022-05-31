@@ -12,7 +12,7 @@ namespace tsorcRevamp.Buffs
             texture = "tsorcRevamp/Buffs/ArmorDrug";
             return base.Autoload(ref name, ref texture);
         }
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Electrocuted!");
             Description.SetDefault("Losing life");

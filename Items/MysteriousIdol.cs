@@ -9,15 +9,15 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.width = 18;
-            item.height = 20;
-            item.rare = ItemRarityID.Blue;
-            item.value = 1000;
-            item.maxStack = 1;
+            Item.width = 18;
+            Item.height = 20;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = 1000;
+            Item.maxStack = 1;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.GoldBar, 3);
             recipe.AddIngredient(ItemID.Ruby, 5);
             recipe.AddIngredient(ItemID.Diamond, 5);

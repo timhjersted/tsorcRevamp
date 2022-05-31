@@ -5,24 +5,24 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class ReforgedOldAxe : ModItem {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldAxe";
         public override void SetDefaults() {
-            item.damage = 12;
-            item.width = 36;
-            item.height = 30;
-            item.knockBack = 6;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1;
-            item.useAnimation = 20;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 20;
-            item.value = 9000;
+            Item.damage = 12;
+            Item.width = 36;
+            Item.height = 30;
+            Item.knockBack = 6;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.scale = 1;
+            Item.useAnimation = 20;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 20;
+            Item.value = 9000;
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldAxe"));
-            recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("OldAxe"));
+            recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

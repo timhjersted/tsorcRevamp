@@ -11,20 +11,20 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 22;
-            item.height = 26;
-            item.accessory = true;
-            item.value = PriceByRarity.Purple_11;
-            item.rare = ItemRarityID.Purple;
+            Item.width = 22;
+            Item.height = 26;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("GoldenHairpin"), 1);
-            recipe.AddIngredient(mod.GetItem("GemBox"), 1);
-            recipe.AddIngredient(mod.GetItem("CursedSoul"), 30);
-            recipe.AddIngredient(mod.GetItem("SoulOfBlight"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 400000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("GoldenHairpin"), 1);
+            recipe.AddIngredient(Mod.GetItem("GemBox"), 1);
+            recipe.AddIngredient(Mod.GetItem("CursedSoul"), 30);
+            recipe.AddIngredient(Mod.GetItem("SoulOfBlight"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 400000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

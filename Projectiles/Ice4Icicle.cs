@@ -5,17 +5,17 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class Ice4Icicle : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 42;
-            projectile.height = 84;
-            projectile.friendly = true;
-            projectile.penetrate = 8;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 400;
+            Projectile.width = 42;
+            Projectile.height = 84;
+            Projectile.friendly = true;
+            Projectile.penetrate = 8;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 400;
         }
         public override void AI() {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
     }
 }

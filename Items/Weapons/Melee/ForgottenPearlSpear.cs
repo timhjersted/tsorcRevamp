@@ -9,27 +9,27 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 52;
-            item.knockBack = 7f;
+            Item.damage = 52;
+            Item.knockBack = 7f;
 
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 15;
-            item.useTime = 7;
-            item.shootSpeed = 7;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 15;
+            Item.useTime = 7;
+            Item.shootSpeed = 7;
             //item.shoot = ProjectileID.DarkLance;
 
-            item.height = 50;
-            item.width = 50;
+            Item.height = 50;
+            Item.width = 50;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.melee = true;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = PriceByRarity.Pink_5;
-            item.rare = ItemRarityID.Pink;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.ForgottenPearlSpear>();
+            Item.value = PriceByRarity.Pink_5;
+            Item.rare = ItemRarityID.Pink;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenPearlSpear>();
 
         }
 

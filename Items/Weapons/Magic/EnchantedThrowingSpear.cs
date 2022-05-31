@@ -11,36 +11,36 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
         public override void SetDefaults()
         {
-            item.shootSpeed = 12f;
-            item.damage = 39;
-            item.knockBack = 9f;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 20;
-            item.useTime = 20;
-            item.mana = 10;
-            item.width = 64;
-            item.height = 64;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.LightRed;
+            Item.shootSpeed = 12f;
+            Item.damage = 39;
+            Item.knockBack = 9f;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
+            Item.mana = 10;
+            Item.width = 64;
+            Item.height = 64;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.LightRed;
 
-            item.consumable = false;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.autoReuse = true;
-            item.magic = true;
+            Item.consumable = false;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.magic = true;
 
-            item.UseSound = SoundID.Item1;
-            item.value = PriceByRarity.LightRed_4;
-            item.shoot = ModContent.ProjectileType<Projectiles.EnchantedThrowingSpear>();
+            Item.UseSound = SoundID.Item1;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.shoot = ModContent.ProjectileType<Projectiles.EnchantedThrowingSpear>();
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ThrowingSpear"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("ThrowingSpear"), 1);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(Mod.GetItem("EphemeralDust"), 30);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 5000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();

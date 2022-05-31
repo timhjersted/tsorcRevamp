@@ -8,68 +8,68 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
     class MassiveCrystalShardsSpell : ModProjectile {
 		public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
 		public override void SetDefaults() {
-            projectile.aiStyle = 0;
-            projectile.hostile = true;
-            projectile.height = 16;
-            projectile.penetrate = 1;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.width = 16;
+            Projectile.aiStyle = 0;
+            Projectile.hostile = true;
+            Projectile.height = 16;
+            Projectile.penetrate = 1;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.width = 16;
 
         }
 
         public override void PostAI() {
-			Lighting.AddLight(projectile.position, Color.Cyan.ToVector3());
-			projectile.alpha += 5;
-			if (projectile.alpha >= 255) {
-				projectile.Kill();
+			Lighting.AddLight(Projectile.position, Color.Cyan.ToVector3());
+			Projectile.alpha += 5;
+			if (Projectile.alpha >= 255) {
+				Projectile.Kill();
             }
         }
 
         public override void Kill(int timeLeft) {
 			
 				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
-				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 30, 0.5f, .1f); //ice materialize - good
+				Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.5f, .1f); //ice materialize - good
 			var Shards = ModContent.ProjectileType<MassiveCrystalShards>();
-				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);
-				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 5), projectile.position.Y + (float)(projectile.height * 4), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);
-				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -3), projectile.position.Y + (float)(projectile.height * 7), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);
-				Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height * 10), 0, 5, Shards, (int)(this.projectile.damage), 3f, projectile.owner);
-				Vector2 projectilePos = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int num41 = Dust.NewDust(projectilePos, projectile.width, projectile.height, 15, 0f, 0f, 100, default, 2f);
+				Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);
+				Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 5), Projectile.position.Y + (float)(Projectile.height * 4), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);
+				Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -3), Projectile.position.Y + (float)(Projectile.height * 7), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);
+				Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 10), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);
+				Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
 				Main.dust[num41].noGravity = true;
 				Main.dust[num41].velocity *= 2f;
-				Dust.NewDust(projectilePos, projectile.width, projectile.height, 15, 0f, 0f, 100, default, 1f);
+				Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 1f);
 				
-			if (projectile.owner == Main.myPlayer) {
+			if (Projectile.owner == Main.myPlayer) {
 				if (Main.netMode != NetmodeID.SinglePlayer) {
-					NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, projectile.identity, (float)projectile.owner, 0f, 0f, 0);
+					NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, Projectile.identity, (float)Projectile.owner, 0f, 0f, 0);
 				}
 			}
-			projectile.active = false;
+			Projectile.active = false;
 		}
 
 		//This is too hard to see especially at night, so i'm making it ignore all lighting and always draw at full brightness
 		static Texture2D texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(ref Color lightColor)
 		{
 			if (texture == null || texture.IsDisposed)
 			{
 				texture = ModContent.GetTexture("tsorcRevamp/Projectiles/Ice1Ball");
 			}
 			SpriteEffects spriteEffects = SpriteEffects.None;
-			if (projectile.spriteDirection == -1)
+			if (Projectile.spriteDirection == -1)
 			{
 				spriteEffects = SpriteEffects.FlipHorizontally;
 			}
 			//Get the premultiplied, properly transparent texture
-			int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-			int startY = frameHeight * projectile.frame;
+			int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+			int startY = frameHeight * Projectile.frame;
 			Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
 			Vector2 origin = sourceRectangle.Size() / 2f;
-			Main.spriteBatch.Draw(texture,
-				projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-				sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+			Main.Main.EntitySpriteDraw(texture,
+				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+				sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
 
 			return false;
 		}

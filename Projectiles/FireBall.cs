@@ -8,23 +8,23 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class FireBall : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 12;
-            projectile.height = 12;
-            projectile.timeLeft = 3600;
-            projectile.friendly = true;
-            projectile.tileCollide = true;
-            projectile.magic = true;
-            projectile.aiStyle = 0;
+            Projectile.width = 12;
+            Projectile.height = 12;
+            Projectile.timeLeft = 3600;
+            Projectile.friendly = true;
+            Projectile.tileCollide = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.aiStyle = 0;
         }
         public override void AI() {
 
             Color color = new Color();
             for (int d = 0; d < 2; d++) {
-                int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 100, color, 1.25f);
+                int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 100, color, 1.25f);
                 Main.dust[dust].noGravity = true;
             }
-            if (projectile.wet) {
-                projectile.Kill();
+            if (Projectile.wet) {
+                Projectile.Kill();
             }
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
@@ -36,10 +36,10 @@ namespace tsorcRevamp.Projectiles {
         {
             for (int d = 0; d < 15; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 174, projectile.velocity.X, projectile.velocity.Y, 0, default(Color), 1f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 174, Projectile.velocity.X, Projectile.velocity.Y, 0, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
-            Main.PlaySound(SoundID.NPCHit3.WithVolume(.45f), projectile.position);
+            Main.PlaySound(SoundID.NPCHit3.WithVolume(.45f), Projectile.position);
         }
     }
 }

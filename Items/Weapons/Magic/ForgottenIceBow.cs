@@ -16,34 +16,34 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.damage = 110;
-            item.height = 58;
-            item.knockBack = 4;
-            item.noMelee = true;
-            item.magic = true;
-            item.rare = ItemRarityID.Red;
-            item.mana = 40;
-            item.channel = true;
-            item.autoReuse = true;
-            item.scale = 0.9f;
-            item.shootSpeed = 34;
-            item.useAnimation = 15;
-            item.UseSound = SoundID.Item5;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 15;
-            item.value = PriceByRarity.Red_10;
-            item.width = 16;
-            item.shoot = ModContent.ProjectileType<Projectiles.Ice5Ball>();
+            Item.damage = 110;
+            Item.height = 58;
+            Item.knockBack = 4;
+            Item.noMelee = true;
+            Item.magic = true;
+            Item.rare = ItemRarityID.Red;
+            Item.mana = 40;
+            Item.channel = true;
+            Item.autoReuse = true;
+            Item.scale = 0.9f;
+            Item.shootSpeed = 34;
+            Item.useAnimation = 15;
+            Item.UseSound = SoundID.Item5;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 15;
+            Item.value = PriceByRarity.Red_10;
+            Item.width = 16;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Ice5Ball>();
         }
 
         public override void AddRecipes() {
             //todo add ingredients
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("ForgottenIceBowScroll"), 1);
-            recipe.AddIngredient(mod.GetItem("Ice4Tome"), 1);
-            recipe.AddIngredient(mod.GetItem("SoulOfArtorias"), 1);
-            recipe.AddIngredient(mod.GetItem("Humanity"), 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("ForgottenIceBowScroll"), 1);
+            recipe.AddIngredient(Mod.GetItem("Ice4Tome"), 1);
+            recipe.AddIngredient(Mod.GetItem("SoulOfArtorias"), 1);
+            recipe.AddIngredient(Mod.GetItem("Humanity"), 30);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 200000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

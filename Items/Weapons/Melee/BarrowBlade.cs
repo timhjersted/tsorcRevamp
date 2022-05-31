@@ -10,19 +10,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nDispels the defensive shields of Artorias and the Witchking");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Quest; //so people know it's important
-            item.damage = 26;
-            item.height = 32;
-            item.knockBack = 5;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = .9f;
-            item.useAnimation = 21;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.Blue_1;
-            item.width = 32;
+            Item.rare = ItemRarityID.Quest; //so people know it's important
+            Item.damage = 26;
+            Item.height = 32;
+            Item.knockBack = 5;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.scale = .9f;
+            Item.useAnimation = 21;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.Blue_1;
+            Item.width = 32;
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {            

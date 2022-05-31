@@ -12,26 +12,26 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 28;
-            item.lifeRegen = 2;
-            item.accessory = true;
-            item.value = PriceByRarity.Blue_1;
-            item.rare = ItemRarityID.Blue;
+            Item.width = 28;
+            Item.height = 28;
+            Item.lifeRegen = 2;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Blue_1;
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BandofRegeneration, 1);
             recipe.AddIngredient(ItemID.BandofStarpower, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
 
-            ModRecipe recipe2 = new ModRecipe(mod);
+            Recipe recipe2 = new Recipe(Mod);
             recipe2.AddIngredient(ItemID.ManaRegenerationBand, 1);
-            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 3000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.SetResult(this, 1);
             recipe2.AddRecipe();

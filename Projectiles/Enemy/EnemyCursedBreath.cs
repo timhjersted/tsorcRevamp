@@ -10,25 +10,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 	{
 		public override void SetDefaults()
 		{
-			projectile.width = 16;
-			projectile.height = 16;
-			projectile.alpha = 255;
-			projectile.aiStyle = 8; //8 with 96 AI Style works; with no AIType it rained down 5 streams like a firework, good if launched above player (23 is a orange flame)
-			projectile.timeLeft = 60;
-			projectile.friendly = false;
-			projectile.light = 0.8f;
-			projectile.penetrate = 3; //was 4, was causing curse buildup way too fast
-			projectile.tileCollide = false;
+			Projectile.width = 16;
+			Projectile.height = 16;
+			Projectile.alpha = 255;
+			Projectile.aiStyle = 8; //8 with 96 AI Style works; with no AIType it rained down 5 streams like a firework, good if launched above player (23 is a orange flame)
+			Projectile.timeLeft = 60;
+			Projectile.friendly = false;
+			Projectile.light = 0.8f;
+			Projectile.penetrate = 3; //was 4, was causing curse buildup way too fast
+			Projectile.tileCollide = false;
 			aiType = 96;
-			projectile.magic = true;
-			projectile.hostile = true;
-			projectile.ignoreWater = true;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.hostile = true;
+			Projectile.ignoreWater = true;
 		}
 		public override void AI()
 		{
-			projectile.rotation += 3f;
+			Projectile.rotation += 3f;
 			
-			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);
+			int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);
 			Main.dust[dust].noGravity = true;
 		}
 

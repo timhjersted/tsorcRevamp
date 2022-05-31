@@ -10,26 +10,26 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Red;
-            item.autoReuse = true;
-            item.damage = 185;
-            item.height = 50;
-            item.knockBack = 8;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1.1f;
-            item.useAnimation = 21;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 21;
-            item.value = PriceByRarity.Red_10;
-            item.width = 50;
+            Item.rare = ItemRarityID.Red;
+            Item.autoReuse = true;
+            Item.damage = 185;
+            Item.height = 50;
+            Item.knockBack = 8;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.scale = 1.1f;
+            Item.useAnimation = 21;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.Red_10;
+            Item.width = 50;
         }
 
 
 
         /*public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ItemID.FallenStar, 120);
             recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
             recipe.AddIngredient(mod.GetItem("WhiteTitanite"), 10);

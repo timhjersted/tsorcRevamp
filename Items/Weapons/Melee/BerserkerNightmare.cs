@@ -6,28 +6,28 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     public class BerserkerNightmare : ModItem { 
 
         public override void SetDefaults() {
-            item.width = 32;
-            item.height = 32;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.channel = true;
-            item.useAnimation = 44;
-            item.useTime = 44;
-            item.damage = 49;
-            item.knockBack = 8;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.LightPurple;
-            item.shootSpeed = 13;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.value = PriceByRarity.LightPurple_6;
-            item.melee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.BerserkerSphere>();
+            Item.width = 32;
+            Item.height = 32;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.channel = true;
+            Item.useAnimation = 44;
+            Item.useTime = 44;
+            Item.damage = 49;
+            Item.knockBack = 8;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.shootSpeed = 13;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.melee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.BerserkerSphere>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.DaoofPow, 2);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 70000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 70000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -14,25 +14,25 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             get;
         }
         public override void SetDefaults() {
-            item.width = 16;
-            item.height = 25;
-            item.consumable = false;
-            item.maxStack = 1;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 8;
-            item.useTime = 8;
-            item.UseSound = SoundID.Item21;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 16;
+            Item.height = 25;
+            Item.consumable = false;
+            Item.maxStack = 1;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 8;
+            Item.useTime = 8;
+            Item.UseSound = SoundID.Item21;
+            Item.rare = ItemRarityID.Orange;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips) {
             int ttindex = tooltips.FindLastIndex(t => t.mod != null);
             if (ttindex != -1) {
-                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", "Does not consume a buff slot."));
-                tooltips.Insert(ttindex + 2, new TooltipLine(mod, "", "Use to toggle effect."));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", "Does not consume a buff slot."));
+                tooltips.Insert(ttindex + 2, new TooltipLine(Mod, "", "Use to toggle effect."));
             }
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.PermanentBuffToggles[PermanentID] = !modPlayer.PermanentBuffToggles[PermanentID]; 
             return true;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
             if (!Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().PermanentBuffToggles[PermanentID]) {
-                Texture2D texture = Main.itemTexture[item.type];
+                Texture2D texture = Main.itemTexture[Item.type];
                 for (int i = 0; i < 4; i++) {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
                     spriteBatch.Draw(texture, position + offsetPositon, null, Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0f);
@@ -213,7 +213,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1) {// if we find one
                     //insert the extra tooltip line
-                    tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", "Has no effect on the [c/6d8827:Bearer of the Curse]"));
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", "Has no effect on the [c/6d8827:Bearer of the Curse]"));
                 }
             }
         }
@@ -720,7 +720,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.PermanentBuffToggles[49] = true;
             modPlayer.PermanentBuffToggles[51] = true;
@@ -750,7 +750,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.PermanentBuffToggles[49] = true;
             modPlayer.PermanentBuffToggles[51] = true;
@@ -815,7 +815,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             Tooltip.SetDefault("Permanently grants the Demon Drug buff.");
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>(); 
             modPlayer.PermanentBuffToggles[46] = true;
             modPlayer.PermanentBuffToggles[51] = true;
@@ -858,7 +858,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.PermanentBuffToggles[46] = true;
             modPlayer.PermanentBuffToggles[49] = true;
@@ -891,7 +891,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override int PermanentID => 52;
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("Permanently grants the Soul Siphon buff.");
-            ItemID.Sets.ItemIconPulse[item.type] = true; // Makes item pulsate in world.
+            ItemID.Sets.ItemIconPulse[Item.type] = true; // Makes item pulsate in world.
         }
 
         public override void PotionEffect(Player player) {

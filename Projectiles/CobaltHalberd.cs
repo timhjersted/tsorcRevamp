@@ -9,42 +9,42 @@ namespace tsorcRevamp.Projectiles
 
 		public override void SetDefaults()
 		{
-			projectile.width = 16;
-			projectile.height = 16;
-			projectile.aiStyle = 19;
-			projectile.penetrate = -1;
-			projectile.timeLeft = 3600;
-			projectile.friendly = true;
-			projectile.hostile = false;
-			projectile.ownerHitCheck = false;
-			projectile.melee = true;
-			projectile.tileCollide = false;
-			projectile.hide = true;
-			projectile.scale = 1f;
+			Projectile.width = 16;
+			Projectile.height = 16;
+			Projectile.aiStyle = 19;
+			Projectile.penetrate = -1;
+			Projectile.timeLeft = 3600;
+			Projectile.friendly = true;
+			Projectile.hostile = false;
+			Projectile.ownerHitCheck = false;
+			Projectile.DamageType = DamageClass.Melee;
+			Projectile.tileCollide = false;
+			Projectile.hide = true;
+			Projectile.scale = 1f;
 
 		}
 		public float moveFactor
 		{ //controls spear speed
-			get => projectile.ai[0];
-			set => projectile.ai[0] = value;
+			get => Projectile.ai[0];
+			set => Projectile.ai[0] = value;
 		}
 
 		public override void AI()
 		{
-			Player pOwner = Main.player[projectile.owner];
+			Player pOwner = Main.player[Projectile.owner];
 			Vector2 ownercenter = pOwner.RotatedRelativePoint(pOwner.MountedCenter, true);
-			projectile.direction = pOwner.direction;
-			pOwner.heldProj = projectile.whoAmI;
+			Projectile.direction = pOwner.direction;
+			pOwner.heldProj = Projectile.whoAmI;
 			pOwner.itemTime = pOwner.itemAnimation;
-			projectile.position.X = ownercenter.X - (float)(projectile.width / 2);
-			projectile.position.Y = ownercenter.Y - (float)(projectile.height / 2);
+			Projectile.position.X = ownercenter.X - (float)(Projectile.width / 2);
+			Projectile.position.Y = ownercenter.Y - (float)(Projectile.height / 2);
 
 			if (!pOwner.frozen)
 			{
 				if (moveFactor == 0f)
 				{ //when initially thrown
 					moveFactor = 3f; //move forward
-					projectile.netUpdate = true;
+					Projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2)
 				{ //after x animation frames, return
@@ -59,15 +59,15 @@ namespace tsorcRevamp.Projectiles
 
 			if (pOwner.itemAnimation == 4)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 			}
 
-			projectile.position += projectile.velocity * moveFactor;
-			projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);
-			projectile.spriteDirection = projectile.direction;
-			if (projectile.spriteDirection == -1)
+			Projectile.position += Projectile.velocity * moveFactor;
+			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);
+			Projectile.spriteDirection = Projectile.direction;
+			if (Projectile.spriteDirection == -1)
 			{
-				projectile.rotation -= MathHelper.ToRadians(90f);
+				Projectile.rotation -= MathHelper.ToRadians(90f);
 			}
 
 

@@ -11,25 +11,25 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void SetDefaults() {
-            item.width = 20;
-            item.height = 26;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item3;
-            item.maxStack = 30;
-            item.consumable = true;
-            item.rare = ItemRarityID.Blue;
-            item.value = 1000;
-            item.buffType = ModContent.BuffType<Buffs.Attraction>();
-            item.buffTime = 36000;
+            Item.width = 20;
+            Item.height = 26;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item3;
+            Item.maxStack = 30;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = 1000;
+            Item.buffType = ModContent.BuffType<Buffs.Attraction>();
+            Item.buffTime = 36000;
         }
         public override bool CanUseItem(Player player) {
             return !Main.dayTime;
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BottledWater, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.Vertebrae, 10);
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Potions {
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(this, 5);
             recipe.AddRecipe();
-            recipe = new ModRecipe(mod);
+            recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BottledWater, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.RottenChunk, 10);

@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Freed Fairy");
-			Main.npcFrameCount[npc.type] = 6;
+			Main.npcFrameCount[NPC.type] = 6;
 			//NPCID.Sets.HatOffsetY[npc.type] = 4;
 		}
 		public override string TownNPCName()
@@ -30,19 +30,19 @@ namespace tsorcRevamp.NPCs.Friendly
 		}
 		public override void SetDefaults()
 		{
-			npc.townNPC = true;
-			npc.noGravity = true;
-			npc.friendly = true;
-			npc.width = 18;
-			npc.height = 18;
-			npc.aiStyle = 7;
-			npc.damage = 90;
-			npc.defense = 15;
-			npc.lifeMax = 1000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 0.5f;
-			npc.dontTakeDamage = true;
+			NPC.townNPC = true;
+			NPC.noGravity = true;
+			NPC.friendly = true;
+			NPC.width = 18;
+			NPC.height = 18;
+			NPC.aiStyle = 7;
+			NPC.damage = 90;
+			NPC.defense = 15;
+			NPC.lifeMax = 1000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 0.5f;
+			NPC.dontTakeDamage = true;
 
 		}
 
@@ -52,27 +52,27 @@ namespace tsorcRevamp.NPCs.Friendly
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}
-			if (npc.velocity.X < 0)
+			if (NPC.velocity.X < 0)
 			{
-				npc.spriteDirection = -1;
+				NPC.spriteDirection = -1;
 			}
 			else
 			{
-				npc.spriteDirection = 1;
+				NPC.spriteDirection = 1;
 			}
-			npc.rotation = npc.velocity.X * 0.08f;
+			NPC.rotation = NPC.velocity.X * 0.08f;
 
-			npc.frameCounter += 1.0;
-			if (npc.frameCounter >= 8.0)
+			NPC.frameCounter += 1.0;
+			if (NPC.frameCounter >= 8.0)
 			{
-				npc.frame.Y = npc.frame.Y + num;
-				npc.frameCounter = 0.0;
+				NPC.frame.Y = NPC.frame.Y + num;
+				NPC.frameCounter = 0.0;
 			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+			if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
 			{
-				npc.frame.Y = 0;
+				NPC.frame.Y = 0;
 			}
 		}
 		#endregion
@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				//Drop one for each player
 				for (int i = 0; i < Main.ActivePlayersCount; i++)
 				{
-					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.Oxyale>());
+					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.Oxyale>());
 				}
 				droppedOxyale = true;
 			}
@@ -109,219 +109,219 @@ namespace tsorcRevamp.NPCs.Friendly
 			//I don't know why. I probably don't want to know why. This is as simple as workarounds get, though.
 			if (droppedOxyale)
             {
-				npc.active = false;
+				NPC.active = false;
 				for (int i = 0; i < 20; i++)
 				{
-					Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.BlueFairy, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3));
+					Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.BlueFairy, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3));
 				}
 				return;
 			}
-			npc.TargetClosest(true);
+			NPC.TargetClosest(true);
 
-			this.npc.directionY = -1;
-				if (this.npc.direction == 0)
+			this.NPC.directionY = -1;
+				if (this.NPC.direction == 0)
 				{
-					this.npc.direction = 1;
+					this.NPC.direction = 1;
 				}
 				
-				if (Main.player[npc.target].active && Main.player[npc.target].talkNPC == this.npc.whoAmI)
+				if (Main.player[NPC.target].active && Main.player[NPC.target].talkNPC == this.NPC.whoAmI)
 				{
-					if (this.npc.ai[0] != 0f)
+					if (this.NPC.ai[0] != 0f)
 					{
-						this.npc.netUpdate = true;
+						this.NPC.netUpdate = true;
 					}
-					this.npc.ai[0] = 0f;
-					this.npc.ai[1] = 300f;
-					this.npc.ai[2] = 100f;
-					if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) < this.npc.position.X + (float)(this.npc.width / 2))
+					this.NPC.ai[0] = 0f;
+					this.NPC.ai[1] = 300f;
+					this.NPC.ai[2] = 100f;
+					if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) < this.NPC.position.X + (float)(this.NPC.width / 2))
 					{
-						this.npc.direction = -1;
+						this.NPC.direction = -1;
 					}
 					else
 					{
-						this.npc.direction = 1;
+						this.NPC.direction = 1;
 					}
 				}
 				
-				if (npc.ai[2] >= 0f)
+				if (NPC.ai[2] >= 0f)
 				{
 					int num258 = 16;
 					bool flag26 = false;
 					bool flag27 = false;
-					if (npc.position.X > npc.ai[0] - (float)num258 && npc.position.X < npc.ai[0] + (float)num258)
+					if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
 					{
 						flag26 = true;
 					}
 					else
 					{
-						if ((npc.velocity.X < 0f && npc.direction > 0) || (npc.velocity.X > 0f && npc.direction < 0))
+						if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
 						{
 							flag26 = true;
 						}
 					}
 					num258 += 24;
-					if (npc.position.Y > npc.ai[1] - (float)num258 && npc.position.Y < npc.ai[1] + (float)num258)
+					if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
 					{
 						flag27 = true;
 					}
 					if (flag26 && flag27)
 					{
-						npc.ai[2] += 1f;						
-						if (npc.ai[2] >= 60f)
+						NPC.ai[2] += 1f;						
+						if (NPC.ai[2] >= 60f)
 						{
-							npc.ai[2] = -200f;
-							npc.direction *= -1;
-							npc.velocity.X = npc.velocity.X * -1f;
-							npc.collideX = false;
+							NPC.ai[2] = -200f;
+							NPC.direction *= -1;
+							NPC.velocity.X = NPC.velocity.X * -1f;
+							NPC.collideX = false;
 						}
 					}
 					else
 					{
-						npc.ai[0] = npc.position.X;
-						npc.ai[1] = npc.position.Y;
-						npc.ai[2] = 0f;
+						NPC.ai[0] = NPC.position.X;
+						NPC.ai[1] = NPC.position.Y;
+						NPC.ai[2] = 0f;
 					}
-					npc.TargetClosest(true);
+					NPC.TargetClosest(true);
 				}
 				else
 				{
-					npc.ai[2] += 1f;
-					if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
+					NPC.ai[2] += 1f;
+					if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
 					{
-						npc.direction = -1;
+						NPC.direction = -1;
 					}
 					else
 					{
-						npc.direction = 1;
+						NPC.direction = 1;
 					}
 				}
-				int num259 = (int)((npc.position.X + (float)(npc.width / 2)) / 16f) + npc.direction * 2;
-				int num260 = (int)((npc.position.Y + (float)npc.height) / 16f);
-				if (npc.position.Y > Main.player[npc.target].position.Y)
+				int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
+				int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
+				if (NPC.position.Y > Main.player[NPC.target].position.Y)
 				{
-					npc.velocity.Y -= .2f;
-					if (npc.velocity.Y < -1.8f)
+					NPC.velocity.Y -= .2f;
+					if (NPC.velocity.Y < -1.8f)
 					{
-						npc.velocity.Y = -1.8f;
+						NPC.velocity.Y = -1.8f;
 					}
 				}
-				if (npc.position.Y < Main.player[npc.target].position.Y)
+				if (NPC.position.Y < Main.player[NPC.target].position.Y)
 				{
-					npc.velocity.Y += .2f;
-					if (npc.velocity.Y > 1.8f)
+					NPC.velocity.Y += .2f;
+					if (NPC.velocity.Y > 1.8f)
 					{
-						npc.velocity.Y = 1.8f;
+						NPC.velocity.Y = 1.8f;
 					}
 				}
-				if (npc.collideX)
+				if (NPC.collideX)
 				{
-					npc.velocity.X = npc.oldVelocity.X * -0.4f;
-					if (npc.direction == -1 && npc.velocity.X > 0f && npc.velocity.X < 1f)
+					NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
+					if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
 					{
-						npc.velocity.X = 1f;
+						NPC.velocity.X = 1f;
 					}
-					if (npc.direction == 1 && npc.velocity.X < 0f && npc.velocity.X > -1f)
+					if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
 					{
-						npc.velocity.X = -1f;
+						NPC.velocity.X = -1f;
 					}
 				}
-				if (npc.collideY)
+				if (NPC.collideY)
 				{
-					npc.velocity.Y = npc.oldVelocity.Y * -0.25f;
-					if (npc.velocity.Y > 0f && npc.velocity.Y < 1f)
+					NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
+					if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
 					{
-						npc.velocity.Y = 1f;
+						NPC.velocity.Y = 1f;
 					}
-					if (npc.velocity.Y < 0f && npc.velocity.Y > -1f)
+					if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
 					{
-						npc.velocity.Y = -1f;
+						NPC.velocity.Y = -1f;
 					}
 				}
 				float num270 = 2.5f;
-				if (npc.direction == -1 && npc.velocity.X > -num270)
+				if (NPC.direction == -1 && NPC.velocity.X > -num270)
 				{
-					npc.velocity.X = npc.velocity.X - 0.1f;
-					if (npc.velocity.X > num270)
+					NPC.velocity.X = NPC.velocity.X - 0.1f;
+					if (NPC.velocity.X > num270)
 					{
-						npc.velocity.X = npc.velocity.X - 0.1f;
+						NPC.velocity.X = NPC.velocity.X - 0.1f;
 					}
 					else
 					{
-						if (npc.velocity.X > 0f)
+						if (NPC.velocity.X > 0f)
 						{
-							npc.velocity.X = npc.velocity.X + 0.05f;
+							NPC.velocity.X = NPC.velocity.X + 0.05f;
 						}
 					}
-					if (npc.velocity.X < -num270)
+					if (NPC.velocity.X < -num270)
 					{
-						npc.velocity.X = -num270;
+						NPC.velocity.X = -num270;
 					}
 				}
 				else
 				{
-					if (npc.direction == 1 && npc.velocity.X < num270)
+					if (NPC.direction == 1 && NPC.velocity.X < num270)
 					{
-						npc.velocity.X = npc.velocity.X + 0.1f;
-						if (npc.velocity.X < -num270)
+						NPC.velocity.X = NPC.velocity.X + 0.1f;
+						if (NPC.velocity.X < -num270)
 						{
-							npc.velocity.X = npc.velocity.X + 0.1f;
+							NPC.velocity.X = NPC.velocity.X + 0.1f;
 						}
 						else
 						{
-							if (npc.velocity.X < 0f)
+							if (NPC.velocity.X < 0f)
 							{
-								npc.velocity.X = npc.velocity.X - 0.05f;
+								NPC.velocity.X = NPC.velocity.X - 0.05f;
 							}
 						}
-						if (npc.velocity.X > num270)
+						if (NPC.velocity.X > num270)
 						{
-							npc.velocity.X = num270;
+							NPC.velocity.X = num270;
 						}
 					}
 				}
-			if (npc.directionY == -1 && (double)npc.velocity.Y > -2.5)
+			if (NPC.directionY == -1 && (double)NPC.velocity.Y > -2.5)
 			{
-				npc.velocity.Y = npc.velocity.Y - 0.04f;
-				if ((double)npc.velocity.Y > 2.5)
+				NPC.velocity.Y = NPC.velocity.Y - 0.04f;
+				if ((double)NPC.velocity.Y > 2.5)
 				{
-					npc.velocity.Y = npc.velocity.Y - 0.05f;
+					NPC.velocity.Y = NPC.velocity.Y - 0.05f;
 				}
 				else
 				{
-					if (npc.velocity.Y > 0f)
+					if (NPC.velocity.Y > 0f)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.03f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.03f;
 					}
 				}
-				if ((double)npc.velocity.Y < -2.5)
+				if ((double)NPC.velocity.Y < -2.5)
 				{
-					npc.velocity.Y = -2.5f;
+					NPC.velocity.Y = -2.5f;
 				}
 			}
 			else
 			{
-				if (npc.directionY == 1 && (double)npc.velocity.Y < 2.5)
+				if (NPC.directionY == 1 && (double)NPC.velocity.Y < 2.5)
 				{
-					npc.velocity.Y = npc.velocity.Y + 0.04f;
-					if ((double)npc.velocity.Y < -2.5)
+					NPC.velocity.Y = NPC.velocity.Y + 0.04f;
+					if ((double)NPC.velocity.Y < -2.5)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.05f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.05f;
 					}
 					else
 					{
-						if (npc.velocity.Y < 0f)
+						if (NPC.velocity.Y < 0f)
 						{
-							npc.velocity.Y = npc.velocity.Y - 0.03f;
+							NPC.velocity.Y = NPC.velocity.Y - 0.03f;
 						}
 					}
-					if ((double)npc.velocity.Y > 2.5)
+					if ((double)NPC.velocity.Y > 2.5)
 					{
-						npc.velocity.Y = 2.5f;
+						NPC.velocity.Y = 2.5f;
 					}
 				}
 			}
 						
-			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.6f, 0.3f, 0.0f);
+			Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.6f, 0.3f, 0.0f);
 			return;
 		}
 		#endregion

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class DarkInferno : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Dark Inferno");
             Description.SetDefault("The black flames eat away at your skin");
             Main.debuff[Type] = true;

@@ -11,28 +11,28 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
     class SwordOfLordGwyn : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 32;
-            projectile.height = 32;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.timeLeft = 225;
-            projectile.tileCollide = false;
-            projectile.light = 0.7f;
-            projectile.penetrate = 1000;
+            Projectile.width = 32;
+            Projectile.height = 32;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.timeLeft = 225;
+            Projectile.tileCollide = false;
+            Projectile.light = 0.7f;
+            Projectile.penetrate = 1000;
         }
 
         internal float AI_Owner {
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
 
         internal float AI_Rotation {
-            get => projectile.ai[1];
-            set => projectile.ai[1] = value;
+            get => Projectile.ai[1];
+            set => Projectile.ai[1] = value;
         }
 
         internal int AI_Timer {
-            get => 225 - projectile.timeLeft;
+            get => 225 - Projectile.timeLeft;
         }
 
         internal const float SWORD_LENGTH = 220;
@@ -40,31 +40,31 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
         internal const float IMG_OFFSET_RAD = 0.7853f;
 
         public override void AI() {
-            projectile.friendly = false;
+            Projectile.friendly = false;
             if (AI_Timer == 0) {
-                projectile.rotation -= IMG_OFFSET_RAD;
+                Projectile.rotation -= IMG_OFFSET_RAD;
                 for (int i = 0; i < 100; i++) {
-                    Dust.NewDust(projectile.Center + new Vector2(0, SWORD_LENGTH * (i / 100f)).RotatedBy(projectile.rotation + MathHelper.ToRadians(180 + IMG_OFFSET_DEG)), 1, 1, DustID.Clentaminator_Red);
+                    Dust.NewDust(Projectile.Center + new Vector2(0, SWORD_LENGTH * (i / 100f)).RotatedBy(Projectile.rotation + MathHelper.ToRadians(180 + IMG_OFFSET_DEG)), 1, 1, DustID.Clentaminator_Red);
                 }
                 Main.NewText("spawning dust");
             }
             
             else {
-                projectile.Center = Main.npc[(int)AI_Owner].Center;
-                projectile.rotation = (-Main.npc[(int)AI_Owner].velocity.ToRotation()) - IMG_OFFSET_RAD;
+                Projectile.Center = Main.npc[(int)AI_Owner].Center;
+                Projectile.rotation = (-Main.npc[(int)AI_Owner].velocity.ToRotation()) - IMG_OFFSET_RAD;
                 Main.NewText("" + (int)AI_Owner);
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) {
-            int frameWidth = Main.projectileTexture[projectile.type].Width;
-            int frameHeight = Main.projectileTexture[projectile.type].Height;
+        public override bool PreDraw(ref Color lightColor) {
+            int frameWidth = Main.projectileTexture[Projectile.type].Width;
+            int frameHeight = Main.projectileTexture[Projectile.type].Height;
             Rectangle sourceRectangle = new Rectangle(0, 0, frameWidth, frameHeight);
             Vector2 origin = new Vector2(0, frameHeight);
-            Color drawColor = projectile.GetAlpha(lightColor);
-            Main.spriteBatch.Draw(Main.projectileTexture[projectile.type],
-                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, drawColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            Color drawColor = Projectile.GetAlpha(lightColor);
+            Main.Main.EntitySpriteDraw(Main.projectileTexture[Projectile.type],
+                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
 
             return false;
         }
@@ -74,8 +74,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
             return Collision.CheckAABBvLineCollision(
                 targetHitbox.TopLeft(),
                 targetHitbox.Size(),
-                projectile.Center,
-                projectile.Center + (new Vector2(0, SWORD_LENGTH)).RotatedBy(projectile.rotation + MathHelper.ToRadians(180 + IMG_OFFSET_DEG)),
+                Projectile.Center,
+                Projectile.Center + (new Vector2(0, SWORD_LENGTH)).RotatedBy(Projectile.rotation + MathHelper.ToRadians(180 + IMG_OFFSET_DEG)),
                 32,
                 ref point);
         }

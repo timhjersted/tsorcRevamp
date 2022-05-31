@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,23 +14,23 @@ namespace tsorcRevamp.Items.Weapons.Summon {
         }
 
         public override void SetDefaults() {
-            item.damage = 39;
-            item.knockBack = 1f;
-            item.width = 44; //placeholder, item doesnt have a sprite yet
-            item.height = 50;
-            item.useTime = item.useAnimation = 36;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = Item.buyPrice(0, 15, 0, 0);
-            item.rare = ItemRarityID.Yellow;
-            item.UseSound = SoundID.Item44;
-            item.noMelee = true;
-            item.summon = true;
-            item.buffType = ModContent.BuffType<Buffs.Summon.NullSpriteBuff>();
-            item.shoot = ModContent.ProjectileType<Projectiles.Summon.NullSprite>();
+            Item.damage = 39;
+            Item.knockBack = 1f;
+            Item.width = 44; //placeholder, item doesnt have a sprite yet
+            Item.height = 50;
+            Item.useTime = Item.useAnimation = 36;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = Item.buyPrice(0, 15, 0, 0);
+            Item.rare = ItemRarityID.Yellow;
+            Item.UseSound = SoundID.Item44;
+            Item.noMelee = true;
+            Item.summon = true;
+            Item.buffType = ModContent.BuffType<Buffs.Summon.NullSpriteBuff>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Summon.NullSprite>();
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
-            player.AddBuff(item.buffType, 2);
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
+            player.AddBuff(Item.buffType, 2);
             position = Main.MouseWorld;
             return true;
         }

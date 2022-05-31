@@ -9,20 +9,20 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Tooltip.SetDefault("Full-auto submachine gun with high RoF\n50% chance to not consume ammo");
         }
         public override void SetDefaults() {
-            item.ranged = true;
-            item.noMelee = true;
-            item.useTime = item.useAnimation = 2; //brrrrrr
-            item.damage = 38;
-            item.knockBack = 1;
-            item.autoReuse = true;
-            item.shootSpeed = 16;
-            item.useAmmo = AmmoID.Bullet;
-            item.rare = ItemRarityID.Cyan;
-            item.value = PriceByRarity.Cyan_9;
-            item.shoot = 10;
-            item.height = 50;
-            item.width = 32;
-            item.useStyle = ItemUseStyleID.HoldingOut;
+            Item.ranged = true;
+            Item.noMelee = true;
+            Item.useTime = Item.useAnimation = 2; //brrrrrr
+            Item.damage = 38;
+            Item.knockBack = 1;
+            Item.autoReuse = true;
+            Item.shootSpeed = 16;
+            Item.useAmmo = AmmoID.Bullet;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.shoot = 10;
+            Item.height = 50;
+            Item.width = 32;
+            Item.useStyle = ItemUseStyleID.Shoot;
             
         }
 
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             return new Vector2(-16f, 0f);
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
             Vector2 offset = new Vector2(speedX, speedY).RotatedByRandom(MathHelper.ToRadians(6));
             speedX = offset.X;
             speedY = offset.Y;
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.VenusMagnum);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);

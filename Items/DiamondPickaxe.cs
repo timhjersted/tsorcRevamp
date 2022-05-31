@@ -13,16 +13,16 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.width = 22;
-            item.height = 22;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 8;
-            item.useTime = 8;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.damage = 0;
-            item.pick = 54;
-            item.knockBack = 1;
+            Item.width = 22;
+            Item.height = 22;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 8;
+            Item.useTime = 8;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.damage = 0;
+            Item.pick = 54;
+            Item.knockBack = 1;
         }
 
         public override bool? CanHitNPC(Player player, NPC target) {
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.CopperPickaxe, 1);
             recipe.AddIngredient(ItemID.Diamond, 6);
             recipe.AddTile(TileID.DemonAltar);

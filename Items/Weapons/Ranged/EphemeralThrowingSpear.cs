@@ -9,28 +9,28 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void SetDefaults() {
-            item.consumable = true;
-            item.damage = 29;
-            item.height = 64;
-            item.knockBack = 6;
-            item.maxStack = 2000;
-            item.noUseGraphic = true;
-            item.ranged = true;
-            item.scale = 0.9f;
-            item.shootSpeed = 14;
-            item.useAnimation = 15;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 15;
-            item.value = 10;
-            item.width = 10;
-            item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingSpear>();
+            Item.consumable = true;
+            Item.damage = 29;
+            Item.height = 64;
+            Item.knockBack = 6;
+            Item.maxStack = 2000;
+            Item.noUseGraphic = true;
+            Item.ranged = true;
+            Item.scale = 0.9f;
+            Item.shootSpeed = 14;
+            Item.useAnimation = 15;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 15;
+            Item.value = 10;
+            Item.width = 10;
+            Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingSpear>();
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("RoyalThrowingSpear"), 30);
-            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("RoyalThrowingSpear"), 30);
+            recipe.AddIngredient(Mod.GetItem("EphemeralDust"), 5);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 30);
             recipe.AddRecipe();

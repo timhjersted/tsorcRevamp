@@ -14,11 +14,11 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 36;
-            item.defense = 7;
-            item.value = 27000;
-            item.rare = ItemRarityID.Blue;
+            Item.width = 30;
+            Item.height = 36;
+            Item.defense = 7;
+            Item.value = 27000;
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override void DrawHands(ref bool drawHands, ref bool drawArms)
@@ -32,9 +32,9 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Silk, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 200);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 200);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

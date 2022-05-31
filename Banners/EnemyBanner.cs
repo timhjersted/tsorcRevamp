@@ -11,19 +11,19 @@ namespace tsorcRevamp.Banners {
     public abstract class EnemyBanner : ModItem {
 
         public override void SetDefaults() {
-            item.width = 10;
-            item.height = 24;
-            item.maxStack = 99;
-            item.useTurn = true;
-            item.autoReuse = true;
-            item.useAnimation = 15;
-            item.useTime = 10;
-            item.scale = 1.5f;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.consumable = true;
-            item.rare = ItemRarityID.Blue;
-            item.value = Item.buyPrice(0, 0, 10, 0);
-            item.createTile = ModContent.TileType<EnemyBannerTile>();
+            Item.width = 10;
+            Item.height = 24;
+            Item.maxStack = 99;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.scale = 1.5f;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = Item.buyPrice(0, 0, 10, 0);
+            Item.createTile = ModContent.TileType<EnemyBannerTile>();
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI) {
             scale = 1.5f;
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Banners {
 
 
     public class EnemyBannerTile : ModTile {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileLavaDeath[Type] = true;
@@ -317,7 +317,7 @@ namespace tsorcRevamp.Banners {
                 default:
                     return;
             }
-            Item.NewItem(i * 16, j * 16, 16, 48, mod.ItemType(item));
+            Item.NewItem(i * 16, j * 16, 16, 48, Mod.Find<ModItem>(item).Type);
         }
 
 
@@ -330,7 +330,7 @@ namespace tsorcRevamp.Banners {
         public override void NearbyEffects(int i, int j, bool closer) {
             if (closer) {
                 Player player = Main.LocalPlayer;
-                int style = Main.tile[i, j].frameX / 18;
+                int style = Main.tile[i, j].TileFrameX / 18;
                 string type;
                 switch (style) {
                     case 0:
@@ -589,7 +589,7 @@ namespace tsorcRevamp.Banners {
                     default:
                         return;
                 }
-                player.NPCBannerBuff[mod.NPCType(type)] = true;
+                player.NPCBannerBuff[Mod.Find<ModNPC>(type).Type] = true;
                 player.hasBanner = true;
             }
         }
@@ -618,7 +618,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 0; //change when texture added
+            Item.placeStyle = 0; //change when texture added
         }
     }
     public class CloudBatBanner : EnemyBanner {
@@ -628,7 +628,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 1;
+            Item.placeStyle = 1;
         }
     }
 
@@ -639,7 +639,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 2;
+            Item.placeStyle = 2;
         }
     }
 
@@ -650,7 +650,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 3; 
+            Item.placeStyle = 3; 
         }
     }
 
@@ -661,7 +661,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 4;
+            Item.placeStyle = 4;
         }
     }
 
@@ -672,7 +672,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 5;
+            Item.placeStyle = 5;
         }
     }
     public class ResentfulSeedlingBanner : EnemyBanner {
@@ -682,7 +682,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 6;
+            Item.placeStyle = 6;
         }
     }
     public class LivingShroomBanner : EnemyBanner {
@@ -693,7 +693,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 7;
+            Item.placeStyle = 7;
         }
     }
     public class LivingShroomThiefBanner : EnemyBanner {
@@ -704,7 +704,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 8;
+            Item.placeStyle = 8;
         }
     }
     public class LivingGlowshroomBanner : EnemyBanner {
@@ -715,7 +715,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 9; //change when texture added
+            Item.placeStyle = 9; //change when texture added
         }
     }
     public class AncientDemonBanner : EnemyBanner {
@@ -726,7 +726,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 10; //change when texture added
+            Item.placeStyle = 10; //change when texture added
         }
     }
     public class UndeadCasterBanner : EnemyBanner {
@@ -737,7 +737,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 11; //change when texture added
+            Item.placeStyle = 11; //change when texture added
         }
     }
     public class ChickenBanner : EnemyBanner {
@@ -748,7 +748,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 12; //change when texture added
+            Item.placeStyle = 12; //change when texture added
         }
     }
     public class AttraidiesIllusionBanner : EnemyBanner {
@@ -759,7 +759,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 13; //change when texture added
+            Item.placeStyle = 13; //change when texture added
         }
     }
     public class CosmicCrystalLizardBanner : EnemyBanner {
@@ -770,7 +770,7 @@ namespace tsorcRevamp.Banners {
         }
         public override void SetDefaults() {
             base.SetDefaults();
-            item.placeStyle = 14; //change when texture added
+            Item.placeStyle = 14; //change when texture added
         }
     }
     public class AssassinBanner : EnemyBanner
@@ -784,7 +784,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 15; //change when texture added
+            Item.placeStyle = 15; //change when texture added
         }
     }
     public class AttraidiesManifestationBanner : EnemyBanner
@@ -798,7 +798,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 16; //change when texture added
+            Item.placeStyle = 16; //change when texture added
         }
     }
     public class BarrowWightBanner : EnemyBanner
@@ -812,7 +812,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 17; //change when texture added
+            Item.placeStyle = 17; //change when texture added
         }
     }
     public class BasiliskShifterBanner : EnemyBanner
@@ -826,7 +826,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 18; //change when texture added
+            Item.placeStyle = 18; //change when texture added
         }
     }
     public class BasiliskWalkerBanner : EnemyBanner
@@ -840,7 +840,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 19; //change when texture added
+            Item.placeStyle = 19; //change when texture added
         }
     }
     public class BlackKnightBanner : EnemyBanner
@@ -854,7 +854,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 20; //change when texture added
+            Item.placeStyle = 20; //change when texture added
         }
     }
     public class CrazedDemonSpiritBanner : EnemyBanner
@@ -868,7 +868,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 21; //change when texture added
+            Item.placeStyle = 21; //change when texture added
         }
     }
     public class DarkElfMageBanner : EnemyBanner
@@ -882,7 +882,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 22; //change when texture added
+            Item.placeStyle = 22; //change when texture added
         }
     }
     public class DemonSpiritBanner : EnemyBanner
@@ -896,7 +896,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 23; //change when texture added
+            Item.placeStyle = 23; //change when texture added
         }
     }
     public class DiscipleOfAttraidiesBanner : EnemyBanner
@@ -910,7 +910,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 24; //change when texture added
+            Item.placeStyle = 24; //change when texture added
         }
     }
     public class DungeonMageBanner : EnemyBanner
@@ -924,7 +924,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 25; //change when texture added
+            Item.placeStyle = 25; //change when texture added
         }
     }
     public class DunlendingBanner : EnemyBanner
@@ -938,7 +938,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 26; //change when texture added
+            Item.placeStyle = 26; //change when texture added
         }
     }
     public class DworcFleshhunterBanner : EnemyBanner
@@ -952,7 +952,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 27; //change when texture added
+            Item.placeStyle = 27; //change when texture added
         }
     }
     public class DworcVenomsniperBanner : EnemyBanner
@@ -966,7 +966,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 28; //change when texture added
+            Item.placeStyle = 28; //change when texture added
         }
     }
     public class DworcVoodoomasterBanner : EnemyBanner
@@ -980,7 +980,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 29; //change when texture added
+            Item.placeStyle = 29; //change when texture added
         }
     }
     public class DworcVoodooShamanBanner : EnemyBanner
@@ -994,7 +994,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 30; //change when texture added
+            Item.placeStyle = 30; //change when texture added
         }
     }
     public class FirebombHollowBanner : EnemyBanner
@@ -1008,7 +1008,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 31; //change when texture added
+            Item.placeStyle = 31; //change when texture added
         }
     }
     public class FlameBatBanner : EnemyBanner
@@ -1022,7 +1022,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 32; //change when texture added
+            Item.placeStyle = 32; //change when texture added
         }
     }
     public class GhostOfTheDarkmoonKnightBanner : EnemyBanner
@@ -1036,7 +1036,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 33; //change when texture added
+            Item.placeStyle = 33; //change when texture added
         }
     }
     public class GhostOfTheForgottenKnightBanner : EnemyBanner
@@ -1050,7 +1050,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 34; //change when texture added
+            Item.placeStyle = 34; //change when texture added
         }
     }
     public class GhostOfTheForgottenWarriorBanner : EnemyBanner
@@ -1064,7 +1064,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 35; //change when texture added
+            Item.placeStyle = 35; //change when texture added
         }
     }
     public class GreatRedKnightOfArtoriasBanner : EnemyBanner
@@ -1078,7 +1078,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 36; //change when texture added
+            Item.placeStyle = 36; //change when texture added
         }
     }
     public class HeroOfLumeliaBanner : EnemyBanner
@@ -1092,7 +1092,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 37; //change when texture added
+            Item.placeStyle = 37; //change when texture added
         }
     }
     public class JungleSentreeBanner : EnemyBanner
@@ -1106,7 +1106,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 38; //change when texture added
+            Item.placeStyle = 38; //change when texture added
         }
     }
     public class ManHunterBanner : EnemyBanner
@@ -1120,7 +1120,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 39; //change when texture added
+            Item.placeStyle = 39; //change when texture added
         }
     }
     public class MarilithSpiritTwinBanner : EnemyBanner
@@ -1134,7 +1134,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 40; //change when texture added
+            Item.placeStyle = 40; //change when texture added
         }
     }
     public class MindflayerIllusionBanner : EnemyBanner
@@ -1148,7 +1148,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 41; //change when texture added
+            Item.placeStyle = 41; //change when texture added
         }
     }
     public class MindflayerKingServantBanner : EnemyBanner
@@ -1162,7 +1162,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 42; //change when texture added
+            Item.placeStyle = 42; //change when texture added
         }
     }
     public class MindflayerServantBanner : EnemyBanner
@@ -1176,7 +1176,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 43; //change when texture added
+            Item.placeStyle = 43; //change when texture added
         }
     }
     public class MutantToadBanner : EnemyBanner
@@ -1190,7 +1190,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 44; //change when texture added
+            Item.placeStyle = 44; //change when texture added
         }
     }
     public class NecromancerBanner : EnemyBanner
@@ -1204,7 +1204,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 45; //change when texture added
+            Item.placeStyle = 45; //change when texture added
         }
     }
     public class NecromancerElementalBanner : EnemyBanner
@@ -1218,7 +1218,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 46; //change when texture added
+            Item.placeStyle = 46; //change when texture added
         }
     }
     public class ParaspriteBanner : EnemyBanner
@@ -1232,7 +1232,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 47; //change when texture added
+            Item.placeStyle = 47; //change when texture added
         }
     }
     public class QuaraHydromancerBanner : EnemyBanner
@@ -1246,7 +1246,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 48; //change when texture added
+            Item.placeStyle = 48; //change when texture added
         }
     }
     public class RedCloudHunterBanner : EnemyBanner
@@ -1260,7 +1260,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 49; //change when texture added
+            Item.placeStyle = 49; //change when texture added
         }
     }
     public class RedKnightofArtoriasBanner : EnemyBanner
@@ -1275,7 +1275,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 50; //change when texture added
+            Item.placeStyle = 50; //change when texture added
         }
     }
     public class ShadowMageBanner : EnemyBanner
@@ -1289,7 +1289,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 51; //change when texture added
+            Item.placeStyle = 51; //change when texture added
         }
     }
     public class SnowOwlBanner : EnemyBanner
@@ -1303,7 +1303,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 52; //change when texture added
+            Item.placeStyle = 52; //change when texture added
         }
     }
     public class TibianAmazonBanner : EnemyBanner
@@ -1317,7 +1317,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 53; //change when texture added
+            Item.placeStyle = 53; //change when texture added
         }
     }
     public class TibianValkyrieBanner : EnemyBanner
@@ -1331,7 +1331,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 54; //change when texture added
+            Item.placeStyle = 54; //change when texture added
         }
     }
     public class TonberryBanner : EnemyBanner
@@ -1345,7 +1345,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 55; //change when texture added
+            Item.placeStyle = 55; //change when texture added
         }
     }
     public class WarlockBanner : EnemyBanner
@@ -1359,7 +1359,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 56; //change when texture added
+            Item.placeStyle = 56; //change when texture added
         }
     }
     public class WaterSpiritBanner : EnemyBanner
@@ -1373,7 +1373,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 57; //change when texture added
+            Item.placeStyle = 57; //change when texture added
         }
     }
     public class ParasyticWormBanner : EnemyBanner
@@ -1387,7 +1387,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 58; //change when texture added
+            Item.placeStyle = 58; //change when texture added
         }
     }
     public class JungleWyvernJuvenileBanner : EnemyBanner
@@ -1401,7 +1401,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 59; //change when texture added
+            Item.placeStyle = 59; //change when texture added
         }
     }
 
@@ -1421,7 +1421,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 60; //change when texture added
+            Item.placeStyle = 60; //change when texture added
         }
     }
     public class AbysswalkerBanner : EnemyBanner
@@ -1435,7 +1435,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 61; //change when texture added
+            Item.placeStyle = 61; //change when texture added
         }
     }
     public class AncientDemonOfTheAbyssBanner : EnemyBanner
@@ -1449,7 +1449,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 62; //change when texture added
+            Item.placeStyle = 62; //change when texture added
         }
     }
     public class BarrowWightNemesisBanner : EnemyBanner
@@ -1463,7 +1463,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 63; //change when texture added
+            Item.placeStyle = 63; //change when texture added
         }
     }
     public class BarrowWightPhantomBanner : EnemyBanner
@@ -1477,7 +1477,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 64; //change when texture added
+            Item.placeStyle = 64; //change when texture added
         }
     }
     public class BasiliskHunter : EnemyBanner
@@ -1491,7 +1491,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 65; //change when texture added
+            Item.placeStyle = 65; //change when texture added
         }
     }
     public class CorruptedElementalBanner : EnemyBanner
@@ -1505,7 +1505,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 66; //change when texture added
+            Item.placeStyle = 66; //change when texture added
         }
     }
     public class CorruptedHornetBanner : EnemyBanner
@@ -1519,7 +1519,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 67; //change when texture added
+            Item.placeStyle = 67; //change when texture added
         }
     }
     public class CrystalKnightBanner : EnemyBanner
@@ -1533,7 +1533,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 68; //change when texture added
+            Item.placeStyle = 68; //change when texture added
         }
     }
     public class DarkBloodKnightBanner : EnemyBanner
@@ -1547,7 +1547,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 70; //change when texture added
+            Item.placeStyle = 70; //change when texture added
         }
     }
     public class DarkKnightBanner : EnemyBanner
@@ -1561,7 +1561,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 71; //change when texture added
+            Item.placeStyle = 71; //change when texture added
         }
     }
     public class GreatRedKnightOfTheAbyssBanner : EnemyBanner
@@ -1575,7 +1575,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 72; //change when texture added
+            Item.placeStyle = 72; //change when texture added
         }
     }
     public class HydrisElementalBanner : EnemyBanner
@@ -1589,7 +1589,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 73; //change when texture added
+            Item.placeStyle = 73; //change when texture added
         }
     }
     public class HydrisNecromancerBanner : EnemyBanner
@@ -1603,7 +1603,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 74; //change when texture added
+            Item.placeStyle = 74; //change when texture added
         }
     }
     public class IceSkeletonBanner : EnemyBanner
@@ -1617,7 +1617,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 75; //change when texture added
+            Item.placeStyle = 75; //change when texture added
         }
     }
     public class ManOfWarBanner : EnemyBanner
@@ -1631,7 +1631,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 76; //change when texture added
+            Item.placeStyle = 76; //change when texture added
         }
     }
     public class OolacileDemonBanner : EnemyBanner
@@ -1646,7 +1646,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 77; //change when texture added
+            Item.placeStyle = 77; //change when texture added
         }
     }
     public class OolacileKnightBanner : EnemyBanner
@@ -1660,7 +1660,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 78; //change when texture added
+            Item.placeStyle = 78; //change when texture added
         }
     }
     public class OolacileSorcererBanner : EnemyBanner
@@ -1674,7 +1674,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 79; //change when texture added
+            Item.placeStyle = 79; //change when texture added
         }
     }
     public class SlograIIBanner : EnemyBanner
@@ -1689,7 +1689,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 80; //change when texture added
+            Item.placeStyle = 80; //change when texture added
         }
     }
     public class TaurusKnightBanner : EnemyBanner
@@ -1703,7 +1703,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 81; //change when texture added
+            Item.placeStyle = 81; //change when texture added
         }
     }
     public class TetsujinBanner : EnemyBanner
@@ -1717,7 +1717,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 82; //change when texture added
+            Item.placeStyle = 82; //change when texture added
         }
     }
     public class VampireBatBanner : EnemyBanner
@@ -1731,7 +1731,7 @@ namespace tsorcRevamp.Banners {
         public override void SetDefaults()
         {
             base.SetDefaults();
-            item.placeStyle = 83; //change when texture added
+            Item.placeStyle = 83; //change when texture added
         }
     }
 

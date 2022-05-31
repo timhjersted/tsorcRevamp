@@ -8,7 +8,7 @@ namespace tsorcRevamp.Buffs
 {
     class Bonfire : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bonfire");
             Description.SetDefault("Stay a little while... Let your soul heal \n" +

@@ -16,22 +16,22 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void SetDefaults()
 		{
-			projectile.hostile = true;
-			projectile.height = 16;
-			projectile.width = 16;
-			projectile.light = 0.8f;
-			projectile.magic = true;
-			projectile.penetrate = 1;
-			projectile.tileCollide = true;
+			Projectile.hostile = true;
+			Projectile.height = 16;
+			Projectile.width = 16;
+			Projectile.light = 0.8f;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.penetrate = 1;
+			Projectile.tileCollide = true;
 		}
 
 		public override void AI()
 		{
-			if ( Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f)//projectile.soundDelay == 0 &&
+			if ( Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)//projectile.soundDelay == 0 &&
 			{
 				//projectile.soundDelay = 10;
 				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
-				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 34, 0.01f, 0f); // flamethrower
+				Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 34, 0.01f, 0f); // flamethrower
 
 				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
 				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
@@ -54,26 +54,26 @@ namespace tsorcRevamp.Projectiles.Enemy
 				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
 
 			}
-			int thisDust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
+			int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
 			Main.dust[thisDust].noGravity = true;
 
-			projectile.rotation += 0.25f;
+			Projectile.rotation += 0.25f;
 		}
 
         public override bool PreKill(int timeLeft)
         {
-			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 100, 0.5f, 0f); // cursed flame wall, lasts a bit longer than flame
+			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 100, 0.5f, 0f); // cursed flame wall, lasts a bit longer than flame
 																									  //Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
 																									  //Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
-			if (projectile.owner == Main.myPlayer)
+			if (Projectile.owner == Main.myPlayer)
 			{
-				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, 0, 0, ModContent.ProjectileType<EnemySpellGreatFireball>(), projectile.damage, 6f, projectile.owner);
+				Projectile.NewProjectile(Projectile.position.X, Projectile.position.Y, 0, 0, ModContent.ProjectileType<EnemySpellGreatFireball>(), Projectile.damage, 6f, Projectile.owner);
 			}
 
 			for (int i = 0; i < 5; i++)
 			{
 				Vector2 vel = Main.rand.NextVector2Circular(12, 12);
-				int thisDust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 15, vel.X, vel.Y, 100, default, 2f);
+				int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, vel.X, vel.Y, 100, default, 2f);
 				Main.dust[thisDust].noGravity = true;
 			}
 			return true;

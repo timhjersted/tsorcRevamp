@@ -11,35 +11,35 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Vampire Bat");
-            Main.npcFrameCount[npc.type] = 8;
+            Main.npcFrameCount[NPC.type] = 8;
         }
 
         public override void SetDefaults() {
-            npc.width = 48;
-            npc.height = 36;
-            npc.aiStyle = 14;
+            NPC.width = 48;
+            NPC.height = 36;
+            NPC.aiStyle = 14;
             aiType = NPCID.CaveBat;
-            npc.timeLeft = 750;
-            npc.damage = 98;
-            npc.defense = 70;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath4;
-            npc.lifeMax = 1500;
-            npc.scale = 1;
-            npc.knockBackResist = 0.5f;
-            npc.value = 1200;
-            banner = npc.type;
+            NPC.timeLeft = 750;
+            NPC.damage = 98;
+            NPC.defense = 70;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath4;
+            NPC.lifeMax = 1500;
+            NPC.scale = 1;
+            NPC.knockBackResist = 0.5f;
+            NPC.value = 1200;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = (int)(npc.lifeMax / 2);
-            npc.damage = (int)(npc.damage / 2);
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.damage = (int)(NPC.damage / 2);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            Player p = spawnInfo.player;
+            Player p = spawnInfo.Player;
             if (tsorcRevampWorld.SuperHardMode) {
                 if (p.ZoneCorrupt || p.ZoneCrimson) {
                     return 0.125f;
@@ -60,13 +60,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
 
         public override void FindFrame(int frameHeight)
         {
-            npc.spriteDirection = npc.direction;
+            NPC.spriteDirection = NPC.direction;
 
-            if (++npc.frameCounter >= 4)
+            if (++NPC.frameCounter >= 4)
             {
                 ++frame;
-                npc.frame.Y = frame * frameHeight;
-                npc.frameCounter = 0;
+                NPC.frame.Y = frame * frameHeight;
+                NPC.frameCounter = 0;
 
                 if (frame >= 7)
                 {
@@ -75,7 +75,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             }
         }
 
-        public override void NPCLoot() {
+        public override void OnKill() {
             base.NPCLoot();
         }
 

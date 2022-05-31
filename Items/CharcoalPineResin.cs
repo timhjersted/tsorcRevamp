@@ -19,22 +19,22 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults()
         {
-            item.width = 40;
-            item.height = 40;
-            item.scale = 0.9f;
-            item.maxStack = 99;
-            item.rare = ItemRarityID.Blue;
-            item.UseSound = SoundID.Item20;
-            item.useStyle = ItemUseStyleID.HoldingUp; //no idea why it still swings sometimes
-            item.useTime = 40;
-            item.useAnimation = 40;
-            item.value = 500;
-            item.consumable = true;
-            item.buffType = BuffID.WeaponImbueFire;
-            item.buffTime = 14400;
+            Item.width = 40;
+            Item.height = 40;
+            Item.scale = 0.9f;
+            Item.maxStack = 99;
+            Item.rare = ItemRarityID.Blue;
+            Item.UseSound = SoundID.Item20;
+            Item.useStyle = ItemUseStyleID.HoldUp; //no idea why it still swings sometimes
+            Item.useTime = 40;
+            Item.useAnimation = 40;
+            Item.value = 500;
+            Item.consumable = true;
+            Item.buffType = BuffID.WeaponImbueFire;
+            Item.buffTime = 14400;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             return true;
         }
@@ -55,9 +55,9 @@ namespace tsorcRevamp.Items
         {
             if (Main.rand.Next(10) == 0)
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X + 10, item.position.Y + 10), 16, 16, DustID.Fire, item.velocity.X, item.velocity.Y - 2f, 100, default(Color), .8f)];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 10, Item.position.Y + 10), 16, 16, DustID.Fire, Item.velocity.X, Item.velocity.Y - 2f, 100, default(Color), .8f)];
                 dust.noGravity = true;
-                dust.velocity += item.velocity;
+                dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;
             }
             return true;

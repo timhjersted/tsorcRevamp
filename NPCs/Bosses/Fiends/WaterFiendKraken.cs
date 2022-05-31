@@ -14,28 +14,28 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 	{
 		public override void SetDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 8;
-			npc.width = 110;
-			npc.height = 170;
+			Main.npcFrameCount[NPC.type] = 8;
+			NPC.width = 110;
+			NPC.height = 170;
 			drawOffsetY = 50;
-			npc.damage = trueContactDamage;
-			npc.defense = 35;
-			npc.aiStyle = -1;
+			NPC.damage = trueContactDamage;
+			NPC.defense = 35;
+			NPC.aiStyle = -1;
 			animationType = -1;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 500000;
-			npc.timeLeft = 22500;
-			npc.friendly = false;
-			npc.noTileCollide = true;
-			npc.noGravity = true;
-			npc.knockBackResist = 0f;
-			npc.lavaImmune = true;
-			npc.boss = true;
-			npc.value = 600000;
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.CursedInferno] = true;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath6;
+			NPC.lifeMax = 500000;
+			NPC.timeLeft = 22500;
+			NPC.friendly = false;
+			NPC.noTileCollide = true;
+			NPC.noGravity = true;
+			NPC.knockBackResist = 0f;
+			NPC.lavaImmune = true;
+			NPC.boss = true;
+			NPC.value = 600000;
+			NPC.buffImmune[BuffID.Poisoned] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.CursedInferno] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.KrakenBag>();
 			despawnHandler = new NPCDespawnHandler("Water Fiend Kraken submerges into the depths...", Color.DeepSkyBlue, 180);
 			InitializeMoves();
@@ -65,20 +65,20 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		//Controls what move is currently being performed
 		public int MoveIndex
 		{
-			get => (int)npc.ai[0];
-			set => npc.ai[0] = value;
+			get => (int)NPC.ai[0];
+			set => NPC.ai[0] = value;
 		}
 
 		//Used by moves to keep track of how long they've been going for
 		public int MoveCounter
 		{
-			get => (int)npc.ai[1];
-			set => npc.ai[1] = value;
+			get => (int)NPC.ai[1];
+			set => NPC.ai[1] = value;
 		}
 
 		public Player Target
         {
-			get => Main.player[npc.target];
+			get => Main.player[NPC.target];
         }
 
 		int MoveTimer = 0;
@@ -86,8 +86,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 		public override void AI()
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			Lighting.AddLight((int)npc.Center.X / 16, (int)npc.Center.Y / 16, 0.4f, 0f, 0.25f);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
+			Lighting.AddLight((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16, 0.4f, 0f, 0.25f);
 
 			if (testAttack != -1)
             {
@@ -115,29 +115,29 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			ChargeTimer++;
 			if (ChargeTimer >= 500)
 			{
-				int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
-				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
+				int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
+				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
 			}
 			if (ChargeTimer == 600)
             {
-				chargeVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 19);
+				chargeVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 19);
 				charging = true;
 			}
 			if (charging)
 			{
-				npc.velocity = chargeVelocity;
-				npc.damage = chargeContactDamage;
+				NPC.velocity = chargeVelocity;
+				NPC.damage = chargeContactDamage;
 
 				//Check if it's passed the player by at least 500 units while charging, and if so stop
-				if (Vector2.Distance(npc.Center, Target.Center) > 500)
+				if (Vector2.Distance(NPC.Center, Target.Center) > 500)
 				{
-					Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-					double angleDiff = UsefulFunctions.CompareAngles(npc.velocity, vectorDiff);
+					Vector2 vectorDiff = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 1);
+					double angleDiff = UsefulFunctions.CompareAngles(NPC.velocity, vectorDiff);
 
 					if (angleDiff > MathHelper.Pi / 2)
 					{
 						charging = false;
-						npc.damage = trueContactDamage;
+						NPC.damage = trueContactDamage;
 						ChargeTimer = 0;
 						MoveCounter++;
 					}
@@ -164,7 +164,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					for (int j = 0; j < 10; j++)
 					{
 						Vector2 dir = Main.rand.NextVector2Circular(300, 300);
-						Vector2 dustPos = npc.Center + dir;
+						Vector2 dustPos = NPC.Center + dir;
 						Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
 						Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.FireworkFountain_Blue, dustVel, Scale: 1);
 						thisDust.noGravity = true;
@@ -180,25 +180,25 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					}
 					if (projectileType < 6)
 					{
-						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
+						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
 						projVector = projVector.RotatedBy(offset);
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, npc.target);
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 0, NPC.target);
+						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType >= 6 && projectileType != 9)
 					{
-						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
+						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
 						projVector = projVector.RotatedBy(offset);
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, npc.target, 1f);
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
+						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType == 9)
 					{
-						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
+						Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
 						projVector = projVector.RotatedBy(offset);
-						projVector += (Main.player[npc.target].velocity / 2);
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-						Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+						projVector += (Main.player[NPC.target].velocity / 2);
+						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+						Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 					}
 					if (projectileType != 9)
 					{
@@ -221,10 +221,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			#endregion
 
 			//If low on life, start flooding the chamber constantly
-			if(npc.life < (npc.lifeMax / 2)){
+			if(NPC.life < (NPC.lifeMax / 2)){
 
 				//Don't start a new flood if it's below the normal water line, to avoid fucking with it as much as possible
-				if (radius != 0 || ((npc.Center.Y / 16) < 1713 && !UsefulFunctions.IsTileReallySolid(npc.Center / 16)))
+				if (radius != 0 || ((NPC.Center.Y / 16) < 1713 && !UsefulFunctions.IsTileReallySolid(NPC.Center / 16)))
 				{
 					radius++;
 					FloodArena();
@@ -252,7 +252,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		int projType = 0;
 		private void AquaWave()
 		{
-			npc.velocity = Vector2.Zero;
+			NPC.velocity = Vector2.Zero;
 
 			if (projType >= 8)
 			{
@@ -260,7 +260,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				for (int j = 0; j < 10; j++)
 				{
 					Vector2 dir = Main.rand.NextVector2Circular(300, 300);
-					Vector2 dustPos = npc.Center + dir;
+					Vector2 dustPos = NPC.Center + dir;
 					Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
 					Dust thisDust = Dust.NewDustPerfect(dustPos, DustID.FireworkFountain_Blue, dustVel, Scale: 1);
 					thisDust.noGravity = true;
@@ -273,22 +273,22 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			
 				if (projType < 5)
 				{
-					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 10);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 10);
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				if (projType >= 5 && projType < 8)
 				{
 
-					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, npc.target, 1f);
-					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 0f, Main.myPlayer, NPC.target, 1f);
+					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				if (projType >= 8)
 				{
-					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 15);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
-					Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 17);
+					Vector2 projVector = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 15);
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+					Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				}
 				projType = Main.rand.Next(10);
 			}
@@ -321,65 +321,65 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			float krakenAccelerationX = 0.05f;
 			float krakenAccelerationY = 0.05f;
 
-			if(npc.Center.X < Target.Center.X)
+			if(NPC.Center.X < Target.Center.X)
 			{
-				npc.velocity.X += krakenAccelerationX;
+				NPC.velocity.X += krakenAccelerationX;
 			}
 			else
 			{
-				npc.velocity.X -= krakenAccelerationX;
+				NPC.velocity.X -= krakenAccelerationX;
 			}
 
 			//This is the part that makes it bob up and down as it moves
 			//If it's moving up
-			if(npc.velocity.Y < 0)
+			if(NPC.velocity.Y < 0)
 			{
 				//And it's not more than 120 units above the player
-				if(Target.Center.Y - npc.Center.Y <= 120)
+				if(Target.Center.Y - NPC.Center.Y <= 120)
                 {
 					//Keep moving up
-					npc.velocity.Y -= krakenAccelerationY;
+					NPC.velocity.Y -= krakenAccelerationY;
                 }
 				//If we are more than 120 units above the player, start accelerating down
 				else
 				{
-					npc.velocity.Y += krakenAccelerationY;
+					NPC.velocity.Y += krakenAccelerationY;
 				}
 			}
 			else
 			{
 				//Do the same thing, but reversed if it's moving down. Could probably simplify this, but this format makes it clear what it's doing.
-				if (Target.Center.Y - npc.Center.Y <= -120)
+				if (Target.Center.Y - NPC.Center.Y <= -120)
 				{
-					npc.velocity.Y -= krakenAccelerationY;
+					NPC.velocity.Y -= krakenAccelerationY;
 				}
 				else
 				{
-					npc.velocity.Y += krakenAccelerationY;
+					NPC.velocity.Y += krakenAccelerationY;
 				}
 			}
 
-			npc.velocity = Vector2.Clamp(npc.velocity, -krakenMaxSpeed, krakenMaxSpeed);
+			NPC.velocity = Vector2.Clamp(NPC.velocity, -krakenMaxSpeed, krakenMaxSpeed);
 		}
 
 		Vector2 ArenaCenter = new Vector2(1820 * 16, 1702 * 16);	
 		private void DashToArenaMidline()
 		{
 			MoveCounter++;
-			int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
-			Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
+			int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
+			Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
 			if (MoveCounter > 60)
 			{
-				if(npc.Center.Y < ArenaCenter.Y)
+				if(NPC.Center.Y < ArenaCenter.Y)
                 {
-					npc.velocity.Y = 12;
+					NPC.velocity.Y = 12;
                 }
 				else
                 {
-					npc.velocity.Y = -12;
+					NPC.velocity.Y = -12;
                 }
 			}
-			if (Math.Abs(npc.Center.Y - ArenaCenter.Y) < 16)
+			if (Math.Abs(NPC.Center.Y - ArenaCenter.Y) < 16)
 			{
 				NextAttack();
 			}
@@ -389,12 +389,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		private void CursedBarrage()
 		{
 			MoveCounter++;
-			npc.velocity = Vector2.Zero;
+			NPC.velocity = Vector2.Zero;
 
 			for (int j = 0; j < 100; j++)
 			{
 				Vector2 dir = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius);
-				Vector2 dustPos = npc.Center + dir;
+				Vector2 dustPos = NPC.Center + dir;
 				Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
 				Dust.NewDustPerfect(dustPos, DustID.CursedTorch, dustVel, 200, default, 1).noGravity = true;
 			}
@@ -406,9 +406,9 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
 			if(MoveCounter % cursedFlameCooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-				Vector2 projCenter = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius) + npc.Center;
-				Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[npc.target].Center, 10);
-				Projectile.NewProjectile(projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, npc.target);
+				Vector2 projCenter = Main.rand.NextVector2CircularEdge(cursedRadius, cursedRadius) + NPC.Center;
+				Vector2 projVector = UsefulFunctions.GenerateTargetingVector(projCenter, Main.player[NPC.target].Center, 10);
+				Projectile.NewProjectile(projCenter.X, projCenter.Y, projVector.X, projVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedFlames>(), cursedFlamesDamage, 0f, Main.myPlayer, 1, NPC.target);
 			}
 
 			int waterJetCooldown = 160;
@@ -422,8 +422,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
 			if (MoveCounter > 800)
 			{
-				int dust = Dust.NewDust(npc.position, npc.width, npc.height, 29, npc.velocity.X, npc.velocity.Y, 200, new Color(), 5);
-				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.dust[dust].position, 5);
+				int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 29, NPC.velocity.X, NPC.velocity.Y, 200, new Color(), 5);
+				Main.dust[dust].velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.dust[dust].position, 5);
 			}
 			if (MoveCounter > 1200)
 			{
@@ -432,7 +432,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 		private void FloodArena()
 		{
-			Vector2 centerOver16 = npc.Center / 16;
+			Vector2 centerOver16 = NPC.Center / 16;
 			//Initialize some things
 			if (radius == 1)
 			{
@@ -501,16 +501,16 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 					positionOffset.X += offset;
 					positionOffset.Y += offset;
 
-					Vector2 offset1 = positionOffset + npc.Center;
+					Vector2 offset1 = positionOffset + NPC.Center;
 					Vector2 offset2 = positionOffset;
 					offset2.X *= -1;
-					offset2 += npc.Center;
+					offset2 += NPC.Center;
 					Vector2 offset3 = positionOffset;
 					offset3.Y *= -1;
-					offset3 += npc.Center;
+					offset3 += NPC.Center;
 					Vector2 offset4 = positionOffset;
 					offset4 *= -1;
-					offset4 += npc.Center;
+					offset4 += NPC.Center;
 
 					if (!UsefulFunctions.IsTileReallySolid(offset1 / 16))
 					{
@@ -587,26 +587,26 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}
-			if (npc.velocity.X < 0)
+			if (NPC.velocity.X < 0)
 			{
-				npc.spriteDirection = -1;
+				NPC.spriteDirection = -1;
 			}
 			else
 			{
-				npc.spriteDirection = 1;
+				NPC.spriteDirection = 1;
 			}
-			npc.rotation = npc.velocity.X * 0.08f;
-			npc.frameCounter += 1.0;
-			if (npc.frameCounter >= 5.0)
+			NPC.rotation = NPC.velocity.X * 0.08f;
+			NPC.frameCounter += 1.0;
+			if (NPC.frameCounter >= 5.0)
 			{
-				npc.frame.Y = npc.frame.Y + num;
-				npc.frameCounter = 0.0;
+				NPC.frame.Y = NPC.frame.Y + num;
+				NPC.frameCounter = 0.0;
 			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+			if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
 			{
-				npc.frame.Y = 0;
+				NPC.frame.Y = 0;
 			}
 		}
 		public override bool CheckActive()
@@ -617,29 +617,29 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		{
 			potionType = ItemID.SuperHealingPotion;
 		}
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 1"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 3"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 4"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 5"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 6"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 7"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 8"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 4"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 5"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 6"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 7"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 8"), 1f);
 
 			if (Main.expertMode)
 			{
-				npc.DropBossBags();
+				NPC.DropBossBags();
 			}
 			else
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
-				if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonHorn>(), 1);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenRisingSun>(), 10);
+				if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
 				{
-					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
 				}
 			}
 		}

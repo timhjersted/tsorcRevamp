@@ -10,14 +10,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 	{
 		public override void SetDefaults()
 		{
-			projectile.aiStyle = 1;
-			projectile.hostile = true;
-			projectile.height = 16;
-			projectile.width = 16;
-			projectile.light = 2;
-			projectile.magic = true;
-			projectile.penetrate = 1;
-			projectile.tileCollide = true;
+			Projectile.aiStyle = 1;
+			Projectile.hostile = true;
+			Projectile.height = 16;
+			Projectile.width = 16;
+			Projectile.light = 2;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.penetrate = 1;
+			Projectile.tileCollide = true;
 		}
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -28,14 +28,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override bool PreKill(int timeLeft)
 		{
-			projectile.type = 0;
+			Projectile.type = 0;
 			//
 			//Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
 			for (int i = 0; i < 10; i++)
 			{
-				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 1f); //6 is a flame dust
-				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 2f);
-				Dust.NewDust(projectile.position, projectile.width, projectile.height, 6, 0, 0, 0, default, 2f); 
+				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 0, default, 1f); //6 is a flame dust
+				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 0, default, 2f);
+				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 6, 0, 0, 0, default, 2f); 
 			}
 			return true;
 		}
@@ -43,18 +43,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 		#region Kill
 		public override void Kill(int timeLeft)
         {
-			if (!projectile.active)
+			if (!Projectile.active)
 			{
 				return;
 			}
-			projectile.timeLeft = 0;
+			Projectile.timeLeft = 0;
 			{
-				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 100, 0.1f, .09f); // flame wall, lasts a bit longer than flame
+				Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 100, 0.1f, .09f); // flame wall, lasts a bit longer than flame
 				//Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
-				if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<EnemySpellAbyssPoisonStrike>(), projectile.damage, 1f, projectile.owner);
-				Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int arg_1394_1 = projectile.width;
-				int arg_1394_2 = projectile.height;
+				if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnemySpellAbyssPoisonStrike>(), Projectile.damage, 1f, Projectile.owner);
+				Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int arg_1394_1 = Projectile.width;
+				int arg_1394_2 = Projectile.height;
 				int arg_1394_3 = 15;
 				float arg_1394_4 = 0f;
 				float arg_1394_5 = 0f;
@@ -64,9 +64,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 				Main.dust[num41].noGravity = true;
 				Dust expr_13B1 = Main.dust[num41];
 				expr_13B1.velocity *= 2f;
-				Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int arg_1422_1 = projectile.width;
-				int arg_1422_2 = projectile.height;
+				Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int arg_1422_1 = Projectile.width;
+				int arg_1422_2 = Projectile.height;
 				int arg_1422_3 = 15;
 				float arg_1422_4 = 0f;
 				float arg_1422_5 = 0f;
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				newColor = default(Color);
 				num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
 			}
-			projectile.active = false;
+			Projectile.active = false;
 		}
 		#endregion
 	}

@@ -6,28 +6,28 @@ namespace tsorcRevamp.Projectiles {
     class SuddenDeathStrike : ModProjectile {
 
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 12;
+            Main.projFrames[Projectile.type] = 12;
         }
 
         public override void SetDefaults() {
-            projectile.width = 44;
-            projectile.height = 40;
-            projectile.friendly = true;
-            projectile.penetrate = 50;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.light = 1f;
+            Projectile.width = 44;
+            Projectile.height = 40;
+            Projectile.friendly = true;
+            Projectile.penetrate = 50;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.light = 1f;
         }
 
         public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3) {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 12) {
-                projectile.Kill();
+            if (Projectile.frame >= 12) {
+                Projectile.Kill();
                 return;
             }
         }

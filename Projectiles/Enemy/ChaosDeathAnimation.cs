@@ -10,25 +10,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 	{
 		public override void SetDefaults()
 		{
-			Main.projFrames[projectile.type] = 14;
-			projectile.height = 1;
-			projectile.tileCollide = false;
-			projectile.width = 1;
-			projectile.scale = 2;
+			Main.projFrames[Projectile.type] = 14;
+			Projectile.height = 1;
+			Projectile.tileCollide = false;
+			Projectile.width = 1;
+			Projectile.scale = 2;
 		}
 
 		//int chaosdacount1 = 0;
         public override void AI()
         {
-			projectile.frameCounter++;
-			if (projectile.frameCounter > 3)
+			Projectile.frameCounter++;
+			if (Projectile.frameCounter > 3)
 			{
-				projectile.frame++;
-				projectile.frameCounter = 0;
+				Projectile.frame++;
+				Projectile.frameCounter = 0;
 			}
-			if (projectile.frame >= 14)
+			if (Projectile.frame >= 14)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 				return;
 			}
 		}

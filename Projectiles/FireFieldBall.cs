@@ -9,37 +9,37 @@ namespace tsorcRevamp.Projectiles {
 
         public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
         public override void SetDefaults() {
-            projectile.aiStyle = 9;
-            projectile.friendly = true;
-            projectile.height = 16;
-            projectile.width = 16;
-            projectile.light = 0.8f;
-            projectile.magic = true;
-            projectile.penetrate = 1;
-            projectile.tileCollide = true;
+            Projectile.aiStyle = 9;
+            Projectile.friendly = true;
+            Projectile.height = 16;
+            Projectile.width = 16;
+            Projectile.light = 0.8f;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = 1;
+            Projectile.tileCollide = true;
         }
         public override void AI()
         {
-            if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f)
+            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
-                projectile.soundDelay = 10;
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+                Projectile.soundDelay = 10;
+                Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
 
-            int thisDust = Dust.NewDust(new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y), projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
+            int thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
             Main.dust[thisDust].noGravity = true;
 
-            projectile.rotation += 0.3f;
+            Projectile.rotation += 0.3f;
         }
 
         public override void Kill(int timeLeft) {            
-            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), projectile.damage, 3f, projectile.owner);
+            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), Projectile.damage, 3f, Projectile.owner);
 
             for (int i = 0; i < 20; i++) {
-                int thisDust = Dust.NewDust(new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y), projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
+                int thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
                 Main.dust[thisDust].noGravity = true;
-                thisDust = Dust.NewDust(new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y), projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
+                thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
                 Main.dust[thisDust].noGravity = true;
             }            
         }

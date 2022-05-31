@@ -14,64 +14,64 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void SetDefaults()
 		{
-			projectile.aiStyle = 0;
-			projectile.hostile = true;
-			projectile.height = 34;
-			projectile.scale = 2f;
-			projectile.tileCollide = false;
-			projectile.width = 34;
-			projectile.timeLeft = 600;
-			Main.projFrames[projectile.type] = 4;
-			projectile.light = 1;
+			Projectile.aiStyle = 0;
+			Projectile.hostile = true;
+			Projectile.height = 34;
+			Projectile.scale = 2f;
+			Projectile.tileCollide = false;
+			Projectile.width = 34;
+			Projectile.timeLeft = 600;
+			Main.projFrames[Projectile.type] = 4;
+			Projectile.light = 1;
 		}
 
 		public override void AI()
 		{
 
-			projectile.rotation += 0.5f;
+			Projectile.rotation += 0.5f;
 
-			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X)
+			if (Main.player[(int)Projectile.ai[0]].position.X < Projectile.position.X)
 			{
-				if (projectile.velocity.X > -10) projectile.velocity.X -= 0.1f;
+				if (Projectile.velocity.X > -10) Projectile.velocity.X -= 0.1f;
 			}
 
-			if (Main.player[(int)projectile.ai[0]].position.X > projectile.position.X)
+			if (Main.player[(int)Projectile.ai[0]].position.X > Projectile.position.X)
 			{
-				if (projectile.velocity.X < 10) projectile.velocity.X += 0.1f;
+				if (Projectile.velocity.X < 10) Projectile.velocity.X += 0.1f;
 			}
 
-			if (Main.player[(int)projectile.ai[0]].position.Y < projectile.position.Y)
+			if (Main.player[(int)Projectile.ai[0]].position.Y < Projectile.position.Y)
 			{
-				if (projectile.velocity.Y > -10) projectile.velocity.Y -= 0.1f;
+				if (Projectile.velocity.Y > -10) Projectile.velocity.Y -= 0.1f;
 			}
 
-			if (Main.player[(int)projectile.ai[0]].position.Y > projectile.position.Y)
+			if (Main.player[(int)Projectile.ai[0]].position.Y > Projectile.position.Y)
 			{
-				if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;
+				if (Projectile.velocity.Y < 10) Projectile.velocity.Y += 0.1f;
 			}
 
 			if (Main.rand.Next(2) == 0)
 			{
-				int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 27, 0, 0, 50, Color.Purple, 1.0f);
+				int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 27, 0, 0, 50, Color.Purple, 1.0f);
 				Main.dust[dust].noGravity = false;
 			}
-			Lighting.AddLight((int)(projectile.position.X / 16f), (int)(projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
+			Lighting.AddLight((int)(Projectile.position.X / 16f), (int)(Projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
 
-			projectile.frameCounter++;
-			if (projectile.frameCounter > 2)
+			Projectile.frameCounter++;
+			if (Projectile.frameCounter > 2)
 			{
-				projectile.frame++;
-				projectile.frameCounter = 3;
+				Projectile.frame++;
+				Projectile.frameCounter = 3;
 			}
-			if (projectile.frame >= 4)
+			if (Projectile.frame >= 4)
 			{
-				projectile.frame = 0;
+				Projectile.frame = 0;
 			}
 		}
 
         public override bool PreKill(int timeLeft)
         {
-			projectile.type = 44;
+			Projectile.type = 44;
             return base.PreKill(timeLeft);
         }
 

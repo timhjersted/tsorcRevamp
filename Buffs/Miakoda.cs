@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class Miakoda : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Miakoda");
             Description.SetDefault("An ancient being freed from Skeletron.");
             Main.buffNoTimeDisplay[Type] = true;

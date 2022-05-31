@@ -10,19 +10,19 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.accessory = true;
-            item.width = 20;
-            item.height = 22;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Blue;//for the soul cost
-            item.value = PriceByRarity.Blue_1; 
-            item.defense = 1;
+            Item.accessory = true;
+            Item.width = 20;
+            Item.height = 22;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Blue;//for the soul cost
+            Item.value = PriceByRarity.Blue_1; 
+            Item.defense = 1;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.IronBar, 2);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

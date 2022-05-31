@@ -8,26 +8,26 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
     class ShadowOrb : ModProjectile {
 
         public override void SetDefaults() {
-	    projectile.timeLeft = 480;
-            projectile.hostile = true;
-            projectile.height = 15;
-            projectile.width = 15;
-            projectile.scale = 0.9f;
-			projectile.tileCollide = false;
+	    Projectile.timeLeft = 480;
+            Projectile.hostile = true;
+            Projectile.height = 15;
+            Projectile.width = 15;
+            Projectile.scale = 0.9f;
+			Projectile.tileCollide = false;
         }
 
         public override void Kill(int timeLeft) {
-            projectile.type = 44;
+            Projectile.type = 44;
         }
 
 		public override void AI() {
-			projectile.rotation++;
-			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 100, Color.Red, 2.0f);
+			Projectile.rotation++;
+			int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 100, Color.Red, 2.0f);
 			Main.dust[dust].noGravity = true;
 
-			if (projectile.velocity.X <= 10 && projectile.velocity.Y <= 10 && projectile.velocity.X >= -10 && projectile.velocity.Y >= -10) {
-				projectile.velocity.X *= 1.01f;
-				projectile.velocity.Y *= 1.01f;
+			if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10) {
+				Projectile.velocity.X *= 1.01f;
+				Projectile.velocity.Y *= 1.01f;
 			}
 		}
 

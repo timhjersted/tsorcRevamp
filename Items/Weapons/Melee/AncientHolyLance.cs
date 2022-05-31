@@ -10,35 +10,35 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 59;
-            item.knockBack = 8.5f;
-            item.scale = 0.9f;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 11;
-            item.useTime = 7;
-            item.shootSpeed = 8;
+            Item.damage = 59;
+            Item.knockBack = 8.5f;
+            Item.scale = 0.9f;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 11;
+            Item.useTime = 7;
+            Item.shootSpeed = 8;
             //item.shoot = ProjectileID.DarkLance;
             
-            item.height = 50;
-            item.width = 50;
+            Item.height = 50;
+            Item.width = 50;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.melee = true;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.LightPurple;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.AncientHolyLance>();
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.AncientHolyLance>();
 
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.MythrilHalberd);
             recipe.AddIngredient(ItemID.SoulofLight);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 6000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();

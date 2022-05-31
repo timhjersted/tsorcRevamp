@@ -9,22 +9,22 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 30;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item3;
-            item.maxStack = 30;
-            item.consumable = true;
-            item.rare = ItemRarityID.Blue;
-            item.value = 5000;
-            item.buffType = ModContent.BuffType<Buffs.Boost>();
-            item.buffTime = 14400;
+            Item.width = 24;
+            Item.height = 30;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item3;
+            Item.maxStack = 30;
+            Item.consumable = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = 5000;
+            Item.buffType = ModContent.BuffType<Buffs.Boost>();
+            Item.buffTime = 14400;
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BattlePotion, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.Gel, 5);

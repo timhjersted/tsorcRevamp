@@ -149,7 +149,7 @@ namespace tsorcRevamp.Items {
 				player.lifeRegen += 1;
             }*/
 
-			if (item.prefix == mod.PrefixType("Blessed"))	
+			if (item.prefix == Mod.Find<ModPrefix>("Blessed").Type)	
             {
 				player.lifeRegen += 1;
             }
@@ -157,12 +157,12 @@ namespace tsorcRevamp.Items {
 
         public override void UpdateAccessory(Item item, Player player, bool hideVisual)
         {
-			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Refreshing")))
+			if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type))
 			{
 				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.02f;
 			}
 
-			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Revitalizing")))
+			if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type))
 			{
 				player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.04f;
 			}
@@ -170,20 +170,20 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Refreshing")))
+			if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type))
 			{
-				TooltipLine line = new TooltipLine(mod, "Refreshing", "+2% stamina recovery speed")
+				TooltipLine line = new TooltipLine(Mod, "Refreshing", "+2% stamina recovery speed")
 				{
-					isModifier = true
+					IsModifier = true
 				};
 				tooltips.Add(line);
 			}
 
-			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Revitalizing")))
+			if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type))
 			{
-				TooltipLine line = new TooltipLine(mod, "Revitalizing", "+4% stamina recovery speed")
+				TooltipLine line = new TooltipLine(Mod, "Revitalizing", "+4% stamina recovery speed")
 				{
-					isModifier = true
+					IsModifier = true
 				};
 				tooltips.Add(line);
 			}
@@ -396,7 +396,7 @@ namespace tsorcRevamp.Items {
 			// To prevent rolling of a prefix on spawn, return false when pre is -1
 			if (pre == -1)
 			{
-				if (item.modItem?.mod == mod)
+				if (item.ModItem?.Mod == Mod)
 				{
 					// All weapons/accesories from tsorcRevamp can have a prefix when they are crafted, bought, taken from a generated chest, opened, or dropped by an enemy
 					return true;

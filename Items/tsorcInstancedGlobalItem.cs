@@ -36,14 +36,14 @@ namespace tsorcRevamp.Items
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			if (!item.social && item.prefix > 0 && (item.prefix == mod.PrefixType("Blessed")))
+			if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Blessed").Type))
 			{
 				int blessedBonus = blessed - Main.cpItem.GetGlobalItem<tsorcInstancedGlobalItem>().blessed;
 				if (blessedBonus > 0)
 				{
-					TooltipLine line = new TooltipLine(mod, "Blessed", "+1 life regen while held")
+					TooltipLine line = new TooltipLine(Mod, "Blessed", "+1 life regen while held")
 					{
-						isModifier = true
+						IsModifier = true
 					};
 					tooltips.Add(line);
 				}

@@ -11,26 +11,26 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 16;
+			Main.npcFrameCount[NPC.type] = 16;
 			animationType = 28;
-			npc.knockBackResist = 0.01f;
-			npc.aiStyle = 3;
-			npc.damage = 76;
-			npc.defense = 35;
-			npc.height = 40;
-			npc.width = 20;
-			npc.lifeMax = 810;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 1800;
-			banner = npc.type;
+			NPC.knockBackResist = 0.01f;
+			NPC.aiStyle = 3;
+			NPC.damage = 76;
+			NPC.defense = 35;
+			NPC.height = 40;
+			NPC.width = 20;
+			NPC.lifeMax = 810;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.value = 1800;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.DarkElfMageBanner>();
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 			meteorDamage = (int)(meteorDamage / 2);
 			iceBallDamage = (int)(iceBallDamage / 2);
 			iceStormDamage = (int)(iceStormDamage / 2);
@@ -50,23 +50,23 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player; //this shortens our code up from writing this line over and over.
+			Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
 
-			bool Sky = spawnInfo.spawnTileY <= (Main.rockLayer * 4);
+			bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
 			bool Meteor = P.ZoneMeteor;
 			bool Jungle = P.ZoneJungle;
 			bool Dungeon = P.ZoneDungeon;
 			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
+			bool Hallow = P.ZoneHallow;
 			bool AboveEarth = P.ZoneOverworldHeight;
 			bool InBrownLayer = P.ZoneDirtLayerHeight;
 			bool InGrayLayer = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
-			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
+			bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
 
 			// these are all the regular stuff you get , now lets see......
-			if (spawnInfo.player.townNPCs > 0f) return 0;
+			if (spawnInfo.Player.townNPCs > 0f) return 0;
 
 			if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.Next(55) == 1) return 1;
 
@@ -84,50 +84,50 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 2, 0.07f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 3);
-			tsorcRevampAIs.LeapAtPlayer(npc, 4, 3, 1, 100);
+			tsorcRevampAIs.FighterAI(NPC, 2, 0.07f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 3);
+			tsorcRevampAIs.LeapAtPlayer(NPC, 4, 3, 1, 100);
 
-			npc.localAI[1]++;
-			bool validTarget = Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height);
-			tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, validTarget, false, 2, 17, 0.1f, 120, 1);
-			tsorcRevampAIs.SimpleProjectile(npc, ref npc.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, validTarget, false, 2, 17);
+			NPC.localAI[1]++;
+			bool validTarget = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
+			tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellLightning3Ball>(), lightningDamage, 9, validTarget, false, 2, 17, 0.1f, 120, 1);
+			tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 90, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 8, validTarget, false, 2, 17);
 
 			
-			if (npc.localAI[1] >= 90 && validTarget)
+			if (NPC.localAI[1] >= 90 && validTarget)
 			{
-				npc.localAI[1] = 0;
+				NPC.localAI[1] = 0;
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					Vector2 overshoot = new Vector2(0, -240);
-					Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center + overshoot, 12, 0.035f);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 0f, Main.myPlayer, 1, npc.target);
+					Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center + overshoot, 12, 0.035f);
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projectileVector.X, projectileVector.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIce3Ball>(), iceBallDamage, 0f, Main.myPlayer, 1, NPC.target);
 				}
 				
-				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 17);
+				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 17);
 				
 			}
 		}
 
 		#region Gore
-		public override void NPCLoot()
+		public override void OnKill()
 		{
 			
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dark Elf Magi Gore 1"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dark Elf Magi Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dark Elf Magi Gore 3"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dark Elf Magi Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Dark Elf Magi Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dark Elf Magi Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dark Elf Magi Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dark Elf Magi Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dark Elf Magi Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Dark Elf Magi Gore 3"), 1f);
 
-			if (Main.rand.Next(100) < 5) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenIceRod>());
-			if (Main.rand.Next(100) < 5) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenThunderRod>());
-			if (Main.rand.Next(100) < 1) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
-			if (Main.rand.Next(100) < 10) Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
-			if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
-			if (Main.rand.Next(100) < 10) Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion);
-			if (Main.rand.Next(100) < 6) Item.NewItem(npc.getRect(), ItemID.GillsPotion);
-			if (Main.rand.Next(100) < 6) Item.NewItem(npc.getRect(), ItemID.HunterPotion);
-			if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion);
-			if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ItemID.ShinePotion);
+			if (Main.rand.Next(100) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenIceRod>());
+			if (Main.rand.Next(100) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenThunderRod>());
+			if (Main.rand.Next(100) < 1) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenStardustRod>());
+			if (Main.rand.Next(100) < 10) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
+			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
+			if (Main.rand.Next(100) < 10) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
+			if (Main.rand.Next(100) < 6) Item.NewItem(NPC.getRect(), ItemID.GillsPotion);
+			if (Main.rand.Next(100) < 6) Item.NewItem(NPC.getRect(), ItemID.HunterPotion);
+			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion);
+			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.getRect(), ItemID.ShinePotion);
 
 		}
 		#endregion

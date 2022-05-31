@@ -10,30 +10,30 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wand of Darkness II");
             Tooltip.SetDefault("Greater damage and higher knockback");
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
         }
         public override void SetDefaults() {
-            item.autoReuse = true;
-            item.width = 12;
-            item.height = 17;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.damage = 18;
-            item.knockBack = 2.5f;
-            item.mana = 5;
-            item.UseSound = SoundID.Item8;
-            item.shootSpeed = 7;
-            item.noMelee = true;
-            item.value = PriceByRarity.Green_2;
-            item.rare = ItemRarityID.Green;
-            item.magic = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.ShadowBall>();
+            Item.autoReuse = true;
+            Item.width = 12;
+            Item.height = 17;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.damage = 18;
+            Item.knockBack = 2.5f;
+            Item.mana = 5;
+            Item.UseSound = SoundID.Item8;
+            Item.shootSpeed = 7;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
+            Item.magic = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.ShadowBall>();
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("WandOfDarkness"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2700);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("WandOfDarkness"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2700);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

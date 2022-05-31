@@ -81,13 +81,13 @@ namespace tsorcRevamp {
             Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             for(int i = 0; i < Main.maxProjectiles; i++)
             {
-                if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].modProjectile is EnemyGenericLaser)
+                if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].ModProjectile is EnemyGenericLaser)
                 {
-                    EnemyGenericLaser laser = (EnemyGenericLaser)Main.projectile[i].modProjectile;
+                    EnemyGenericLaser laser = (EnemyGenericLaser)Main.projectile[i].ModProjectile;
                     laser.AdditiveContext = true;
                     if((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2))
                     {
-                        laser.PreDraw(Main.spriteBatch, Lighting.GetColor((int)laser.projectile.Center.X / 16, (int)(laser.projectile.Center.Y / 16f)));
+                        laser.PreDraw(Main.spriteBatch, Lighting.GetColor((int)laser.Projectile.Center.X / 16, (int)(laser.Projectile.Center.Y / 16f)));
                     }
                     laser.AdditiveContext = false;
                 }
@@ -425,11 +425,11 @@ namespace tsorcRevamp {
                 for (int i = Main.spawnTileX - 1; i < Main.spawnTileX + 2; i++) {
                     for (int j = Main.spawnTileY - 3; j < Main.spawnTileY; j++) {
                         if (Main.tile[i, j] != null) {
-                            if (Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type]) {
+                            if (Main.tileSolid[Main.tile[i, j].TileType] && !Main.tileSolidTop[Main.tile[i, j].TileType]) {
                                 WorldGen.KillTile(i, j);
                             }
                             if (Main.tile[i, j].liquid > 0) {
-                                Main.tile[i, j].lava(lava: false);
+                                Main.tile[i, j].LiquidType = false;
                                 Main.tile[i, j].liquid = 0;
                                 WorldGen.SquareTileFrame(i, j);
                             }
@@ -484,9 +484,9 @@ namespace tsorcRevamp {
                             if (Main.tile[i + self.SpawnX, j + self.SpawnY] != null)
                             {
                                 Tile thisTile = Main.tile[i + self.SpawnX, j + self.SpawnY];
-                                if (thisTile.active())
+                                if (thisTile.HasTile)
                                 {
-                                    if (thisTile.type == TileID.Beds || thisTile.type == ModContent.TileType<Tiles.BonfireCheckpoint>())
+                                    if (thisTile.TileType == TileID.Beds || thisTile.TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
                                     {
                                         return true;
                                     }
@@ -699,26 +699,26 @@ namespace tsorcRevamp {
 
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
         internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY) {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.tileSign[Main.tile[myX, myY].type]) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.tileSign[Main.tile[myX, myY].TileType]) {
                 if (Main.tile[myX, myY] == null) {
                     Main.tile[myX, myY] = new Tile();
                 }
-                if (!Main.tile[myX, myY].active()) {
+                if (!Main.tile[myX, myY].HasTile) {
                     return;
                 }
-                if (Main.tile[myX, myY].type == 21) {
+                if (Main.tile[myX, myY].TileType == 21) {
                     orig(self, myX, myY);
                 }
-                if (Main.tile[myX, myY].type == 88) {
+                if (Main.tile[myX, myY].TileType == 88) {
                     orig(self, myX, myY);
                 }
-                if (Main.tileSign[Main.tile[myX, myY].type]) {
+                if (Main.tileSign[Main.tile[myX, myY].TileType]) {
                     Vector2 signPos = new Vector2(myX * 16, myY * 16);
                     Vector2 toSign = signPos - self.position;
                     if (Collision.CanHitLine(self.position, 0, 0, signPos, 0, 0) && toSign.Length() < 240) { 
                         self.noThrow = 2;
-                        int num3 = Main.tile[myX, myY].frameX / 18;
-                        int num4 = Main.tile[myX, myY].frameY / 18;
+                        int num3 = Main.tile[myX, myY].TileFrameX / 18;
+                        int num4 = Main.tile[myX, myY].TileFrameY / 18;
                         num3 %= 2;
                         int num7 = myX - num3;
                         int num5 = myY - num4;
@@ -1165,7 +1165,7 @@ namespace tsorcRevamp {
                 {
                     for (int l = num14; l < num15; l++)
                     {
-                        if (Main.tile[k, l] != null && ((Main.tile[k, l].nactive() && (Main.tileSolid[Main.tile[k, l].type] || (Main.tileSolidTop[Main.tile[k, l].type] && Main.tile[k, l].frameY == 0))) || Main.tile[k, l].liquid > 64))
+                        if (Main.tile[k, l] != null && ((Main.tile[k, l].HasUnactuatedTile && (Main.tileSolid[Main.tile[k, l].TileType] || (Main.tileSolidTop[Main.tile[k, l].TileType] && Main.tile[k, l].TileFrameY == 0))) || Main.tile[k, l].liquid > 64))
                         {
                             vector2.X = k * 16;
                             vector2.Y = l * 16;

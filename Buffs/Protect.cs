@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class Protect : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Protect");
             Description.SetDefault("Defense is increased by 30!");
             Main.debuff[Type] = false;

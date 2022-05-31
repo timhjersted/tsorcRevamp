@@ -15,14 +15,14 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 38;
-            item.height = 34;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.maxStack = 1;
-            item.consumable = false;
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.maxStack = 1;
+            Item.consumable = false;
         }
 
         public override bool CanUseItem(Player player)
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.BossItems {
             return canUse;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
            
             Main.NewText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());            
@@ -46,10 +46,10 @@ namespace tsorcRevamp.Items.BossItems {
         public override void AddRecipes() {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("BlueTitanite"), 10);
+                Recipe recipe = new Recipe(Mod);
+                recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 10);
                 recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
                 recipe.AddTile(TileID.DemonAltar);
                 recipe.SetResult(this, 1);
                 recipe.AddRecipe();

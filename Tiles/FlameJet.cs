@@ -11,7 +11,7 @@ namespace tsorcRevamp.Tiles
 {
 	public class FlameJet : ModTile
 	{
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			ModTranslation name = CreateMapEntryName();
 			name.SetDefault("Flame Jet");
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Tiles
 			b = color.Z;
 		}
 
-        public override bool Dangersense(int i, int j, Player player)
+        public override bool IsTileDangerous(int i, int j, Player player)
         {
             return true;
         }
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Tiles
 					int projSize = 0;
 					for (int index = 1; index < maxHeight; index++)
 					{
-						if (!Main.tile[i, j - index].active() || (!Main.tileSolid[Main.tile[i, j - index].type]))
+						if (!Main.tile[i, j - index].HasTile || (!Main.tileSolid[Main.tile[i, j - index].TileType]))
 						{
 							projSize++;
 						}
@@ -75,7 +75,7 @@ namespace tsorcRevamp.Tiles
 
 
 
-        public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref Color drawColor, ref int nextSpecialDrawIndex)
+        public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawInfo)
 		{
 			if (!Main.gamePaused && Main.instance.IsActive && (!Lighting.UpdateEveryFrame || Main.rand.NextBool(4)))
 			{				
@@ -93,9 +93,9 @@ namespace tsorcRevamp.Tiles
 
 		public override void SetDefaults()
 		{
-			item.CloneDefaults(ItemID.ArmorStatue);
-			item.createTile = ModContent.TileType<FlameJet>();
-			item.placeStyle = 0;
+			Item.CloneDefaults(ItemID.ArmorStatue);
+			Item.createTile = ModContent.TileType<FlameJet>();
+			Item.placeStyle = 0;
 		}
 	}
 }

@@ -12,11 +12,11 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void SetDefaults() {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 15;
-            item.value = 500000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 15;
+            Item.value = 500000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player) {
@@ -26,11 +26,11 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DragoonGreaves"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("DragoonGreaves"), 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 40000);
+            recipe.AddIngredient(Mod.GetItem("FlameOfTheAbyss"), 10);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 40000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

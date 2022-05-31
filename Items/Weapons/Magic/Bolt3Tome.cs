@@ -15,24 +15,24 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void SetDefaults() {
 
-            item.damage = 35;
-            item.height = 10;
-            item.width = 34;
-            item.knockBack = 0;
-            item.autoReuse = true;
-            item.rare = ItemRarityID.LightRed;
-            item.shootSpeed = 6f;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 50;
-            item.useAnimation = 25;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 25;
-            item.value = PriceByRarity.LightRed_4;
-            item.shoot = ModContent.ProjectileType<Projectiles.Bolt3Ball>();
+            Item.damage = 35;
+            Item.height = 10;
+            Item.width = 34;
+            Item.knockBack = 0;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.LightRed;
+            Item.shootSpeed = 6f;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 50;
+            Item.useAnimation = 25;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 25;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Bolt3Ball>();
         }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             if (player.wet)
             {
@@ -43,10 +43,10 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SoulofLight, 15);
-            recipe.AddIngredient(mod.GetItem("Bolt2Tome"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(Mod.GetItem("Bolt2Tome"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 25000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

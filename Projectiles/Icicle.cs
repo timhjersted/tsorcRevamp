@@ -6,28 +6,28 @@ namespace tsorcRevamp.Projectiles {
     class Icicle : ModProjectile {
         public override void SetDefaults() {
             //projectile.aiStyle = 9;
-            projectile.friendly = true;
-            projectile.penetrate = 3;
-            projectile.height = 38;
-            projectile.width = 38;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 70;
-            projectile.alpha = 70;
+            Projectile.friendly = true;
+            Projectile.penetrate = 3;
+            Projectile.height = 38;
+            Projectile.width = 38;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 70;
+            Projectile.alpha = 70;
         }
 
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(225f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(225f);
 
-            if (projectile.timeLeft <= 15)
+            if (Projectile.timeLeft <= 15)
             {
-                projectile.alpha += 9;
+                Projectile.alpha += 9;
             }
 
-            Vector2 arg_2675_0 = new Vector2(projectile.position.X, projectile.position.Y);
-            int arg_2675_1 = projectile.width;
-            int arg_2675_2 = projectile.height;
+            Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+            int arg_2675_1 = Projectile.width;
+            int arg_2675_2 = Projectile.height;
             int arg_2675_3 = 15;
             float arg_2675_4 = 0f;
             float arg_2675_5 = 0f;
@@ -39,8 +39,8 @@ namespace tsorcRevamp.Projectiles {
                 Dust expr_2684 = Main.dust[num47];
                 expr_2684.velocity *= 0.3f;
 
-                Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
-                Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
+                Main.dust[num47].position.X = Projectile.position.X + (float)(Projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
+                Main.dust[num47].position.Y = Projectile.position.Y + (float)(Projectile.height / 2) + (float)Main.rand.Next(-4, 5);
                 Main.dust[num47].noGravity = true;
             }
 
@@ -49,8 +49,8 @@ namespace tsorcRevamp.Projectiles {
 
             for (int i = 0; i < 2; i++)
             {
-                Main.dust[n1337].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
-                Main.dust[n1337].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
+                Main.dust[n1337].position.X = Projectile.position.X + (float)(Projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
+                Main.dust[n1337].position.Y = Projectile.position.Y + (float)(Projectile.height / 2) + (float)Main.rand.Next(-4, 5);
                 Main.dust[n1337].noGravity = true;
                 Main.dust[n1337].velocity *= 0.8f;
             }

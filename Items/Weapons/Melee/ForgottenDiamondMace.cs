@@ -9,20 +9,20 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.rare = ItemRarityID.Pink;
-            item.damage = 90;
-            item.height = 36;
-            item.knockBack = 10;
-            item.scale = 1.3f;
-            item.melee = true;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.UseSound = SoundID.Item1;
-            item.value = PriceByRarity.Pink_5;
-            item.width = 36;
-            item.useStyle = ItemUseStyleID.SwingThrow;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Pink;
+            Item.damage = 90;
+            Item.height = 36;
+            Item.knockBack = 10;
+            Item.scale = 1.3f;
+            Item.melee = true;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.UseSound = SoundID.Item1;
+            Item.value = PriceByRarity.Pink_5;
+            Item.width = 36;
+            Item.useStyle = ItemUseStyleID.Swing;
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
             if (Main.rand.Next(15) == 0) {
@@ -33,11 +33,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             }
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.AdamantiteBar, 10);
             recipe.AddIngredient(ItemID.Diamond, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 66000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 66000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

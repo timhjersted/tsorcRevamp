@@ -11,19 +11,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 18;
-            item.width = 22;
-            item.height = 22;
-            item.knockBack = 3;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1.1f;
-            item.useAnimation = 11;
-            item.rare = ItemRarityID.White;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.Stabbing;
-            item.useTime = 15;
-            item.value = 500;
+            Item.damage = 18;
+            Item.width = 22;
+            Item.height = 22;
+            Item.knockBack = 3;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.scale = 1.1f;
+            Item.useAnimation = 11;
+            Item.rare = ItemRarityID.White;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Thrust;
+            Item.useTime = 15;
+            Item.value = 500;
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
             if (Main.rand.Next(2) == 0) {
@@ -37,9 +37,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             }
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldPoisonDagger"));
-            recipe.AddTile(mod.GetTile("SweatyCyclopsForge"));
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("OldPoisonDagger"));
+            recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

@@ -11,62 +11,62 @@ namespace tsorcRevamp.Projectiles
         public override void SetDefaults()
         {
             drawHeldProjInFrontOfHeldItemAndArms = true; // Makes projectile appear in front of arms, not just in between body and arms
-            projectile.height = 4;
-            projectile.width = 4;
-            projectile.scale = 0.4f;
-            projectile.hostile = false;
-            projectile.friendly = true;
-            projectile.timeLeft = 600;
-            projectile.tileCollide = true;
+            Projectile.height = 4;
+            Projectile.width = 4;
+            Projectile.scale = 0.4f;
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+            Projectile.timeLeft = 600;
+            Projectile.tileCollide = true;
 
             drawOffsetX = -5;
             drawOriginOffsetY = -8;
         }
         public override void AI()
         {
-            Player projOwner = Main.player[projectile.owner];
-            projOwner.heldProj = projectile.whoAmI; //this makes it appear in front of the player
+            Player projOwner = Main.player[Projectile.owner];
+            projOwner.heldProj = Projectile.whoAmI; //this makes it appear in front of the player
 
-            if (projectile.timeLeft < 255)
+            if (Projectile.timeLeft < 255)
             {
-                projectile.alpha += 1;
+                Projectile.alpha += 1;
             }
 
-            projectile.ai[0] += 1f;
-            if (projectile.ai[0] > 7f)
+            Projectile.ai[0] += 1f;
+            if (Projectile.ai[0] > 7f)
             {
-                projectile.ai[0] = 10f;
+                Projectile.ai[0] = 10f;
                 // Roll speed dampening.
-                if (projectile.velocity.Y == 0f && projectile.velocity.X != 0f)
+                if (Projectile.velocity.Y == 0f && Projectile.velocity.X != 0f)
                 {
-                    projectile.velocity.X = projectile.velocity.X * 0.95f;
+                    Projectile.velocity.X = Projectile.velocity.X * 0.95f;
 
-                    if ((double)projectile.velocity.X > -0.01 && (double)projectile.velocity.X < 0.01)
+                    if ((double)Projectile.velocity.X > -0.01 && (double)Projectile.velocity.X < 0.01)
                     {
-                        projectile.velocity.X = 0f;
-                        projectile.netUpdate = true;
+                        Projectile.velocity.X = 0f;
+                        Projectile.netUpdate = true;
                     }
                 }
-                projectile.velocity.Y = projectile.velocity.Y + 0.2f;
+                Projectile.velocity.Y = Projectile.velocity.Y + 0.2f;
             }
-            projectile.rotation += projectile.velocity.X * 0.4f;
+            Projectile.rotation += Projectile.velocity.X * 0.4f;
 
-            projectile.velocity.Y = projectile.velocity.Y + 0.1f; // 0.1f for arrow gravity, 0.4f for knife gravity
-            if (projectile.velocity.Y > 16f) // This check implements "terminal velocity". We don't want the projectile to keep getting faster and faster. Past 16f this projectile will travel through blocks, so this check is useful.
+            Projectile.velocity.Y = Projectile.velocity.Y + 0.1f; // 0.1f for arrow gravity, 0.4f for knife gravity
+            if (Projectile.velocity.Y > 16f) // This check implements "terminal velocity". We don't want the projectile to keep getting faster and faster. Past 16f this projectile will travel through blocks, so this check is useful.
             {
-                projectile.velocity.Y = 16f;
+                Projectile.velocity.Y = 16f;
             }
             return;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 1f)
+            if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 1f)
             {
-                projectile.velocity.X = oldVelocity.X * -0.3f;
+                Projectile.velocity.X = oldVelocity.X * -0.3f;
             }
-            if (projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 1f)
+            if (Projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 1f)
             {
-                projectile.velocity.Y = oldVelocity.Y * -0.3f;
+                Projectile.velocity.Y = oldVelocity.Y * -0.3f;
             }
             return false;
         }

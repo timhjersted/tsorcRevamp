@@ -7,45 +7,45 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
     class ManOfWar : ModNPC {
         public override void SetDefaults() {
-            npc.npcSlots = 1;
-            npc.width = 26;
-            npc.height = 26;
-            Main.npcFrameCount[npc.type] = 7;
+            NPC.npcSlots = 1;
+            NPC.width = 26;
+            NPC.height = 26;
+            Main.npcFrameCount[NPC.type] = 7;
             animationType = NPCID.GreenJellyfish;
-            npc.aiStyle = 18;
-            npc.timeLeft = 750;
-            npc.damage = 120;
-            npc.defense = 40;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.lifeMax = 2000;
-            npc.alpha = 20;
-            npc.scale = .7f;
-            npc.knockBackResist = 0.3f;
-            npc.noGravity = true;
-            npc.value = 1250;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.Frozen] = true;
-            banner = npc.type;
+            NPC.aiStyle = 18;
+            NPC.timeLeft = 750;
+            NPC.damage = 120;
+            NPC.defense = 40;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.lifeMax = 2000;
+            NPC.alpha = 20;
+            NPC.scale = .7f;
+            NPC.knockBackResist = 0.3f;
+            NPC.noGravity = true;
+            NPC.value = 1250;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.Frozen] = true;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
-            if (Main.hardMode) { npc.lifeMax = 500; npc.defense = 30; npc.value = 550; }
+            if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 30; NPC.value = 550; }
         }
 
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = (int)(npc.lifeMax / 2);
-            npc.damage = (int)(npc.damage / 2);
+            NPC.lifeMax = (int)(NPC.lifeMax / 2);
+            NPC.damage = (int)(NPC.damage / 2);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) {
 
             float chance = 0;
 
-            if (Main.hardMode && spawnInfo.water) {
+            if (Main.hardMode && spawnInfo.Water) {
                     chance = 0.5f;
             }
-            if(Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
+            if(Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
             {
                 chance *= 4;
             }
@@ -58,16 +58,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             }
         }
         public override void HitEffect(int hitDirection, double damage) {
-            if (npc.life <= 0) {
-                Dust.NewDust(npc.position, npc.width, npc.height, 71, 0.3f, 0.3f, 200, default, 1f);
-                Dust.NewDust(npc.position, npc.height, npc.width, 71, 0.2f, 0.2f, 200, default, 2f);
-                Dust.NewDust(npc.position, npc.width, npc.height, 71, 0.2f, 0.2f, 200, default, 2f);
-                Dust.NewDust(npc.position, npc.height, npc.width, 71, 0.2f, 0.2f, 200, default, 3f);
-                Dust.NewDust(npc.position, npc.height, npc.width, 71, 0.2f, 0.2f, 200, default, 2f);
-                Dust.NewDust(npc.position, npc.width, npc.height, 71, 0.2f, 0.2f, 200, default, 2f);
-                Dust.NewDust(npc.position, npc.height, npc.width, 71, 0.2f, 0.2f, 200, default, 2f);
-                Dust.NewDust(npc.position, npc.height, npc.width, 71, 0.2f, 0.2f, 200, default, 2f);
-                Dust.NewDust(npc.position, npc.height, npc.width, 71, 0.2f, 0.2f, 200, default, 2f);
+            if (NPC.life <= 0) {
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 71, 0.3f, 0.3f, 200, default, 1f);
+                Dust.NewDust(NPC.position, NPC.height, NPC.width, 71, 0.2f, 0.2f, 200, default, 2f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 71, 0.2f, 0.2f, 200, default, 2f);
+                Dust.NewDust(NPC.position, NPC.height, NPC.width, 71, 0.2f, 0.2f, 200, default, 3f);
+                Dust.NewDust(NPC.position, NPC.height, NPC.width, 71, 0.2f, 0.2f, 200, default, 2f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 71, 0.2f, 0.2f, 200, default, 2f);
+                Dust.NewDust(NPC.position, NPC.height, NPC.width, 71, 0.2f, 0.2f, 200, default, 2f);
+                Dust.NewDust(NPC.position, NPC.height, NPC.width, 71, 0.2f, 0.2f, 200, default, 2f);
+                Dust.NewDust(NPC.position, NPC.height, NPC.width, 71, 0.2f, 0.2f, 200, default, 2f);
             }
         }
     }

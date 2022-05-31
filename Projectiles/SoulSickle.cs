@@ -10,29 +10,29 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Sickle");
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 3;
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
-            projectile.friendly = true;
-            projectile.width = 68;
-            projectile.height = 68;
-            projectile.penetrate = -1;
-            projectile.damage = 40;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 30;
-            projectile.alpha = 120;
-            projectile.ignoreWater = true;
+            Projectile.aiStyle = 0;
+            Projectile.friendly = true;
+            Projectile.width = 68;
+            Projectile.height = 68;
+            Projectile.penetrate = -1;
+            Projectile.damage = 40;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 30;
+            Projectile.alpha = 120;
+            Projectile.ignoreWater = true;
         }
 
         public override void AI()
         {
 
-            Lighting.AddLight(projectile.Center, 0.3f, 0.462f, 0.4f);
+            Lighting.AddLight(Projectile.Center, 0.3f, 0.462f, 0.4f);
 
-            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 89, 0, 0, 0, default, .5f);
+            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 89, 0, 0, 0, default, .5f);
             Main.dust[dust].velocity *= 0.25f;
             Main.dust[dust].noGravity = true;
             Main.dust[dust].fadeIn = 1f;
@@ -40,21 +40,21 @@ namespace tsorcRevamp.Projectiles
 
             //ANIMATION
 
-            if (++projectile.frameCounter >= 5) //ticks spent on each frame
+            if (++Projectile.frameCounter >= 5) //ticks spent on each frame
             {
-                projectile.frameCounter = 0;
-                if (projectile.timeLeft >= 5)
+                Projectile.frameCounter = 0;
+                if (Projectile.timeLeft >= 5)
                 {
-                    if (++projectile.frame == 3)
+                    if (++Projectile.frame == 3)
                     {
-                        projectile.frame = 0;
+                        Projectile.frame = 0;
                     }
                 }
             }
 
-            if (projectile.timeLeft < 20)
+            if (Projectile.timeLeft < 20)
             {
-                projectile.alpha += 6;
+                Projectile.alpha += 6;
             }
         }
     }

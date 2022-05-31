@@ -14,13 +14,13 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void SetDefaults()
 		{
-			projectile.width = 6;
-			projectile.height = 6;
-			projectile.timeLeft = 3600;
-			projectile.hostile = true;
-			projectile.penetrate = 1; //was 3
-			projectile.ignoreWater = true;
-			projectile.tileCollide = true;
+			Projectile.width = 6;
+			Projectile.height = 6;
+			Projectile.timeLeft = 3600;
+			Projectile.hostile = true;
+			Projectile.penetrate = 1; //was 3
+			Projectile.ignoreWater = true;
+			Projectile.tileCollide = true;
 			
 			aiType = 4;
 		}
@@ -29,36 +29,36 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void AI()
 		{
-			if (projectile.timeLeft > 60)
+			if (Projectile.timeLeft > 60)
 
 
 			{
-				projectile.timeLeft = 60;
+				Projectile.timeLeft = 60;
 			}
-			if (projectile.ai[0] > 7f)
+			if (Projectile.ai[0] > 7f)
 			{
 				float num152 = 1f;
-				if (projectile.ai[0] == 8f)
+				if (Projectile.ai[0] == 8f)
 				{
 					num152 = 0.25f;
 				}
 				else
 				{
-					if (projectile.ai[0] == 9f)
+					if (Projectile.ai[0] == 9f)
 					{
 						num152 = 0.5f;
 					}
 					else
 					{
-						if (projectile.ai[0] == 10f)
+						if (Projectile.ai[0] == 10f)
 						{
 							num152 = 0.75f;
 						}
 					}
 				}
-				projectile.ai[0] += 1f;
+				Projectile.ai[0] += 1f;
 				int num153 = 6;
-				if (projectile.type == ModContent.ProjectileType<FrozenDragonsBreath>())
+				if (Projectile.type == ModContent.ProjectileType<FrozenDragonsBreath>())
 				{
 					num153 = 76;
 				}
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				{
 					for (int num154 = 0; num154 < 1; num154++)
 					{
-						int num155 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, num153, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+						int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, num153, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
 						if (Main.rand.Next(3) != 0 || (num153 == 76 && Main.rand.Next(3) == 0))
 						{
 							Main.dust[num155].noGravity = true; 
@@ -84,7 +84,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 						Main.dust[num155].scale *= num152;
 						if (num153 == 75)
 						{
-							Main.dust[num155].velocity += projectile.velocity;
+							Main.dust[num155].velocity += Projectile.velocity;
 							if (!Main.dust[num155].noGravity)
 							{
 								Main.dust[num155].velocity *= 0.5f;
@@ -95,9 +95,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 			}
 			else
 			{
-				projectile.ai[0] += 1f;
+				Projectile.ai[0] += 1f;
 			}
-			projectile.rotation += 0.3f * (float)projectile.direction;
+			Projectile.rotation += 0.3f * (float)Projectile.direction;
 		}
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

@@ -13,45 +13,45 @@ namespace tsorcRevamp.Projectiles {
             DisplayName.SetDefault("Sandstorm");
         }
         public override void SetDefaults() {
-            projectile.width = 6;
-            projectile.height = 6;
-            projectile.scale = 1f;
-            projectile.alpha = 255;
-            projectile.aiStyle = 0;
-            projectile.timeLeft = 3600;
-            projectile.friendly = true;
-            projectile.penetrate = 4;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = true;
-            projectile.magic = true;
-            projectile.usesIDStaticNPCImmunity = true;
-            projectile.idStaticNPCHitCooldown = 6;
+            Projectile.width = 6;
+            Projectile.height = 6;
+            Projectile.scale = 1f;
+            Projectile.alpha = 255;
+            Projectile.aiStyle = 0;
+            Projectile.timeLeft = 3600;
+            Projectile.friendly = true;
+            Projectile.penetrate = 4;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 6;
         }
         public override void AI() {
-            if (projectile.timeLeft > 60) {
-                projectile.timeLeft = 60;
+            if (Projectile.timeLeft > 60) {
+                Projectile.timeLeft = 60;
             }
-            if (projectile.ai[0] > 7f) {
+            if (Projectile.ai[0] > 7f) {
                 float num152 = 1f;
-                if (projectile.ai[0] == 8f) {
+                if (Projectile.ai[0] == 8f) {
                     num152 = 0.25f;
                 }
                 else {
-                    if (projectile.ai[0] == 9f) {
+                    if (Projectile.ai[0] == 9f) {
                         num152 = 0.5f;
                     }
                     else {
-                        if (projectile.ai[0] == 10f) {
+                        if (Projectile.ai[0] == 10f) {
                             num152 = 0.75f;
                         }
                     }
                 }
-                projectile.ai[0] += 1f;
+                Projectile.ai[0] += 1f;
                 if (Main.rand.Next(2) == 0) {
                     for (int i = 0; i < 1; i++) {
-                        int num155 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, 10, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-                        int dust2 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y - 10), projectile.width, projectile.height, 10, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-                        int dust3 = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y + 10), projectile.width, projectile.height, 10, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                        int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 10, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                        int dust2 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 10), Projectile.width, Projectile.height, 10, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                        int dust3 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 10), Projectile.width, Projectile.height, 10, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
                         if (Main.rand.Next(3) != 0) {
                             Main.dust[num155].noGravity = true;
                             Main.dust[num155].scale *= 3f;
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles {
                                     (float)dustnum155.velocity.X,
                                     (float)dustnum155.velocity.Y,
                                     ModContent.ProjectileType<Sand>(),
-                                    projectile.damage, projectile.knockBack, Main.player[projectile.owner].whoAmI);
+                                    Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
                                 Main.projectile[projectileMini2].timeLeft = 60;
                                 Main.projectile[projectileMini2].scale = 0.5f;
                             }
@@ -87,7 +87,7 @@ namespace tsorcRevamp.Projectiles {
                                     new Vector2(dustDust2.position.X, dustDust2.position.Y),
                                     new Vector2(dustDust2.velocity.X, dustDust2.velocity.Y),
                                     ModContent.ProjectileType<Sand>(),
-                                    projectile.damage, projectile.knockBack, Main.player[projectile.owner].whoAmI);
+                                    Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
                                 Main.projectile[projectileMini3].timeLeft = 60;
                                 Main.projectile[projectileMini3].scale = 0.5f;
                             }
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles {
                                     (float)dustDust3.velocity.X,
                                     (float)dustDust3.velocity.Y,
                                     ModContent.ProjectileType<Sand>(),
-                                    projectile.damage, projectile.knockBack, Main.player[projectile.owner].whoAmI);
+                                    Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
                                 Main.projectile[projectileMini4].timeLeft = 60;
                                 Main.projectile[projectileMini4].scale = 0.5f;
                             }
@@ -128,7 +128,7 @@ namespace tsorcRevamp.Projectiles {
                                 (float)dust155.velocity.X,
                                 (float)dust155.velocity.Y,
                                 ModContent.ProjectileType<Sand>(),
-                                projectile.damage, projectile.knockBack, Main.player[projectile.owner].whoAmI);
+                                Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
                             Main.projectile[projectileMini5].timeLeft = 60;
                             Main.projectile[projectileMini5].scale = 0.5f;
                         }
@@ -139,7 +139,7 @@ namespace tsorcRevamp.Projectiles {
                                 (float)dustDust2_3.velocity.X,
                                 (float)dustDust2_3.velocity.Y,
                                 ModContent.ProjectileType<Sand>(),
-                                projectile.damage, projectile.knockBack, Main.player[projectile.owner].whoAmI);
+                                Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
                             Main.projectile[projectileMini6].timeLeft = 60;
                             Main.projectile[projectileMini6].scale = 0.5f;
                         }
@@ -150,7 +150,7 @@ namespace tsorcRevamp.Projectiles {
                                 (float)dustDust3_3.velocity.X,
                                 (float)dustDust3_3.velocity.Y,
                                 ModContent.ProjectileType<Sand>(),
-                                projectile.damage, projectile.knockBack, Main.player[projectile.owner].whoAmI);
+                                Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
                             Main.projectile[projectileMini7].timeLeft = 60;
                             Main.projectile[projectileMini7].scale = 0.5f;
                         }
@@ -158,9 +158,9 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
             else {
-                projectile.ai[0] += 1f;
+                Projectile.ai[0] += 1f;
             }
-            projectile.rotation += 0.3f * (float)projectile.direction;
+            Projectile.rotation += 0.3f * (float)Projectile.direction;
             return;
         }
     }

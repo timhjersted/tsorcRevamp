@@ -103,7 +103,7 @@ namespace tsorcRevamp {
             CustomMap = worldStateList.Contains("CustomMap");
 
             //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
-            if (Framing.GetTileSafely(7102, 137).type == 54 && Framing.GetTileSafely(7103, 137).type == 357 && Framing.GetTileSafely(7104, 136).type == 357 && Framing.GetTileSafely(7105, 136).type == 197) {
+            if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197) {
                 CustomMap = true;
             }
 
@@ -115,7 +115,7 @@ namespace tsorcRevamp {
             {
                 if (Main.tile[5810, 1670] != null)
                 {
-                    if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                     {
                         NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
                     }
@@ -207,7 +207,7 @@ namespace tsorcRevamp {
                 for (int y = 0; y < Main.maxTilesY - 2; y++) {
 
                     //Campfire to Bonfire
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Campfire) {
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Campfire) {
 
                         //kill the space above the campfire, to remove vines and such
                         for (int q = 0; q < 3; q++) {
@@ -231,7 +231,7 @@ namespace tsorcRevamp {
                                     if (Main.tile[i, j] == null) {
                                         Main.tile[i, j] = new Tile();
                                     }
-                                    if (Main.tile[i, j].active()) {
+                                    if (Main.tile[i, j].HasTile) {
                                         flag = false;
                                     }
                                 }
@@ -243,18 +243,18 @@ namespace tsorcRevamp {
                                 int num = style * 54;
                                 for (int k = -3; k <= 0; k++) {
                                     short frameY = (short)((3 + k) * 18);
-                                    Main.tile[x + 1 - 1, y + 1 + k].active(active: true);
-                                    Main.tile[x + 1 - 1, y + 1 + k].frameY = frameY;
-                                    Main.tile[x + 1 - 1, y + 1 + k].frameX = (short)num;
-                                    Main.tile[x + 1 - 1, y + 1 + k].type = type;
-                                    Main.tile[x + 1, y + 1 + k].active(active: true);
-                                    Main.tile[x + 1, y + 1 + k].frameY = frameY;
-                                    Main.tile[x + 1, y + 1 + k].frameX = (short)(num + 18);
-                                    Main.tile[x + 1, y + 1 + k].type = type;
-                                    Main.tile[x + 1 + 1, y + 1 + k].active(active: true);
-                                    Main.tile[x + 1 + 1, y + 1 + k].frameY = frameY;
-                                    Main.tile[x + 1 + 1, y + 1 + k].frameX = (short)(num + 36);
-                                    Main.tile[x + 1 + 1, y + 1 + k].type = type;
+                                    Main.tile[x + 1 - 1, y + 1 + k].HasTile = true;
+                                    Main.tile[x + 1 - 1, y + 1 + k].TileFrameY = frameY;
+                                    Main.tile[x + 1 - 1, y + 1 + k].TileFrameX = (short)num;
+                                    Main.tile[x + 1 - 1, y + 1 + k].TileType = type;
+                                    Main.tile[x + 1, y + 1 + k].HasTile = true;
+                                    Main.tile[x + 1, y + 1 + k].TileFrameY = frameY;
+                                    Main.tile[x + 1, y + 1 + k].TileFrameX = (short)(num + 18);
+                                    Main.tile[x + 1, y + 1 + k].TileType = type;
+                                    Main.tile[x + 1 + 1, y + 1 + k].HasTile = true;
+                                    Main.tile[x + 1 + 1, y + 1 + k].TileFrameY = frameY;
+                                    Main.tile[x + 1 + 1, y + 1 + k].TileFrameX = (short)(num + 36);
+                                    Main.tile[x + 1 + 1, y + 1 + k].TileType = type;
                                 }
                             }
 
@@ -262,7 +262,7 @@ namespace tsorcRevamp {
                     }
 
                     //Slime blocks to SkullLeft - SlimeBlock-PinkSlimeBlock (I tried to stick right and lefts together but the code refuses to work for both, I swear I'm not just being dumb) 
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.PinkSlimeBlock && Main.tile[x - 1, y].type == TileID.SlimeBlock) 
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.PinkSlimeBlock && Main.tile[x - 1, y].TileType == TileID.SlimeBlock) 
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -288,7 +288,7 @@ namespace tsorcRevamp {
                                 if (Main.tile[i, j] == null) {
                                     Main.tile[i, j] = new Tile();
                                 }
-                                if (Main.tile[i, j].active()) {
+                                if (Main.tile[i, j].HasTile) {
                                     flag = false;
                                 }
                             }
@@ -298,27 +298,27 @@ namespace tsorcRevamp {
                         }
                         if (flag) {
                             short num2 = (short)(36 * style);
-                            Main.tile[x - 1, y - 1].active(active: true);
-                            Main.tile[x - 1, y - 1].frameY = num;
-                            Main.tile[x - 1, y - 1].frameX = num2;
-                            Main.tile[x - 1, y - 1].type = type;
-                            Main.tile[x, y - 1].active(active: true);
-                            Main.tile[x, y - 1].frameY = num;
-                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
-                            Main.tile[x, y - 1].type = type;
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = (short)(num + 18);
-                            Main.tile[x - 1, y].frameX = num2;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = (short)(num + 18);
-                            Main.tile[x, y].frameX = (short)(num2 + 18);
-                            Main.tile[x, y].type = type;
+                            Main.tile[x - 1, y - 1].HasTile = true;
+                            Main.tile[x - 1, y - 1].TileFrameY = num;
+                            Main.tile[x - 1, y - 1].TileFrameX = num2;
+                            Main.tile[x - 1, y - 1].TileType = type;
+                            Main.tile[x, y - 1].HasTile = true;
+                            Main.tile[x, y - 1].TileFrameY = num;
+                            Main.tile[x, y - 1].TileFrameX = (short)(num2 + 18);
+                            Main.tile[x, y - 1].TileType = type;
+                            Main.tile[x - 1, y].HasTile = true;
+                            Main.tile[x - 1, y].TileFrameY = (short)(num + 18);
+                            Main.tile[x - 1, y].TileFrameX = num2;
+                            Main.tile[x - 1, y].TileType = type;
+                            Main.tile[x, y].HasTile = true;
+                            Main.tile[x, y].TileFrameY = (short)(num + 18);
+                            Main.tile[x, y].TileFrameX = (short)(num2 + 18);
+                            Main.tile[x, y].TileType = type;
                         }
                     }
 
                     //Slime block to SkullRight - PinkSlimeBlock-SlimeBlock
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.SlimeBlock && Main.tile[x - 1, y].type == TileID.PinkSlimeBlock)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.SlimeBlock && Main.tile[x - 1, y].TileType == TileID.PinkSlimeBlock)
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -348,7 +348,7 @@ namespace tsorcRevamp {
                                 {
                                     Main.tile[i, j] = new Tile();
                                 }
-                                if (Main.tile[i, j].active())
+                                if (Main.tile[i, j].HasTile)
                                 {
                                     flag = false;
                                 }
@@ -361,27 +361,27 @@ namespace tsorcRevamp {
                         if (flag)
                         {
                             short num2 = (short)(36 * style);
-                            Main.tile[x - 1, y - 1].active(active: true);
-                            Main.tile[x - 1, y - 1].frameY = num;
-                            Main.tile[x - 1, y - 1].frameX = num2;
-                            Main.tile[x - 1, y - 1].type = type;
-                            Main.tile[x, y - 1].active(active: true);
-                            Main.tile[x, y - 1].frameY = num;
-                            Main.tile[x, y - 1].frameX = (short)(num2 + 18);
-                            Main.tile[x, y - 1].type = type;
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = (short)(num + 18);
-                            Main.tile[x - 1, y].frameX = num2;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = (short)(num + 18);
-                            Main.tile[x, y].frameX = (short)(num2 + 18);
-                            Main.tile[x, y].type = type;
+                            Main.tile[x - 1, y - 1].HasTile = true;
+                            Main.tile[x - 1, y - 1].TileFrameY = num;
+                            Main.tile[x - 1, y - 1].TileFrameX = num2;
+                            Main.tile[x - 1, y - 1].TileType = type;
+                            Main.tile[x, y - 1].HasTile = true;
+                            Main.tile[x, y - 1].TileFrameY = num;
+                            Main.tile[x, y - 1].TileFrameX = (short)(num2 + 18);
+                            Main.tile[x, y - 1].TileType = type;
+                            Main.tile[x - 1, y].HasTile = true;
+                            Main.tile[x - 1, y].TileFrameY = (short)(num + 18);
+                            Main.tile[x - 1, y].TileFrameX = num2;
+                            Main.tile[x - 1, y].TileType = type;
+                            Main.tile[x, y].HasTile = true;
+                            Main.tile[x, y].TileFrameY = (short)(num + 18);
+                            Main.tile[x, y].TileFrameX = (short)(num2 + 18);
+                            Main.tile[x, y].TileType = type;
                         }
                     }
 
                     //Stucco blocks to SkellyLeft - GreyStucco-GreenStuccoBlock-GreyStuccoBlock
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.GreenStucco && Main.tile[x + 1, y].type == TileID.GrayStucco && Main.tile[x - 1, y].type == TileID.GrayStucco)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.GreenStucco && Main.tile[x + 1, y].TileType == TileID.GrayStucco && Main.tile[x - 1, y].TileType == TileID.GrayStucco)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -407,7 +407,7 @@ namespace tsorcRevamp {
                             {
                                 Main.tile[i, y] = new Tile();
                             }
-                            if (Main.tile[i, y].active())
+                            if (Main.tile[i, y].HasTile)
                             {
                                 flag = false;
                             }
@@ -419,23 +419,23 @@ namespace tsorcRevamp {
                         if (flag)
                         {
                             short num = (short)(54 * style);
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = 0;
-                            Main.tile[x - 1, y].frameX = num;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = 0;
-                            Main.tile[x, y].frameX = (short)(num + 18);
-                            Main.tile[x, y].type = type;
-                            Main.tile[x + 1, y].active(active: true);
-                            Main.tile[x + 1, y].frameY = 0;
-                            Main.tile[x + 1, y].frameX = (short)(num + 36);
-                            Main.tile[x + 1, y].type = type;
+                            Main.tile[x - 1, y].HasTile = true;
+                            Main.tile[x - 1, y].TileFrameY = 0;
+                            Main.tile[x - 1, y].TileFrameX = num;
+                            Main.tile[x - 1, y].TileType = type;
+                            Main.tile[x, y].HasTile = true;
+                            Main.tile[x, y].TileFrameY = 0;
+                            Main.tile[x, y].TileFrameX = (short)(num + 18);
+                            Main.tile[x, y].TileType = type;
+                            Main.tile[x + 1, y].HasTile = true;
+                            Main.tile[x + 1, y].TileFrameY = 0;
+                            Main.tile[x + 1, y].TileFrameX = (short)(num + 36);
+                            Main.tile[x + 1, y].TileType = type;
                         }
                     }
 
                     //Stucco blocks to SkellyRight - GreenStucco-GreyStuccoBlock-GreenStuccoBlock
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.GrayStucco && Main.tile[x + 1, y].type == TileID.GreenStucco && Main.tile[x - 1, y].type == TileID.GreenStucco)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.GrayStucco && Main.tile[x + 1, y].TileType == TileID.GreenStucco && Main.tile[x - 1, y].TileType == TileID.GreenStucco)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -461,7 +461,7 @@ namespace tsorcRevamp {
                             {
                                 Main.tile[i, y] = new Tile();
                             }
-                            if (Main.tile[i, y].active())
+                            if (Main.tile[i, y].HasTile)
                             {
                                 flag = false;
                             }
@@ -473,23 +473,23 @@ namespace tsorcRevamp {
                         if (flag)
                         {
                             short num = (short)(54 * style);
-                            Main.tile[x - 1, y].active(active: true);
-                            Main.tile[x - 1, y].frameY = 0;
-                            Main.tile[x - 1, y].frameX = num;
-                            Main.tile[x - 1, y].type = type;
-                            Main.tile[x, y].active(active: true);
-                            Main.tile[x, y].frameY = 0;
-                            Main.tile[x, y].frameX = (short)(num + 18);
-                            Main.tile[x, y].type = type;
-                            Main.tile[x + 1, y].active(active: true);
-                            Main.tile[x + 1, y].frameY = 0;
-                            Main.tile[x + 1, y].frameX = (short)(num + 36);
-                            Main.tile[x + 1, y].type = type;
+                            Main.tile[x - 1, y].HasTile = true;
+                            Main.tile[x - 1, y].TileFrameY = 0;
+                            Main.tile[x - 1, y].TileFrameX = num;
+                            Main.tile[x - 1, y].TileType = type;
+                            Main.tile[x, y].HasTile = true;
+                            Main.tile[x, y].TileFrameY = 0;
+                            Main.tile[x, y].TileFrameX = (short)(num + 18);
+                            Main.tile[x, y].TileType = type;
+                            Main.tile[x + 1, y].HasTile = true;
+                            Main.tile[x + 1, y].TileFrameY = 0;
+                            Main.tile[x + 1, y].TileFrameX = (short)(num + 36);
+                            Main.tile[x + 1, y].TileType = type;
                         }
                     }
 
                     //Confetti blocks to SkellyHangingUp (wrists chained) - Confetti Block
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.Confetti)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Confetti)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -511,7 +511,7 @@ namespace tsorcRevamp {
                         {
                             for (int j = num2; j < num2 + 3; j++)
                             {
-                                if (Main.tile[i, j].active() || Main.tile[i, j].wall == 0)
+                                if (Main.tile[i, j].HasTile || Main.tile[i, j].WallType == 0)
                                 {
                                     flag = false;
                                     break;
@@ -534,16 +534,16 @@ namespace tsorcRevamp {
                         {
                             for (int l = num2; l < num2 + 3; l++)
                             {
-                                Main.tile[k, l].active(active: true);
-                                Main.tile[k, l].type = type;
-                                Main.tile[k, l].frameX = (short)(num4 + 18 * (k - num));
-                                Main.tile[k, l].frameY = (short)(num5 + 18 * (l - num2));
+                                Main.tile[k, l].HasTile = true;
+                                Main.tile[k, l].TileType = type;
+                                Main.tile[k, l].TileFrameX = (short)(num4 + 18 * (k - num));
+                                Main.tile[k, l].TileFrameY = (short)(num5 + 18 * (l - num2));
                             }
                         }
                     }
 
                     //Confetti blocks to SkellyHangingDown (ankles chained) - Confetti Black Block (aka Midnight Confetti Block)
-                    if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.ConfettiBlack)
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.ConfettiBlack)
                     {
 
                         //kill the space the skelly occupies, to remove vines and such
@@ -565,7 +565,7 @@ namespace tsorcRevamp {
                         {
                             for (int j = num2; j < num2 + 3; j++)
                             {
-                                if (Main.tile[i, j].active() || Main.tile[i, j].wall == 0)
+                                if (Main.tile[i, j].HasTile || Main.tile[i, j].WallType == 0)
                                 {
                                     flag = false;
                                     break;
@@ -588,10 +588,10 @@ namespace tsorcRevamp {
                         {
                             for (int l = num2; l < num2 + 3; l++)
                             {
-                                Main.tile[k, l].active(active: true);
-                                Main.tile[k, l].type = type;
-                                Main.tile[k, l].frameX = (short)(num4 + 18 * (k - num));
-                                Main.tile[k, l].frameY = (short)(num5 + 18 * (l - num2));
+                                Main.tile[k, l].HasTile = true;
+                                Main.tile[k, l].TileType = type;
+                                Main.tile[k, l].TileFrameX = (short)(num4 + 18 * (k - num));
+                                Main.tile[k, l].TileFrameY = (short)(num5 + 18 * (l - num2));
                             }
                         }
                     }
@@ -617,9 +617,9 @@ namespace tsorcRevamp {
                 for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j += 4)
                 {
                     //Check if each tile is a bonfire, and is the left frame, and does not have a bonfire above it (aka just the top left tile of a bonfire)
-                    if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == bonfireType)
+                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile && Main.tile[i, j].TileType == bonfireType)
                     {
-                        if (Main.tile[i, j].frameY / 74 != 0)
+                        if (Main.tile[i, j].TileFrameY / 74 != 0)
                         {
                             BonfireList.Add(new Vector2(i, j));
                         }
@@ -835,7 +835,7 @@ namespace tsorcRevamp {
             //This simply ensures even if something deeply silly happens it'll still likely register as the custom map
             if (Main.tile[7102, 137] != null && Main.tile[7103, 137] != null && Main.tile[7104, 136] != null && Main.tile[7105, 136] != null)
             {
-                if (Main.tile[7102, 137].type == 54 && Main.tile[7103, 137].type == 357 && Main.tile[7104, 136].type == 357 && Main.tile[7105, 136].type == 197)
+                if (Main.tile[7102, 137].TileType == 54 && Main.tile[7103, 137].TileType == 357 && Main.tile[7104, 136].TileType == 357 && Main.tile[7105, 136].TileType == 197)
                 {
                     return true;
                 }

@@ -11,50 +11,50 @@ namespace tsorcRevamp.Projectiles {
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Elfin Arrow");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 10;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
         public override void SetDefaults()
         {
-            projectile.height = 5;
-            projectile.width = 5;
-            projectile.friendly = true;
-            projectile.ranged = true;
-            projectile.tileCollide = false;
+            Projectile.height = 5;
+            Projectile.width = 5;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
         }
 
         float topSpeed = 14;
         float homingStrength = 0.005f;
         public override void AI()
         {
-            if (!UsefulFunctions.IsTileReallySolid(projectile.Center / 16))
+            if (!UsefulFunctions.IsTileReallySolid(Projectile.Center / 16))
             {
-                Dust thisdust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f);
+                Dust thisdust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f);
                 thisdust.velocity = Vector2.Zero;
             }
 
             
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             homingStrength += 0.035f;
             if (topSpeed < 24)
             {
                 topSpeed += 0.02f;
             }
-            if (projectile.ai[0] >= 0)
+            if (Projectile.ai[0] >= 0)
             {
-                Projectile target = Main.projectile[(int)projectile.ai[0]];
+                Projectile target = Main.projectile[(int)Projectile.ai[0]];
                 if (target != null && target.active && target.type == ModContent.ProjectileType<ElfinTargeting>())
                 {
-                    Vector2 homingDirection = Vector2.Normalize(target.Center - projectile.Center);
-                    projectile.velocity = (projectile.velocity * (30 / homingStrength) + homingDirection * 14) / ((30 / homingStrength) + 1);
+                    Vector2 homingDirection = Vector2.Normalize(target.Center - Projectile.Center);
+                    Projectile.velocity = (Projectile.velocity * (30 / homingStrength) + homingDirection * 14) / ((30 / homingStrength) + 1);
 
-                    if (projectile.velocity.Length() < topSpeed)
+                    if (Projectile.velocity.Length() < topSpeed)
                     {
-                        projectile.velocity *= topSpeed / projectile.velocity.Length();
+                        Projectile.velocity *= topSpeed / Projectile.velocity.Length();
                     }
-                    if (projectile.velocity.Length() > topSpeed)
+                    if (Projectile.velocity.Length() > topSpeed)
                     {
-                        projectile.velocity *= topSpeed / projectile.velocity.Length();
+                        Projectile.velocity *= topSpeed / Projectile.velocity.Length();
                     }
                 }
                 else
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles {
                     {
                         if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<ElfinTargeting>())
                         {
-                            projectile.ai[0] = Main.projectile[i].whoAmI;
+                            Projectile.ai[0] = Main.projectile[i].whoAmI;
                         }
                     }
                 }
@@ -74,15 +74,15 @@ namespace tsorcRevamp.Projectiles {
         {
             for (int i = 0; i < 10; i++)
             {
-                Vector2 vel = projectile.velocity + Main.rand.NextVector2Circular(5, 5);
-                Dust d = Dust.NewDustPerfect(projectile.Center, DustID.MagicMirror, vel, 10, default, 2);
+                Vector2 vel = Projectile.velocity + Main.rand.NextVector2Circular(5, 5);
+                Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.MagicMirror, vel, 10, default, 2);
                 d.noGravity = true;
                 d.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
             }
             return true;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
@@ -90,25 +90,25 @@ namespace tsorcRevamp.Projectiles {
             data.Apply(null);
 
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (projectile.spriteDirection == -1)
+            if (Projectile.spriteDirection == -1)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ElfinArrow];
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-            int startY = frameHeight * projectile.frame;
+            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
             for(int i = 0; i < 9; i++)
             {
-                Main.spriteBatch.Draw(texture,
-                  projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                  sourceRectangle, Color.White * (0.15f * i), projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                Main.Main.EntitySpriteDraw(texture,
+                  Projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                  sourceRectangle, Color.White * (0.15f * i), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
             }
-            Main.spriteBatch.Draw(texture,
-                projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+            Main.Main.EntitySpriteDraw(texture,
+                Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);

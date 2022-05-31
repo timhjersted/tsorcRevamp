@@ -9,32 +9,32 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 128; //was 78
-            item.knockBack = 7f;
+            Item.damage = 128; //was 78
+            Item.knockBack = 7f;
 
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 15;
-            item.useTime = 5;
-            item.shootSpeed = 5;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 15;
+            Item.useTime = 5;
+            Item.shootSpeed = 5;
             //item.shoot = ProjectileID.DarkLance;
 
-            item.height = 50;
-            item.width = 50;
+            Item.height = 50;
+            Item.width = 50;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.melee = true;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = PriceByRarity.LightPurple_6;
-            item.rare = ItemRarityID.LightPurple;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.HiRyuuSpear>();
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.HiRyuuSpear>();
 
         }
 
         /*public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ItemID.AdamantiteGlaive);
             recipe.AddIngredient(mod.GetItem("DarkSoul"), 32000);
             recipe.SetResult(this, 1);

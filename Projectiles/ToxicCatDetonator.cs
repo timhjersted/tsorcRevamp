@@ -10,19 +10,19 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
         public override void SetDefaults()
         {
 
             // while the sprite is actually bigger than 15x15, we use 15x15 since it lets the projectile clip into tiles as it bounces. It looks better.
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.friendly = true;
-            projectile.aiStyle = 0;
-            projectile.ranged = true;
-            projectile.tileCollide = true;
-            projectile.timeLeft = 145;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.friendly = true;
+            Projectile.aiStyle = 0;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = true;
+            Projectile.timeLeft = 145;
 
             //These 2 help the projectile hitbox be centered on the projectile sprite.
             drawOffsetX = -9;
@@ -31,11 +31,11 @@ namespace tsorcRevamp.Projectiles
 
         public int toxiccatdetotimer;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D texture = Main.projectileTexture[Projectile.type];
 
-            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame * 32, 32, 32), Color.White, projectile.rotation, new Vector2(16, 16), projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }
@@ -46,36 +46,36 @@ namespace tsorcRevamp.Projectiles
             float rotationsPerSecond = 1.2f;
             bool rotateClockwise = true;
             //The rotation is set here
-            projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 6f);
+            Projectile.rotation += (rotateClockwise ? 1 : -1) * MathHelper.ToRadians(rotationsPerSecond * 6f);
 
             //ANIMATION
             if (toxiccatdetotimer > 40)
             {
                 toxiccatdetotimer = 0;
             }
-            if (++projectile.frameCounter >= 10) //ticks spent on each frame
+            if (++Projectile.frameCounter >= 10) //ticks spent on each frame
             {
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
 
-                if (++projectile.frame >= 4)
+                if (++Projectile.frame >= 4)
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
             }
 
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                Main.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item91.Style, .7f, -0.5f);
-                projectile.localAI[0] += 1f;
+                Main.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item91.Style, .7f, -0.5f);
+                Projectile.localAI[0] += 1f;
             }
 
-            Lighting.AddLight(projectile.position, 0.325f, 0.59f, 0.17f);
+            Lighting.AddLight(Projectile.position, 0.325f, 0.59f, 0.17f);
 
-            if (projectile.owner == Main.myPlayer && projectile.timeLeft >= 139 && projectile.timeLeft < 142)
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft >= 139 && Projectile.timeLeft < 142)
             {
                 for (int d = 0; d < 2; d++)
                 {
-                    Dust dust = Main.dust[Dust.NewDust(new Vector2(projectile.position.X - 7, projectile.position.Y - 7), 24, 24, 75, projectile.velocity.X * .5f, projectile.velocity.Y * .5f, 100, default(Color), .8f)];
+                    Dust dust = Main.dust[Dust.NewDust(new Vector2(Projectile.position.X - 7, Projectile.position.Y - 7), 24, 24, 75, Projectile.velocity.X * .5f, Projectile.velocity.Y * .5f, 100, default(Color), .8f)];
                     dust.noGravity = true;
                 }
             }
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles
             Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f));
             for (int d = 0; d < 20; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
                 Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].noGravity = true;
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Projectiles
             Main.PlaySound(SoundID.NPCDeath9.WithVolume(.8f));
             for (int d = 0; d < 20; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1f, projectile.velocity.Y * 1f, 30, default(Color), 1f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1f, Projectile.velocity.Y * 1f, 30, default(Color), 1f);
                 Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].noGravity = true;
@@ -112,7 +112,7 @@ namespace tsorcRevamp.Projectiles
             Main.PlaySound(SoundID.NPCDeath9.WithVolume(.4f));
             for (int d = 0; d < 20; d++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 75, projectile.velocity.X * 1.2f, projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 75, Projectile.velocity.X * 1.2f, Projectile.velocity.Y * 1.2f, 30, default(Color), 1f);
                 Main.dust[dust].velocity.X = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].velocity.Y = +Main.rand.Next(-50, 51) * 0.05f;
                 Main.dust[dust].noGravity = true;

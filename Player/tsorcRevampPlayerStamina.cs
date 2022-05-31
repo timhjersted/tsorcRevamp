@@ -78,7 +78,7 @@ namespace tsorcRevamp
 
 		private void ResetVariables()
 		{
-			if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+			if (!Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
 				staminaResourceRegenRate = 1f;
 			}
@@ -109,25 +109,25 @@ namespace tsorcRevamp
 
 			for (int p = 0; p < 1000; p++) //To-do add a check before this making this loop only run if there are actually any projectiles in the array
 			{
-				if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+				if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 				{
-					if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 3) //find boomerangs, if so, cut regen by 2/3
+					if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].aiStyle == 3) //find boomerangs, if so, cut regen by 2/3
 					{
-						player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
+						Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .333333f;
 						break; //break to prevent it nuking the regen rate when multiple boomerangs are present
 					}
 
-					if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].type == ProjectileID.FlyingKnife)
+					if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && Main.projectile[p].type == ProjectileID.FlyingKnife)
 					{
-						player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
-						player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
+						Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= .6f;
+						Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= .0f;
 						if (staminaResourceCurrent < 1)
 						{
 							Main.projectile[p].Kill();
 						}
 					}
 
-					if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && (Main.projectile[p].type == ProjectileID.MechanicalPiranha || Main.projectile[p].type == ProjectileID.LaserMachinegun 
+					if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.MechanicalPiranha || Main.projectile[p].type == ProjectileID.LaserMachinegun 
 						|| Main.projectile[p].type == ProjectileID.DD2PhoenixBow || Main.projectile[p].type == ProjectileID.Phantasm))
 					{
 						if (staminaResourceCurrent < 1)
@@ -139,14 +139,14 @@ namespace tsorcRevamp
 			}
 
 			//Stamina capping for summoners - First minion costs 18, second one 16, third one 14, etc. Once the cost hits 2, at 9 minions, it keeps costing 2 for subsequent minions
-			int scale = Math.Max(0, 19 - player.numMinions);
-			if (player.numMinions > 9)
+			int scale = Math.Max(0, 19 - Player.numMinions);
+			if (Player.numMinions > 9)
 			{
-				minionStaminaCap = (int)(staminaResourceMax2 - (72 + 2 * player.numMinions));
+				minionStaminaCap = (int)(staminaResourceMax2 - (72 + 2 * Player.numMinions));
 			}
 			else
 			{
-				minionStaminaCap = (int)(staminaResourceMax2 - (scale * player.numMinions));
+				minionStaminaCap = (int)(staminaResourceMax2 - (scale * Player.numMinions));
 			}
 			//Main.NewText(minionStaminaCap);
 
@@ -158,12 +158,12 @@ namespace tsorcRevamp
 			staminaResourceRegenTimer++; //Increase it by 60 per second, or 1 per tick.
 
 			// A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
-			if (player.whoAmI == Main.myPlayer)
+			if (Player.whoAmI == Main.myPlayer)
 			{
 				//no stamina regen during a roll/swordspin/using an item, for balance? Yes
-				if (!player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping)
+				if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping)
 				{
-					if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+					if (!Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 					{
 						if (staminaResourceRegenTimer > 3)
 						{
@@ -171,7 +171,7 @@ namespace tsorcRevamp
 							staminaResourceRegenTimer = 0;
 						}
 					}
-					else if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.itemAnimation == 0 && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
+					else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.itemAnimation == 0 && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
                     {
 						if (staminaResourceRegenTimer > 3)
 						{

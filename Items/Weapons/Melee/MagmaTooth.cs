@@ -11,19 +11,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Tooltip.SetDefault("Chance to light enemies on fire.");
         }
         public override void SetDefaults() {
-            item.width = 40;
-            item.height = 40;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.maxStack = 1;
-            item.damage = 44;
-            item.knockBack = 8;
-            item.scale = 1.2f;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Orange;
-            item.value = PriceByRarity.Orange_3;
-            item.melee = true;
+            Item.width = 40;
+            Item.height = 40;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.maxStack = 1;
+            Item.damage = 44;
+            Item.knockBack = 8;
+            Item.scale = 1.2f;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = PriceByRarity.Orange_3;
+            Item.melee = true;
         }
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
@@ -37,9 +37,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.FieryGreatsword, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1700);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1700);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

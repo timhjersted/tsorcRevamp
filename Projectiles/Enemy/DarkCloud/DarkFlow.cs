@@ -12,49 +12,49 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark";
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.hostile = true;
-            projectile.penetrate = 20;
-            projectile.tileCollide = false;
+            Projectile.aiStyle = 0;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.hostile = true;
+            Projectile.penetrate = 20;
+            Projectile.tileCollide = false;
         }
         public NPC darkCloud
         {
-            get => Main.npc[(int)projectile.ai[0]];
+            get => Main.npc[(int)Projectile.ai[0]];
         }
 
         bool initialized = false;
         float initialDistance = 0;
         public override void AI()
         {
-            float distance = Vector2.Distance(projectile.Center, darkCloud.Center);
+            float distance = Vector2.Distance(Projectile.Center, darkCloud.Center);
             if (!initialized)
             {
-                projectile.timeLeft = (int)projectile.ai[1];
+                Projectile.timeLeft = (int)Projectile.ai[1];
                 initialDistance = distance;
                 initialized = true;
             }
             //Could these all be one line? Sure. Would make it even more obnoxious to figure out what it does, though
-            Vector2 target = UsefulFunctions.GenerateTargetingVector(projectile.Center, darkCloud.Center, 8);
-            projectile.velocity = target;
-            projectile.velocity += (2.2f * ((initialDistance - distance)/initialDistance) * target.RotatedBy(MathHelper.ToRadians(90)));
+            Vector2 target = UsefulFunctions.GenerateTargetingVector(Projectile.Center, darkCloud.Center, 8);
+            Projectile.velocity = target;
+            Projectile.velocity += (2.2f * ((initialDistance - distance)/initialDistance) * target.RotatedBy(MathHelper.ToRadians(90)));
 
             //Only spawn dust that will actually be onscreen
-            if (Vector2.Distance(projectile.Center, Main.player[Main.myPlayer].Center) < 1000)
+            if (Vector2.Distance(Projectile.Center, Main.player[Main.myPlayer].Center) < 1000)
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(8, 8);
                 Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                Dust.NewDustPerfect(projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
             }
 
             if (distance < 120)
             {
-                projectile.Kill();
+                Projectile.Kill();
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             
             return false;

@@ -12,11 +12,11 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 24;
-            item.accessory = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override void UpdateEquip(Player player) {
@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.HellstoneBar, 3);
             recipe.AddIngredient(ItemID.CursedFlame, 3);
             recipe.AddIngredient(ItemID.Stinger, 3);

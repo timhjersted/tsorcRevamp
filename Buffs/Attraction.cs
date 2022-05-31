@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class Attraction : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Attraction");
             Description.SetDefault("You've summoned a blood moon");
             Main.debuff[Type] = false;

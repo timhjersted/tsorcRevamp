@@ -620,7 +620,7 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())
             {
                 //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Bosses.SuperHardMode.Artorias ourArtorias = (NPCs.Bosses.SuperHardMode.Artorias)thisEvent.spawnedNPC.modNPC;
+                NPCs.Bosses.SuperHardMode.Artorias ourArtorias = (NPCs.Bosses.SuperHardMode.Artorias)thisEvent.spawnedNPC.ModNPC;
 
                 //Now we can change the damages!!
                 //Note: If you can't find the damages for a NPC, their damage stats might not be public.
@@ -655,7 +655,7 @@ namespace tsorcRevamp
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
             {
                 //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Enemies.BlackKnight ourKnight = (NPCs.Enemies.BlackKnight)thisEvent.spawnedNPC.modNPC;
+                NPCs.Enemies.BlackKnight ourKnight = (NPCs.Enemies.BlackKnight)thisEvent.spawnedNPC.ModNPC;
 
                 //Now we can change the damages!!
                 //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
@@ -671,7 +671,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.FireLurker>())
             {
-                NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.modNPC;
+                NPCs.Enemies.FireLurker ourFireLurker = (NPCs.Enemies.FireLurker)thisEvent.spawnedNPC.ModNPC;
 
                 ourFireLurker.lostSoulDamage = 13; //was 23
             }
@@ -683,7 +683,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
-                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
+                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;                
                 ourRedKnightPain.redKnightsSpearDamage = 20;
             }
             return true;
@@ -694,7 +694,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
-                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.modNPC;                
+                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;                
                 ourRedKnight.redKnightsSpearDamage = 19;
                 ourRedKnight.redMagicDamage = 19;
             }

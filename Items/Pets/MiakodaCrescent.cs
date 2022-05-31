@@ -21,33 +21,33 @@ namespace tsorcRevamp.Items.Pets
         }
         public override void SetDefaults()
         {
-            item.CloneDefaults(ItemID.DD2PetGhost);
-            item.shoot = ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>();
-            item.buffType = ModContent.BuffType<Buffs.MiakodaCrescent>();
+            Item.CloneDefaults(ItemID.DD2PetGhost);
+            Item.shoot = ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>();
+            Item.buffType = ModContent.BuffType<Buffs.MiakodaCrescent>();
         }
 
         public override void UseStyle(Player player)
         {
             if (player.whoAmI == Main.myPlayer && player.itemTime == 0)
             {
-                player.AddBuff(item.buffType, 3600, true);
+                player.AddBuff(Item.buffType, 3600, true);
             }
         }
 
         public override void AddRecipes()
         {
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("MiakodaFull"));
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+                Recipe recipe = new Recipe(Mod);
+                recipe.AddIngredient(Mod.GetItem("MiakodaFull"));
+                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 100);
                 recipe.AddTile(TileID.DemonAltar);
                 recipe.SetResult(this);
                 recipe.AddRecipe();
             }
             {
-                ModRecipe recipe = new ModRecipe(mod);
-                recipe.AddIngredient(mod.GetItem("MiakodaNew"));
-                recipe.AddIngredient(mod.GetItem("DarkSoul"), 100);
+                Recipe recipe = new Recipe(Mod);
+                recipe.AddIngredient(Mod.GetItem("MiakodaNew"));
+                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 100);
                 recipe.AddTile(TileID.DemonAltar);
                 recipe.SetResult(this);
                 recipe.AddRecipe();

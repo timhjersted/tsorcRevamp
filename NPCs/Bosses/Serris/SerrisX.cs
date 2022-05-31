@@ -13,26 +13,26 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 	{
 		public override void SetDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 16;
+			Main.npcFrameCount[NPC.type] = 16;
 			drawOffsetY = 10;
-			npc.npcSlots = 5;
-			npc.width = 70;
-			npc.height = 70;
-			npc.aiStyle = 2;
-			npc.timeLeft = 22500;
-			npc.damage = 150;
-			npc.defense = 9999;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.lifeMax = 10000;
-			npc.scale = 1;
-			npc.knockBackResist = 0;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.boss = true;
-			npc.value = 500000;
+			NPC.npcSlots = 5;
+			NPC.width = 70;
+			NPC.height = 70;
+			NPC.aiStyle = 2;
+			NPC.timeLeft = 22500;
+			NPC.damage = 150;
+			NPC.defense = 9999;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.lifeMax = 10000;
+			NPC.scale = 1;
+			NPC.knockBackResist = 0;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.boss = true;
+			NPC.value = 500000;
 
-			npc.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.SerrisBag>();
 
 			//If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
@@ -54,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 		int plasmaOrbDamage = 100;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.damage = (int)(npc.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
+			NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
 			plasmaOrbDamage = plasmaOrbDamage / 2;
 		}
 
@@ -71,21 +71,21 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 		int slowdownCounter = 100;
 		public override void AI()
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
 			//Health stuff. This would go into OnHitByWhatever or ModifyHitByWhatever, but surprise: Those are fucky in multiplayer! Isn't learning fun.
-			if((npc.life % 1000) != 0 && npc.life > 1)
+			if((NPC.life % 1000) != 0 && NPC.life > 1)
             {
-				npc.life -= npc.life % 1000;
-				if(npc.life <= 0)
+				NPC.life -= NPC.life % 1000;
+				if(NPC.life <= 0)
                 {
-					npc.life = 1;
+					NPC.life = 1;
                 }
 
 				TimeLock = false;
-				npc.ai[0] = 2;
-				Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
-				npc.netUpdate = true;
+				NPC.ai[0] = 2;
+				Main.PlaySound(15, (int)NPC.position.X, (int)NPC.position.Y, 0);
+				NPC.netUpdate = true;
 			}
 
 			if(attack == 0) {
@@ -105,10 +105,10 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				{
 					projCooldown = 60;
 					float speed = 5f;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-					float distanceFactor = Vector2.Distance(vector8, Main.player[npc.target].position) / speed;
-					float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) / distanceFactor;
-					float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) / distanceFactor;
+					Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+					float distanceFactor = Vector2.Distance(vector8, Main.player[NPC.target].position) / speed;
+					float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) / distanceFactor;
+					float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) / distanceFactor;
 
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
@@ -153,8 +153,8 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 					for (int j = 0; j < 5; j++)
 					{
 						Vector2 dir = Main.rand.NextVector2CircularEdge(250, 250);
-						Vector2 dustPos = npc.Center + dir;
-						Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(dustPos, npc.Center, 12);
+						Vector2 dustPos = NPC.Center + dir;
+						Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(dustPos, NPC.Center, 12);
 						Dust.NewDustPerfect(dustPos, DustID.Firework_Blue, dustVel, 200).noGravity = true;
 					}
 					projCooldown--;
@@ -162,8 +162,8 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				}
 				else
                 {
-					npc.velocity.X *= slowdownCounter/100;
-					npc.velocity.Y *= slowdownCounter/100;
+					NPC.velocity.X *= slowdownCounter/100;
+					NPC.velocity.Y *= slowdownCounter/100;
 
 					if(slowdownCounter > 0)
                     {
@@ -173,19 +173,19 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						{
 							if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Projectile.NewProjectile(npc.Center.X, npc.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
+								Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), ModContent.ProjectileType<Projectiles.Enemy.EnemyPlasmaOrb>(), plasmaOrbDamage, 0f, Main.myPlayer);
 							}
 						}
 					}
 
-					if(slowdownCounter == 0 && ((Math.Abs(npc.velocity.X) < .01) && Math.Abs(npc.velocity.Y) < .01))
+					if(slowdownCounter == 0 && ((Math.Abs(NPC.velocity.X) < .01) && Math.Abs(NPC.velocity.Y) < .01))
                     {
 						float speed = 10f;
 						int spread = 30;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float distanceFactor = Vector2.Distance(vector8, Main.player[npc.target].position) / speed;
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) / distanceFactor;
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) / distanceFactor;
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float distanceFactor = Vector2.Distance(vector8, Main.player[NPC.target].position) / speed;
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) / distanceFactor;
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) / distanceFactor;
 
 						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
@@ -235,22 +235,22 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 					}
 				}
 			}
-			npc.ai[0]++;
-			npc.position += npc.velocity * 1.5f;
-			if (npc.ai[0] <= 1 || npc.ai[0] >= 300)
+			NPC.ai[0]++;
+			NPC.position += NPC.velocity * 1.5f;
+			if (NPC.ai[0] <= 1 || NPC.ai[0] >= 300)
 			{
 				immuneFlash = false;
-				npc.dontTakeDamage = false;
+				NPC.dontTakeDamage = false;
 				TimeLock = true;
 			}
-			else if (npc.ai[0] >= 2)
+			else if (NPC.ai[0] >= 2)
 			{
 				immuneFlash = true;
-				npc.dontTakeDamage = true;
+				NPC.dontTakeDamage = true;
 			}
 			if (TimeLock)
 			{
-				npc.ai[0] = 0;
+				NPC.ai[0] = 0;
 			}
 		}
 
@@ -263,25 +263,25 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
         public override bool PreNPCLoot()
         {
-			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 1"), 1f);
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 2"), 1f);
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Serris-X Gore 3"), 1f);
+			Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Serris-X Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Serris-X Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Serris-X Gore 3"), 1f);
 			for (int num36 = 0; num36 < 70; num36++)
 			{
-				int dust = Dust.NewDust(npc.position, (int)(npc.width), (int)(npc.height), DustID.Firework_Blue, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
+				int dust = Dust.NewDust(NPC.position, (int)(NPC.width), (int)(NPC.height), DustID.Firework_Blue, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
 				Main.dust[dust].noGravity = true;
 			}
 
-			if (Main.player[npc.target].active)
+			if (Main.player[NPC.target].active)
 			{
-				npc.Center = Main.player[npc.target].Center;
+				NPC.Center = Main.player[NPC.target].Center;
 			}
 			return true;
         }
 
 
-        public override void NPCLoot()
+        public override void OnKill()
 		{
 			UsefulFunctions.BroadcastText("Serris falls...", Color.Cyan);
 
@@ -289,16 +289,16 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 
 				if (Main.expertMode)
 				{
-					npc.DropBossBags();
+					NPC.DropBossBags();
 				}
 				else
 				{
-					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
-					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
-					Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-					if (!tsorcRevampWorld.Slain.ContainsKey(npc.type))
+					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.DemonDrugPotion>(), 3 + Main.rand.Next(4));
+					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ArmorDrugPotion>(), 3 + Main.rand.Next(4));
+					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+					if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
 					{
-						Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 50000);
+						Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 50000);
 					}
 				}
 			}
@@ -312,85 +312,85 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}
-			npc.frameCounter += 1.0;
+			NPC.frameCounter += 1.0;
 			if (immuneFlash)
 			{
-				if (npc.frameCounter >= 0 && npc.frameCounter < 5)
+				if (NPC.frameCounter >= 0 && NPC.frameCounter < 5)
 				{
-					npc.frame.Y = num * 8;
+					NPC.frame.Y = num * 8;
 				}
-				if (npc.frameCounter >= 5 && npc.frameCounter < 10)
+				if (NPC.frameCounter >= 5 && NPC.frameCounter < 10)
 				{
-					npc.frame.Y = num * 9;
+					NPC.frame.Y = num * 9;
 				}
-				if (npc.frameCounter >= 10 && npc.frameCounter < 15)
+				if (NPC.frameCounter >= 10 && NPC.frameCounter < 15)
 				{
-					npc.frame.Y = num * 10;
+					NPC.frame.Y = num * 10;
 				}
-				if (npc.frameCounter >= 15 && npc.frameCounter < 20)
+				if (NPC.frameCounter >= 15 && NPC.frameCounter < 20)
 				{
-					npc.frame.Y = num * 11;
+					NPC.frame.Y = num * 11;
 				}
-				if (npc.frameCounter >= 20 && npc.frameCounter < 25)
+				if (NPC.frameCounter >= 20 && NPC.frameCounter < 25)
 				{
-					npc.frame.Y = num * 12;
+					NPC.frame.Y = num * 12;
 				}
-				if (npc.frameCounter >= 25 && npc.frameCounter < 30)
+				if (NPC.frameCounter >= 25 && NPC.frameCounter < 30)
 				{
-					npc.frame.Y = num * 13;
+					NPC.frame.Y = num * 13;
 				}
-				if (npc.frameCounter >= 30 && npc.frameCounter < 35)
+				if (NPC.frameCounter >= 30 && NPC.frameCounter < 35)
 				{
-					npc.frame.Y = num * 14;
+					NPC.frame.Y = num * 14;
 				}
-				if (npc.frameCounter >= 35 && npc.frameCounter < 40)
+				if (NPC.frameCounter >= 35 && NPC.frameCounter < 40)
 				{
-					npc.frame.Y = num * 15;
+					NPC.frame.Y = num * 15;
 				}
-				if (npc.frameCounter >= 40)
+				if (NPC.frameCounter >= 40)
 				{
-					npc.frameCounter = 0;
+					NPC.frameCounter = 0;
 				}
 			}
 			else
 			{
-				if (npc.frameCounter >= 0 && npc.frameCounter < 5)
+				if (NPC.frameCounter >= 0 && NPC.frameCounter < 5)
 				{
-					npc.frame.Y = 0;
+					NPC.frame.Y = 0;
 				}
-				if (npc.frameCounter >= 5 && npc.frameCounter < 10)
+				if (NPC.frameCounter >= 5 && NPC.frameCounter < 10)
 				{
-					npc.frame.Y = num;
+					NPC.frame.Y = num;
 				}
-				if (npc.frameCounter >= 10 && npc.frameCounter < 15)
+				if (NPC.frameCounter >= 10 && NPC.frameCounter < 15)
 				{
-					npc.frame.Y = num * 2;
+					NPC.frame.Y = num * 2;
 				}
-				if (npc.frameCounter >= 15 && npc.frameCounter < 20)
+				if (NPC.frameCounter >= 15 && NPC.frameCounter < 20)
 				{
-					npc.frame.Y = num * 3;
+					NPC.frame.Y = num * 3;
 				}
-				if (npc.frameCounter >= 20 && npc.frameCounter < 25)
+				if (NPC.frameCounter >= 20 && NPC.frameCounter < 25)
 				{
-					npc.frame.Y = num * 4;
+					NPC.frame.Y = num * 4;
 				}
-				if (npc.frameCounter >= 25 && npc.frameCounter < 30)
+				if (NPC.frameCounter >= 25 && NPC.frameCounter < 30)
 				{
-					npc.frame.Y = num * 5;
+					NPC.frame.Y = num * 5;
 				}
-				if (npc.frameCounter >= 30 && npc.frameCounter < 35)
+				if (NPC.frameCounter >= 30 && NPC.frameCounter < 35)
 				{
-					npc.frame.Y = num * 6;
+					NPC.frame.Y = num * 6;
 				}
-				if (npc.frameCounter >= 35 && npc.frameCounter < 40)
+				if (NPC.frameCounter >= 35 && NPC.frameCounter < 40)
 				{
-					npc.frame.Y = num * 7;
+					NPC.frame.Y = num * 7;
 				}
-				if (npc.frameCounter >= 45)
+				if (NPC.frameCounter >= 45)
 				{
-					npc.frameCounter = 0;
+					NPC.frameCounter = 0;
 				}
 			}
 		}

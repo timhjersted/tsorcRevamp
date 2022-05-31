@@ -19,25 +19,25 @@ namespace tsorcRevamp.Items {
                                 "\ntimhjersted@gmail.com");
         }
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 1;
-            item.useTime = 1;
-            item.damage = 500;
-            item.autoReuse = true;
-            item.rare = ItemRarityID.Blue;
-            item.shootSpeed = 1;
-            item.value = 20000;
-            item.channel = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.MegaDrill>();
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 1;
+            Item.useTime = 1;
+            Item.damage = 500;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.shootSpeed = 1;
+            Item.value = 20000;
+            Item.channel = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.MegaDrill>();
         }
 
         public override Vector2? HoldoutOffset() {
             return new Vector2(-8, 0);
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
             if ((player.direction == -1) && ((Main.mouseX + Main.screenPosition.X) > (player.position.X + player.width * 0.5f))) {
                 player.direction = 1;
             }

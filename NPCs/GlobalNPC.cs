@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs
                 pool.Clear(); //stop NPC spawns in The End 
             }
 
-            if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.StarlitHeavenWallpaper)
+            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper)
             {
                 pool.Clear();
                 pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
@@ -75,25 +75,25 @@ namespace tsorcRevamp.NPCs
 
             //PRE-HARD MODE
             //jungle
-            if (spawnInfo.player.ZoneJungle && !Main.hardMode)
+            if (spawnInfo.Player.ZoneJungle && !Main.hardMode)
             {
                 //pool.Add(the type of the npc, what chance you want it to spawn with);
                 pool.Add(NPCID.LostGirl, 0.02f);
                 pool.Add(NPCID.Salamander2, 0.03f);
             }
             //corrupt (not in water)
-            if (spawnInfo.player.ZoneCorrupt && !spawnInfo.water && !Main.hardMode)
+            if (spawnInfo.Player.ZoneCorrupt && !spawnInfo.Water && !Main.hardMode)
             {
                 pool.Add(NPCID.CochinealBeetle, 0.02f);
                 pool.Add(NPCID.GiantShelly, 0.02f);
             }
             //corrupt (in water)
-            if (spawnInfo.player.ZoneCorrupt && spawnInfo.water && !Main.hardMode)
+            if (spawnInfo.Player.ZoneCorrupt && spawnInfo.Water && !Main.hardMode)
             {
                 pool.Add(NPCID.Squid, 0.02f);
             }
             //crimson
-            if (spawnInfo.player.ZoneCrimson && !Main.hardMode)
+            if (spawnInfo.Player.ZoneCrimson && !Main.hardMode)
             {
                 pool.Add(NPCID.LacBeetle, 0.02f);
                 pool.Add(NPCID.Drippler, 0.1f); 
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.BloodCrawlerWall, 0.002f);
             }
             //meteor
-            if (spawnInfo.player.ZoneMeteor && !Main.hardMode)
+            if (spawnInfo.Player.ZoneMeteor && !Main.hardMode)
             {
                 pool.Add(NPCID.GraniteFlyer, 0.4f);
                 pool.Add(NPCID.Salamander4, 0.4f);
@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs
 
             //HARD MODE SECTION
             //golem temple
-            if (spawnInfo.spawnTileType == TileID.LihzahrdBrick && spawnInfo.lihzahrd && Main.hardMode)
+            if (spawnInfo.SpawnTileType == TileID.LihzahrdBrick && spawnInfo.Lihzahrd && Main.hardMode)
             {
                 pool.Add(NPCID.DiabolistRed, 0.15f);
                 pool.Add(NPCID.DiabolistWhite, 0.1f);
@@ -119,44 +119,44 @@ namespace tsorcRevamp.NPCs
 
             }
             //shadow temple
-            if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.PinkDungeonUnsafe && Main.hardMode)
+            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.Necromancer, 0.05f);
                 pool.Add(NPCID.NecromancerArmored, 0.1f);
             }
             //machine temple (in water)
-            if (spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
+            if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.GreenJellyfish, 1f);
             }
             //machine temple (not in water)
-            if (!spawnInfo.water && Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].wall == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
+            if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
                 pool.Add(NPCID.NecromancerArmored, 0.1f);
             }
             //sky
-            if (spawnInfo.player.ZoneSkyHeight && Main.hardMode)
+            if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
             {
                 pool.Add(NPCID.GoblinSummoner, 0.01f);
             }
             //ocean water (outer thirds of the map)
-            if (spawnInfo.water && Main.hardMode && (Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
+            if (spawnInfo.Water && Main.hardMode && (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3))
             {
                 pool.Add(NPCID.SandsharkHallow, 0.3f);
             }
 
             //SUPER HARD MODE SECTION
-            if (spawnInfo.player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneJungle && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.BoneLee, 0.05f);
             }
 
             //mushroom
-            if (spawnInfo.player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneGlowshroom && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.DD2LightningBugT3, 0.3f);
             }
-            if (spawnInfo.player.ZoneUnderworldHeight && !spawnInfo.player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneUnderworldHeight && !spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.SolarCrawltipedeHead, 0.002f);
                 pool.Add(NPCID.SolarSroller, 0.5f); //.5 is 16%
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarSolenian, 1f);
             }
             //catacombs
-            if (spawnInfo.spawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.NebulaBrain, 0.2f); //.1 is 3%
                 pool.Add(NPCID.NebulaHeadcrab, 0.5f); //.1 is 3%
@@ -174,17 +174,17 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.NebulaSoldier, 0.5f); //.1 is 3%
             }
             //spaceships
-            if (spawnInfo.spawnTileType == TileID.MartianConduitPlating && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.SpawnTileType == TileID.MartianConduitPlating && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexLarva, 0.4f); //.1 is 3%
             }
             //one of the outer thirds of the map
-            if ((Math.Abs(spawnInfo.spawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
+            if ((Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3) && tsorcRevampWorld.SuperHardMode)
             {
                 //pool.Add(NPCID.GoblinShark, 0.2f); //.1 is 3%
             }
             // molten sky temple
-            if (spawnInfo.player.ZoneUnderworldHeight && spawnInfo.spawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
+            if (spawnInfo.Player.ZoneUnderworldHeight && spawnInfo.SpawnTileType == TileID.MeteoriteBrick && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.StardustWormHead, 0.4f); //.1 is 3%
                 pool.Add(NPCID.StardustCellBig, 0.02f); //.5 is 16%
@@ -194,7 +194,7 @@ namespace tsorcRevamp.NPCs
             }
 
 
-            if (spawnInfo.player.ZoneTowerSolar || spawnInfo.player.ZoneTowerNebula || spawnInfo.player.ZoneTowerStardust || spawnInfo.player.ZoneTowerVortex || spawnInfo.player.ZoneOldOneArmy || Main.invasionType != 0)
+            if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || Main.invasionType != 0)
             {
                 List<int> blockedNPCs = new List<int>();
 
@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs
                 {
                     ModNPC modNPC = NPCLoader.GetNPC(id);
 
-                    if (modNPC != null && modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+                    if (modNPC != null && modNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
                     {
                         blockedNPCs.Add(id);
                     }
@@ -248,7 +248,7 @@ namespace tsorcRevamp.NPCs
                 maxSpawns = (int)(maxSpawns * 1.5);
             }
 
-            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].wall == WallID.StarlitHeavenWallpaper)
+            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
             {
                 spawnRate /= 10; //Origin of the Abyss. All spawns blocked other than Humanity Phantoms
             }
@@ -390,7 +390,7 @@ namespace tsorcRevamp.NPCs
                         DarkSoulQuantity = 10;
                     }
 
-                    Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), DarkSoulQuantity);
+                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, DarkSoulQuantity);
                     DarkSoulQuantity = 0;
                 }
                 #endregion
@@ -937,7 +937,7 @@ namespace tsorcRevamp.NPCs
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
         {
             //If it's not one of ours, don't mess with it.
-            if ((npc.modNPC == null) || (npc.modNPC.mod != this.mod))
+            if ((npc.ModNPC == null) || (npc.ModNPC.Mod != this.Mod))
             {
                 base.ScaleExpertStats(npc, numPlayers, bossLifeScale);
                 return;
@@ -1302,7 +1302,7 @@ namespace tsorcRevamp.NPCs
                 {
                     for (int tY = tileY; tY < tileCenterY; tY++)
                     {
-                        if (Main.tile[tX, tY] != null && ((Main.tile[tX, tY].active() && (Main.tileSolid[(int)Main.tile[tX, tY].type] || (Main.tileSolidTop[(int)Main.tile[tX, tY].type] && Main.tile[tX, tY].frameY == 0))) || Main.tile[tX, tY].liquid > 64))
+                        if (Main.tile[tX, tY] != null && ((Main.tile[tX, tY].HasTile && (Main.tileSolid[(int)Main.tile[tX, tY].TileType] || (Main.tileSolidTop[(int)Main.tile[tX, tY].TileType] && Main.tile[tX, tY].TileFrameY == 0))) || Main.tile[tX, tY].liquid > 64))
                         {
                             Vector2 tPos;
                             tPos.X = (float)(tX * 16);
@@ -1310,7 +1310,7 @@ namespace tsorcRevamp.NPCs
                             if (npc.position.X + (float)npc.width > tPos.X && npc.position.X < tPos.X + 16f && npc.position.Y + (float)npc.height > tPos.Y && npc.position.Y < tPos.Y + 16f)
                             {
                                 canMove = true;
-                                if (spawnTileDust && (Main.rand.Next(100)) == 0 && Main.tile[tX, tY].active())
+                                if (spawnTileDust && (Main.rand.Next(100)) == 0 && Main.tile[tX, tY].HasTile)
                                 {
                                     WorldGen.KillTile(tX, tY, true, true, false);
                                 }
@@ -1531,11 +1531,11 @@ namespace tsorcRevamp.NPCs
                     int tpTileY = Main.rand.Next(playerTileY - tpRadius, playerTileY + tpRadius);
                     for (int tpY = tpTileY; tpY < playerTileY + tpRadius; tpY++)
                     {
-                        if ((tpY < playerTileY - distFromPlayer || tpY > playerTileY + distFromPlayer || tpTileX < playerTileX - distFromPlayer || tpTileX > playerTileX + distFromPlayer) && (tpY < tileY - 1 || tpY > tileY + 1 || tpTileX < tileX - 1 || tpTileX > tileX + 1) && Main.tile[tpTileX, tpY].active())
+                        if ((tpY < playerTileY - distFromPlayer || tpY > playerTileY + distFromPlayer || tpTileX < playerTileX - distFromPlayer || tpTileX > playerTileX + distFromPlayer) && (tpY < tileY - 1 || tpY > tileY + 1 || tpTileX < tileX - 1 || tpTileX > tileX + 1) && Main.tile[tpTileX, tpY].HasTile)
                         {
                             bool safe = true;
-                            if (Main.tile[tpTileX, tpY - 1].lava() && !npc.lavaImmune) safe = false;
-                            if (safe && (Main.tileSolid[(int)Main.tile[tpTileX, tpY].type] || aerial) && !Collision.SolidTiles(tpTileX - 1, tpTileX + 1, tpY - 4, tpY - 1))
+                            if (Main.tile[tpTileX, tpY - 1].LiquidType && !npc.lavaImmune) safe = false;
+                            if (safe && (Main.tileSolid[(int)Main.tile[tpTileX, tpY].TileType] || aerial) && !Collision.SolidTiles(tpTileX - 1, tpTileX + 1, tpY - 4, tpY - 1))
                             {
                                 telePos.X = (float)(tpTileX * 16f - (float)(npc.width / 2) + 8f);
                                 telePos.Y = (aerial) ? (float)(tpY * 16f - (float)npc.height) - 65 : (float)(tpY * 16f - (float)npc.height);
@@ -1732,7 +1732,7 @@ namespace tsorcRevamp.NPCs
                     if (Main.tile[l, yBelow] == null) // null tile means ??
                         return;
 
-                    if (Main.tile[l, yBelow].nactive() && Main.tileSolid[(int)Main.tile[l, yBelow].type]) // tile exists and is solid
+                    if (Main.tile[l, yBelow].HasUnactuatedTile && Main.tileSolid[(int)Main.tile[l, yBelow].TileType]) // tile exists and is solid
                     {
                         standingOnSolid = true;
                         break; // one is enough so stop checking
@@ -1754,12 +1754,12 @@ namespace tsorcRevamp.NPCs
                 if (Main.tile[tileX, tileY - 3] == null) Main.tile[tileX, tileY - 3] = new Tile();
                 if (Main.tile[tileX, tileY + 1] == null) Main.tile[tileX, tileY + 1] = new Tile();
                 if (Main.tile[tileX - offset, tileY - 3] == null) Main.tile[tileX - offset, tileY - 3] = new Tile();
-                if ((float)(tileX * 16) < pos.X + (float)npc.width && (float)(tileX * 16 + 16) > pos.X && ((Main.tile[tileX, tileY].nactive() && !Main.tile[tileX, tileY].topSlope() && !Main.tile[tileX, tileY - 1].topSlope() && Main.tileSolid[(int)Main.tile[tileX, tileY].type] && !Main.tileSolidTop[(int)Main.tile[tileX, tileY].type]) || (Main.tile[tileX, tileY - 1].halfBrick() && Main.tile[tileX, tileY - 1].nactive())) && (!Main.tile[tileX, tileY - 1].nactive() || !Main.tileSolid[(int)Main.tile[tileX, tileY - 1].type] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 1].type] || (Main.tile[tileX, tileY - 1].halfBrick() && (!Main.tile[tileX, tileY - 4].nactive() || !Main.tileSolid[(int)Main.tile[tileX, tileY - 4].type] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 4].type]))) && (!Main.tile[tileX, tileY - 2].nactive() || !Main.tileSolid[(int)Main.tile[tileX, tileY - 2].type] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 2].type]) && (!Main.tile[tileX, tileY - 3].nactive() || !Main.tileSolid[(int)Main.tile[tileX, tileY - 3].type] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 3].type]) && (!Main.tile[tileX - offset, tileY - 3].nactive() || !Main.tileSolid[(int)Main.tile[tileX - offset, tileY - 3].type]))
+                if ((float)(tileX * 16) < pos.X + (float)npc.width && (float)(tileX * 16 + 16) > pos.X && ((Main.tile[tileX, tileY].HasUnactuatedTile && !Main.tile[tileX, tileY].TopSlope && !Main.tile[tileX, tileY - 1].TopSlope && Main.tileSolid[(int)Main.tile[tileX, tileY].TileType] && !Main.tileSolidTop[(int)Main.tile[tileX, tileY].TileType]) || (Main.tile[tileX, tileY - 1].IsHalfBlock && Main.tile[tileX, tileY - 1].HasUnactuatedTile)) && (!Main.tile[tileX, tileY - 1].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 1].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 1].TileType] || (Main.tile[tileX, tileY - 1].IsHalfBlock && (!Main.tile[tileX, tileY - 4].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 4].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 4].TileType]))) && (!Main.tile[tileX, tileY - 2].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 2].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 2].TileType]) && (!Main.tile[tileX, tileY - 3].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX, tileY - 3].TileType] || Main.tileSolidTop[(int)Main.tile[tileX, tileY - 3].TileType]) && (!Main.tile[tileX - offset, tileY - 3].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[tileX - offset, tileY - 3].TileType]))
                 {
                     float tileWorldY = (float)(tileY * 16);
-                    if (Main.tile[tileX, tileY].halfBrick())
+                    if (Main.tile[tileX, tileY].IsHalfBlock)
                     { tileWorldY += 8f; }
-                    if (Main.tile[tileX, tileY - 1].halfBrick())
+                    if (Main.tile[tileX, tileY - 1].IsHalfBlock)
                     { tileWorldY -= 8f; }
                     if (tileWorldY < pos.Y + (float)npc.height)
                     {
@@ -1796,8 +1796,8 @@ namespace tsorcRevamp.NPCs
                     Main.tile[x2 + npc.direction, y2 - 1] = new Tile();
                 if (Main.tile[x2 + npc.direction, y2 + 1] == null)
                     Main.tile[x2 + npc.direction, y2 + 1] = new Tile();
-                Main.tile[x2, y2 + 1].halfBrick();
-                if (Main.tile[x2, y2 - 1].nactive() && (Main.tile[x2, y2 - 1].type == 10 || Main.tile[x2, y2 - 1].type == 388) && knockPower != 0)
+                Main.tile[x2, y2 + 1].IsHalfBlock;
+                if (Main.tile[x2, y2 - 1].HasUnactuatedTile && (Main.tile[x2, y2 - 1].TileType == 10 || Main.tile[x2, y2 - 1].TileType == 388) && knockPower != 0)
                 {
                     npc.localAI[2] += 1f; // inc knock countdown
                     npc.ai[3] = 0f; // not bored if working on breaking a door
@@ -1823,7 +1823,7 @@ namespace tsorcRevamp.NPCs
                             }
                             else  //  try to open without breaking
                             {
-                                if (Main.tile[x2, y2 - 1].type == 10)
+                                if (Main.tile[x2, y2 - 1].TileType == 10)
                                 {
                                     bool openDoor = WorldGen.OpenDoor(x2, y2 - 1, npc.direction);
                                     if (!openDoor)  //  door not opened successfully
@@ -1835,7 +1835,7 @@ namespace tsorcRevamp.NPCs
                                     if (Main.netMode == 2 && openDoor) // is server & door was just opened
                                         NetMessage.SendData(19, -1, -1, null, 0, (float)x2, (float)(y2 - 1), (float)npc.direction, 0, 0, 0);
                                 }
-                                if (Main.tile[x2, y2 - 1].type == 388)
+                                if (Main.tile[x2, y2 - 1].TileType == 388)
                                 {
                                     bool openDoor = WorldGen.ShiftTallGate(x2, y2 - 1, false);  //  open the door
                                     if (!openDoor)
@@ -1854,9 +1854,9 @@ namespace tsorcRevamp.NPCs
                 {
                     if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
                     {  //  moving forward
-                        if (npc.height >= 32 && Main.tile[x2, y2 - 2].nactive() && Main.tileSolid[(int)Main.tile[x2, y2 - 2].type])
+                        if (npc.height >= 32 && Main.tile[x2, y2 - 2].HasUnactuatedTile && Main.tileSolid[(int)Main.tile[x2, y2 - 2].TileType])
                         { // 3 blocks above ground level(head height) blocked
-                            if (Main.tile[x2, y2 - 3].nactive() && Main.tileSolid[(int)Main.tile[x2, y2 - 3].type])
+                            if (Main.tile[x2, y2 - 3].HasUnactuatedTile && Main.tileSolid[(int)Main.tile[x2, y2 - 3].TileType])
                             { // 4 blocks above ground level(over head) blocked
                                 npc.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
                                 npc.netUpdate = true;
@@ -1867,17 +1867,17 @@ namespace tsorcRevamp.NPCs
                                 npc.netUpdate = true;
                             }
                         } // for everything else, head height clear:
-                        else if (Main.tile[x2, y2 - 1].nactive() && Main.tileSolid[(int)Main.tile[x2, y2 - 1].type])
+                        else if (Main.tile[x2, y2 - 1].HasUnactuatedTile && Main.tileSolid[(int)Main.tile[x2, y2 - 1].TileType])
                         { // 2 blocks above ground level(mid body height) blocked
                             npc.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
                             npc.netUpdate = true;
                         }
-                        else if (npc.position.Y + (float)npc.height - (float)(y2 * 16) > 20f && Main.tile[x2, y2].nactive() && !Main.tile[x2, y2].topSlope() && Main.tileSolid[(int)Main.tile[x2, y2].type])
+                        else if (npc.position.Y + (float)npc.height - (float)(y2 * 16) > 20f && Main.tile[x2, y2].HasUnactuatedTile && !Main.tile[x2, y2].TopSlope && Main.tileSolid[(int)Main.tile[x2, y2].TileType])
                         { // 1 block above ground level(foot height) blocked
                             npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
                             npc.netUpdate = true;
                         }
-                        else if (leapReq > -1 && npc.directionY < 0 && (!Main.tile[x2, y2 + 1].nactive() || !Main.tileSolid[(int)Main.tile[x2, y2 + 1].type]) && (!Main.tile[x2 + npc.direction, y2 + 1].nactive() || !Main.tileSolid[(int)Main.tile[x2 + npc.direction, y2 + 1].type]))
+                        else if (leapReq > -1 && npc.directionY < 0 && (!Main.tile[x2, y2 + 1].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[x2, y2 + 1].TileType]) && (!Main.tile[x2 + npc.direction, y2 + 1].HasUnactuatedTile || !Main.tileSolid[(int)Main.tile[x2 + npc.direction, y2 + 1].TileType]))
                         { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
                             npc.velocity.Y = -8f; // jump with power 8
                             npc.velocity.X *= 1.5f; // jump forward hard as well; we're trying to jump a gap
@@ -2094,11 +2094,11 @@ namespace tsorcRevamp.NPCs
             BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, passiveSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
 
             //Apply scaling to SHM enemies
-            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
                 if (!npc.boss)
                 {
-                    if (npc.modNPC.GetType().Namespace.Contains("SuperHardMode"))
+                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
                     {
                         projectileDamage = (int)(tsorcRevampWorld.SHMScale * projectileDamage);
                         projectileVelocity = (int)(tsorcRevampWorld.SubtleSHMScale * projectileVelocity);
@@ -2189,11 +2189,11 @@ namespace tsorcRevamp.NPCs
         private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
             //Apply scaling to SHM enemies
-            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
                 if (!npc.boss)
                 {
-                    if (npc.modNPC.GetType().Namespace.Contains("SuperHardMode"))
+                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
                     {
                         topSpeed *= tsorcRevampWorld.SHMScale;
                         acceleration *= tsorcRevampWorld.SubtleSHMScale;
@@ -2352,7 +2352,7 @@ namespace tsorcRevamp.NPCs
 
                     //Door breaking
                     //First, it checks if the tile in front of it is solid, a door, and the npc can break it
-                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].type == 10 && (doorBreakingDamage > 0))
+                    if (UsefulFunctions.IsTileReallySolid(x_in_front, y_above_feet - 1) && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && (doorBreakingDamage > 0))
                     {
                         npc.ai[3] = 0f; // not bored if working on breaking a door
                         if (Main.GameUpdateCount % 60 == 0)  //  knock once per second
@@ -2520,7 +2520,7 @@ namespace tsorcRevamp.NPCs
                     {
                         //Skip to the next tile if any of the following is true:
                         //If the selected tile has lava above it, and the npc isn't immune
-                        if(Main.tile[(int)teleportTarget.X, y - 1].lava() && !npc.lavaImmune)
+                        if(Main.tile[(int)teleportTarget.X, y - 1].LiquidType && !npc.lavaImmune)
                         {
                             continue;
                         }

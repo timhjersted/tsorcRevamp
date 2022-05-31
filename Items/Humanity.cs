@@ -14,23 +14,23 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.width = 16;
-            item.height = 24;
-            item.rare = ItemRarityID.Green;
-            item.value = 75000;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.UseSound = SoundID.Item4;
-            item.maxStack = 500;
-            item.consumable = true;
+            Item.width = 16;
+            Item.height = 24;
+            Item.rare = ItemRarityID.Green;
+            Item.value = 75000;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.UseSound = SoundID.Item4;
+            Item.maxStack = 500;
+            Item.consumable = true;
         }
 
         public override bool CanUseItem(Player player) {
             return (player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP);
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
 
             player.statLifeMax += 20;
             player.statLife += 20; //BOTC can still heal from this, as you can in DS
@@ -53,14 +53,14 @@ namespace tsorcRevamp.Items {
             if (ttindex != -1)
             {// if we find one
              //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
             }
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 
-            Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(0, 4), item.scale, SpriteEffects.None, 0f);
+            Texture2D texture = Main.itemTexture[Item.type];
+            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(0, 4), Item.scale, SpriteEffects.None, 0f);
 
             return false;
         }

@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class BossZenBuff : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Boss Zen");
             Description.SetDefault("The active boss is blocking enemy spawns!");
             Main.debuff[Type] = false;

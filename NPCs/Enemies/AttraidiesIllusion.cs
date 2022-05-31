@@ -12,31 +12,31 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Attraidies Illusion");
-            Main.npcFrameCount[npc.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
+            Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.GoblinSorcerer];
         }
 
         public override void SetDefaults()
         {
             animationType = NPCID.GoblinSorcerer;
-            npc.npcSlots = 5;
-            npc.lifeMax = 400;
-            npc.damage = 13;
-            npc.scale = 1f;
-            npc.knockBackResist = 0.3f;
-            npc.value = 6000;
-            npc.defense = 10;
-            npc.height = 44;
-            npc.width = 28;
-            npc.HitSound = SoundID.NPCHit48;
-            npc.DeathSound = SoundID.NPCDeath58;
-            npc.noGravity = false;
-            npc.noTileCollide = false;
-            npc.lavaImmune = true;
-            npc.buffImmune[BuffID.Confused] = true;
-            npc.buffImmune[BuffID.OnFire] = true;
-            npc.buffImmune[BuffID.Poisoned] = true;
+            NPC.npcSlots = 5;
+            NPC.lifeMax = 400;
+            NPC.damage = 13;
+            NPC.scale = 1f;
+            NPC.knockBackResist = 0.3f;
+            NPC.value = 6000;
+            NPC.defense = 10;
+            NPC.height = 44;
+            NPC.width = 28;
+            NPC.HitSound = SoundID.NPCHit48;
+            NPC.DeathSound = SoundID.NPCDeath58;
+            NPC.noGravity = false;
+            NPC.noTileCollide = false;
+            NPC.lavaImmune = true;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
             //npc.buffImmune[BuffID.Paralyzed] = true; ???
-            banner = npc.type;
+            banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.AttraidiesIllusionBanner>();
 
 
@@ -45,7 +45,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 
+            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 
                 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
             {
                 if (!Main.hardMode) { chance = .02f; }
@@ -53,11 +53,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 
             }
 
-            if (spawnInfo.player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(mod.NPCType("AttraidiesIllusion"))) {
+            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(Mod.Find<ModNPC>("AttraidiesIllusion").Type)) {
                 chance = .033f;
             }
 
-            if (spawnInfo.player.ZoneJungle && Main.hardMode) {
+            if (spawnInfo.Player.ZoneJungle && Main.hardMode) {
                 chance = .00625f;
             }
 
@@ -71,63 +71,63 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
 
-            npc.netUpdate = false;
-            npc.ai[0]++; // Timer Scythe
-            npc.ai[1]++; // Timer Teleport
+            NPC.netUpdate = false;
+            NPC.ai[0]++; // Timer Scythe
+            NPC.ai[1]++; // Timer Teleport
                          // npc.ai[2]++; // Shots
 
-            if (npc.life > 300)
+            if (NPC.life > 300)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X, npc.velocity.Y, 120, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 120, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            else if (npc.life <= 300)
+            else if (NPC.life <= 300)
             {
-                int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 54, npc.velocity.X, npc.velocity.Y, 180, Color.Red, 1f);
+                int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (npc.life < npc.lifeMax * .66f  && npc.life > npc.lifeMax * .33f)
+            if (NPC.life < NPC.lifeMax * .66f  && NPC.life > NPC.lifeMax * .33f)
             {
                 illusiontimer++;
                 if (illusiontimer > 40 && illusiontimer < 100)
                 {
-                    npc.alpha += 1;
+                    NPC.alpha += 1;
                 }
                 if (illusiontimer == 100)
                 {
-                    npc.alpha = 50;
+                    NPC.alpha = 50;
                     illusiontimer = 0;
                 }
             }
 
 
-            if (npc.life <= npc.lifeMax * .33f)
+            if (NPC.life <= NPC.lifeMax * .33f)
             {
                 illusiontimer++;
                 if (illusiontimer == 0)
                 {
-                    npc.alpha = 200;
+                    NPC.alpha = 200;
                 }
                 if (illusiontimer < 30)
                 {
-                    npc.alpha -= 4;
+                    NPC.alpha -= 4;
                 }
                 if (illusiontimer >= 51 && illusiontimer <= 61)
                 {
-                    npc.alpha = 150;
+                    NPC.alpha = 150;
                 }
                 if (illusiontimer >= 62 && illusiontimer <= 66)
                 {
-                    npc.alpha = 40;
+                    NPC.alpha = 40;
                 }
                 if (illusiontimer >= 67 && illusiontimer <= 75)
                 {
-                    npc.alpha = 200;
+                    NPC.alpha = 200;
                 }
                 if (illusiontimer >= 76 && illusiontimer <= 110)
                 {
-                    npc.alpha = 150;
+                    NPC.alpha = 150;
                 }
                 if (illusiontimer == 111)
                 {
@@ -137,13 +137,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (Main.netMode != NetmodeID.Server)
             {
-                if (npc.ai[0] >= 12 && npc.ai[2] < 5) //2 was 12
+                if (NPC.ai[0] >= 12 && NPC.ai[2] < 5) //2 was 12
                 {
                     float num48 = 6f;
-                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20) / 2; //was 10/5
-                    float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30) / 2;
-                    if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20) / 2; //was 10/5
+                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30) / 2;
+                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                     {
                         float num51 = (float)System.Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                         num51 = num48 / num51;
@@ -153,42 +153,42 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<TheOracle>();
                         int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 150;
-                        Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                        npc.ai[0] = 0;
-                        npc.ai[2]++;
+                        Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                        NPC.ai[0] = 0;
+                        NPC.ai[2]++;
                     }
                 }
-                if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh2").WithVolume(1.1f), npc.Center);
+                if (!Main.dedServ && (Main.rand.Next(360) == 0)) Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh2").WithVolume(1.1f), NPC.Center);
             }
 
-            if (npc.ai[1] >= 35)
+            if (NPC.ai[1] >= 35)
             {
-                npc.velocity.X *= 0.37f;
-                npc.velocity.Y *= 0.17f;
+                NPC.velocity.X *= 0.37f;
+                NPC.velocity.Y *= 0.17f;
             }
 
-            if ((npc.ai[1] >= 280 && npc.life > 300) || (npc.ai[1] >= 200 && npc.life <= 300))
+            if ((NPC.ai[1] >= 280 && NPC.life > 300) || (NPC.ai[1] >= 200 && NPC.life <= 300))
             {
-                Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 8);
+                Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 55, npc.velocity.X + Main.rand.Next(-10, 10), npc.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
                     Main.dust[dust].noGravity = true;
                 }
-                npc.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
-                npc.ai[2] = 0;
+                NPC.ai[3] = (float)(Main.rand.Next(360) * (Math.PI / 180));
+                NPC.ai[2] = 0;
                 //npc.ai[1] = 0;
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
+                if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
                 {
-                    npc.TargetClosest(true);
+                    NPC.TargetClosest(true);
                 }
-                if (Main.player[npc.target].dead)
+                if (Main.player[NPC.target].dead)
                 {
-                    npc.position.X = 0;
-                    npc.position.Y = 0;
-                    if (npc.timeLeft > 10)
+                    NPC.position.X = 0;
+                    NPC.position.Y = 0;
+                    if (NPC.timeLeft > 10)
                     {
-                        npc.timeLeft = 10;
+                        NPC.timeLeft = 10;
                         return;
                     }
                 }
@@ -202,14 +202,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     //region teleportation - can't believe I got this to work.. yayyyyy :D lol
 
-                    int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-                    int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-                    int x_blockpos = (int)npc.position.X / 16; // corner not center
-                    int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                    int target_x_blockpos = (int)Main.player[NPC.target].position.X / 16; // corner not center
+                    int target_y_blockpos = (int)Main.player[NPC.target].position.Y / 16; // corner not center
+                    int x_blockpos = (int)NPC.position.X / 16; // corner not center
+                    int y_blockpos = (int)NPC.position.Y / 16; // corner not center
                     int tp_radius = 30; // radius around target(upper left corner) in blocks to teleport into
                     int tp_counter = 0;
                     bool flag7 = false;
-                    if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 9000000f)
+                    if (Math.Abs(NPC.position.X - Main.player[NPC.target].position.X) + Math.Abs(NPC.position.Y - Main.player[NPC.target].position.Y) > 9000000f)
                     { // far away from target; 4000 pixels = 250 blocks
                         tp_counter = 100;
                         flag7 = false; // always telleport was true for no teleport
@@ -224,33 +224,33 @@ namespace tsorcRevamp.NPCs.Enemies
                         int tp_y_target = Main.rand.Next((target_y_blockpos - tp_radius) - 62, (target_y_blockpos + tp_radius) - 24);  //  pick random tp point (centered on corner)
                         for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                         { // (tp_x_target,m) is block under its feet I think
-                            if ((m < target_y_blockpos - 15 || m > target_y_blockpos + 15 || tp_x_target < target_x_blockpos - 15 || tp_x_target > target_x_blockpos + 15) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].active()) { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                            if ((m < target_y_blockpos - 15 || m > target_y_blockpos + 15 || tp_x_target < target_x_blockpos - 15 || tp_x_target > target_x_blockpos + 15) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].HasTile) { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                                 bool safe_to_stand = true;
                                 bool dark_caster = false; // not a fighter type AI...
-                                if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                                if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
                                     safe_to_stand = false;
-                                else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                                else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
                                     safe_to_stand = false;
 
-                                if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                                if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
                                 { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
 
-                                    npc.TargetClosest(true);
-                                    npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-                                    npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                                    npc.velocity.X = (float)(Math.Cos(rotation) * 6) * -1;
-                                    npc.velocity.Y = (float)(Math.Sin(rotation) * 6) * -1;
+                                    NPC.TargetClosest(true);
+                                    NPC.position.X = (float)(tp_x_target * 16 - NPC.width / 2); // center x at target
+                                    NPC.position.Y = (float)(m * 16 - NPC.height); // y so block is under feet
+                                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                                    NPC.velocity.X = (float)(Math.Cos(rotation) * 6) * -1;
+                                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 6) * -1;
 
 
                                     // npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
                                     // npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                    npc.netUpdate = true;
+                                    NPC.netUpdate = true;
 
                                     //npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
                                     flag7 = true; // end the loop (after testing every lower point :/)
-                                    npc.ai[1] = 0;
+                                    NPC.ai[1] = 0;
                                 }
                             } // END over 13 blocks distant from player...
                         } // END traverse y down to edge of radius
@@ -265,17 +265,17 @@ namespace tsorcRevamp.NPCs.Enemies
             //beginning of Omnir's Ultima Weapon projectile code
 
 
-            npc.ai[3]++;
+            NPC.ai[3]++;
 
-            if (npc.ai[3] >= 60) //how often the crystal attack can happen in frames per second
+            if (NPC.ai[3] >= 60) //how often the crystal attack can happen in frames per second
             {
                 if (Main.rand.Next(4) == 0) //1 in 4 chance boss will use attack when it flies down on top of you
                 {
                     float num48 = 2f;
-                    Vector2 vector9 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 620 + (npc.height / 2));
-                    float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
-                    float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
-                    if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                    Vector2 vector9 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 620 + (NPC.height / 2));
+                    float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector9.X) + Main.rand.Next(-20, 0x15);
+                    float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector9.Y) + Main.rand.Next(-20, 0x15);
+                    if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                     {
                         float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                         num51 = num48 / num51;
@@ -285,8 +285,8 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<ScrewAttack>();
                         int num54 = Projectile.NewProjectile(vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 540;
-                        Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 25);
-                        npc.ai[3] = 0; ;
+                        Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                        NPC.ai[3] = 0; ;
                     }
                 }
 
@@ -294,19 +294,19 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X - 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.JungleBat, 0);
-                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.npc.target].position.X + 636 - this.npc.width / 2, (int)Main.player[this.npc.target].position.Y - 16 - this.npc.width / 2, NPCID.JungleBat, 0);
-                    Main.npc[Paraspawn].velocity.X = npc.velocity.X;
-                    npc.active = true;
+                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.JungleBat, 0);
+                    if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.JungleBat, 0);
+                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
+                    NPC.active = true;
 
                 }
             }
 
-            npc.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
-            if (npc.ai[3] >= 600)
+            NPC.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb
+            if (NPC.ai[3] >= 600)
             {
-                if (npc.ai[1] == 0) npc.ai[1] = 1;
-                else npc.ai[1] = 0;
+                if (NPC.ai[1] == 0) NPC.ai[1] = 1;
+                else NPC.ai[1] = 0;
             }
 
         }
@@ -317,103 +317,103 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void FindFrame(int frameHeight)
         {
 
-            if ((npc.velocity.X > -9 && npc.velocity.X < 9) && (npc.velocity.Y > -9 && npc.velocity.Y < 9))
+            if ((NPC.velocity.X > -9 && NPC.velocity.X < 9) && (NPC.velocity.Y > -9 && NPC.velocity.Y < 9))
             {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
-                if (npc.position.X > Main.player[npc.target].position.X)
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0;
+                if (NPC.position.X > Main.player[NPC.target].position.X)
                 {
-                    npc.spriteDirection = -1;
+                    NPC.spriteDirection = -1;
                 }
                 else
                 {
-                    npc.spriteDirection = 1;
+                    NPC.spriteDirection = 1;
                 }
             }
 
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+                num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
             }
-            if ((npc.velocity.X > -2 && npc.velocity.X < 2) && (npc.velocity.Y > -2 && npc.velocity.Y < 2))
+            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
             {
-                npc.frameCounter = 0;
-                npc.frame.Y = 0;
+                NPC.frameCounter = 0;
+                NPC.frame.Y = 0;
             }
             else
             {
-                npc.frameCounter += 1.0;
+                NPC.frameCounter += 1.0;
             }
-            if (npc.frameCounter >= 1.0)
+            if (NPC.frameCounter >= 1.0)
             {
-                npc.frame.Y = npc.frame.Y + num;
-                npc.frameCounter = 0.0;
+                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frameCounter = 0.0;
             }
-            if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
             {
-                npc.frame.Y = 0;
+                NPC.frame.Y = 0;
             }
         }
 
 
-        public override void NPCLoot()
+        public override void OnKill()
         {
             for (int j = 0; j < 50; j++)
             {
-                int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 16, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 200, Color.Salmon, 2.5f);
+                int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 16, Main.rand.Next(-4, 4), Main.rand.Next(-4, 4), 200, Color.Salmon, 2.5f);
                 Main.dust[dust].noGravity = true;
             }
 
-            Player player = Main.player[npc.target];
+            Player player = Main.player[NPC.target];
             UsefulFunctions.BroadcastText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
 
-            Item.NewItem(npc.getRect(), mod.ItemType("HealingElixir"));
+            Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("HealingElixir").Type);
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .5f))
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             }
             else
             {
-                Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 2);
+                Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 2);
             }
 
             if (Main.rand.NextFloat() <= .05f)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("AquamarineRing"), 1, false, -1);
+                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("AquamarineRing").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .3f)
             {
-                Item.NewItem(npc.getRect(), ItemID.GoldenKey);
+                Item.NewItem(NPC.getRect(), ItemID.GoldenKey);
             }
             if (Main.rand.NextFloat() <= .9f)
             {
-                Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
+                Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
             }
             if (Main.rand.NextFloat() <= .4f)
             {
-                Item.NewItem(npc.getRect(), ItemID.IronskinPotion);
+                Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
             }
             if (Main.rand.NextFloat() <= .01f)
             {
-                Item.NewItem(npc.getRect(), ItemID.GillsPotion);
+                Item.NewItem(NPC.getRect(), ItemID.GillsPotion);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(npc.getRect(), ItemID.HunterPotion);
+                Item.NewItem(NPC.getRect(), ItemID.HunterPotion);
             }
             if (Main.rand.NextFloat() <= .6f)
             {
-                Item.NewItem(npc.getRect(), ItemID.MagicPowerPotion);
+                Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion);
             }
             if (Main.rand.NextFloat() <= .8f)
             {
-                Item.NewItem(npc.getRect(), ItemID.RegenerationPotion);
+                Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion);
             }
             if (Main.rand.NextFloat() <= .2f)
             {
-                Item.NewItem(npc.getRect(), ItemID.ShinePotion);
+                Item.NewItem(NPC.getRect(), ItemID.ShinePotion);
             }
         }
     }

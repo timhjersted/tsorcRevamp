@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class Boost : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Boost");
             Description.SetDefault("Increased critical strike chance");
             Main.debuff[Type] = false;

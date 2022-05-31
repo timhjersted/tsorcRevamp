@@ -9,24 +9,24 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
         public override void SetDefaults() {
-            projectile.aiStyle = 4; //maybe 11 (shadow orb) instead
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.penetrate = 1;
-            projectile.hostile = true;
-            projectile.tileCollide = true;
-            projectile.light = 0.8f;
-            projectile.timeLeft = 50;
+            Projectile.aiStyle = 4; //maybe 11 (shadow orb) instead
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.penetrate = 1;
+            Projectile.hostile = true;
+            Projectile.tileCollide = true;
+            Projectile.light = 0.8f;
+            Projectile.timeLeft = 50;
         }
 
         public void Kill() {
 
-            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
+            Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             
-            Projectile.NewProjectile(projectile.position.X + (float)(projectile.width / 2), projectile.position.Y + (float)(projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemyBolt4Bolt>(), projectile.damage, 8f, projectile.owner);
-            Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-            int arg_1394_1 = projectile.width;
-            int arg_1394_2 = projectile.height;
+            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemyBolt4Bolt>(), Projectile.damage, 8f, Projectile.owner);
+            Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+            int arg_1394_1 = Projectile.width;
+            int arg_1394_2 = Projectile.height;
             int arg_1394_3 = 15;
             float arg_1394_4 = 0f;
             float arg_1394_5 = 0f;
@@ -36,9 +36,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Main.dust[num41].noGravity = true;
             Dust expr_13B1 = Main.dust[num41];
             expr_13B1.velocity *= 2f;
-            Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-            int arg_1422_1 = projectile.width;
-            int arg_1422_2 = projectile.height;
+            Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+            int arg_1422_1 = Projectile.width;
+            int arg_1422_2 = Projectile.height;
             int arg_1422_3 = 15;
             float arg_1422_4 = 0f;
             float arg_1422_5 = 0f;
@@ -47,12 +47,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
             num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
             
 
-            if (projectile.owner == Main.myPlayer) {
+            if (Projectile.owner == Main.myPlayer) {
                 if (Main.netMode != NetmodeID.SinglePlayer) {
-                    NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, projectile.identity, (float)projectile.owner, 0f, 0f, 0);
+                    NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, Projectile.identity, (float)Projectile.owner, 0f, 0f, 0);
                 }
             }
-            projectile.active = false;
+            Projectile.active = false;
         }
     }
 }

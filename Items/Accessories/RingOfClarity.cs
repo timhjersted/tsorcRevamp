@@ -10,18 +10,18 @@ namespace tsorcRevamp.Items.Accessories {
             Tooltip.SetDefault("The Ring of Clarity prevents confusion, gravitation disorientation, bleeding, and poisoning. \n+4 HP Regeneration and 9 defense");
         }
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 24;
-            item.accessory = true;
-            item.useAnimation = 100;
-            item.useTime = 100;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Orange;
-            item.value = PriceByRarity.Orange_3;
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.useAnimation = 100;
+            Item.useTime = 100;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = PriceByRarity.Orange_3;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<PoisonbloodRing>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddTile(TileID.DemonAltar);

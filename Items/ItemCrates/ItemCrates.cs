@@ -10,11 +10,11 @@ namespace tsorcRevamp.Items.ItemCrates
 
 		public override void SetDefaults()
 		{
-			item.maxStack = 999;
-			item.consumable = true;
-			item.width = 19;
-			item.height = 19;
-			item.rare = ItemRarityID.White;
+			Item.maxStack = 999;
+			Item.consumable = true;
+			Item.width = 19;
+			Item.height = 19;
+			Item.rare = ItemRarityID.White;
 		}
 
 		public override bool CanRightClick()

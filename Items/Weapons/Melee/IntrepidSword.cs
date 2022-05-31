@@ -11,19 +11,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.width = 48;
-            item.height = 48;
-            item.useAnimation = 23;
-            item.useTime = 23;
-            item.damage = 200;
-            item.knockBack = 3;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Lime;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Lime_7;
-            item.melee = true;
+            Item.width = 48;
+            Item.height = 48;
+            Item.useAnimation = 23;
+            Item.useTime = 23;
+            Item.damage = 200;
+            Item.knockBack = 3;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Lime;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Lime_7;
+            Item.melee = true;
         }
 
         public override void MeleeEffects(Player player, Rectangle hitbox) {
@@ -37,9 +37,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("Galaxia"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("Galaxia"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

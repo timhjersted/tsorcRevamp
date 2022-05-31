@@ -10,30 +10,30 @@ namespace tsorcRevamp.Projectiles {
         public override string Texture => "tsorcRevamp/Projectiles/GreatFireStrike";
 
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 5;
+            Main.projFrames[Projectile.type] = 5;
         }
 
         public override void SetDefaults() {
-            projectile.width = 26;
-            projectile.height = 40;
-            projectile.aiStyle = -1; ;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.light = 1;
-            projectile.tileCollide = true;
-            projectile.ignoreWater = true;
-            projectile.penetrate = 50;
-            projectile.timeLeft = 360;
+            Projectile.width = 26;
+            Projectile.height = 40;
+            Projectile.aiStyle = -1; ;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.light = 1;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = 50;
+            Projectile.timeLeft = 360;
         }
 
         public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3) {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5) {
-                projectile.frame = 0;
+            if (Projectile.frame >= 5) {
+                Projectile.frame = 0;
                 return;
             }
         }

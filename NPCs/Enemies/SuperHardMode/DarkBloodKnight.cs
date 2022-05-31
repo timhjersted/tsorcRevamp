@@ -11,23 +11,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		public override void SetDefaults()
 		{
 
-			npc.npcSlots = 2;
-			Main.npcFrameCount[npc.type] = 20;
+			NPC.npcSlots = 2;
+			Main.npcFrameCount[NPC.type] = 20;
 			animationType = 110;
-			npc.width = 18;
-			npc.height = 48;
+			NPC.width = 18;
+			NPC.height = 48;
 
 			//aiType = 110;
-			npc.aiStyle = 0;
-			npc.timeLeft = 750;
-			npc.damage = 65;
-			npc.defense = 67;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.lifeMax = 8700;
-			npc.knockBackResist = 0;
-			npc.value = 5430;
-			banner = npc.type;
+			NPC.aiStyle = 0;
+			NPC.timeLeft = 750;
+			NPC.damage = 65;
+			NPC.defense = 67;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.lifeMax = 8700;
+			NPC.knockBackResist = 0;
+			NPC.value = 5430;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
 		}
 
@@ -35,16 +35,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
 			blackFireDamage = (int)(blackFireDamage * tsorcRevampWorld.SubtleSHMScale);
 		}
 
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player player = spawnInfo.player;
-			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
-			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
+			Player player = spawnInfo.Player;
+			bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
 
 			float chance = 0;
 			if (tsorcRevampWorld.SuperHardMode && player.ZoneJungle && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson) && !Ocean)
@@ -74,20 +74,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 		public override void AI()
 		{
-			tsorcRevampAIs.ArcherAI(npc, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), blackFireDamage, 14, 110, 2f, 0.1f, 0.04f, true, lavaJumping: true, projectileGravity: 0.025f);
+			tsorcRevampAIs.ArcherAI(NPC, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), blackFireDamage, 14, 110, 2f, 0.1f, 0.04f, true, lavaJumping: true, projectileGravity: 0.025f);
 		}
 
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			if (npc.life <= 0)
+			if (NPC.life <= 0)
 			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 1"), 1.1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 2"), 1.1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 3"), 1.1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 2"), 1.1f);
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Man Hunter Gore 3"), 1.1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Man Hunter Gore 1"), 1.1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Man Hunter Gore 2"), 1.1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Man Hunter Gore 3"), 1.1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Man Hunter Gore 2"), 1.1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Man Hunter Gore 3"), 1.1f);
 			}
-			Item.NewItem(npc.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
+			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
 		}
 	}
 }

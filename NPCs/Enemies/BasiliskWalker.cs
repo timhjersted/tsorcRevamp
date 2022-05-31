@@ -19,43 +19,43 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 2;
-			Main.npcFrameCount[npc.type] = 12;
+			NPC.npcSlots = 2;
+			Main.npcFrameCount[NPC.type] = 12;
 			animationType = 28;
-			npc.knockBackResist = 0.3f;
-			npc.damage = 50;
-			npc.defense = 8;
-			npc.height = 50;
-			npc.width = 24;
-			npc.lifeMax = 180; //was 280
+			NPC.knockBackResist = 0.3f;
+			NPC.damage = 50;
+			NPC.defense = 8;
+			NPC.height = 50;
+			NPC.width = 24;
+			NPC.lifeMax = 180; //was 280
 
 			if (Main.hardMode)
 			{
-				npc.lifeMax = 380;
-				npc.defense = 20;
-				npc.value = 1000;
-				npc.damage = 60;
+				NPC.lifeMax = 380;
+				NPC.defense = 20;
+				NPC.value = 1000;
+				NPC.damage = 60;
 				hypnoticDisruptorDamage = 45;
 				bioSpitDamage = 35;
 			}
 
-			npc.HitSound = SoundID.NPCHit20;
-			npc.DeathSound = SoundID.NPCDeath5;
-			npc.value = 400; //was 2000
-			npc.lavaImmune = true;
-			banner = npc.type;
+			NPC.HitSound = SoundID.NPCHit20;
+			NPC.DeathSound = SoundID.NPCDeath5;
+			NPC.value = 400; //was 2000
+			NPC.lavaImmune = true;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
 
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[24] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[24] = true;
 		}
 
 
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 			hypnoticDisruptorDamage = (int)(hypnoticDisruptorDamage / 2);
 			bioSpitDamage = (int)(bioSpitDamage / 2);
 		}
@@ -63,26 +63,26 @@ namespace tsorcRevamp.NPCs.Enemies
 	
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player; //These are mostly redundant with the new zone definitions, but it still works.
+			Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
 			bool Meteor = P.ZoneMeteor;
 			bool Jungle = P.ZoneJungle;
 			bool Dungeon = P.ZoneDungeon;
 			bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-			bool Hallow = P.ZoneHoly;
+			bool Hallow = P.ZoneHallow;
 			bool AboveEarth = P.ZoneOverworldHeight;
 			bool InBrownLayer = P.ZoneDirtLayerHeight;
 			bool InGrayLayer = P.ZoneRockLayerHeight;
 			bool InHell = P.ZoneUnderworldHeight;
-			bool FrozenOcean = spawnInfo.spawnTileX > (Main.maxTilesX - 800);
-			bool Ocean = spawnInfo.spawnTileX < 800 || FrozenOcean;
+			bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
+			bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
 			// P.townNPCs > 0f // is no town NPCs nearby
 
-			if (spawnInfo.invasion)
+			if (spawnInfo.Invasion)
 			{
 				return 0;
 			}
 
-			if (spawnInfo.water) return 0f;
+			if (spawnInfo.Water) return 0f;
 
 			if (!Main.hardMode && !Main.dayTime && (Corruption || Jungle) && AboveEarth && P.townNPCs <= 0f && tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && Main.rand.Next(24) == 1) return 1;
 			
@@ -120,77 +120,77 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			tsorcRevampAIs.FighterAI(npc, 1, 0.03f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
+			tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: true, soundType: 26, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2);
 
-			bool clearLineOfSight = Collision.CanHitLine(npc.Center, 2, 2, Main.player[npc.target].Center, 2, 2);
-			if(tsorcRevampAIs.SimpleProjectile(npc, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && Main.rand.Next(15) != 0, true))
+			bool clearLineOfSight = Collision.CanHitLine(NPC.Center, 2, 2, Main.player[NPC.target].Center, 2, 2);
+			if(tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 8, clearLineOfSight && Main.rand.Next(15) != 0, true))
             {
-				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 20, 0.2f, 0.3f); //fire
+				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, 0.3f); //fire
 			}
-			if (tsorcRevampAIs.SimpleProjectile(npc, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, clearLineOfSight, false))
+			if (tsorcRevampAIs.SimpleProjectile(NPC, ref shotTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 3, clearLineOfSight, false))
 			{
-				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 24, 0.6f, -0.5f); //wobble
+				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
 			}
 
 			//MAKE SOUND WHEN JUMPING/HOVERING
-			if (Main.rand.Next(12) == 0 && npc.velocity.Y <= -1f)
+			if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
 			{
-				Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 24, 0.2f, .1f);
+				Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.2f, .1f);
 			}
 
 			//TELEGRAPH DUSTS
 			if (shotTimer >= 100)
 			{
-				Lighting.AddLight(npc.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+				Lighting.AddLight(NPC.Center, Color.Purple.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 				if (Main.rand.Next(3) == 1)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, DustID.CursedTorch, npc.velocity.X, npc.velocity.Y);
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);
 					//Dust.NewDust(npc.position, npc.width, npc.height, DustID.EmeraldBolt, npc.velocity.X, npc.velocity.Y);
 				}
 			}			
 
 			//JUSTHIT CODE
-			Player player2 = Main.player[npc.target];
-			if (npc.justHit && npc.Distance(player2.Center) < 150)
+			Player player2 = Main.player[NPC.target];
+			if (NPC.justHit && NPC.Distance(player2.Center) < 150)
 			{
 				shotTimer = 40f;
 			}
-			if (npc.justHit && npc.Distance(player2.Center) < 150 && Main.rand.Next(2) == 1)
+			if (NPC.justHit && NPC.Distance(player2.Center) < 150 && Main.rand.Next(2) == 1)
 			{
 				shotTimer = 100f;
-				npc.velocity.Y = Main.rand.NextFloat(-6f, -3f);
-				npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-5f, -3f);
-				npc.netUpdate = true;
+				NPC.velocity.Y = Main.rand.NextFloat(-6f, -3f);
+				NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, -3f);
+				NPC.netUpdate = true;
 			}
-			if (npc.justHit && npc.Distance(player2.Center) > 150 && Main.rand.Next(2) == 1)
+			if (NPC.justHit && NPC.Distance(player2.Center) > 150 && Main.rand.Next(2) == 1)
 			{
-				npc.velocity.Y = Main.rand.NextFloat(-5f, -2f);
-				npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-5f, 3f);
-				npc.netUpdate = true;
+				NPC.velocity.Y = Main.rand.NextFloat(-5f, -2f);
+				NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-5f, 3f);
+				NPC.netUpdate = true;
 			}
 			
 			//Shift toward the player randomly
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
-				Player player = Main.player[npc.target];
-				if (Main.rand.Next(200) == 1 && npc.Distance(player.Center) > 260)
+				Player player = Main.player[NPC.target];
+				if (Main.rand.Next(200) == 1 && NPC.Distance(player.Center) > 260)
 				{
 					chargeDamageFlag = true;
-					Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-					npc.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
-					npc.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
-					npc.netUpdate = true;
+					Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+					float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+					NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
+					NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
+					NPC.netUpdate = true;
 				}
 				if (chargeDamageFlag == true)
 				{
-					npc.damage = 50;
+					NPC.damage = 50;
 					chargeDamage++;
 				}
 				if (chargeDamage >= 55)
 				{
 					chargeDamageFlag = false;
-					npc.damage = 45;
+					NPC.damage = 45;
 					chargeDamage = 0;
 				}
 
@@ -205,43 +205,43 @@ namespace tsorcRevamp.NPCs.Enemies
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}			
-			if (npc.velocity.Y == 0f)
+			if (NPC.velocity.Y == 0f)
 			{
-				if (npc.direction == 1)
+				if (NPC.direction == 1)
 				{
-					npc.spriteDirection = 1;
+					NPC.spriteDirection = 1;
 				}
-				if (npc.direction == -1)
+				if (NPC.direction == -1)
 				{
-					npc.spriteDirection = -1;
+					NPC.spriteDirection = -1;
 				}
-				if (npc.velocity.X == 0f)
+				if (NPC.velocity.X == 0f)
 				{
-					npc.frame.Y = 0;
-					npc.frameCounter = 0.0;
+					NPC.frame.Y = 0;
+					NPC.frameCounter = 0.0;
 				}
 				else
 				{
-					npc.frameCounter += (double)(Math.Abs(npc.velocity.X) * .2f);
+					NPC.frameCounter += (double)(Math.Abs(NPC.velocity.X) * .2f);
 					//npc.frameCounter += 1.0;
-					if (npc.frameCounter > 10)
+					if (NPC.frameCounter > 10)
 					{
-						npc.frame.Y = npc.frame.Y + num;
-						npc.frameCounter = 0;
+						NPC.frame.Y = NPC.frame.Y + num;
+						NPC.frameCounter = 0;
 					}
-					if (npc.frame.Y / num >= Main.npcFrameCount[npc.type])
+					if (NPC.frame.Y / num >= Main.npcFrameCount[NPC.type])
 					{
-						npc.frame.Y = num * 1;
+						NPC.frame.Y = num * 1;
 					}
 				}
 			}
 			else
 			{
-				npc.frameCounter = 0.0;
-				npc.frame.Y = num;
-				npc.frame.Y = 0;
+				NPC.frameCounter = 0.0;
+				NPC.frame.Y = num;
+				NPC.frame.Y = 0;
 			}
 		}
 
@@ -271,23 +271,23 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		#endregion
 
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 1"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 3"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 1"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 3"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Parasite Zombie Gore 3"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 1"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 2"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 3"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 2"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 1"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 3"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 2"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Parasite Zombie Gore 3"), 1.1f);
 			for (int i = 0; i < 10; i++)
 			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Blood Splat"), 1.1f);
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Blood Splat"), 1.1f);
 			}
 
-			if (!Main.hardMode && Main.rand.Next(100) < 30) Item.NewItem(npc.getRect(), ItemID.HealingPotion);
-			if (Main.rand.Next(100) < 30) Item.NewItem(npc.getRect(), ItemID.ManaRegenerationPotion);
+			if (!Main.hardMode && Main.rand.Next(100) < 30) Item.NewItem(NPC.getRect(), ItemID.HealingPotion);
+			if (Main.rand.Next(100) < 30) Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
 			//if (Main.rand.Next(100) < 20) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.BossItems.TomeOfSlograAndGaibon>());
 			
 		}

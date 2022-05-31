@@ -10,33 +10,33 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 27;
-            item.knockBack = 3f;
+            Item.damage = 27;
+            Item.knockBack = 3f;
 
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 11;
-            item.useTime = 6;
-            item.shootSpeed = 10;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 11;
+            Item.useTime = 6;
+            Item.shootSpeed = 10;
             //item.shoot = ProjectileID.DarkLance;
             
-            item.height = 50;
-            item.width = 50;
+            Item.height = 50;
+            Item.width = 50;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.melee = true;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = PriceByRarity.Orange_3;
-            item.rare = ItemRarityID.Orange;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.ForgottenPolearm>();
+            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Orange;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenPolearm>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 35);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 6000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();

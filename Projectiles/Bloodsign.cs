@@ -8,22 +8,22 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bloodsign");
-            Main.projFrames[projectile.type] = 25;
+            Main.projFrames[Projectile.type] = 25;
         }
         public override void SetDefaults()
         {
-            projectile.friendly = true;
-            projectile.width = 64;
-            projectile.height = 98;
-            projectile.penetrate = -1;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 36000;
-            projectile.alpha = 254; //start nearly invis
+            Projectile.friendly = true;
+            Projectile.width = 64;
+            Projectile.height = 98;
+            Projectile.penetrate = -1;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 36000;
+            Projectile.alpha = 254; //start nearly invis
         }
         public float AI_Projectile_Lifetime {
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
 
         public bool playerReturned = false;
@@ -31,41 +31,41 @@ namespace tsorcRevamp.Projectiles
         {
             AI_Projectile_Lifetime += 1f;
 
-            var player = Main.player[projectile.owner];
+            var player = Main.player[Projectile.owner];
 
-            if ((Main.player[projectile.owner].Distance(projectile.Center) < 360f) && !player.dead) //kill when player returns.
+            if ((Main.player[Projectile.owner].Distance(Projectile.Center) < 360f) && !player.dead) //kill when player returns.
             {
                 playerReturned = true;
             }
 
             if (playerReturned) {
-                projectile.alpha += 1;
-                if (projectile.alpha > 254) {
-                    projectile.Kill();
+                Projectile.alpha += 1;
+                if (Projectile.alpha > 254) {
+                    Projectile.Kill();
                 }
             }
             if (AI_Projectile_Lifetime < 100)
             {
-                projectile.alpha -= 4; //increase visibility
+                Projectile.alpha -= 4; //increase visibility
             }
             
             //movement
             if (AI_Projectile_Lifetime <= 60)
             {
-                projectile.velocity.Y = -.9f; //float up for 1 second
+                Projectile.velocity.Y = -.9f; //float up for 1 second
             }
             else {
-                projectile.velocity.Y = 0f; //stop upwards velocity
+                Projectile.velocity.Y = 0f; //stop upwards velocity
             }
 
             //animation
             
-            if (++projectile.frameCounter >= 5)
+            if (++Projectile.frameCounter >= 5)
             {
-                projectile.frameCounter = 0;
-                if (++projectile.frame >= 25)
+                Projectile.frameCounter = 0;
+                if (++Projectile.frame >= 25)
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
             }
 

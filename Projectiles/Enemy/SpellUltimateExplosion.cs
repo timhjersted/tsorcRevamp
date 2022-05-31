@@ -12,35 +12,35 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spell Ultimate Explosion");
-            Main.projFrames[projectile.type] = 9;
+            Main.projFrames[Projectile.type] = 9;
         }
         public override void SetDefaults()
         {
 
-            projectile.aiStyle = 1;
-            projectile.friendly = true;
-            projectile.width = 300;
-            projectile.height = 300;
-            projectile.light = 1f;
-            projectile.penetrate = 50;
-            projectile.magic = true;
-            projectile.scale = 2f;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = true;
+            Projectile.aiStyle = 1;
+            Projectile.friendly = true;
+            Projectile.width = 300;
+            Projectile.height = 300;
+            Projectile.light = 1f;
+            Projectile.penetrate = 50;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 2f;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = true;
         }
 
         #region AI
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3)
             {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 9)
+            if (Projectile.frame >= 9)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
         }

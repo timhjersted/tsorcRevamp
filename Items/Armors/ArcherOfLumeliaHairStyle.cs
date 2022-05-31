@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 1;
-            item.value = 10000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 1;
+            Item.value = 10000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -36,9 +36,9 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.AdamantiteMask, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 4000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 4000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

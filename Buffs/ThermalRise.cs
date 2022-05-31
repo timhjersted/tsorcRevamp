@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class ThermalRise : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Thermal Rise");
 			Description.SetDefault("Heat from the lasers is refilling your flight!");
 

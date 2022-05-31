@@ -12,9 +12,9 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void SetDefaults() {
-            item.height = item.width = 18;
-            item.defense = 4;
-            item.value = 15000;
+            Item.height = Item.width = 18;
+            Item.defense = 4;
+            Item.value = 15000;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<AncientDwarvenHelmet>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe.AddTile(TileID.DemonAltar);

@@ -15,25 +15,25 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
-            projectile.hostile = true;
-            projectile.height = 34;
-            projectile.tileCollide = false;
-            projectile.width = 34;
-            projectile.timeLeft = 150;
-            projectile.light = .3f;
-            Main.projFrames[projectile.type] = 4;
+            Projectile.aiStyle = 0;
+            Projectile.hostile = true;
+            Projectile.height = 34;
+            Projectile.tileCollide = false;
+            Projectile.width = 34;
+            Projectile.timeLeft = 150;
+            Projectile.light = .3f;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override bool PreKill(int timeLeft)
         {
-            projectile.type = 44;
+            Projectile.type = 44;
             return true;
         }
 
         public override void AI()
         {
-            int num40 = Dust.NewDust(new Vector2(projectile.position.X + projectile.velocity.X, projectile.position.Y + projectile.velocity.Y), projectile.width, projectile.height, 15, projectile.velocity.X, projectile.velocity.Y, 250, default(Color), 1f);
+            int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, 15, Projectile.velocity.X, Projectile.velocity.Y, 250, default(Color), 1f);
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

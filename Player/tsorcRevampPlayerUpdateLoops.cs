@@ -177,7 +177,7 @@ namespace tsorcRevamp {
             SoulReaper = 5;
             DragoonBoots = false;
             //player.eocDash = 0;
-            player.armorEffectDrawShadowEOCShield = false;
+            Player.armorEffectDrawShadowEOCShield = false;
             UndeadTalisman = false;
             DuskCrownRing = false;
             DragoonBoots = false;
@@ -231,20 +231,20 @@ namespace tsorcRevamp {
 
         public override void PreUpdate() {
 
-            player.fullRotationOrigin = new Vector2(11, 22);
+            Player.fullRotationOrigin = new Vector2(11, 22);
             SetDirection(true);
 
-            darkSoulQuantity = player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
+            darkSoulQuantity = Player.CountItem(ModContent.ItemType<DarkSoul>(), 999999);
 
             //the item in the soul slot will only ever be souls, so we dont need to check type
             if (SoulSlot.Item.stack > 0) { darkSoulQuantity += SoulSlot.Item.stack; }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
-                tsorcScriptedEvents.PlayerScriptedEventCheck(this.player);
+                tsorcScriptedEvents.PlayerScriptedEventCheck(this.Player);
             }
 
-            if (!player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
-                if (player.whoAmI == Main.LocalPlayer.whoAmI)
+            if (!Player.HasBuff(ModContent.BuffType<Bonfire>())) { //this ensures that BonfireUIState is only visible when within Bonfire range
+                if (Player.whoAmI == Main.LocalPlayer.whoAmI)
                 {
                     BonfireUIState.Visible = false;
                 }
@@ -256,11 +256,11 @@ namespace tsorcRevamp {
             }
             if (potionBagCountdown == 1)
             {
-                if (player.whoAmI == Main.myPlayer)
+                if (Player.whoAmI == Main.myPlayer)
                 {
                     if (!PotionBagUIState.Visible)
                     {
-                        player.chest = -1;
+                        Player.chest = -1;
                         Main.playerInventory = true;
                         PotionBagUIState.Visible = true;
                         Main.PlaySound(SoundID.MenuOpen);
@@ -280,7 +280,7 @@ namespace tsorcRevamp {
 
             if (MiakodaFullHeal1) { //dust loop on player the instant they get healed
                 for (int d = 0; d < 100; d++) {
-                    int dust = Dust.NewDust(player.position, player.width, player.height, 107, 0f, 0f, 30, default, .75f);
+                    int dust = Dust.NewDust(Player.position, Player.width, Player.height, 107, 0f, 0f, 30, default, .75f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 3.5f);
                     Main.dust[dust].noGravity = true;
                 }
@@ -288,7 +288,7 @@ namespace tsorcRevamp {
 
             if (MiakodaCrescentDust1) { //dust loop on player the instant they get imbue
                 for (int d = 0; d < 100; d++) {
-                    int dust = Dust.NewDust(player.position, player.width, player.height, 164, 0f, 0f, 30, default, 1.2f);
+                    int dust = Dust.NewDust(Player.position, Player.width, Player.height, 164, 0f, 0f, 30, default, 1.2f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(0.5f, 5f);
                     Main.dust[dust].noGravity = false;
                 }
@@ -297,24 +297,24 @@ namespace tsorcRevamp {
                 MiakodaCrescentBoostTimer++;
             }
             if (MiakodaCrescentBoostTimer > 150) {
-                player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = false;
+                Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = false;
                 MiakodaCrescentBoostTimer = 0;
             }
 
             if (MiakodaNewDust1) { //dust loop on player the instant they get boost
                 for (int d = 0; d < 100; d++) {
-                    int dust = Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0f, 50, default, 1.2f);
+                    int dust = Dust.NewDust(Player.position, Player.width, Player.height, 57, 0f, 0f, 50, default, 1.2f);
                     Main.dust[dust].velocity *= Main.rand.NextFloat(2f, 7.5f);
                     Main.dust[dust].noGravity = true;
                 }
             }
             if (MiakodaNewBoost) {
                 MiakodaNewBoostTimer++;
-                player.armorEffectDrawShadow = true;
+                Player.armorEffectDrawShadow = true;
 
             }
             if (MiakodaNewBoostTimer > 150) {
-                player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
+                Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = false;
                 MiakodaNewBoostTimer = 0;
             }
 
@@ -328,19 +328,19 @@ namespace tsorcRevamp {
                 }
 
                 //Disable Mana Regen Potions
-                player.manaRegenBuff = false;
-                player.buffImmune[BuffID.ManaRegeneration] = true;
+                Player.manaRegenBuff = false;
+                Player.buffImmune[BuffID.ManaRegeneration] = true;
             }
             #endregion manashield
 
             #region Abyss Shader
             bool hasCoA = false;
 
-            if (player.whoAmI == Main.myPlayer) {
+            if (Player.whoAmI == Main.myPlayer) {
 
                 //does the player have a covenant of artorias
-                for (int i = 3; i < (8 + player.extraAccessorySlots); i++) {
-                    if (player.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+                for (int i = 3; i < (8 + Player.extraAccessorySlots); i++) {
+                    if (Player.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
                         hasCoA = true;
                         break;
                     }
@@ -368,58 +368,58 @@ namespace tsorcRevamp {
                 }
                 else {
                     //This would have looked so much nicer if controlUp, controlLeft, etc were all in an array like doubleTapCardinalTimer, but...
-                    if (player.controlUp && keyPrimed[DashUp] == 0) {
+                    if (Player.controlUp && keyPrimed[DashUp] == 0) {
                         keyPrimed[DashUp] = 1;
                     }
-                    if (player.releaseUp && keyPrimed[DashUp] == 1) {
+                    if (Player.releaseUp && keyPrimed[DashUp] == 1) {
                         keyPrimed[DashUp] = 2;
                     }
-                    if (player.doubleTapCardinalTimer[DashUp] == 0) {
+                    if (Player.doubleTapCardinalTimer[DashUp] == 0) {
                         keyPrimed[DashUp] = 0;
                     }
-                    if (player.controlUp && player.doubleTapCardinalTimer[DashUp] < 15 && keyPrimed[DashUp] == 2) {
+                    if (Player.controlUp && Player.doubleTapCardinalTimer[DashUp] < 15 && keyPrimed[DashUp] == 2) {
                         ReflectionShiftKeypressTime = dashCooldown;
                         ReflectionShiftState.Y = -1;
                     }
 
-                    if (player.controlLeft && keyPrimed[DashLeft] == 0) {
+                    if (Player.controlLeft && keyPrimed[DashLeft] == 0) {
                         keyPrimed[DashLeft] = 1;
                     }
-                    if (player.releaseLeft && keyPrimed[DashLeft] == 1) {
+                    if (Player.releaseLeft && keyPrimed[DashLeft] == 1) {
                         keyPrimed[DashLeft] = 2;
                     }
-                    if (player.doubleTapCardinalTimer[DashLeft] == 0) {
+                    if (Player.doubleTapCardinalTimer[DashLeft] == 0) {
                         keyPrimed[DashLeft] = 0;
                     }
-                    if (player.controlLeft && player.doubleTapCardinalTimer[DashLeft] < 15 && keyPrimed[DashLeft] == 2) {
+                    if (Player.controlLeft && Player.doubleTapCardinalTimer[DashLeft] < 15 && keyPrimed[DashLeft] == 2) {
                         ReflectionShiftKeypressTime = dashCooldown;
                         ReflectionShiftState.X = -1;
                     }
 
-                    if (player.controlRight && keyPrimed[DashRight] == 0) {
+                    if (Player.controlRight && keyPrimed[DashRight] == 0) {
                         keyPrimed[DashRight] = 1;
                     }
-                    if (player.releaseRight && keyPrimed[DashRight] == 1) {
+                    if (Player.releaseRight && keyPrimed[DashRight] == 1) {
                         keyPrimed[DashRight] = 2;
                     }
-                    if (player.doubleTapCardinalTimer[DashRight] == 0) {
+                    if (Player.doubleTapCardinalTimer[DashRight] == 0) {
                         keyPrimed[DashRight] = 0;
                     }
-                    if (player.controlRight && player.doubleTapCardinalTimer[DashRight] < 15 && keyPrimed[DashRight] == 2) {
+                    if (Player.controlRight && Player.doubleTapCardinalTimer[DashRight] < 15 && keyPrimed[DashRight] == 2) {
                         ReflectionShiftKeypressTime = dashCooldown;
                         ReflectionShiftState.X = 1;
                     }
 
-                    if (player.controlDown && keyPrimed[DashDown] == 0) {
+                    if (Player.controlDown && keyPrimed[DashDown] == 0) {
                         keyPrimed[DashDown] = 1;
                     }
-                    if (player.releaseDown && keyPrimed[DashDown] == 1) {
+                    if (Player.releaseDown && keyPrimed[DashDown] == 1) {
                         keyPrimed[DashDown] = 2;
                     }
-                    if (player.doubleTapCardinalTimer[DashDown] == 0) {
+                    if (Player.doubleTapCardinalTimer[DashDown] == 0) {
                         keyPrimed[DashDown] = 0;
                     }
-                    if (player.controlDown && player.doubleTapCardinalTimer[DashDown] < 15 && keyPrimed[DashDown] == 2) {
+                    if (Player.controlDown && Player.doubleTapCardinalTimer[DashDown] < 15 && keyPrimed[DashDown] == 2) {
                         ReflectionShiftKeypressTime = dashCooldown;
                         ReflectionShiftState.Y = 1;
                     }
@@ -428,28 +428,28 @@ namespace tsorcRevamp {
             #endregion
 
 
-            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() 
-                || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 10 && (Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.SagittariusBow>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.ArtemisBow>() 
+                || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
             {
-                player.channel = false;
+                Player.channel = false;
             }
 
-            if (player.itemAnimation != 0 && (player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
+            if (Player.itemAnimation != 0 && (Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineSpark>() || Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Magic.DivineBoomCannon>()))
             {
-                player.statMana -= 1;
-                if (player.statMana < 1) { player.channel = false; }
-                if (player.statMana < 0) { player.statMana = 0; }
+                Player.statMana -= 1;
+                if (Player.statMana < 1) { Player.channel = false; }
+                if (Player.statMana < 0) { Player.statMana = 0; }
 
             }
 
-            if (Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16] != null && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].wall == WallID.StarlitHeavenWallpaper)
+            if (Main.tile[(int)Player.position.X / 16, (int)Player.position.Y / 16] != null && Main.tile[(int)Player.position.X / 16, (int)Player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
             {
-                player.AddBuff(BuffID.Darkness, 60);
+                Player.AddBuff(BuffID.Darkness, 60);
             }
 
-            if (MaxAcquiredHP < player.statLifeMax)
+            if (MaxAcquiredHP < Player.statLifeMax)
             {
-                MaxAcquiredHP = player.statLifeMax;
+                MaxAcquiredHP = Player.statLifeMax;
             }
         }
 
@@ -475,20 +475,20 @@ namespace tsorcRevamp {
             {
                 if (thisItem != null && !thisItem.IsAir)
                 {
-                    thisItem.modItem?.UpdateInventory(player);
+                    thisItem.ModItem?.UpdateInventory(Player);
                 }
             }
 
             if (MiakodaCrescentBoost)
             {
-                player.allDamageMult += 0.07f;
+                Player.allDamageMult += 0.07f;
             }
 
             if (MiakodaNewBoost)
             {
-                player.moveSpeed += 0.9f;
-                player.endurance = .5f;
-                player.noKnockback = true;
+                Player.moveSpeed += 0.9f;
+                Player.endurance = .5f;
+                Player.noKnockback = true;
             }
 
             #region Lifegem Healing
@@ -500,7 +500,7 @@ namespace tsorcRevamp {
 
                 if (healingTimer == 6)
                 {
-                    player.statLife += 1;
+                    Player.statLife += 1;
                     healingTimer = 0;
                 }
             }
@@ -511,7 +511,7 @@ namespace tsorcRevamp {
 
                 if (healingTimer == 4)
                 {
-                    player.statLife += 1;
+                    Player.statLife += 1;
                     healingTimer = 0;
                 }
             }
@@ -523,107 +523,107 @@ namespace tsorcRevamp {
 
             #endregion
 
-            if (player.HasBuff(BuffID.WellFed))
+            if (Player.HasBuff(BuffID.WellFed))
             {
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
             }
 
-            if (player.HasBuff(BuffID.TheTongue))
+            if (Player.HasBuff(BuffID.TheTongue))
             {
                 for (int i = 0; i < 9; i++)
                 {
-                    CombatText.NewText(player.Hitbox, CombatText.DamagedFriendly, 999999999, true);
+                    CombatText.NewText(Player.Hitbox, CombatText.DamagedFriendly, 999999999, true);
                 }
-                player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(player.name + " was consumed by The Wall."), 999999999, 1);
+                Player.KillMe(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(Player.name + " was consumed by The Wall."), 999999999, 1);
             }
 
-            if (!player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()))
+            if (!Player.HasBuff(ModContent.BuffType<Buffs.CurseBuildup>()))
             {
                 CurseLevel = 1; //Not sure why 1 is the default
             }
 
-            if (!player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>()))
+            if (!Player.HasBuff(ModContent.BuffType<Buffs.PowerfulCurseBuildup>()))
             {
                 PowerfulCurseLevel = 1; //Not sure why 1 is the default
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.buffImmune[BuffID.Shine] = true;
+                Player.buffImmune[BuffID.Shine] = true;
             }
         }
 
         public override void PostUpdateEquips() {
             if (manaShield > 0) {
-                player.manaRegenBuff = false;
+                Player.manaRegenBuff = false;
             }
-            int PTilePosX = (int)player.position.X / 16;
+            int PTilePosX = (int)Player.position.X / 16;
             bool Ocean = (PTilePosX < 750 || PTilePosX > Main.maxTilesX - 750);
-            bool underground = (player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
+            bool underground = (Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
 
-            if (((underground && player.ZoneHoly && !Ocean && !player.ZoneDungeon /*&& !player.ZoneOverworldHeight*/) || player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
+            if (((underground && Player.ZoneHallow && !Ocean && !Player.ZoneDungeon /*&& !player.ZoneOverworldHeight*/) || Player.ZoneMeteor) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) {
 
-                player.gravControl = true;
+                Player.gravControl = true;
             }
 
-            if (player.position.X == player.oldPosition.X)
+            if (Player.position.X == Player.oldPosition.X)
             {
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.5f;
+                Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.5f;
             }
 
             if (ShadowWeight) {
-                player.doubleJumpBlizzard = false;
-                player.doubleJumpFart = false;
-                player.doubleJumpSail = false;
-                player.doubleJumpSandstorm = false;
-                player.doubleJumpUnicorn = false;
-                player.canRocket = false;
-                player.rocketTime = 0;
-                player.jumpBoost = false;
-                player.wingTime = 0;
+                Player.doubleJumpBlizzard = false;
+                Player.doubleJumpFart = false;
+                Player.doubleJumpSail = false;
+                Player.doubleJumpSandstorm = false;
+                Player.doubleJumpUnicorn = false;
+                Player.canRocket = false;
+                Player.rocketTime = 0;
+                Player.jumpBoost = false;
+                Player.wingTime = 0;
                 float speedCap = 12;
-                if (player.velocity.X > speedCap) {
-                    player.velocity.X = speedCap;
+                if (Player.velocity.X > speedCap) {
+                    Player.velocity.X = speedCap;
                 }
-                if (player.velocity.X < -speedCap) {
-                    player.velocity.X = -speedCap;
+                if (Player.velocity.X < -speedCap) {
+                    Player.velocity.X = -speedCap;
                 }
             }
             
             if (TornWings)
             {
-                player.wingTime = 0;
-                player.moveSpeed *= 0.8f;
+                Player.wingTime = 0;
+                Player.moveSpeed *= 0.8f;
             }
             
             if (Crippled) {
-                player.doubleJumpBlizzard = false;
-                player.doubleJumpCloud = false;
-                player.doubleJumpFart = false;
-                player.doubleJumpSail = false;
-                player.doubleJumpSandstorm = false;
-                player.doubleJumpUnicorn = false;
-                player.canRocket = false;
-                player.rocketTime = 0;
-                player.jumpBoost = false;
-                player.jumpSpeedBoost = 0f;
-                player.wingTime = 0;
-                player.moveSpeed *= 0.8f;
+                Player.doubleJumpBlizzard = false;
+                Player.doubleJumpCloud = false;
+                Player.doubleJumpFart = false;
+                Player.doubleJumpSail = false;
+                Player.doubleJumpSandstorm = false;
+                Player.doubleJumpUnicorn = false;
+                Player.canRocket = false;
+                Player.rocketTime = 0;
+                Player.jumpBoost = false;
+                Player.jumpSpeedBoost = 0f;
+                Player.wingTime = 0;
+                Player.moveSpeed *= 0.8f;
             }
 
             for (int i = 0; i < 50; i++) {
                 //block souls from going in normal inventory slots
-                tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                if (player.inventory[i].type == ModContent.ItemType<DarkSoul>()) {
+                tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
+                if (Player.inventory[i].type == ModContent.ItemType<DarkSoul>()) {
                     //if the player's soul slot is empty
                     if (modPlayer.SoulSlot.Item.type != ModContent.ItemType<DarkSoul>()) {
-                        modPlayer.SoulSlot.Item = player.inventory[i].Clone();
+                        modPlayer.SoulSlot.Item = Player.inventory[i].Clone();
                     }
                     else {
-                        modPlayer.SoulSlot.Item.stack += player.inventory[i].stack;
+                        modPlayer.SoulSlot.Item.stack += Player.inventory[i].stack;
                     }
                     //dont send the souls to the normal inventory
-                    player.inventory[i].TurnToAir();
+                    Player.inventory[i].TurnToAir();
                 }
 
             }
@@ -631,31 +631,31 @@ namespace tsorcRevamp {
 
             if (Shockwave) {
                 
-                if (player.controlDown && player.velocity.Y != 0f) {
-                    player.gravity += 5f;
-                    player.maxFallSpeed *= 1.25f;
+                if (Player.controlDown && Player.velocity.Y != 0f) {
+                    Player.gravity += 5f;
+                    Player.maxFallSpeed *= 1.25f;
                     if (!Falling) {
-                        fallStartY = player.position.Y;
+                        fallStartY = Player.position.Y;
                     }
-                    if (player.velocity.Y > 12f) {
+                    if (Player.velocity.Y > 12f) {
                         Falling = true;
                         StopFalling = 0;
-                        player.noKnockback = true;
+                        Player.noKnockback = true;
                     }
                 }
-                if (player.velocity.Y == 0f && Falling && player.controlDown && !player.wet) {
+                if (Player.velocity.Y == 0f && Falling && Player.controlDown && !Player.wet) {
                     for (int i = 0; i < 30; i++) {
-                        int dustIndex2 = Dust.NewDust(new Vector2(player.position.X, player.position.Y), player.width, player.height, 31, 0f, 0f, 100);
+                        int dustIndex2 = Dust.NewDust(new Vector2(Player.position.X, Player.position.Y), Player.width, Player.height, 31, 0f, 0f, 100);
                         Main.dust[dustIndex2].scale = 0.1f + Main.rand.Next(5) * 0.1f;
                         Main.dust[dustIndex2].fadeIn = 1.5f + Main.rand.Next(5) * 0.1f;
                         Main.dust[dustIndex2].noGravity = true;
                     }
-                    FallDist = (int)((player.position.Y - fallStartY) / 16);
+                    FallDist = (int)((Player.position.Y - fallStartY) / 16);
                     if (FallDist > 5) {
-                        Main.PlaySound(SoundID.Item, (int)player.Center.X, (int)player.Center.Y, 14);
+                        Main.PlaySound(SoundID.Item, (int)Player.Center.X, (int)Player.Center.Y, 14);
                         for (int i = -9; i < 10; i++) { //19 projectiles
                             Vector2 shotDirection = new Vector2(0f, -16f);
-                            int shockwaveShot = Projectile.NewProjectile(player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, player.whoAmI);
+                            int shockwaveShot = Projectile.NewProjectile(Player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
                             Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))); // (180 / (projectilecount - 1))
                         }
                     }
@@ -663,7 +663,7 @@ namespace tsorcRevamp {
 
                     Falling = false;
                 }
-                if (player.velocity.Y <= 2f) {
+                if (Player.velocity.Y <= 2f) {
                     StopFalling++;
                 }
                 else {
@@ -682,14 +682,14 @@ namespace tsorcRevamp {
                 
                 for (int l = 0; l < 200; l++) {
                     NPC nPC = Main.npc[l];
-                    if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(player.Center, nPC.Center) <= 240) {
+                    if (nPC.active && !nPC.friendly && nPC.damage > 0 && !nPC.dontTakeDamage && !nPC.buffImmune[ModContent.BuffType<CrimsonBurn>()] && Vector2.Distance(Player.Center, nPC.Center) <= 240) {
                         nPC.AddBuff(ModContent.BuffType<CrimsonBurn>(), 2);
                     }
                 }
 
-                Vector2 centerOffset = new Vector2(player.Center.X + 2 - player.width / 2, player.Center.Y + 6 - player.height / 2);
+                Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
                 for (int j = 1; j < 30; j++) {
-                    var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 150) : 150)).RotatedByRandom(Math.PI * 4.0), player.width / 2, player.height / 2, 235, player.velocity.X, player.velocity.Y);
+                    var x = Dust.NewDust(centerOffset + (Vector2.One * (j % 8 == 0 ? Main.rand.Next(15, 150) : 150)).RotatedByRandom(Math.PI * 4.0), Player.width / 2, Player.height / 2, 235, Player.velocity.X, Player.velocity.Y);
                     Main.dust[x].noGravity = true;
                 }
                 
@@ -703,7 +703,7 @@ namespace tsorcRevamp {
 
                 if (Main.rand.Next(3) == 0) //outermost "ring"
                 {
-                    int num5 = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default, 1f);
+                    int num5 = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[num5].noGravity = true;
                     Main.dust[num5].velocity *= 0.75f;
                     Main.dust[num5].fadeIn = 1.5f;
@@ -713,11 +713,11 @@ namespace tsorcRevamp {
                     Main.dust[num5].velocity = vector;
                     vector.Normalize();
                     vector *= Main.rand.Next(220, 900);
-                    Main.dust[num5].position = player.Center - vector;
+                    Main.dust[num5].position = Player.Center - vector;
                 }
 
                 if (Main.rand.Next(6) == 0) {
-                    int x = Dust.NewDust(player.position, player.width, player.height, 89, player.velocity.X, player.velocity.Y, 120, default, 1f);
+                    int x = Dust.NewDust(Player.position, Player.width, Player.height, 89, Player.velocity.X, Player.velocity.Y, 120, default, 1f);
                     Main.dust[x].noGravity = true;
                     Main.dust[x].velocity *= 0.75f;
                     Main.dust[x].fadeIn = 1.3f;
@@ -727,14 +727,14 @@ namespace tsorcRevamp {
                     Main.dust[x].velocity = vector;
                     vector.Normalize();
                     vector *= 200f; //spawn distance from player
-                    Main.dust[x].position = player.Center - vector;
+                    Main.dust[x].position = Player.Center - vector;
 
                     //Vector2.Normalize(start - end) * someSpeed //start and end are also Vector2 // Aparently another way to make things move toward each other
 
                 }
 
                 if (Main.rand.Next(3) == 0) {
-                    int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default, 1f);
+                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
                     Main.dust[z].velocity *= 0.75f;
                     Main.dust[z].fadeIn = 1.3f;
@@ -744,11 +744,11 @@ namespace tsorcRevamp {
                     Main.dust[z].velocity = vectorother;
                     vectorother.Normalize();
                     vectorother *= 150f;
-                    Main.dust[z].position = player.Center - vectorother;
+                    Main.dust[z].position = Player.Center - vectorother;
                 }
 
                 if (Main.rand.Next(2) == 0) {
-                    int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default, 1f);
+                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
                     Main.dust[z].velocity *= 0.75f;
                     Main.dust[z].fadeIn = 1.3f;
@@ -758,12 +758,12 @@ namespace tsorcRevamp {
                     Main.dust[z].velocity = vectorother;
                     vectorother.Normalize();
                     vectorother *= 90f;
-                    Main.dust[z].position = player.Center - vectorother;
+                    Main.dust[z].position = Player.Center - vectorother;
                 }
 
                 if (Main.rand.Next(2) == 0) //innermost "ring"
                 {
-                    int z = Dust.NewDust(player.position, player.width, player.height, 89, 0f, 0f, 120, default, 1f);
+                    int z = Dust.NewDust(Player.position, Player.width, Player.height, 89, 0f, 0f, 120, default, 1f);
                     Main.dust[z].noGravity = true;
                     Main.dust[z].velocity *= 2.75f;
                     Main.dust[z].fadeIn = 1.3f;
@@ -773,22 +773,22 @@ namespace tsorcRevamp {
                     Main.dust[z].velocity = vectorother;
                     vectorother.Normalize();
                     vectorother *= 45f;
-                    Main.dust[z].position = player.Center - vectorother;
+                    Main.dust[z].position = Player.Center - vectorother;
                 }
             }
 
             #endregion
             #region consistent hellstone and spike damage
-            float REDUCE = CheckReduceDefense(player.position, player.width, player.height, player.fireWalk); // <--- added firewalk parameter
+            float REDUCE = CheckReduceDefense(Player.position, Player.width, Player.height, Player.fireWalk); // <--- added firewalk parameter
             if (REDUCE != 0) {
                 REDUCE = 1f - REDUCE;
-                player.statDefense = (int)(player.statDefense * REDUCE);
+                Player.statDefense = (int)(Player.statDefense * REDUCE);
             }
             #endregion
             #region boss zen
             GiveBossZen = CheckBossZen();
             if (GiveBossZen && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig) {
-                player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
+                Player.AddBuff(ModContent.BuffType<BossZenBuff>(), 2, false);
             }
             #endregion
             #region boss magnet
@@ -806,7 +806,7 @@ namespace tsorcRevamp {
             #region Reflection Shift
 
             if (ReflectionShiftKeypressTime > 20) {
-                player.immune = true;
+                Player.immune = true;
             }
 
             if (ReflectionShiftState != Microsoft.Xna.Framework.Vector2.Zero) {
@@ -814,29 +814,29 @@ namespace tsorcRevamp {
                 for (int i = 0; i < 30; i++) {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
                     Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                    Dust.NewDustPerfect(player.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                    Dust.NewDustPerfect(Player.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
                 }
-                if (Collision.CanHit(player.Center, 1, 1, player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1) || Collision.CanHitLine(player.Center, 1, 1, player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1)) {
-                    player.Center += ReflectionShiftState * shiftDistance * 16; //Teleport distance
+                if (Collision.CanHit(Player.Center, 1, 1, Player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1) || Collision.CanHitLine(Player.Center, 1, 1, Player.Center + ReflectionShiftState * shiftDistance * 16, 1, 1)) {
+                    Player.Center += ReflectionShiftState * shiftDistance * 16; //Teleport distance
                 }
                 FastFallTimer = 30;
-                player.velocity = ReflectionShiftState * 20; //Dash speed
+                Player.velocity = ReflectionShiftState * 20; //Dash speed
                 ReflectionShiftState = Vector2.Zero;
 
                 for (int i = 0; i < 30; i++) {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
                     Vector2 velocity = new Vector2(5, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                    Dust.NewDustPerfect(player.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                    Dust.NewDustPerfect(Player.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
                 }
             }
             #endregion
 
             if (DragoonBoots && DragoonBootsEnable) {
                 //Player.jumpSpeed += 10f; why
-                player.jumpSpeedBoost += 10f;
+                Player.jumpSpeedBoost += 10f;
             }
-            if (DragoonHorn && (((player.gravDir == 1f) && (player.velocity.Y > 0)) || ((player.gravDir == -1f) && (player.velocity.Y < 0)))) {
-                player.meleeDamage *= 2;
+            if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0)))) {
+                Player.meleeDamage *= 2;
             }
         }
 
@@ -855,31 +855,31 @@ namespace tsorcRevamp {
                     moveSpeedPercentBoost = 0.35f;
                     //6f is hermes boots speed.
                     baseSpeed = 6f;
-                    player.moveSpeed += 0.2f;
+                    Player.moveSpeed += 0.2f;
                 }
                 //SupersonicWings
                 if (supersonicLevel == 2) {
                     moveSpeedPercentBoost = 0.5f;
                     baseSpeed = 6.8f;
-                    player.moveSpeed += 0.3f;
+                    Player.moveSpeed += 0.3f;
                 }
                 //SupersonicWings2
                 if (supersonicLevel == 3) {
 
                     moveSpeedPercentBoost = 1f;
                     baseSpeed = 7.5f;
-                    player.moveSpeed += 0.6f;
+                    Player.moveSpeed += 0.6f;
                 }
 
 
                 //((player.moveSpeed * 0.5f) + 0.5) means 50% of the player's moveSpeed bonus will be applied
                 //The general form is ((player.moveSpeed * %theyshouldget) + (1 - %theyshouldget))
-                player.accRunSpeed = baseSpeed * ((player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
-                player.maxRunSpeed = baseSpeed * ((player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
+                Player.accRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
+                Player.maxRunSpeed = baseSpeed * ((Player.moveSpeed * moveSpeedPercentBoost) + (1 - moveSpeedPercentBoost));
 
                 if(FastFallTimer > 0)
                 {
-                    player.maxFallSpeed = 50;
+                    Player.maxFallSpeed = 50;
                     FastFallTimer--;
                 }
             }
@@ -887,83 +887,83 @@ namespace tsorcRevamp {
 
         public override void UpdateBadLifeRegen() {
             if (DarkInferno) {
-                if (player.lifeRegen > 0) {
-                    player.lifeRegen = 0;
+                if (Player.lifeRegen > 0) {
+                    Player.lifeRegen = 0;
                 }
-                player.lifeRegenTime = 0;
-                player.lifeRegen = -11;
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen = -11;
                 for (int j = 0; j < 4; j++) {
-                    int dust = Dust.NewDust(player.position, player.width / 2, player.height / 2, 54, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    int dust = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust].noGravity = true;
 
-                    int dust2 = Dust.NewDust(player.position, player.width / 2, player.height / 2, 54, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f); //54 was 58
+                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f); //54 was 58
                     Main.dust[dust2].noGravity = true;
                 }
             }
 
             if (PhazonCorruption)
             {
-                if (player.lifeRegen > 0)
+                if (Player.lifeRegen > 0)
                 {
-                    player.lifeRegen = 0;
+                    Player.lifeRegen = 0;
                 }
-                player.lifeRegenTime = 0;
-                player.lifeRegen = -7;
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen = -7;
                 for (int j = 0; j < 4; j++)
                 {
-                    int dust = Dust.NewDust(player.position, player.width / 2, player.height / 2, 29, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    int dust = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 29, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust].noGravity = true;
 
-                    int dust2 = Dust.NewDust(player.position, player.width / 2, player.height / 2, DustID.FireworkFountain_Blue, (player.velocity.X * 0.2f), player.velocity.Y * 0.2f, 100, default, 1f);
+                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.FireworkFountain_Blue, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
                 }
             }
 
             if (SOADrain || PowerWithin) {
-                if (player.lifeRegen > 0) {
-                    player.lifeRegen = 0;
+                if (Player.lifeRegen > 0) {
+                    Player.lifeRegen = 0;
                 }
-                player.lifeRegenTime = 0;
-                player.lifeRegen = -15;
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen = -15;
                 if (Main.rand.Next(3) == 0) {
-                    int dust = Dust.NewDust(player.position, player.width, player.height, 235, player.velocity.X, player.velocity.Y, 140, default, 0.8f);
+                    int dust = Dust.NewDust(Player.position, Player.width, Player.height, 235, Player.velocity.X, Player.velocity.Y, 140, default, 0.8f);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].fadeIn = 1f;
                 }
             }
 
             if (CowardsAffliction) {
-                if (player.lifeRegen > 0) {
-                    player.lifeRegen = 0;
+                if (Player.lifeRegen > 0) {
+                    Player.lifeRegen = 0;
                 }
-                player.lifeRegenTime = 0;
-                player.lifeRegen -= 240;
+                Player.lifeRegenTime = 0;
+                Player.lifeRegen -= 240;
             }
         }
 
         public override void UpdateDead()
         {
-            if (player.whoAmI == Main.myPlayer) {
+            if (Player.whoAmI == Main.myPlayer) {
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath && Main.netMode == NetmodeID.SinglePlayer)
                 {
                     souldroptimer++;
                     if (souldroptimer == 5 && souldroplooptimer < 13)
                     {
-                        foreach (Item item in player.inventory)
+                        foreach (Item item in Player.inventory)
                         { 
                             //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
                             if (item.type == ModContent.ItemType<DarkSoul>())
                             {
                                 if (Main.netMode == NetmodeID.SinglePlayer)
                                 {
-                                    Item.NewItem(player.Center, item.type, item.stack);
+                                    Item.NewItem(Player.Center, item.type, item.stack);
                                     item.stack = 0;
                                 }
                                 else
                                 {
                                     ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                                     soulPacket.Write(tsorcPacketID.DropSouls);
-                                    soulPacket.WriteVector2(player.Center);
+                                    soulPacket.WriteVector2(Player.Center);
                                     soulPacket.Write(item.stack);
                                     soulPacket.Send();
                                     item.stack = 0;
@@ -979,14 +979,14 @@ namespace tsorcRevamp {
                             {
                                 if (Main.netMode == NetmodeID.SinglePlayer)
                                 {
-                                    Item.NewItem(player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
+                                    Item.NewItem(Player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
                                     SoulSlot.Item.TurnToAir();
                                 }
                                 else
                                 {
                                     ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
                                     soulPacket.Write(tsorcPacketID.DropSouls);
-                                    soulPacket.WriteVector2(player.Center);
+                                    soulPacket.WriteVector2(Player.Center);
                                     soulPacket.Write(SoulSlot.Item.stack);
                                     soulPacket.Send();
                                     SoulSlot.Item.TurnToAir();
@@ -994,7 +994,7 @@ namespace tsorcRevamp {
                             }
                             else if (Main.netMode == NetmodeID.SinglePlayer)
                             {
-                                Item.NewItem(player.Center, SoulSlot.Item.type, 0);
+                                Item.NewItem(Player.Center, SoulSlot.Item.type, 0);
                             }
                             
                             souldroplooptimer++;
@@ -1012,43 +1012,43 @@ namespace tsorcRevamp {
         }
 
         public override void PostUpdate() {
-            if ((player.HasBuff(ModContent.BuffType<MagicWeapon>()) || player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && player.meleeEnchant > 0) {
+            if ((Player.HasBuff(ModContent.BuffType<MagicWeapon>()) || Player.HasBuff(ModContent.BuffType<GreatMagicWeapon>()) || Player.HasBuff(ModContent.BuffType<CrystalMagicWeapon>())) && Player.meleeEnchant > 0) {
                 int buffIndex = 0;
 
-                foreach (int buffType in player.buffType) {
+                foreach (int buffType in Player.buffType) {
 
                     if ((buffType == ModContent.BuffType<MagicWeapon>()) || (buffType == ModContent.BuffType<GreatMagicWeapon>()) || (buffType == ModContent.BuffType<CrystalMagicWeapon>())) {
-                        player.buffTime[buffIndex] = 0;
+                        Player.buffTime[buffIndex] = 0;
                     }
                     buffIndex++;
                 }
             }
             SetDirection();
 
-            if (!player.mount.Active) {
-                player.fullRotation = rotation * player.gravDir;
+            if (!Player.mount.Active) {
+                Player.fullRotation = rotation * Player.gravDir;
             }
 
             rotation = 0f;
             if (forcedItemRotation.HasValue) {
-                player.itemRotation = forcedItemRotation.Value;
+                Player.itemRotation = forcedItemRotation.Value;
 
                 forcedItemRotation = null;
             }
             
 
-            TryForceFrame(ref player.headFrame, ref forcedHeadFrame);
-            TryForceFrame(ref player.bodyFrame, ref forcedBodyFrame);
-            TryForceFrame(ref player.legFrame, ref forcedLegFrame);
+            TryForceFrame(ref Player.headFrame, ref forcedHeadFrame);
+            TryForceFrame(ref Player.bodyFrame, ref forcedBodyFrame);
+            TryForceFrame(ref Player.legFrame, ref forcedLegFrame);
 
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.allDamageMult *= 1.2f;
+                Player.allDamageMult *= 1.2f;
 
-                if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
                 {
-                    player.lifeRegen /= 2;
+                    Player.lifeRegen /= 2;
                 }
             }
 
@@ -1078,7 +1078,7 @@ namespace tsorcRevamp {
                 oldPos[i] = oldPos[i - 1];
             }
             //except the first slot
-            oldPos[0] = player.position;
+            oldPos[0] = Player.position;
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame) {
@@ -1093,15 +1093,15 @@ namespace tsorcRevamp {
         }
         public override void UpdateBiomes() {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3) {
-                if (Main.dungeonTiles >= 200 && player.Center.Y > Main.worldSurface * 16.0 * 1.5f || Main.dungeonTiles >= 50 && tsorcRevampWorld.SuperHardMode) {
-                    int playerTileX = (int)player.Center.X / 16;
-                    int playerTileY = (int)player.Center.Y / 16;
+                if (Main.dungeonTiles >= 200 && Player.Center.Y > Main.worldSurface * 16.0 * 1.5f || Main.dungeonTiles >= 50 && tsorcRevampWorld.SuperHardMode) {
+                    int playerTileX = (int)Player.Center.X / 16;
+                    int playerTileY = (int)Player.Center.Y / 16;
                     for (int i = -10; i < 11; i++) {
                         for (int j = 0; j < 2; j++) {
                             int cross = (2 * j) - 1;
                             //check in an x shape instead of checking the entire region, since checking 100 tiles every frame is a little silly
-                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].wall] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].wall]) {
-                                player.ZoneDungeon = true;
+                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType]) {
+                                Player.ZoneDungeon = true;
 
                             }
                         }

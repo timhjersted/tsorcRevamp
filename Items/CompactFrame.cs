@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items {
             Tooltip.SetDefault("Used for making advanced weaponry, from a civilization not of this world\n" +
                                "The strange way it is unaffected by gravity reminds you of somewhere...");
 
-            ItemID.Sets.ItemNoGravity[item.type] = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
         }
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[item.type];
+            Texture2D texture = Main.itemTexture[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
@@ -30,11 +30,11 @@ namespace tsorcRevamp.Items {
 
 
         public override void SetDefaults() {
-            item.width = 20;
-            item.height = 18;
-            item.maxStack = 99;
-            item.value = 350000;
-            item.rare = ItemRarityID.Red;
+            Item.width = 20;
+            Item.height = 18;
+            Item.maxStack = 99;
+            Item.value = 350000;
+            Item.rare = ItemRarityID.Red;
         }
     }
 }

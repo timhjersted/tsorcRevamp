@@ -11,11 +11,11 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 38;
-            item.accessory = true;
-            item.value = PriceByRarity.Red_10;
-            item.rare = ItemRarityID.Red;
+            Item.width = 28;
+            Item.height = 38;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.rare = ItemRarityID.Red;
         }
  
         public override void UpdateEquip(Player player) {

@@ -7,15 +7,15 @@ namespace tsorcRevamp.Items.Armors {
     class ShadowNinjaBottoms : ModItem {
 
         public override void SetDefaults() {
-            item.width = 18;
-            item.height = 18;
-            item.value = 50000;
-            item.rare = ItemRarityID.Orange;
-            item.defense = 5;
+            Item.width = 18;
+            Item.height = 18;
+            Item.value = 50000;
+            Item.rare = ItemRarityID.Orange;
+            Item.defense = 5;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<BlackBeltGiPants>());
             recipe.AddIngredient(ItemID.SoulofFright);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);

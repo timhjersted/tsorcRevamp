@@ -19,16 +19,16 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.width = 16;
-            item.height = 18;
-            item.maxStack = 9999;
-            item.value = 1000;
-            item.useAnimation = 90;
-            item.useTime = 90;
-            item.useTurn = true;
-            item.rare = ItemRarityID.Blue;
+            Item.consumable = true;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.width = 16;
+            Item.height = 18;
+            Item.maxStack = 9999;
+            Item.value = 1000;
+            Item.useAnimation = 90;
+            Item.useTime = 90;
+            Item.useTurn = true;
+            Item.rare = ItemRarityID.Blue;
         }
 
 
@@ -57,14 +57,14 @@ namespace tsorcRevamp.Items
         {
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item));
+                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
                 player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 90);
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 90);
             }
 
-            if (player.itemTime < (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime < (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
             {
-                item.useStyle = ItemUseStyleID.HoldingUp;
+                Item.useStyle = ItemUseStyleID.HoldUp;
 
                 if (Main.rand.Next(4) == 0)
                 {
@@ -81,9 +81,9 @@ namespace tsorcRevamp.Items
                 }
             }
 
-            if (player.itemTime >= (int)(item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, item)) / 2)
+            if (player.itemTime >= (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
             {
-                item.useStyle = ItemUseStyleID.HoldingOut;
+                Item.useStyle = ItemUseStyleID.Shoot;
             }
 
             if (player.itemTime == 1)
@@ -121,8 +121,8 @@ namespace tsorcRevamp.Items
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
 
-                if (item.stack == 1) item.TurnToAir();
-                else item.stack--;
+                if (Item.stack == 1) Item.TurnToAir();
+                else Item.stack--;
                 //}
                 //else
                 //{
@@ -134,19 +134,19 @@ namespace tsorcRevamp.Items
 
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
-            Lighting.AddLight(item.Center, 0.2f, 0.2f, 0.35f);
+            Lighting.AddLight(Item.Center, 0.2f, 0.2f, 0.35f);
 
             if (Main.rand.Next(35) == 0)
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(item.position.X, item.position.Y), 14, 14, 68, item.velocity.X, item.velocity.Y, 100, default, Main.rand.NextFloat(.4f, .8f))];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X, Item.position.Y), 14, 14, 68, Item.velocity.X, Item.velocity.Y, 100, default, Main.rand.NextFloat(.4f, .8f))];
                 dust.velocity *= 0f;
                 dust.noGravity = true;
                 dust.fadeIn = 1.3f;
             }
 
             Color color = Color.White * 0.8f;
-            Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 2f),
+            Texture2D texture = Main.itemTexture[Item.type];
+            spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
                 new Rectangle(0, 0, texture.Width, texture.Height), color, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
         }
     }

@@ -14,26 +14,26 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Yellow;
-            item.damage = 50;
-            item.height = 64;
-            item.width = 64;
-            item.knockBack = 14f;
-            item.melee = true;
-            item.autoReuse = true;
-            item.useAnimation = 21;
-            item.useTime = 21;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Yellow_8;
+            Item.rare = ItemRarityID.Yellow;
+            Item.damage = 50;
+            Item.height = 64;
+            Item.width = 64;
+            Item.knockBack = 14f;
+            Item.melee = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 21;
+            Item.useTime = 21;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Yellow_8;
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Excalibur, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 5);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 85000);
+            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 85000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
@@ -70,8 +70,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 baseTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.UltimaWeapon];
             }
 
-            spriteBatch.Draw(baseTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);            
-            spriteBatch.Draw(glowTexture, item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(item.width / 2, item.height / 2), item.scale, SpriteEffects.None, 0.1f);            
+            spriteBatch.Draw(baseTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);            
+            spriteBatch.Draw(glowTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);            
 
             return false;
         }

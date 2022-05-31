@@ -9,13 +9,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
     public class DarkLaserHost : ModProjectile {
 
         public override void SetDefaults() {
-            projectile.aiStyle = 0;
-            projectile.height = 16;
-            projectile.scale = 1.2f;
-            projectile.tileCollide = false;
-            projectile.width = 16;
-            projectile.hostile = false;
-            projectile.timeLeft = 1300;
+            Projectile.aiStyle = 0;
+            Projectile.height = 16;
+            Projectile.scale = 1.2f;
+            Projectile.tileCollide = false;
+            Projectile.width = 16;
+            Projectile.hostile = false;
+            Projectile.timeLeft = 1300;
         }
 
         bool instantiated = false;
@@ -29,14 +29,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 InstantiateLaser();
                 instantiated = true;
             }
-            projectile.Center = Main.npc[(int)projectile.ai[0]].Center;
+            Projectile.Center = Main.npc[(int)Projectile.ai[0]].Center;
 
             RotationProgress += 0.005f;
             for (int i = 0; i < DarkLasers.Length; i++)
             {
-                Dust.NewDustPerfect(projectile.Center, 54, new Vector2(8, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5))).noGravity = true;
-                DarkLasers[i].LaserOrigin = projectile.Center;
-                DarkLasers[i].LaserTarget = projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
+                Dust.NewDustPerfect(Projectile.Center, 54, new Vector2(8, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5))).noGravity = true;
+                DarkLasers[i].LaserOrigin = Projectile.Center;
+                DarkLasers[i].LaserTarget = Projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
             }
 
         }
@@ -49,9 +49,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             {
                 if (DarkLasers[i] == null)
                 {
-                    DarkLasers[i] = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), projectile.damage, .5f, Main.myPlayer).modProjectile;
-                    DarkLasers[i].LaserOrigin = projectile.Center;
-                    DarkLasers[i].LaserTarget = projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
+                    DarkLasers[i] = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), Projectile.damage, .5f, Main.myPlayer).ModProjectile;
+                    DarkLasers[i].LaserOrigin = Projectile.Center;
+                    DarkLasers[i].LaserTarget = Projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
                     DarkLasers[i].TelegraphTime = 300;
                     DarkLasers[i].MaxCharge = 240;
                     DarkLasers[i].FiringDuration = 940;
@@ -63,7 +63,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {         
             return false;
         }

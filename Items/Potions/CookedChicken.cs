@@ -10,17 +10,17 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void SetDefaults() {
-            item.consumable = true;
-            item.useAnimation = 17;
-            item.UseSound= SoundID.Item2;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useTime = 17;
-            item.height = 16;
-            item.maxStack = 100;
-            item.scale = 1;
-            item.value = 2;
-            item.width = 20;
-            item.healLife = 100;
+            Item.consumable = true;
+            Item.useAnimation = 17;
+            Item.UseSound= SoundID.Item2;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useTime = 17;
+            Item.height = 16;
+            Item.maxStack = 100;
+            Item.scale = 1;
+            Item.value = 2;
+            Item.width = 20;
+            Item.healLife = 100;
         }
 
 
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Potions {
             return true;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
 
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
@@ -47,8 +47,8 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DeadChicken"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("DeadChicken"), 1);
             recipe.AddTile(TileID.CookingPots);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

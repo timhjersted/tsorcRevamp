@@ -11,25 +11,25 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void SetDefaults() {
-            item.ranged = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
-            item.channel = true;
+            Item.ranged = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
+            Item.channel = true;
 
-            item.damage = 795; 
-            item.width = 24;
-            item.height = 48;
-            item.useTime = 48; 
-            item.useAnimation = 48;
-            item.reuseDelay = 4;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noMelee = true;
-            item.noUseGraphic = true;
-            item.knockBack = 4f;
-            item.value = PriceByRarity.Purple_11;
-            item.rare = ItemRarityID.Purple;
-            item.UseSound = SoundID.Item7;
+            Item.damage = 795; 
+            Item.width = 24;
+            Item.height = 48;
+            Item.useTime = 48; 
+            Item.useAnimation = 48;
+            Item.reuseDelay = 4;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
+            Item.knockBack = 4f;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
+            Item.UseSound = SoundID.Item7;
 
-            item.shootSpeed = 24f;
+            Item.shootSpeed = 24f;
 
             //item.useAmmo = AmmoID.Arrow; //dont do this! it'll just shoot the arrow instead of using the bow draw animation.
             //TODO investigate displaying the ammo count on the bow
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<SagittariusBow>(), 1);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 15);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);

@@ -7,33 +7,33 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles {
     class DeathStrike : ModProjectile {
 		public override void SetDefaults() {
-			projectile.friendly = true;
-			projectile.height = 16;
-			projectile.magic = true;
-			projectile.penetrate = 8;
-			projectile.tileCollide = true;
-			projectile.width = 16;
-			projectile.timeLeft = 1;
+			Projectile.friendly = true;
+			Projectile.height = 16;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.penetrate = 8;
+			Projectile.tileCollide = true;
+			Projectile.width = 16;
+			Projectile.timeLeft = 1;
 
 		}
 
 		public override void AI() {
 
-			Lighting.AddLight(projectile.Center, Color.Purple.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+			Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
 			if (Main.rand.Next(3) == 1)
 			{
-				Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.CrystalPulse2, projectile.velocity.X, projectile.velocity.Y);
-				Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.PortalBolt, projectile.velocity.X, projectile.velocity.Y);
+				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CrystalPulse2, Projectile.velocity.X, Projectile.velocity.Y);
+				Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PortalBolt, Projectile.velocity.X, Projectile.velocity.Y);
 			}
 
 
-			if (projectile.soundDelay == 0 && Math.Abs(projectile.velocity.X) + Math.Abs(projectile.velocity.Y) > 2f) {
-				projectile.soundDelay = 10;
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
+			if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
+				Projectile.soundDelay = 10;
+				Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
 			}
-			Vector2 arg_2675_0 = new Vector2(projectile.position.X, projectile.position.Y);
-			int arg_2675_1 = projectile.width;
-			int arg_2675_2 = projectile.height;
+			Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+			int arg_2675_1 = Projectile.width;
+			int arg_2675_2 = Projectile.height;
 			int arg_2675_3 = 15;
 			float arg_2675_4 = 0f;
 			float arg_2675_5 = 0f;
@@ -42,13 +42,13 @@ namespace tsorcRevamp.Projectiles {
 			int num47 = Dust.NewDust(arg_2675_0, arg_2675_1, arg_2675_2, arg_2675_3, arg_2675_4, arg_2675_5, arg_2675_6, newColor, 2f);
 			Dust expr_2684 = Main.dust[num47];
 			expr_2684.velocity *= 0.3f;
-			Main.dust[num47].position.X = projectile.position.X + (float)(projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
-			Main.dust[num47].position.Y = projectile.position.Y + (float)(projectile.height / 2) + (float)Main.rand.Next(-4, 5);
+			Main.dust[num47].position.X = Projectile.position.X + (float)(Projectile.width / 2) + 4f + (float)Main.rand.Next(-4, 5);
+			Main.dust[num47].position.Y = Projectile.position.Y + (float)(Projectile.height / 2) + (float)Main.rand.Next(-4, 5);
 			Main.dust[num47].noGravity = true;
-			if (Main.myPlayer == projectile.owner && projectile.ai[0] == 0f) {
-				if (Main.player[projectile.owner].channel) {
+			if (Main.myPlayer == Projectile.owner && Projectile.ai[0] == 0f) {
+				if (Main.player[Projectile.owner].channel) {
 					float num48 = 12f;
-					Vector2 vector6 = new Vector2(projectile.position.X + (float)projectile.width * 0.5f, projectile.position.Y + (float)projectile.height * 0.5f);
+					Vector2 vector6 = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
 					float num49 = (float)Main.mouseX + Main.screenPosition.X - vector6.X;
 					float num50 = (float)Main.mouseY + Main.screenPosition.Y - vector6.Y;
 					float num51 = (float)Math.Sqrt((double)(num49 * num49 + num50 * num50));
@@ -58,83 +58,83 @@ namespace tsorcRevamp.Projectiles {
 						num49 *= num51;
 						num50 *= num51;
 						int num52 = (int)(num49 * 1000f);
-						int num53 = (int)(projectile.velocity.X * 1000f);
+						int num53 = (int)(Projectile.velocity.X * 1000f);
 						int num54 = (int)(num50 * 1000f);
-						int num55 = (int)(projectile.velocity.Y * 1000f);
+						int num55 = (int)(Projectile.velocity.Y * 1000f);
 						if (num52 != num53 || num54 != num55) {
-							projectile.netUpdate = true;
+							Projectile.netUpdate = true;
 						}
-						projectile.velocity.X = num49;
-						projectile.velocity.Y = num50;
+						Projectile.velocity.X = num49;
+						Projectile.velocity.Y = num50;
 					}
 					else {
 						int num56 = (int)(num49 * 1000f);
-						int num57 = (int)(projectile.velocity.X * 1000f);
+						int num57 = (int)(Projectile.velocity.X * 1000f);
 						int num58 = (int)(num50 * 1000f);
-						int num59 = (int)(projectile.velocity.Y * 1000f);
+						int num59 = (int)(Projectile.velocity.Y * 1000f);
 						if (num56 != num57 || num58 != num59) {
-							projectile.netUpdate = true;
+							Projectile.netUpdate = true;
 						}
-						projectile.velocity.X = num49;
-						projectile.velocity.Y = num50;
+						Projectile.velocity.X = num49;
+						Projectile.velocity.Y = num50;
 					}
 				}
 				else {
-					if (projectile.ai[0] == 0f) {
-						projectile.ai[0] = 1f;
-						projectile.netUpdate = true;
+					if (Projectile.ai[0] == 0f) {
+						Projectile.ai[0] = 1f;
+						Projectile.netUpdate = true;
 						float num60 = 12f;
-						Vector2 vector7 = new Vector2(projectile.position.X + (float)projectile.width * 0.5f, projectile.position.Y + (float)projectile.height * 0.5f);
+						Vector2 vector7 = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
 						float num61 = (float)Main.mouseX + Main.screenPosition.X - vector7.X;
 						float num62 = (float)Main.mouseY + Main.screenPosition.Y - vector7.Y;
 						float num63 = (float)Math.Sqrt((double)(num61 * num61 + num62 * num62));
 						if (num63 == 0f) {
-							vector7 = new Vector2(Main.player[projectile.owner].position.X + (float)(Main.player[projectile.owner].width / 2), Main.player[projectile.owner].position.Y + (float)(Main.player[projectile.owner].height / 2));
-							num61 = projectile.position.X + (float)projectile.width * 0.5f - vector7.X;
-							num62 = projectile.position.Y + (float)projectile.height * 0.5f - vector7.Y;
+							vector7 = new Vector2(Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2), Main.player[Projectile.owner].position.Y + (float)(Main.player[Projectile.owner].height / 2));
+							num61 = Projectile.position.X + (float)Projectile.width * 0.5f - vector7.X;
+							num62 = Projectile.position.Y + (float)Projectile.height * 0.5f - vector7.Y;
 							num63 = (float)Math.Sqrt((double)(num61 * num61 + num62 * num62));
 						}
 						num63 = num60 / num63;
 						num61 *= num63;
 						num62 *= num63;
-						projectile.velocity.X = num61;
-						projectile.velocity.Y = num62;
-						if (projectile.velocity.X == 0f && projectile.velocity.Y == 0f) {
-							projectile.Kill();
+						Projectile.velocity.X = num61;
+						Projectile.velocity.Y = num62;
+						if (Projectile.velocity.X == 0f && Projectile.velocity.Y == 0f) {
+							Projectile.Kill();
 						}
 					}
 				}
 			}
-			if (projectile.type == 34) {
-				projectile.rotation += 0.3f * (float)projectile.direction;
+			if (Projectile.type == 34) {
+				Projectile.rotation += 0.3f * (float)Projectile.direction;
 			}
 			else {
-				if (projectile.velocity.X != 0f || projectile.velocity.Y != 0f) {
-					projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) - 2.355f;
+				if (Projectile.velocity.X != 0f || Projectile.velocity.Y != 0f) {
+					Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) - 2.355f;
 				}
 			}
-			if (projectile.velocity.Y > 16f) {
-				projectile.velocity.Y = 16f;
+			if (Projectile.velocity.Y > 16f) {
+				Projectile.velocity.Y = 16f;
 				return;
 			}
 		}
 
 		public override void Kill(int timeLeft) {
-			if (!projectile.active) {
+			if (!Projectile.active) {
 				return;
 			}
-			projectile.timeLeft = 0;
+			Projectile.timeLeft = 0;
 			{
-				Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-				if (projectile.position.X + (float)(projectile.width / 2) > Main.player[projectile.owner].position.X + (float)(Main.player[projectile.owner].width / 2)) {
-					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), projectile.damage, 4f, projectile.owner);
+				Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+				if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2)) {
+					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
 				}
 				else {
-					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -4), projectile.position.Y + (float)(projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), projectile.damage, 4f, projectile.owner);
+					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
 				}
-				Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int arg_1394_1 = projectile.width;
-				int arg_1394_2 = projectile.height;
+				Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int arg_1394_1 = Projectile.width;
+				int arg_1394_2 = Projectile.height;
 				int arg_1394_3 = 15;
 				float arg_1394_4 = 0f;
 				float arg_1394_5 = 0f;
@@ -144,9 +144,9 @@ namespace tsorcRevamp.Projectiles {
 				Main.dust[num41].noGravity = true;
 				Dust expr_13B1 = Main.dust[num41];
 				expr_13B1.velocity *= 2f;
-				Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int arg_1422_1 = projectile.width;
-				int arg_1422_2 = projectile.height;
+				Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int arg_1422_1 = Projectile.width;
+				int arg_1422_2 = Projectile.height;
 				int arg_1422_3 = 15;
 				float arg_1422_4 = 0f;
 				float arg_1422_5 = 0f;
@@ -154,7 +154,7 @@ namespace tsorcRevamp.Projectiles {
 				newColor = default(Color);
 				num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
 			}
-			projectile.active = false;
+			Projectile.active = false;
 		}
 
 	}

@@ -11,11 +11,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 12;
-            item.defense = 30;
-            item.value = 21000;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 30;
+            Item.value = 21000;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)

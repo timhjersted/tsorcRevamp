@@ -17,48 +17,48 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
-			npc.aiStyle = 22;
-			npc.npcSlots = 5;
-			Main.npcFrameCount[npc.type] = 3;
+			NPC.aiStyle = 22;
+			NPC.npcSlots = 5;
+			Main.npcFrameCount[NPC.type] = 3;
 			animationType = -1; //was 60
-			npc.width = 30;
-			npc.height = 80;
-			npc.damage = 82;
-			npc.defense = 18;
-			npc.aiStyle = -1;//22;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.lifeMax = 400;
-			npc.friendly = false;
-			npc.noTileCollide = true;
-			npc.lavaImmune = true;
-			npc.noGravity = true;
-			npc.knockBackResist = 0f;
-			npc.alpha = 70; // was 100
-			npc.value = 500;
-			banner = npc.type;
+			NPC.width = 30;
+			NPC.height = 80;
+			NPC.damage = 82;
+			NPC.defense = 18;
+			NPC.aiStyle = -1;//22;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.lifeMax = 400;
+			NPC.friendly = false;
+			NPC.noTileCollide = true;
+			NPC.lavaImmune = true;
+			NPC.noGravity = true;
+			NPC.knockBackResist = 0f;
+			NPC.alpha = 70; // was 100
+			NPC.value = 500;
+			banner = NPC.type;
 			
 			//bannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
 
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				npc.lifeMax = 3660;
-				npc.defense = 67;
-				npc.value = 16500;
-				npc.damage = 295;
-				npc.knockBackResist = 0.0f;
+				NPC.lifeMax = 3660;
+				NPC.defense = 67;
+				NPC.value = 16500;
+				NPC.damage = 295;
+				NPC.knockBackResist = 0.0f;
 				crystalFireDamage = 95;
 			}
 
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
-			npc.buffImmune[BuffID.Poisoned] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.OnFire] = true;
+			NPC.buffImmune[BuffID.Poisoned] = true;
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 			crystalFireDamage = (int)(crystalFireDamage / 2);
 		}
 
@@ -68,13 +68,13 @@ namespace tsorcRevamp.NPCs.Enemies
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player p = spawnInfo.player;
+			Player p = spawnInfo.Player;
 
 			//Ensuring it can't spawn if two already exist.
 			int count = 0;
 			for(int i = 0; i < Main.npc.Length; i++)
             {
-				if(Main.npc[i].type == npc.type)
+				if(Main.npc[i].type == NPC.type)
                 {
 					count++;
 					if(count > 1)
@@ -84,16 +84,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 			
-			bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHoly && !p.ZoneMeteor && !p.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-			bool sky = nospecialbiome && ((double)spawnInfo.spawnTileY < Main.worldSurface * 0.44999998807907104);
-			bool surface = nospecialbiome && !sky && (spawnInfo.spawnTileY <= Main.worldSurface);
-			bool underground = nospecialbiome && !surface && (spawnInfo.spawnTileY <= Main.rockLayer);
+			bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
+			bool sky = nospecialbiome && ((double)spawnInfo.SpawnTileY < Main.worldSurface * 0.44999998807907104);
+			bool surface = nospecialbiome && !sky && (spawnInfo.SpawnTileY <= Main.worldSurface);
+			bool underground = nospecialbiome && !surface && (spawnInfo.SpawnTileY <= Main.rockLayer);
 			bool underworld = (p.ZoneUnderworldHeight);
 			
-			bool cavern = nospecialbiome && (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25);
-			bool undergroundJungle = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
-			bool undergroundEvil = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
-			bool undergroundHoly = (spawnInfo.spawnTileY >= Main.rockLayer) && (spawnInfo.spawnTileY <= Main.rockLayer * 25) && p.ZoneHoly;
+			bool cavern = nospecialbiome && (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25);
+			bool undergroundJungle = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
+			bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
+			bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
 						
 			if (underworld && Main.rand.Next(15) == 0) return 1;
 			else if (underworld && Main.hardMode && Main.rand.Next(1000) == 0) return 1;
@@ -106,18 +106,18 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 
 			//I don't know why this is multiplied by its scale, don't even ask. Its scale is 1, so this doesn't even do anything.
-			customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+			customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
 			
 
 
-			if (npc.life > 200)
+			if (NPC.life > 200)
 			{
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Fire, npc.velocity.X, npc.velocity.Y, 200, Color.Violet, 2f);
+				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
 				Main.dust[dust].noGravity = true;
 			}
-			else if (npc.life <= 200)
+			else if (NPC.life <= 200)
 			{
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Fire, npc.velocity.X, npc.velocity.Y, 200, Color.Violet, 3f);
+				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
 				Main.dust[dust].noGravity = true;
 			}
 
@@ -126,16 +126,16 @@ namespace tsorcRevamp.NPCs.Enemies
             if (customAi1 >= 10f)
 			{
 
-				npc.TargetClosest(true);
-				if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+				NPC.TargetClosest(true);
+				if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
 				{
 					if (Main.rand.Next(80) == 1) //was 30
 					{
 						float num48 = 6f; //was 8
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
 							num51 = num48 / num51;
@@ -145,18 +145,18 @@ namespace tsorcRevamp.NPCs.Enemies
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 120;
 							//Main.projectile[num54].aiStyle = 4;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 					if (Main.rand.Next(90) == 1)
 					{
 						float num48 = 6f;
-						Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-						float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 50) / 100;
-						float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 50) / 100;
-						if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+						Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+						float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-50, 50) / 100;
+						float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-50, 50) / 100;
+						if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
 						{
 
 							float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
@@ -168,27 +168,27 @@ namespace tsorcRevamp.NPCs.Enemies
 							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crystalFireDamage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 150;
 							//Main.projectile[num54].aiStyle = 19;
-							Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Main.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 							customAi1 = 1f;
 						}
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 				}
 			}
 			#endregion 
-			if (npc.justHit)
+			if (NPC.justHit)
 			{
-				npc.ai[2] = 0f;
+				NPC.ai[2] = 0f;
 
 
 				Color color = new Color();
-				int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
+				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
-				dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
+				dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
-				dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
+				dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
-				dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
+				dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
 
 
@@ -202,7 +202,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			//npc.ai[0] = a snapshot of its X position at some point in time
 			//npc.ai[1] = a snapshot of its Y position at some point in time
 			//npc.ai[2] = Counts up every frame to 60, then drops to 200
-			if (npc.ai[2] >= 0f)
+			if (NPC.ai[2] >= 0f)
 			{
 
 				int strayLimit = 16;
@@ -212,13 +212,13 @@ namespace tsorcRevamp.NPCs.Enemies
 				bool flag27 = false;
 
 				//If it HAS NOT moved 16 units left or right since ai[0] was last set to its position
-				if (npc.position.X > (npc.ai[0] - (float)strayLimit) && npc.position.X < (npc.ai[0] + (float)strayLimit))
+				if (NPC.position.X > (NPC.ai[0] - (float)strayLimit) && NPC.position.X < (NPC.ai[0] + (float)strayLimit))
 				{
 					flag26 = true;
 				}
 				else
 				{	//If the direction it's facing and the direction it's moving are different
-					if ((npc.velocity.X < 0f && npc.direction > 0) || (npc.velocity.X > 0f && npc.direction < 0))
+					if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
 					{
 						flag26 = true;
 					}
@@ -227,7 +227,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 				//
 				//If it is within 40 tiles of where npc.ai[1] was last set to
-				if (npc.position.Y > npc.ai[1] - (float)strayLimit && npc.position.Y < npc.ai[1] + (float)strayLimit)
+				if (NPC.position.Y > NPC.ai[1] - (float)strayLimit && NPC.position.Y < NPC.ai[1] + (float)strayLimit)
 				{
 					flag27 = true;
 				}
@@ -235,48 +235,48 @@ namespace tsorcRevamp.NPCs.Enemies
 				//If both of these are true
 				if (flag26 && flag27)
 				{
-					npc.ai[2] += 1f;
+					NPC.ai[2] += 1f;
 
-					if (npc.ai[2] >= 30f && strayLimit == 16)
+					if (NPC.ai[2] >= 30f && strayLimit == 16)
 					{
 						//This will NEVER be true, since num258 gets set to 40 first.
 						flag25 = true;
 					}
 
 					//Once it hits 60, turn the NPC around and set it back to -200
-					if (npc.ai[2] >= 60f)
+					if (NPC.ai[2] >= 60f)
 					{
-						npc.ai[2] = -200f;
-						npc.direction *= -1;
-						npc.velocity.X = npc.velocity.X * -1f;
-						npc.collideX = false;
+						NPC.ai[2] = -200f;
+						NPC.direction *= -1;
+						NPC.velocity.X = NPC.velocity.X * -1f;
+						NPC.collideX = false;
 					}
 				}
 				else
 				{
-					npc.ai[0] = npc.position.X;
-					npc.ai[1] = npc.position.Y;
-					npc.ai[2] = 0f;
+					NPC.ai[0] = NPC.position.X;
+					NPC.ai[1] = NPC.position.Y;
+					NPC.ai[2] = 0f;
 				}
-				npc.TargetClosest(true);
+				NPC.TargetClosest(true);
 			}
 			else
 			{
-				npc.ai[2] += 1f;
-				if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
+				NPC.ai[2] += 1f;
+				if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
 				{
-					npc.direction = -1;
+					NPC.direction = -1;
 				}
 				else
 				{
-					npc.direction = 1;
+					NPC.direction = 1;
 				}
 			}
 
 			//The centered X position of it
-			int centeredXInTiles = (int)((npc.position.X + (float)(npc.width / 2)) / 16f) + npc.direction * 2;
+			int centeredXInTiles = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
 			//The centered Y position of it
-			int centeredYInTiles = (int)((npc.position.Y + (float)npc.height) / 16f);
+			int centeredYInTiles = (int)((NPC.position.Y + (float)NPC.height) / 16f);
 			bool isNotAboveSolidTile = true;
 			//Literally nothing! This bool literally just exists to make this even harder to read. It gets set a few times, but never checked or used at all. For sanity's sake, i'm commenting them all out.
 			//bool flag29 = false;
@@ -288,7 +288,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					Main.tile[centeredXInTiles, tileIterator] = new Tile();
 				}
-				if ((Main.tile[centeredXInTiles, tileIterator].active() && Main.tileSolid[(int)Main.tile[centeredXInTiles, tileIterator].type]) || Main.tile[centeredXInTiles, tileIterator].liquid > 0)
+				if ((Main.tile[centeredXInTiles, tileIterator].HasTile && Main.tileSolid[(int)Main.tile[centeredXInTiles, tileIterator].TileType]) || Main.tile[centeredXInTiles, tileIterator].liquid > 0)
 				{
 					/**if (num269 <= num260 + 1)
 				//	{
@@ -309,177 +309,177 @@ namespace tsorcRevamp.NPCs.Enemies
 			//If flag 28, then accelerate it down in the Y direction
 			if (isNotAboveSolidTile)
 			{
-				npc.velocity.Y = npc.velocity.Y + 0.1f;
-				if (npc.velocity.Y > 3f)
+				NPC.velocity.Y = NPC.velocity.Y + 0.1f;
+				if (NPC.velocity.Y > 3f)
 				{
-					npc.velocity.Y = 3f;
+					NPC.velocity.Y = 3f;
 				}
 			}
 			else
 			{
-				if (npc.directionY < 0 && npc.velocity.Y > 0f)
+				if (NPC.directionY < 0 && NPC.velocity.Y > 0f)
 				{
-					npc.velocity.Y = npc.velocity.Y - 0.1f;
+					NPC.velocity.Y = NPC.velocity.Y - 0.1f;
 				}
-				if (npc.velocity.Y < -4f)
+				if (NPC.velocity.Y < -4f)
 				{
-					npc.velocity.Y = -4f;
+					NPC.velocity.Y = -4f;
 				}
 			}
 			//CollideX will always be false, this will never run!!
-			if (npc.collideX)
+			if (NPC.collideX)
 			{
-				npc.velocity.X = npc.oldVelocity.X * -0.4f;
-				if (npc.direction == -1 && npc.velocity.X > 0f && npc.velocity.X < 1f)
+				NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
+				if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
 				{
-					npc.velocity.X = 1f;
+					NPC.velocity.X = 1f;
 				}
-				if (npc.direction == 1 && npc.velocity.X < 0f && npc.velocity.X > -1f)
+				if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
 				{
-					npc.velocity.X = -1f;
+					NPC.velocity.X = -1f;
 				}
 			}
-			if (npc.collideY)
+			if (NPC.collideY)
 			{
-				npc.velocity.Y = npc.oldVelocity.Y * -0.25f;
-				if (npc.velocity.Y > 0f && npc.velocity.Y < 1f)
+				NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
+				if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
 				{
-					npc.velocity.Y = 1f;
+					NPC.velocity.Y = 1f;
 				}
-				if (npc.velocity.Y < 0f && npc.velocity.Y > -1f)
+				if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
 				{
-					npc.velocity.Y = -1f;
+					NPC.velocity.Y = -1f;
 				}
 			}
 
 
 			float speedLimit = 2f;
-			if (npc.direction == -1 && npc.velocity.X > -speedLimit)
+			if (NPC.direction == -1 && NPC.velocity.X > -speedLimit)
 			{
 
-				npc.velocity.X = npc.velocity.X - 0.1f;
+				NPC.velocity.X = NPC.velocity.X - 0.1f;
 
-				if (npc.velocity.X > speedLimit)
+				if (NPC.velocity.X > speedLimit)
 				{
 
-					npc.velocity.X = npc.velocity.X - 0.1f;
+					NPC.velocity.X = NPC.velocity.X - 0.1f;
 
 				}
 				else
 				{
-					if (npc.velocity.X > 0f)
+					if (NPC.velocity.X > 0f)
 					{
-						npc.velocity.X = npc.velocity.X + 0.05f;
+						NPC.velocity.X = NPC.velocity.X + 0.05f;
 
 					}
 				}
-				if (npc.velocity.X < -speedLimit)
+				if (NPC.velocity.X < -speedLimit)
 				{
-					npc.velocity.X = -speedLimit;
+					NPC.velocity.X = -speedLimit;
 
 				}
 			}
 			else
 			{
-				if (npc.direction == 1 && npc.velocity.X < speedLimit)
+				if (NPC.direction == 1 && NPC.velocity.X < speedLimit)
 				{
-					npc.velocity.X = npc.velocity.X + 0.1f;
-					if (npc.velocity.X < -speedLimit)
+					NPC.velocity.X = NPC.velocity.X + 0.1f;
+					if (NPC.velocity.X < -speedLimit)
 					{
-						npc.velocity.X = npc.velocity.X + 0.1f;
+						NPC.velocity.X = NPC.velocity.X + 0.1f;
 					}
 					else
 					{
-						if (npc.velocity.X < 0f)
+						if (NPC.velocity.X < 0f)
 						{
-							npc.velocity.X = npc.velocity.X - 0.05f;
+							NPC.velocity.X = NPC.velocity.X - 0.05f;
 						}
 					}
-					if (npc.velocity.X > speedLimit)
+					if (NPC.velocity.X > speedLimit)
 					{
-						npc.velocity.X = speedLimit;
+						NPC.velocity.X = speedLimit;
 					}
 				}
 			}
-			if (npc.directionY == -1 && (double)npc.velocity.Y > -1.5)
+			if (NPC.directionY == -1 && (double)NPC.velocity.Y > -1.5)
 			{
-				npc.velocity.Y = npc.velocity.Y - 0.04f;
-				if ((double)npc.velocity.Y > 1.5)
+				NPC.velocity.Y = NPC.velocity.Y - 0.04f;
+				if ((double)NPC.velocity.Y > 1.5)
 				{
-					npc.velocity.Y = npc.velocity.Y - 0.05f;
+					NPC.velocity.Y = NPC.velocity.Y - 0.05f;
 				}
 				else
 				{
-					if (npc.velocity.Y > 0f)
+					if (NPC.velocity.Y > 0f)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.03f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.03f;
 					}
 				}
-				if ((double)npc.velocity.Y < -1.5)
+				if ((double)NPC.velocity.Y < -1.5)
 				{
-					npc.velocity.Y = -1.5f;
+					NPC.velocity.Y = -1.5f;
 				}
 			}
 			else
 			{
-				if (npc.directionY == 1 && (double)npc.velocity.Y < 1.5)
+				if (NPC.directionY == 1 && (double)NPC.velocity.Y < 1.5)
 				{
-					npc.velocity.Y = npc.velocity.Y + 0.04f;
-					if ((double)npc.velocity.Y < -1.5)
+					NPC.velocity.Y = NPC.velocity.Y + 0.04f;
+					if ((double)NPC.velocity.Y < -1.5)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.05f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.05f;
 					}
 					else
 					{
-						if (npc.velocity.Y < 0f)
+						if (NPC.velocity.Y < 0f)
 						{
-							npc.velocity.Y = npc.velocity.Y - 0.03f;
+							NPC.velocity.Y = NPC.velocity.Y - 0.03f;
 						}
 					}
-					if ((double)npc.velocity.Y > 1.5)
+					if ((double)NPC.velocity.Y > 1.5)
 					{
-						npc.velocity.Y = 1.5f;
+						NPC.velocity.Y = 1.5f;
 					}
 				}
 			}
             #endregion
 
-            Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0.25f);
+            Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0.25f);
 			return;
 		}
 		#endregion
 
 		#region Gore
-		public override void NPCLoot()
+		public override void OnKill()
 		{
 
 			//UsefulFunctions.BroadcastText("A demon elemental has faded from existence...", 175, 75, 255);
 
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore1"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore2"), 1.1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/DemonElementalGore3"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/DemonElementalGore1"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/DemonElementalGore2"), 1.1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/DemonElementalGore3"), 1.1f);
 
 
-			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-			if (npc.life <= 0)
+			Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+			if (NPC.life <= 0)
 			{
 				for (int num36 = 0; num36 < 50; num36++)
 				{
 					{
 						Color color = new Color();
-						int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.UnholyWater, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+						int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.UnholyWater, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 						Main.dust[dust].noGravity = true;
-						dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+						dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 						Main.dust[dust].noGravity = true;
-						dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.Wraith, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+						dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 						Main.dust[dust].noGravity = true;
-						dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
+						dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.PurpleTorch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
 						Main.dust[dust].noGravity = true;
 					}
 				}
 
-				if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.Heart, 1);
-				if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.Heart, 1);
+				if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
+				if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
 			}
 		}
 		#endregion
@@ -490,26 +490,26 @@ namespace tsorcRevamp.NPCs.Enemies
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}
-			if (npc.velocity.X < 0)
+			if (NPC.velocity.X < 0)
 			{
-				npc.spriteDirection = -1;
+				NPC.spriteDirection = -1;
 			}
 			else
 			{
-				npc.spriteDirection = 1;
+				NPC.spriteDirection = 1;
 			}
-			npc.rotation = npc.velocity.X * 0.08f;
-			npc.frameCounter += 1.0;
-			if (npc.frameCounter >= 8.0)
+			NPC.rotation = NPC.velocity.X * 0.08f;
+			NPC.frameCounter += 1.0;
+			if (NPC.frameCounter >= 8.0)
 			{
-				npc.frame.Y = npc.frame.Y + num;
-				npc.frameCounter = 0.0;
+				NPC.frame.Y = NPC.frame.Y + num;
+				NPC.frameCounter = 0.0;
 			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+			if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
 			{
-				npc.frame.Y = 0;
+				NPC.frame.Y = 0;
 			}
 		}
 		#endregion

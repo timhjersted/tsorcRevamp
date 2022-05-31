@@ -11,18 +11,18 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 12;
-            item.height = 12;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 5;
-            item.useTime = 5;
-            item.maxStack = 1;
-            item.consumable = false;
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 12;
+            Item.height = 12;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 5;
+            Item.useTime = 5;
+            Item.maxStack = 1;
+            Item.consumable = false;
         }
 
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             bool zoneJ = (player.position.X < 250 * 16 || player.position.X > (Main.maxTilesX - 250) * 16);
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) {
                 return false;
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.BossItems {
         public override void AddRecipes() {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                ModRecipe recipe = new ModRecipe(mod);
+                Recipe recipe = new Recipe(Mod);
                 
                 recipe.AddIngredient(ItemID.MythrilOre, 30);
                 recipe.AddIngredient(ItemID.Coral, 1);

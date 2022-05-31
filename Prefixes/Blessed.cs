@@ -39,7 +39,7 @@ namespace tsorcRevamp.Prefixes
 				return false;
 			}
 
-			mod.AddPrefix("Blessed", new Blessed(1));
+			Mod.AddPrefix("Blessed", new Blessed(1));
 			return false;
 		}
 

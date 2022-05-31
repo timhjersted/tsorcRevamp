@@ -12,15 +12,15 @@ namespace tsorcRevamp.Projectiles {
 
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Bow Holdout");
-            Main.projFrames[projectile.type] = 7;
-            ProjectileID.Sets.NeedsUUID[projectile.type] = true;
+            Main.projFrames[Projectile.type] = 7;
+            ProjectileID.Sets.NeedsUUID[Projectile.type] = true;
         }
 
         public override void SetDefaults() {
-            projectile.CloneDefaults(ProjectileID.LastPrism); //so the visual bow does no damage
-            projectile.width = 48;
-            projectile.height = 12;
-            projectile.friendly = false;
+            Projectile.CloneDefaults(ProjectileID.LastPrism); //so the visual bow does no damage
+            Projectile.width = 48;
+            Projectile.height = 12;
+            Projectile.friendly = false;
         }
 
         public override Color? GetAlpha(Color lightColor) {
@@ -29,26 +29,26 @@ namespace tsorcRevamp.Projectiles {
 
         public override void AI() {
             const int MAX_CHARGE_COUNT = 6;
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
             Vector2 playerHandPos = player.RotatedRelativePoint(player.MountedCenter);
             //update character visuals while idle
             {
-                projectile.Center = playerHandPos;
-                projectile.rotation = projectile.velocity.ToRotation() + (float)Math.PI / 2f;
-                player.heldProj = projectile.whoAmI;
-                player.itemRotation = (projectile.velocity * projectile.direction).ToRotation();
-                player.ChangeDir(projectile.direction);
+                Projectile.Center = playerHandPos;
+                Projectile.rotation = Projectile.velocity.ToRotation() + (float)Math.PI / 2f;
+                player.heldProj = Projectile.whoAmI;
+                player.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
+                player.ChangeDir(Projectile.direction);
             }
-            if (projectile.owner == Main.myPlayer) {
+            if (Projectile.owner == Main.myPlayer) {
                 //update character visuals while aiming
                 {
                     Vector2 aimVector = Vector2.Normalize(Main.MouseWorld - playerHandPos);
-                    aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(projectile.velocity), aimVector, 0.6f)); //taken straight from RedLaserBeam, thanks past me!
+                    aimVector = Vector2.Normalize(Vector2.Lerp(Vector2.Normalize(Projectile.velocity), aimVector, 0.6f)); //taken straight from RedLaserBeam, thanks past me!
                     aimVector *= 15;
-                    if (aimVector != projectile.velocity) {
-                        projectile.netUpdate = true; //update the bow visually to other players when we change aim
+                    if (aimVector != Projectile.velocity) {
+                        Projectile.netUpdate = true; //update the bow visually to other players when we change aim
                     }
-                    projectile.velocity = aimVector;
+                    Projectile.velocity = aimVector;
                 }
                 bool charging = player.channel && !player.noItems && !player.CCed; //not cursed or frozen, and holding lmb
                 int maxChargeTime; //for modifying the max charge time based on prefix
@@ -67,13 +67,13 @@ namespace tsorcRevamp.Projectiles {
                 if (charging) {
                     chargeTimer++;
                     if ((chargeTimer % chargeInterval == 0) && (chargeTimer <= maxChargeTime)) { //gain one charge every chargeInterval frames, up to max of MAX_CHARGE_COUNT
-                        projectile.frame++;
+                        Projectile.frame++;
                         charge++;
                     }
                 }
                 else { 
                     chargeTimer = 0;
-                    Vector2 bowVelocity = Vector2.Normalize(projectile.velocity);
+                    Vector2 bowVelocity = Vector2.Normalize(Projectile.velocity);
 
                     if (charge != 0) { //dont fire zero-velocity arrows, it looks silly
 
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles {
 
                             if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
                                 //the projectile damage math has to be cast like this for it to work! it wont work if you just cast the result! do not change it! 
-                                Projectile.NewProjectile(projectile.Center, projectileVelocity, ammoProjectileType, (int)(projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), projectile.knockBack, projectile.owner);
+                                Projectile.NewProjectile(Projectile.Center, projectileVelocity, ammoProjectileType, (int)(Projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), Projectile.knockBack, Projectile.owner);
                                 if (player.inventory[ammoLocation].type != ItemID.EndlessQuiver) {
                                     player.inventory[ammoLocation].stack--;
                                     if (player.inventory[ammoLocation].stack == 0) {
@@ -101,7 +101,7 @@ namespace tsorcRevamp.Projectiles {
                         Main.PlaySound(SoundID.Item5.WithVolume(0.8f), player.position);
                     }
                     charge = 0; //reset the charge
-                    projectile.Kill(); //and kill the bow so we dont keep shooting
+                    Projectile.Kill(); //and kill the bow so we dont keep shooting
                 }
             }
         }

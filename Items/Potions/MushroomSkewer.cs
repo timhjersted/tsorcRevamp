@@ -17,16 +17,16 @@ namespace tsorcRevamp.Items.Potions
 
         public override void SetDefaults()
         {
-            item.consumable = true;
-            item.useAnimation = 17;
-            item.UseSound = SoundID.Item2;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useTime = 17;
-            item.height = 44;
-            item.width = 44;
-            item.maxStack = 100;
-            item.scale = .6f;
-            item.value = 100;
+            Item.consumable = true;
+            Item.useAnimation = 17;
+            Item.UseSound = SoundID.Item2;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useTime = 17;
+            Item.height = 44;
+            Item.width = 44;
+            Item.maxStack = 100;
+            Item.scale = .6f;
+            Item.value = 100;
         }
 
 
@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Potions
             return true;
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Potions
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(ItemID.Mushroom, 1);
             recipe.AddTile(TileID.Campfire);

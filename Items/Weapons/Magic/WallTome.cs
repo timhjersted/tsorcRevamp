@@ -15,33 +15,33 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.stack = 1;
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 99;
-            item.rare = ItemRarityID.Green;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 50;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 35;
-            item.useAnimation = 35;
-            item.value = 8000;
-            item.consumable = true;
+            Item.stack = 1;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 99;
+            Item.rare = ItemRarityID.Green;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 50;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 35;
+            Item.useAnimation = 35;
+            Item.value = 8000;
+            Item.consumable = true;
 
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.IronskinPotion);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 600);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 600);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             player.AddBuff(ModContent.BuffType<Buffs.Wall>(), 1500, false);
             player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 5100); //85 seconds (60 seconds downtime)
             return true;

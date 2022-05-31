@@ -8,22 +8,22 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Freaking huge magical laser");
         }
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 2;
-            item.useTime = 1;
-            item.maxStack = 1;
-            item.damage = 170;
-            item.autoReuse = true;
-            item.rare = ItemRarityID.Red;
-            item.shootSpeed = 1;
-            item.mana = 3;
-            item.noMelee = true;
-            item.value = PriceByRarity.Red_10;
-            item.magic = true;
-            item.channel = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.MasterBuster>();
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 2;
+            Item.useTime = 1;
+            Item.maxStack = 1;
+            Item.damage = 170;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Red;
+            Item.shootSpeed = 1;
+            Item.mana = 3;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.magic = true;
+            Item.channel = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.MasterBuster>();
         }
     }
 }

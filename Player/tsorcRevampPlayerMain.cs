@@ -58,16 +58,16 @@ namespace tsorcRevamp
             if (oldClone == null) { return; }
 
             if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item)) {
-                SendSingleItemPacket(1, SoulSlot.Item, -1, player.whoAmI);
+                SendSingleItemPacket(1, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
 
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
 
             //Sync soul slot
-            ModPacket packet = mod.GetPacket();
+            ModPacket packet = Mod.GetPacket();
             packet.Write((byte)tsorcPacketID.SyncSoulSlot);
-            packet.Write((byte)player.whoAmI);
+            packet.Write((byte)Player.whoAmI);
             ItemIO.Send(SoulSlot.Item, packet);
             packet.Send(toWho, fromWho);
 
@@ -172,14 +172,14 @@ namespace tsorcRevamp
 
         private void SetDirection(bool resetForcedDirection) {
             if (!Main.dedServ && Main.gameMenu) {
-                player.direction = 1;
+                Player.direction = 1;
 
                 return;
             }
 
-            if (!player.pulley && (!player.mount.Active || player.mount.AllowDirectionChange) && (player.itemAnimation <= 1)) {
+            if (!Player.pulley && (!Player.mount.Active || Player.mount.AllowDirectionChange) && (Player.itemAnimation <= 1)) {
                 if (forcedDirection != 0) {
-                    player.direction = forcedDirection;
+                    Player.direction = forcedDirection;
 
                     if (resetForcedDirection) {
                         forcedDirection = 0;
@@ -188,7 +188,7 @@ namespace tsorcRevamp
             }
         }
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
-            if (player.HasBuff(ModContent.BuffType<Invincible>())) return false;
+            if (Player.HasBuff(ModContent.BuffType<Invincible>())) return false;
             /*
             player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             */
@@ -218,15 +218,15 @@ namespace tsorcRevamp
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            Projectile.NewProjectile(player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, player.whoAmI);
+            Projectile.NewProjectile(Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
             //Main.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
             //you died sound
-            Main.PlaySound(SoundLoader.customSoundType, (int)player.position.X, (int)player.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/you-died"), 0.3f, 0.0f);
+            Main.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/you-died"), 0.3f, 0.0f);
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.statLifeMax > 200)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.statLifeMax > 200)
             {
-                player.statLifeMax -= 20;
+                Player.statLifeMax -= 20;
             }
 
             
@@ -267,7 +267,7 @@ namespace tsorcRevamp
 
         public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
         {
-            if(player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
+            if(Player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
             {
                 if (PotionBagUIState.IsValidPotion(inventory[slot]))
                 {
@@ -296,9 +296,9 @@ namespace tsorcRevamp
                             {
                                 PotionBagItems[i].stack += item.stack;
                                 item.TurnToAir(); 
-                                if (Main.netMode == 1 && player.chest >= -1 && context == ItemSlot.Context.ChestItem)
+                                if (Main.netMode == 1 && Player.chest >= -1 && context == ItemSlot.Context.ChestItem)
                                 {
-                                    NetMessage.SendData(32, -1, -1, null, player.chest, slot);
+                                    NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
                                 }
                                 Main.PlaySound(SoundID.Grab);
                                 Main.PlaySound(SoundID.Item, Style: 8);
@@ -312,9 +312,9 @@ namespace tsorcRevamp
                         {
                             PotionBagItems[emptySlot.Value] = item.DeepClone();
                             item.TurnToAir();
-                            if (Main.netMode == 1 && player.chest >= -1 && context == ItemSlot.Context.ChestItem)
+                            if (Main.netMode == 1 && Player.chest >= -1 && context == ItemSlot.Context.ChestItem)
                             {
-                                NetMessage.SendData(32, -1, -1, null, player.chest, slot);
+                                NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
                             }
                             Main.PlaySound(SoundID.Grab);
                             Main.PlaySound(SoundID.Item, Style: 8);
@@ -327,13 +327,13 @@ namespace tsorcRevamp
                     {
                         for (int i = 0; i < 50; i++)
                         {
-                            if (player.inventory[i].type == 0 && emptySlot == null)
+                            if (Player.inventory[i].type == 0 && emptySlot == null)
                             {
                                 emptySlot = i;
                             }
-                            if (player.inventory[i].type == item.type && (player.inventory[i].stack + item.stack) <= player.inventory[i].maxStack)
+                            if (Player.inventory[i].type == item.type && (Player.inventory[i].stack + item.stack) <= Player.inventory[i].maxStack)
                             {
-                                player.inventory[i].stack += item.stack;
+                                Player.inventory[i].stack += item.stack;
                                 item.TurnToAir();                                
                                 Main.PlaySound(SoundID.Grab);
                                 Main.PlaySound(SoundID.Item, Style: 8);
@@ -343,7 +343,7 @@ namespace tsorcRevamp
 
                         if (emptySlot != null)
                         {
-                            player.inventory[emptySlot.Value] = item.DeepClone();
+                            Player.inventory[emptySlot.Value] = item.DeepClone();
                             item.TurnToAir(); 
                             Main.PlaySound(SoundID.Grab);
                             Main.PlaySound(SoundID.Item, Style: 8);
@@ -374,8 +374,8 @@ namespace tsorcRevamp
             {
                 if (Main.rand.Next(10) == 0)
                 {
-                    player.HealEffect(10);
-                    player.statLife += (10);
+                    Player.HealEffect(10);
+                    Player.statLife += (10);
 
                 }
             }
@@ -383,8 +383,8 @@ namespace tsorcRevamp
             {
                 if (Main.rand.Next(5) == 0)
                 {
-                    player.HealEffect(damage / 4);
-                    player.statLife += (damage / 4);
+                    Player.HealEffect(damage / 4);
+                    Player.statLife += (damage / 4);
                 }
             }
             if (MiakodaFull)
@@ -394,18 +394,18 @@ namespace tsorcRevamp
                     if (crit)
                     {
 
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
 
-                        int HealAmount = (int)((Math.Floor((double)(player.statLifeMax2 / 100)) * 2) + 2);
-                        player.statLife += HealAmount;
-                        player.HealEffect(HealAmount, false);
-                        if (player.statLife > player.statLifeMax2)
+                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * 2) + 2);
+                        Player.statLife += HealAmount;
+                        Player.HealEffect(HealAmount, false);
+                        if (Player.statLife > Player.statLifeMax2)
                         {
-                            player.statLife = player.statLifeMax2;
+                            Player.statLife = Player.statLifeMax2;
                         }
 
-                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
+                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -418,11 +418,11 @@ namespace tsorcRevamp
                 {
                     if (crit)
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
+                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -435,11 +435,11 @@ namespace tsorcRevamp
                 {
                     if (crit)
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
 
-                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), player.Center);
+                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -455,21 +455,21 @@ namespace tsorcRevamp
                 {
                     if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
 
 
 
                         //2 per 100 max hp, plus 2
-                        int HealAmount = (int)((Math.Floor((double)(player.statLifeMax2 / 100)) * 2) + 2);
-                        player.statLife += HealAmount;
-                        player.HealEffect(HealAmount, false);
-                        if (player.statLife > player.statLifeMax2)
+                        int HealAmount = (int)((Math.Floor((double)(Player.statLifeMax2 / 100)) * 2) + 2);
+                        Player.statLife += HealAmount;
+                        Player.HealEffect(HealAmount, false);
+                        if (Player.statLife > Player.statLifeMax2)
                         {
-                            player.statLife = player.statLifeMax2;
+                            Player.statLife = Player.statLifeMax2;
                         }
 
-                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), player.Center);
+                        Main.PlaySound(SoundID.Item30.WithVolume(.7f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -482,11 +482,11 @@ namespace tsorcRevamp
                 {
                     if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
 
-                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), player.Center);
+                        Main.PlaySound(SoundID.Item100.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -499,11 +499,11 @@ namespace tsorcRevamp
                 {
                     if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
                     {
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
-                        player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
+                        Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewBoost = true;
 
-                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), player.Center);
+                        Main.PlaySound(SoundID.Item81.WithVolume(.75f), Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -520,16 +520,16 @@ namespace tsorcRevamp
             }
             if (crit) {
                 if (item.melee) {
-                    DoMultiCrits(ref damage, player.meleeCrit);
+                    DoMultiCrits(ref damage, Player.meleeCrit);
                 }
                 else if (item.magic) {
-                    DoMultiCrits(ref damage, player.magicCrit);
+                    DoMultiCrits(ref damage, Player.magicCrit);
                 }
                 else if (item.ranged) {
-                    DoMultiCrits(ref damage, player.rangedCrit);
+                    DoMultiCrits(ref damage, Player.rangedCrit);
                 }
                 else if (item.thrown) {
-                    DoMultiCrits(ref damage, player.thrownCrit); //lol
+                    DoMultiCrits(ref damage, Player.thrownCrit); //lol
                 }
             }
         }
@@ -541,23 +541,23 @@ namespace tsorcRevamp
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
-            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
+            if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>())
             {
                 damage = (int)(damage * 0.55);
             }
 
             if (crit) {
                 if (proj.melee) {
-                    DoMultiCrits(ref damage, player.meleeCrit);
+                    DoMultiCrits(ref damage, Player.meleeCrit);
                 }
                 else if (proj.magic) {
-                    DoMultiCrits(ref damage, player.magicCrit);
+                    DoMultiCrits(ref damage, Player.magicCrit);
                 }
                 else if (proj.ranged) {
-                    DoMultiCrits(ref damage, player.rangedCrit);
+                    DoMultiCrits(ref damage, Player.rangedCrit);
                 }
                 else if (proj.thrown) {
-                    DoMultiCrits(ref damage, player.thrownCrit); //lol
+                    DoMultiCrits(ref damage, Player.thrownCrit); //lol
                 }
             }
         }
@@ -645,77 +645,77 @@ namespace tsorcRevamp
 
         public override void OnHitByNPC(NPC npc, int damage, bool crit)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
                 if (!Main.hardMode)
                 {
                     for (int b = 0; b < 8; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
                 else
                 {
                     for (int b = 0; b < 12; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
             {
-                player.AddBuff(BuffID.Bleeding, 1800);
-                player.AddBuff(BuffID.OnFire, 600);
+                Player.AddBuff(BuffID.Bleeding, 1800);
+                Player.AddBuff(BuffID.OnFire, 600);
             }
         }
 
         public override void OnHitByProjectile(Projectile projectile, int damage, bool crit)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
                 if (!Main.hardMode)
                 {
                     for (int b = 0; b < 8; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
                 else
                 {
                     for (int b = 0; b < 12; b++)
                     {
-                        Projectile.NewProjectile(player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
+            if (Player.GetModPlayer<tsorcRevampPlayer>().SoulSickle)
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
             if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)
             {
-                player.AddBuff(BuffID.BrokenArmor, 180);
-                player.AddBuff(BuffID.OnFire, 180);
+                Player.AddBuff(BuffID.BrokenArmor, 180);
+                Player.AddBuff(BuffID.OnFire, 180);
             }
         }
 
@@ -748,19 +748,19 @@ namespace tsorcRevamp
             if (tsorcRevamp.reflectionShiftKey.JustPressed) { 
                 if (ReflectionShiftEnabled)
                 {
-                    if (player.controlUp)
+                    if (Player.controlUp)
                     {
                         ReflectionShiftState.Y = -1;
                     }
-                    if (player.controlLeft)
+                    if (Player.controlLeft)
                     {
                         ReflectionShiftState.X = -1;
                     }
-                    if (player.controlRight)
+                    if (Player.controlRight)
                     {
                         ReflectionShiftState.X = 1;
                     }
-                    if (player.controlDown)
+                    if (Player.controlDown)
                     {
                         ReflectionShiftState.Y = 1;
                     }
@@ -777,10 +777,10 @@ namespace tsorcRevamp
             base.Hurt(pvp, quiet, damage, hitDirection, crit);
             if (manaShield == 1)
             {
-                if (player.statMana >= Items.Accessories.ManaShield.manaCost)
+                if (Player.statMana >= Items.Accessories.ManaShield.manaCost)
                 {
-                    player.statMana -= Items.Accessories.ManaShield.manaCost;
-                    player.manaRegenDelay = Items.Accessories.ManaShield.regenDelay;
+                    Player.statMana -= Items.Accessories.ManaShield.manaCost;
+                    Player.manaRegenDelay = Items.Accessories.ManaShield.regenDelay;
                 }
             }
         }
@@ -844,12 +844,12 @@ namespace tsorcRevamp
 
             for (int i = playerTileXLeft; i < playerTileXRight; i++) {
                 for (int j = playerTileYBottom; j < playerTileYTop; j++) {
-                    if (Main.tile[i, j] != null && Main.tile[i, j].active()) {
+                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile) {
                         Vector2 TilePos;
                         TilePos.X = i * 16;
                         TilePos.Y = j * 16;
 
-                        int type = Main.tile[i, j].type;
+                        int type = Main.tile[i, j].TileType;
 
                         if (DamageDir.ContainsKey(type) && !(fireWalk && type == 76)) {
                             float a = DamageDir[type];
@@ -892,24 +892,24 @@ namespace tsorcRevamp
             LegacySoundStyle useSound = instance.UseSound;
 
             if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType) {
-                int oldChest = player.chest;
-                player.chest = bankID;
+                int oldChest = Player.chest;
+                Player.chest = bankID;
                 toggle = true;
 
-                int num17 = (int)((player.position.X + player.width * 0.5) / 16.0);
-                int num18 = (int)((player.position.Y + player.height * 0.5) / 16.0);
-                player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
-                player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
-                if ((oldChest != bankID && oldChest != -1) || num17 < player.chestX - Player.tileRangeX || num17 > player.chestX + Player.tileRangeX + 1 || num18 < player.chestY - Player.tileRangeY || num18 > player.chestY + Player.tileRangeY + 1) {
+                int num17 = (int)((Player.position.X + Player.width * 0.5) / 16.0);
+                int num18 = (int)((Player.position.Y + Player.height * 0.5) / 16.0);
+                Player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
+                Player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
+                if ((oldChest != bankID && oldChest != -1) || num17 < Player.chestX - Player.tileRangeX || num17 > Player.chestX + Player.tileRangeX + 1 || num18 < Player.chestY - Player.tileRangeY || num18 > Player.chestY + Player.tileRangeY + 1) {
                     whoAmI = -1;
-                    if (player.chest != -1) {
+                    if (Player.chest != -1) {
                         Main.PlaySound(useSound);
                     }
 
                     if (oldChest != bankID)
-                        player.chest = oldChest;
+                        Player.chest = oldChest;
                     else
-                        player.chest = -1;
+                        Player.chest = -1;
 
                     Recipe.FindRecipes();
                 }
@@ -918,15 +918,15 @@ namespace tsorcRevamp
 
 
                 whoAmI = -1;
-                player.chest = -1; //none
+                Player.chest = -1; //none
                 Recipe.FindRecipes();
             }
         }
 
         internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho) {
-            ModPacket packet = mod.GetPacket();
+            ModPacket packet = Mod.GetPacket();
             packet.Write((byte)message);
-            packet.Write((byte)player.whoAmI);
+            packet.Write((byte)Player.whoAmI);
             ItemIO.Send(item, packet);
             packet.Send(toWho, fromWho);
         }

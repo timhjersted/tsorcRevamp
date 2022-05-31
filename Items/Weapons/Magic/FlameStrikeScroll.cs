@@ -8,21 +8,21 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("The scroll reads \"Exori flam.\"");
         }
         public override void SetDefaults() {
-            item.damage = 40;
-            item.height = 10;
-            item.knockBack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.shootSpeed = 4;
-            item.magic = true;
-            item.mana = 10;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
-            item.useAnimation = 10;
-            item.value = PriceByRarity.LightRed_4;
-            item.width = 34;
-            item.noMelee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.FlameStrike>();
+            Item.damage = 40;
+            Item.height = 10;
+            Item.knockBack = 1;
+            Item.rare = ItemRarityID.LightRed;
+            Item.shootSpeed = 4;
+            Item.magic = true;
+            Item.mana = 10;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.width = 34;
+            Item.noMelee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.FlameStrike>();
         }
     }
 }

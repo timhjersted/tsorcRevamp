@@ -7,27 +7,27 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Summons 9 electric energy orbs in a square at the point of impact.");
         }
         public override void SetDefaults() {
-            item.damage = 36;
-            item.height = 28;
-            item.knockBack = 4;
-            item.rare = ItemRarityID.LightPurple;
-            item.shootSpeed = 6;
-            item.magic = true;
-            item.noMelee = true;
-            item.useAnimation = 21;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 21;
-            item.value = PriceByRarity.LightPurple_6;
-            item.width = 20;
-            item.mana = 50;
-            item.shoot = ModContent.ProjectileType<Projectiles.EnergyBombBall>();
+            Item.damage = 36;
+            Item.height = 28;
+            Item.knockBack = 4;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.shootSpeed = 6;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.useAnimation = 21;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 21;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.width = 20;
+            Item.mana = 50;
+            Item.shoot = ModContent.ProjectileType<Projectiles.EnergyBombBall>();
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(mod.GetItem("EnergyFieldRune"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 15000);
+            recipe.AddIngredient(Mod.GetItem("EnergyFieldRune"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 15000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

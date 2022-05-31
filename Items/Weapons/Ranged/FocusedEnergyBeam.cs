@@ -12,34 +12,34 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void SetDefaults() {
-            item.ranged = true;
-            item.shoot = ProjectileID.PurificationPowder;
+            Item.ranged = true;
+            Item.shoot = ProjectileID.PurificationPowder;
 
-            item.damage = 750;
-            item.width = 52;
-            item.height = 22;
-            item.knockBack = 9.0f;
-            item.maxStack = 1;
-            item.noMelee = true;
-            item.autoReuse = true;
-            item.rare = ItemRarityID.Red;
-            item.useAmmo = mod.ItemType("TeslaBolt");
-            item.shootSpeed = 30;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.UseSound = SoundID.Item12;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.value = PriceByRarity.Red_10;
+            Item.damage = 750;
+            Item.width = 52;
+            Item.height = 22;
+            Item.knockBack = 9.0f;
+            Item.maxStack = 1;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Red;
+            Item.useAmmo = Mod.Find<ModItem>("TeslaBolt").Type;
+            Item.shootSpeed = 30;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.UseSound = SoundID.Item12;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.value = PriceByRarity.Red_10;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
-            recipe.AddIngredient(mod.GetItem("CompactFrame"));
-            recipe.AddIngredient(mod.GetItem("DestructionElement"));
+            recipe.AddIngredient(Mod.GetItem("CompactFrame"));
+            recipe.AddIngredient(Mod.GetItem("DestructionElement"));
             recipe.AddIngredient(ItemID.SpaceGun, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 90000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 90000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

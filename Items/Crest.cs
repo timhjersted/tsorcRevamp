@@ -5,10 +5,10 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items {
     public abstract class Crest : ModItem { //crests are using an abstract so we dont have 6 different .cs files with essentially nothing in them
         public override void SetDefaults() {
-            item.width = 12;
-            item.height = 12;
-            item.rare = ItemRarityID.Blue;
-            item.maxStack = 1;
+            Item.width = 12;
+            Item.height = 12;
+            Item.rare = ItemRarityID.Blue;
+            Item.maxStack = 1;
         }
     }
 

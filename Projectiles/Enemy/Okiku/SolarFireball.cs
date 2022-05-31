@@ -12,9 +12,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         }
         public override string Texture => "Terraria/Projectile_" + ProjectileID.DD2BetsyFireball;
         public override void SetDefaults() {
-            projectile.aiStyle = 686;
-            projectile.CloneDefaults(ProjectileID.DD2BetsyFireball);
-            projectile.tileCollide = false;
+            Projectile.aiStyle = 686;
+            Projectile.CloneDefaults(ProjectileID.DD2BetsyFireball);
+            Projectile.tileCollide = false;
         }        
     }
 }

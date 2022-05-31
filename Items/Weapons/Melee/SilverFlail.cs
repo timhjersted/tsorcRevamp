@@ -5,27 +5,27 @@ namespace tsorcRevamp.Items.Weapons.Melee {
     class SilverFlail : ModItem {
 
         public override void SetDefaults() {
-            item.width = 32;
-            item.height = 32;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.channel = true;
-            item.useAnimation = 50;
-            item.useTime = 50;
-            item.damage = 9;
-            item.knockBack = 6f;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.White;
-            item.shootSpeed = 14;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.value = 5000;
-            item.melee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.SilverBall>();
+            Item.width = 32;
+            Item.height = 32;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.channel = true;
+            Item.useAnimation = 50;
+            Item.useTime = 50;
+            Item.damage = 9;
+            Item.knockBack = 6f;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.White;
+            Item.shootSpeed = 14;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.value = 5000;
+            Item.melee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.SilverBall>();
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(ItemID.Chain, 2);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 100);

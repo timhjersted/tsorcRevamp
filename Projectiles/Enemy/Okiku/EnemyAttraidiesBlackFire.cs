@@ -17,61 +17,61 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 		}
 		public override void SetDefaults()
 		{
-			projectile.width = 12;
-			projectile.height = 12;
-			projectile.scale = 1.5f;
-			projectile.alpha = 50;
-			projectile.aiStyle = -1;
-			projectile.timeLeft = 360;
-			projectile.friendly = false;
-			projectile.hostile = true;
-			projectile.penetrate = 1;
-			projectile.light = 0.8f;
-			projectile.magic = true;
-			projectile.tileCollide = true;
-			projectile.damage = 1;
-			projectile.knockBack = 9;
+			Projectile.width = 12;
+			Projectile.height = 12;
+			Projectile.scale = 1.5f;
+			Projectile.alpha = 50;
+			Projectile.aiStyle = -1;
+			Projectile.timeLeft = 360;
+			Projectile.friendly = false;
+			Projectile.hostile = true;
+			Projectile.penetrate = 1;
+			Projectile.light = 0.8f;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.tileCollide = true;
+			Projectile.damage = 1;
+			Projectile.knockBack = 9;
 		}
 		public override void AI()
 		{
-			if(Main.player[(int)projectile.ai[0]].position.Y > projectile.position.Y)
+			if(Main.player[(int)Projectile.ai[0]].position.Y > Projectile.position.Y)
             {
-				projectile.tileCollide = false;
+				Projectile.tileCollide = false;
             }
 			else
             {
-				projectile.tileCollide = true;
+				Projectile.tileCollide = true;
             }
 
 
 			// Determine projectile behavior
 			// Apply half-gravity & clamp downward speed
-			projectile.velocity.Y = projectile.velocity.Y > 16f ? 16f : projectile.velocity.Y + 0.1f;
+			Projectile.velocity.Y = Projectile.velocity.Y > 16f ? 16f : Projectile.velocity.Y + 0.1f;
 
-			if (projectile.velocity.X < 0f)
+			if (Projectile.velocity.X < 0f)
 			{    // Dampen left-facing horizontal velocity & clamp to minimum speed
-				projectile.velocity.X = projectile.velocity.X > -1f ? -1f : projectile.velocity.X + 0.01f;
+				Projectile.velocity.X = Projectile.velocity.X > -1f ? -1f : Projectile.velocity.X + 0.01f;
 			}
-			else if (projectile.velocity.X > 0f)
+			else if (Projectile.velocity.X > 0f)
 			{    // Dampen right-facing horizontal velocity & clamp to minimum speed
-				projectile.velocity.X = projectile.velocity.X < 1f ? 1f : projectile.velocity.X - 0.01f;
+				Projectile.velocity.X = Projectile.velocity.X < 1f ? 1f : Projectile.velocity.X - 0.01f;
 			}
 
 			// Align projectile facing with velocity normal
-			projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X) - 2.355f;
+			Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) - 2.355f;
 			// Render fire particles [every frame]
-			int particle = Dust.NewDust(projectile.position, projectile.width, projectile.height, 54, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
+			int particle = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 54, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
 			Main.dust[particle].noGravity = true;
 			Main.dust[particle].velocity *= 1.4f;
-			int lol = Dust.NewDust(projectile.position, projectile.width, projectile.height, 58, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
+			int lol = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 58, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 160, default(Color), 3f);
 			Main.dust[lol].noGravity = true;
 			Main.dust[lol].velocity *= 1.4f;
 
 
 			// Render smoke particles [every other frame]
-			if (projectile.timeLeft % 2 == 0)
+			if (Projectile.timeLeft % 2 == 0)
 			{
-				int particle2 = Dust.NewDust(projectile.position, projectile.width, projectile.height, 1, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f - 1f, 180, default(Color), 1f + (float)Main.rand.Next(2));
+				int particle2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 1, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f - 1f, 180, default(Color), 1f + (float)Main.rand.Next(2));
 				Main.dust[particle2].noGravity = true;
 				Main.dust[particle2].noLight = true;
 				Main.dust[particle2].fadeIn = 3f;
@@ -85,14 +85,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
         public override bool PreKill(int timeLeft)
 		{
-			if (!projectile.active)
+			if (!Projectile.active)
 			{
 				return true;
 			}
-			projectile.timeLeft = 0;
+			Projectile.timeLeft = 0;
 			//projectile.AI(false);
 
-			Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
+			Main.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 14);
 
 			float len = 4f;
 			int flam = ModContent.ProjectileType<EnemyBlackFirelet>();
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 				velY *= len + var;
 
 				//if(projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width-5), projectile.position.Y + (float)(projectile.height-5), 0, 0, flam, 72, 0, projectile.owner);
-				Projectile.NewProjectile(projectile.position.X, projectile.position.Y, velX, velY, flam, projectile.damage, 0, projectile.owner);
+				Projectile.NewProjectile(Projectile.position.X, Projectile.position.Y, velX, velY, flam, Projectile.damage, 0, Projectile.owner);
 			}
 
 
@@ -134,12 +134,12 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 				float velY = 2f - ((float)Main.rand.Next(20)) / 5f;
 				velX *= 4f;
 				velY *= 4f;
-				int p = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width >> 1), projectile.position.Y - (float)(projectile.height >> 1)), projectile.width, projectile.height, 54, velX, velY, 160, default(Color), 1.5f);
-				int p2 = Dust.NewDust(new Vector2(projectile.position.X - (float)(projectile.width >> 1), projectile.position.Y - (float)(projectile.height >> 1)), projectile.width, projectile.height, 58, velX, velY, 160, default(Color), 1.5f);
+				int p = Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width >> 1), Projectile.position.Y - (float)(Projectile.height >> 1)), Projectile.width, Projectile.height, 54, velX, velY, 160, default(Color), 1.5f);
+				int p2 = Dust.NewDust(new Vector2(Projectile.position.X - (float)(Projectile.width >> 1), Projectile.position.Y - (float)(Projectile.height >> 1)), Projectile.width, Projectile.height, 58, velX, velY, 160, default(Color), 1.5f);
 			}
 
 			// terminate projectile
-			projectile.active = false;
+			Projectile.active = false;
 			return true;
 		}
 	}

@@ -13,26 +13,26 @@ namespace tsorcRevamp.Items
         {
             Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
                 "\nUsed as a currency among certain merchants");
-            ItemID.Sets.ItemNoGravity[item.type] = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
             //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
 
         }
 
         public override void SetDefaults()
         {
-            item.width = 14;
-            item.height = 22;
-            item.maxStack = 99999;
-            item.value = 0;
-            item.rare = ItemRarityID.Lime;
+            Item.width = 14;
+            Item.height = 22;
+            Item.maxStack = 99999;
+            Item.value = 1;
+            Item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
         }
 
         public override bool GrabStyle(Player player)
         {
-            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            item.velocity = item.velocity + movement;
+            Item.velocity = Item.velocity + movement;
             return true;
         }
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items
             {
                 if (line2.mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.overrideColor = BaseColor.RarityExample;
+                    line2.OverrideColor = BaseColor.RarityExample;
                 }
             }
         }
@@ -71,18 +71,18 @@ namespace tsorcRevamp.Items
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 5);
             recipe.SetResult(this);
             recipe.AddRecipe();
 
-            ModRecipe recipe2 = new ModRecipe(mod);
-            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 50);
+            Recipe recipe2 = new Recipe(Mod);
+            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 50);
             recipe2.SetResult(this, 10);
             recipe2.AddRecipe();
 
-            ModRecipe recipe3 = new ModRecipe(mod);
-            recipe3.AddIngredient(mod.GetItem("DarkSoul"), 500);
+            Recipe recipe3 = new Recipe(Mod);
+            recipe3.AddIngredient(Mod.GetItem("DarkSoul"), 500);
             recipe3.SetResult(this, 100);
             recipe3.AddRecipe();
         }
@@ -94,10 +94,10 @@ namespace tsorcRevamp.Items
         {
 
 
-            Lighting.AddLight(item.Center, 0.1f, 0.45f, 0.21f);
-            Texture2D texture = mod.GetTexture("Items/SoulShekel_InWorld");
+            Lighting.AddLight(Item.Center, 0.1f, 0.45f, 0.21f);
+            Texture2D texture = Mod.GetTexture("Items/SoulShekel_InWorld");
             var myrectangle = texture.Frame(1, 8, 0, itemframe);
-            spriteBatch.Draw(texture, item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), item.scale, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(7, 11), Item.scale, SpriteEffects.None, 0.1f);
 
             itemframeCounter += Main.rand.Next(1, 3);
 

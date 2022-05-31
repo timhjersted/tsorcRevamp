@@ -31,17 +31,17 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override string Texture => base.Texture;
 
         public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.hide = true;
-            projectile.timeLeft = 180;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 30;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hide = true;
+            Projectile.timeLeft = 180;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
 
             FollowHost = true;
             LaserOrigin = Main.npc[HostIdentifier].Center;
@@ -66,9 +66,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void AI()
         {
-            projectile.friendly = true;
-            projectile.hostile = false;
-            projectile.damage = 300;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.damage = 300;
             displayDuration--;
             if (Charge < MaxCharge - 1)
             {
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             base.ChargeLaser();
 
             //Dust on player when  using
-            Dust.NewDustPerfect(projectile.position, DustID.FireworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
+            Dust.NewDustPerfect(Projectile.position, DustID.FireworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
 
             //Dust along lightning lines
             if (FiringTimeLeft == 28)
@@ -132,7 +132,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             branches = new List<List<Vector2>>();
             branchAngles = new List<List<float>>();
 
-            Tuple<List<Vector2>, List<float>> initialLine = GenerateLightningLine(projectile.position, projectile.velocity.ToRotation(), segmentCount, false);
+            Tuple<List<Vector2>, List<float>> initialLine = GenerateLightningLine(Projectile.position, Projectile.velocity.ToRotation(), segmentCount, false);
 
             branches.Add(initialLine.Item1);
             branchAngles.Add(initialLine.Item2);
@@ -151,7 +151,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                             {
                                 segmentLimit = 12;
                             }
-                            Tuple<List<Vector2>, List<float>> newBranch = GenerateLightningLine(branches[i][j], projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
+                            Tuple<List<Vector2>, List<float>> newBranch = GenerateLightningLine(branches[i][j], Projectile.velocity.ToRotation(), Main.rand.Next(segmentLimit), true);
                             branches.Add(newBranch.Item1);
                             branchAngles.Add(newBranch.Item2);
                         }
@@ -227,7 +227,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     bool segmentCollides = false;
                     if (!Collision.CanHit(currentBranch[i], 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(currentBranch[i], 1, 1, currentBranch[i + 1], 1, 1))
                     {
-                        if(!branch || (!Collision.CanHit(projectile.position, 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(projectile.position, 1, 1, currentBranch[i + 1], 1, 1)))
+                        if(!branch || (!Collision.CanHit(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1)))
                         {
                             segmentCollides = true;
                             branchCollided = true;
@@ -292,7 +292,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         //RenderTarget2D renderTarget;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (!IsAtMaxCharge)
             {
@@ -492,7 +492,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
                 Rectangle screenRect = new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
                 for(int i = 0; i < 10; i++)
-                spriteBatch.Draw(renderTarget, new Vector2(10, 10) * i, screenRect, Color.White);
+                Main.EntitySpriteDraw(renderTarget, new Vector2(10, 10) * i, screenRect, Color.White);
                 spriteBatch.End();
 
                 //Revert to normal spritebatch mode
@@ -562,7 +562,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             basicEffect.VertexColorEnabled = true;
 
 
-            Vector2 worldPos = projectile.position - Main.screenPosition;
+            Vector2 worldPos = Projectile.position - Main.screenPosition;
             worldPos.X = (worldPos.X / (Main.screenWidth / 2)) - 1;
             worldPos.Y = (worldPos.Y / (Main.screenHeight / -2f)) + 1;
             worldPos *= Main.GameZoomTarget;
@@ -630,14 +630,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 Vector2 drawStart = startPos + i * diff;
                 if (screenRect.Contains(drawStart.ToPoint()))
                 {
-                    spriteBatch.Draw(texture, drawStart - Main.screenPosition, bodyFrame, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
+                    Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyFrame, color, rotation + MathHelper.PiOver2, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
                 }
             }
 
             /*
             if (screenRect.Contains(startPos.ToPoint()))
             {
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
+                Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
             }
             startPos += (unit * (headRect.Height) * scale);
             i -= (LaserTextureBody.Height) * scale;
@@ -646,7 +646,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             if (screenRect.Contains(startPos.ToPoint()))
             {
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
+                Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
             }*/
             }
 
@@ -747,9 +747,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override bool CanHitPlayer(Player target)
         {
 
-            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, projectile.whoAmI).GetDeathText(target.name).ToString();
+            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
             deathMessage = deathMessage.Replace("Laser", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), projectile.damage * 4, 1);
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }

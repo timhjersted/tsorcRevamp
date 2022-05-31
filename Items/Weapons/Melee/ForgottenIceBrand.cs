@@ -8,22 +8,22 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Tooltip.SetDefault("A sword imbued with ice.\n" + "Will randomly cast ice 2.");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Pink;
-            item.damage = 52;
-            item.height = 42;
-            item.knockBack = 4;
-            item.autoReuse = true;
-            item.melee = true;
-            item.scale = 1.05f;
-            item.useAnimation = 22;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 15;
-            item.value = PriceByRarity.Pink_5;
-            item.width = 42;
+            Item.rare = ItemRarityID.Pink;
+            Item.damage = 52;
+            Item.height = 42;
+            Item.knockBack = 4;
+            Item.autoReuse = true;
+            Item.melee = true;
+            Item.scale = 1.05f;
+            Item.useAnimation = 22;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 15;
+            Item.value = PriceByRarity.Pink_5;
+            Item.width = 42;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             if (Main.rand.Next(5) == 0) {
                 Projectile.NewProjectile(player.position.X, player.position.Y, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Ice2Ball>(), 20, 2.0f, player.whoAmI);
             }

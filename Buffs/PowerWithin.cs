@@ -9,7 +9,7 @@ namespace tsorcRevamp.Buffs
     class PowerWithin : ModBuff
     {
 
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Power Within");
             Description.SetDefault("Excessive power is eating away at you!");

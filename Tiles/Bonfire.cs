@@ -12,7 +12,7 @@ namespace tsorcRevamp.Tiles
 	public class Bonfire : ModTile
 	{
 		public override bool Autoload(ref string name, ref string texture) => false;
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
 		{
 			Main.tileFrameImportant[Type] = true;
 
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Tiles
 			Texture2D texture;
 			if (Main.canDrawColorTile(i, j))
 			{
-				texture = Main.tileAltTexture[Type, (int)tile.color()];
+				texture = Main.tileAltTexture[Type, (int)tile.TileColor];
 			}
 			else
 			{
@@ -79,15 +79,15 @@ namespace tsorcRevamp.Tiles
 			{
 				zero = Vector2.Zero;
 			}
-			int width = tile.frameX % animationFrameWidth == 54 ? 18 : 16;
-			int height = tile.frameY % animationFrameHeight == 36 ? 18 : 16; //This seems to say that of the 3 Y tiles, the bottom one is 18px tall, the other two 16px. 
+			int width = tile.TileFrameX % animationFrameWidth == 54 ? 18 : 16;
+			int height = tile.TileFrameY % animationFrameHeight == 36 ? 18 : 16; //This seems to say that of the 3 Y tiles, the bottom one is 18px tall, the other two 16px. 
 			int animate = 0;
-			if (tile.frameX >= 0) //change to 54 once right-click to light is implemented
+			if (tile.TileFrameX >= 0) //change to 54 once right-click to light is implemented
 			{
 				animate = Main.tileFrame[Type] * animationFrameWidth;
 			}
-			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, height), Lighting.GetColor(i, j), 0f, default, 1f, SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(mod.GetTexture("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX + animate, tile.frameY, width, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX + animate, tile.TileFrameY, width, height), Lighting.GetColor(i, j), 0f, default, 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(Mod.GetTexture("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX + animate, tile.TileFrameY, width, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 			Dust.NewDust(zero, 4, 4, 6, 0, 0, 100, default, 1f);
 			return false;
 		}
@@ -105,9 +105,9 @@ namespace tsorcRevamp.Tiles
 
 		public override void SetDefaults()
 		{
-			item.CloneDefaults(ItemID.ArmorStatue);
-			item.createTile = ModContent.TileType<Bonfire>();
-			item.placeStyle = 0;
+			Item.CloneDefaults(ItemID.ArmorStatue);
+			Item.createTile = ModContent.TileType<Bonfire>();
+			Item.placeStyle = 0;
 		}
 	}
 }

@@ -8,26 +8,26 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellGravity4Strike : ModProjectile {
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 7;
+            Main.projFrames[Projectile.type] = 7;
         }
 
         public override void SetDefaults() {
-            projectile.width = 110;
-            projectile.height = 110;
-            projectile.hostile = true;
-            projectile.penetrate = 50;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
+            Projectile.width = 110;
+            Projectile.height = 110;
+            Projectile.hostile = true;
+            Projectile.penetrate = 50;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
         }
 
         public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3) {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 7) {
-                projectile.Kill();
+            if (Projectile.frame >= 7) {
+                Projectile.Kill();
                 return;
             }
         }

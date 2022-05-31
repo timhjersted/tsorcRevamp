@@ -15,22 +15,22 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void SetDefaults()
 		{
-			projectile.aiStyle = 1;
-			projectile.hostile = true;
-			projectile.friendly = false;
-			projectile.height = 16;
-			projectile.light = 1;
-			projectile.ranged = true;
-			projectile.penetrate = 8;
-			projectile.scale = 1.3f;
-			projectile.tileCollide = true;
-			projectile.width = 16;
-			projectile.timeLeft = 600;
+			Projectile.aiStyle = 1;
+			Projectile.hostile = true;
+			Projectile.friendly = false;
+			Projectile.height = 16;
+			Projectile.light = 1;
+			Projectile.DamageType = DamageClass.Ranged;
+			Projectile.penetrate = 8;
+			Projectile.scale = 1.3f;
+			Projectile.tileCollide = true;
+			Projectile.width = 16;
+			Projectile.timeLeft = 600;
 		}
 
 		public override void AI()
 		{
-			Dust dust = Dust.NewDustPerfect(projectile.Center, 15, Alpha: 80, Scale: 2f);
+			Dust dust = Dust.NewDustPerfect(Projectile.Center, 15, Alpha: 80, Scale: 2f);
 			dust.noGravity = false;
 			dust.velocity /= 3;
 		}
@@ -39,10 +39,10 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void Kill(int timeLeft)
 		{
-			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
-			Projectile.NewProjectile(projectile.Center.X , projectile.Center.Y, 0, 0, ModContent.ProjectileType<EnemySpellAbyssStorm>(), projectile.damage, 8f, projectile.owner);
-			Dust.NewDust(projectile.Center, projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
-			Dust.NewDust(projectile.Center, projectile.width, projectile.height, 15, 0, 0, 100, default, 2f);
+			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+			Projectile.NewProjectile(Projectile.Center.X , Projectile.Center.Y, 0, 0, ModContent.ProjectileType<EnemySpellAbyssStorm>(), Projectile.damage, 8f, Projectile.owner);
+			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
+			Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
 		}
 	}
 }

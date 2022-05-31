@@ -15,16 +15,16 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 23;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.light = 0.8f;
-            projectile.penetrate = 1;
-            projectile.magic = true;
-            projectile.scale = 1f;
-            projectile.tileCollide = true;
+            Projectile.aiStyle = 23;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.light = 0.8f;
+            Projectile.penetrate = 1;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 1f;
+            Projectile.tileCollide = true;
         }
 
 
@@ -32,23 +32,23 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void Kill(int timeLeft)
         {
 
-            if (!projectile.active)
+            if (!Projectile.active)
             {
                 return;
             }
-            projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
             {
-                Main.PlaySound(6, (int)projectile.position.X, (int)projectile.position.Y, 0, 0.3f, -4.7f); //grass cut slowed down
-                if (projectile.owner == Main.myPlayer)
+                Main.PlaySound(6, (int)Projectile.position.X, (int)Projectile.position.Y, 0, 0.3f, -4.7f); //grass cut slowed down
+                if (Projectile.owner == Main.myPlayer)
 
                 {
 
-                    int poisonball = Projectile.NewProjectile(new Vector2(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.projectile.damage), 1f, projectile.owner);
+                    int poisonball = Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.Projectile.damage), 1f, Projectile.owner);
 
-                    Projectile.NewProjectile(new Vector2(projectile.position.X + (float)(projectile.width), projectile.position.Y + (float)(projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.projectile.damage), 1f, projectile.owner);
-                    Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-                    int arg_1394_1 = projectile.width;
-                    int arg_1394_2 = projectile.height;
+                    Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.Projectile.damage), 1f, Projectile.owner);
+                    Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+                    int arg_1394_1 = Projectile.width;
+                    int arg_1394_2 = Projectile.height;
                     int arg_1394_3 = 15;
                     float arg_1394_4 = 0f;
                     float arg_1394_5 = 0f;
@@ -58,9 +58,9 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Main.dust[num41].noGravity = true;
                     Dust expr_13B1 = Main.dust[num41];
                     expr_13B1.velocity *= 2f;
-                    Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-                    int arg_1422_1 = projectile.width;
-                    int arg_1422_2 = projectile.height;
+                    Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+                    int arg_1422_1 = Projectile.width;
+                    int arg_1422_2 = Projectile.height;
                     int arg_1422_3 = 15;
                     float arg_1422_4 = 0f;
                     float arg_1422_5 = 0f;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             }
 
-            projectile.active = false;
+            Projectile.active = false;
 
 
         }

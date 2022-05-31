@@ -12,17 +12,17 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 38;
-            item.height = 34;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.maxStack = 1;
-            item.consumable = false;
-            item.channel = true;
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 38;
+            Item.height = 34;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.maxStack = 1;
+            Item.consumable = false;
+            Item.channel = true;
         }
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             Main.NewText("I am impressed you've made it this far, Red. But I'm done playing games. It's time to end this...", 175, 75, 255);
 

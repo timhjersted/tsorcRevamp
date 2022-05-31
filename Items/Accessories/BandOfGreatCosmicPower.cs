@@ -13,19 +13,19 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 28;
-            item.lifeRegen = 3;
-            item.accessory = true;
-            item.value = PriceByRarity.Orange_3;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 28;
+            Item.height = 28;
+            Item.lifeRegen = 3;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("BandOfCosmicPower"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("BandOfCosmicPower"), 1);
             recipe.AddIngredient(ItemID.ShadowScale, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

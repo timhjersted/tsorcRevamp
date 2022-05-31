@@ -16,18 +16,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void SetDefaults()
 		{
-			projectile.width = 150;
-			projectile.height = 150;
-			Main.projFrames[projectile.type] = 9;
-			projectile.aiStyle = -1;
-			projectile.hostile = true;
-			projectile.scale = 2;
-			projectile.magic = true;
-			projectile.light = 1;
-			projectile.tileCollide = true;
-			projectile.ignoreWater = true;
-			projectile.timeLeft = 360;
-			projectile.penetrate = 50;
+			Projectile.width = 150;
+			Projectile.height = 150;
+			Main.projFrames[Projectile.type] = 9;
+			Projectile.aiStyle = -1;
+			Projectile.hostile = true;
+			Projectile.scale = 2;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.light = 1;
+			Projectile.tileCollide = true;
+			Projectile.ignoreWater = true;
+			Projectile.timeLeft = 360;
+			Projectile.penetrate = 50;
 			drawOriginOffsetX = -75;
 			drawOriginOffsetY = 70;
 		}
@@ -35,15 +35,15 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override void AI()
 		{
 			
-			projectile.frameCounter++;
-			if (projectile.frameCounter > 3)
+			Projectile.frameCounter++;
+			if (Projectile.frameCounter > 3)
 			{
-				projectile.frame++;
-				projectile.frameCounter = 0;
+				Projectile.frame++;
+				Projectile.frameCounter = 0;
 			}
-			if (projectile.frame >= 9)
+			if (Projectile.frame >= 9)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 				return;
 			}
 		}

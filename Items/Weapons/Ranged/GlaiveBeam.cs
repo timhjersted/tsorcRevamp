@@ -13,24 +13,24 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
         public override void SetDefaults() {
             //item.CloneDefaults(ItemID.LastPrism);
-            item.mana = 0;
-            item.magic = false;
-            item.damage = 750;
-            item.noMelee = true;
-            item.ranged = true;
-            item.height = 28;
-            item.width = 12;
-            item.knockBack = 4;
-            item.rare = ItemRarityID.Purple;
-            item.shoot = ModContent.ProjectileType<Projectiles.GlaiveBeamHoldout>();
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.UseSound = null;
-            item.channel = true;
-            item.autoReuse = true;
-            item.shootSpeed = 30;
-            item.useAnimation = 150;
-            item.useTime = 200;
-            item.value = 8000000;
+            Item.mana = 0;
+            Item.magic = false;
+            Item.damage = 750;
+            Item.noMelee = true;
+            Item.ranged = true;
+            Item.height = 28;
+            Item.width = 12;
+            Item.knockBack = 4;
+            Item.rare = ItemRarityID.Purple;
+            Item.shoot = ModContent.ProjectileType<Projectiles.GlaiveBeamHoldout>();
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.UseSound = null;
+            Item.channel = true;
+            Item.autoReuse = true;
+            Item.shootSpeed = 30;
+            Item.useAnimation = 150;
+            Item.useTime = 200;
+            Item.value = 8000000;
             
         }
         public override bool CanUseItem(Player player)
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
         {
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamItemGlowmask];
-            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 2f), 
+            spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f), 
                 new Rectangle(0, 0, texture.Width, texture.Height), Color.White, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
@@ -52,11 +52,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Ranged.FocusedEnergyBeam>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 250000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 250000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

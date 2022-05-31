@@ -9,28 +9,28 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 9;
-            item.useTime = 9;
-            item.damage = 42;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item91;
-            item.rare = ItemRarityID.LightPurple;
-            item.shoot = ProjectileID.PurificationPowder;
-            item.shootSpeed = 11;
-            item.noMelee = true;
-            item.value = PriceByRarity.LightPurple_6;
-            item.useAmmo = AmmoID.Bullet;
-            item.ranged = true;
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 9;
+            Item.useTime = 9;
+            Item.damage = 42;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item91;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.shoot = ProjectileID.PurificationPowder;
+            Item.shootSpeed = 11;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.useAmmo = AmmoID.Bullet;
+            Item.ranged = true;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Megashark, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

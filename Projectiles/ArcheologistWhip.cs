@@ -10,51 +10,51 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 6;
+            Main.projFrames[Projectile.type] = 6;
         }
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
-            projectile.width = 180;
-            projectile.height = 30;
-            projectile.penetrate = 8;
-            projectile.timeLeft = 16;
-            projectile.friendly = true;
-            projectile.hostile = false;
-            projectile.tileCollide = false;
-            projectile.hide = false;
-            projectile.scale = 1f;
+            Projectile.aiStyle = 0;
+            Projectile.width = 180;
+            Projectile.height = 30;
+            Projectile.penetrate = 8;
+            Projectile.timeLeft = 16;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.tileCollide = false;
+            Projectile.hide = false;
+            Projectile.scale = 1f;
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D texture = Main.projectileTexture[Projectile.type];
 
-            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame * 40, 118, 40), lightColor, projectile.rotation, new Vector2(20, 20), projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 40, 118, 40), lightColor, Projectile.rotation, new Vector2(20, 20), Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
         public override void AI()
         {
-            projectile.ai[0] += 1f;
-            if (++projectile.frameCounter >= 3)
+            Projectile.ai[0] += 1f;
+            if (++Projectile.frameCounter >= 3)
             {
-                projectile.frameCounter = 0;
-                if (++projectile.frame >= 6)
+                Projectile.frameCounter = 0;
+                if (++Projectile.frame >= 6)
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
             }
 
-            if (projectile.ai[0] == 1)
+            if (Projectile.ai[0] == 1)
             {
-                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WhipCrack").WithVolume(.6f).WithPitchVariance(.3f), projectile.Center);
+                Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WhipCrack").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
             }
             /*if (projectile.ai[0] <= 2f)
             {
                 projectile.velocity.X = 2f;
             }*/
 
-            projectile.rotation = projectile.velocity.ToRotation()/* + MathHelper.ToRadians(90f)*/; //simplified rotation code (no trig!)
-            projectile.spriteDirection = projectile.direction; //this no work with npcs for some reason. Or me stupid?
+            Projectile.rotation = Projectile.velocity.ToRotation()/* + MathHelper.ToRadians(90f)*/; //simplified rotation code (no trig!)
+            Projectile.spriteDirection = Projectile.direction; //this no work with npcs for some reason. Or me stupid?
 
         }
 

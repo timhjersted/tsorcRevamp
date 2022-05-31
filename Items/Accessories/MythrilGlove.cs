@@ -17,11 +17,11 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void SetDefaults()
         {
-            item.width = 30;
-            item.height = 34;
-            item.accessory = true;
-            item.rare = ItemRarityID.Cyan;
-            item.value = PriceByRarity.Cyan_9;
+            Item.width = 30;
+            Item.height = 34;
+            Item.accessory = true;
+            Item.rare = ItemRarityID.Cyan;
+            Item.value = PriceByRarity.Cyan_9;
         }
 
         public override void UpdateEquip(Player player)
@@ -194,12 +194,12 @@ namespace tsorcRevamp.Items.Accessories
         
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.TitanGlove);
             recipe.AddIngredient(ItemID.MythrilBar, 10);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"));
-            recipe.AddIngredient(mod.GetItem("SoulOfAttraidies"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 50000);
+            recipe.AddIngredient(Mod.GetItem("GuardianSoul"));
+            recipe.AddIngredient(Mod.GetItem("SoulOfAttraidies"));
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 50000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

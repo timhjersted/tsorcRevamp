@@ -8,21 +8,21 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("The scroll reads \"Exori mort.\"");
         }
         public override void SetDefaults() {
-            item.damage = 100;
-            item.height = 10;
-            item.knockBack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.shootSpeed = 4;
-            item.magic = true;
-            item.mana = 200;
-            item.useAnimation = 30;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 30;
-            item.value = PriceByRarity.LightRed_4;
-            item.width = 34;
-            item.noMelee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.DeathStrike>();
+            Item.damage = 100;
+            Item.height = 10;
+            Item.knockBack = 1;
+            Item.rare = ItemRarityID.LightRed;
+            Item.shootSpeed = 4;
+            Item.magic = true;
+            Item.mana = 200;
+            Item.useAnimation = 30;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 30;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.width = 34;
+            Item.noMelee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.DeathStrike>();
         }
     }
 }

@@ -15,35 +15,35 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
 
-            projectile.aiStyle = 1;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.height = 10;
-            projectile.penetrate = 2;
-            projectile.ranged = true;
-            projectile.scale = 1f;
-            projectile.tileCollide = true;
-            projectile.width = 6;
+            Projectile.aiStyle = 1;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.height = 10;
+            Projectile.penetrate = 2;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.scale = 1f;
+            Projectile.tileCollide = true;
+            Projectile.width = 6;
             aiType = ProjectileID.WoodenArrowFriendly;
-            projectile.aiStyle = 1;
+            Projectile.aiStyle = 1;
         }
 
         #region AI
         public override void Kill(int timeLeft)
         {
             //int num98 = -1;
-            if (!projectile.active)
+            if (!Projectile.active)
             {
                 return;
             }
-            projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
             {
-                Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+                Main.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
                 for (int i = 0; i < 10; i++)
                 {
-                    Vector2 arg_92_0 = new Vector2(projectile.position.X, projectile.position.Y);
-                    int arg_92_1 = projectile.width;
-                    int arg_92_2 = projectile.height;
+                    Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+                    int arg_92_1 = Projectile.width;
+                    int arg_92_2 = Projectile.height;
                     int arg_92_3 = 7;
                     float arg_92_4 = 0f;
                     float arg_92_5 = 0f;
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Dust.NewDust(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5, arg_92_6, newColor, 1f);
                 }
             }
-            projectile.active = false;
+            Projectile.active = false;
         }
         #endregion
     }

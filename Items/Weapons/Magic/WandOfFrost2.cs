@@ -9,35 +9,35 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             DisplayName.SetDefault("Wand of Frost II");
             Tooltip.SetDefault("Reforged to reveal the full power of this ancient ice spell" +
                                 "\nCan pass through walls");
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
         }
 
         public override void SetDefaults() {
-            item.damage = 45;
-            item.height = 30;
-            item.knockBack = 6;
-            item.rare = ItemRarityID.Pink; //yes, despite not taking any mech boss items
-            item.shootSpeed = 13f;
-            item.magic = true;
-            item.mana = 25;
-            item.useAnimation = 26;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 26;
-            item.value = PriceByRarity.Pink_5; 
-            item.width = 30;
-            item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
+            Item.damage = 45;
+            Item.height = 30;
+            Item.knockBack = 6;
+            Item.rare = ItemRarityID.Pink; //yes, despite not taking any mech boss items
+            Item.shootSpeed = 13f;
+            Item.magic = true;
+            Item.mana = 25;
+            Item.useAnimation = 26;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 26;
+            Item.value = PriceByRarity.Pink_5; 
+            Item.width = 30;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
             target.AddBuff(BuffID.Frostburn, 360);
         }
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod); ;
-            recipe.AddIngredient(mod.GetItem("WandOfFrost"), 1);
+            Recipe recipe = new Recipe(Mod); ;
+            recipe.AddIngredient(Mod.GetItem("WandOfFrost"), 1);
             recipe.AddIngredient(ItemID.CrystalShard, 60);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 25000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

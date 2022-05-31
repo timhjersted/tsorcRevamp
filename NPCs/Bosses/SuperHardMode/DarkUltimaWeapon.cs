@@ -11,35 +11,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetDefaults()
         {
-            npc.aiStyle = -1;
-            npc.width = 12;
-            npc.height = 12;
-            npc.noTileCollide = true;
-            npc.noGravity = true;
-            npc.dontTakeDamage = true;
-            npc.lifeMax = 500000;
-            npc.scale = 1.2f;
-            npc.damage = DarkCloud.swordDamage;
-            npc.behindTiles = false;
+            NPC.aiStyle = -1;
+            NPC.width = 12;
+            NPC.height = 12;
+            NPC.noTileCollide = true;
+            NPC.noGravity = true;
+            NPC.dontTakeDamage = true;
+            NPC.lifeMax = 500000;
+            NPC.scale = 1.2f;
+            NPC.damage = DarkCloud.swordDamage;
+            NPC.behindTiles = false;
             AttackModeCounter = 3;            
         }
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Ultima Weapon");
-            NPCID.Sets.TrailCacheLength[npc.type] = 6;
-            NPCID.Sets.TrailingMode[npc.type] = 1;
-            NPCID.Sets.NeedsExpertScaling[npc.type] = false;
+            NPCID.Sets.TrailCacheLength[NPC.type] = 6;
+            NPCID.Sets.TrailingMode[NPC.type] = 1;
+            NPCID.Sets.NeedsExpertScaling[NPC.type] = false;
         }
         public NPC HolderDarkCloud
         {
-            get => Main.npc[(int)npc.ai[0]];
-            set => Main.npc[(int)npc.ai[0]] = value;
+            get => Main.npc[(int)NPC.ai[0]];
+            set => Main.npc[(int)NPC.ai[0]] = value;
         }
         public float AttackModeCounter
         {
-            get => npc.ai[1];
-            set => npc.ai[1] = value;
+            get => NPC.ai[1];
+            set => NPC.ai[1] = value;
         }
         public Player Target
         {
@@ -55,12 +55,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if(HolderDarkCloud.active == false)
             {
-                npc.active = false;
+                NPC.active = false;
             }
 
-            if (npc.ai[2] == 0)
+            if (NPC.ai[2] == 0)
             {
-                npc.rotation = MathHelper.ToRadians(-20);
+                NPC.rotation = MathHelper.ToRadians(-20);
 
                 if (spawnedSubProjectiles == false)
                 {
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int i = 0; i < 5; i++)
                         {
-                            Projectile.NewProjectileDirect(npc.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordDamage, 0.5f, Main.myPlayer, npc.whoAmI, i);
+                            Projectile.NewProjectileDirect(NPC.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordDamage, 0.5f, Main.myPlayer, NPC.whoAmI, i);
                         }
                     }
 
@@ -80,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (HolderDarkCloud == null || HolderDarkCloud.active == false)
                 {
-                    npc.active = false;
+                    NPC.active = false;
                 }
 
                 //Always stay in Dark Cloud's hand except for during the throw attack
@@ -102,22 +102,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Launch toward the player
                 if (AttackModeCounter == 120)
                 {
-                    npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center + new Vector2(0, -62), Target.Center, 25);
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center + new Vector2(0, -62), Target.Center, 25);
                 }
 
                 //Rotate as it flies
                 if (AttackModeCounter > 120 && AttackModeCounter < 180)
                 {
-                    npc.rotation += 0.05f * AttackModeCounter;
+                    NPC.rotation += 0.05f * AttackModeCounter;
                 }
 
                 //Launch back toward Dark Cloud
                 if (AttackModeCounter > 180 && AttackModeCounter < 240)
                 {
                     //If not close to the Dark Cloud, accelerate toward it until close enough to teleport into its hands.
-                    if (Vector2.Distance(npc.Center, HolderDarkCloud.Center) > 100)
+                    if (Vector2.Distance(NPC.Center, HolderDarkCloud.Center) > 100)
                     {
-                        npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, HolderDarkCloud.Center, 25);
+                        NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, HolderDarkCloud.Center, 25);
                     }
                     else
                     {
@@ -141,60 +141,60 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Swing as dark cloud fires off a projectile
                 if (AttackModeCounter >= 300 && AttackModeCounter < 530)
                 {
-                    npc.rotation = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation() + MathHelper.ToRadians(45);
+                    NPC.rotation = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation() + MathHelper.ToRadians(45);
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     if (AttackModeCounter == 302)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 305)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 308)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
 
                     if (AttackModeCounter == 422)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(90)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(90)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 425)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 428)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
 
                     if (AttackModeCounter == 522)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 525)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                     if (AttackModeCounter == 528)
                     {
-                        Projectile.NewProjectileDirect(npc.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center + new Vector2(0, -62), UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center + new Vector2(0, -62), projSpeed).RotatedBy(MathHelper.ToRadians(-45)), ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                     }
                 }
 
                 //Point straight down for the final falling attack
                 if (AttackModeCounter >= 600)
                 {
-                    npc.rotation = MathHelper.ToRadians(135);
+                    NPC.rotation = MathHelper.ToRadians(135);
                 }
 
                 //End the attack phase
                 if (AttackModeCounter == 750)
                 {
-                    npc.active = false;
+                    NPC.active = false;
                     //Maybe add dust?
                 }
 
@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
 
-            if (npc.ai[2] == DarkCloud.DarkCloudAttackID.TeleportingSlashes)
+            if (NPC.ai[2] == DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
                 if (spawnedSubProjectiles == false)
                 {
@@ -214,7 +214,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int i = 0; i < 5; i++)
                         {
-                            Projectile.NewProjectileDirect(npc.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordDamage, 0.5f, Main.myPlayer, npc.whoAmI, i);
+                            Projectile.NewProjectileDirect(NPC.position, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkUltimaWeaponDummyProjectile>(), DarkCloud.swordDamage, 0.5f, Main.myPlayer, NPC.whoAmI, i);
                         }
                     }
 
@@ -223,19 +223,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 AttackModeCounter++;
                 if(HolderDarkCloud.Center.X < Target.Center.X)
                 {
-                    npc.rotation = MathHelper.ToRadians(-20);
-                    npc.Center = HolderDarkCloud.Center + new Vector2(0, 55);
+                    NPC.rotation = MathHelper.ToRadians(-20);
+                    NPC.Center = HolderDarkCloud.Center + new Vector2(0, 55);
                 }
                 else
                 {
-                    npc.rotation = MathHelper.ToRadians(-70);
+                    NPC.rotation = MathHelper.ToRadians(-70);
 
-                    npc.Center = HolderDarkCloud.Center + new Vector2(10, 55);
+                    NPC.Center = HolderDarkCloud.Center + new Vector2(10, 55);
                 }
                 
                 if (AttackModeCounter == 640)
                 {                    
-                    npc.active = false;
+                    NPC.active = false;
                 }
             }
 
@@ -245,11 +245,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 trailRotations[i] = trailRotations[i - 1];
             }
-            trailRotations[0] = npc.rotation;
+            trailRotations[0] = NPC.rotation;
         }
         void InHand()
         {
-            npc.direction = HolderDarkCloud.direction;
+            NPC.direction = HolderDarkCloud.direction;
             Vector2 offset = new Vector2(0, 45);          
 
             if (AttackModeCounter < 120)
@@ -261,26 +261,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 offset.Y = 75;
             }
             
-            npc.Center = HolderDarkCloud.Center + offset;
+            NPC.Center = HolderDarkCloud.Center + offset;
         }
 
         void DownAngle()
         {
-            npc.rotation = MathHelper.ToRadians(110);
-            if (npc.direction == -1)
+            NPC.rotation = MathHelper.ToRadians(110);
+            if (NPC.direction == -1)
             {
-                npc.rotation = MathHelper.ToRadians(170);
+                NPC.rotation = MathHelper.ToRadians(170);
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.DarkUltimaWeapon];
             Texture2D glowTexture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.DarkUltimaWeaponGlowmask];
-            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / Main.npcFrameCount[npc.type]);
+            Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height / Main.npcFrameCount[NPC.type]);
             Vector2 origin = sourceRectangle.Size() / 2f;
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (npc.spriteDirection == 1)
+            if (NPC.spriteDirection == 1)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
@@ -288,15 +288,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 offset = new Vector2(0, 45);
 
             //Draw shadow trails
-            for (float i = NPCID.Sets.TrailCacheLength[npc.type] - 1; i >= 0; i--)
+            for (float i = NPCID.Sets.TrailCacheLength[NPC.type] - 1; i >= 0; i--)
             {
-                Main.spriteBatch.Draw(texture, npc.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, drawColor * ((6 - i) / 6), trailRotations[(int)i], origin, npc.scale, spriteEffects, 0f);
-                Main.spriteBatch.Draw(glowTexture, npc.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, Color.White * ((6 - i) / 6), trailRotations[(int)i], origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(texture, NPC.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, drawColor * ((6 - i) / 6), trailRotations[(int)i], origin, NPC.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(glowTexture, NPC.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, Color.White * ((6 - i) / 6), trailRotations[(int)i], origin, NPC.scale, spriteEffects, 0f);
             }
 
             //Draw actual npc
-            Main.spriteBatch.Draw(texture, npc.position - Main.screenPosition - offset, sourceRectangle, drawColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            Main.spriteBatch.Draw(glowTexture, npc.position - Main.screenPosition - offset, sourceRectangle, Color.White, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, NPC.position - Main.screenPosition - offset, sourceRectangle, drawColor, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowTexture, NPC.position - Main.screenPosition - offset, sourceRectangle, Color.White, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
             return false;
         }
@@ -304,10 +304,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //Make the projectile swing.
         void Swing(float progress, float maxProgress)
         {
-            npc.rotation = MathHelper.ToRadians(-20) + (MathHelper.ToRadians(130) * (progress / maxProgress));
-            if (npc.direction == -1)
+            NPC.rotation = MathHelper.ToRadians(-20) + (MathHelper.ToRadians(130) * (progress / maxProgress));
+            if (NPC.direction == -1)
             {
-                npc.rotation = MathHelper.ToRadians(180) + MathHelper.ToRadians(-20) + (MathHelper.ToRadians(130) * ((maxProgress - progress) / maxProgress));
+                NPC.rotation = MathHelper.ToRadians(180) + MathHelper.ToRadians(-20) + (MathHelper.ToRadians(130) * ((maxProgress - progress) / maxProgress));
             }
         }
         public override bool CheckActive()

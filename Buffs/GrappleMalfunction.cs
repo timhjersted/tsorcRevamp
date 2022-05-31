@@ -8,7 +8,7 @@ namespace tsorcRevamp.Buffs
 {
     class GrappleMalfunction : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Grapple Malfunction");
             Description.SetDefault("Something is causing your grapple to sieze up!");

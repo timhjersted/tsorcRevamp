@@ -14,23 +14,23 @@ namespace tsorcRevamp.Items.Weapons.Throwing
         public override void SetDefaults()
         {
 
-            item.rare = ItemRarityID.Blue;
-            item.width = 22;
-            item.damage = 100;
-            item.height = 24;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.knockBack = 8f;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.value = 500;
-            item.shoot = mod.ProjectileType("Firebomb");
-            item.shootSpeed = 6.5f;
-            item.useAnimation = 50;
-            item.useTime = 50;
-            item.UseSound = SoundID.Item1;
-            item.consumable = true;
-            item.maxStack = 999;
-            item.thrown = true;
+            Item.rare = ItemRarityID.Blue;
+            Item.width = 22;
+            Item.damage = 100;
+            Item.height = 24;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.knockBack = 8f;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.value = 500;
+            Item.shoot = Mod.Find<ModProjectile>("Firebomb").Type;
+            Item.shootSpeed = 6.5f;
+            Item.useAnimation = 50;
+            Item.useTime = 50;
+            Item.UseSound = SoundID.Item1;
+            Item.consumable = true;
+            Item.maxStack = 999;
+            Item.thrown = true;
         }
     }
 }

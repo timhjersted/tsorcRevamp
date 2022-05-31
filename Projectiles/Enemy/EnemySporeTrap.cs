@@ -15,18 +15,18 @@ namespace tsorcRevamp.Projectiles.Enemy
 		{
 			//projectile.aiStyle = ProjectileID.SporeTrap;
 			
-			projectile.height = 8;
+			Projectile.height = 8;
 			
-			projectile.light = 1;
+			Projectile.light = 1;
 			
 			//projectile.penetrate = 1; //was 8
 			
-			projectile.CloneDefaults(ProjectileID.SporeTrap);
-			projectile.hostile = true;
-			projectile.friendly = false;
-			projectile.tileCollide = true;
-			projectile.width = 8;
-			projectile.timeLeft = 80;
+			Projectile.CloneDefaults(ProjectileID.SporeTrap);
+			Projectile.hostile = true;
+			Projectile.friendly = false;
+			Projectile.tileCollide = true;
+			Projectile.width = 8;
+			Projectile.timeLeft = 80;
 			spriteType = Main.rand.Next(2);
 			//aiType = ProjectileID.SporeTrap;
 		}
@@ -35,8 +35,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 		//Turn into the spore cloud by expanding and changing sprites
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
-			projectile.width += 20;
-			projectile.height += 20;
+			Projectile.width += 20;
+			Projectile.height += 20;
 			spriteType = Main.rand.Next(3, 5);
 
 			if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		
 		
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(ref Color lightColor)
 		{
 			Texture2D texture = null;
 			if (spriteType == 0)
@@ -81,17 +81,17 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 			if (texture != null)
 			{
-				spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+				Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
 			}
 
 			return false;
 		}
 
-		/*public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		/*public override bool PreDraw(ref Color lightColor)
 		{
 			Texture2D texture = Main.projectileTexture[projectile.type];
 			//Texture2D texture = Main.projectileTexture[ProjectileID.SporeTrap];
-			spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+			Main.EntitySpriteDraw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
 			return false;
 		}
 		*/

@@ -5,34 +5,34 @@ using Terraria.ID;
 namespace tsorcRevamp.Projectiles {
     public class DevilSickle : ModProjectile {
         public override void SetDefaults() {
-            projectile.width = 40;
-            projectile.height = 40;
-            projectile.scale = 0.9f;
-            projectile.alpha = 100;
-            projectile.timeLeft = 130;
-            projectile.friendly = true;
-            projectile.penetrate = 5;
-            projectile.tileCollide = false;
-            projectile.magic = true;
+            Projectile.width = 40;
+            Projectile.height = 40;
+            Projectile.scale = 0.9f;
+            Projectile.alpha = 100;
+            Projectile.timeLeft = 130;
+            Projectile.friendly = true;
+            Projectile.penetrate = 5;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
         }
         public override void AI() {
             int dust = Dust.NewDust(
-            projectile.position,
-            projectile.width,
-            projectile.height,
+            Projectile.position,
+            Projectile.width,
+            Projectile.height,
             6,
-            projectile.velocity.X,
-            projectile.velocity.Y,
+            Projectile.velocity.X,
+            Projectile.velocity.Y,
             90,
             default,
             1.8f
             );
             Main.dust[dust].noGravity = true;
-            projectile.rotation += projectile.direction * 0.8f;
+            Projectile.rotation += Projectile.direction * 0.8f;
 
-            if (projectile.velocity.X <= 7f && projectile.velocity.Y <= 7f && projectile.velocity.X >= -7f && projectile.velocity.Y >= -7f) {
-                projectile.velocity.X *= 1.06f;
-                projectile.velocity.Y *= 1.06f;
+            if (Projectile.velocity.X <= 7f && Projectile.velocity.Y <= 7f && Projectile.velocity.X >= -7f && Projectile.velocity.Y >= -7f) {
+                Projectile.velocity.X *= 1.06f;
+                Projectile.velocity.Y *= 1.06f;
             }
         }
 
@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles {
             }
         }
         public override void Kill(int timeLeft) {
-            Main.PlaySound(SoundID.Dig, (int)projectile.position.X, (int)projectile.position.Y, 9);
+            Main.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
         }
     }
 }

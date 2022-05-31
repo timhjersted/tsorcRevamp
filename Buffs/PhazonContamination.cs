@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class PhazonContamination : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Phazon Contamination");
             Description.SetDefault("Radiation is tearing your cells apart");
             Main.debuff[Type] = true;

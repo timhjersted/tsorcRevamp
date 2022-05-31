@@ -6,17 +6,17 @@ namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellIce3Icicle : ModProjectile {
         public override string Texture => "tsorcRevamp/Projectiles/Ice3Icicle";
         public override void SetDefaults() {
-            projectile.width = 32;
-            projectile.height = 88;
-            projectile.hostile = true;
-            projectile.penetrate = 8;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 300;
+            Projectile.width = 32;
+            Projectile.height = 88;
+            Projectile.hostile = true;
+            Projectile.penetrate = 8;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 300;
         }
 
         public override void AI() {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
         }
     }
 }

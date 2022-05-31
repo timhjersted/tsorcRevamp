@@ -16,12 +16,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 28;
-            item.accessory = true;
-            item.defense = 5;
-            item.rare = ItemRarityID.Blue;
-            item.value = PriceByRarity.Blue_1;
+            Item.width = 28;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.defense = 5;
+            Item.rare = ItemRarityID.Blue;
+            Item.value = PriceByRarity.Blue_1;
         }
 
         public override void UpdateEquip(Player player) {
@@ -32,9 +32,9 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.IronBar, 4);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 600);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 600);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

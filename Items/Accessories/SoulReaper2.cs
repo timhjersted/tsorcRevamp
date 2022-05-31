@@ -14,17 +14,17 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 24;
-            item.accessory = true;
-            item.value = PriceByRarity.Green_2;
-            item.rare = ItemRarityID.Green;
+            Item.width = 24;
+            Item.height = 24;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 7000);
-            recipe.AddIngredient(mod.GetItem("SoulReaper"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 7000);
+            recipe.AddIngredient(Mod.GetItem("SoulReaper"), 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

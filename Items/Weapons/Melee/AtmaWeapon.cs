@@ -13,27 +13,27 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetDefaults() {
 
-            item.stack = 1;
-            item.rare = ItemRarityID.LightPurple;
-            item.damage = 55;
-            item.height = 58;
-            item.knockBack = (float)9;
-            item.maxStack = 1;
-            item.melee = true;
-            item.autoReuse = true;
-            item.useAnimation = 19;
-            item.useTime = 19;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.LightPurple_6;
-            item.width = 58;
+            Item.stack = 1;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.damage = 55;
+            Item.height = 58;
+            Item.knockBack = (float)9;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 19;
+            Item.useTime = 19;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.width = 58;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Excalibur, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 60000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 60000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

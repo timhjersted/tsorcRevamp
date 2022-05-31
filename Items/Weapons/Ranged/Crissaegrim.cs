@@ -12,33 +12,33 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                                 "\nreturn them if the wielder's throw misses the one for whom it was intended.");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.LightRed;
-            item.width = 20;
-            item.height = 20;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 30;
-            item.useTime = 30;
-            item.useTurn = true;
-            item.damage = 50;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item1;
-            item.noMelee = true;
-            item.ranged = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.noUseGraphic = true;
-            item.shoot = ProjectileID.PurificationPowder;
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 20;
+            Item.height = 20;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.useTurn = true;
+            Item.damage = 50;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item1;
+            Item.noMelee = true;
+            Item.ranged = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.noUseGraphic = true;
+            Item.shoot = ProjectileID.PurificationPowder;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SoulofNight, 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 80000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 80000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
             float num48 = 14f; //this controls the range
             float mySpeedX = Main.mouseX + Main.screenPosition.X - (player.position.X + player.width * 0.5f);
             float mySpeedY = Main.mouseY + Main.screenPosition.Y - (player.position.Y + player.height * 0.5f);
@@ -70,8 +70,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
                                 (float)shiftedSpeed.X,
                                 (float)shiftedSpeed.Y,
                                 ModContent.ProjectileType<Projectiles.Crissaegrim>(),
-                                (int)(item.damage * player.magicDamage),
-                                item.knockBack,
+                                (int)(Item.damage * player.magicDamage),
+                                Item.knockBack,
                                 Main.myPlayer
                                 );
 

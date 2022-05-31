@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs {
         public override void SetDefaults(NPC npc) {
 
             //Only mess with it if it's one of our bosses
-            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp"))
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
                 if (npc.boss) {
                     //Bosses are 1.3x weaker in normal mode. This is reverted for expert in ScaleExpertStats
@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs {
                 }
                 else
                 {
-                    if (npc.modNPC.GetType().Namespace.Contains("SuperHardMode"))
+                    if (npc.ModNPC.GetType().Namespace.Contains("SuperHardMode"))
                     {
                         base.SetDefaults(npc);
                         npc.lifeMax = (int)(tsorcRevampWorld.SHMScale * npc.lifeMax);
@@ -883,7 +883,7 @@ namespace tsorcRevamp.NPCs {
         public override void ScaleExpertStats(NPC npc, int numPlayers, float bossLifeScale)
         {
             //Only mess with it if it's one of our bosses
-            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
             {
                 //These could've been simplified to one formula, but i'm leaving them like this so it's obvious what they're doing
 
@@ -1847,9 +1847,9 @@ namespace tsorcRevamp.NPCs {
                             num504++;
                             int num505 = Main.rand.Next(point3.X - num499, point3.X + num499 + 1);
                             int num506 = Main.rand.Next(point3.Y - num499, point3.Y + num499 + 1);
-                            if ((num506 < point3.Y - num501 || num506 > point3.Y + num501 || num505 < point3.X - num501 || num505 > point3.X + num501) && (num506 < point2.Y - num500 || num506 > point2.Y + num500 || num505 < point2.X - num500 || num505 > point2.X + num500) && !Main.tile[num505, num506].nactive()) {
+                            if ((num506 < point3.Y - num501 || num506 > point3.Y + num501 || num505 < point3.X - num501 || num505 > point3.X + num501) && (num506 < point2.Y - num500 || num506 > point2.Y + num500 || num505 < point2.X - num500 || num505 > point2.X + num500) && !Main.tile[num505, num506].HasUnactuatedTile) {
                                 bool flag102 = true;
-                                if (flag102 && Main.tile[num505, num506].lava()) {
+                                if (flag102 && Main.tile[num505, num506].LiquidType) {
                                     flag102 = false;
                                 }
                                 if (flag102 && Collision.SolidTiles(num505 - num503, num505 + num503, num506 - num503, num506 + num503)) {
@@ -2222,9 +2222,9 @@ namespace tsorcRevamp.NPCs {
                     else {
                         Main.PlaySound(3, (int)npc.position.X, (int)npc.position.Y);
                         for (int num844 = 0; num844 < 2; num844++) {
-                            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
-                            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
-                            Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 6);
+                            Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
+                            Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
+                            Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 6);
                         }
                         for (int num855 = 0; num855 < 20; num855++) {
                             Dust.NewDust(npc.position, npc.width, npc.height, 5, (float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f);
@@ -3008,8 +3008,8 @@ namespace tsorcRevamp.NPCs {
                         int npcTileY = (int)(npc.Center.Y / 16f);
                         if (!WorldGen.SolidTile(npcTileX, npcTileY)) {
                             Main.tile[npcTileX, npcTileY].liquid = 0;
-                            Main.tile[npcTileX, npcTileY].lava(lava: false);
-                            Main.tile[npcTileX, npcTileY].honey(honey: false);
+                            Main.tile[npcTileX, npcTileY].LiquidType = false;
+                            Main.tile[npcTileX, npcTileY].LiquidType = false;
                             WorldGen.SquareTileFrame(npcTileX, npcTileY);
                         }
                     }
@@ -3026,7 +3026,7 @@ namespace tsorcRevamp.NPCs {
             Player player = Main.player[npc.target];
 
             if (npc.type == NPCID.BigStinger) {
-                Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
             }
 
             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
@@ -3041,19 +3041,19 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.MossHornet ||
                                 (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
                 if (Main.rand.NextFloat() >= .66f) { // 33% chance in revamped
-                    Item.NewItem(npc.getRect(), mod.ItemType("BloodredMossClump"));
+                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
                 }
             }
             
             if (npc.type == NPCID.KingSlime) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 500);
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 500);
                 if (!Main.expertMode) {
                     Item.NewItem(npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
                 }
             }
 
             if (npc.type == NPCID.QueenBee) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 1000);
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 1000);
             }
 
             if (npc.type == NPCID.TheDestroyer && !Main.expertMode) {
@@ -3082,17 +3082,17 @@ namespace tsorcRevamp.NPCs {
             }
 
             if (npc.netID == NPCID.GreenSlime) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
             }
 
             if (npc.netID == NPCID.RedSlime)
             {
-                Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"), 2);
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 2);
             }
 
             if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow)) {
                 if (Main.rand.Next(10) == 0) {
-                    Item.NewItem(npc.getRect(), mod.ItemType("SymbolOfAvarice"));
+                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("SymbolOfAvarice").Type);
                 }
             }
 
@@ -3111,15 +3111,15 @@ namespace tsorcRevamp.NPCs {
             }
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.Next(50) == 0 && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), mod.ItemType("WallTome"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
             }
 
             if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.Next(25) == 0 && Main.expertMode) {
-                Item.NewItem(npc.getRect(), mod.ItemType("WallTome"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
             }
 
             if (npc.type == NPCID.Shark && Main.rand.Next(20) == 0) {
-                Item.NewItem(npc.getRect(), mod.ItemType("CoralSword"), 1, false, -1);
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("CoralSword").Type, 1, false, -1);
             }
 
             if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
@@ -3130,11 +3130,11 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.Skeleton ||
                                 npc.type == NPCID.ArmoredSkeleton ||
                                 npc.type == NPCID.SkeletonArcher)) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
             if (npc.type == NPCID.Vulture && Main.rand.Next(10) == 0) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
             if (npc.type == NPCID.Wraith) {
@@ -3159,17 +3159,17 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.ZombieEskimo ||
                                 npc.type == NPCID.FemaleZombie ||
                                 (npc.type >= NPCID.PincushionZombie && npc.type <= NPCID.TwiggyZombie))) {
-                Item.NewItem(npc.getRect(), mod.ItemType("DeadChicken"));
+                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief) {
 
                 if (Main.rand.Next(200) == 0) { // 0.5%
-                    Item.NewItem(npc.getRect(), mod.ItemType("Pulsar"), 1, false, -1);
+                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("Pulsar").Type, 1, false, -1);
                 }
 
                 else if (Main.rand.Next(200) == 0) { // 0.5% 
-                    Item.NewItem(npc.getRect(), mod.ItemType("ToxicCatalyzer"), 1, false, -1);
+                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("ToxicCatalyzer").Type, 1, false, -1);
                 }
             }
             if (npc.type == NPCID.Plantera && !Main.expertMode)
@@ -3233,7 +3233,7 @@ namespace tsorcRevamp.NPCs {
 
         public override bool CheckActive(NPC npc)
         {
-            if (npc.modNPC != null && npc.modNPC.mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
+            if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp") && npc.boss)
             {
                 return false;
             }

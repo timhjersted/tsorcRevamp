@@ -13,12 +13,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.accessory = true;
-            item.width = 32;
-            item.height = 26;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Red;
-            item.value = PriceByRarity.Red_10;
+            Item.accessory = true;
+            Item.width = 32;
+            Item.height = 26;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Red;
+            Item.value = PriceByRarity.Red_10;
         }
         public override void UpdateEquip(Player player) {
             player.noFallDmg = true;

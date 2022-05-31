@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class CowardsAffliction : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Coward's Affliction");
             Description.SetDefault("Do not flee from the Lord of Cinder.");
             Main.debuff[Type] = true;

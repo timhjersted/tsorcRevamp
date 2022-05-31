@@ -11,37 +11,37 @@ namespace tsorcRevamp.NPCs.Enemies
 	{
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 5;
-			Main.npcFrameCount[npc.type] = 4;
+			NPC.npcSlots = 5;
+			Main.npcFrameCount[NPC.type] = 4;
 			animationType = 60;
-			npc.width = 50;
-			npc.height = 50;
-			npc.damage = 75;
-			npc.defense = 18;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath6;
-			npc.lifeMax = 1200;
-			npc.scale = 1;
-			npc.friendly = false;
-			npc.noTileCollide = true;
-			npc.lavaImmune = true;
-			npc.noGravity = true;
-			npc.knockBackResist = 0;
-			npc.alpha = 100;
-			npc.value = 1600;
-			banner = npc.type;
+			NPC.width = 50;
+			NPC.height = 50;
+			NPC.damage = 75;
+			NPC.defense = 18;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath6;
+			NPC.lifeMax = 1200;
+			NPC.scale = 1;
+			NPC.friendly = false;
+			NPC.noTileCollide = true;
+			NPC.lavaImmune = true;
+			NPC.noGravity = true;
+			NPC.knockBackResist = 0;
+			NPC.alpha = 100;
+			NPC.value = 1600;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.WaterSpiritBanner>();
 
 
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
-			npc.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.Poisoned] = true;
+			NPC.buffImmune[BuffID.OnFire] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -49,27 +49,27 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			/**
 			//if(Y >= Main.rockLayer) return false; //this is for being above the grey background
-			if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY].type != 53) return 0; //this means 'if the tile you spawn on is not sand , dont spawn'
-			if (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 1].liquid == 0) return 0; //this means if there is no water above , don't spawn
+			if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].type != 53) return 0; //this means 'if the tile you spawn on is not sand , dont spawn'
+			if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 1].liquid == 0) return 0; //this means if there is no water above , don't spawn
 			if (Main.rand.Next(15) == 0)
 			{
-				NPC.NewNPC(spawnInfo.spawnTileX * 16 + 8, spawnInfo.spawnTileY * 16, 65, 0);
+				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 65, 0);
 			}
 			if (Main.rand.Next(10) == 0)
 			{
-				NPC.NewNPC(spawnInfo.spawnTileX * 16 + 8, spawnInfo.spawnTileY * 16, 67, 0);
+				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 67, 0);
 			}
 			else
 			{
-				NPC.NewNPC(spawnInfo.spawnTileX * 16 + 8, spawnInfo.spawnTileY * 16, 64, 0);
+				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 64, 0);
 			}
 			**/
 			return 0;
 		}
 
-        public override void NPCLoot()
+        public override void OnKill()
         {
-			if (Main.rand.Next(100) < 3) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
+			if (Main.rand.Next(100) < 3) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
 		}
     }
 }

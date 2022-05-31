@@ -10,18 +10,18 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                                 "\nHas a chance to heal the player on hit.");
         }
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 21;
-            item.autoReuse = true;
-            item.useTime = 21;
-            item.damage = 11;
-            item.knockBack = 4f;
-            item.UseSound = SoundID.Item1;
-            item.value = PriceByRarity.Blue_1;
-            item.melee = true;
-            item.rare = ItemRarityID.Blue;
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 21;
+            Item.autoReuse = true;
+            Item.useTime = 21;
+            Item.damage = 11;
+            Item.knockBack = 4f;
+            Item.UseSound = SoundID.Item1;
+            Item.value = PriceByRarity.Blue_1;
+            Item.melee = true;
+            Item.rare = ItemRarityID.Blue;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             if (target.type == NPCID.EaterofSouls
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SilverBroadsword);
             recipe.AddIngredient(ItemID.RottenChunk, 5);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 800);

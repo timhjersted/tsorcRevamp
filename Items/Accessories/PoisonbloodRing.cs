@@ -12,19 +12,19 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 24;
-			item.lifeRegen = 2;
-            item.accessory = true;
-            item.value = PriceByRarity.Green_2;
-            item.rare = ItemRarityID.Green;
+            Item.width = 24;
+            Item.height = 24;
+			Item.lifeRegen = 2;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.rare = ItemRarityID.Green;
         }
  
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("PoisonbiteRing"), 1);
-			recipe.AddIngredient(mod.GetItem("BloodbiteRing"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("PoisonbiteRing"), 1);
+			recipe.AddIngredient(Mod.GetItem("BloodbiteRing"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 5000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

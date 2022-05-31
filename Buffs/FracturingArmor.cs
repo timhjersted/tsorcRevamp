@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Buffs {
     class FracturingArmor : ModBuff {
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Fracturing Armor");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;

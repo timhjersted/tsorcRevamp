@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class EarthAlignment : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Alignment of the Earth");
 			Description.SetDefault("The world's gravity offers no resistance to your flight \n" +
 								   "It's as if the entire planet is lifting you up in counter to Attraidies' dark power...");

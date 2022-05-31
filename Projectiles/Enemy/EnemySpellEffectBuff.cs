@@ -6,25 +6,25 @@ using Terraria.ID;
 namespace tsorcRevamp.Projectiles.Enemy {
     class EnemySpellEffectBuff : ModProjectile {
         public override void SetStaticDefaults() {
-            Main.projFrames[projectile.type] = 5;
+            Main.projFrames[Projectile.type] = 5;
         }
         public override void SetDefaults() {
-            projectile.height = 44;
-            projectile.hostile = true;
-            projectile.penetrate = 50;
-            projectile.scale = 1.2f;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
+            Projectile.height = 44;
+            Projectile.hostile = true;
+            Projectile.penetrate = 50;
+            Projectile.scale = 1.2f;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
         }
 
         public override void AI() {
-            projectile.frameCounter++;
-            if (projectile.frameCounter > 3) {
-                projectile.frame++;
-                projectile.frameCounter = 0;
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter > 3) {
+                Projectile.frame++;
+                Projectile.frameCounter = 0;
             }
-            if (projectile.frame >= 5) {
-                projectile.Kill();
+            if (Projectile.frame >= 5) {
+                Projectile.Kill();
                 return;
             }
         }

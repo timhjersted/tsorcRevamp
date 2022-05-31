@@ -21,7 +21,7 @@ namespace tsorcRevamp {
         }
 
         public static bool NoSpecialBiome(Player p) {
-            return (!p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHoly && !p.ZoneMeteor && !p.ZoneDungeon);
+            return (!p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon);
         }
 
         public static bool Sky(Player p) { //p.ZoneSkyHeight is more restrictive than this, so use this if an enemy uses it
@@ -239,7 +239,7 @@ namespace tsorcRevamp {
 
             if(texture == null || texture.IsDisposed)
             {
-                texture = ModContent.GetTexture(projectile.modProjectile.Texture);
+                texture = ModContent.GetTexture(projectile.ModProjectile.Texture);
             }
 
             int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
@@ -381,7 +381,7 @@ namespace tsorcRevamp {
                 Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];                
 
                 //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
-                if (thisTile != null && thisTile.active() && !thisTile.inActive() && Main.tileSolid[thisTile.type])
+                if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
                 {
                     return true;
                 }
@@ -404,7 +404,7 @@ namespace tsorcRevamp {
                 Tile thisTile = Main.tile[X, Y];
 
                 //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
-                if (thisTile != null && thisTile.active() && !thisTile.inActive() && Main.tileSolid[thisTile.type])
+                if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
                 {
                     return true;
                 }

@@ -10,33 +10,33 @@ namespace tsorcRevamp.Projectiles {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/EphemeralThrowingAxe";
 
         public override void SetDefaults() {
-            projectile.aiStyle = 2;
-            projectile.friendly = true;
-            projectile.height = 22;
-            projectile.penetrate = 4;
-            projectile.melee = true;
-            projectile.tileCollide = false;
-            projectile.width = 22;
-            projectile.timeLeft = 50;
+            Projectile.aiStyle = 2;
+            Projectile.friendly = true;
+            Projectile.height = 22;
+            Projectile.penetrate = 4;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.tileCollide = false;
+            Projectile.width = 22;
+            Projectile.timeLeft = 50;
         }
 
         public override void AI() {
             Color color = new Color();
-            int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 57, 0f, 0f, 80, color, 1f);
+            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 57, 0f, 0f, 80, color, 1f);
             Main.dust[dust].noGravity = true;
         }
         public override void Kill(int timeLeft) {
 
-            if (!projectile.active) {
+            if (!Projectile.active) {
                 return;
             }
-            projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
             {
-                Main.PlaySound(SoundID.Dig, (int)projectile.position.X, (int)projectile.position.Y, 1);
+                Main.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
                 for (int i = 0; i < 10; i++) {
-                    Vector2 arg_92_0 = new Vector2(projectile.position.X, projectile.position.Y);
-                    int arg_92_1 = projectile.width;
-                    int arg_92_2 = projectile.height;
+                    Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+                    int arg_92_1 = Projectile.width;
+                    int arg_92_2 = Projectile.height;
                     int arg_92_3 = 7;
                     float arg_92_4 = 0f;
                     float arg_92_5 = 0f;
@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles {
                     Dust.NewDust(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5, arg_92_6, newColor, 1f);
                 }
             }
-            projectile.active = false;
+            Projectile.active = false;
 
         }
     }

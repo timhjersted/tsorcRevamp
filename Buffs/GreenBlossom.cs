@@ -7,7 +7,7 @@ namespace tsorcRevamp.Buffs
 {
     class GreenBlossom : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Green Blossom");
             Description.SetDefault("Stamina recovery speed increased!");

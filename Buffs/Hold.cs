@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Buffs {
     class Hold : ModBuff {
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Held");
             Description.SetDefault("You're being held in position!");
             Main.debuff[Type] = true;

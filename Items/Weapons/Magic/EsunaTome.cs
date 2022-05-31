@@ -8,21 +8,21 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("A lost tome known to cure all but the rarest of ailments.");
         }
         public override void SetDefaults() {
-            item.height = 10;
-            item.knockBack = 4;
-            item.rare = ItemRarityID.Cyan;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 40;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
-            item.useAnimation = 10;
-            item.value = PriceByRarity.Cyan_9;
-            item.width = 34;
+            Item.height = 10;
+            Item.knockBack = 4;
+            Item.rare = ItemRarityID.Cyan;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 40;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 10;
+            Item.useAnimation = 10;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.width = 34;
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             int buffIndex = 0;
 
             foreach (int buffType in player.buffType) {
@@ -47,11 +47,11 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome);
-            recipe.AddIngredient(mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(mod.GetItem("HealingElixir"), 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 70000);
+            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
+            recipe.AddIngredient(Mod.GetItem("HealingElixir"), 10);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 70000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

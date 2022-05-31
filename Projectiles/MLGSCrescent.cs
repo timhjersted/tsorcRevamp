@@ -11,27 +11,27 @@ namespace tsorcRevamp.Projectiles
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.penetrate = 5;
-            projectile.friendly = true;
-            projectile.tileCollide = false;
-            projectile.melee = true;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.penetrate = 5;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Melee;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D texture = Main.projectileTexture[Projectile.type];
             Color color = Color.White * 1f;
 
-            if (projectile.ai[0] > 8)
+            if (Projectile.ai[0] > 8)
             {
-                spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, new Rectangle(0, projectile.frame * 64, 68, 64), color, projectile.rotation, new Vector2(34, 32), projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 64, 68, 64), color, Projectile.rotation, new Vector2(34, 32), Projectile.scale, SpriteEffects.None, 0);
             }
 
             return false;
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles
         {
             for (int i = 0; i < 20; i++)
             {
-                int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 89, 0, 0, 70, default(Color), 1f);
+                int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, 0, 0, 70, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
         }
@@ -49,35 +49,35 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-            projectile.ai[0]++;
-            projectile.rotation = projectile.velocity.ToRotation();
+            Projectile.ai[0]++;
+            Projectile.rotation = Projectile.velocity.ToRotation();
 
-            projectile.velocity *= 1.2f;
+            Projectile.velocity *= 1.2f;
 
-            if (projectile.ai[0] > 8)
+            if (Projectile.ai[0] > 8)
             {
 
-                Lighting.AddLight(projectile.position, 0.0452f, 0.21f, 0.1f);
+                Lighting.AddLight(Projectile.position, 0.0452f, 0.21f, 0.1f);
 
                 for (int d = 0; d < 2; d++)
                 {
-                    int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 89, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 89, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default(Color), 1f);
                     Main.dust[dust].noGravity = true;
 
                 }
 
                 for (int d = 0; d < 2; d++)
                 {
-                    int dust = Dust.NewDust(new Vector2(projectile.position.X - 11, projectile.position.Y - 11), projectile.width + 22, projectile.height + 22, 110, projectile.velocity.X * 0f, projectile.velocity.Y * 0f, 30, default(Color), 1f);
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X - 11, Projectile.position.Y - 11), Projectile.width + 22, Projectile.height + 22, 110, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default(Color), 1f);
                     Main.dust[dust].noGravity = true;
                 }
 
-                if (++projectile.frameCounter >= 3)
+                if (++Projectile.frameCounter >= 3)
                 {
-                    projectile.frameCounter = 0;
-                    if (++projectile.frame > 2)
+                    Projectile.frameCounter = 0;
+                    if (++Projectile.frame > 2)
                     {
-                        projectile.Kill();
+                        Projectile.Kill();
                     }
                 }
             }

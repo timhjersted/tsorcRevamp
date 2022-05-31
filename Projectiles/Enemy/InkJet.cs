@@ -12,20 +12,20 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
 
         public override void SetDefaults() {
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.timeLeft = 90;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.timeLeft = 90;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
         }
 
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, Color.Blue.ToVector3());
+            Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3());
             if (Main.GameUpdateCount % 4 == 0)
             {                
-                Dust thisDust = Main.dust[Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.Asphalt, projectile.velocity.X, projectile.velocity.Y, 0, new Color(), 4)];
+                Dust thisDust = Main.dust[Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Asphalt, Projectile.velocity.X, Projectile.velocity.Y, 0, new Color(), 4)];
                 thisDust.noGravity = true;
 
                 thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.BlackDye), Main.LocalPlayer);
@@ -47,7 +47,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             target.AddBuff(BuffID.Obstructed, 120 / buffLengthMod, false);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             return false;
         }

@@ -7,33 +7,33 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/WandOfFire";
         public override void SetStaticDefaults() {
             DisplayName.SetDefault("Wand of Fire II");
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
         }
         public override void SetDefaults() {
-            item.autoReuse = true;
-            item.width = 12;
-            item.height = 17;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 19;
-            item.useTime = 19;
-            item.maxStack = 1;
-            item.damage = 23;
-            item.knockBack = 1;
-            item.mana = 8;
-            item.UseSound = SoundID.Item20;
-            item.shootSpeed = 14;
-            item.noMelee = true;
-            item.value = PriceByRarity.Green_2;
-            item.magic = true;
-            item.rare = ItemRarityID.Green;
-            item.shoot = ModContent.ProjectileType<Projectiles.FireBall>();
+            Item.autoReuse = true;
+            Item.width = 12;
+            Item.height = 17;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 19;
+            Item.useTime = 19;
+            Item.maxStack = 1;
+            Item.damage = 23;
+            Item.knockBack = 1;
+            Item.mana = 8;
+            Item.UseSound = SoundID.Item20;
+            Item.shootSpeed = 14;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.magic = true;
+            Item.rare = ItemRarityID.Green;
+            Item.shoot = ModContent.ProjectileType<Projectiles.FireBall>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Stinger, 3);
-            recipe.AddIngredient(mod.GetItem("WandOfFire"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2300);
+            recipe.AddIngredient(Mod.GetItem("WandOfFire"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2300);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

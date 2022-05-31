@@ -17,28 +17,28 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            item.stack = 1;
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Blue;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 20;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 20;
-            item.useAnimation = 20;
-            item.value = PriceByRarity.Blue_1;
+            Item.stack = 1;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Blue;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 20;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.value = PriceByRarity.Blue_1;
 
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(mod.GetItem("HealingElixir"));
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe.AddIngredient(Mod.GetItem("HealingElixir"));
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
 
 
-        public override bool UseItem(Player player) 
+        public override bool? UseItem(Player player) 
         {
             player.AddBuff(ModContent.BuffType<Buffs.Fog>(), 900, false);
             return true;

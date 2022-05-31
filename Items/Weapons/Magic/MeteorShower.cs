@@ -9,34 +9,34 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Tooltip.SetDefault("Causes meteorites to rain from the sky.");
         }
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 5;
-            item.useTime = 5;
-            item.autoReuse = true;
-            item.UseSound = SoundID.Item8;
-            item.rare = ItemRarityID.Orange;
-            item.knockBack = 3;
-            item.mana = 10;
-            item.damage = 40;
-            item.autoReuse = true;
-            item.noMelee = true;
-            item.value = PriceByRarity.Orange_3;
-            item.magic = true;
+            Item.width = 24;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 5;
+            Item.useTime = 5;
+            Item.autoReuse = true;
+            Item.UseSound = SoundID.Item8;
+            Item.rare = ItemRarityID.Orange;
+            Item.knockBack = 3;
+            Item.mana = 10;
+            Item.damage = 40;
+            Item.autoReuse = true;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Orange_3;
+            Item.magic = true;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 20);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 10000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             Projectile.NewProjectile(
                 (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),

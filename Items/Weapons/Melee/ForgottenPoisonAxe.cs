@@ -11,18 +11,18 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
         public override void SetDefaults() {
 
-            item.rare = ItemRarityID.Pink;
-            item.damage = 76;
-            item.height = 46;
-            item.knockBack = 5;
-            item.melee = true;
-            item.scale = 1.2f;
-            item.useAnimation = 25;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 15;
-            item.value = PriceByRarity.Pink_5;
-            item.width = 50;
+            Item.rare = ItemRarityID.Pink;
+            Item.damage = 76;
+            Item.height = 46;
+            Item.knockBack = 5;
+            Item.melee = true;
+            Item.scale = 1.2f;
+            Item.useAnimation = 25;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 15;
+            Item.value = PriceByRarity.Pink_5;
+            Item.width = 50;
         }
 
         public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit) {

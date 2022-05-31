@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     public class Chilled : ModBuff { //every instance of the Chilled buff in the original source should be this one, not the vanilla one
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Frostbite");
             Description.SetDefault("Defense and speed reduced");
             Main.debuff[Type] = true;

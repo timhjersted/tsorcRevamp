@@ -15,11 +15,11 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 20;
-            item.defense = 3;
-            item.value = 1000000;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 24;
+            Item.height = 20;
+            Item.defense = 3;
+            Item.value = 1000000;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player)
@@ -56,9 +56,9 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.MythrilHood, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3500);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3500);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -10,12 +10,12 @@ namespace tsorcRevamp.Items {
                                 "\nThe most assured way to find him, however, is to enter the Abyss yourself, using the Covanent of Artorias ring.");
         }
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 32;
-            item.consumable = false;
-            item.maxStack = 1;
-            item.value = 50000;
-            item.rare = ItemRarityID.Purple;
+            Item.width = 28;
+            Item.height = 32;
+            Item.consumable = false;
+            Item.maxStack = 1;
+            Item.value = 50000;
+            Item.rare = ItemRarityID.Purple;
         }
     }
 }

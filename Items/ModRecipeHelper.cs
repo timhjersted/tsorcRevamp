@@ -7,9 +7,9 @@ using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
 
 namespace tsorcRevamp.Items {
-    class ModRecipeHelper {
+    class RecipeHelper {
         
-        public static void AddModRecipes() {
+        public static void AddRecipes() {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
             
             #region add s tier potion recipes
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Items {
             PermaPotionRecipeC(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentSoup>());
             #endregion
             #region special perma recipes
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddIngredient(ItemID.GravitationPotion, 20);
             recipe.AddIngredient(ItemID.SoulofFlight, 1);
@@ -83,7 +83,7 @@ namespace tsorcRevamp.Items {
             recipe.SetResult(ModContent.ItemType<PermanentGravitationPotion>());
             recipe.AddRecipe();
 
-            recipe = new ModRecipe(mod);
+            recipe = new Recipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
@@ -94,7 +94,7 @@ namespace tsorcRevamp.Items {
             #endregion 
             
 
-            ModRecipe recipe1 = new ModRecipe(mod);
+            Recipe recipe1 = new Recipe(mod);
             recipe1.AddIngredient(ItemID.FallenStar);
             recipe1.AddIngredient(ItemID.Gel, 2);
             recipe1.AddIngredient(ItemID.Bottle, 10);
@@ -113,7 +113,7 @@ namespace tsorcRevamp.Items {
 
         #region permanent potion recipes
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 5);
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Items {
             recipe.AddRecipe();
         }
         public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion) {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
@@ -131,7 +131,7 @@ namespace tsorcRevamp.Items {
             recipe.AddRecipe();
         }
         public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion) {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);
@@ -140,7 +140,7 @@ namespace tsorcRevamp.Items {
             recipe.AddRecipe();
         }
         public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion) {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(mod);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddIngredient(IngredientPotion);
             recipe.AddIngredient(ModContent.ItemType<EternalCrystal>());
@@ -160,7 +160,7 @@ namespace tsorcRevamp.Items {
 
     }
 
-    public class ReverseMirror : ModRecipe { //custom recipe to refund the player their souls if they revert their mirror
+    public class ReverseMirror : Recipe { //custom recipe to refund the player their souls if they revert their mirror
         public ReverseMirror(Mod mod) : base(mod) { } //constructor declares which mod we're in
 
         public override void OnCraft(Item item) {

@@ -10,26 +10,26 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 30;
-            item.height = 30;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.accessory = true;
-            item.value = PriceByRarity.Blue_1;
-            item.rare = ItemRarityID.Blue;
+            Item.width = 30;
+            Item.height = 30;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Blue_1;
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SilverWatch, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 50);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 50);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player) { // it doesn't, sorry :P
+        public override bool? UseItem(Player player) { // it doesn't, sorry :P
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
                 Main.dayTime = !Main.dayTime;

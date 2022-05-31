@@ -6,28 +6,28 @@ namespace tsorcRevamp.Projectiles {
     class Ice1Icicle : ModProjectile {
 
         public override void SetDefaults() {
-            projectile.width = 18;
-            projectile.height = 38;
-            projectile.friendly = true;
-            projectile.penetrate = 3;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 90;
+            Projectile.width = 18;
+            Projectile.height = 38;
+            Projectile.friendly = true;
+            Projectile.penetrate = 3;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 90;
         }
 
         public override void AI() {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
 
-            if (projectile.timeLeft <= 30)
+            if (Projectile.timeLeft <= 30)
             {
-                projectile.alpha += 6;
+                Projectile.alpha += 6;
             }
             //keep a portion of the projectile's velocity when spawned, so we canmake sure it has the right knockback
-            if (projectile.ai[0] == 0)
+            if (Projectile.ai[0] == 0)
             {
-                projectile.velocity.X *= 0.001f;
-                projectile.ai[0] = 1;
+                Projectile.velocity.X *= 0.001f;
+                Projectile.ai[0] = 1;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Doctor Jones");
-			Main.npcFrameCount[npc.type] = 26;
+			Main.npcFrameCount[NPC.type] = 26;
 			//NPCID.Sets.ExtraFramesCount[npc.type] = 10;
 			//NPCID.Sets.AttackFrameCount[npc.type] = 5;
 			//NPCID.Sets.DangerDetectRange[npc.type] = 140;
@@ -37,22 +37,22 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetDefaults()
 		{
 			//npc.townNPC = true;
-			npc.friendly = true;
-			npc.width = 18;
-			npc.height = 40;
+			NPC.friendly = true;
+			NPC.width = 18;
+			NPC.height = 40;
 			//npc.aiStyle = ModContent.NPCType<NPCs.Friendly.Archeologist>();
-			npc.aiStyle = 7;
-			npc.damage = 50;
-			npc.defense = 15;
-			npc.lifeMax = 1000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 0.3f;
+			NPC.aiStyle = 7;
+			NPC.damage = 50;
+			NPC.defense = 15;
+			NPC.lifeMax = 1000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 0.3f;
 			animationType = NPCID.Guide;
 		}
 
         public override bool PreAI() {
-			npc.Transform(ModContent.NPCType<Archaeologist>());
+			NPC.Transform(ModContent.NPCType<Archaeologist>());
 			return true;
         }
 
@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			float chance = 0;
 
-			if (spawnInfo.player.ZoneJungle && !NPC.AnyNPCs(mod.NPCType("DoctorJones")) && !NPC.AnyNPCs(mod.NPCType("Archaeologist")) && Main.rand.Next(10) == 0)
+			if (spawnInfo.Player.ZoneJungle && !NPC.AnyNPCs(Mod.Find<ModNPC>("DoctorJones").Type) && !NPC.AnyNPCs(Mod.Find<ModNPC>("Archaeologist").Type) && Main.rand.Next(10) == 0)
 			{
 				UsefulFunctions.BroadcastText("The spirit of adventure is nearby...", 255, 255, 0);
 				return 1f;
@@ -132,13 +132,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void HitEffect(int hitDirection, double damage)
 		{
-			if (base.npc.life <= 0) //even though npcs are immortal
+			if (base.NPC.life <= 0) //even though npcs are immortal
 			{
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Archeologist Head Gore"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Archeologist Arm Gore"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Archeologist Arm Gore"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Archeologist Leg Gore"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Archeologist Leg Gore"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Archeologist Head Gore"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Archeologist Arm Gore"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Archeologist Arm Gore"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Archeologist Leg Gore"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Archeologist Leg Gore"));
 			}
 		}
 	}

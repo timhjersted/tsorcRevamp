@@ -6,7 +6,7 @@ namespace tsorcRevamp.Buffs
 {
     class MiakodaCrescent : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Miakoda - Crescent Moon Form");
             Description.SetDefault("An ancient being freed from Skeletron." +

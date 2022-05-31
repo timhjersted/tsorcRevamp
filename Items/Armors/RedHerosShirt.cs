@@ -16,19 +16,19 @@ namespace tsorcRevamp.Items.Armors
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.defense = 20;
-            item.value = 2500;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 18;
+            Item.height = 18;
+            Item.defense = 20;
+            Item.value = 2500;
+            Item.rare = ItemRarityID.LightRed;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("BlueHerosShirt"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("BlueHerosShirt"), 1);
             recipe.AddIngredient(ItemID.SoulofSight, 3);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

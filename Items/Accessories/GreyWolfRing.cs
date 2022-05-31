@@ -14,21 +14,21 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 24;
-            item.height = 24;
-            item.defense = 16;
-			item.lifeRegen = 8;
-            item.accessory = true;
-            item.value = PriceByRarity.Red_10;
-            item.rare = ItemRarityID.Red;
+            Item.width = 24;
+            Item.height = 24;
+            Item.defense = 16;
+			Item.lifeRegen = 8;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.rare = ItemRarityID.Red;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("WolfRing"), 1);
-			recipe.AddIngredient(mod.GetItem("BandOfSupremeCosmicPower"), 1);
-			recipe.AddIngredient(mod.GetItem("PoisonbloodRing"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 100000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("WolfRing"), 1);
+			recipe.AddIngredient(Mod.GetItem("BandOfSupremeCosmicPower"), 1);
+			recipe.AddIngredient(Mod.GetItem("PoisonbloodRing"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 100000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

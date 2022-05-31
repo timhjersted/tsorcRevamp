@@ -12,16 +12,16 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetDefaults()
         {
-            projectile.width = 12;
-            projectile.height = 12;
-            projectile.friendly = true;
-            projectile.aiStyle = 0;
-            projectile.ranged = true;
-            projectile.tileCollide = false;
-			projectile.penetrate = 5;
+            Projectile.width = 12;
+            Projectile.height = 12;
+            Projectile.friendly = true;
+            Projectile.aiStyle = 0;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
+			Projectile.penetrate = 5;
 			//In theory this means the projectile can only ever hit a NPC once.
-			projectile.usesLocalNPCImmunity = true;
-			projectile.localNPCHitCooldown = -1;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown = -1;
         }
 		public override void SetStaticDefaults()
 		{
@@ -35,41 +35,41 @@ namespace tsorcRevamp.Projectiles
 		int hitTileCounter = 2;
 		public override void AI()
         {
-			int tileX = (int)(projectile.position.X / 16);
-			int tileY = (int)(projectile.position.Y / 16);
+			int tileX = (int)(Projectile.position.X / 16);
+			int tileY = (int)(Projectile.position.Y / 16);
 			DelegateMethods.CutTiles(tileX, tileY);
 			if (!hitTile)
 			{
-				if (Main.tile[tileX, tileY].active() && Main.tileSolid[(int)Main.tile[tileX, tileY].type]) // tile exists and is solid
+				if (Main.tile[tileX, tileY].HasTile && Main.tileSolid[(int)Main.tile[tileX, tileY].TileType]) // tile exists and is solid
 				{
 					hitTile = true;
-					Main.PlaySound(4, (int)projectile.position.X, (int)projectile.position.Y, 43);
+					Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
 				}
 			} else
             {
 				hitTileCounter--;
 				if(hitTileCounter <= 0)
                 {
-					projectile.tileCollide = true;
+					Projectile.tileCollide = true;
                 }
             }
 
 			if (reposition)
 			{
-				projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + 1.57f;
+				Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
 
-				projectile.velocity.X *= 0.45f;
-				projectile.velocity.Y *= 0.45f;
+				Projectile.velocity.X *= 0.45f;
+				Projectile.velocity.Y *= 0.45f;
 
 				reposition = false;
-				projectile.alpha = 255;
+				Projectile.alpha = 255;
 			}
-			projectile.alpha -= 51;
+			Projectile.alpha -= 51;
 
 			for (int i = 0; i < 10; i++)
 			{
 				bool bulletHit = false;
-				Rectangle myBox = new Rectangle((int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height);
+				Rectangle myBox = new Rectangle((int)Projectile.position.X, (int)Projectile.position.Y, Projectile.width, Projectile.height);
 				foreach (NPC targetNPC in Main.npc)
 				{
 					if (targetNPC.townNPC || bulletHit) { continue; }
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles
 				{
 					if (sinwaveCounter > 0)
 					{//tracer
-						Vector2 DustPos = projectile.position;
+						Vector2 DustPos = Projectile.position;
 
 						int DustIndex = Dust.NewDust(DustPos, 0, 0, 6, 0, 0, 100, default(Color), 1.7f);
 						Main.dust[DustIndex].noGravity = true;
@@ -97,9 +97,9 @@ namespace tsorcRevamp.Projectiles
 					}
 					else
 					{//fire effect
-						Vector2 DustPos = projectile.position;
-						int DustWidth = projectile.width;
-						int DustHeight = projectile.height;
+						Vector2 DustPos = Projectile.position;
+						int DustWidth = Projectile.width;
+						int DustHeight = Projectile.height;
 
 						Dust.NewDust(DustPos, DustWidth, DustHeight, 6, 0, 0, 100, default(Color), 1.1f);
 						int DustIndex = Dust.NewDust(DustPos, DustWidth, DustHeight, 31, 0, 0, 100, default(Color), 3f);
@@ -109,17 +109,17 @@ namespace tsorcRevamp.Projectiles
 				if (sinwaveCounter > 0)
 				{
 					//sine wave top
-					Vector2 DustTopPos = projectile.position +
-						new Vector2((float)(15 * Math.Cos(sinwaveCounter) * Math.Cos(projectile.rotation)),
-						(float)(15 * Math.Sin(sinwaveCounter) * Math.Sin(projectile.rotation)));
+					Vector2 DustTopPos = Projectile.position +
+						new Vector2((float)(15 * Math.Cos(sinwaveCounter) * Math.Cos(Projectile.rotation)),
+						(float)(15 * Math.Sin(sinwaveCounter) * Math.Sin(Projectile.rotation)));
 
 					int sineTop = Dust.NewDust(DustTopPos, 0, 0, 60, 0, 0, 100, default(Color), 1f);
 					Main.dust[sineTop].noGravity = true;
 					Main.dust[sineTop].velocity = new Vector2(0, 0);
 					//sine wave bottom
-					Vector2 DustBotPos = projectile.position +
-						new Vector2((float)(-15 * Math.Cos(sinwaveCounter) * Math.Cos(projectile.rotation)),
-						(float)(-15 * Math.Sin(sinwaveCounter) * Math.Sin(projectile.rotation)));
+					Vector2 DustBotPos = Projectile.position +
+						new Vector2((float)(-15 * Math.Cos(sinwaveCounter) * Math.Cos(Projectile.rotation)),
+						(float)(-15 * Math.Sin(sinwaveCounter) * Math.Sin(Projectile.rotation)));
 
 					int sineBot = Dust.NewDust(DustBotPos, 0, 0, 60, 0, 0, 100, default(Color), 1f);
 					Main.dust[sineBot].noGravity = true;
@@ -132,42 +132,42 @@ namespace tsorcRevamp.Projectiles
 					break;
 				}
 
-				Vector2 velo2 = Collision.TileCollision(projectile.position, projectile.velocity, projectile.width, projectile.height, false, false);
-				if (projectile.velocity != velo2)
+				Vector2 velo2 = Collision.TileCollision(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height, false, false);
+				if (Projectile.velocity != velo2)
 				{
-					projectile.position += velo2;
+					Projectile.position += velo2;
 					//projectile.velocity *= new Vector2(0.1f, 0.1f);
 
-                    if (projectile.tileCollide)
+                    if (Projectile.tileCollide)
 					{
-						Main.PlaySound(4, (int)projectile.position.X, (int)projectile.position.Y, 43);
-						projectile.Kill();
+						Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
+						Projectile.Kill();
                     }
 				}
 
-				projectile.position += projectile.velocity;
+				Projectile.position += Projectile.velocity;
 			}
 
-			Lighting.AddLight((int)((projectile.position.X + (float)(projectile.width / 2)) / 16f), (int)((projectile.position.Y + (float)(projectile.height / 2)) / 16f), 0.9f, 0.2f, 0.1f);
+			Lighting.AddLight((int)((Projectile.position.X + (float)(Projectile.width / 2)) / 16f), (int)((Projectile.position.Y + (float)(Projectile.height / 2)) / 16f), 0.9f, 0.2f, 0.1f);
 		}
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(ref Color lightColor)
 		{
 			SpriteEffects spriteEffects = SpriteEffects.None;
-			if (projectile.spriteDirection == -1)
+			if (Projectile.spriteDirection == -1)
 			{
 				spriteEffects = SpriteEffects.FlipHorizontally;
 			}
 			//Get the premultiplied, properly transparent texture
 			Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.AntiMaterialRound];
-			int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-			int startY = frameHeight * projectile.frame;
+			int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+			int startY = frameHeight * Projectile.frame;
 			Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
 			Vector2 origin = sourceRectangle.Size() / 2f;
 			//origin.X = (float)(projectile.spriteDirection == 1 ? sourceRectangle.Width - 20 : 20);
-			Color drawColor = projectile.GetAlpha(lightColor);
-			Main.spriteBatch.Draw(texture,
-				projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-				sourceRectangle, drawColor, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+			Color drawColor = Projectile.GetAlpha(lightColor);
+			Main.Main.EntitySpriteDraw(texture,
+				Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+				sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
 
 			return false;
 		}
@@ -175,18 +175,18 @@ namespace tsorcRevamp.Projectiles
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
         {
-			Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-			Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 10);
+			Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
+			Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 			return true;
         }
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			Main.PlaySound(4, (int)projectile.position.X, (int)projectile.position.Y, 43);
-			damage = target.defense + projectile.damage;
-			if (projectile.penetrate <= 0)
+			Main.PlaySound(4, (int)Projectile.position.X, (int)Projectile.position.Y, 43);
+			damage = target.defense + Projectile.damage;
+			if (Projectile.penetrate <= 0)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 			}
 		}
 
@@ -194,11 +194,11 @@ namespace tsorcRevamp.Projectiles
         {
 			for (int num36 = 0; num36 < 10; num36++)
 			{
-				Dust.NewDustPerfect(projectile.position, 127, projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 1f).noGravity = true;
+				Dust.NewDustPerfect(Projectile.position, 127, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 1f).noGravity = true;
 			}
 			for (int num36 = 0; num36 < 7; num36++)
 			{
-				Dust.NewDustPerfect(projectile.position, 130, projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 2f).noGravity = true;
+				Dust.NewDustPerfect(Projectile.position, 130, Projectile.velocity + new Vector2(Main.rand.Next(-5, 5), Main.rand.Next(-5, 5)), 100, new Color(), 2f).noGravity = true;
 			}
 			return base.PreKill(timeLeft);
         }

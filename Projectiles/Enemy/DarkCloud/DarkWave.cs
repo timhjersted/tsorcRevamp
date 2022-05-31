@@ -12,29 +12,29 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/DarkCloud/DarkCloudSpark";
         public override void SetDefaults()
         {
-            projectile.aiStyle = 0;
-            projectile.width = 26;
-            projectile.height = 26;
-            projectile.hostile = true;
-            projectile.penetrate = 20;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 240;
+            Projectile.aiStyle = 0;
+            Projectile.width = 26;
+            Projectile.height = 26;
+            Projectile.hostile = true;
+            Projectile.penetrate = 20;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 240;
         }
 
 
         public override void AI()
         {
             //Aka lmao if you think you can just outrun this
-            projectile.width = 10 + (240 - projectile.timeLeft) / 2;
-            projectile.height = 10 + (240 - projectile.timeLeft) / 2;
+            Projectile.width = 10 + (240 - Projectile.timeLeft) / 2;
+            Projectile.height = 10 + (240 - Projectile.timeLeft) / 2;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             
-            Vector2 offset = Main.rand.NextVector2CircularEdge(projectile.width, projectile.height);
+            Vector2 offset = Main.rand.NextVector2CircularEdge(Projectile.width, Projectile.height);
             Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-            Dust.NewDustPerfect(projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
+            Dust.NewDustPerfect(Projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
                
             return false;
         }

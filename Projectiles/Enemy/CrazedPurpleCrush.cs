@@ -13,17 +13,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
 
-            projectile.width = 16;
+            Projectile.width = 16;
             //projectile.aiStyle = 24;
-            projectile.hostile = true;
-            projectile.height = 16;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.damage = 25;
+            Projectile.hostile = true;
+            Projectile.height = 16;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.damage = 25;
             //projectile.aiPretendType = 94;
             //projectile.timeLeft = 100;
-            projectile.light = 0.8f;
-            Main.projFrames[projectile.type] = 1;
+            Projectile.light = 0.8f;
+            Main.projFrames[Projectile.type] = 1;
 
             drawOriginOffsetX = 12;
         }
@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreKill(int timeLeft)
         {
-            projectile.type = 44; //killpretendtype
+            Projectile.type = 44; //killpretendtype
             return true;
         }
 
@@ -43,12 +43,12 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
 
             Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y - 10), projectile.width, projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.0f);
             Main.dust[dust].noGravity = true;
 
-            projectile.rotation++;
+            Projectile.rotation++;
 
-            if (projectile.velocity.X <= 10 && projectile.velocity.Y <= 10 && projectile.velocity.X >= -10 && projectile.velocity.Y >= -10)
+            if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10)
             {
            //     projectile.velocity.X *= 1.01f;
            //     projectile.velocity.Y *= 1.01f;

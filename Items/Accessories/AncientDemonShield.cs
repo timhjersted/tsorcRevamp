@@ -14,12 +14,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 38;
-            item.defense = 10;
-            item.accessory = true;
-            item.value = PriceByRarity.Orange_3;
-            item.rare = ItemRarityID.Orange;
+            Item.width = 28;
+            Item.height = 38;
+            Item.defense = 10;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Orange_3;
+            Item.rare = ItemRarityID.Orange;
         }
 
         public override void UpdateEquip(Player player) {
@@ -37,12 +37,12 @@ namespace tsorcRevamp.Items.Accessories {
             int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name !=  "SocialDesc" && !t.Name.Contains("Prefix"));
             if (ttindex != -1) {// if we find one
                 //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(mod, "RevampShieldDR", "Reduces damage taken by 8%"));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "RevampShieldDR", "Reduces damage taken by 8%"));
             }
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.ObsidianShield);
             recipe.AddIngredient(ModContent.ItemType<Accessories.SpikedIronShield>());
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 10000);

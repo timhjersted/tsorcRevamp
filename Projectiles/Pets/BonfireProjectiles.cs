@@ -17,48 +17,48 @@ namespace tsorcRevamp.Projectiles.Pets {
         public abstract LegacySoundStyle UseSound { get; }
 
         public override void AI() {
-            if (projectile.ai[0] == 0f) {
-                if (projectile.velocity.Length() < 0.1) {
-                    projectile.velocity.X = 0f;
-                    projectile.velocity.Y = 0f;
-                    projectile.ai[0] = 1f;
-                    projectile.ai[1] = 45f;
+            if (Projectile.ai[0] == 0f) {
+                if (Projectile.velocity.Length() < 0.1) {
+                    Projectile.velocity.X = 0f;
+                    Projectile.velocity.Y = 0f;
+                    Projectile.ai[0] = 1f;
+                    Projectile.ai[1] = 45f;
                     return;
                 }
 
-                projectile.velocity *= 0.94f;
-                if (projectile.velocity.X < 0f) {
-                    projectile.direction = -1;
+                Projectile.velocity *= 0.94f;
+                if (Projectile.velocity.X < 0f) {
+                    Projectile.direction = -1;
                 }
                 else {
-                    projectile.direction = 1;
+                    Projectile.direction = 1;
                 }
 
-                projectile.spriteDirection = projectile.direction;
+                Projectile.spriteDirection = Projectile.direction;
                 return;
             }
 
-            if (Main.player[projectile.owner].Center.X < projectile.Center.X) {
-                projectile.direction = -1;
+            if (Main.player[Projectile.owner].Center.X < Projectile.Center.X) {
+                Projectile.direction = -1;
             }
             else
-                projectile.direction = 1;
+                Projectile.direction = 1;
 
-            projectile.spriteDirection = projectile.direction;
-            projectile.ai[1] += 1f;
+            Projectile.spriteDirection = Projectile.direction;
+            Projectile.ai[1] += 1f;
             float acceleration = 0.005f;
-            if (projectile.ai[1] > 0f) {
-                projectile.velocity.Y -= acceleration;
+            if (Projectile.ai[1] > 0f) {
+                Projectile.velocity.Y -= acceleration;
             }
             else {
-                projectile.velocity.Y += acceleration;
+                Projectile.velocity.Y += acceleration;
             }
 
-            if (projectile.ai[1] >= 90f) {
-                projectile.ai[1] *= -1f;
+            if (Projectile.ai[1] >= 90f) {
+                Projectile.ai[1] *= -1f;
             }
 
-            StorageProjectileAI(projectile);
+            StorageProjectileAI(Projectile);
         }
 
         internal void StorageProjectileAI(Projectile proj) {
@@ -125,32 +125,32 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Safe");
-            Main.projFrames[projectile.type] = 10;
+            Main.projFrames[Projectile.type] = 10;
         }
         public override void SetDefaults() {
-            projectile.width = 30;
-            projectile.height = 38;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 10800;
-            projectile.alpha = 120;
+            Projectile.width = 30;
+            Projectile.height = 38;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 10800;
+            Projectile.alpha = 120;
         }
         public override void AI()
         {
-            if (projectile.alpha <= 200)
+            if (Projectile.alpha <= 200)
             {
-                Lighting.AddLight(projectile.Center, 0.15f, 0.6f, 0.32f);
+                Lighting.AddLight(Projectile.Center, 0.15f, 0.6f, 0.32f);
             }
-            if (projectile.alpha > 200)
+            if (Projectile.alpha > 200)
             {
-                Lighting.AddLight(projectile.Center, 0.1f, 0.45f, 0.21f);
+                Lighting.AddLight(Projectile.Center, 0.1f, 0.45f, 0.21f);
             }
 
-            if (++projectile.frameCounter >= 8)
+            if (++Projectile.frameCounter >= 8)
             {
-                projectile.frameCounter = 0;
-                if (++projectile.frame >= 10)
+                Projectile.frameCounter = 0;
+                if (++Projectile.frame >= 10)
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
             }
 
@@ -158,21 +158,21 @@ namespace tsorcRevamp.Projectiles.Pets {
             {
                 if (Main.player[i] != null && Main.player[i].active)
                 {
-                    if (Main.player[i].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+                    if (Main.player[i].Distance(Projectile.Center) >= 350f && Main.rand.Next(2) == 0)
                     {
-                        projectile.alpha += 1;
+                        Projectile.alpha += 1;
                     }
 
-                    if ((Main.player[i].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
+                    if ((Main.player[i].Distance(Projectile.Center) <= 300f) && Projectile.alpha >= 120)
                     {
-                        projectile.alpha -= 2;
+                        Projectile.alpha -= 2;
                     }
                 }
             }
 
-            if (projectile.alpha == 255)
+            if (Projectile.alpha == 255)
             {
-                projectile.timeLeft = 0;
+                Projectile.timeLeft = 0;
             }
 
 
@@ -192,33 +192,33 @@ namespace tsorcRevamp.Projectiles.Pets {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul Piglett");
-            Main.projFrames[projectile.type] = 10;
+            Main.projFrames[Projectile.type] = 10;
         }
         public override void SetDefaults() {
-            projectile.height = 24;
-            projectile.width = 24;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 10800;
-            projectile.alpha = 120;
+            Projectile.height = 24;
+            Projectile.width = 24;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 10800;
+            Projectile.alpha = 120;
         }
 
         public override void AI()
         {
-            if (projectile.alpha <= 200)
+            if (Projectile.alpha <= 200)
             {
-                Lighting.AddLight(projectile.Center, 0.15f, 0.6f, 0.32f);
+                Lighting.AddLight(Projectile.Center, 0.15f, 0.6f, 0.32f);
             }
-            if (projectile.alpha > 200)
+            if (Projectile.alpha > 200)
             {
-                Lighting.AddLight(projectile.Center, 0.1f, 0.45f, 0.21f);
+                Lighting.AddLight(Projectile.Center, 0.1f, 0.45f, 0.21f);
             }
 
-            if (++projectile.frameCounter >= 10)
+            if (++Projectile.frameCounter >= 10)
             {
-                projectile.frameCounter = 0;
-                if (++projectile.frame >= 10)
+                Projectile.frameCounter = 0;
+                if (++Projectile.frame >= 10)
                 {
-                    projectile.frame = 0;
+                    Projectile.frame = 0;
                 }
             }
 
@@ -226,23 +226,23 @@ namespace tsorcRevamp.Projectiles.Pets {
             {
                 if (Main.player[i] != null && Main.player[i].active)
                 {
-                    if (Main.player[i].Distance(projectile.Center) >= 350f && Main.rand.Next(2) == 0)
+                    if (Main.player[i].Distance(Projectile.Center) >= 350f && Main.rand.Next(2) == 0)
                     {
 
-                        projectile.alpha += 1;
+                        Projectile.alpha += 1;
 
                     }
 
-                    if ((Main.player[i].Distance(projectile.Center) <= 300f) && projectile.alpha >= 120)
+                    if ((Main.player[i].Distance(Projectile.Center) <= 300f) && Projectile.alpha >= 120)
                     {
-                        projectile.alpha -= 2;
+                        Projectile.alpha -= 2;
                     }
                 }
             }
 
-            if (projectile.alpha == 255)
+            if (Projectile.alpha == 255)
             {
-                projectile.timeLeft = 0;
+                Projectile.timeLeft = 0;
             }
 
 

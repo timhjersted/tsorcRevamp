@@ -10,33 +10,33 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 79;
-            item.knockBack = 5.5f;
+            Item.damage = 79;
+            Item.knockBack = 5.5f;
 
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.shootSpeed = 8;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.shootSpeed = 8;
             
-            item.height = 40;
-            item.width = 40;
+            Item.height = 40;
+            Item.width = 40;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.melee = true;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = PriceByRarity.LightPurple_6;
-            item.rare = ItemRarityID.LightPurple;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.GaeBolg>();
+            Item.value = PriceByRarity.LightPurple_6;
+            Item.rare = ItemRarityID.LightPurple;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.GaeBolg>();
 
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Gungnir);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 40000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 40000);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.DemonAltar);
             recipe.AddRecipe();

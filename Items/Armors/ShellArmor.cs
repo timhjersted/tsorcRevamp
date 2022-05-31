@@ -11,15 +11,15 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void SetDefaults() {
-            item.defense = 7;
-            item.rare = ItemRarityID.LightRed;
-            item.width = 18;
-            item.height = 18;
-            item.value = 30000;
+            Item.defense = 7;
+            Item.rare = ItemRarityID.LightRed;
+            Item.width = 18;
+            Item.height = 18;
+            Item.value = 30000;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.NecroBreastplate);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);

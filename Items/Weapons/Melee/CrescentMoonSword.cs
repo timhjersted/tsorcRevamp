@@ -17,31 +17,31 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
-            item.autoReuse = true;
-            item.rare = ItemRarityID.Cyan;
-            item.damage = 36;
-            item.width = 40;
-            item.height = 40;
-            item.knockBack = 4.5f;
-            item.maxStack = 1;
-            item.melee = true;
-            item.scale = 1f;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 100000;
-            item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
-            item.shootSpeed = 4.5f;
+            Item.autoReuse = true;
+            Item.rare = ItemRarityID.Cyan;
+            Item.damage = 36;
+            Item.width = 40;
+            Item.height = 40;
+            Item.knockBack = 4.5f;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.scale = 1f;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = 100000;
+            Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
+            Item.shootSpeed = 4.5f;
         }
         public override bool OnlyShootOnSwing => true;
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             if ((player.name == "Zeodexic")/* || (player.name == "Chroma TSORC test")*/) //Add whatever names you use -C
             {
-                item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
-                item.shootSpeed = 22f;
+                Item.shoot = ModContent.ProjectileType<Projectiles.CrescentTrue>();
+                Item.shootSpeed = 22f;
             }
 
             return true;
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             if ((player.name == "Zeodexic")/* || (player.name == "Chroma TSORC test")*/) //Add whatever names you use -C
             {
-                item.damage = 120; //change this to whatever suits your testing needs -C
+                Item.damage = 120; //change this to whatever suits your testing needs -C
             }
         }
     }

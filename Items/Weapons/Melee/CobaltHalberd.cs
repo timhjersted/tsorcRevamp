@@ -16,20 +16,20 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void SetDefaults()
         {
-            item.rare = ItemRarityID.LightRed;
-            item.damage = 29;
-            item.width = 76;
-            item.height = 74;
-            item.knockBack = (float)6;
-            item.maxStack = 1;
-            item.melee = true;
-            item.autoReuse = false;
-            item.scale = 1;
-            item.useAnimation = 28;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 28;
-            item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
+            Item.damage = 29;
+            Item.width = 76;
+            Item.height = 74;
+            Item.knockBack = (float)6;
+            Item.maxStack = 1;
+            Item.melee = true;
+            Item.autoReuse = false;
+            Item.scale = 1;
+            Item.useAnimation = 28;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTime = 28;
+            Item.value = PriceByRarity.LightRed_4;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -41,30 +41,30 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             if (player.altFunctionUse == 2)
             {
 
-                item.useStyle = ItemUseStyleID.SwingThrow;
-                item.shoot = ProjectileID.None;
-                item.noMelee = false;
-                item.noUseGraphic = false;
-                item.damage = 36;
+                Item.useStyle = ItemUseStyleID.Swing;
+                Item.shoot = ProjectileID.None;
+                Item.noMelee = false;
+                Item.noUseGraphic = false;
+                Item.damage = 36;
             }
             else
             {
-                item.damage = 29;
-                item.noMelee = true;
-                item.noUseGraphic = true;
-                item.useStyle = ItemUseStyleID.HoldingOut;
-                item.shoot = ModContent.ProjectileType<Projectiles.CobaltHalberd>();
-                item.shootSpeed = 2.7f;
+                Item.damage = 29;
+                Item.noMelee = true;
+                Item.noUseGraphic = true;
+                Item.useStyle = ItemUseStyleID.Shoot;
+                Item.shoot = ModContent.ProjectileType<Projectiles.CobaltHalberd>();
+                Item.shootSpeed = 2.7f;
             }
             return base.CanUseItem(player);
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
 
             recipe.AddIngredient(ItemID.CobaltBar, 10);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

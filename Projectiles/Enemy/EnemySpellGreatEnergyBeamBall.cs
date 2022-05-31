@@ -16,32 +16,32 @@ namespace tsorcRevamp.Projectiles.Enemy
 		}
 		public override void SetDefaults()
 		{
-			projectile.aiStyle = 23;
-			projectile.hostile = true;
-			projectile.height = 16;
-			projectile.light = 1;
-			projectile.magic = true;
-			projectile.penetrate = 8;
-			projectile.scale = 1;
-			projectile.tileCollide = true;
-			projectile.width = 16;
-			projectile.timeLeft = 0;
+			Projectile.aiStyle = 23;
+			Projectile.hostile = true;
+			Projectile.height = 16;
+			Projectile.light = 1;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.penetrate = 8;
+			Projectile.scale = 1;
+			Projectile.tileCollide = true;
+			Projectile.width = 16;
+			Projectile.timeLeft = 0;
 		}
 
 		#region AI
 		public override void AI()
 		{
-			if (projectile.aiStyle == 1)
+			if (Projectile.aiStyle == 1)
 			{
-				if (projectile.ai[1] == 0f)
+				if (Projectile.ai[1] == 0f)
 				{
-					projectile.ai[1] = 1f;
+					Projectile.ai[1] = 1f;
 					
 				}
-				projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + 1.57f;
-				if (projectile.velocity.Y > 16f)
+				Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
+				if (Projectile.velocity.Y > 16f)
 				{
-					projectile.velocity.Y = 16f;
+					Projectile.velocity.Y = 16f;
 					return;
 				}
 			}
@@ -51,25 +51,25 @@ namespace tsorcRevamp.Projectiles.Enemy
 		#region Kill
 		public override bool PreKill(int timeLeft)
 		{
-			if (!projectile.active)
+			if (!Projectile.active)
 			{
 				return true;
 			}
-			projectile.timeLeft = 0;
+			Projectile.timeLeft = 0;
 			{
-				Main.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 93, 0.09f, 0f); //electric zap long
+				Main.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 93, 0.09f, 0f); //electric zap long
 				//Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-				if (projectile.position.X + (float)(projectile.width / 2) > Main.player[projectile.owner].position.X + (float)(Main.player[projectile.owner].width / 2))
+				if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2))
 				{
-					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * -13), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), projectile.damage, 8f, projectile.owner);
+					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -13), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), Projectile.damage, 8f, Projectile.owner);
 				}
 				else
 				{
-					if (projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width * 14f), projectile.position.Y + (float)(projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), projectile.damage, 8f, projectile.owner);
+					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 14f), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyBeam>(), Projectile.damage, 8f, Projectile.owner);
 				}
-				Vector2 arg_1394_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int arg_1394_1 = projectile.width;
-				int arg_1394_2 = projectile.height;
+				Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int arg_1394_1 = Projectile.width;
+				int arg_1394_2 = Projectile.height;
 				int arg_1394_3 = 15;
 				float arg_1394_4 = 0f;
 				float arg_1394_5 = 0f;
@@ -79,9 +79,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 				Main.dust[num41].noGravity = true;
 				Dust expr_13B1 = Main.dust[num41];
 				expr_13B1.velocity *= 2f;
-				Vector2 arg_1422_0 = new Vector2(projectile.position.X - projectile.velocity.X, projectile.position.Y - projectile.velocity.Y);
-				int arg_1422_1 = projectile.width;
-				int arg_1422_2 = projectile.height;
+				Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
+				int arg_1422_1 = Projectile.width;
+				int arg_1422_2 = Projectile.height;
 				int arg_1422_3 = 15;
 				float arg_1422_4 = 0f;
 				float arg_1422_5 = 0f;
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 				newColor = default(Color);
 				num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
 			}
-			projectile.active = false;
+			Projectile.active = false;
 			return true;
 		}
 		#endregion

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs
 			return base.Autoload(ref name, ref texture);
 		}
 
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Biohazard Drain");
 			Description.SetDefault("Rapidly losing life");

@@ -9,27 +9,27 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void SetDefaults() {
-            item.width = 32;
-            item.height = 32;
-            item.accessory = true;
-            item.value = PriceByRarity.LightRed_4;
-            item.rare = ItemRarityID.LightRed;
+            Item.width = 32;
+            Item.height = 32;
+            Item.accessory = true;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.rare = ItemRarityID.LightRed;
         }
  
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("FrozenStarlight"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("FrozenStarlight"), 1);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddIngredient(ItemID.CrossNecklace, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
 
-            ModRecipe recipe2 = new ModRecipe(mod);
-            recipe2.AddIngredient(mod.GetItem("FrozenStarlight"), 1);
+            Recipe recipe2 = new Recipe(Mod);
+            recipe2.AddIngredient(Mod.GetItem("FrozenStarlight"), 1);
             recipe2.AddIngredient(ItemID.StarVeil, 1);
-            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 1000);
+            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.SetResult(this, 1);
             recipe2.AddRecipe();

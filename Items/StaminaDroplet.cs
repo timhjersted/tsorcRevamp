@@ -11,9 +11,9 @@ namespace tsorcRevamp.Items
 
         public override void SetDefaults()
         {
-            item.width = 14;
-            item.height = 20;
-            item.rare = ItemRarityID.Green;
+            Item.width = 14;
+            Item.height = 20;
+            Item.rare = ItemRarityID.Green;
         }
 
         public override bool ItemSpace(Player player)
@@ -51,16 +51,16 @@ namespace tsorcRevamp.Items
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Main.itemTexture[item.type];
-            spriteBatch.Draw(texture, item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), item.scale, SpriteEffects.None, 0f);
+            Texture2D texture = Main.itemTexture[Item.type];
+            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), Item.scale, SpriteEffects.None, 0f);
 
             return false;
         }
         public override bool GrabStyle(Player player)
         {
-            Vector2 vectorItemToPlayer = player.Center - item.Center;
+            Vector2 vectorItemToPlayer = player.Center - Item.Center;
             Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            item.velocity = item.velocity + movement;
+            Item.velocity = Item.velocity + movement;
             return true;
         }
 

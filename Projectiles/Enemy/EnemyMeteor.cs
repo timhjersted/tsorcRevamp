@@ -10,20 +10,20 @@ namespace tsorcRevamp.Projectiles.Enemy
 	{
 		public override void SetDefaults()
 		{
-			projectile.aiStyle = 9;
-			projectile.hostile = true;
-			projectile.friendly = false;
-			projectile.height = 16;
-			projectile.light = 0.5f;
-			projectile.magic = true;
-			projectile.penetrate = 1;
-			projectile.timeLeft = 45;
-			projectile.tileCollide = true;
-			projectile.width = 16;
+			Projectile.aiStyle = 9;
+			Projectile.hostile = true;
+			Projectile.friendly = false;
+			Projectile.height = 16;
+			Projectile.light = 0.5f;
+			Projectile.DamageType = DamageClass.Magic;
+			Projectile.penetrate = 1;
+			Projectile.timeLeft = 45;
+			Projectile.tileCollide = true;
+			Projectile.width = 16;
 		}
 		public override bool PreKill(int timeLeft)
 		{
-			projectile.type = 15;
+			Projectile.type = 15;
 
 
 			return true;

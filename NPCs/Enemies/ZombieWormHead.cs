@@ -16,24 +16,24 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void SetDefaults()
 		{
 			animationType = 10;
-			npc.netAlways = true;
-			npc.npcSlots = 5;
-			npc.width = 38;
-			npc.height = 32;
-			npc.aiStyle = 6;
-			npc.defense = 20;
-			npc.timeLeft = 750;
-			npc.damage = 90;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lifeMax = 3000;
-			npc.knockBackResist = 0;
-			npc.lavaImmune = true;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.behindTiles = true;
-			npc.value = 4000;
-			banner = npc.type;
+			NPC.netAlways = true;
+			NPC.npcSlots = 5;
+			NPC.width = 38;
+			NPC.height = 32;
+			NPC.aiStyle = 6;
+			NPC.defense = 20;
+			NPC.timeLeft = 750;
+			NPC.damage = 90;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath5;
+			NPC.lifeMax = 3000;
+			NPC.knockBackResist = 0;
+			NPC.lavaImmune = true;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.behindTiles = true;
+			NPC.value = 4000;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
 
 			bodyTypes = new int[13];
@@ -47,26 +47,26 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
-			npc.defense = (int)(npc.defense * (2 / 3));
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
+			NPC.defense = (int)(NPC.defense * (2 / 3));
 		}
 
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			bool nospecialbiome = !spawnInfo.player.ZoneJungle && !spawnInfo.player.ZoneCorrupt && !spawnInfo.player.ZoneCrimson && !spawnInfo.player.ZoneHoly && !spawnInfo.player.ZoneMeteor && !spawnInfo.player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
+			bool nospecialbiome = !spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
 
-			bool sky = nospecialbiome && ((double)spawnInfo.player.position.Y < Main.worldSurface * 0.44999998807907104);
-			bool surface = nospecialbiome && !sky && (spawnInfo.player.position.Y <= Main.worldSurface);
-			bool underground = nospecialbiome && !surface && (spawnInfo.player.position.Y <= Main.rockLayer);
-			bool cavern = nospecialbiome && (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25);
-			bool undergroundJungle = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && spawnInfo.player.ZoneJungle;
-			bool undergroundEvil = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && (spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson);
-			bool undergroundHoly = (spawnInfo.player.position.Y >= Main.rockLayer) && (spawnInfo.player.position.Y <= Main.rockLayer * 25) && spawnInfo.player.ZoneHoly;
+			bool sky = nospecialbiome && ((double)spawnInfo.Player.position.Y < Main.worldSurface * 0.44999998807907104);
+			bool surface = nospecialbiome && !sky && (spawnInfo.Player.position.Y <= Main.worldSurface);
+			bool underground = nospecialbiome && !surface && (spawnInfo.Player.position.Y <= Main.rockLayer);
+			bool cavern = nospecialbiome && (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25);
+			bool undergroundJungle = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneJungle;
+			bool undergroundEvil = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson);
+			bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
 			
 			if (Main.hardMode)
 			{
-				if (spawnInfo.player.ZoneUnderworldHeight || undergroundEvil)
+				if (spawnInfo.Player.ZoneUnderworldHeight || undergroundEvil)
 				{
 					if (Main.rand.Next(200) == 0)
 					{
@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void AI()
 		{
-			tsorcRevampGlobalNPC.AIWorm(npc, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
+			tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ZombieWormHead>(), bodyTypes, ModContent.NPCType<ZombieWormTail>(), 15, .4f, 8, 0.07f, false, false, false, true, true);
 		}
 
 		private static int ClosestSegment(NPC head, params int[] segmentIDs)
@@ -107,10 +107,10 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override bool SpecialNPCLoot()
 		{
 			//Putting this here so the gore is spawned before the head is moved
-			Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-			Gore.NewGore(vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Worm Gore 1"), 1f);
-			int closestSegmentID = ClosestSegment(npc, ModContent.NPCType<ZombieWormBody>(), ModContent.NPCType<ZombieWormTail>());
-			npc.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
+			Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Worm Gore 1"), 1f);
+			int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<ZombieWormBody>(), ModContent.NPCType<ZombieWormTail>());
+			NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
 			return false;
 		}
 	}

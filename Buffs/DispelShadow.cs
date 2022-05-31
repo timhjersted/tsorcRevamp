@@ -10,7 +10,7 @@ namespace tsorcRevamp.Buffs {
             return base.Autoload(ref name, ref texture);
         }
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Dispel Shadow");
             Description.SetDefault("Your defense has been dispelled");
         }

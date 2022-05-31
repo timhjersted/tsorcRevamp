@@ -8,11 +8,11 @@ namespace tsorcRevamp.Items.Accessories {
         public override string Texture => "tsorcRevamp/Items/Potions/HolyWarElixir";
 
         public override void SetDefaults() {
-            item.width = 1;
-            item.height = 1;
-            item.value = 69; //i am the master of comedy
-            item.accessory = true;
-            item.rare = ItemRarityID.Expert;
+            Item.width = 1;
+            Item.height = 1;
+            Item.value = 69; //i am the master of comedy
+            Item.accessory = true;
+            Item.rare = ItemRarityID.Expert;
         }
 
         public override void SetStaticDefaults() {

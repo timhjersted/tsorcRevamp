@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class BrokenSpirit : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Broken Spirit");
             Description.SetDefault("You feel like giving up!");
             Main.debuff[Type] = true;

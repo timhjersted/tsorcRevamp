@@ -20,33 +20,33 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 30;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Blue;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 60;
-            item.UseSound = SoundID.Item82;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.useTime = 34;
-            item.useAnimation = 34;
-            item.value = 15000;
+            Item.width = 28;
+            Item.height = 30;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Blue;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 60;
+            Item.UseSound = SoundID.Item82;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.useTime = 34;
+            Item.useAnimation = 34;
+            Item.value = 15000;
 
         }
 
         public override void AddRecipes() //recipe/progression subject to change
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 2000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 

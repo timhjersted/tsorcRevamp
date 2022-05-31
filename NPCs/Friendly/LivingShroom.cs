@@ -10,24 +10,24 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Living Shroom");
-			Main.npcFrameCount[npc.type] = 8;
+			Main.npcFrameCount[NPC.type] = 8;
 		}
 
 		public override void SetDefaults()
 		{
-			npc.width = 8;
-			npc.height = 18;
-			npc.aiStyle = -1; //Unique AI is -1
-			npc.damage = 0;
-			npc.knockBackResist = 1;
-			npc.defense = 2;
-			npc.lifeMax = 16;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 0;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.noGravity = false;
-			banner = npc.type;
+			NPC.width = 8;
+			NPC.height = 18;
+			NPC.aiStyle = -1; //Unique AI is -1
+			NPC.damage = 0;
+			NPC.knockBackResist = 1;
+			NPC.defense = 2;
+			NPC.lifeMax = 16;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.value = 0;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.noGravity = false;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.LivingShroomBanner>();
 		}
 
@@ -35,13 +35,13 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			float chance = 0;
 
-			if (spawnInfo.invasion)
+			if (spawnInfo.Invasion)
 			{
 				chance = 0;
 				return chance;
 			}
 
-			if (Main.dayTime && NPC.CountNPCS(mod.NPCType("LivingShroom")) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.spawnTileType] && !spawnInfo.water && (Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 5].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 8].wall == WallID.None || Main.tile[spawnInfo.spawnTileX, spawnInfo.spawnTileY - 12].wall == WallID.None) && !(spawnInfo.player.ZoneCorrupt || spawnInfo.player.ZoneCrimson || spawnInfo.player.ZoneDesert || spawnInfo.player.ZoneJungle || spawnInfo.player.ZoneMeteor))
+			if (Main.dayTime && NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroom").Type) < 4 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && !spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor))
 			{
 				return 0.35f;
 			}
@@ -58,14 +58,14 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public float AI_State
 		{
-			get => npc.ai[AI_State_Slot];
-			set => npc.ai[AI_State_Slot] = value;
+			get => NPC.ai[AI_State_Slot];
+			set => NPC.ai[AI_State_Slot] = value;
 		}
 
 		public float AI_Timer
 		{
-			get => npc.ai[AI_Timer_Slot];
-			set => npc.ai[AI_Timer_Slot] = value;
+			get => NPC.ai[AI_Timer_Slot];
+			set => NPC.ai[AI_Timer_Slot] = value;
 		}
 
 		public int spawntimer = 0;
@@ -76,47 +76,47 @@ namespace tsorcRevamp.NPCs.Friendly
 			// The npc starts in the asleep state, waiting for a player to enter range
 			if (AI_State == State_Asleep)
 			{
-				npc.GivenName = "???";
+				NPC.GivenName = "???";
 				// TargetClosest sets npc.target to the player.whoAmI of the closest player. the faceTarget parameter means that npc.direction will automatically be 1 or -1 if the targeted player is to the right or left. This is also automatically flipped if npc.confused
-				npc.TargetClosest(true);
+				NPC.TargetClosest(true);
 				AI_Timer++;
-				if (npc.velocity.Y == 0)
+				if (NPC.velocity.Y == 0)
 				{
-					npc.velocity = new Vector2(0f, 0f);
+					NPC.velocity = new Vector2(0f, 0f);
 				}
-				if (npc.HasValidTarget && Main.player[npc.target].Distance(npc.Center) < 120f)
+				if (NPC.HasValidTarget && Main.player[NPC.target].Distance(NPC.Center) < 120f)
 				{
 					AI_State = State_Jump;
 					AI_Timer = 0;
 				}
-				if ((npc.life < npc.lifeMax) && (Main.rand.Next(8) == 0))
+				if ((NPC.life < NPC.lifeMax) && (Main.rand.Next(8) == 0))
 				{
-					Dust.NewDust(npc.position, npc.width - 6, npc.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
+					Dust.NewDust(NPC.position, NPC.width - 6, NPC.height - 16, 107, 0, 0, 0, default(Color), .75f); //regenerating hp
 				}
 
 				// if hit, change to flee state
 			}
 			else if (AI_State == State_Jump)
 			{
-				npc.GivenName = "Fleeing Fungi";
+				NPC.GivenName = "Fleeing Fungi";
 				AI_Timer++;
 				if (AI_Timer == 1)
 				{
-					npc.velocity = new Vector2(npc.direction * -2.2f, -3.6f);
+					NPC.velocity = new Vector2(NPC.direction * -2.2f, -3.6f);
 				}
-				if ((Main.rand.Next(6) == 0) && (AI_Timer == 2) && npc.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
+				if ((Main.rand.Next(6) == 0) && (AI_Timer == 2) && NPC.collideX /*&& Main.netMode != NetmodeID.MultiplayerClient*/)
 				{
-					if (npc.direction == -1) //right-facing bump
+					if (NPC.direction == -1) //right-facing bump
 					{
-						npc.velocity += new Vector2(-1f, 0);
+						NPC.velocity += new Vector2(-1f, 0);
 						//if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
-					if (npc.direction == 1) //left-facing bump
+					if (NPC.direction == 1) //left-facing bump
 					{
-						npc.velocity += new Vector2(1f, 0);
+						NPC.velocity += new Vector2(1f, 0);
 						//if (!Main.dedServ) Main.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak").WithVolume(0.5f), npc.Center);
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 					}
 				}
 				else if (AI_Timer == 10)
@@ -124,49 +124,49 @@ namespace tsorcRevamp.NPCs.Friendly
 					AI_State = State_Fleeing;
 					AI_Timer = 0;
 				}
-				npc.netUpdate = true;
+				NPC.netUpdate = true;
 			}
 			else if (AI_State == State_Fleeing) //everything is inverted due to npc running away from the player instead of towards. Sprite is also manually mirrored (the png, not codewise)
 			{
-				npc.TargetClosest(true);
-				if (npc.direction == 1) //FACING LEFT - vel to move left
+				NPC.TargetClosest(true);
+				if (NPC.direction == 1) //FACING LEFT - vel to move left
 				{
-					if (npc.velocity.X > -2.2f)
+					if (NPC.velocity.X > -2.2f)
 					{
-						npc.velocity += new Vector2(-.04f, 0); //breaking power after turn
+						NPC.velocity += new Vector2(-.04f, 0); //breaking power after turn
 					}
-					else if (npc.velocity.X < -2.6f) //max vel
+					else if (NPC.velocity.X < -2.6f) //max vel
 					{
-						npc.velocity += new Vector2(.04f, 0); //slowdown after knockback
+						NPC.velocity += new Vector2(.04f, 0); //slowdown after knockback
 					}
-					else if ((npc.velocity.X <= -2.2f) && (npc.velocity.X > -2.6f))
+					else if ((NPC.velocity.X <= -2.2f) && (NPC.velocity.X > -2.6f))
 					{
-						npc.velocity += new Vector2(-.01f, 0); //running accel.
+						NPC.velocity += new Vector2(-.01f, 0); //running accel.
 					}
 				}
 
-				if (npc.direction == -1) //FACING RIGHT + vel to move right
+				if (NPC.direction == -1) //FACING RIGHT + vel to move right
 				{
-					if (npc.velocity.X < 2.2f)
+					if (NPC.velocity.X < 2.2f)
 					{
-						npc.velocity += new Vector2(.04f, 0); //breaking power
+						NPC.velocity += new Vector2(.04f, 0); //breaking power
 					}
-					else if (npc.velocity.X > 2.6f) //max vel
+					else if (NPC.velocity.X > 2.6f) //max vel
 					{
-						npc.velocity += new Vector2(-.04f, 0); //slowdown after knockback
+						NPC.velocity += new Vector2(-.04f, 0); //slowdown after knockback
 					}
-					else if ((npc.velocity.X >= 2.2f) && (npc.velocity.X < 2.6f))
+					else if ((NPC.velocity.X >= 2.2f) && (NPC.velocity.X < 2.6f))
 					{
-						npc.velocity += new Vector2(.01f, 0); //running accel.
+						NPC.velocity += new Vector2(.01f, 0); //running accel.
 					}
 				}
-				if (npc.collideX)
+				if (NPC.collideX)
 				{
 					// NPC has stopped upon hitting a block
 					AI_State = State_Jump;
 					AI_Timer = 0;
 				}
-				if (!npc.HasValidTarget || Main.player[npc.target].Distance(npc.Center) > 350f)
+				if (!NPC.HasValidTarget || Main.player[NPC.target].Distance(NPC.Center) > 350f)
 				{
 					// Out targeted player seems to have left our range, so we'll go back to sleep.
 					AI_State = State_Asleep;
@@ -194,49 +194,49 @@ namespace tsorcRevamp.NPCs.Friendly
 			if (AI_State == State_Asleep)
 			{
 				// npc.frame.Y is the goto way of changing animation frames. npc.frame starts from the top left corner in pixel coordinates, so keep that in mind.
-				npc.frame.Y = Frame_Asleep * frameHeight;
+				NPC.frame.Y = Frame_Asleep * frameHeight;
 
 			}
 			else if (AI_State == State_Jump)
 			{
-					npc.frame.Y = Frame_Fleeing_5 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_5 * frameHeight;
 			}
 			else if (AI_State == State_Fleeing)
 			{
 				// Cycle through all 8 frames
-				npc.spriteDirection = npc.direction;
-				npc.frameCounter++;
-				if (npc.frameCounter < 4)
+				NPC.spriteDirection = NPC.direction;
+				NPC.frameCounter++;
+				if (NPC.frameCounter < 4)
 				{
-					npc.frame.Y = Frame_Fleeing_0 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_0 * frameHeight;
 				}
-				else if (npc.frameCounter < 8)
+				else if (NPC.frameCounter < 8)
 				{
-					npc.frame.Y = Frame_Fleeing_1 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_1 * frameHeight;
 				}
-				else if (npc.frameCounter < 12)
+				else if (NPC.frameCounter < 12)
 				{
-					npc.frame.Y = Frame_Fleeing_2 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_2 * frameHeight;
 				}
-				else if (npc.frameCounter < 16)
+				else if (NPC.frameCounter < 16)
 				{
-					npc.frame.Y = Frame_Fleeing_3 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_3 * frameHeight;
 				}
-				else if (npc.frameCounter < 20)
+				else if (NPC.frameCounter < 20)
 				{
-					npc.frame.Y = Frame_Fleeing_4 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_4 * frameHeight;
 				}
-				else if (npc.frameCounter < 24)
+				else if (NPC.frameCounter < 24)
 				{
-					npc.frame.Y = Frame_Fleeing_5 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_5 * frameHeight;
 				}
-				else if (npc.frameCounter < 28)
+				else if (NPC.frameCounter < 28)
 				{
-					npc.frame.Y = Frame_Fleeing_6 * frameHeight;
+					NPC.frame.Y = Frame_Fleeing_6 * frameHeight;
 				}
 				else
 				{
-					npc.frameCounter = 0;
+					NPC.frameCounter = 0;
 				}
 			}
 		}
@@ -244,7 +244,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		{
 			if (AI_State == State_Asleep)
 			{
-				npc.lifeRegen = 2;
+				NPC.lifeRegen = 2;
 			}
 		}
 
@@ -253,7 +253,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			for (int i = 0; i < 15; i++)
 			{
 				int dustType = 147;
-				int dustIndex = Dust.NewDust(npc.position, npc.width, npc.height, dustType);
+				int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
 				Dust dust = Main.dust[dustIndex];
 
 				dust.scale *= .70f + Main.rand.Next(-30, 31) * 0.01f;
@@ -261,18 +261,18 @@ namespace tsorcRevamp.NPCs.Friendly
 				dust.noGravity = false;
 				dust.alpha = 120;
 			}
-			if (npc.life <= 0)
+			if (NPC.life <= 0)
 			{
 				for (int i = 0; i < 20; i++)
 				{
-					Dust.NewDust(npc.position, npc.width, npc.height, 147, 0, Main.rand.Next(-2, 0), 120, default(Color), .75f);
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, 147, 0, Main.rand.Next(-2, 0), 120, default(Color), .75f);
 				}
 			}
 		}
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Item.NewItem(npc.getRect(), ItemID.Mushroom);
-			Item.NewItem(npc.getRect(), mod.ItemType("DarkSoul"));
+			Item.NewItem(NPC.getRect(), ItemID.Mushroom);
+			Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
 		}
 	}
 }

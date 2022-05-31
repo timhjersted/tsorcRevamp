@@ -7,7 +7,7 @@ using tsorcRevamp.Buffs;
 namespace tsorcRevamp.Buffs {
     class PowerfulCurseBuildup : ModBuff {
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Powerful Curse Buildup");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;

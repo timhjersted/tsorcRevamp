@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Buffs {
     class ShieldCooldown : ModBuff {
 
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("Shield Cooldown");
             Description.SetDefault("You cannot use wall tomes!");
             Main.debuff[Type] = true;

@@ -18,26 +18,26 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost3;
         public override void SetDefaults() {
-            item.autoReuse = true; //why was it the only one without autoreuse?
-            item.damage = 32;
-            item.height = 10;
-            item.knockBack = 0f;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.LightRed;
-            item.scale = 1;
-            item.channel = true;
-            item.shootSpeed = 10;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 30;
-            storeManaCost3 = item.mana;
-            item.useAnimation = 10;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 10;
-            item.value = PriceByRarity.LightRed_4;
-            item.width = 34;
-            item.shoot = ModContent.ProjectileType<Projectiles.Ice3Ball>();
+            Item.autoReuse = true; //why was it the only one without autoreuse?
+            Item.damage = 32;
+            Item.height = 10;
+            Item.knockBack = 0f;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.LightRed;
+            Item.scale = 1;
+            Item.channel = true;
+            Item.shootSpeed = 10;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 30;
+            storeManaCost3 = Item.mana;
+            Item.useAnimation = 10;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 10;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.width = 34;
+            Item.shoot = ModContent.ProjectileType<Projectiles.Ice3Ball>();
         }
 
         public override bool CanUseItem(Player player)
@@ -53,10 +53,10 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("Ice2Tome"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("Ice2Tome"), 1);
             recipe.AddIngredient(ItemID.SoulofLight, 15);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 25000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

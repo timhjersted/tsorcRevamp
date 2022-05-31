@@ -6,7 +6,7 @@ using Terraria.ObjectData;
 
 namespace tsorcRevamp.Tiles {
     public class SweatyCyclopsForge : ModTile {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             Main.tileFrameImportant[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
@@ -43,12 +43,12 @@ namespace tsorcRevamp.Tiles {
             }
 
             public override void SetDefaults() {
-                item.CloneDefaults(ItemID.Sawmill);
-                item.createTile = ModContent.TileType<SweatyCyclopsForge>();
-                item.placeStyle = 0;
+                Item.CloneDefaults(ItemID.Sawmill);
+                Item.createTile = ModContent.TileType<SweatyCyclopsForge>();
+                Item.placeStyle = 0;
             }
             public override void AddRecipes() {
-                ModRecipe recipe = new ModRecipe(mod);
+                Recipe recipe = new Recipe(Mod);
                 recipe.AddIngredient(ItemID.StoneBlock, 50);
                 recipe.AddIngredient(ItemID.Torch, 5);
                 recipe.AddTile(TileID.WorkBenches);

@@ -18,27 +18,27 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
 
         public override void SetDefaults() {
-            projectile.aiStyle = 0;
-            projectile.height = 16;
-            projectile.scale = 1.2f;
-            projectile.tileCollide = false;
-            projectile.width = 16;
-            projectile.hostile = false;
+            Projectile.aiStyle = 0;
+            Projectile.height = 16;
+            Projectile.scale = 1.2f;
+            Projectile.tileCollide = false;
+            Projectile.width = 16;
+            Projectile.hostile = false;
         }
 
         internal float AI_Timer {
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
         public override void AI() {
             AI_Timer++;
             if (AI_Timer == 1) {
                 Main.NewText("here");
-                Projectile.NewProjectile(new Vector2(projectile.Center.X - projectile.width, projectile.Center.Y), new Vector2(0, 1), ModContent.ProjectileType<BulletHellLaser>(), projectile.damage, 0);
+                Projectile.NewProjectile(new Vector2(Projectile.Center.X - Projectile.width, Projectile.Center.Y), new Vector2(0, 1), ModContent.ProjectileType<BulletHellLaser>(), Projectile.damage, 0);
             }
-            Dust.NewDust(projectile.Center, 1, 1, DustID.Clentaminator_Purple);
+            Dust.NewDust(Projectile.Center, 1, 1, DustID.Clentaminator_Purple);
             if (AI_Timer > 300) {
-                projectile.Kill();
+                Projectile.Kill();
             }
         }
     }
@@ -46,14 +46,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
     class BulletHellLaser : EnemyGenericLaser {
 
         public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.hide = true;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.hide = true;
 
             ProjectileSource = true;
             FollowHost = true;

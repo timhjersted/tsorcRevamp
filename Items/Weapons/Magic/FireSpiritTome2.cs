@@ -10,30 +10,30 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 30;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 5;
-            item.useTime = 5;
-            item.maxStack = 1;
-            item.damage = 30;
-            item.knockBack = 8;
-            item.autoReuse = true;
-            item.scale = 1.3f;
-            item.UseSound = SoundID.Item9;
-            item.rare = ItemRarityID.Lime;
-            item.shootSpeed = 12;
-            item.mana = 5;
-            item.value = PriceByRarity.Lime_7;
-            item.magic = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
+            Item.width = 28;
+            Item.height = 30;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 5;
+            Item.useTime = 5;
+            Item.maxStack = 1;
+            Item.damage = 30;
+            Item.knockBack = 8;
+            Item.autoReuse = true;
+            Item.scale = 1.3f;
+            Item.UseSound = SoundID.Item9;
+            Item.rare = ItemRarityID.Lime;
+            Item.shootSpeed = 12;
+            Item.mana = 5;
+            Item.value = PriceByRarity.Lime_7;
+            Item.magic = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("FireSpiritTome"), 1);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("FireSpiritTome"), 1);
             recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 45000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 45000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

@@ -17,11 +17,11 @@ namespace tsorcRevamp.Items.Accessories
         }
 
         public override void SetDefaults() {
-            item.width = 40;
-            item.height = 40;
-            item.accessory = true;
-            item.value = PriceByRarity.Purple_11;
-            item.rare = ItemRarityID.Purple;
+            Item.width = 40;
+            Item.height = 40;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Purple_11;
+            Item.rare = ItemRarityID.Purple;
         }
 
         public override void UpdateVanity(Player player, EquipType type)
@@ -55,10 +55,10 @@ namespace tsorcRevamp.Items.Accessories
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 
-            Lighting.AddLight(item.Center, Color.Blue.ToVector3());
-            UsefulFunctions.DustRing(item.Center, 32, DustID.ShadowbeamStaff);
+            Lighting.AddLight(Item.Center, Color.Blue.ToVector3());
+            UsefulFunctions.DustRing(Item.Center, 32, DustID.ShadowbeamStaff);
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ReflectionShift];
-            spriteBatch.Draw(texture, new Vector2(item.position.X - Main.screenPosition.X + item.width * 0.5f, item.position.Y - Main.screenPosition.Y + item.height - texture.Height * 0.5f + 2f),
+            spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
                 new Rectangle(0, 0, texture.Width, texture.Height), Color.White, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }

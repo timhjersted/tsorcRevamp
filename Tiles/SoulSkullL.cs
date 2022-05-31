@@ -11,7 +11,7 @@ namespace tsorcRevamp.Tiles
 {
 	public class SoulSkullL : ModTile
 	{
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			Main.tileFrameImportant[Type] = true;
 
@@ -38,28 +38,28 @@ namespace tsorcRevamp.Tiles
 		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 		{
 			Tile tile = Main.tile[i, j];
-			if (tile.frameX / 36 == 0) //having this set to 0 was only indicating the first 16 pixels, aka the first horizontal block,
+			if (tile.TileFrameX / 36 == 0) //having this set to 0 was only indicating the first 16 pixels, aka the first horizontal block,
 			{                           //hence why the 2 left blocks only had the glowmask and could be clicked
 				r = 0.15f;
 				g = 0.25f;
 				b = 0f;
 			}
-			if (tile.frameX == 72)
+			if (tile.TileFrameX == 72)
 			{
 				r = 0.3f;
 				g = 0.55f;
 				b = 0.75f;
 			}
 		}
-		public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref Color drawColor, ref int nextSpecialDrawIndex)
+		public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawInfo)
 		{
 
 			if (!Main.gamePaused && Main.instance.IsActive && (!Lighting.UpdateEveryFrame || Main.rand.NextBool(4)))
 			{
 				Tile tile = Main.tile[i, j];
-				short frameX = tile.frameX;
-				short frameY = tile.frameY;
-				if (Main.rand.NextBool(2) && tile.frameX == 0) //If 0 is changed to 36, you end up with the dust duplicated 2 tiles past the intended location
+				short frameX = tile.TileFrameX;
+				short frameY = tile.TileFrameY;
+				if (Main.rand.NextBool(2) && tile.TileFrameX == 0) //If 0 is changed to 36, you end up with the dust duplicated 2 tiles past the intended location
 				{
 					int style = frameY / 36; //changing this doesnt seem to do anything. Not sure what it was originally. Had it on 2 for ages, but it's probably 36.
 					//if (frameY / 18 % 3 == 0) But even then makes no difference
@@ -84,7 +84,7 @@ namespace tsorcRevamp.Tiles
 					}
 				}
 
-				if (Main.rand.NextBool(2) && tile.frameX == 0)
+				if (Main.rand.NextBool(2) && tile.TileFrameX == 0)
 				{
 					int style = frameY / 2;
 					//if (frameY / 18 % 3 == 0)
@@ -106,7 +106,7 @@ namespace tsorcRevamp.Tiles
 					}
 				}
 
-				if (Main.rand.NextBool(2) && tile.frameX == 0)
+				if (Main.rand.NextBool(2) && tile.TileFrameX == 0)
 				{
 					int style = frameY / 2;
 					//if (frameY / 18 % 3 == 0)
@@ -127,7 +127,7 @@ namespace tsorcRevamp.Tiles
 						}
 					}
 				}
-				if (Main.rand.NextBool(1) && tile.frameX == 72)
+				if (Main.rand.NextBool(1) && tile.TileFrameX == 72)
 				{
 					int style = frameY / 2;
 					//if (frameY / 18 % 3 == 0)
@@ -154,31 +154,31 @@ namespace tsorcRevamp.Tiles
 		public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 		{
 			Tile tile = Main.tile[i, j];
-			if (tile.frameX / 36 == 0)
+			if (tile.TileFrameX / 36 == 0)
 			{
 				Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);
 				if (Main.drawToScreen)
 				{
 					zero = Vector2.Zero;
 				}
-				int height = tile.frameY == 36 ? 18 : 16;
-				Main.spriteBatch.Draw(mod.GetTexture("Tiles/SoulSkullL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX, tile.frameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+				int height = tile.TileFrameY == 36 ? 18 : 16;
+				Main.spriteBatch.Draw(Mod.GetTexture("Tiles/SoulSkullL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 			}
-			if (tile.frameX >= 72)
+			if (tile.TileFrameX >= 72)
 			{
 				Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);
 				if (Main.drawToScreen)
 				{
 					zero = Vector2.Zero;
 				}
-				int height = tile.frameY == 36 ? 18 : 16;
-				Main.spriteBatch.Draw(mod.GetTexture("Tiles/SansL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.frameX - 72, tile.frameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+				int height = tile.TileFrameY == 36 ? 18 : 16;
+				Main.spriteBatch.Draw(Mod.GetTexture("Tiles/SansL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX - 72, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 			}
 		}
 		public override void MouseOver(int i, int j)
 		{
 			Tile tile = Main.tile[i, j];
-			if (tile.frameX / 36 == 0)
+			if (tile.TileFrameX / 36 == 0)
 			{
 				Player player = Main.LocalPlayer;
 				player.noThrow = 2;
@@ -189,7 +189,7 @@ namespace tsorcRevamp.Tiles
 		public override void MouseOverFar(int i, int j)
 		{
 			Tile tile = Main.tile[i, j];
-			if (tile.frameX / 36 == 0)
+			if (tile.TileFrameX / 36 == 0)
 			{
 				MouseOver(i, j);
 				Player player = Main.LocalPlayer;
@@ -201,13 +201,13 @@ namespace tsorcRevamp.Tiles
 			}
 		}
 		int sansannoyed;
-		public override bool NewRightClick(int i, int j)
+		public override bool RightClick(int i, int j)
 		{
 			Tile tile = Main.tile[i, j];
-			if (tile.frameX >= 72)
+			if (tile.TileFrameX >= 72)
 			{
 				sansannoyed++;
-				Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Sans").WithVolume(1f).WithPitchVariance(-.01f)); //custom sounds have to go in Sounds/Item otherwise it makes a mess
+				Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Sans").WithVolume(1f).WithPitchVariance(-.01f)); //custom sounds have to go in Sounds/Item otherwise it makes a mess
 				if (sansannoyed < 12)
 				{
 					if (Main.rand.Next(3) == 0)
@@ -231,7 +231,7 @@ namespace tsorcRevamp.Tiles
 				if (sansannoyed == 12) //after clicking 12 times, gives accessory
 				{
 					UsefulFunctions.BroadcastText("Fine. Here. Take it and leave.", 255, 90, 90);
-					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, mod.ItemType("RingOfTheBlueEye"), 1); 
+					Item.NewItem(new Vector2(i * 16, j * 16), 16, 16, Mod.Find<ModItem>("RingOfTheBlueEye").Type, 1); 
 				}
 
 				if (sansannoyed > 12)
@@ -243,16 +243,16 @@ namespace tsorcRevamp.Tiles
 					}
 				}
 			}
-			if (tile.frameX / 36 == 0)
+			if (tile.TileFrameX / 36 == 0)
 			{
 				Main.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
 				SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
 
 				if (Main.rand.Next(10) == 0) // 5%, maybe rarer depending on how many are on the map
 				{
-					Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Megalovania").WithVolume(1f).WithPitchVariance(-.01f));
-					int x = i - Main.tile[i, j].frameX / 18 % 2; // 16 pixels in a block + 2 pixels for the buffer. 2 because its 2 blocks wide
-					int y = j - Main.tile[i, j].frameY / 18 % 2; // 2 because it is 2 blocks tall
+					Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Megalovania").WithVolume(1f).WithPitchVariance(-.01f));
+					int x = i - Main.tile[i, j].TileFrameX / 18 % 2; // 16 pixels in a block + 2 pixels for the buffer. 2 because its 2 blocks wide
+					int y = j - Main.tile[i, j].TileFrameY / 18 % 2; // 2 because it is 2 blocks tall
 					for (int l = x; l < x + 2; l++)             // this chunk of code basically makes it so that when you right click one tile, 
 					{              //2 because 2x2 tile         // it counts as the whole 2x2 tile, not 4 individual tiles that can all be clicked
 						for (int m = y; m < y + 2; m++)         //Code taken from VoidMonolith from example mod
@@ -261,15 +261,15 @@ namespace tsorcRevamp.Tiles
 							{
 								Main.tile[l, m] = new Tile();
 							}
-							if (Main.tile[l, m].active() && Main.tile[l, m].type == Type)
+							if (Main.tile[l, m].HasTile && Main.tile[l, m].TileType == Type)
 							{
-								if (Main.tile[l, m].frameX < 72) //frameX because the spritesheet is horizontal
+								if (Main.tile[l, m].TileFrameX < 72) //frameX because the spritesheet is horizontal
 								{
-									Main.tile[l, m].frameX += 72; //if spritesheet were vertical then
+									Main.tile[l, m].TileFrameX += 72; //if spritesheet were vertical then
 								}
 								else
 								{
-									Main.tile[l, m].frameX -= 72; //frameX would have to be replaced with frameY
+									Main.tile[l, m].TileFrameX -= 72; //frameX would have to be replaced with frameY
 								}
 							}
 						}
@@ -277,8 +277,8 @@ namespace tsorcRevamp.Tiles
 				}
 				else
 				{
-					int x = i - Main.tile[i, j].frameX / 18 % 2; // 16 pixels in a block + 2 pixels for the buffer. 2 because its 2 blocks wide
-					int y = j - Main.tile[i, j].frameY / 18 % 2; // 2 because it is 2 blocks tall
+					int x = i - Main.tile[i, j].TileFrameX / 18 % 2; // 16 pixels in a block + 2 pixels for the buffer. 2 because its 2 blocks wide
+					int y = j - Main.tile[i, j].TileFrameY / 18 % 2; // 2 because it is 2 blocks tall
 					for (int l = x; l < x + 2; l++)             // this chunk of code basically makes it so that when you right click one tile, 
 					{              //2 because 2x2 tile         // it counts as the whole 2x2 tile, not 4 individual tiles that can all be clicked
 						for (int m = y; m < y + 2; m++)         //Code taken from VoidMonolith from example mod
@@ -287,15 +287,15 @@ namespace tsorcRevamp.Tiles
 							{
 								Main.tile[l, m] = new Tile();
 							}
-							if (Main.tile[l, m].active() && Main.tile[l, m].type == Type)
+							if (Main.tile[l, m].HasTile && Main.tile[l, m].TileType == Type)
 							{
-								if (Main.tile[l, m].frameX < 36) //frameX because the spritesheet is horizontal
+								if (Main.tile[l, m].TileFrameX < 36) //frameX because the spritesheet is horizontal
 								{
-									Main.tile[l, m].frameX += 36; //if spritesheet were vertical then
+									Main.tile[l, m].TileFrameX += 36; //if spritesheet were vertical then
 								}
 								else
 								{
-									Main.tile[l, m].frameX -= 36; //frameX would have to be replaced with frameY
+									Main.tile[l, m].TileFrameX -= 36; //frameX would have to be replaced with frameY
 								}
 							}
 						}
@@ -318,9 +318,9 @@ namespace tsorcRevamp.Tiles
 
 		public override void SetDefaults()
 		{
-			item.CloneDefaults(ItemID.ArmorStatue);
-			item.createTile = ModContent.TileType<SoulSkullL>();
-			item.placeStyle = 0;
+			Item.CloneDefaults(ItemID.ArmorStatue);
+			Item.createTile = ModContent.TileType<SoulSkullL>();
+			Item.placeStyle = 0;
 		}
 	}
 }

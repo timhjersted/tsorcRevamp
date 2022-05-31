@@ -19,26 +19,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            NPCID.Sets.TrailCacheLength[npc.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
-            NPCID.Sets.TrailingMode[npc.type] = 1;
+            NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
+            NPCID.Sets.TrailingMode[NPC.type] = 1;
         }
         public override void SetDefaults()
         {
-            npc.npcSlots = 10;
-            Main.npcFrameCount[npc.type] = 16;
+            NPC.npcSlots = 10;
+            Main.npcFrameCount[NPC.type] = 16;
             animationType = 28;
-            npc.aiStyle = 3;
-            npc.height = 40;
-            npc.width = 20;
+            NPC.aiStyle = 3;
+            NPC.height = 40;
+            NPC.width = 20;
             music = 12;
-            npc.damage = 200;
-            npc.defense = 80;
-            npc.lifeMax = 300000;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 1500000;
-            npc.knockBackResist = 0f;
-            npc.boss = true;
+            NPC.damage = 200;
+            NPC.defense = 80;
+            NPC.lifeMax = 300000;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.value = 1500000;
+            NPC.knockBackResist = 0f;
+            NPC.boss = true;
             bossBag = ModContent.ItemType<Items.BossBags.DarkCloudBag>();
             despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
         }
@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage = 200;
+            NPC.damage = 200;
         }
 
         #region First Phase Vars
@@ -108,38 +108,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public int NextAttackMode
         {
-            get => (int)npc.ai[0];
-            set => npc.ai[0] = value;
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
         }
         public float AttackModeCounter
         {
-            get => npc.ai[1];
-            set => npc.ai[1] = value;
+            get => NPC.ai[1];
+            set => NPC.ai[1] = value;
         }
         public float NextConfinedBlastsAngle
         {
-            get => npc.ai[2];
-            set => npc.ai[2] = value;
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
         }
         public int AttackModeTally
         {
-            get => (int)npc.ai[3];
-            set => npc.ai[3] = value;
+            get => (int)NPC.ai[3];
+            set => NPC.ai[3] = value;
         }
         public Player Target
         {
-            get => Main.player[npc.target];
+            get => Main.player[NPC.target];
         }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
             //If we're about to despawn, and it's not first phase, then clean up by deactivating the pyramid and clearing any targeting lasers
-            if (despawnHandler.TargetAndDespawn(npc.whoAmI) && !firstPhase)
+            if (despawnHandler.TargetAndDespawn(NPC.whoAmI) && !firstPhase)
             {
                 if (Main.tile[5810, 1670] != null)
                 {
-                    if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                     {
                         ActuatePyramid();
                     }
@@ -153,13 +153,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            Lighting.AddLight(npc.Center, Color.Blue.ToVector3());
-            UsefulFunctions.DustRing(npc.Center, 64, DustID.ShadowbeamStaff);
+            Lighting.AddLight(NPC.Center, Color.Blue.ToVector3());
+            UsefulFunctions.DustRing(NPC.Center, 64, DustID.ShadowbeamStaff);
 
             //Force an update 3 times a second. Terraria gets a bit lazy about it, and this consistency is required to prevent rubberbanding on certain high-intensity attacks
             if (Main.GameUpdateCount % 20 == 0)
             {
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
 
            
@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (firstPhase)
             {
                 //Check if it's either low on health or has already begun the phase change process
-                if (changingPhases || ((npc.life < (9 * npc.lifeMax / 10))))
+                if (changingPhases || ((NPC.life < (9 * NPC.lifeMax / 10))))
                 {
                     ChangePhases();
                 }
@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             //Reset variables
-            npc.velocity = Vector2.Zero;
+            NPC.velocity = Vector2.Zero;
             AttackModeCounter = -1;
             AttackModeTally = 0;
             nextWarpPoint = Vector2.Zero;            
@@ -356,11 +356,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void DragoonLanceMove()
         {
-            npc.position.Y = Main.player[npc.target].position.Y + 400;
+            NPC.position.Y = Main.player[NPC.target].position.Y + 400;
             if (AttackModeCounter == 0)
             {
                 DarkCloudParticleEffect(-2);
-                npc.position = Main.player[npc.target].position + (new Vector2(-800, 400));
+                NPC.position = Main.player[NPC.target].position + (new Vector2(-800, 400));
                 DarkCloudParticleEffect(6);
             }
             if (AttackModeCounter <= 60)
@@ -374,27 +374,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (AttackModeCounter >= 60 && AttackModeCounter < 180)
             {
-                npc.velocity = new Vector2(17, 0);
+                NPC.velocity = new Vector2(17, 0);
             }
             if (AttackModeCounter == 180)
             {
                 DarkCloudParticleEffect(-2);
-                npc.position = Main.player[npc.target].position + (new Vector2(800, 400));
+                NPC.position = Main.player[NPC.target].position + (new Vector2(800, 400));
                 DarkCloudParticleEffect(6);
             }
             if (AttackModeCounter >= 180 && AttackModeCounter < 300)
             {
-                npc.velocity = new Vector2(-17, 0);
+                NPC.velocity = new Vector2(-17, 0);
             }
             if (AttackModeCounter == 300)
             {
                 DarkCloudParticleEffect(-2);
-                npc.position = Main.player[npc.target].position + (new Vector2(-800, 400));
+                NPC.position = Main.player[NPC.target].position + (new Vector2(-800, 400));
                 DarkCloudParticleEffect(6);
             }
             if (AttackModeCounter >= 300 && AttackModeCounter < 420)
             {
-                npc.velocity = new Vector2(17, 0);
+                NPC.velocity = new Vector2(17, 0);
             }
             if (AttackModeCounter == 420)
             {
@@ -442,12 +442,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (AttackModeCounter % turnLength == 0)
             {
                 //Clean up the old targeting lasers
-                List<GenericLaser> targetingList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, npc.whoAmI);
+                List<GenericLaser> targetingList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
                 if(targetingList != null && targetingList.Count > 0)
                 {
                     foreach(GenericLaser thisLaser in targetingList)
                     {
-                        thisLaser.projectile.Kill();
+                        thisLaser.Projectile.Kill();
                     }
                 }
 
@@ -478,11 +478,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     while (!valid);
 
-                    npc.Center = Target.Center + nextWarpPoint;
+                    NPC.Center = Target.Center + nextWarpPoint;
                 }
                 else
                 {
-                    npc.Center = Target.Center + preSelectedWarpPoint;
+                    NPC.Center = Target.Center + preSelectedWarpPoint;
                 }
 
                 nextWarpPoint = DivineSparkTeleport();
@@ -491,10 +491,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackModeCounter % turnLength <= 15)
             {
-                initialTargetRotation = (Target.Center - npc.Center).ToRotation();
-                if (npc.Center.Y > Target.Center.Y)
+                initialTargetRotation = (Target.Center - NPC.Center).ToRotation();
+                if (NPC.Center.Y > Target.Center.Y)
                 {
-                    if (npc.Center.X < Target.Center.X)
+                    if (NPC.Center.X < Target.Center.X)
                     {
                         initialTargetRotation += MathHelper.ToRadians(arcLength);
                         counterClockwise = true;
@@ -507,7 +507,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 else
                 {
-                    if (npc.Center.X < Target.Center.X)
+                    if (NPC.Center.X < Target.Center.X)
                     {
                         initialTargetRotation -= MathHelper.ToRadians(arcLength);
                         counterClockwise = false;
@@ -529,13 +529,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Spawn the targeting lasers one by one
                 if ((AttackModeCounter % turnLength) % Math.Round((chargeTime * 0.8) / 5) == 0 && AttackModeCounter % turnLength <= (chargeTime * 0.8))
                 {
-                    Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, npc.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
                 }
 
                 //Spawn the big laser
                 if (AttackModeCounter % turnLength == chargeTime)
                 {
-                    Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, npc.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
                 }
             }
 
@@ -543,7 +543,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //This part of the code initializes and manages the lasers.
             //It HAS to run both client side and server side, hence why this code is all in Move instead of Attack.
             //1) Get all lasers with that ID. The GetLasersByID returns all lasers with that ID which are active.
-            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSpark, npc.whoAmI);
+            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
             if (laserList.Count > 0)
             {
                 //2) Store it in an object. There can only be one here, so as soon as one exists grab it.
@@ -553,8 +553,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //3) Check if it's been initialized on this client already, and if not then set all its values.
                 if (!DarkDivineSparkBeam.initialized)
                 {
-                    DarkDivineSparkBeam.LaserOrigin = npc.Center;
-                    DarkDivineSparkBeam.LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation);
+                    DarkDivineSparkBeam.LaserOrigin = NPC.Center;
+                    DarkDivineSparkBeam.LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation);
                     DarkDivineSparkBeam.TelegraphTime = 0;
                     DarkDivineSparkBeam.LaserLength = 8000;
                     DarkDivineSparkBeam.LaserTexture = TransparentTextureHandler.TransparentTextureType.DarkDivineSpark;
@@ -579,28 +579,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //4) Either way this laser is a moving one, so move its current target according to the formula and play its unique sound.
                 if (counterClockwise)
                 {
-                    DarkDivineSparkBeam.LaserOrigin = npc.Center;
-                    DarkDivineSparkBeam.LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
+                    DarkDivineSparkBeam.LaserOrigin = NPC.Center;
+                    DarkDivineSparkBeam.LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
                 }
                 else
                 {
-                    DarkDivineSparkBeam.LaserOrigin = npc.Center;
-                    DarkDivineSparkBeam.LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
+                    DarkDivineSparkBeam.LaserOrigin = NPC.Center;
+                    DarkDivineSparkBeam.LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians(4 * (int)((AttackModeCounter % turnLength) - chargeTime)));
                 }
                 if (Main.GameUpdateCount % 8 == 0)
                 {
-                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MasterBuster"));
+                    Main.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MasterBuster"));
                 }
             }
 
             //Do the same stuff again, but for each of the targeting lasers.
             //They don't move, so once they're initialized we never need to mess with them again.
-            laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, npc.whoAmI);
+            laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
             for (int i = 0; i < laserList.Count; i++)
             {
                 if(!laserList[i].initialized)
                 {
-                    laserList[i].LaserOrigin = npc.Center;
+                    laserList[i].LaserOrigin = NPC.Center;
                     laserList[i].TelegraphTime = 99999;
                     laserList[i].LaserLength = 8000;
                     laserList[i].LaserColor = Color.Blue * 0.8f;
@@ -615,11 +615,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     
                     if (counterClockwise)
                     {
-                        laserList[i].LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians((arcLength / 2) * i));
+                        laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians((arcLength / 2) * i));
                     }
                     else
                     {
-                        laserList[i].LaserTarget = npc.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians((arcLength / 2) * i));
+                        laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians((arcLength / 2) * i));
                     }
                 }                
             }
@@ -676,7 +676,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NukeGrapples();
 
             //Make sure it stays still
-            npc.velocity = Vector2.Zero;
+            NPC.velocity = Vector2.Zero;
 
             //At the start of the attack, teleport to the arena center, and make a list of every player within 5000 units (to avoid pulling players who are on the other end of the world)
             if (targetPlayers == null || AttackModeCounter == 0)
@@ -685,7 +685,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 targetPlayers = new List<Player>();
                 for(int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Vector2.Distance(Main.player[i].Center, npc.Center) < 5000)
+                    if (Vector2.Distance(Main.player[i].Center, NPC.Center) < 5000)
                     {
                         targetPlayers.Add(Main.player[i]);
                     }
@@ -706,7 +706,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 dustPos = Main.rand.NextVector2CircularEdge(damageRadius * strengthFactor, damageRadius * strengthFactor);
                 Vector2 dustVel = new Vector2(15, 0).RotatedBy(dustPos.ToRotation() + MathHelper.Pi);
-                dustPos += npc.Center;
+                dustPos += NPC.Center;
 
                 Dust.NewDustPerfect(dustPos, 109, dustVel, Scale: 2).noGravity = true;
             }
@@ -715,7 +715,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             for (int j = 0; j < 20; j++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(damageRadius * strengthFactor, damageRadius * strengthFactor);
-                Vector2 dustPos = npc.Center + dir;
+                Vector2 dustPos = NPC.Center + dir;
 
                 Vector2 dustVel = new Vector2(2, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
                 Dust.NewDustPerfect(dustPos, DustID.ShadowbeamStaff, dustVel, 200).noGravity = true;
@@ -723,7 +723,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             
             //Spawn a ring of dust at the hard pull radius
-            UsefulFunctions.DustRing(npc.Center, 1900, DustID.ShadowbeamStaff, 50);
+            UsefulFunctions.DustRing(NPC.Center, 1900, DustID.ShadowbeamStaff, 50);
 
             //The actual attack
             //For each player in the list, check if they're outside past the attack's hard pull radius. If so, pull them back into it hard.
@@ -736,15 +736,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     p.velocity += shockwaveCounter;
                 }
-                distance = Vector2.Distance(p.Center, npc.Center);
+                distance = Vector2.Distance(p.Center, NPC.Center);
                 p.velocity += gravCounter;
                 if (distance < 1900)
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(25));
+                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, NPC.Center, pullSpeed * strengthFactor).RotatedBy(MathHelper.ToRadians(25));
                 }
                 else
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * 10 * strengthFactor);
+                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, NPC.Center, pullSpeed * 10 * strengthFactor);
                 }
 
                 //If they're within the dust ring in the center, then damage them rapidly. Calculate the damage such that it increases to counter player defense or damage reduction.
@@ -775,7 +775,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(256, 256);
                     Vector2 velocity = new Vector2(15, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                    Dust.NewDustPerfect(npc.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
                 }
             }
             if (AttackModeCounter == 1210)
@@ -817,9 +817,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Initialize things
             if (AttackModeCounter == 0)
             {
-                npc.noGravity = false;
-                npc.noTileCollide = false;
-                npc.Center = Target.Center + new Vector2(-500, 0);               
+                NPC.noGravity = false;
+                NPC.noTileCollide = false;
+                NPC.Center = Target.Center + new Vector2(-500, 0);               
             }            
 
             //Hold AttackModeCounter at 1 and keep refreshing the debuff until the target player lands, delaying the start of the attack phase
@@ -843,7 +843,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 Vector2 warp = Target.Center;
                 warp.X += distance;
-                npc.Center = warp;
+                NPC.Center = warp;
 
                 DarkCloudParticleEffect(5);
             }
@@ -851,7 +851,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Prevent it from moving along the y-axis for the duration of the attack
             if(AttackModeCounter >= 3 && AttackModeCounter <= 210)
             {
-                npc.velocity.Y = 0;
+                NPC.velocity.Y = 0;
             }
 
             //Charging particle effect
@@ -863,35 +863,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Dash at the player. Once past them, slow down and chill for a moment.
             if (AttackModeCounter >= 60 && AttackModeCounter <= 150)
             {
-                if ((npc.Center.X > Target.Center.X) && dashLeft)
+                if ((NPC.Center.X > Target.Center.X) && dashLeft)
                 {
-                    npc.velocity = new Vector2(-30, 0);
-                    npc.noTileCollide = true;
-                    npc.noGravity = true;
+                    NPC.velocity = new Vector2(-30, 0);
+                    NPC.noTileCollide = true;
+                    NPC.noGravity = true;
                 }
-                else if ((npc.Center.X < Target.Center.X) && !dashLeft)
+                else if ((NPC.Center.X < Target.Center.X) && !dashLeft)
                 {
-                    npc.velocity = new Vector2(30, 0);
-                    npc.noTileCollide = true;
-                    npc.noGravity = true;
+                    NPC.velocity = new Vector2(30, 0);
+                    NPC.noTileCollide = true;
+                    NPC.noGravity = true;
                 }
                 else
                 {
-                    if (Math.Abs(npc.velocity.X) < 1)
+                    if (Math.Abs(NPC.velocity.X) < 1)
                     {
-                        npc.noTileCollide = false;
-                        npc.noGravity = false;
+                        NPC.noTileCollide = false;
+                        NPC.noGravity = false;
                     }
                 }
 
                 //Make the NPC face the direction it is moving (it defaults toward its target)
-                if (npc.velocity.X > 0)
+                if (NPC.velocity.X > 0)
                 {
-                    npc.direction = 1;
+                    NPC.direction = 1;
                 }
                 else
                 {
-                    npc.direction = -1;
+                    NPC.direction = -1;
                 }
             }
 
@@ -912,23 +912,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (AttackModeCounter > 180 && AttackModeCounter < 240)
             {
                 ChargingParticleEffect((int)AttackModeCounter - 180, 60);
-                npc.noTileCollide = true;
+                NPC.noTileCollide = true;
 
                 //If not close to the chosen point, accelerate toward it. Within 200 units is close enough.
-                if (Vector2.DistanceSquared(npc.Center, targetPoint) > 200)
+                if (Vector2.DistanceSquared(NPC.Center, targetPoint) > 200)
                 {
-                    npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, targetPoint, 30 - ((AttackModeCounter - 180) / 2));
+                    NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, targetPoint, 30 - ((AttackModeCounter - 180) / 2));
                 }
                 else
                 {
-                    npc.velocity = Vector2.Zero;
+                    NPC.velocity = Vector2.Zero;
                 }
             }
 
             //Slam down directly toward the player
             if (AttackModeCounter >= 240 && AttackModeCounter < 300)
             {
-                npc.noTileCollide = false;
+                NPC.noTileCollide = false;
 
                 //On hitting ground after slam
                 if (OnGround())
@@ -942,12 +942,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             if (Math.Abs(offset.Y) < 2.5f)
                             {
                                 Vector2 velocity = new Vector2(7, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                                Dust.NewDustPerfect(npc.Center + offset, DustID.ShadowbeamStaff, velocity * 5, Scale: 5).noGravity = true;
+                                Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity * 5, Scale: 5).noGravity = true;
                             }
                         }
 
-                        npc.velocity = Vector2.Zero;
-                        npc.noGravity = false;
+                        NPC.velocity = Vector2.Zero;
+                        NPC.noGravity = false;
                         hitGround = true;
                     }
                 }
@@ -955,36 +955,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //In air slamming
                 else
                 {
-                    npc.noGravity = true;
+                    NPC.noGravity = true;
                     ChargingParticleEffect((int)AttackModeCounter - 240, 20);
 
-                    slamVelocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 20);
+                    slamVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 20);
                     
                     //Do not change X velocity if it would cause dark cloud to change directions mid-slam
-                    if ((slamVelocity.X > 0 && npc.velocity.X >= 0) || (slamVelocity.X < 0 && npc.velocity.X <= 0))
+                    if ((slamVelocity.X > 0 && NPC.velocity.X >= 0) || (slamVelocity.X < 0 && NPC.velocity.X <= 0))
                     {
                         //Do not change x velocity if it would cause dark cloud to slow down
                         //These checks are to allow the player to dash under it
-                        if (Math.Abs(slamVelocity.X) > Math.Abs(npc.velocity.X))
+                        if (Math.Abs(slamVelocity.X) > Math.Abs(NPC.velocity.X))
                         {
-                            npc.velocity = slamVelocity;
+                            NPC.velocity = slamVelocity;
                         }
                     }               
 
-                    npc.velocity.Y = (AttackModeCounter - 240) / 1.5f;
-                    if (npc.velocity.Y > 35)
+                    NPC.velocity.Y = (AttackModeCounter - 240) / 1.5f;
+                    if (NPC.velocity.Y > 35)
                     {
-                        npc.velocity.Y = 35;
+                        NPC.velocity.Y = 35;
                     }
                 }    
                 
-                if(npc.velocity.X > 0)
+                if(NPC.velocity.X > 0)
                 {
-                    npc.direction = 1;
+                    NPC.direction = 1;
                 }
                 else
                 {
-                    npc.direction = -1;
+                    NPC.direction = -1;
                 }
 
             }
@@ -1000,7 +1000,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Set its velocity to 0 for the next few attacks
             if (AttackModeCounter >= 360 && AttackModeCounter < 600)
             {
-                npc.velocity = Vector2.Zero;
+                NPC.velocity = Vector2.Zero;
             }
 
             //Telegraph teleport
@@ -1019,7 +1019,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {               
                 Vector2 warp = Target.Center;
                 warp.X += backstabOffset * Target.direction * -1;
-                npc.Center = warp;
+                NPC.Center = warp;
 
                 DarkCloudParticleEffect(5);
             }
@@ -1040,7 +1040,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {                
                 Vector2 warp = Target.Center;
                 warp.X += backstabOffset * Target.direction * -1;
-                npc.Center = warp;
+                NPC.Center = warp;
 
                 DarkCloudParticleEffect(5);
             }
@@ -1052,12 +1052,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 warp = Target.Center;
                 warp.X -= 0.1f;
                 warp.Y -= 500;
-                npc.Center = warp;
-                npc.noGravity = true;
-                npc.noTileCollide = false;
-                npc.velocity = Vector2.Zero;
+                NPC.Center = warp;
+                NPC.noGravity = true;
+                NPC.noTileCollide = false;
+                NPC.velocity = Vector2.Zero;
                 //Do not get hit by this.
-                npc.damage = 600;
+                NPC.damage = 600;
             }
 
             if (AttackModeCounter >= 600 && AttackModeCounter < 630)
@@ -1069,7 +1069,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Similar to first slam, but fall straight down instead.
             if (AttackModeCounter >= 630 && AttackModeCounter < 730)
             {
-                npc.noTileCollide = false;
+                NPC.noTileCollide = false;
 
                 //Mostly the same code as before, with a few tweaks
                 if (OnGround())
@@ -1085,7 +1085,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             }
                             
                             Vector2 velocity = new Vector2(7, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                            Dust.NewDustPerfect(npc.Center + offset, DustID.ShadowbeamStaff, velocity * 5, Scale: 5).noGravity = true;                         
+                            Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity * 5, Scale: 5).noGravity = true;                         
                         }
 
                         //Fire shockwave projectiles. This sorta has to be done here, not in Attack() like the other projectiles, because it's not time-based. When the NPC hits the ground depends on how far up it is.
@@ -1104,25 +1104,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                                 {
                                     velocity.Y *= -1;
                                 }
-                                Projectile.NewProjectileDirect(npc.Center, velocity, ModContent.ProjectileType<DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
+                                Projectile.NewProjectileDirect(NPC.Center, velocity, ModContent.ProjectileType<DarkWave>(), DarkCloud.darkSlashDamage, 0.5f, Main.myPlayer);
                             }
                         }
 
 
-                        npc.velocity = Vector2.Zero;
-                        npc.damage = 200;
-                        npc.noGravity = false;
+                        NPC.velocity = Vector2.Zero;
+                        NPC.damage = 200;
+                        NPC.noGravity = false;
                         hitGround = true;
                     }
                 }
                 else
                 {
-                    npc.noGravity = true;
+                    NPC.noGravity = true;
                     DarkCloudParticleEffect(5, 120, 12);
-                    npc.velocity.Y = (AttackModeCounter - 540) / 2f;
-                    if (npc.velocity.Y > 11)
+                    NPC.velocity.Y = (AttackModeCounter - 540) / 2f;
+                    if (NPC.velocity.Y > 11)
                     {
-                        npc.velocity.Y = 11;
+                        NPC.velocity.Y = 11;
                     }
                 }
             }
@@ -1130,9 +1130,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Reset variables
             if (AttackModeCounter == 770)
             {
-                npc.noGravity = true;
-                npc.noTileCollide = true;
-                npc.velocity = new Vector2(0, -22);
+                NPC.noGravity = true;
+                NPC.noTileCollide = true;
+                NPC.velocity = new Vector2(0, -22);
                 hitGround = false;
                 slamVelocity = Vector2.Zero;
             }
@@ -1164,7 +1164,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 targetPlayers = new List<Player>();
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Vector2.Distance(Main.player[i].Center, npc.Center) < 5000)
+                    if (Vector2.Distance(Main.player[i].Center, NPC.Center) < 5000)
                     {
                         targetPlayers.Add(Main.player[i]);
                     }
@@ -1172,7 +1172,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             //Make sure it stays still
-            npc.velocity = Vector2.Zero;
+            NPC.velocity = Vector2.Zero;
 
             //Scales from 0 to 1 as the attack ramps up. Certain effects are tied to this.
             float intensity = (AttackModeCounter / 300);
@@ -1196,10 +1196,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float distance;
             foreach (Player p in targetPlayers)
             {
-                distance = Vector2.Distance(p.Center, npc.Center);
+                distance = Vector2.Distance(p.Center, NPC.Center);
                 if (distance > confinedBlastsRadius)
                 {
-                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, npc.Center, pullSpeed * 5 * (AttackModeCounter / 300));
+                    p.velocity += UsefulFunctions.GenerateTargetingVector(p.Center, NPC.Center, pullSpeed * 5 * (AttackModeCounter / 300));
 
                     //If more than 5 seconds have passed, damage them when outside the range
                     if (AttackModeCounter > 300)
@@ -1240,11 +1240,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //Spawn dust within 45 degrees (Pi / 4) around the chosen angle 
                     float dustAngle = currentBlastAngle + Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
                     Vector2 dustPos = new Vector2(Main.rand.NextFloat(0, confinedBlastsRadius), 0).RotatedBy(dustAngle);
-                    Dust thisDust = Dust.NewDustPerfect(npc.Center + dustPos, DustID.VenomStaff, Scale: 1.5f);
+                    Dust thisDust = Dust.NewDustPerfect(NPC.Center + dustPos, DustID.VenomStaff, Scale: 1.5f);
                     thisDust.noLight = true;
                     thisDust.noGravity = true;
 
-                    thisDust = Dust.NewDustPerfect(npc.Center - dustPos, DustID.VenomStaff, Scale: 1.5f);
+                    thisDust = Dust.NewDustPerfect(NPC.Center - dustPos, DustID.VenomStaff, Scale: 1.5f);
                     thisDust.noLight = true;
                     thisDust.noGravity = true;
                 }
@@ -1255,8 +1255,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         float dustAngle = currentBlastAngle + Main.rand.NextFloat(-MathHelper.PiOver4, MathHelper.PiOver4);
                         Vector2 dustVel = new Vector2(99, 0).RotatedBy(dustAngle);
-                        Dust.NewDustPerfect(npc.Center, DustID.ShadowbeamStaff, dustVel, Scale: 5).noLight = true;
-                        Dust.NewDustPerfect(npc.Center, DustID.ShadowbeamStaff, -dustVel, Scale: 5).noLight = true;
+                        Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, dustVel, Scale: 5).noLight = true;
+                        Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, -dustVel, Scale: 5).noLight = true;
                     }
                     
                     //In-between each attack, nuke all dust that was telegraphing the previous one
@@ -1279,7 +1279,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(256, 256);
                     Vector2 velocity = new Vector2(15, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                    Dust.NewDustPerfect(npc.Center, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
                 }
             }
             
@@ -1360,11 +1360,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (AttackModeCounter > 70)
                 {
-                    npc.Center = nextWarpPoint + Target.Center;
+                    NPC.Center = nextWarpPoint + Target.Center;
                 }
                 else
                 {
-                    npc.Center = preSelectedWarpPoint + Target.Center;
+                    NPC.Center = preSelectedWarpPoint + Target.Center;
                 }
 
                 //Pick the next warp point immediately after warping, to give it time to sync
@@ -1378,11 +1378,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //This is generated client-side here because it's also needed for the draw code, to make it hold the bow at the right angle
                 if (AttackModeTally % 2 == 0)
                 {
-                    arrowRainTargetingVector = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 11, 0.05f, false);
+                    arrowRainTargetingVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Target.Center, 11, 0.05f, false);
                 }
                 else
                 {
-                    arrowRainTargetingVector = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 11, 0.05f, true);
+                    arrowRainTargetingVector = UsefulFunctions.BallisticTrajectory(NPC.Center, Target.Center, 11, 0.05f, true);
                 }
             }
 
@@ -1423,11 +1423,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //The first warp should be to the pre-selected point
                 if (AttackModeCounter > 270)
                 {
-                    npc.Center = Target.Center + nextWarpPoint;
+                    NPC.Center = Target.Center + nextWarpPoint;
                 }
                 else
                 {
-                    npc.Center = Target.Center + preSelectedWarpPoint;
+                    NPC.Center = Target.Center + preSelectedWarpPoint;
                 }
 
                 //They'll recieve it from the server.
@@ -1442,16 +1442,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, npc.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
                 }
             }
 
-            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, npc.whoAmI);
+            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
             for (int i = 0; i < laserList.Count; i++)
             {
                 if (!laserList[i].initialized)
                 {
-                    laserList[i].LaserOrigin = npc.Center;          
+                    laserList[i].LaserOrigin = NPC.Center;          
                     laserList[i].TelegraphTime = 99999;
                     laserList[i].LaserLength = 4000;
                     //Forbidden secret color "half red"
@@ -1469,7 +1469,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 //Get a vector of length 128 pointing from dark cloud to the player, then rotate it by 90 degrees
-                Vector2 offset = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
+                Vector2 offset = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
                 //Multiply it by ((300 - AttackModeCounter) / 300), meaning as AttackModeCounter increases and approaches 0, the offset distance shrinks down
                 //Then multiply it by Math.Sin, using AttackModeCounter as the parameter because it changes smoothly. Then add 120 * i, so each laser is offset by 120 degrees
                 //offset *= ((300 - AttackModeCounter) / 300) * (float)Math.Sin(MathHelper.ToRadians(2 * AttackModeCounter + (120 * i)));
@@ -1488,18 +1488,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float slashesWarpRadius = 750;
         void TeleportingSlashesMove()
         {
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.aiStyle = 0;
-            npc.velocity.Y += 0.09f;
-            npc.velocity.X *= 1.07f;
-            if (Target.Center.X > npc.Center.X)
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.aiStyle = 0;
+            NPC.velocity.Y += 0.09f;
+            NPC.velocity.X *= 1.07f;
+            if (Target.Center.X > NPC.Center.X)
             {
-                npc.direction = 1;
+                NPC.direction = 1;
             }
             else
             {
-                npc.direction = -1;
+                NPC.direction = -1;
             }            
 
             //Skip the first one to give players time to react
@@ -1508,15 +1508,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 DarkCloudParticleEffect(-2); 
                 if (AttackModeCounter > 70)
                 {
-                    npc.Center = nextWarpPoint;
+                    NPC.Center = nextWarpPoint;
                 }
                 else
                 {
-                    npc.Center = preSelectedWarpPoint;
+                    NPC.Center = preSelectedWarpPoint;
                 }
                 nextWarpPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
                 DarkCloudParticleEffect(6);
-                npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 17);
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
             }
 
             for(int i = 0; i < 50; i++)
@@ -1553,17 +1553,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter >= 60 && AttackModeCounter < 180 && ((AttackModeCounter) % 5 == 0))
             {
-                Projectile.NewProjectile(npc.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                Projectile.NewProjectile(NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
             if (AttackModeCounter >= 180 && AttackModeCounter < 300 && ((AttackModeCounter - 2) % 5 == 0))
             {
-                Projectile.NewProjectile(npc.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                Projectile.NewProjectile(NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
             if (AttackModeCounter >= 300 && AttackModeCounter < 420 && ((AttackModeCounter) % 5 == 0))
             {
-                Projectile.NewProjectile(npc.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
+                Projectile.NewProjectile(NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
         }        
@@ -1578,7 +1578,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter % 4 == 0)
             {
-                Projectile.NewProjectile(npc.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, npc.whoAmI, 1200 - AttackModeCounter);
+                Projectile.NewProjectile(NPC.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, NPC.whoAmI, 1200 - AttackModeCounter);
             }
         }
         
@@ -1593,7 +1593,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 //Spawn the sword.
                 //That's it. The rest of it happens within the sword's ai.
-                NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, ModContent.NPCType<DarkUltimaWeapon>(), 0, npc.whoAmI);
+                NPC.NewNPC((int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<DarkUltimaWeapon>(), 0, NPC.whoAmI);
             }
         }
 
@@ -1606,7 +1606,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Player p = Main.player[i];
                     if (p.active)
                     {
-                        Vector2 diff = npc.Center - p.Center;
+                        Vector2 diff = NPC.Center - p.Center;
                         float posAngle = diff.ToRotation();
 
                         //Deeply cursed conversions from XNA FuckoUnits to normal radians, because working with the former was giving me a headache
@@ -1627,7 +1627,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         float posDiff = Math.Abs(posAngle - workingAngle);
                         if (posDiff < MathHelper.PiOver4 || posDiff > (MathHelper.Pi - MathHelper.PiOver4))
                         {                            
-                            if (Vector2.DistanceSquared(npc.Center, p.Center) < confinedBlastsRadius * confinedBlastsRadius)
+                            if (Vector2.DistanceSquared(NPC.Center, p.Center) < confinedBlastsRadius * confinedBlastsRadius)
                             {
                                 float damage = confinedBlastDamage;
                                 damage *= (1 - p.endurance);
@@ -1662,7 +1662,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Vector2 attackVel = new Vector2(speed, 0);
                         float tally = (AttackModeCounter - 40) / 20;
                         attackVel = attackVel.RotatedBy(MathHelper.TwoPi * (i / boltCount) + MathHelper.ToRadians(15 * tally));
-                        Projectile.NewProjectileDirect(npc.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                     }
                 }                
             }
@@ -1681,7 +1681,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle);
                     for(int i = 0; i < 5; i++)
                     {
-                        Projectile.NewProjectileDirect(npc.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                     }
                 }
             }
@@ -1694,7 +1694,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if ((AttackModeCounter - 120) % 60 == 0)
                     {
                         count = 0;
-                        attackAngle = (Target.Center - npc.Center).ToRotation() - MathHelper.ToRadians(45);
+                        attackAngle = (Target.Center - NPC.Center).ToRotation() - MathHelper.ToRadians(45);
                     }
                     int step = (int)AttackModeCounter - 120;
                     //Integer division is evil, but occasionally useful evil
@@ -1704,9 +1704,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         count++; 
                         Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle + MathHelper.ToRadians(15 * count));
-                        Projectile.NewProjectileDirect(npc.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(npc.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
-                        Projectile.NewProjectileDirect(npc.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectileDirect(NPC.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
 
                     }
                 }                
@@ -1722,17 +1722,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     for (int i = 0; i < 13; i++)
                     {
                         Vector2 offset = (i - 7) * new Vector2(1.05f, 1.05f);
-                        Projectile.NewProjectile(npc.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.Center, (arrowRainTargetingVector + offset), ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
                     }
                 }
                 else
                 {
                     for (int i = 0; i < 13; i++)
                     {
-                        Vector2 velocity = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 5 + i, 0.05f, true, false);
+                        Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Target.Center, 5 + i, 0.05f, true, false);
                         if (velocity != Vector2.Zero)
                         {
-                            Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.Center, velocity, ModContent.ProjectileType<EnemyArrowOfDarkCloud>(), arrowRainDamage, 0.5f, Main.myPlayer);
                         }
                     }
                 }
@@ -1754,9 +1754,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackModeCounter % 300 == 299)
             {
-                Projectile.NewProjectile(npc.Center, UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
-                Projectile.NewProjectile(npc.Center, UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
-                Projectile.NewProjectile(npc.Center, UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 16), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 14).RotatedBy(MathHelper.ToRadians(-10)), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage, 0.5f, Main.myPlayer);
             }
         }
 
@@ -1764,7 +1764,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {            
             if (AttackModeCounter == 0)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: npc.whoAmI, ai2: DarkCloudAttackID.TeleportingSlashes);
+                NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloudAttackID.TeleportingSlashes);
 
                 Vector2 spawnPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
                 NPC.NewNPC((int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
@@ -1801,10 +1801,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 PrecalculateFirstTeleport();
                 changingPhases = true;
-                npc.dontTakeDamage = true;
-                npc.noTileCollide = false;
-                npc.noGravity = true;
-                npc.aiStyle = 0;
+                NPC.dontTakeDamage = true;
+                NPC.noTileCollide = false;
+                NPC.noGravity = true;
+                NPC.aiStyle = 0;
             }
 
             for (int i = 0; i < 5; i++)
@@ -1814,11 +1814,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 dustPos.Y -= 500;
 
                 Dust newDust = Dust.NewDustDirect(dustPos, 3000, 1500, DustID.ShadowbeamStaff, 0, 0, Scale: 2);
-                newDust.velocity = UsefulFunctions.GenerateTargetingVector(newDust.position, npc.position, 40);
+                newDust.velocity = UsefulFunctions.GenerateTargetingVector(newDust.position, NPC.position, 40);
             }
             if (phaseChangeCounter <= 180)
             {
-                npc.velocity = Vector2.Zero;
+                NPC.velocity = Vector2.Zero;
                 DarkCloudParticleEffect(-3, (float)30 * (float)(phaseChangeCounter / 180));
             }
             if (phaseChangeCounter == 180)
@@ -1841,8 +1841,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     ActuatePyramid();
                 }
-                npc.noTileCollide = true;
-                npc.velocity = new Vector2(0, -22);
+                NPC.noTileCollide = true;
+                NPC.velocity = new Vector2(0, -22);
 
                 for (int i = 0; i < 500; i++)
                 {
@@ -1854,11 +1854,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (phaseChangeCounter == 240)
             {
-                npc.velocity = Vector2.Zero;
-                npc.lifeMax = 500000 * Main.ActivePlayersCount;
-                npc.life = npc.lifeMax;
+                NPC.velocity = Vector2.Zero;
+                NPC.lifeMax = 500000 * Main.ActivePlayersCount;
+                NPC.life = NPC.lifeMax;
                 changingPhases = false;
-                npc.dontTakeDamage = false;
+                NPC.dontTakeDamage = false;
                 firstPhase = false;              
             }
             phaseChangeCounter++;
@@ -1875,13 +1875,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             DarkCloudParticleEffect(-2);
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                npc.Center = new Vector2(5827.5f, 1698) * 16;
+                NPC.Center = new Vector2(5827.5f, 1698) * 16;
             }
             else
             {
                 Vector2 warpPoint = Target.Center;
                 warpPoint.Y -= 600;
-                npc.Center = warpPoint;
+                NPC.Center = warpPoint;
             }
             DarkCloudParticleEffect(6);
             InstantNetUpdate();
@@ -1895,7 +1895,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius);
                 Vector2 velocity = new Vector2(dustSpeed, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                Dust.NewDustPerfect(npc.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
             }
         }
 
@@ -1916,7 +1916,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(35 - count, 35 - count);
                 Vector2 velocity = new Vector2(-5, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                Dust.NewDustPerfect(npc.Center + offset, DustID.MagicMirror, velocity, Scale: 2).noGravity = true;
+                Dust.NewDustPerfect(NPC.Center + offset, DustID.MagicMirror, velocity, Scale: 2).noGravity = true;
             }
         }
 
@@ -1939,33 +1939,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.NPC.whoAmI);
             }
         }
 
         static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if(darkCloudTexture == null || darkCloudTexture.IsDisposed)
             {
                 darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
             }
-            Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[npc.type]);
+            Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[NPC.type]);
             Vector2 origin = sourceRectangle.Size() / 2f;
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (npc.spriteDirection == 1)
+            if (NPC.spriteDirection == 1)
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             for (float i = TRAIL_LENGTH - 1; i >= 0 ; i--)
             {
-                Main.spriteBatch.Draw(darkCloudTexture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
             }
            
             return true;
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (!firstPhase && CurrentMove != null && CurrentMove.Draw != null)
             {
@@ -2002,8 +2002,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        Vector2 thisPos = npc.Center + startPos + Main.rand.NextVector2Circular(50, 50);
-                        Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, npc.Center + Main.rand.NextVector2Circular(10, 10), 8);
+                        Vector2 thisPos = NPC.Center + startPos + Main.rand.NextVector2Circular(50, 50);
+                        Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
                         Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Blue, thisVel).noGravity = true;
                     }
                     DarkCloudParticleEffect(-2, 1);
@@ -2012,7 +2012,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //targetPoint = initialTargetRotation;
             Rectangle sourceRectangle = new Rectangle(0, 0, darkSparkTexture.Width, darkSparkTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
-            Main.spriteBatch.Draw(darkSparkTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(darkSparkTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, SpriteEffects.None, 0f);
         }
 
         static Texture2D antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
@@ -2022,19 +2022,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
             }
-            float targetPoint = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation();
+            float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
             {                
-                Vector2 thisPos = npc.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
-                Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, npc.Center + Main.rand.NextVector2Circular(10, 10), 8);
+                Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
+                Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
                 Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
             }
             
 
             Rectangle sourceRectangle = new Rectangle(0, 0, antimatTexture.Width, antimatTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
-            SpriteEffects theseEffects = (npc.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            Main.spriteBatch.Draw(antimatTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
+            SpriteEffects theseEffects = (NPC.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
+            Main.spriteBatch.Draw(antimatTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, theseEffects, 0f);
         }
 
         static Texture2D cernosTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.CernosPrime>()).Texture);
@@ -2049,14 +2049,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 20; i++) {
                     Vector2 thisVel = arrowRainTargetingVector + Main.rand.NextVector2Circular(10, 10);
-                    Dust.NewDustPerfect(npc.Center, DustID.FireworkFountain_Green, thisVel).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, DustID.FireworkFountain_Green, thisVel).noGravity = true;
                 }
             }
 
             Rectangle sourceRectangle = new Rectangle(0, 0, cernosTexture.Width, cernosTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
-            SpriteEffects theseEffects = (npc.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            Main.spriteBatch.Draw(cernosTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
+            SpriteEffects theseEffects = (NPC.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
+            Main.spriteBatch.Draw(cernosTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, theseEffects, 0f);
         }
         #endregion
 
@@ -2100,13 +2100,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             bool standing_on_solid_tile = false;
            
-            int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-            int x_left_edge = (int)npc.position.X / 16;
-            int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
+            int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
+            int x_left_edge = (int)NPC.position.X / 16;
+            int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
             for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
             {
                 Tile t = Main.tile[l, y_below_feet];
-                if (t.active() && !t.inActive() && Main.tileSolid[(int)t.type]) // tile exists and is solid
+                if (t.HasTile && !t.IsActuated && Main.tileSolid[(int)t.TileType]) // tile exists and is solid
                 {
                     standing_on_solid_tile = true;
                     break; // one is enough so stop checking
@@ -2121,10 +2121,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 Vector2 pyramidCenter = new Vector2(5828, 1750) * 16;
-                npc.Center = pyramidCenter; 
+                NPC.Center = pyramidCenter; 
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Vector2.Distance(Main.player[i].Center, npc.Center) < 10000)
+                    if (Vector2.Distance(Main.player[i].Center, NPC.Center) < 10000)
                     {
                         Main.player[i].Center = pyramidCenter;
                     }
@@ -2143,18 +2143,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return true;
         }
 
-        public override void NPCLoot()
+        public override void OnKill()
         {
 
-            Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.3f, 0.3f, 200, default(Color), 1f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
-            Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.2f, 0.2f, 200, default(Color), 4f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 4f);
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, 52, 0.3f, 0.3f, 200, default(Color), 1f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, 52, 0.2f, 0.2f, 200, default(Color), 4f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 2f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 4f);
 
             //Clean up projectiles
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -2168,17 +2168,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (Main.expertMode)
             {
-                npc.DropBossBags();
+                NPC.DropBossBags();
             }
             else
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
+                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
+                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
             }
             if (Main.tile[5810, 1670] != null)
             {
-                if (Main.tile[5810, 1670].active() && Main.tile[5810, 1670].inActive())
+                if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
                 {
                     ActuatePyramid();
                 }
@@ -2211,7 +2211,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Destroy Lanterns (doing it like this prevents tiles from doing annoying things like dropping an item or spawning a boss)
                 for (int i = 0; i < 9; i++)
                 {
-                    if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].type == TileID.HangingLanterns)
+                    if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].TileType == TileID.HangingLanterns)
                     {
                         Main.tile[Lanterns[i, 0], Lanterns[i, 1]] = new Tile();
                         Main.tile[Lanterns[i, 0], Lanterns[i, 1] + 1] = new Tile();
@@ -2223,7 +2223,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Bulbs
                 for (int i = 0; i < 6; i++)
                 {
-                    if (Main.tile[Bulbs[i, 0], Bulbs[i, 1]].type == TileID.PlanteraBulb)
+                    if (Main.tile[Bulbs[i, 0], Bulbs[i, 1]].TileType == TileID.PlanteraBulb)
                     {
                         Main.tile[Bulbs[i, 0], Bulbs[i, 1]] = new Tile();
                         Main.tile[Bulbs[i, 0], Bulbs[i, 1] - 1] = new Tile();
@@ -2277,7 +2277,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     for (int x = 5740; x < 5748; x++)
                     {
-                        if (Main.tile[x + offset, y].type != TileID.SandstoneBrick)
+                        if (Main.tile[x + offset, y].TileType != TileID.SandstoneBrick)
                         {
                             WorldGen.PlaceTile(x + offset, y, TileID.SandstoneBrick, true, true);
                         }
@@ -2292,7 +2292,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Place lanterns (yes, they have to be seperate from breaking because Place[X] functions respect anchor points)
                 for (int i = 0; i < 8; i++)
                 {
-                    if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].type != TileID.HangingLanterns)
+                    if (Main.tile[Lanterns[i, 0], Lanterns[i, 1]].TileType != TileID.HangingLanterns)
                     {
                         WorldGen.Place1x2Top(Lanterns[i, 0], Lanterns[i, 1], TileID.HangingLanterns, 24);
                     }
@@ -2301,7 +2301,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //And the bulbs
                 for (int i = 0; i < 6; i++)
                 {
-                    if (Main.tile[Bulbs[i, 0], Bulbs[i, 1]].type != TileID.PlanteraBulb)
+                    if (Main.tile[Bulbs[i, 0], Bulbs[i, 1]].TileType != TileID.PlanteraBulb)
                     {
                         WorldGen.Place2x2(Bulbs[i, 0] + 1, Bulbs[i, 1], TileID.PlanteraBulb, 0);
                     }
@@ -2379,35 +2379,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             // calculated parameters
             bool moonwalking = false;  //  not jump/fall and moving backwards to facing
-            if (npc.velocity.Y == 0f && ((npc.velocity.X > 0f && npc.direction < 0) || (npc.velocity.X < 0f && npc.direction > 0)))
+            if (NPC.velocity.Y == 0f && ((NPC.velocity.X > 0f && NPC.direction < 0) || (NPC.velocity.X < 0f && NPC.direction > 0)))
                 moonwalking = true;
             #endregion
             //-------------------------------------------------------------------
             #region teleportation particle effects
             if (can_teleport)  //  chaos elemental type teleporter
             {
-                if (npc.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
+                if (NPC.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
                 {
-                    npc.velocity *= 0f; // stop moving
-                    npc.ai[3] = 0f; // reset boredom to 0
-                    Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
-                    Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
-                    float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
-                    float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
+                    NPC.velocity *= 0f; // stop moving
+                    NPC.ai[3] = 0f; // reset boredom to 0
+                    Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                    Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
+                    float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
+                    float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
                     float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
                     num8 = 2f / num8; // to normalize to 2 unit long vector
                     num6 *= num8; // direction to where it was 3 frames ago, vector normalized
                     num7 *= num8; // direction to where it was 3 frames ago, vector normalized
                     for (int j = 0; j < 20; j++) // make 20 dusts at current position
                     {
-                        int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
+                        int num9 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 71, num6, num7, 200, default(Color), 2f);
                         Main.dust[num9].noGravity = true; // floating
                         Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
                         expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
                     }
                     for (int k = 0; k < 20; k++) // more dust effects at old position
                     {
-                        int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
+                        int num10 = Dust.NewDust(NPC.oldPos[2], NPC.width, NPC.height, 71, -num6, -num7, 200, default(Color), 2f);
                         Main.dust[num10].noGravity = true;
                         Dust expr_1A6F_cp_0 = Main.dust[num10];
                         expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
@@ -2417,61 +2417,61 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #endregion
             //-------------------------------------------------------------------
             #region adjust boredom level
-            if (!is_archer || npc.ai[2] <= 0f)  //  loop to set ai[3] (boredom)
+            if (!is_archer || NPC.ai[2] <= 0f)  //  loop to set ai[3] (boredom)
             {
-                if (npc.position.X == npc.oldPosition.X || npc.ai[3] >= (float)boredom_time || moonwalking)  //  stopped or bored or moonwalking
-                    npc.ai[3] += 1f; // increase boredom
-                else if ((double)Math.Abs(npc.velocity.X) > bored_speed && npc.ai[3] > 0f)  //  moving fast and not bored
-                    npc.ai[3] -= 1f; // decrease boredom
+                if (NPC.position.X == NPC.oldPosition.X || NPC.ai[3] >= (float)boredom_time || moonwalking)  //  stopped or bored or moonwalking
+                    NPC.ai[3] += 1f; // increase boredom
+                else if ((double)Math.Abs(NPC.velocity.X) > bored_speed && NPC.ai[3] > 0f)  //  moving fast and not bored
+                    NPC.ai[3] -= 1f; // decrease boredom
 
-                if (npc.justHit || npc.ai[3] > boredom_cooldown)
-                    npc.ai[3] = 0f; // boredom wears off if enough time passes, or if hit
+                if (NPC.justHit || NPC.ai[3] > boredom_cooldown)
+                    NPC.ai[3] = 0f; // boredom wears off if enough time passes, or if hit
 
-                if (npc.ai[3] == (float)boredom_time)
-                    npc.netUpdate = true; // netupdate when state changes to bored
+                if (NPC.ai[3] == (float)boredom_time)
+                    NPC.netUpdate = true; // netupdate when state changes to bored
             }
             #endregion
             //-------------------------------------------------------------------
             #region play creature sounds, target/face player, respond to boredom
-            if ((!hates_light || !Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0) && npc.ai[3] < (float)boredom_time)
+            if ((!hates_light || !Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0) && NPC.ai[3] < (float)boredom_time)
             {  // not fleeing light & not bored
                 if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-                    Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
-                if (!canDrown || (canDrown && !npc.wet) || (quickBored && boredTimer > tBored))
+                    Main.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
+                if (!canDrown || (canDrown && !NPC.wet) || (quickBored && boredTimer > tBored))
                 {
                     //npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
                 }
             }
-            else if (!is_archer || npc.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
+            else if (!is_archer || NPC.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
             {
-                if (hates_light && Main.dayTime && (double)(npc.position.Y / 16f) < Main.worldSurface && npc.timeLeft > 10)
+                if (hates_light && Main.dayTime && (double)(NPC.position.Y / 16f) < Main.worldSurface && NPC.timeLeft > 10)
                     //npc.timeLeft = 10;  //  if hates light & in light, hasten despawn
 
-                    if (npc.velocity.X == 0f)
+                    if (NPC.velocity.X == 0f)
                     {
-                        if (npc.velocity.Y == 0f)
+                        if (NPC.velocity.Y == 0f)
                         { // not moving
-                            if (npc.ai[0] == 0f)
-                                npc.ai[0] = 1f; // facing change delay
+                            if (NPC.ai[0] == 0f)
+                                NPC.ai[0] = 1f; // facing change delay
                             else
                             { // change movement and facing direction, reset delay
-                                npc.direction *= -1;
-                                npc.spriteDirection = npc.direction;
-                                npc.ai[0] = 0f;
+                                NPC.direction *= -1;
+                                NPC.spriteDirection = NPC.direction;
+                                NPC.ai[0] = 0f;
                             }
                         }
                     }
                     else // moving in x direction,
-                        npc.ai[0] = 0f; // reset facing change delay
+                        NPC.ai[0] = 0f; // reset facing change delay
 
-                if (npc.direction == 0) // what does it mean if direction is 0?
-                    npc.direction = 1; // flee right if direction not set? or is initial direction?
+                if (NPC.direction == 0) // what does it mean if direction is 0?
+                    NPC.direction = 1; // flee right if direction not set? or is initial direction?
             } // END fleeing light or bored (& not aiming)
             #endregion
             //-------------------------------------------------------------------
             #region enrage
             bool enraged = false; // angry from damage; not stored from tick to tick
-            if ((enrage_percentage > 0) && (npc.life < (float)npc.lifeMax * enrage_percentage))  //  speed up at low life
+            if ((enrage_percentage > 0) && (NPC.life < (float)NPC.lifeMax * enrage_percentage))  //  speed up at low life
                 enraged = true;
             if (enraged)
             { // speed up movement if enraged
@@ -2482,26 +2482,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //-------------------------------------------------------------------
             #region melee movement
 
-            int dust = Dust.NewDust(new Vector2((float)npc.position.X, (float)npc.position.Y), npc.width, npc.height, 6, npc.velocity.X - 6f, npc.velocity.Y, 150, Color.Blue, 1f + comboDamage / 500);
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X - 6f, NPC.velocity.Y, 150, Color.Blue, 1f + comboDamage / 500);
             Main.dust[dust].noGravity = true;
 
 
 
-            if (!is_archer || (npc.ai[2] <= 0f && !npc.confused))  //  meelee attack/movement. archers only use while not aiming
+            if (!is_archer || (NPC.ai[2] <= 0f && !NPC.confused))  //  meelee attack/movement. archers only use while not aiming
             {
-                if (Math.Abs(npc.velocity.X) > top_speed)  //  running/flying faster than top speed
+                if (Math.Abs(NPC.velocity.X) > top_speed)  //  running/flying faster than top speed
                 {
-                    if (npc.velocity.Y == 0f)  //  and not jump/fall
-                        npc.velocity *= (1f - braking_power);  //  decelerate
+                    if (NPC.velocity.Y == 0f)  //  and not jump/fall
+                        NPC.velocity *= (1f - braking_power);  //  decelerate
                 }
-                else if ((npc.velocity.X < top_speed && npc.direction == 1) || (npc.velocity.X > -top_speed && npc.direction == -1))
+                else if ((NPC.velocity.X < top_speed && NPC.direction == 1) || (NPC.velocity.X > -top_speed && NPC.direction == -1))
                 {  //  running slower than top speed (forward), can be jump/fall
                     if (can_teleport && moonwalking)
-                        npc.velocity.X = npc.velocity.X * 0.99f;  //  ? small decelerate for teleporters
+                        NPC.velocity.X = NPC.velocity.X * 0.99f;  //  ? small decelerate for teleporters
 
-                    npc.velocity.X = npc.velocity.X + (float)npc.direction * acceleration;  //  accellerate fwd; can happen midair
-                    if ((float)npc.direction * npc.velocity.X > top_speed)
-                        npc.velocity.X = (float)npc.direction * top_speed;  //  but cap at top speed
+                    NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * acceleration;  //  accellerate fwd; can happen midair
+                    if ((float)NPC.direction * NPC.velocity.X > top_speed)
+                        NPC.velocity.X = (float)NPC.direction * top_speed;  //  but cap at top speed
                 }  //  END running slower than top speed (forward), can be jump/fall
             } // END non archer or not aiming*/
             #endregion
@@ -2509,31 +2509,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region archer projectile code (stops moving to shoot)
             if (is_archer)
             {
-                if (npc.confused)
-                    npc.ai[2] = 0f; // won't try to stop & aim if confused
+                if (NPC.confused)
+                    NPC.ai[2] = 0f; // won't try to stop & aim if confused
                 else // not confused
                 {
-                    if (npc.ai[1] > 0f)
-                        npc.ai[1] -= 1f; // decrement fire & reload counter
+                    if (NPC.ai[1] > 0f)
+                        NPC.ai[1] -= 1f; // decrement fire & reload counter
 
-                    if (npc.justHit) // was just hit?
+                    if (NPC.justHit) // was just hit?
                     {
-                        npc.ai[1] = 30f; // shot on .5 sec cooldown
-                        npc.ai[2] = 0f; // not aiming
+                        NPC.ai[1] = 30f; // shot on .5 sec cooldown
+                        NPC.ai[2] = 0f; // not aiming
                     }
-                    if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
+                    if (NPC.ai[2] > 0f) // if aiming: adjust aim and fire if needed
                     {
                         //npc.TargetClosest(true); // target and face closest player
-                        if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
+                        if (NPC.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
                         { // firing:
-                            Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
-                            float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X; // x vector to target
+                            Vector2 npc_center = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // npc position
+                            float npc_to_target_x = Main.player[NPC.target].position.X + (float)Main.player[NPC.target].width * 0.5f - npc_center.X; // x vector to target
                             float num16 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-                            float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num16; // y vector to target (aiming high at distant targets)
+                            float npc_to_target_y = Main.player[NPC.target].position.Y + (float)Main.player[NPC.target].height * 0.5f - npc_center.Y - num16; // y vector to target (aiming high at distant targets)
                             npc_to_target_x += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
                             npc_to_target_y += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
                             float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y)); // distance to target
-                            npc.netUpdate = true; // ??
+                            NPC.netUpdate = true; // ??
                             target_dist = projectile_velocity / target_dist; // to normalize by projectile_velocity
                             npc_to_target_x *= target_dist; // normalize by projectile_velocity
                             npc_to_target_y *= target_dist; // normalize by projectile_velocity
@@ -2545,60 +2545,60 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
                             {
                                 if (npc_to_target_y > 0f)
-                                    npc.ai[2] = 1f; // aim downward
+                                    NPC.ai[2] = 1f; // aim downward
                                 else
-                                    npc.ai[2] = 5f; // aim upward
+                                    NPC.ai[2] = 5f; // aim upward
                             }
                             else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-                                npc.ai[2] = 3f;  //  aim straight ahead
+                                NPC.ai[2] = 3f;  //  aim straight ahead
                             else if (npc_to_target_y > 0f) // target is below NPC
-                                npc.ai[2] = 2f;  //  aim slight downward
+                                NPC.ai[2] = 2f;  //  aim slight downward
                             else // target is not below NPC
-                                npc.ai[2] = 4f;  //  aim slight upward
+                                NPC.ai[2] = 4f;  //  aim slight upward
                         } // END firing
-                        if (npc.velocity.Y != 0f || npc.ai[1] <= 0f) // jump/fall or firing reload
+                        if (NPC.velocity.Y != 0f || NPC.ai[1] <= 0f) // jump/fall or firing reload
                         {
-                            npc.ai[2] = 0f; // not aiming
-                            npc.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
+                            NPC.ai[2] = 0f; // not aiming
+                            NPC.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
                         }
                         else // no jump/fall and no firing reload
                         {
-                            npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
-                            npc.spriteDirection = npc.direction; // match animation to facing
+                            NPC.velocity.X = NPC.velocity.X * 0.9f; // decelerate to stop & shoot
+                            NPC.spriteDirection = NPC.direction; // match animation to facing
                         }
                     } // END if aiming: adjust aim and fire if needed
-                    if (npc.ai[2] <= 0f && npc.velocity.Y == 0f && npc.ai[1] <= 0f && !Main.player[npc.target].dead && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+                    if (NPC.ai[2] <= 0f && NPC.velocity.Y == 0f && NPC.ai[1] <= 0f && !Main.player[NPC.target].dead && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                     { // not aiming & no jump/fall & fire/reload ctr is 0 & target is alive and LOS to target: start aiming
                         float num21 = 10f; // dummy vector length in place of initial velocity? not sure why this is needed
-                        Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-                        float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X;
+                        Vector2 npc_center = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f);
+                        float npc_to_target_x = Main.player[NPC.target].position.X + (float)Main.player[NPC.target].width * 0.5f - npc_center.X;
                         float num23 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-                        float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num23; // y vector to target (aiming high at distant targets)
+                        float npc_to_target_y = Main.player[NPC.target].position.Y + (float)Main.player[NPC.target].height * 0.5f - npc_center.Y - num23; // y vector to target (aiming high at distant targets)
                         npc_to_target_x += (float)Main.rand.Next(-40, 41);
                         npc_to_target_y += (float)Main.rand.Next(-40, 41);
                         float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y));
                         if (target_dist < 700f) // 700 pix = 43.75 blocks
                         { // target is in range
-                            npc.netUpdate = true; // ??
-                            npc.velocity.X = npc.velocity.X * 0.5f; // hard brake
+                            NPC.netUpdate = true; // ??
+                            NPC.velocity.X = NPC.velocity.X * 0.5f; // hard brake
                             target_dist = num21 / target_dist; // to normalize by num21
                             npc_to_target_x *= target_dist; // normalize by num21
                             npc_to_target_y *= target_dist; // normalize by num21
-                            npc.ai[2] = 3f; // aim straight ahead
-                            npc.ai[1] = (float)shot_rate; // start fire & reload counter
+                            NPC.ai[2] = 3f; // aim straight ahead
+                            NPC.ai[1] = (float)shot_rate; // start fire & reload counter
                             if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
                             {
                                 if (npc_to_target_y > 0f)
-                                    npc.ai[2] = 1f; // aim downward
+                                    NPC.ai[2] = 1f; // aim downward
                                 else
-                                    npc.ai[2] = 5f; // aim upward
+                                    NPC.ai[2] = 5f; // aim upward
                             }
                             else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-                                npc.ai[2] = 3f; // aim straight ahead
+                                NPC.ai[2] = 3f; // aim straight ahead
                             else if (npc_to_target_y > 0f)
-                                npc.ai[2] = 2f; // aim slight downward
+                                NPC.ai[2] = 2f; // aim slight downward
                             else
-                                npc.ai[2] = 4f; // aim slight upward
+                                NPC.ai[2] = 4f; // aim slight upward
                         } // END target is in range
                     } // END start aiming
                 } // END not confused
@@ -2608,7 +2608,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
             #region shoot and walk
-            if (!oBored && shoot_and_walk && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code 
+            if (!oBored && shoot_and_walk && !Main.player[NPC.target].dead) // can generalize this section to moving+projectile code 
             {
                 // Main.netMode != 1 &&
 
@@ -2618,25 +2618,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (breakCombo == true || (enraged == true && Main.rand.Next(700) == 1) || (enraged == false && Main.rand.Next(1700) == 1))
                 {
                     chargeDamageFlag = true;
-                    Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                    npc.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
-                    npc.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
-                    npc.knockBackResist = 0f;
+                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                    NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
+                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
+                    NPC.knockBackResist = 0f;
                     breakCombo = false;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
                 if (chargeDamageFlag == true)
                 {
-                    npc.damage = 120;
-                    npc.knockBackResist = 0;
+                    NPC.damage = 120;
+                    NPC.knockBackResist = 0;
                     chargeDamage++;
                 }
                 if (chargeDamage >= 96)
                 {
                     chargeDamageFlag = false;
-                    npc.damage = 95;
-                    npc.knockBackResist = 0.2f;
+                    NPC.damage = 95;
+                    NPC.knockBackResist = 0.2f;
                     chargeDamage = 0;
                 }
 
@@ -2646,16 +2646,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 #region Projectiles
                 //if(Main.netMode != 1)
                 //{
-                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * npc.scale;
+                customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
                 if (customAi1 >= 10f)
                 {
                     //npc.TargetClosest(true);
                     if ((customspawn1 < 1) && Main.rand.Next(1000) == 1)
                     {
-                        int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.CrystalKnight>(), 0);
+                        int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.CrystalKnight>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        npc.ai[0] = 20 - Main.rand.Next(80);
+                        NPC.ai[0] = 20 - Main.rand.Next(80);
                         customspawn1 += 1f;
                         if (Main.netMode != 1)
                         {
@@ -2664,10 +2664,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     if ((customspawn2 < 2) && Main.rand.Next(3500) == 1)
                     {
-                        int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
+                        int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        npc.ai[0] = 20 - Main.rand.Next(80);
+                        NPC.ai[0] = 20 - Main.rand.Next(80);
                         customspawn2 += 1f;
                         if (Main.netMode != 1)
                         {
@@ -2679,10 +2679,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if ((customspawn3 < 0) && Main.rand.Next(9950) == 1)
                     {
-                        int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
+                        int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
-                        npc.ai[0] = 20 - Main.rand.Next(80);
+                        NPC.ai[0] = 20 - Main.rand.Next(80);
                         customspawn3 += 1f;
                         if (Main.netMode != 1)
                         {
@@ -2695,10 +2695,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(700) == 1)
                     {
                         float num48 = 10f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2708,10 +2708,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, deathBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 6;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2719,10 +2719,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(195) == 1)
                     {
                         float num48 = 13f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2732,29 +2732,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 700;
                             Main.projectile[num54].aiStyle = 23;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
                     if (Main.rand.Next(520) == 1)
                     {
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
-                        npc.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
-                        npc.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
-                        npc.ai[1] = 1f;
-                        npc.netUpdate = true;
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
+                        NPC.velocity.X = (float)(Math.Cos(rotation) * 14) * -1;
+                        NPC.velocity.Y = (float)(Math.Sin(rotation) * 14) * -1;
+                        NPC.ai[1] = 1f;
+                        NPC.netUpdate = true;
                     }
                     if (Main.rand.Next(340) == 1)
                     {
                         float num48 = 18f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 100 + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 100 + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2764,10 +2764,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, holdBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 105;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                            npc.ai[1] = 1f;
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            NPC.ai[1] = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2775,10 +2775,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(120) == 1)
                     {
                         float num48 = 13f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.Center.Y - 10f);
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = (((Main.player[npc.target].position.Y - 10) + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.Center.Y - 10f);
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = (((Main.player[NPC.target].position.Y - 10) + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2788,10 +2788,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, dragoonLanceDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 700;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2799,10 +2799,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(300) == 1)
                     {
                         float num48 = 15f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2812,10 +2812,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 600;
                             Main.projectile[num54].aiStyle = 23;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                            npc.ai[1] = 1f;
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            NPC.ai[1] = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2823,10 +2823,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(85) == 1)
                     {
                         float num48 = 12f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2837,20 +2837,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 450;
                             Main.projectile[num54].aiStyle = 23;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
                     if (Main.rand.Next(350) == 1)
                     {
                         float num48 = 12f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-10, 20);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-10, 30);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2860,10 +2860,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, armageddonDamage, 0f, Main.myPlayer);
                             //Main.projectile[num54].timeLeft = 0;
                             Main.projectile[num54].aiStyle = 23;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2871,10 +2871,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(70) == 1)
                     {
                         float num48 = 14f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2884,18 +2884,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, gravityBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 40;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                            npc.ai[1] = 1f;
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            NPC.ai[1] = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     if (Main.rand.Next(280) == 1)
                     {
                         float num48 = 11f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2905,18 +2905,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, poisonStrikeDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 270;
                             Main.projectile[num54].aiStyle = 23;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                     if (Main.rand.Next(350) == 1)
                     {
                         float num48 = 13f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y - 1000 + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y - 1000 + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2926,10 +2926,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, crazedPurpleCrushDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 600;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2945,10 +2945,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(526) == 1)
                     {
                         float num48 = 7f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2958,19 +2958,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, shadowShotDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 200;
                             Main.projectile[num54].aiStyle = 23; //was 23
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
                     if (Main.rand.Next(50) == 1)
                     {
                         float num48 = 8f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -2980,10 +2980,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, iceStormDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 0;//was 70
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-                            npc.ai[1] = 1f;
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            NPC.ai[1] = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -2993,10 +2993,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(65) == 1)
                     {
                         float num48 = 13f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -3006,20 +3006,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 1300;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
                     if (Main.rand.Next(555) == 1)
                     {
                         float num48 = 13f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -3029,10 +3029,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, stormWaveDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 1300;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
 
 
@@ -3040,10 +3040,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     if (Main.rand.Next(205) == 1)
                     {
                         float num48 = 15f;
-                        Vector2 vector8 = new Vector2(npc.position.X + (npc.width * 0.5f), npc.position.Y + (npc.height / 2));
-                        float speedX = ((Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
-                        float speedY = ((Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
-                        if (((speedX < 0f) && (npc.velocity.X < 0f)) || ((speedX > 0f) && (npc.velocity.X > 0f)))
+                        Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+                        float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
+                        float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
+                        if (((speedX < 0f) && (NPC.velocity.X < 0f)) || ((speedX > 0f) && (NPC.velocity.X > 0f)))
                         {
                             float num51 = (float)Math.Sqrt((double)((speedX * speedX) + (speedY * speedY)));
                             num51 = num48 / num51;
@@ -3053,10 +3053,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, darkArrowDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 1300;
                             Main.projectile[num54].aiStyle = 1;
-                            Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                            Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
                             customAi1 = 1f;
                         }
-                        npc.netUpdate = true;
+                        NPC.netUpdate = true;
                     }
                 }
 
@@ -3072,17 +3072,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region check if standing on a solid tile
             // warning: this section contains a return statement
             bool standing_on_solid_tile = false;
-            if (npc.velocity.Y == 0f) // no jump/fall
+            if (NPC.velocity.Y == 0f) // no jump/fall
             {
-                int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-                int x_left_edge = (int)npc.position.X / 16;
-                int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
+                int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
+                int x_left_edge = (int)NPC.position.X / 16;
+                int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
                 for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
                 {
                     if (Main.tile[l, y_below_feet] == null) // null tile means ??
                         return;
 
-                    if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
+                    if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
                     {
                         standing_on_solid_tile = true;
                         break; // one is enough so stop checking
@@ -3094,10 +3094,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             #region new Tile()s, door opening/breaking
             if (standing_on_solid_tile)  //  if standing on solid tile
             {
-                int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
-                int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
+                int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
+                int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
                 if (clown_sized)
-                    x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f); // 16 pix in front of edge
+                    x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f); // 16 pix in front of edge
                                                                                                                                          //  create? 5 tile high stack in front
                 if (Main.tile[x_in_front, y_above_feet] == null)
                     Main.tile[x_in_front, y_above_feet] = new Tile();
@@ -3114,29 +3114,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (Main.tile[x_in_front, y_above_feet + 1] == null)
                     Main.tile[x_in_front, y_above_feet + 1] = new Tile();
                 //  create? 2 other tiles farther in front
-                if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null)
-                    Main.tile[x_in_front + npc.direction, y_above_feet - 1] = new Tile();
+                if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
 
-                if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null)
-                    Main.tile[x_in_front + npc.direction, y_above_feet + 1] = new Tile();
+                if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
 
-                if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tile[x_in_front, y_above_feet - 1].type == 10 && can_pass_doors)
+                if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && can_pass_doors)
                 { // tile in front is active, is door and NPC can pass doors: trying to break door
-                    npc.ai[2] += 1f; // inc knock countdown
-                    npc.ai[3] = 0f; // not bored if working on breaking a door
-                    if (npc.ai[2] >= 60f)  //  knock once per second
+                    NPC.ai[2] += 1f; // inc knock countdown
+                    NPC.ai[3] = 0f; // not bored if working on breaking a door
+                    if (NPC.ai[2] >= 60f)  //  knock once per second
                     {
                         if (!Main.bloodMoon && can_pass_doors_bloodmoon_only)
-                            npc.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
+                            NPC.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
 
-                        npc.velocity.X = 0.5f * (float)(-(float)npc.direction); //  slight recoil from hitting it
-                        npc.ai[1] += door_break_pow;  //  increase door damage counter
-                        npc.ai[2] = 0f;  //  knock finished; start next knock
+                        NPC.velocity.X = 0.5f * (float)(-(float)NPC.direction); //  slight recoil from hitting it
+                        NPC.ai[1] += door_break_pow;  //  increase door damage counter
+                        NPC.ai[2] = 0f;  //  knock finished; start next knock
                         bool door_breaking = false;  //  door break flag
-                        if (npc.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
+                        if (NPC.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
                         {
                             door_breaking = true;
-                            npc.ai[1] = 10f;
+                            NPC.ai[1] = 10f;
                         }
                         WorldGen.KillTile(x_in_front, y_above_feet - 1, true, false, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
                         if (door_breaking && Main.netMode != 1)  //  server and door breaking
@@ -3149,15 +3149,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             }
                             else  //  try to open without breaking
                             {
-                                bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction);  //  open the door
+                                bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, NPC.direction);  //  open the door
                                 if (!door_opened)  //  door not opened successfully
                                 {
-                                    npc.ai[3] = (float)boredom_time;  //  bored if door is stuck
-                                    npc.netUpdate = true;
-                                    npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
+                                    NPC.ai[3] = (float)boredom_time;  //  bored if door is stuck
+                                    NPC.netUpdate = true;
+                                    NPC.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
                                 }
                                 if (Main.netMode == 2 && door_opened) // is server & door was just opened
-                                    NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
+                                    NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)NPC.direction, 0); // ??
                             }
                         }  //  END server and door breaking
                     } // END knock on door
@@ -3167,76 +3167,76 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 #region jumping, reset door knock & damage counters
                 else // standing on solid tile but not in front of a passable door
                 {
-                    if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
+                    if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
                     {  //  moving forward
-                        if (Main.tile[x_in_front, y_above_feet - 2].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].type])
+                        if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
                         { // 3 blocks above ground level(head height) blocked
-                            if (Main.tile[x_in_front, y_above_feet - 3].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].type])
+                            if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
                             { // 4 blocks above ground level(over head) blocked
-                                npc.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-                                npc.netUpdate = true;
+                                NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
+                                NPC.netUpdate = true;
                             }
                             else
                             {
-                                npc.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-                                npc.netUpdate = true;
+                                NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
+                                NPC.netUpdate = true;
                             }
                         } // for everything else, head height clear:
-                        else if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].type])
+                        else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
                         { // 2 blocks above ground level(mid body height) blocked
-                            npc.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-                            npc.netUpdate = true;
+                            NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
+                            NPC.netUpdate = true;
                         }
-                        else if (Main.tile[x_in_front, y_above_feet].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].type])
+                        else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
                         { // 1 block above ground level(foot height) blocked
-                            npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-                            npc.netUpdate = true;
+                            NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
+                            NPC.netUpdate = true;
                         }
-                        else if (npc.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type]))
+                        else if (NPC.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
                         { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                            npc.velocity.Y = -8f; // jump with power 8
-                            npc.velocity.X = npc.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                            npc.netUpdate = true;
+                            NPC.velocity.Y = -8f; // jump with power 8
+                            NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
+                            NPC.netUpdate = true;
                         }
                         else if (can_pass_doors) // standing on solid tile but not in front of a passable door, moving forward, didnt jump.  I assume recoil from hitting door is too small to move passable door out of range and trigger this
                         {
-                            npc.ai[1] = 0f;  //  reset door dmg counter
-                            npc.ai[2] = 0f;  //  reset knock counter
+                            NPC.ai[1] = 0f;  //  reset door dmg counter
+                            NPC.ai[2] = 0f;  //  reset knock counter
                         }
                     } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    if (hops && npc.velocity.Y == 0f && Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2))) < hop_range_x && Math.Abs(npc.position.Y + (float)(npc.height / 2) - (Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2))) < hop_range_y && ((npc.direction > 0 && npc.velocity.X >= hop_velocity) || (npc.direction < 0 && npc.velocity.X <= -hop_velocity)))
+                    if (hops && NPC.velocity.Y == 0f && Math.Abs(NPC.position.X + (float)(NPC.width / 2) - (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2))) < hop_range_x && Math.Abs(NPC.position.Y + (float)(NPC.height / 2) - (Main.player[NPC.target].position.Y + (float)(Main.player[NPC.target].height / 2))) < hop_range_y && ((NPC.direction > 0 && NPC.velocity.X >= hop_velocity) || (NPC.direction < 0 && NPC.velocity.X <= -hop_velocity)))
                     { // type that hops & no jump/fall & near target & moving forward fast enough: hop code
-                        npc.velocity.X = npc.velocity.X * 2f; // burst forward
-                        if (npc.velocity.X > hop_speed) // but cap at hop_speed
-                            npc.velocity.X = hop_speed;
-                        else if (npc.velocity.X < -hop_speed)
-                            npc.velocity.X = -hop_speed;
+                        NPC.velocity.X = NPC.velocity.X * 2f; // burst forward
+                        if (NPC.velocity.X > hop_speed) // but cap at hop_speed
+                            NPC.velocity.X = hop_speed;
+                        else if (NPC.velocity.X < -hop_speed)
+                            NPC.velocity.X = -hop_speed;
 
-                        npc.velocity.Y = -hop_power; // and jump of course
-                        npc.netUpdate = true;
+                        NPC.velocity.Y = -hop_power; // and jump of course
+                        NPC.netUpdate = true;
                     }
-                    if (can_teleport && npc.velocity.Y < 0f) // jumping
-                        npc.velocity.Y = npc.velocity.Y * 1.1f; // infinite jump? antigravity?
+                    if (can_teleport && NPC.velocity.Y < 0f) // jumping
+                        NPC.velocity.Y = NPC.velocity.Y * 1.1f; // infinite jump? antigravity?
                 }
             }
             else if (can_pass_doors)  //  not standing on a solid tile & can open/break doors
             {
-                npc.ai[1] = 0f;  //  reset door damage counter
-                npc.ai[2] = 0f;  //  reset knock counter
+                NPC.ai[1] = 0f;  //  reset door damage counter
+                NPC.ai[2] = 0f;  //  reset knock counter
             }//*/
             #endregion
             //-------------------------------------------------------------------
             #region teleportation
-            if (Main.netMode != 1 && can_teleport && npc.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
+            if (Main.netMode != 1 && can_teleport && NPC.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
             {
-                int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-                int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-                int x_blockpos = (int)npc.position.X / 16; // corner not center
-                int y_blockpos = (int)npc.position.Y / 16; // corner not center
+                int target_x_blockpos = (int)Main.player[NPC.target].position.X / 16; // corner not center
+                int target_y_blockpos = (int)Main.player[NPC.target].position.Y / 16; // corner not center
+                int x_blockpos = (int)NPC.position.X / 16; // corner not center
+                int y_blockpos = (int)NPC.position.Y / 16; // corner not center
                 int tp_radius = 25; // radius around target(upper left corner) in blocks to teleport into
                 int tp_counter = 0;
                 bool flag7 = false;
-                if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 2000f)
+                if (Math.Abs(NPC.position.X - Main.player[NPC.target].position.X) + Math.Abs(NPC.position.Y - Main.player[NPC.target].position.Y) > 2000f)
                 { // far away from target; 2000 pixels = 125 blocks
                     tp_counter = 100;
                     flag7 = true; // no teleport
@@ -3251,21 +3251,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
                     for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                     { // (tp_x_target,m) is block under its feet I think
-                        if ((m < target_y_blockpos - 9 || m > target_y_blockpos + 9 || tp_x_target < target_x_blockpos - 9 || tp_x_target > target_x_blockpos + 6) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+                        if ((m < target_y_blockpos - 9 || m > target_y_blockpos + 9 || tp_x_target < target_x_blockpos - 9 || tp_x_target > target_x_blockpos + 6) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].HasTile)
                         { // over 6 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                             bool safe_to_stand = true;
                             bool dark_caster = false; // not a fighter type AI...
-                            if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+                            if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
                                 safe_to_stand = false;
-                            else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+                            else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
                                 safe_to_stand = false;
 
-                            if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+                            if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
                             { // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-                                npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-                                npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-                                npc.netUpdate = true;
-                                npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+                                NPC.position.X = (float)(tp_x_target * 16 - NPC.width / 2); // center x at target
+                                NPC.position.Y = (float)(m * 16 - NPC.height); // y so block is under feet
+                                NPC.netUpdate = true;
+                                NPC.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
                                 flag7 = true; // end the loop (after testing every lower point :/)
                             }
                         } // END over 6 blocks distant from player...
@@ -3280,21 +3280,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (!oBored)
                 {
-                    if (npc.velocity.X == 0f)
+                    if (NPC.velocity.X == 0f)
                     {
                         boredTimer++;
                         if (boredTimer > tBored)
                         {
                             boredResetT = 0;
-                            npc.directionY = -1;
-                            if (npc.velocity.Y > 0f)
+                            NPC.directionY = -1;
+                            if (NPC.velocity.Y > 0f)
                             {
-                                npc.direction = 1;
+                                NPC.direction = 1;
                             }
-                            npc.direction = -1;
-                            if (npc.velocity.X > 0f)
+                            NPC.direction = -1;
+                            if (NPC.velocity.X > 0f)
                             {
-                                npc.direction = 1;
+                                NPC.direction = 1;
                             }
                             oBored = true;
                         }

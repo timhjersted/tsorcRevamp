@@ -7,7 +7,7 @@ namespace tsorcRevamp.Buffs
 {
     class LifegemHealing : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lifegem Healing");
             Description.SetDefault("Health is slowly being restored");

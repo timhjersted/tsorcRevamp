@@ -7,27 +7,27 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Tooltip.SetDefault("A blade of bone and fangs");
         }
         public override void SetDefaults() {
-            item.width = 68;
-            item.height = 76;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 30;
-            item.useTime = 30;
-            item.damage = 46;
-            item.knockBack = 7;
-            item.scale = 1f;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Orange;
-            item.value = PriceByRarity.Orange_3;
-            item.melee = true;
-            item.autoReuse = true;
+            Item.width = 68;
+            Item.height = 76;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 30;
+            Item.useTime = 30;
+            Item.damage = 46;
+            Item.knockBack = 7;
+            Item.scale = 1f;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Orange;
+            Item.value = PriceByRarity.Orange_3;
+            Item.melee = true;
+            Item.autoReuse = true;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
 
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.BoneBlade>());
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);

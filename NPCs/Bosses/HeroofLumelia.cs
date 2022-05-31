@@ -21,34 +21,34 @@ namespace tsorcRevamp.NPCs.Bosses
 		public int smokebombDamage = 22;
 		public override void SetDefaults()
 		{
-			npc.npcSlots = 5;
-			Main.npcFrameCount[npc.type] = 16;
+			NPC.npcSlots = 5;
+			Main.npcFrameCount[NPC.type] = 16;
 			animationType = 28;
-			npc.aiStyle = 3;
-			npc.height = 40;
-			npc.width = 20;
-			npc.damage = 75;
-			npc.defense = 55;
-			npc.boss = true;
+			NPC.aiStyle = 3;
+			NPC.height = 40;
+			NPC.width = 20;
+			NPC.damage = 75;
+			NPC.defense = 55;
+			NPC.boss = true;
 			//npc.timeLeft = 22000;
-			npc.lifeMax = 10000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.value = 20000;
-			npc.lavaImmune = true;
-			npc.knockBackResist = 0.1f;
-			npc.rarity = 4;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
-			banner = npc.type;
+			NPC.lifeMax = 10000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.value = 20000;
+			NPC.lavaImmune = true;
+			NPC.knockBackResist = 0.1f;
+			NPC.rarity = 4;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.OnFire] = true;
+			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.HeroOfLumeliaBanner>();
 			despawnHandler = new NPCDespawnHandler("The hero of Lumelia stands victorious...", Color.Gold, DustID.GoldFlame);
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.lifeMax = (int)(npc.lifeMax / 2);
-			npc.damage = (int)(npc.damage / 2);
+			NPC.lifeMax = (int)(NPC.lifeMax / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 			herosArrowDamage = (int)(herosArrowDamage / 2);
 			throwingKnifeDamage = (int)(throwingKnifeDamage / 2);
 		}
@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses
 		#region Spawn
 		public override float SpawnChance(NPCSpawnInfo spawnInfo)
 		{
-			Player P = spawnInfo.player;
+			Player P = spawnInfo.Player;
 			//if (!NPC.downedBoss3) //changed from 2
 			//{
 			//	return 0;
@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Bosses
 		#region AI // code by GrtAndPwrflTrtl (http://www.terrariaonline.com/members/grtandpwrfltrtl.86018/)
 		public override void AI()  //  warrior ai
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
 			#region set up NPC's attributes & behaviors
 			// set parameters
@@ -152,29 +152,29 @@ namespace tsorcRevamp.NPCs.Bosses
 
 			// calculated parameters
 			bool moonwalking = false;  //  not jump/fall and moving backwards to facing
-			if (npc.velocity.Y == 0f && ((npc.velocity.X > 0f && npc.direction < 0) || (npc.velocity.X < 0f && npc.direction > 0)))
+			if (NPC.velocity.Y == 0f && ((NPC.velocity.X > 0f && NPC.direction < 0) || (NPC.velocity.X < 0f && NPC.direction > 0)))
 				moonwalking = true;
 			#endregion
 			//-------------------------------------------------------------------
 			#region Too Big and Lava Jumping
 			if (tooBig)
 			{
-				if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction < 0))
+				if (NPC.velocity.Y == 0f && (NPC.velocity.X == 0f && NPC.direction < 0))
 				{
-					npc.velocity.Y -= 8f;
-					npc.velocity.X -= 2f;
+					NPC.velocity.Y -= 8f;
+					NPC.velocity.X -= 2f;
 				}
-				else if (npc.velocity.Y == 0f && (npc.velocity.X == 0f && npc.direction > 0))
+				else if (NPC.velocity.Y == 0f && (NPC.velocity.X == 0f && NPC.direction > 0))
 				{
-					npc.velocity.Y -= 8f;
-					npc.velocity.X += 2f;
+					NPC.velocity.Y -= 8f;
+					NPC.velocity.X += 2f;
 				}
 			}
 			if (lavaJumping)
 			{
-				if (npc.lavaWet)
+				if (NPC.lavaWet)
 				{
-					npc.velocity.Y -= 2;
+					NPC.velocity.Y -= 2;
 				}
 			}
 			#endregion
@@ -182,28 +182,28 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region teleportation particle effects
 			if (can_teleport)  //  chaos elemental type teleporter
 			{
-				if (npc.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
+				if (NPC.ai[3] == -120f)  //  boredom goes negative? I think this makes disappear/arrival effects after it just teleported
 				{
-					npc.velocity *= 0f; // stop moving
-					npc.ai[3] = 0f; // reset boredom to 0
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
-					Vector2 vector = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // current location
-					float num6 = npc.oldPos[2].X + (float)npc.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
-					float num7 = npc.oldPos[2].Y + (float)npc.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
+					NPC.velocity *= 0f; // stop moving
+					NPC.ai[3] = 0f; // reset boredom to 0
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+					Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
+					float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
+					float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
 					float num8 = (float)Math.Sqrt((double)(num6 * num6 + num7 * num7)); // distance to where it was 3 frames ago?
 					num8 = 2f / num8; // to normalize to 2 unit long vector
 					num6 *= num8; // direction to where it was 3 frames ago, vector normalized
 					num7 *= num8; // direction to where it was 3 frames ago, vector normalized
 					for (int j = 0; j < 20; j++) // make 20 dusts at current position
 					{
-						int num9 = Dust.NewDust(npc.position, npc.width, npc.height, 71, num6, num7, 200, default(Color), 2f);
+						int num9 = Dust.NewDust(NPC.position, NPC.width, NPC.height, 71, num6, num7, 200, default(Color), 2f);
 						Main.dust[num9].noGravity = true; // floating
 						Dust expr_19EE_cp_0 = Main.dust[num9]; // make a dust handle?
 						expr_19EE_cp_0.velocity.X = expr_19EE_cp_0.velocity.X * 2f; // faster in x direction
 					}
 					for (int k = 0; k < 20; k++) // more dust effects at old position
 					{
-						int num10 = Dust.NewDust(npc.oldPos[2], npc.width, npc.height, 71, -num6, -num7, 200, default(Color), 2f);
+						int num10 = Dust.NewDust(NPC.oldPos[2], NPC.width, NPC.height, 71, -num6, -num7, 200, default(Color), 2f);
 						Main.dust[num10].noGravity = true;
 						Dust expr_1A6F_cp_0 = Main.dust[num10];
 						expr_1A6F_cp_0.velocity.X = expr_1A6F_cp_0.velocity.X * 2f;
@@ -213,65 +213,65 @@ namespace tsorcRevamp.NPCs.Bosses
 			#endregion
 			//-------------------------------------------------------------------
 			#region adjust boredom level
-			if (!is_archer || npc.ai[2] <= 0f)  //  loop to set ai[3] (boredom)
+			if (!is_archer || NPC.ai[2] <= 0f)  //  loop to set ai[3] (boredom)
 			{
-				if (npc.position.X == npc.oldPosition.X || npc.ai[3] >= (float)boredom_time || moonwalking)  //  stopped or bored or moonwalking
-					npc.ai[3] += 1f; // increase boredom
-				else if ((double)Math.Abs(npc.velocity.X) > bored_speed && npc.ai[3] > 0f)  //  moving fast and not bored
-					npc.ai[3] -= 1f; // decrease boredom
+				if (NPC.position.X == NPC.oldPosition.X || NPC.ai[3] >= (float)boredom_time || moonwalking)  //  stopped or bored or moonwalking
+					NPC.ai[3] += 1f; // increase boredom
+				else if ((double)Math.Abs(NPC.velocity.X) > bored_speed && NPC.ai[3] > 0f)  //  moving fast and not bored
+					NPC.ai[3] -= 1f; // decrease boredom
 
-				if (npc.justHit || npc.ai[3] > boredom_cooldown)
-					npc.ai[3] = 0f; // boredom wears off if enough time passes, or if hit
+				if (NPC.justHit || NPC.ai[3] > boredom_cooldown)
+					NPC.ai[3] = 0f; // boredom wears off if enough time passes, or if hit
 
-				if (npc.ai[3] == (float)boredom_time)
-					npc.netUpdate = true; // netupdate when state changes to bored
+				if (NPC.ai[3] == (float)boredom_time)
+					NPC.netUpdate = true; // netupdate when state changes to bored
 			}
 			#endregion
 			//-------------------------------------------------------------------
 			#region play creature sounds, target/face player, respond to boredom
-			if ((!hates_light || !Main.dayTime || (double)npc.position.Y > Main.worldSurface * 16.0) && npc.ai[3] < (float)boredom_time)
+			if ((!hates_light || !Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0) && NPC.ai[3] < (float)boredom_time)
 			{   // not fleeing light & not bored
 				if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-					Main.PlaySound(sound_type, (int)npc.position.X, (int)npc.position.Y, 1); // random creature sounds
+					Main.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
 				if (!canDrown)
 				{
-					npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+					NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
 				}
-				if (canDrown && !npc.wet)
+				if (canDrown && !NPC.wet)
 				{
-					npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+					NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
 				}
 			}
-			else if (!is_archer || npc.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
+			else if (!is_archer || NPC.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
 			{
-				if (hates_light && Main.dayTime && (double)(npc.position.Y / 16f) < Main.worldSurface && npc.timeLeft > 10)
-					npc.timeLeft = 10;  //  if hates light & in light, hasten despawn
+				if (hates_light && Main.dayTime && (double)(NPC.position.Y / 16f) < Main.worldSurface && NPC.timeLeft > 10)
+					NPC.timeLeft = 10;  //  if hates light & in light, hasten despawn
 
-				if (npc.velocity.X == 0f)
+				if (NPC.velocity.X == 0f)
 				{
-					if (npc.velocity.Y == 0f)
+					if (NPC.velocity.Y == 0f)
 					{ // not moving
-						if (npc.ai[0] == 0f)
-							npc.ai[0] = 1f; // facing change delay
+						if (NPC.ai[0] == 0f)
+							NPC.ai[0] = 1f; // facing change delay
 						else
 						{ // change movement and facing direction, reset delay
-							npc.direction *= -1;
-							npc.spriteDirection = npc.direction;
-							npc.ai[0] = 0f;
+							NPC.direction *= -1;
+							NPC.spriteDirection = NPC.direction;
+							NPC.ai[0] = 0f;
 						}
 					}
 				}
 				else // moving in x direction,
-					npc.ai[0] = 0f; // reset facing change delay
+					NPC.ai[0] = 0f; // reset facing change delay
 
-				if (npc.direction == 0) // what does it mean if direction is 0?
-					npc.direction = 1; // flee right if direction not set? or is initial direction?
+				if (NPC.direction == 0) // what does it mean if direction is 0?
+					NPC.direction = 1; // flee right if direction not set? or is initial direction?
 			} // END fleeing light or bored (& not aiming)
 			#endregion
 			//-------------------------------------------------------------------
 			#region enrage
 			bool enraged = false; // angry from damage; not stored from tick to tick
-			if ((enrage_percentage > 0) && (npc.life < (float)npc.lifeMax * enrage_percentage))  //  speed up at low life
+			if ((enrage_percentage > 0) && (NPC.life < (float)NPC.lifeMax * enrage_percentage))  //  speed up at low life
 				enraged = true;
 			if (enraged)
 			{ // speed up movement if enraged
@@ -281,51 +281,51 @@ namespace tsorcRevamp.NPCs.Bosses
 			#endregion
 			//-------------------------------------------------------------------
 			#region melee movement
-			if (!is_archer || (npc.ai[2] <= 0f && !npc.confused))  //  meelee attack/movement. archers only use while not aiming
+			if (!is_archer || (NPC.ai[2] <= 0f && !NPC.confused))  //  meelee attack/movement. archers only use while not aiming
 			{
-				if (Math.Abs(npc.velocity.X) > top_speed)  //  running/flying faster than top speed
+				if (Math.Abs(NPC.velocity.X) > top_speed)  //  running/flying faster than top speed
 				{
-					if (npc.velocity.Y == 0f)  //  and not jump/fall
-						npc.velocity *= (1f - braking_power);  //  decelerate
+					if (NPC.velocity.Y == 0f)  //  and not jump/fall
+						NPC.velocity *= (1f - braking_power);  //  decelerate
 				}
-				else if ((npc.velocity.X < top_speed && npc.direction == 1) || (npc.velocity.X > -top_speed && npc.direction == -1))
+				else if ((NPC.velocity.X < top_speed && NPC.direction == 1) || (NPC.velocity.X > -top_speed && NPC.direction == -1))
 				{  //  running slower than top speed (forward), can be jump/fall
 					if (can_teleport && moonwalking)
-						npc.velocity.X = npc.velocity.X * 0.99f;  //  ? small decelerate for teleporters
+						NPC.velocity.X = NPC.velocity.X * 0.99f;  //  ? small decelerate for teleporters
 
-					npc.velocity.X = npc.velocity.X + (float)npc.direction * acceleration;  //  accellerate fwd; can happen midair
-					if ((float)npc.direction * npc.velocity.X > top_speed)
-						npc.velocity.X = (float)npc.direction * top_speed;  //  but cap at top speed
+					NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * acceleration;  //  accellerate fwd; can happen midair
+					if ((float)NPC.direction * NPC.velocity.X > top_speed)
+						NPC.velocity.X = (float)NPC.direction * top_speed;  //  but cap at top speed
 				}  //  END running slower than top speed (forward), can be jump/fall
 			} // END non archer or not aiming*/
 
-			if (npc.ai[1] == 0)
+			if (NPC.ai[1] == 0)
 			{
-				npc.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
+				NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
 			}
 
 			//Turn and walk away if hitting a wall
-			if (npc.position.X == npc.oldPosition.X)
+			if (NPC.position.X == NPC.oldPosition.X)
 			{
-				npc.ai[1]++;
-				if (npc.ai[1] > 120 && npc.velocity.Y == 0)
+				NPC.ai[1]++;
+				if (NPC.ai[1] > 120 && NPC.velocity.Y == 0)
 				{
-					npc.direction *= -1;
-					npc.spriteDirection = npc.direction;
-					npc.ai[1] = 50;
+					NPC.direction *= -1;
+					NPC.spriteDirection = NPC.direction;
+					NPC.ai[1] = 50;
 				}
 			}
 
-			Player player = Main.player[npc.target];
+			Player player = Main.player[NPC.target];
 
-			if (npc.ai[1] == 51 && npc.Distance(player.Center) > 1100)
+			if (NPC.ai[1] == 51 && NPC.Distance(player.Center) > 1100)
 			{
-				npc.ai[1] = 0;
+				NPC.ai[1] = 0;
 			}
 
-			if (Collision.CanHitLine(npc.Center, 0, 0, Main.player[npc.target].Center, 0, 0))
+			if (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
 			{
-				npc.ai[1] = 0;
+				NPC.ai[1] = 0;
 			}
 
 
@@ -334,31 +334,31 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region archer projectile code (stops moving to shoot)
 			if (is_archer)
 			{
-				if (npc.confused)
-					npc.ai[2] = 0f; // won't try to stop & aim if confused
+				if (NPC.confused)
+					NPC.ai[2] = 0f; // won't try to stop & aim if confused
 				else // not confused
 				{
-					if (npc.ai[1] > 0f)
-						npc.ai[1] -= 1f; // decrement fire & reload counter
+					if (NPC.ai[1] > 0f)
+						NPC.ai[1] -= 1f; // decrement fire & reload counter
 
-					if (npc.justHit) // was just hit?
+					if (NPC.justHit) // was just hit?
 					{
-						npc.ai[1] = 30f; // shot on .5 sec cooldown
-						npc.ai[2] = 0f; // not aiming
+						NPC.ai[1] = 30f; // shot on .5 sec cooldown
+						NPC.ai[2] = 0f; // not aiming
 					}
-					if (npc.ai[2] > 0f) // if aiming: adjust aim and fire if needed
+					if (NPC.ai[2] > 0f) // if aiming: adjust aim and fire if needed
 					{
-						npc.TargetClosest(true); // target and face closest player
-						if (npc.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
+						NPC.TargetClosest(true); // target and face closest player
+						if (NPC.ai[1] == (float)(shot_rate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
 						{ // firing:
-							Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f); // npc position
-							float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X; // x vector to target
+							Vector2 npc_center = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // npc position
+							float npc_to_target_x = Main.player[NPC.target].position.X + (float)Main.player[NPC.target].width * 0.5f - npc_center.X; // x vector to target
 							float num16 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-							float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num16; // y vector to target (aiming high at distant targets)
+							float npc_to_target_y = Main.player[NPC.target].position.Y + (float)Main.player[NPC.target].height * 0.5f - npc_center.Y - num16; // y vector to target (aiming high at distant targets)
 							npc_to_target_x += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
 							npc_to_target_y += (float)Main.rand.Next(-40, 41); //  targeting error: 40 pix=2.5 blocks
 							float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y)); // distance to target
-							npc.netUpdate = true; // ??
+							NPC.netUpdate = true; // ??
 							target_dist = projectile_velocity / target_dist; // to normalize by projectile_velocity
 							npc_to_target_x *= target_dist; // normalize by projectile_velocity
 							npc_to_target_y *= target_dist; // normalize by projectile_velocity
@@ -370,60 +370,60 @@ namespace tsorcRevamp.NPCs.Bosses
 							if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
 							{
 								if (npc_to_target_y > 0f)
-									npc.ai[2] = 1f; // aim downward
+									NPC.ai[2] = 1f; // aim downward
 								else
-									npc.ai[2] = 5f; // aim upward
+									NPC.ai[2] = 5f; // aim upward
 							}
 							else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-								npc.ai[2] = 3f;  //  aim straight ahead
+								NPC.ai[2] = 3f;  //  aim straight ahead
 							else if (npc_to_target_y > 0f) // target is below NPC
-								npc.ai[2] = 2f;  //  aim slight downward
+								NPC.ai[2] = 2f;  //  aim slight downward
 							else // target is not below NPC
-								npc.ai[2] = 4f;  //  aim slight upward
+								NPC.ai[2] = 4f;  //  aim slight upward
 						} // END firing
-						if (npc.velocity.Y != 0f || npc.ai[1] <= 0f) // jump/fall or firing reload
+						if (NPC.velocity.Y != 0f || NPC.ai[1] <= 0f) // jump/fall or firing reload
 						{
-							npc.ai[2] = 0f; // not aiming
-							npc.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
+							NPC.ai[2] = 0f; // not aiming
+							NPC.ai[1] = 0f; // reset firing/reload counter (necessary? nonzero maybe)
 						}
 						else // no jump/fall and no firing reload
 						{
-							npc.velocity.X = npc.velocity.X * 0.9f; // decelerate to stop & shoot
-							npc.spriteDirection = npc.direction; // match animation to facing
+							NPC.velocity.X = NPC.velocity.X * 0.9f; // decelerate to stop & shoot
+							NPC.spriteDirection = NPC.direction; // match animation to facing
 						}
 					} // END if aiming: adjust aim and fire if needed
-					if (npc.ai[2] <= 0f && npc.velocity.Y == 0f && npc.ai[1] <= 0f && !Main.player[npc.target].dead && Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))
+					if (NPC.ai[2] <= 0f && NPC.velocity.Y == 0f && NPC.ai[1] <= 0f && !Main.player[NPC.target].dead && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
 					{ // not aiming & no jump/fall & fire/reload ctr is 0 & target is alive and LOS to target: start aiming
 						float num21 = 10f; // dummy vector length in place of initial velocity? not sure why this is needed
-						Vector2 npc_center = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-						float npc_to_target_x = Main.player[npc.target].position.X + (float)Main.player[npc.target].width * 0.5f - npc_center.X;
+						Vector2 npc_center = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f);
+						float npc_to_target_x = Main.player[NPC.target].position.X + (float)Main.player[NPC.target].width * 0.5f - npc_center.X;
 						float num23 = Math.Abs(npc_to_target_x) * 0.1f; // 10% of x distance to target: to aim high if farther?
-						float npc_to_target_y = Main.player[npc.target].position.Y + (float)Main.player[npc.target].height * 0.5f - npc_center.Y - num23; // y vector to target (aiming high at distant targets)
+						float npc_to_target_y = Main.player[NPC.target].position.Y + (float)Main.player[NPC.target].height * 0.5f - npc_center.Y - num23; // y vector to target (aiming high at distant targets)
 						npc_to_target_x += (float)Main.rand.Next(-40, 41);
 						npc_to_target_y += (float)Main.rand.Next(-40, 41);
 						float target_dist = (float)Math.Sqrt((double)(npc_to_target_x * npc_to_target_x + npc_to_target_y * npc_to_target_y));
 						if (target_dist < 700f) // 700 pix = 43.75 blocks
 						{ // target is in range
-							npc.netUpdate = true; // ??
-							npc.velocity.X = npc.velocity.X * 0.5f; // hard brake
+							NPC.netUpdate = true; // ??
+							NPC.velocity.X = NPC.velocity.X * 0.5f; // hard brake
 							target_dist = num21 / target_dist; // to normalize by num21
 							npc_to_target_x *= target_dist; // normalize by num21
 							npc_to_target_y *= target_dist; // normalize by num21
-							npc.ai[2] = 3f; // aim straight ahead
-							npc.ai[1] = (float)shot_rate; // start fire & reload counter
+							NPC.ai[2] = 3f; // aim straight ahead
+							NPC.ai[1] = (float)shot_rate; // start fire & reload counter
 							if (Math.Abs(npc_to_target_y) > Math.Abs(npc_to_target_x) * 2f) // target steeply above/below NPC
 							{
 								if (npc_to_target_y > 0f)
-									npc.ai[2] = 1f; // aim downward
+									NPC.ai[2] = 1f; // aim downward
 								else
-									npc.ai[2] = 5f; // aim upward
+									NPC.ai[2] = 5f; // aim upward
 							}
 							else if (Math.Abs(npc_to_target_x) > Math.Abs(npc_to_target_y) * 2f) // target on level with NPC
-								npc.ai[2] = 3f; // aim straight ahead
+								NPC.ai[2] = 3f; // aim straight ahead
 							else if (npc_to_target_y > 0f)
-								npc.ai[2] = 2f; // aim slight downward
+								NPC.ai[2] = 2f; // aim slight downward
 							else
-								npc.ai[2] = 4f; // aim slight upward
+								NPC.ai[2] = 4f; // aim slight upward
 						} // END target is in range
 					} // END start aiming
 				} // END not confused
@@ -431,67 +431,67 @@ namespace tsorcRevamp.NPCs.Bosses
 			#endregion
 			//-------------------------------------------------------------------
 			#region shoot and walk
-			if (shoot_and_walk && Main.netMode != 1 && !Main.player[npc.target].dead) // can generalize this section to moving+projectile code
+			if (shoot_and_walk && Main.netMode != 1 && !Main.player[NPC.target].dead) // can generalize this section to moving+projectile code
 			{
 				//ENEMY SPAWNS
-				if (npc.Distance(player.Center) > 220)
+				if (NPC.Distance(player.Center) > 220)
 				{
 
-					if ((customSpawn1 == 0) && npc.life <= 4500)
+					if ((customSpawn1 == 0) && NPC.life <= 4500)
 					{
 						//spawn it and increase customSpawn1
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.EnchantedSword, 0);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						customSpawn1 += 1f;
 					}
-					if ((customSpawn1 == 1) && npc.life <= 3500)
+					if ((customSpawn1 == 1) && NPC.life <= 3500)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.EnchantedSword, 0);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.EnchantedSword, 0);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						customSpawn1 += 1f;
 					}
-					if ((customSpawn1 == 2) && npc.life <= 3000)
+					if ((customSpawn1 == 2) && NPC.life <= 3000)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.ManHunter>(), 0);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.ManHunter>(), 0);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						customSpawn1 += 1f;
 					}
 
 
 					//WOLF SPAWNS
-					if (!wolfSpawned1 && npc.life <= 2500)
+					if (!wolfSpawned1 && NPC.life <= 2500)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
-						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
-						int Spawned3 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
+						int Spawned2 = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
+						int Spawned3 = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Main.PlaySound(3, -1, -1, 6, 0.3f, -.01f); //beast
 						wolfSpawned1 = true;
 
 					}
 
-					if (!wolfSpawned2 && npc.life <= 1500)
+					if (!wolfSpawned2 && NPC.life <= 1500)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
-						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
+						int Spawned2 = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
 						
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Main.PlaySound(3, -1, -1, 6, 0.3f, -.02f); //beast
 						wolfSpawned2 = true;
 
 					}
 
-					if (!wolfSpawned3 && npc.life <= 1000)
+					if (!wolfSpawned3 && NPC.life <= 1000)
 					{
-						int Spawned = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), NPCID.Wolf, 0);
-						int Spawned2 = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<NPCs.Enemies.RedCloudHunter>(), 0);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
-						Dust.NewDust(npc.position, npc.width, npc.height, DustID.MagicMirror, npc.velocity.X, npc.velocity.Y);
+						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
+						int Spawned2 = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.RedCloudHunter>(), 0);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Main.PlaySound(3, -1, -1, 6, 0.3f, .01f); //beast
 						wolfSpawned3 = true;
 
@@ -504,40 +504,40 @@ namespace tsorcRevamp.NPCs.Bosses
 				#region Projectiles
 
 				customAi1++; ;
-				npc.TargetClosest(true);
+				NPC.TargetClosest(true);
 
 				//JUSTHIT CODE
 				
-				if (npc.justHit && npc.Distance(player.Center) < 100)
+				if (NPC.justHit && NPC.Distance(player.Center) < 100)
 				{
 					customAi1 = 1f;
 				}
-				if (npc.justHit && npc.Distance(player.Center) < 350 && Main.rand.Next(3) == 1)//
+				if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.Next(3) == 1)//
 				{
-					npc.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
-                    float v = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(-6f, -4f);
-                    npc.velocity.X = v;
+					NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
+                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
+                    NPC.velocity.X = v;
 					if(Main.rand.Next(2) == 1) 
 					{ customAi1 = 70f; } //was 100 but knife goes away and doesn't shoot consistently
 					else
 					{ customAi1 = 240f; }
 					
 					
-					npc.netUpdate = true;
+					NPC.netUpdate = true;
 				}
-				if (npc.justHit && npc.Distance(player.Center) > 351 && Main.rand.Next(3) == 1)
+				if (NPC.justHit && NPC.Distance(player.Center) > 351 && Main.rand.Next(3) == 1)
 				{
-					npc.knockBackResist = 0f;
-					npc.velocity.Y = Main.rand.NextFloat(-10f, -3f);
-					npc.velocity.X = npc.velocity.X + (float)npc.direction * Main.rand.NextFloat(9f, 3f);
-					npc.netUpdate = true;
+					NPC.knockBackResist = 0f;
+					NPC.velocity.Y = Main.rand.NextFloat(-10f, -3f);
+					NPC.velocity.X = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(9f, 3f);
+					NPC.netUpdate = true;
 
 				}
 
 				//ARROWS FROM ARCHERS NEARBY ATTACK
-				if (npc.Distance(player.Center) < 500 && Main.rand.Next(350) == 0) 
+				if (NPC.Distance(player.Center) < 500 && Main.rand.Next(350) == 0) 
 				{
-					Player nT = Main.player[npc.target];
+					Player nT = Main.player[NPC.target];
 
 				
 					if (Main.rand.Next(4) == 0)
@@ -551,15 +551,15 @@ namespace tsorcRevamp.NPCs.Bosses
 						Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 800f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
 						Main.PlaySound(2, -1, -1, 5);
 						
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 						
 					}
 				}
 
 				//ARROWS FROM ARCHERS IN THE DISTANCE ATTACK
-				if (npc.Distance(player.Center) > 800 && Main.rand.Next(100) == 0)
+				if (NPC.Distance(player.Center) > 800 && Main.rand.Next(100) == 0)
 				{
-					Player nT = Main.player[npc.target];
+					Player nT = Main.player[NPC.target];
 
 					if (Main.rand.Next(4) == 0)
 					{
@@ -571,7 +571,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						Projectile.NewProjectile((float)nT.position.X - 100 + Main.rand.Next(400), (float)nT.position.Y - 900f, (float)(-50 + Main.rand.Next(100)) / 10, 9.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
 						Main.PlaySound(2, -1, -1, 5);
 						
-						npc.netUpdate = true;
+						NPC.netUpdate = true;
 						
 					}
 				}
@@ -580,44 +580,44 @@ namespace tsorcRevamp.NPCs.Bosses
 				
 
 				//JUMP BEFORE KNIFE ATTACK SOMETIMES
-				if (customAi1 == 130f && npc.velocity.Y == 0f && npc.life >= 1001 && Main.rand.Next(2) == 1)
+				if (customAi1 == 130f && NPC.velocity.Y == 0f && NPC.life >= 1001 && Main.rand.Next(2) == 1)
 					//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
 					{
 
-					npc.velocity.Y = Main.rand.NextFloat(-10f, -5f);
+					NPC.velocity.Y = Main.rand.NextFloat(-10f, -5f);
 
-					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 8); //0.4f, true, true																								
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
 					speed += Main.rand.NextVector2Circular(-4, -2);
-					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						//customAi1 = 132f;
 					}
 					
-					npc.netUpdate = true;
+					NPC.netUpdate = true;
 				}
 
 				//DESPERATE FINAL ATTACK
-				if (customAi1 >= 130f && customAi1 <= 148f && npc.life <= 1000)
+				if (customAi1 >= 130f && customAi1 <= 148f && NPC.life <= 1000)
 				//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
 				{
-					if(npc.velocity.Y == 0f)
+					if(NPC.velocity.Y == 0f)
 					{ 
-						npc.velocity.Y = Main.rand.NextFloat(-11f, -8f); 
+						NPC.velocity.Y = Main.rand.NextFloat(-11f, -8f); 
 					}
 					
 
-					Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 8); //0.4f, true, true																								
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
 					speed += Main.rand.NextVector2Circular(-4, -2);
-					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 						//customAi1 = 132f;
 					}
 
-					npc.netUpdate = true;
+					NPC.netUpdate = true;
 				}
 
 				//THROW KNIFE
@@ -625,17 +625,17 @@ namespace tsorcRevamp.NPCs.Bosses
 				//if (Collision.CanHitLine(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))			
 				if (customAi1 == 152 )	
 				{
-				Vector2 speed = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 12); //0.4f, true, true
+				Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true
 				//speed += Main.rand.NextVector2Circular(-3, -1);
-				speed += Main.player[npc.target].velocity / 2;
-					if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
+				speed += Main.player[NPC.target].velocity / 2;
+					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-							Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-							Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+							Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+							Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
 
 							//go to smoke bomb attack
 							customAi1 = 200f;
-							npc.knockBackResist = 0.1f;
+							NPC.knockBackResist = 0.1f;
 
 							if (Main.rand.Next(2) == 1)
 							{
@@ -643,40 +643,40 @@ namespace tsorcRevamp.NPCs.Bosses
 							//customAi1 = 1f;
 							}
 					}
-					npc.netUpdate = true;
+					NPC.netUpdate = true;
 
 				}
 				
 				//SMOKE BOMB DUST TELEGRAPH
 				if (customAi1 >= 220 && customAi1 >= 280) //&& npc.Distance(player.Center) > 10
 				{
-							Lighting.AddLight(npc.Center, Color.Green.ToVector3() * 1f); 
-							if (Main.rand.Next(2) == 1 && npc.Distance(player.Center) > 1)
+							Lighting.AddLight(NPC.Center, Color.Green.ToVector3() * 1f); 
+							if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 1)
 							{
-								Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, npc.velocity.X, npc.velocity.Y);
+								Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
 							}
 
 							//JUMP BEFORE BOMB ATTACK SOMETIMES
-							if (customAi1 == 260f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+							if (customAi1 == 260f && NPC.velocity.Y == 0f && Main.rand.Next(2) == 1)
 							{
-								npc.velocity.Y = Main.rand.NextFloat(-8f, -4f);
-								npc.netUpdate = true;
+								NPC.velocity.Y = Main.rand.NextFloat(-8f, -4f);
+								NPC.netUpdate = true;
 							}
 
 							//SMOKE BOMB ATTACK
 							if (customAi1 >= 280) //&& npc.Distance(player.Center) > 10
 							{
-								npc.TargetClosest(true);
+								NPC.TargetClosest(true);
 							
-								if (Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+								if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
 								{
-											Vector2 speed2 = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, 10); //, 0.2f, false, false
+											Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10); //, 0.2f, false, false
 											speed2 += Main.rand.NextVector2Circular(-4, 0);
 											//speed2 += Main.player[npc.target].velocity / 2;
-											if (((speed2.X < 0f) && (npc.velocity.X < 0f)) || ((speed2.X > 0f) && (npc.velocity.X > 0f)))
+											if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
 											{
-												Projectile.NewProjectile(npc.Center.X, npc.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
-												Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), npc.position); //Play swing-throw sound
+												Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
+												Main.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
 												customAi1 = 1f;
 											}
 								}
@@ -691,17 +691,17 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region check if standing on a solid tile
 			// warning: this section contains a return statement
 			bool standing_on_solid_tile = false;
-			if (npc.velocity.Y == 0f) // no jump/fall
+			if (NPC.velocity.Y == 0f) // no jump/fall
 			{
-				int y_below_feet = (int)(npc.position.Y + (float)npc.height + 8f) / 16;
-				int x_left_edge = (int)npc.position.X / 16;
-				int x_right_edge = (int)(npc.position.X + (float)npc.width) / 16;
+				int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
+				int x_left_edge = (int)NPC.position.X / 16;
+				int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
 				for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
 				{
 					if (Main.tile[l, y_below_feet] == null) // null tile means ??
 						return;
 
-					if (Main.tile[l, y_below_feet].active() && Main.tileSolid[(int)Main.tile[l, y_below_feet].type]) // tile exists and is solid
+					if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
 					{
 						standing_on_solid_tile = true;
 						break; // one is enough so stop checking
@@ -713,10 +713,10 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region new Tile()s, door opening/breaking
 			if (standing_on_solid_tile)  //  if standing on solid tile
 			{
-				int x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)(15 * npc.direction)) / 16f); // 15 pix in front of center of mass
-				int y_above_feet = (int)((npc.position.Y + (float)npc.height - 15f) / 16f); // 15 pix above feet
+				int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
+				int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
 				if (clown_sized)
-					x_in_front = (int)((npc.position.X + (float)(npc.width / 2) + (float)((npc.width / 2 + 16) * npc.direction)) / 16f); // 16 pix in front of edge
+					x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f); // 16 pix in front of edge
 																																		 //  create? 5 tile high stack in front
 				if (Main.tile[x_in_front, y_above_feet] == null)
 					Main.tile[x_in_front, y_above_feet] = new Tile();
@@ -733,29 +733,29 @@ namespace tsorcRevamp.NPCs.Bosses
 				if (Main.tile[x_in_front, y_above_feet + 1] == null)
 					Main.tile[x_in_front, y_above_feet + 1] = new Tile();
 				//  create? 2 other tiles farther in front
-				if (Main.tile[x_in_front + npc.direction, y_above_feet - 1] == null)
-					Main.tile[x_in_front + npc.direction, y_above_feet - 1] = new Tile();
+				if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
+					Main.tile[x_in_front + NPC.direction, y_above_feet - 1] = new Tile();
 
-				if (Main.tile[x_in_front + npc.direction, y_above_feet + 1] == null)
-					Main.tile[x_in_front + npc.direction, y_above_feet + 1] = new Tile();
+				if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
+					Main.tile[x_in_front + NPC.direction, y_above_feet + 1] = new Tile();
 
-				if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tile[x_in_front, y_above_feet - 1].type == 10 && can_pass_doors)
+				if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && can_pass_doors)
 				{ // tile in front is active, is door and NPC can pass doors: trying to break door
-					npc.ai[2] += 1f; // inc knock countdown
-					npc.ai[3] = 0f; // not bored if working on breaking a door
-					if (npc.ai[2] >= 60f)  //  knock once per second
+					NPC.ai[2] += 1f; // inc knock countdown
+					NPC.ai[3] = 0f; // not bored if working on breaking a door
+					if (NPC.ai[2] >= 60f)  //  knock once per second
 					{
 						if (!Main.bloodMoon && can_pass_doors_bloodmoon_only)
-							npc.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
+							NPC.ai[1] = 0f;  //  damage counter zeroed unless bloodmoon, but will still knock
 
-						npc.velocity.X = 0.5f * (float)(-(float)npc.direction); //  slight recoil from hitting it
-						npc.ai[1] += door_break_pow;  //  increase door damage counter
-						npc.ai[2] = 0f;  //  knock finished; start next knock
+						NPC.velocity.X = 0.5f * (float)(-(float)NPC.direction); //  slight recoil from hitting it
+						NPC.ai[1] += door_break_pow;  //  increase door damage counter
+						NPC.ai[2] = 0f;  //  knock finished; start next knock
 						bool door_breaking = false;  //  door break flag
-						if (npc.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
+						if (NPC.ai[1] >= 10f)  //  at 10 damage, set door as breaking (and cap at 10)
 						{
 							door_breaking = true;
-							npc.ai[1] = 10f;
+							NPC.ai[1] = 10f;
 						}
 						WorldGen.KillTile(x_in_front, y_above_feet - 1, true, false, false);  //  kill door ? when door not breaking too? can fail=true; effect only would make more sense, to make knocking sound
 						if (door_breaking && Main.netMode != 1)  //  server and door breaking
@@ -768,15 +768,15 @@ namespace tsorcRevamp.NPCs.Bosses
 							}
 							else  //  try to open without breaking
 							{
-								bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, npc.direction);  //  open the door
+								bool door_opened = WorldGen.OpenDoor(x_in_front, y_above_feet, NPC.direction);  //  open the door
 								if (!door_opened)  //  door not opened successfully
 								{
-									npc.ai[3] = (float)boredom_time;  //  bored if door is stuck
-									npc.netUpdate = true;
-									npc.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
+									NPC.ai[3] = (float)boredom_time;  //  bored if door is stuck
+									NPC.netUpdate = true;
+									NPC.velocity.X = 0; // cancel recoil so boredom wall reflection can trigger
 								}
 								if (Main.netMode == 2 && door_opened) // is server & door was just opened
-									NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)npc.direction, 0); // ??
+									NetMessage.SendData(19, -1, -1, null, 0, (float)x_in_front, (float)y_above_feet, (float)NPC.direction, 0); // ??
 							}
 						}  //  END server and door breaking
 					} // END knock on door
@@ -786,78 +786,78 @@ namespace tsorcRevamp.NPCs.Bosses
 				#region jumping, reset door knock & damage counters
 				else // standing on solid tile but not in front of a passable door
 				{
-					if ((npc.velocity.X < 0f && npc.spriteDirection == -1) || (npc.velocity.X > 0f && npc.spriteDirection == 1))
+					if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
 					{  //  moving forward
-						if (Main.tile[x_in_front, y_above_feet - 2].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].type])
+						if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
 						{ // 3 blocks above ground level(head height) blocked
-							if (Main.tile[x_in_front, y_above_feet - 3].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].type])
+							if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
 							{ // 4 blocks above ground level(over head) blocked
-								npc.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-								npc.netUpdate = true;
+								NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
+								NPC.netUpdate = true;
 							}
 							else
 							{
-								npc.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-								npc.netUpdate = true;
+								NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
+								NPC.netUpdate = true;
 							}
 						} // for everything else, head height clear:
-						else if (Main.tile[x_in_front, y_above_feet - 1].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].type])
+						else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
 						{ // 2 blocks above ground level(mid body height) blocked
-							npc.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-							npc.netUpdate = true;
+							NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
+							NPC.netUpdate = true;
 						}
-						else if (Main.tile[x_in_front, y_above_feet].active() && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].type])
+						else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
 						{ // 1 block above ground level(foot height) blocked
-							npc.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-							npc.netUpdate = true;
+							NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
+							NPC.netUpdate = true;
 						}
-						else if (npc.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].type]) && (!Main.tile[x_in_front + npc.direction, y_above_feet + 1].active() || !Main.tileSolid[(int)Main.tile[x_in_front + npc.direction, y_above_feet + 1].type]))
+						else if (NPC.directionY < 0 && jump_gaps && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
 						{ // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-							npc.velocity.Y = -8f; // jump with power 8
-							npc.velocity.X = npc.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-							npc.netUpdate = true;
+							NPC.velocity.Y = -8f; // jump with power 8
+							NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
+							NPC.netUpdate = true;
 						}
 						else if (can_pass_doors) // standing on solid tile but not in front of a passable door, moving forward, didnt jump.  I assume recoil from hitting door is too small to move passable door out of range and trigger this
 						{
-							npc.ai[1] = 0f;  //  reset door dmg counter
-							npc.ai[2] = 0f;  //  reset knock counter
+							NPC.ai[1] = 0f;  //  reset door dmg counter
+							NPC.ai[2] = 0f;  //  reset knock counter
 						}
 					} // END moving forward, still: standing on solid tile but not in front of a passable door
-					if (hops && npc.velocity.Y == 0f && Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2))) < hop_range_x && Math.Abs(npc.position.Y + (float)(npc.height / 2) - (Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2))) < hop_range_y && ((npc.direction > 0 && npc.velocity.X >= hop_velocity) || (npc.direction < 0 && npc.velocity.X <= -hop_velocity)))
+					if (hops && NPC.velocity.Y == 0f && Math.Abs(NPC.position.X + (float)(NPC.width / 2) - (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2))) < hop_range_x && Math.Abs(NPC.position.Y + (float)(NPC.height / 2) - (Main.player[NPC.target].position.Y + (float)(Main.player[NPC.target].height / 2))) < hop_range_y && ((NPC.direction > 0 && NPC.velocity.X >= hop_velocity) || (NPC.direction < 0 && NPC.velocity.X <= -hop_velocity)))
 					{ // type that hops & no jump/fall & near target & moving forward fast enough: hop code
-						npc.velocity.X = npc.velocity.X * 2f; // burst forward
-						if (npc.velocity.X > hop_speed) // but cap at hop_speed
-							npc.velocity.X = hop_speed;
-						else if (npc.velocity.X < -hop_speed)
-							npc.velocity.X = -hop_speed;
+						NPC.velocity.X = NPC.velocity.X * 2f; // burst forward
+						if (NPC.velocity.X > hop_speed) // but cap at hop_speed
+							NPC.velocity.X = hop_speed;
+						else if (NPC.velocity.X < -hop_speed)
+							NPC.velocity.X = -hop_speed;
 
-						npc.velocity.Y = -hop_power; // and jump of course
-						npc.netUpdate = true;
+						NPC.velocity.Y = -hop_power; // and jump of course
+						NPC.netUpdate = true;
 					}
-					if (can_teleport && npc.velocity.Y < 0f) // jumping
-						npc.velocity.Y = npc.velocity.Y * 1.1f; // infinite jump? antigravity?
+					if (can_teleport && NPC.velocity.Y < 0f) // jumping
+						NPC.velocity.Y = NPC.velocity.Y * 1.1f; // infinite jump? antigravity?
 				}
 
 					
 			}
 			else if (can_pass_doors)  //  not standing on a solid tile & can open/break doors
 			{
-				npc.ai[1] = 0f;  //  reset door damage counter
-				npc.ai[2] = 0f;  //  reset knock counter
+				NPC.ai[1] = 0f;  //  reset door damage counter
+				NPC.ai[2] = 0f;  //  reset knock counter
 			}//*/
 			#endregion
 			//-------------------------------------------------------------------
 			#region teleportation
-			if (Main.netMode != 1 && can_teleport && npc.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
+			if (Main.netMode != 1 && can_teleport && NPC.ai[3] >= (float)boredom_time) // is server & chaos ele & bored
 			{
-				int target_x_blockpos = (int)Main.player[npc.target].position.X / 16; // corner not center
-				int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
-				int x_blockpos = (int)npc.position.X / 16; // corner not center
-				int y_blockpos = (int)npc.position.Y / 16; // corner not center
+				int target_x_blockpos = (int)Main.player[NPC.target].position.X / 16; // corner not center
+				int target_y_blockpos = (int)Main.player[NPC.target].position.Y / 16; // corner not center
+				int x_blockpos = (int)NPC.position.X / 16; // corner not center
+				int y_blockpos = (int)NPC.position.Y / 16; // corner not center
 				int tp_radius = 20; // radius around target(upper left corner) in blocks to teleport into
 				int tp_counter = 0;
 				bool flag7 = false;
-				if (Math.Abs(npc.position.X - Main.player[npc.target].position.X) + Math.Abs(npc.position.Y - Main.player[npc.target].position.Y) > 20000f)
+				if (Math.Abs(NPC.position.X - Main.player[NPC.target].position.X) + Math.Abs(NPC.position.Y - Main.player[NPC.target].position.Y) > 20000f)
 				{ // far away from target; 2000 pixels = 125 blocks
 					tp_counter = 100;
 					flag7 = true; // no teleport
@@ -872,21 +872,21 @@ namespace tsorcRevamp.NPCs.Bosses
 					int tp_y_target = Main.rand.Next(target_y_blockpos - tp_radius, target_y_blockpos + tp_radius);  //  pick random tp point (centered on corner)
 					for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
 					{ // (tp_x_target,m) is block under its feet I think
-						if ((m < target_y_blockpos - 6 || m > target_y_blockpos + 6 || tp_x_target < target_x_blockpos - 6 || tp_x_target > target_x_blockpos + 6) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].active())
+						if ((m < target_y_blockpos - 6 || m > target_y_blockpos + 6 || tp_x_target < target_x_blockpos - 6 || tp_x_target > target_x_blockpos + 6) && (m < y_blockpos - 1 || m > y_blockpos + 1 || tp_x_target < x_blockpos - 1 || tp_x_target > x_blockpos + 1) && Main.tile[tp_x_target, m].HasTile)
 						{ // over 4 blocks distant from player & over 1 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
 							bool safe_to_stand = true;
 							bool dark_caster = false; // not a fighter type AI...
-							if (dark_caster && Main.tile[tp_x_target, m - 1].wall == 0) // Dark Caster & ?outdoors
+							if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
 								safe_to_stand = false;
-							else if (Main.tile[tp_x_target, m - 1].lava()) // feet submerged in lava
+							else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
 								safe_to_stand = false;
 
-							if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].type] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
+							if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
 							{ // safe enviornment & solid below feet & 3x4 tile region is clear; (tp_x_target,m) is below bottom middle tile
-								npc.position.X = (float)(tp_x_target * 16 - npc.width / 2); // center x at target
-								npc.position.Y = (float)(m * 16 - npc.height); // y so block is under feet
-								npc.netUpdate = true;
-								npc.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
+								NPC.position.X = (float)(tp_x_target * 16 - NPC.width / 2); // center x at target
+								NPC.position.Y = (float)(m * 16 - NPC.height); // y so block is under feet
+								NPC.netUpdate = true;
+								NPC.ai[3] = -120f; // -120 boredom is signal to display effects & reset boredom next tick in section "teleportation particle effects"
 								flag7 = true; // end the loop (after testing every lower point :/)
 							}
 						} // END over 4 blocks distant from player...
@@ -898,45 +898,45 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region drown // code by Omnir
 			if (canDrown)
 			{
-				if (!npc.wet)
+				if (!NPC.wet)
 				{
-					npc.TargetClosest(true);
+					NPC.TargetClosest(true);
 					drownTimer = drownTimerMax;
 				}
-				if (npc.wet)
+				if (NPC.wet)
 				{
 					drownTimer--;
 				}
-				if (npc.wet && drownTimer > drowningRisk)
+				if (NPC.wet && drownTimer > drowningRisk)
 				{
-					npc.TargetClosest(true);
+					NPC.TargetClosest(true);
 				}
-				else if (npc.wet && drownTimer <= drowningRisk)
+				else if (NPC.wet && drownTimer <= drowningRisk)
 				{
-					npc.TargetClosest(false);
-					if (npc.timeLeft > 10)
+					NPC.TargetClosest(false);
+					if (NPC.timeLeft > 10)
 					{
-						npc.timeLeft = 10;
+						NPC.timeLeft = 10;
 					}
-					npc.directionY = -1;
-					if (npc.velocity.Y > 0f)
+					NPC.directionY = -1;
+					if (NPC.velocity.Y > 0f)
 					{
-						npc.direction = 1;
+						NPC.direction = 1;
 					}
-					npc.direction = -1;
-					if (npc.velocity.X > 0f)
+					NPC.direction = -1;
+					if (NPC.velocity.X > 0f)
 					{
-						npc.direction = 1;
+						NPC.direction = 1;
 					}
 				}
 				if (drownTimer <= 0)
 				{
-					npc.life--;
-					if (npc.life <= 0)
+					NPC.life--;
+					if (NPC.life <= 0)
 					{
-						Main.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 1);
-						npc.NPCLoot();
-						npc.netUpdate = true;
+						Main.PlaySound(4, (int)NPC.position.X, (int)NPC.position.Y, 1);
+						NPC.NPCLoot();
+						NPC.netUpdate = true;
 					}
 				}
 			}
@@ -947,34 +947,34 @@ namespace tsorcRevamp.NPCs.Bosses
 
 		static Texture2D spearTexture;
 		static Texture2D bombTexture;
-		public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 		{
 			
-			Player player = Main.player[npc.target];
-			SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+			Player player = Main.player[NPC.target];
+			SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
 			if (spearTexture == null) //|| spearTexture.IsDisposed
 			{
-				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnifeSmall");
+				spearTexture = Mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnifeSmall");
 			}
 
 			if (bombTexture == null)
 			{
-				bombTexture = mod.GetTexture("Projectiles/Enemy/EnemySmokebomb");
+				bombTexture = Mod.GetTexture("Projectiles/Enemy/EnemySmokebomb");
 			}
 			
 			//knife
 			if (customAi1 >= 120 && customAi1 <= 152)
 			{
-				Lighting.AddLight(npc.Center, Color.White.ToVector3() * 0.1f);
+				Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.1f);
 
-				if (npc.spriteDirection == -1)
+				if (NPC.spriteDirection == -1)
 				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), npc.scale, effects, 0); //facing left, (-22,--) was above NPC head, was 24, 48
+					spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), NPC.scale, effects, 0); //facing left, (-22,--) was above NPC head, was 24, 48
 				}
 				else
 				{
-					spriteBatch.Draw(spearTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(4, 10), npc.scale, effects, 0); // facing right, first value is height, higher number is higher, 2nd value is width axis
+					spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(4, 10), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher, 2nd value is width axis
 				}
 			}
 
@@ -982,34 +982,34 @@ namespace tsorcRevamp.NPCs.Bosses
 			if (customAi1 >= 220) //&& npc.Distance(player.Center) > 10 && customAi1 <= 280
 			{
 				//bomb sprite doesn't always show for some reason
-				if (npc.spriteDirection == -1)
+				if (NPC.spriteDirection == -1)
 				{
-					spriteBatch.Draw(bombTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), npc.scale, effects, 0); //facing left, 
+					spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(14, 4), NPC.scale, effects, 0); //facing left, 
 				}
 				else
 				{
-					spriteBatch.Draw(bombTexture, npc.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(14, 4), npc.scale, effects, 0); // facing right
+					spriteBatch.Draw(bombTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, bombTexture.Width, bombTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(14, 4), NPC.scale, effects, 0); // facing right
 				}
 			}
 		}
 		#region Gore
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 1"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
-			Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 2"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hero of Lumelia Gore 3"), 1f);
 
-			if (Main.rand.Next(99) < 90) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-			if (Main.rand.Next(99) < 6) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ItemID.ObsidianSkinPotion, 1);
-			Item.NewItem(npc.getRect(), ItemID.GreaterHealingPotion, 3);
-			Item.NewItem(npc.getRect(), ItemID.ArcheryPotion, 1);
-			Item.NewItem(npc.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
+			if (Main.rand.Next(99) < 90) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+			if (Main.rand.Next(99) < 6) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
+			Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 3);
+			Item.NewItem(NPC.getRect(), ItemID.ArcheryPotion, 1);
+			Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
 
 		}
 		#endregion

@@ -5,19 +5,19 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Items.Potions {
     class GreaterRestorationPotion : ModItem {
         public override void SetDefaults() {
-            item.width = 20;
-            item.height = 26;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.maxStack = 100;
-            item.healLife = 300;
-            item.healMana = 300;
-            item.potion = true;
-            item.rare = ItemRarityID.Green;
-            item.consumable = true;
-            item.value = 10000;
-            item.UseSound = SoundID.Item3;
+            Item.width = 20;
+            Item.height = 26;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.maxStack = 100;
+            Item.healLife = 300;
+            Item.healMana = 300;
+            Item.potion = true;
+            Item.rare = ItemRarityID.Green;
+            Item.consumable = true;
+            Item.value = 10000;
+            Item.UseSound = SoundID.Item3;
         }
 
         public override void GetHealLife(Player player, bool quickHeal, ref int healValue) {

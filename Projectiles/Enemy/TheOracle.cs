@@ -10,34 +10,34 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void SetDefaults()
 		{
-			projectile.friendly = false;
-			projectile.hostile = true;
-			projectile.tileCollide = false;
-			projectile.height = 16;
-			projectile.width = 16;
-			projectile.timeLeft = 250;
+			Projectile.friendly = false;
+			Projectile.hostile = true;
+			Projectile.tileCollide = false;
+			Projectile.height = 16;
+			Projectile.width = 16;
+			Projectile.timeLeft = 250;
 
 		}
 		public override void AI()
 		{
-			projectile.rotation += .5f;
+			Projectile.rotation += .5f;
 			if (Main.rand.Next(4) == 0)
 			{
-				int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y), projectile.width, projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
+				int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 6, 0, 0, 50, Color.Green, 3.0f);
 				Main.dust[dust].noGravity = false;
 			}
-			Lighting.AddLight(projectile.position, 0.5f, 0.6f, 0.1f);
+			Lighting.AddLight(Projectile.position, 0.5f, 0.6f, 0.1f);
 
-			if (projectile.velocity.X <= 4 && projectile.velocity.Y <= 4 && projectile.velocity.X >= -4 && projectile.velocity.Y >= -4)
+			if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4)
 			{
 				float accel = 1f + (Main.rand.Next(10, 30) * 0.001f);
-				projectile.velocity.X *= accel;
-				projectile.velocity.Y *= accel;
+				Projectile.velocity.X *= accel;
+				Projectile.velocity.Y *= accel;
 			}
 		}
 		public override bool PreKill(int timeLeft)
 		{
-			projectile.type = ProjectileID.Grenade;
+			Projectile.type = ProjectileID.Grenade;
 			return true;
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)

@@ -11,29 +11,29 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.damage = 14;
-            item.height = 28;
-            item.knockBack = 3f;
-            item.rare = ItemRarityID.Green;
-            item.shootSpeed = 6;
-            item.magic = true;
-            item.autoReuse = true;
-            item.mana = 15;
-            item.noMelee = true;
-            item.useAnimation = 45;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 45;
-            item.value = PriceByRarity.Green_2;
-            item.width = 20;
-            item.shoot = ModContent.ProjectileType<Projectiles.PoisonFieldBall>();
+            Item.damage = 14;
+            Item.height = 28;
+            Item.knockBack = 3f;
+            Item.rare = ItemRarityID.Green;
+            Item.shootSpeed = 6;
+            Item.magic = true;
+            Item.autoReuse = true;
+            Item.mana = 15;
+            Item.noMelee = true;
+            Item.useAnimation = 45;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 45;
+            Item.value = PriceByRarity.Green_2;
+            Item.width = 20;
+            Item.shoot = ModContent.ProjectileType<Projectiles.PoisonFieldBall>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.Stinger, 5);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 3000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

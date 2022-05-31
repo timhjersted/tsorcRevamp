@@ -13,7 +13,7 @@ namespace tsorcRevamp.Buffs
 			return base.Autoload(ref name, ref texture);
 		}
 
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Soulstruck");
 			Description.SetDefault("Will drop 10% more souls if killed while buff is active");

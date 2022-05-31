@@ -10,16 +10,16 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                  "\nDeals massive damage to humans");
         }
         public override void SetDefaults() {
-            item.damage = 5;
-            item.width = 48;
-            item.height = 44;
-            item.knockBack = 5;
-            item.melee = true;
-            item.useAnimation = item.useTime = 11;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = 3500;
-            item.rare = ItemRarityID.White;
+            Item.damage = 5;
+            Item.width = 48;
+            Item.height = 44;
+            Item.knockBack = 5;
+            Item.melee = true;
+            Item.useAnimation = Item.useTime = 11;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = 3500;
+            Item.rare = ItemRarityID.White;
         }
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {

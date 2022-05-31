@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs {
     class RTQ2 : ModBuff {
-        public override void SetDefaults() {
+        public override void SetStaticDefaults() {
             DisplayName.SetDefault("RTQ2");
             Description.SetDefault("RTQ2 is following you");
             Main.buffNoTimeDisplay[Type] = true;

@@ -17,35 +17,35 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void SetDefaults()
         {
-            item.stack = 1;
-            item.width = 34;
-            item.height = 10;
-            item.maxStack = 1;
-            item.rare = ItemRarityID.Pink;
-            item.magic = true;
-            item.noMelee = true;
-            item.mana = 130;
-            item.UseSound = SoundID.Item21;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTime = 20;
-            item.useAnimation = 20;
-            item.value = PriceByRarity.Pink_5;
+            Item.stack = 1;
+            Item.width = 34;
+            Item.height = 10;
+            Item.maxStack = 1;
+            Item.rare = ItemRarityID.Pink;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.mana = 130;
+            Item.UseSound = SoundID.Item21;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
+            Item.value = PriceByRarity.Pink_5;
 
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 10);
             recipe.AddIngredient(ItemID.SoulofLight, 20);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.Barrier>(), 1200, false);
             //Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);

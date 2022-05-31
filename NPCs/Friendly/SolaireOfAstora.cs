@@ -14,41 +14,41 @@ namespace tsorcRevamp.NPCs.Friendly {
 		public override bool Autoload(ref string name) => true;
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Warrior of Sunlight");
-			Main.npcFrameCount[npc.type] = 25;
-			NPCID.Sets.ExtraFramesCount[npc.type] = 9;
-			NPCID.Sets.AttackFrameCount[npc.type] = 4;
-			NPCID.Sets.DangerDetectRange[npc.type] = 40;
-			NPCID.Sets.AttackType[npc.type] = 3;
-			NPCID.Sets.AttackTime[npc.type] = 18;
-			NPCID.Sets.AttackAverageChance[npc.type] = 10;
-			NPCID.Sets.HatOffsetY[npc.type] = 4;
+			Main.npcFrameCount[NPC.type] = 25;
+			NPCID.Sets.ExtraFramesCount[NPC.type] = 9;
+			NPCID.Sets.AttackFrameCount[NPC.type] = 4;
+			NPCID.Sets.DangerDetectRange[NPC.type] = 40;
+			NPCID.Sets.AttackType[NPC.type] = 3;
+			NPCID.Sets.AttackTime[NPC.type] = 18;
+			NPCID.Sets.AttackAverageChance[NPC.type] = 10;
+			NPCID.Sets.HatOffsetY[NPC.type] = 4;
 		}
         public override string TownNPCName() {
 			return "Solaire";
         }
 
         public override void SetDefaults() {
-			npc.townNPC = true;
-			npc.friendly = true;
-			npc.width = 18;
-			npc.height = 40;
-			npc.aiStyle = 7;
-			npc.damage = 90;
-			npc.defense = 15;
-			npc.lifeMax = 1000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 0.5f;
+			NPC.townNPC = true;
+			NPC.friendly = true;
+			NPC.width = 18;
+			NPC.height = 40;
+			NPC.aiStyle = 7;
+			NPC.damage = 90;
+			NPC.defense = 15;
+			NPC.lifeMax = 1000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 0.5f;
 			animationType = NPCID.DyeTrader;
 		}
 		public override void AI()
 		{
-			if ((npc.velocity.X == 0 && npc.velocity.Y == 0) && Main.dayTime)
+			if ((NPC.velocity.X == 0 && NPC.velocity.Y == 0) && Main.dayTime)
 			{
-				Lighting.AddLight(npc.Center, .850f, .850f, .450f);
+				Lighting.AddLight(NPC.Center, .850f, .850f, .450f);
 				if (Main.rand.Next(10) == 0)
 				{
-					int dust = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 57, npc.velocity.X * 0f, -1f, 30, default(Color), 1.5f);
+					int dust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 57, NPC.velocity.X * 0f, -1f, 30, default(Color), 1.5f);
 					Main.dust[dust].noGravity = true;
 				}
 			}
@@ -168,12 +168,12 @@ namespace tsorcRevamp.NPCs.Friendly {
 		}
 
 		public override void HitEffect(int hitDirection, double damage) {
-			if (base.npc.life <= 0) {
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 1"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
-				Gore.NewGore(npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
+			if (base.NPC.life <= 0) {
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 1"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 2"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
+				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Tibian Female Knight Gore 3"));
 			}
 		}
 

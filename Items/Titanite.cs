@@ -12,10 +12,10 @@ namespace tsorcRevamp.Items {
         }
 
         public override void SetDefaults() {
-            item.width = 16;
-            item.height = 16;
-            item.rare = ItemRarityID.LightRed;
-            item.maxStack = 9999;
+            Item.width = 16;
+            Item.height = 16;
+            Item.rare = ItemRarityID.LightRed;
+            Item.maxStack = 9999;
         }
     }
 
@@ -30,13 +30,13 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {            
-            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Ice cold to the touch, it glows with enchanted power"));
+            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "", "Ice cold to the touch, it glows with enchanted power"));
         }
 
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[item.type];
+            Texture2D texture = Main.itemTexture[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
@@ -61,13 +61,13 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "Radiating heat, it shimmers with forbidden magic"));
+            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "", "Radiating heat, it shimmers with forbidden magic"));
         }
 
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[item.type];
+            Texture2D texture = Main.itemTexture[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
@@ -92,12 +92,12 @@ namespace tsorcRevamp.Items {
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.Insert(tooltips.Count, new TooltipLine(mod, "", "A solid white surface, it casts an eerie purple shadow"));
+            tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "", "A solid white surface, it casts an eerie purple shadow"));
         }
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[item.type];
+            Texture2D texture = Main.itemTexture[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;

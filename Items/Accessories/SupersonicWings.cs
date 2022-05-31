@@ -15,28 +15,28 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void SetDefaults() {
-            item.width = 32;
-            item.height = 28;
-            item.accessory = true;
-            item.value = PriceByRarity.Pink_5;
-            item.rare = ItemRarityID.Pink;
+            Item.width = 32;
+            Item.height = 28;
+            Item.accessory = true;
+            Item.value = PriceByRarity.Pink_5;
+            Item.rare = ItemRarityID.Pink;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
-            recipe.AddIngredient(mod.GetItem("SupersonicBoots"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.GetItem("SupersonicBoots"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
 
-            ModRecipe recipe2 = new ModRecipe(mod);
+            Recipe recipe2 = new Recipe(Mod);
             recipe2.AddIngredient(ModContent.ItemType<ImprovedCloudInABalloon>(), 1);
             recipe2.AddIngredient(ItemID.AngelWings, 1);
             recipe2.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
-            recipe2.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.SetResult(this, 1);
             recipe2.AddRecipe();

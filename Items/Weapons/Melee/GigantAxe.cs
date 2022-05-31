@@ -8,17 +8,17 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Tooltip.SetDefault("An axe used to kill humans.");
         }
         public override void SetDefaults() {
-            item.rare = ItemRarityID.Cyan;
-            item.damage = 330;
-            item.height = 80;
-            item.knockBack = 9;
-            item.melee = true;
-            item.scale = .9f;
-            item.useAnimation = item.useTime = 21;
-            item.UseSound = SoundID.Item1;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.Cyan_9;
-            item.width = 84;
+            Item.rare = ItemRarityID.Cyan;
+            Item.damage = 330;
+            Item.height = 80;
+            Item.knockBack = 9;
+            Item.melee = true;
+            Item.scale = .9f;
+            Item.useAnimation = Item.useTime = 21;
+            Item.UseSound = SoundID.Item1;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.Cyan_9;
+            Item.width = 84;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
             //todo add mod NPCs to this list

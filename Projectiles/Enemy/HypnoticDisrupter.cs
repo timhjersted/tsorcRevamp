@@ -14,14 +14,14 @@ namespace tsorcRevamp.Projectiles.Enemy
 		public override void SetDefaults()
 		{
 			//projectile.aiStyle = 18;
-			projectile.width = 16;
-			projectile.height = 16;
-			projectile.penetrate = 1;
-			projectile.hostile = true;
-			projectile.timeLeft = 360;
-			projectile.scale = 1f;
-			projectile.tileCollide = false;
-			projectile.light = 1;
+			Projectile.width = 16;
+			Projectile.height = 16;
+			Projectile.penetrate = 1;
+			Projectile.hostile = true;
+			Projectile.timeLeft = 360;
+			Projectile.scale = 1f;
+			Projectile.tileCollide = false;
+			Projectile.light = 1;
 		}
 
 		public override void SetStaticDefaults()
@@ -35,41 +35,41 @@ namespace tsorcRevamp.Projectiles.Enemy
 			
 
 			
-			if (projectile.ai[1] > 0 && projectile.timeLeft > 300)
+			if (Projectile.ai[1] > 0 && Projectile.timeLeft > 300)
             {
-				projectile.timeLeft = 300;
-				projectile.tileCollide = true;
+				Projectile.timeLeft = 300;
+				Projectile.tileCollide = true;
             }
-			projectile.rotation += 3f;
+			Projectile.rotation += 3f;
 
-			if (Main.player[(int)projectile.ai[0]].position.X < projectile.position.X)
+			if (Main.player[(int)Projectile.ai[0]].position.X < Projectile.position.X)
 			{
-				if (projectile.velocity.X > -10) projectile.velocity.X -= 0.1f;
+				if (Projectile.velocity.X > -10) Projectile.velocity.X -= 0.1f;
 			}
 
-			if (Main.player[(int)projectile.ai[0]].position.X > projectile.position.X)
+			if (Main.player[(int)Projectile.ai[0]].position.X > Projectile.position.X)
 			{
-				if (projectile.velocity.X < 10) projectile.velocity.X += 0.2f;
+				if (Projectile.velocity.X < 10) Projectile.velocity.X += 0.2f;
 			}
 
-			if (Main.player[(int)projectile.ai[0]].position.Y < projectile.position.Y)
+			if (Main.player[(int)Projectile.ai[0]].position.Y < Projectile.position.Y)
 			{
-				if (projectile.velocity.Y > -10) projectile.velocity.Y -= 0.1f;
+				if (Projectile.velocity.Y > -10) Projectile.velocity.Y -= 0.1f;
 			}
 
-			if (Main.player[(int)projectile.ai[0]].position.Y > projectile.position.Y)
+			if (Main.player[(int)Projectile.ai[0]].position.Y > Projectile.position.Y)
 			{
-				if (projectile.velocity.Y < 10) projectile.velocity.Y += 0.1f;
+				if (Projectile.velocity.Y < 10) Projectile.velocity.Y += 0.1f;
 			}
 
 
 			Color color = new Color();
-			int dust = Dust.NewDust(new Vector2((float)projectile.position.X, (float)projectile.position.Y - 10), projectile.width, projectile.height, DustID.Shadowflame, 0, 0, 50, color, 2.0f);
+			int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 50, color, 2.0f);
 			Main.dust[dust].noGravity = true;
 
 			if (Main.rand.Next(2) == 0)
 			{
-				Lighting.AddLight((int)(projectile.position.X / 16f), (int)(projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
+				Lighting.AddLight((int)(Projectile.position.X / 16f), (int)(Projectile.position.Y / 16f), 0.7f, 0.2f, 0.2f);
 			}
 		}
 		public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -83,7 +83,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 			target.AddBuff(BuffID.Bleeding, 600 / buffLengthMod, false); //bleeding
 			target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 600 / buffLengthMod, false); //you take knockback
 
-			if (projectile.ai[1] < 1)
+			if (Projectile.ai[1] < 1)
 			{
 				target.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 300 / buffLengthMod, false);
 			}

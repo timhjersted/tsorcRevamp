@@ -11,12 +11,12 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
     {
         public override void SetDefaults()
         {
-            projectile.width = 10;
-            projectile.height = 5;
-            projectile.hostile = true;
-            projectile.penetrate = 2;
-            projectile.ranged = true;
-            projectile.tileCollide = false;
+            Projectile.width = 10;
+            Projectile.height = 5;
+            Projectile.hostile = true;
+            Projectile.penetrate = 2;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
         }
         public override void SetStaticDefaults()
         {
@@ -27,15 +27,15 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         public override void AI()
         {
             //Secret forbidden color unlocked: Green 3
-            Lighting.AddLight(projectile.Center, Color.SeaGreen.ToVector3() * 3);
-            projectile.velocity.Y += 0.05f;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Lighting.AddLight(Projectile.Center, Color.SeaGreen.ToVector3() * 3);
+            Projectile.velocity.Y += 0.05f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         static Texture2D texture;
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, projectile, ref texture);
+            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, Projectile, ref texture);
             return false;
         }
 
@@ -43,20 +43,20 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         public override void Kill(int timeLeft)
         {
             //int num98 = -1;
-            if (!projectile.active)
+            if (!Projectile.active)
             {
                 return;
 
 
             }
-            projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
             {
-                Main.PlaySound(0, (int)projectile.position.X, (int)projectile.position.Y, 1);
+                Main.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
                 for (int i = 0; i < 10; i++)
                 {
-                    Vector2 arg_92_0 = new Vector2(projectile.position.X, projectile.position.Y);
-                    int arg_92_1 = projectile.width;
-                    int arg_92_2 = projectile.height;
+                    Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
+                    int arg_92_1 = Projectile.width;
+                    int arg_92_2 = Projectile.height;
                     int arg_92_3 = 7;
                     float arg_92_4 = 0f;
                     float arg_92_5 = 0f;
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
                 }
             }
-            projectile.active = false;
+            Projectile.active = false;
         }
         #endregion       
     }

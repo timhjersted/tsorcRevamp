@@ -16,32 +16,32 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            item.damage = 70;
-            item.ranged = true;
-            item.width = 52;
-            item.height = 42;
-            item.useTime = 13;
-            item.useAnimation = 13;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.noMelee = true; //so the item's animation doesn't do damage
-            item.knockBack = 4;
-            item.value = 250000;
-            item.scale = 0.9f;
-            item.rare = ItemRarityID.Pink;
-            item.crit = 5;
-            item.UseSound = SoundID.Item40;
+            Item.damage = 70;
+            Item.ranged = true;
+            Item.width = 52;
+            Item.height = 42;
+            Item.useTime = 13;
+            Item.useAnimation = 13;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.noMelee = true; //so the item's animation doesn't do damage
+            Item.knockBack = 4;
+            Item.value = 250000;
+            Item.scale = 0.9f;
+            Item.rare = ItemRarityID.Pink;
+            Item.crit = 5;
+            Item.UseSound = SoundID.Item40;
             //item.autoReuse = true;
-            item.shoot = mod.ProjectileType("APShot");
-            item.shootSpeed = 26f;
+            Item.shoot = Mod.Find<ModProjectile>("APShot").Type;
+            Item.shootSpeed = 26f;
         }
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(null, "Silversix");
             recipe.AddIngredient(ItemID.HallowedBar, 10);
             recipe.AddIngredient(ItemID.PixieDust, 35);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
 
         int ammoleft = 6;
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
             ammoleft--;
             if (ammoleft > 0)

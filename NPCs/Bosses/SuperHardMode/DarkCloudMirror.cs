@@ -19,28 +19,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     {
         public override void SetStaticDefaults()
         {
-            NPCID.Sets.TrailCacheLength[npc.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
-            NPCID.Sets.TrailingMode[npc.type] = 1;
+            NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
+            NPCID.Sets.TrailingMode[NPC.type] = 1;
         }
         public override void SetDefaults()
         {
-            npc.npcSlots = 10;
-            Main.npcFrameCount[npc.type] = 16;
+            NPC.npcSlots = 10;
+            Main.npcFrameCount[NPC.type] = 16;
             animationType = 0;
-            npc.aiStyle = 0;
-            npc.height = 40;
-            npc.width = 20;
+            NPC.aiStyle = 0;
+            NPC.height = 40;
+            NPC.width = 20;
             music = 12;
-            npc.damage = 105;
-            npc.defense = 160;
-            npc.lifeMax = 30000;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.value = 0;
-            npc.knockBackResist = 0f;
-            npc.timeLeft = 310;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
+            NPC.damage = 105;
+            NPC.defense = 160;
+            NPC.lifeMax = 30000;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.value = 0;
+            NPC.knockBackResist = 0f;
+            NPC.timeLeft = 310;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
         }
         const float TRAIL_LENGTH = 12;
 
@@ -49,7 +49,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int antiMatDamage = 200;
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.damage /= 2;
+            NPC.damage /= 2;
             divineSparkDamage /= 2;
             darkFlowDamage /= 2;
             antiMatDamage /= 2;
@@ -57,31 +57,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public int MirrorAttackType
         {
-            get => (int)npc.ai[0];
-            set => npc.ai[0] = value;
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
         }
         public float AttackModeCounter;
         public float AttackModeLimit
         {
-            get => (int)npc.ai[1];
-            set => npc.ai[1] = value;
+            get => (int)NPC.ai[1];
+            set => NPC.ai[1] = value;
         }
         public Player PlayerTarget
         {
-            get => Main.player[(int)npc.ai[2]];
+            get => Main.player[(int)NPC.ai[2]];
         }
 
         //Depricated
         public Player Target
         {
-            get => Main.player[npc.target];
+            get => Main.player[NPC.target];
         }
 
         Vector2 nextWarpPoint = Vector2.Zero;
         public override void AI()
         {            
-            Lighting.AddLight(npc.Center, Color.Blue.ToVector3() * 0.5f);
-            UsefulFunctions.DustRing(npc.Center, 32, DustID.ShadowbeamStaff);
+            Lighting.AddLight(NPC.Center, Color.Blue.ToVector3() * 0.5f);
+            UsefulFunctions.DustRing(NPC.Center, 32, DustID.ShadowbeamStaff);
 
             if (MirrorAttackType == DarkCloud.DarkCloudAttackID.AntiMat)
             {
@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 if (AttackModeCounter == AttackModeLimit + 10)
                 {
-                    npc.active = false;
+                    NPC.active = false;
                 }
             }
             
@@ -110,16 +110,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (AttackModeCounter == 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectileDirect(npc.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, npc.whoAmI);
+                Projectile.NewProjectileDirect(NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), 0, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
             }
 
-            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, npc.whoAmI);
+            List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
             if(laserList.Count > 0)
             {
                 GenericLaser thisLaser = laserList[0];
                 if (!thisLaser.initialized)
                 {
-                    thisLaser.LaserOrigin = npc.Center;
+                    thisLaser.LaserOrigin = NPC.Center;
 
                     thisLaser.TelegraphTime = 99999;
                     thisLaser.LaserLength = 4000;
@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 Vector2 offset;                
-                offset = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
+                offset = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
                 offset *= ((300 - AttackModeCounter) / 300);
                 offset = offset.RotatedBy(MathHelper.ToRadians(AttackModeCounter + (120)));
                 thisLaser.LaserTarget = Target.Center + offset;                
@@ -148,7 +148,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {           
             if (AttackModeCounter == AttackModeLimit)
             {
-                Projectile.NewProjectile(npc.Center, UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
             }
         }
 
@@ -159,17 +159,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void TeleportingSlashes()
         {
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.aiStyle = 0;
-            npc.velocity.X *= 1.07f;
-            if (Target.Center.X > npc.Center.X)
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.aiStyle = 0;
+            NPC.velocity.X *= 1.07f;
+            if (Target.Center.X > NPC.Center.X)
             {
-                npc.direction = 1;
+                NPC.direction = 1;
             }
             else
             {
-                npc.direction = -1;
+                NPC.direction = -1;
             }           
             if(AttackModeCounter == 0)
             {
@@ -181,26 +181,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 50; i++)
                 {
-                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(30, 60), DustID.ShadowbeamStaff, Main.rand.NextVector2CircularEdge(3, 3));
+                    Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(30, 60), DustID.ShadowbeamStaff, Main.rand.NextVector2CircularEdge(3, 3));
                 }
             }
             else
             {
-                npc.velocity.Y += 0.09f;
+                NPC.velocity.Y += 0.09f;
             }
 
             if (AttackModeCounter == 80)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: npc.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
+                    NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
                 }
-                npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 17);
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
             }           
 
             if (AttackModeCounter == 240)
             {
-                npc.active = false;
+                NPC.active = false;
             }
         }
 
@@ -216,13 +216,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void TeleportBehindPlayer()
         {
             DarkCloudParticleEffect(-2);
-            npc.Center = Main.player[npc.target].Center;
-            if (Main.player[npc.target].direction == 1) {
-                npc.position.X -= 128;
+            NPC.Center = Main.player[NPC.target].Center;
+            if (Main.player[NPC.target].direction == 1) {
+                NPC.position.X -= 128;
             }
             else
             {
-                npc.position.X += 128;
+                NPC.position.X += 128;
             }
             DarkCloudParticleEffect(6);
         }
@@ -230,7 +230,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void TeleportAroundPlayer(float radius = 192)
         {
             DarkCloudParticleEffect(-2);
-            npc.position = Main.player[npc.target].position + Main.rand.NextVector2CircularEdge(radius, radius);
+            NPC.position = Main.player[NPC.target].position + Main.rand.NextVector2CircularEdge(radius, radius);
             DarkCloudParticleEffect(6);
         }
 
@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void TeleportToArenaCenter()
         {
             DarkCloudParticleEffect(-2);
-            npc.Center = new Vector2(5827.5f, 1698) * 16;
+            NPC.Center = new Vector2(5827.5f, 1698) * 16;
             DarkCloudParticleEffect(6);
         }
         #endregion
@@ -254,12 +254,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
                 Vector2 velocity = new Vector2(dustSpeed, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                Dust.NewDustPerfect(npc.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
+                Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
             }
         }
 
         static Texture2D darkCloudTexture = ModContent.GetTexture("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (darkCloudTexture == null || darkCloudTexture.IsDisposed)
             {
@@ -267,16 +267,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (AttackModeCounter >= 80 || MirrorAttackType != DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
-                Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[npc.type]);
+                Rectangle sourceRectangle = new Rectangle(0, 0, darkCloudTexture.Width, darkCloudTexture.Height / Main.npcFrameCount[NPC.type]);
                 Vector2 origin = sourceRectangle.Size() / 2f;
                 SpriteEffects spriteEffects = SpriteEffects.None;
-                if (npc.spriteDirection == 1)
+                if (NPC.spriteDirection == 1)
                 {
                     spriteEffects = SpriteEffects.FlipHorizontally;
                 }
                 for (float i = TRAIL_LENGTH - 1; i >= 0; i--)
                 {
-                    Main.spriteBatch.Draw(darkCloudTexture, npc.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
                 }
 
                 return true;
@@ -287,7 +287,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (MirrorAttackType == DarkCloud.DarkCloudAttackID.AntiMat)
             {
@@ -304,30 +304,30 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 antimatTexture = ModContent.GetTexture(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);
             }
-            float targetPoint = UsefulFunctions.GenerateTargetingVector(npc.Center, Target.Center, 1).ToRotation();
+            float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
             {                
-                Vector2 thisPos = npc.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
-                Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, npc.Center + Main.rand.NextVector2Circular(10, 10), 8);
+                Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
+                Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
                 Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
             }
             
 
             Rectangle sourceRectangle = new Rectangle(0, 0, antimatTexture.Width, antimatTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
-            SpriteEffects theseEffects = (npc.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            Main.spriteBatch.Draw(antimatTexture, npc.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, npc.scale, theseEffects, 0f);
+            SpriteEffects theseEffects = (NPC.Center.X < Target.Center.X) ? SpriteEffects.None : SpriteEffects.FlipVertically;
+            Main.spriteBatch.Draw(antimatTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, theseEffects, 0f);
         }
         #endregion
 
         
 
-        public override void NPCLoot()
+        public override void OnKill()
         {
-            Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.3f, 0.3f, 200, default(Color), 1f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            Dust.NewDust(npc.position, npc.width, npc.height, 52, 0.2f, 0.2f, 200, default(Color), 3f);
-            Dust.NewDust(npc.position, npc.height, npc.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, 52, 0.3f, 0.3f, 200, default(Color), 1f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, 52, 0.2f, 0.2f, 200, default(Color), 3f);
+            Dust.NewDust(NPC.position, NPC.height, NPC.width, 52, 0.2f, 0.2f, 200, default(Color), 3f);
             UsefulFunctions.BroadcastText("Just a reflection...", Color.Blue);
         }
 

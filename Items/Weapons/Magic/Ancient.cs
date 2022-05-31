@@ -13,41 +13,41 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         public override void SetDefaults() {
 
-            item.width = 28;
-            item.height = 30;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useTurn = true;
-            item.useAnimation = 25;
-            item.useTime = 25;
-            item.maxStack = 1;
-            item.damage = 170;
-            item.autoReuse = true;
-            item.knockBack = (float)4;
-            item.scale = (float)1;
-            item.UseSound = SoundID.Item34;
+            Item.width = 28;
+            Item.height = 30;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useTurn = true;
+            Item.useAnimation = 25;
+            Item.useTime = 25;
+            Item.maxStack = 1;
+            Item.damage = 170;
+            Item.autoReuse = true;
+            Item.knockBack = (float)4;
+            Item.scale = (float)1;
+            Item.UseSound = SoundID.Item34;
             //item.projectile=Sandstorm;
-            item.rare = ItemRarityID.Red;
-            item.shootSpeed = (float)10;
-            item.crit = 2;
-            item.mana = 14;
-            item.noMelee = true;
-            item.value = PriceByRarity.Red_10;
-            item.magic = true;
+            Item.rare = ItemRarityID.Red;
+            Item.shootSpeed = (float)10;
+            Item.crit = 2;
+            Item.mana = 14;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Red_10;
+            Item.magic = true;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 25);
             recipe.AddIngredient(ItemID.SandBlock, 150);
-            recipe.AddIngredient(mod.GetItem("FlameOfTheAbyss"), 20);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 120000);
+            recipe.AddIngredient(Mod.GetItem("FlameOfTheAbyss"), 20);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 120000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();
         }
 
-        public override bool UseItem(Player player) {
+        public override bool? UseItem(Player player) {
             int spread = 10;
             float num48 = 14f;
 
@@ -76,7 +76,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
             position.X += player.width * 0.5f;
             position.Y += player.height * 0.5f;
-            int damage = (int)(item.damage * player.magicDamage);
+            int damage = (int)(Item.damage * player.magicDamage);
             float knockback = player.inventory[player.selectedItem].knockBack;
 
             Projectile.NewProjectile(position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);

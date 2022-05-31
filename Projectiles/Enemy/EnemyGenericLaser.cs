@@ -134,19 +134,19 @@ namespace tsorcRevamp.Projectiles.Enemy {
         //Messing with this is only necessary if you need to change a laser *after* it has been created (ex: to make it move)
         public float NetworkID
         {
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
 
         public int HostIdentifier
         {
-            get => (int)projectile.ai[1];
-            set => projectile.ai[1] = value;
+            get => (int)Projectile.ai[1];
+            set => Projectile.ai[1] = value;
         }
 
         public float Charge {
-            get => projectile.localAI[0];
-            set => projectile.localAI[0] = value;
+            get => Projectile.localAI[0];
+            set => Projectile.localAI[0] = value;
         }
 
         public bool IsAtMaxCharge => (Charge == MaxCharge || MaxCharge == 0 || MaxCharge == -1);
@@ -158,15 +158,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         }
         public override void SetDefaults() {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.magic = true;
-            projectile.damage = 25;
-            projectile.hide = true;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.damage = 25;
+            Projectile.hide = true;
 
             LaserOrigin = ProjectileSource ? Main.projectile[HostIdentifier].position : Main.npc[HostIdentifier].position;
         }
@@ -177,7 +177,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             drawCacheProjsBehindNPCs.Add(index);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
 
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
@@ -206,7 +206,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
 
                 DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
-                    projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, color);
+                    Projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, color);
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
@@ -224,7 +224,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
                 
                 DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
-                        projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
+                        Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
             
             return false;
@@ -258,7 +258,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Vector2 startPos = start;
             if (screenRect.Contains(startPos.ToPoint()))
             {
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
+                Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, headFrame, color, r, new Vector2(headRect.Width * .5f, headRect.Height * .5f), scale, 0, 0);
             }
             startPos += (unit * (headRect.Height) * scale);
 
@@ -268,7 +268,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 Vector2 drawStart = startPos + i * unit;
                 if (screenRect.Contains(drawStart.ToPoint()))
                 {
-                    spriteBatch.Draw(texture, drawStart - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
+                    Main.EntitySpriteDraw(texture, drawStart - Main.screenPosition, bodyFrame, color, r, new Vector2(bodyRect.Width * .5f, bodyRect.Height * .5f), scale, 0, 0);
                 }
             }
             i -= (LaserTextureBody.Height) * scale;
@@ -277,7 +277,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             if (screenRect.Contains(startPos.ToPoint()))
             {
-                spriteBatch.Draw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
+                Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
             }
         }
 
@@ -290,14 +290,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
             float point = 0f;
             Vector2 origin = GetOrigin();
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
-                origin + projectile.velocity * Distance, 22, ref point);
+                origin + Projectile.velocity * Distance, 22, ref point);
         }
 
         public override bool CanHitPlayer(Player target)
         {
-            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, projectile.whoAmI).GetDeathText(target.name).ToString();
+            string deathMessage = Terraria.DataStructures.PlayerDeathReason.ByProjectile(-1, Projectile.whoAmI).GetDeathText(target.name).ToString();
             deathMessage = deathMessage.Replace("DefaultLaserName", LaserName);
-            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), projectile.damage * 4, 1);
+            target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), Projectile.damage * 4, 1);
 
             return false;
         }
@@ -332,13 +332,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
             {
                 if (!Main.npc[HostIdentifier].active)
                 {
-                    projectile.active = false;
+                    Projectile.active = false;
                 }
             }
             
 
-            projectile.position = origin + projectile.velocity * MOVE_DISTANCE;
-            projectile.timeLeft = 2;
+            Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;
+            Projectile.timeLeft = 2;
 
 
             
@@ -346,7 +346,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             ChargeLaser();
             if (LaserDust != 0)
             {
-                int pointdust = Dust.NewDust(projectile.position, 1, 1, LaserDust, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 20, default, 1.0f);
+                int pointdust = Dust.NewDust(Projectile.position, 1, 1, LaserDust, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 20, default, 1.0f);
                 Main.dust[pointdust].noGravity = true;
             }
             if (TelegraphTime + Charge < MaxCharge) return;
@@ -361,9 +361,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
 
             SetLaserPosition();
-            if (projectile.tileCollide)
+            if (Projectile.tileCollide)
             {
-                Vector2 endpoint = origin + projectile.velocity * Distance;
+                Vector2 endpoint = origin + Projectile.velocity * Distance;
                 float distance = Vector2.Distance(endpoint, origin);
                 float velocity = -8f;
                 Vector2 speed = ((endpoint - origin) / distance) * velocity;
@@ -407,7 +407,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         private void SetLaserPosition()
         {
             Vector2 origin = GetOrigin();
-            Vector2 start = origin + projectile.velocity * Distance;
+            Vector2 start = origin + Projectile.velocity * Distance;
             for (Distance = MOVE_DISTANCE; Distance <= LaserLength; Distance += 50f)
             {
                 if (!TileCollide)
@@ -429,11 +429,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             // A universal time-based sinusoid which updates extremely rapidly. GlobalTime is 0 to 3600, measured in seconds.
             float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTime * 20f);
-            Vector2 ripplePos = projectile.position + new Vector2(beamDims.X * 0.5f, 0f).RotatedBy(projectile.rotation);
+            Vector2 ripplePos = Projectile.position + new Vector2(beamDims.X * 0.5f, 0f).RotatedBy(Projectile.rotation);
 
             // WaveData is encoded as a Color. Not really sure why.
             Color waveData = new Color(0.5f, 0.1f * Math.Sign(waveSine) + 0.5f, 0f, 1f) * Math.Abs(waveSine);
-            shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, projectile.rotation);
+            shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, Projectile.rotation);
         }
 
         public void ChargeLaser() {
@@ -457,7 +457,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 FiringTimeLeft--;
                 if (FiringTimeLeft == 0)
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                 }
             }
         }
@@ -481,13 +481,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 colorVector /= 2;
             }
             DelegateMethods.v3_1 = colorVector;
-            Utils.PlotTileLine(projectile.Center, projectile.Center + projectile.velocity * (Distance - MOVE_DISTANCE), 8, DelegateMethods.CastLight);
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * (Distance - MOVE_DISTANCE), 8, DelegateMethods.CastLight);
         }
         private void SpawnDusts()
         {
-            Vector2 unit = projectile.velocity * -1;
+            Vector2 unit = Projectile.velocity * -1;
             Vector2 origin = GetOrigin();
-            Vector2 dustPos = origin + projectile.velocity;
+            Vector2 dustPos = origin + Projectile.velocity;
             
 
             if (Charge >= MaxCharge)
@@ -496,11 +496,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     if (Main.rand.Next(5) == 0)
                     {
-                        Vector2 offset = projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
-                        Dust dust = Main.dust[Dust.NewDust((origin + (projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, LaserDust, 0.0f, 0.0f, 125, Color.LightBlue, 4.0f)];
+                        Vector2 offset = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
+                        Dust dust = Main.dust[Dust.NewDust((origin + (Projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, LaserDust, 0.0f, 0.0f, 125, Color.LightBlue, 4.0f)];
                         dust.velocity = Vector2.Zero;
                         dust.noGravity = true;
-                        dust.rotation = projectile.rotation;
+                        dust.rotation = Projectile.rotation;
                     }
                 }
             }
@@ -531,8 +531,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             if (Charge == MaxCharge)
             {
                 DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
-                Vector2 unit = projectile.velocity;
-                Utils.PlotTileLine(projectile.Center, projectile.Center + unit * Distance, (projectile.width + 16) * projectile.scale, DelegateMethods.CutTiles);
+                Vector2 unit = Projectile.velocity;
+                Utils.PlotTileLine(Projectile.Center, Projectile.Center + unit * Distance, (Projectile.width + 16) * Projectile.scale, DelegateMethods.CutTiles);
             }
         }
     }

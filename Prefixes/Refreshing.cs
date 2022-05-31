@@ -39,8 +39,8 @@ namespace tsorcRevamp.Prefixes
 				return false;
 			}
 
-			mod.AddPrefix("Refreshing", new Refreshing(1));
-			mod.AddPrefix("Revitalizing", new Refreshing(2));
+			Mod.AddPrefix("Refreshing", new Refreshing(1));
+			Mod.AddPrefix("Revitalizing", new Refreshing(2));
 			return false;
 		}
 

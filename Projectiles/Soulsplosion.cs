@@ -10,22 +10,22 @@ namespace tsorcRevamp.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soulsplosion"); // These are just part of the animation of the consumable souls
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 3;
         }
         public override void SetDefaults()
         {
 
-            projectile.aiStyle = 0;
-            projectile.friendly = true;
-            projectile.width = 112;
-            projectile.height = 112;
-            projectile.penetrate = -1;
-            projectile.damage = 200;
-            projectile.scale = 1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 12;
-            projectile.alpha = 100;
-            projectile.ignoreWater = true;
+            Projectile.aiStyle = 0;
+            Projectile.friendly = true;
+            Projectile.width = 112;
+            Projectile.height = 112;
+            Projectile.penetrate = -1;
+            Projectile.damage = 200;
+            Projectile.scale = 1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 12;
+            Projectile.alpha = 100;
+            Projectile.ignoreWater = true;
         }
 
         public int soulsplosionsmalltimer;
@@ -35,14 +35,14 @@ namespace tsorcRevamp.Projectiles
 
             //ANIMATION
 
-            if (++projectile.frameCounter >= 4) //ticks spent on each frame
+            if (++Projectile.frameCounter >= 4) //ticks spent on each frame
             {
-                projectile.frameCounter = 0;
-                if (projectile.timeLeft >= 4)
+                Projectile.frameCounter = 0;
+                if (Projectile.timeLeft >= 4)
                 {
-                    if (++projectile.frame == 3)
+                    if (++Projectile.frame == 3)
                     {
-                        projectile.frame = 0;
+                        Projectile.frame = 0;
                     }
                 }
             }

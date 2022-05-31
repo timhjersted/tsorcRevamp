@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Friendly
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Emerald Herald");
-			Main.npcFrameCount[npc.type] = 6;
+			Main.npcFrameCount[NPC.type] = 6;
 		}
 
 		public override string TownNPCName()
@@ -23,17 +23,17 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void SetDefaults()
 		{
-			npc.townNPC = true;
-			npc.friendly = true;
-			npc.width = 18;
-			npc.height = 46;
-			npc.aiStyle = -1;
-			npc.damage = 50;
-			npc.defense = 9999;
-			npc.lifeMax = 1000;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath1;
-			npc.knockBackResist = 1f;
+			NPC.townNPC = true;
+			NPC.friendly = true;
+			NPC.width = 18;
+			NPC.height = 46;
+			NPC.aiStyle = -1;
+			NPC.damage = 50;
+			NPC.defense = 9999;
+			NPC.lifeMax = 1000;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath1;
+			NPC.knockBackResist = 1f;
 		}
 
 
@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
 			if (!player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter)
 			{
-				Main.PlaySound(SoundLoader.customSoundType, (int)npc.position.X, (int)npc.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
+				Main.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
 
 				chat.Add("Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King." +
 					"\nHe has grown mighty in power and seeks to destroy not only your world, but also mine and many others.");
@@ -58,14 +58,14 @@ namespace tsorcRevamp.NPCs.Friendly
 			{
 				if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5)
 				{
-					Main.PlaySound(SoundLoader.customSoundType, (int)npc.position.X, (int)npc.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
+					Main.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
 					chat.Add("Is that a shard you've found? Here, let me see it." + "\nSo that I may help you. To see light, to see hope… However faint it might be…");
 				}
 				else
 				{
 					if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
 					{
-						Main.PlaySound(SoundLoader.customSoundType, (int)npc.position.X, (int)npc.position.Y, mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
+						Main.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ashen-one"), 0.5f, 0.0f);
 						chat.Add("Listen to everything I have to say and I may give you a reward.", 4);
 					}
 					if (!tsorcRevampWorld.SuperHardMode)
@@ -239,28 +239,28 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void AI()
 		{
-			npc.spriteDirection = npc.direction; //she's technically facing the opposite way she's looking but whatevs
+			NPC.spriteDirection = NPC.direction; //she's technically facing the opposite way she's looking but whatevs
 
 			if (tsorcRevampWorld.CustomMap) // If it is our custom map
 			{
-				npc.velocity.X = 0; // Don't move left or right
+				NPC.velocity.X = 0; // Don't move left or right
 
-				if (Main.dayTime && Main.player[Main.myPlayer].Distance(npc.Center) > 2500f) // If day and the player is far away
+				if (Main.dayTime && Main.player[Main.myPlayer].Distance(NPC.Center) > 2500f) // If day and the player is far away
 				{
-					npc.position = new Vector2(4510.5f * 16, 737 * 16); // Stand under structure
+					NPC.position = new Vector2(4510.5f * 16, 737 * 16); // Stand under structure
 				}
-				if (!Main.dayTime && Main.player[Main.myPlayer].Distance(npc.Center) > 2500f) //If night and the player is far away
+				if (!Main.dayTime && Main.player[Main.myPlayer].Distance(NPC.Center) > 2500f) //If night and the player is far away
 				{
-					npc.position = new Vector2(4489.25f * 16, 732 * 16); // Stand by bonfire
+					NPC.position = new Vector2(4489.25f * 16, 732 * 16); // Stand by bonfire
 				}
 
-				if (npc.position.X > 4505f * 16) // If standing under structure
+				if (NPC.position.X > 4505f * 16) // If standing under structure
 				{
-					npc.direction = -1;
+					NPC.direction = -1;
 				}
-				if (npc.position.X < 4505f * 16) // If standing by bonfire
+				if (NPC.position.X < 4505f * 16) // If standing by bonfire
 				{
-					npc.direction = 1;
+					NPC.direction = 1;
 				}
 			}
 		}
@@ -297,16 +297,16 @@ namespace tsorcRevamp.NPCs.Friendly
 
 		public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-			Texture2D eyeTexture = mod.GetTexture("NPCs/Friendly/EmeraldHerald_Eye");
-			SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+			Texture2D eyeTexture = Mod.GetTexture("NPCs/Friendly/EmeraldHerald_Eye");
+			SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 			Rectangle myrectangle = eyeTexture.Frame(1, 4, 0, eyeFrame);
-			if (npc.spriteDirection == -1)
+			if (NPC.spriteDirection == -1)
 			{
-				spriteBatch.Draw(eyeTexture, npc.Center - Main.screenPosition, myrectangle, lightColor, npc.rotation, new Vector2(-3, 11), npc.scale, effects, 0f);
+				spriteBatch.Draw(eyeTexture, NPC.Center - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(-3, 11), NPC.scale, effects, 0f);
 			}
 			else
 			{
-				spriteBatch.Draw(eyeTexture, npc.Center - Main.screenPosition, myrectangle, lightColor, npc.rotation, new Vector2(7, 11), npc.scale, effects, 0f);
+				spriteBatch.Draw(eyeTexture, NPC.Center - Main.screenPosition, myrectangle, lightColor, NPC.rotation, new Vector2(7, 11), NPC.scale, effects, 0f);
 			}
 		}
 
@@ -320,126 +320,126 @@ namespace tsorcRevamp.NPCs.Friendly
 			{
 				if (idleTimer < 30)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 60)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 90)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 120)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 150)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 180)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 210)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 240)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 270)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 300)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 330)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 360)
 				{
-					npc.frame.Y = Frame_Wind_2 * frameHeight;
+					NPC.frame.Y = Frame_Wind_2 * frameHeight;
 				}
 				else if (idleTimer < 390)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 420)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 450)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 480)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 510)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 540)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 				else if (idleTimer < 570)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else if (idleTimer < 600)
 				{
-					npc.frame.Y = Frame_Idle * frameHeight;
+					NPC.frame.Y = Frame_Idle * frameHeight;
 				}
 			}
 
 			if (idleTimer >= 600)
 			{
-				npc.frameCounter += Main.rand.Next(0, 4);
+				NPC.frameCounter += Main.rand.Next(0, 4);
 
-				if (npc.frameCounter < 30)
+				if (NPC.frameCounter < 30)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
-				else if (npc.frameCounter < 60)
+				else if (NPC.frameCounter < 60)
 				{
-					npc.frame.Y = Frame_Wind_2 * frameHeight;
+					NPC.frame.Y = Frame_Wind_2 * frameHeight;
 				}
-				else if (npc.frameCounter < 90)
+				else if (NPC.frameCounter < 90)
 				{
-					npc.frame.Y = Frame_Wind_3 * frameHeight;
+					NPC.frame.Y = Frame_Wind_3 * frameHeight;
 				}
-				else if (npc.frameCounter < 120)
+				else if (NPC.frameCounter < 120)
 				{
-					npc.frame.Y = Frame_Wind_5 * frameHeight;
+					NPC.frame.Y = Frame_Wind_5 * frameHeight;
 				}
-				else if (npc.frameCounter < 150)
+				else if (NPC.frameCounter < 150)
 				{
-					npc.frame.Y = Frame_Wind_4 * frameHeight;
+					NPC.frame.Y = Frame_Wind_4 * frameHeight;
 				}
-				else if (npc.frameCounter < 180)
+				else if (NPC.frameCounter < 180)
 				{
-					npc.frame.Y = Frame_Wind_3 * frameHeight;
+					NPC.frame.Y = Frame_Wind_3 * frameHeight;
 				}
-				else if (npc.frameCounter < 210)
+				else if (NPC.frameCounter < 210)
 				{
-					npc.frame.Y = Frame_Wind_2 * frameHeight;
+					NPC.frame.Y = Frame_Wind_2 * frameHeight;
 				}
-				else if (npc.frameCounter < 240)
+				else if (NPC.frameCounter < 240)
 				{
-					npc.frame.Y = Frame_Wind_1 * frameHeight;
+					NPC.frame.Y = Frame_Wind_1 * frameHeight;
 				}
 				else
 				{
 					idleTimer = 0;
-					npc.frameCounter = 0;
+					NPC.frameCounter = 0;
 				}
 			}
 

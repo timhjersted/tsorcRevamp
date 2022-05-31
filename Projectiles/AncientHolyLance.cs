@@ -10,40 +10,40 @@ namespace tsorcRevamp.Projectiles {
     class AncientHolyLance : ModProjectile {
 
         public override void SetDefaults() {
-			projectile.width = 45;
-			projectile.height = 45;
-			projectile.aiStyle = 19;
-			projectile.penetrate = 5;
-			projectile.timeLeft = 3600;
-			projectile.friendly = true; //can hit enemies
-			projectile.hostile = false; //can hit player / friendly NPCs
-			projectile.ownerHitCheck = false;
-			projectile.melee = true;
-			projectile.tileCollide = false;
-			projectile.hide = true;
+			Projectile.width = 45;
+			Projectile.height = 45;
+			Projectile.aiStyle = 19;
+			Projectile.penetrate = 5;
+			Projectile.timeLeft = 3600;
+			Projectile.friendly = true; //can hit enemies
+			Projectile.hostile = false; //can hit player / friendly NPCs
+			Projectile.ownerHitCheck = false;
+			Projectile.DamageType = DamageClass.Melee;
+			Projectile.tileCollide = false;
+			Projectile.hide = true;
 			//projectile.usesLocalNPCImmunity = true;
 			//projectile.localNPCHitCooldown = 5;
-			projectile.scale = 1.3f;
+			Projectile.scale = 1.3f;
 			
 		}
 		public float moveFactor { //controls spear speed
-			get => projectile.ai[0];
-			set => projectile.ai[0] = value;
+			get => Projectile.ai[0];
+			set => Projectile.ai[0] = value;
         }
 
         public override void AI() {
-			Player pOwner = Main.player[projectile.owner];
+			Player pOwner = Main.player[Projectile.owner];
 			Vector2 ownercenter = pOwner.RotatedRelativePoint(pOwner.MountedCenter, true);
-			projectile.direction = pOwner.direction;
-			pOwner.heldProj = projectile.whoAmI;
+			Projectile.direction = pOwner.direction;
+			pOwner.heldProj = Projectile.whoAmI;
 			pOwner.itemTime = pOwner.itemAnimation;
-			projectile.position.X = ownercenter.X - (float)(projectile.width / 2);
-			projectile.position.Y = ownercenter.Y - (float)(projectile.height / 2);
+			Projectile.position.X = ownercenter.X - (float)(Projectile.width / 2);
+			Projectile.position.Y = ownercenter.Y - (float)(Projectile.height / 2);
 
 			if (!pOwner.frozen) {
 				if (moveFactor == 0f) { //when initially thrown
 					moveFactor = 3.1f; //move forward
-					projectile.netUpdate = true;
+					Projectile.netUpdate = true;
 				}
 				if (pOwner.itemAnimation < pOwner.itemAnimationMax / 2) { //after x animation frames, return
 					moveFactor -= 2.86f;
@@ -55,14 +55,14 @@ namespace tsorcRevamp.Projectiles {
             }
 
 			if (pOwner.itemAnimation == 0) {
-				projectile.Kill();
+				Projectile.Kill();
 			}
 
-			projectile.position += projectile.velocity * moveFactor;
-			projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);
+			Projectile.position += Projectile.velocity * moveFactor;
+			Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);
 			
-			if (projectile.spriteDirection == -1) {
-				projectile.rotation -= MathHelper.ToRadians(90f);
+			if (Projectile.spriteDirection == -1) {
+				Projectile.rotation -= MathHelper.ToRadians(90f);
             }
 
 

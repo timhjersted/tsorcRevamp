@@ -9,32 +9,32 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.damage = 8;
-            item.knockBack = 4f;
+            Item.damage = 8;
+            Item.knockBack = 4f;
 
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.useAnimation = 31;
-            item.useTime = 31;
-            item.shootSpeed = 3.7f;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useAnimation = 31;
+            Item.useTime = 31;
+            Item.shootSpeed = 3.7f;
             //item.shoot = ProjectileID.DarkLance;
 
-            item.height = 32;
-            item.width = 32;
+            Item.height = 32;
+            Item.width = 32;
 
-            item.melee = true;
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.melee = true;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
-            item.value = 1000;
-            item.rare = ItemRarityID.White;
-            item.maxStack = 1;
-            item.UseSound = SoundID.Item1;
-            item.shoot = ModContent.ProjectileType<Projectiles.IronSpear>();
+            Item.value = 1000;
+            Item.rare = ItemRarityID.White;
+            Item.maxStack = 1;
+            Item.UseSound = SoundID.Item1;
+            Item.shoot = ModContent.ProjectileType<Projectiles.IronSpear>();
 
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.IronBar, 10);
             recipe.SetResult(this, 1);
             recipe.AddTile(TileID.Anvils);

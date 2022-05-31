@@ -10,30 +10,30 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void SetDefaults() {
-            item.width = 28;
-            item.height = 28;
-            item.useStyle = ItemUseStyleID.HoldingOut;
-            item.channel = true;
-            item.scale = 0.8f;
-            item.useAnimation = 44;
-            item.useTime = 44;
-            item.damage = 33;
-            item.knockBack = 6f;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.Green;
-            item.shootSpeed = 12;
-            item.noUseGraphic = true;
-            item.noMelee = true;
-            item.value = PriceByRarity.Green_2;
-            item.melee = true;
-            item.shoot = ModContent.ProjectileType<Projectiles.EnchantedMorningStar>();
+            Item.width = 28;
+            Item.height = 28;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.channel = true;
+            Item.scale = 0.8f;
+            Item.useAnimation = 44;
+            Item.useTime = 44;
+            Item.damage = 33;
+            Item.knockBack = 6f;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.Green;
+            Item.shootSpeed = 12;
+            Item.noUseGraphic = true;
+            Item.noMelee = true;
+            Item.value = PriceByRarity.Green_2;
+            Item.melee = true;
+            Item.shoot = ModContent.ProjectileType<Projectiles.EnchantedMorningStar>();
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.GetItem("OldMorningStar"), 1);
-            recipe.AddIngredient(mod.GetItem("EphemeralDust"), 30);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 6000);
+            Recipe recipe = new Recipe(Mod);
+            recipe.AddIngredient(Mod.GetItem("OldMorningStar"), 1);
+            recipe.AddIngredient(Mod.GetItem("EphemeralDust"), 30);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 6000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

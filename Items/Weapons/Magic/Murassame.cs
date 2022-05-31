@@ -10,29 +10,29 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void SetDefaults() {
-            item.width = 48;
-            item.height = 48;
-            item.useAnimation = 16;
-            item.useTime = 16;
-            item.damage = 18;
-            item.knockBack = 5;
-            item.autoReuse = true;
-            item.useTurn = true;
-            item.UseSound = SoundID.Item1;
-            item.rare = ItemRarityID.LightRed;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.value = PriceByRarity.LightRed_4;
-            item.magic = true;
-            item.mana = 5;
-            item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
-            item.shootSpeed = 12f;
+            Item.width = 48;
+            Item.height = 48;
+            Item.useAnimation = 16;
+            Item.useTime = 16;
+            Item.damage = 18;
+            Item.knockBack = 5;
+            Item.autoReuse = true;
+            Item.useTurn = true;
+            Item.UseSound = SoundID.Item1;
+            Item.rare = ItemRarityID.LightRed;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = PriceByRarity.LightRed_4;
+            Item.magic = true;
+            Item.mana = 5;
+            Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
+            Item.shootSpeed = 12f;
         }
 
         public override void AddRecipes() {
-            ModRecipe recipe = new ModRecipe(mod);
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(mod.GetItem("Muramassa"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 5000);
+            recipe.AddIngredient(Mod.GetItem("Muramassa"), 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 5000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 1);
             recipe.AddRecipe();

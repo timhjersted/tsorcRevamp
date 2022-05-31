@@ -11,26 +11,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 	{
 		public override void SetDefaults()
 		{
-			Main.npcFrameCount[npc.type] = 8;
-			npc.width = 130;
-			npc.height = 170;
-			npc.aiStyle = 22;
-			npc.damage = 150;
-			npc.defense = 80;
-			npc.HitSound = SoundID.NPCHit1;
-			npc.DeathSound = SoundID.NPCDeath5;
-			npc.lifeMax = 400000;
-			npc.knockBackResist = 0;
-			npc.noGravity = true;
-			npc.noTileCollide = true;
-			npc.value = 600000;
-			npc.boss = true;
-			npc.lavaImmune = true;
+			Main.npcFrameCount[NPC.type] = 8;
+			NPC.width = 130;
+			NPC.height = 170;
+			NPC.aiStyle = 22;
+			NPC.damage = 150;
+			NPC.defense = 80;
+			NPC.HitSound = SoundID.NPCHit1;
+			NPC.DeathSound = SoundID.NPCDeath5;
+			NPC.lifeMax = 400000;
+			NPC.knockBackResist = 0;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.value = 600000;
+			NPC.boss = true;
+			NPC.lavaImmune = true;
 
-			npc.buffImmune[BuffID.Poisoned] = true;
-			npc.buffImmune[BuffID.Confused] = true;
-			npc.buffImmune[BuffID.CursedInferno] = true;
-			npc.buffImmune[BuffID.OnFire] = true;
+			NPC.buffImmune[BuffID.Poisoned] = true;
+			NPC.buffImmune[BuffID.Confused] = true;
+			NPC.buffImmune[BuffID.CursedInferno] = true;
+			NPC.buffImmune[BuffID.OnFire] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.ChaosBag>();
 			despawnHandler = new NPCDespawnHandler("Chaos tears you asunder...", Color.Yellow, DustID.GoldFlame);
 
@@ -48,7 +48,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		int fireTrailsDamage = 35;
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
 		{
-			npc.damage = (int)(npc.damage / 2);
+			NPC.damage = (int)(NPC.damage / 2);
 		}
 
 		int chaosHealed = 0;
@@ -61,16 +61,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		NPCDespawnHandler despawnHandler;
 		public override void AI()
 		{
-			despawnHandler.TargetAndDespawn(npc.whoAmI);
-			Lighting.AddLight((int)npc.position.X / 16, (int)npc.position.Y / 16, 0.4f, 0f, 0f);
+			despawnHandler.TargetAndDespawn(NPC.whoAmI);
+			Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.4f, 0f, 0f);
 
 			if (holdTimer > 0)
 			{
 				holdTimer--;
 			}
-			if (Vector2.Distance(npc.Center, Main.player[npc.target].Center) > 1000)
+			if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) > 1000)
 			{
-				npc.defense = 9999;
+				NPC.defense = 9999;
 				if (holdTimer <= 0 && Main.netMode != NetmodeID.Server)
 				{
 					Main.NewText("Chaos is protected by unseen powers -- you're too far away!", 175, 75, 255);
@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 				else
 				{
-					npc.defense = 80;
+					NPC.defense = 80;
 				}
 			}
 
@@ -88,183 +88,183 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				NonClientAttacks();
 			}
 
-			if (npc.justHit)
+			if (NPC.justHit)
 			{
-				npc.ai[2] = 0f;
+				NPC.ai[2] = 0f;
 			}
-			if (npc.ai[2] >= 0f)
+			if (NPC.ai[2] >= 0f)
 			{
 				int num258 = 16;
 				bool flag26 = false;
 				bool flag27 = false;
-				if (npc.position.X > npc.ai[0] - (float)num258 && npc.position.X < npc.ai[0] + (float)num258)
+				if (NPC.position.X > NPC.ai[0] - (float)num258 && NPC.position.X < NPC.ai[0] + (float)num258)
 				{
 					flag26 = true;
 				}
 				else
 				{
-					if ((npc.velocity.X < 0f && npc.direction > 0) || (npc.velocity.X > 0f && npc.direction < 0))
+					if ((NPC.velocity.X < 0f && NPC.direction > 0) || (NPC.velocity.X > 0f && NPC.direction < 0))
 					{
 						flag26 = true;
 					}
 				}
 				num258 += 24;
-				if (npc.position.Y > npc.ai[1] - (float)num258 && npc.position.Y < npc.ai[1] + (float)num258)
+				if (NPC.position.Y > NPC.ai[1] - (float)num258 && NPC.position.Y < NPC.ai[1] + (float)num258)
 				{
 					flag27 = true;
 				}
 				if (flag26 && flag27)
 				{
-					npc.ai[2] += 1f;
-					if (npc.ai[2] >= 60f)
+					NPC.ai[2] += 1f;
+					if (NPC.ai[2] >= 60f)
 					{
-						npc.ai[2] = -200f;
-						npc.direction *= -1;
-						npc.velocity.X = npc.velocity.X * -1f;
-						npc.collideX = false;
+						NPC.ai[2] = -200f;
+						NPC.direction *= -1;
+						NPC.velocity.X = NPC.velocity.X * -1f;
+						NPC.collideX = false;
 					}
 				}
 				else
 				{
-					npc.ai[0] = npc.position.X;
-					npc.ai[1] = npc.position.Y;
-					npc.ai[2] = 0f;
+					NPC.ai[0] = NPC.position.X;
+					NPC.ai[1] = NPC.position.Y;
+					NPC.ai[2] = 0f;
 				}
 			}
 			else
 			{
-				npc.ai[2] += 1f;
-				if (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) > npc.position.X + (float)(npc.width / 2))
+				NPC.ai[2] += 1f;
+				if (Main.player[NPC.target].position.X + (float)(Main.player[NPC.target].width / 2) > NPC.position.X + (float)(NPC.width / 2))
 				{
-					npc.direction = -1;
+					NPC.direction = -1;
 				}
 				else
 				{
-					npc.direction = 1;
+					NPC.direction = 1;
 				}
 			}
-			int num259 = (int)((npc.position.X + (float)(npc.width / 2)) / 16f) + npc.direction * 2;
-			int num260 = (int)((npc.position.Y + (float)npc.height) / 16f);
-			if (npc.position.Y > Main.player[npc.target].position.Y)
+			int num259 = (int)((NPC.position.X + (float)(NPC.width / 2)) / 16f) + NPC.direction * 2;
+			int num260 = (int)((NPC.position.Y + (float)NPC.height) / 16f);
+			if (NPC.position.Y > Main.player[NPC.target].position.Y)
 			{
-				npc.velocity.Y -= .22f;
-				if (npc.velocity.Y < -2)
+				NPC.velocity.Y -= .22f;
+				if (NPC.velocity.Y < -2)
 				{
-					npc.velocity.Y = -2;
+					NPC.velocity.Y = -2;
 				}
 			}
-			if (npc.position.Y < Main.player[npc.target].position.Y)
+			if (NPC.position.Y < Main.player[NPC.target].position.Y)
 			{
-				npc.velocity.Y += .22f;
-				if (npc.velocity.Y > 2)
+				NPC.velocity.Y += .22f;
+				if (NPC.velocity.Y > 2)
 				{
-					npc.velocity.Y = 2;
+					NPC.velocity.Y = 2;
 				}
 			}
-			if (npc.collideX)
+			if (NPC.collideX)
 			{
-				npc.velocity.X = npc.oldVelocity.X * -0.4f;
-				if (npc.direction == -1 && npc.velocity.X > 0f && npc.velocity.X < 1f)
+				NPC.velocity.X = NPC.oldVelocity.X * -0.4f;
+				if (NPC.direction == -1 && NPC.velocity.X > 0f && NPC.velocity.X < 1f)
 				{
-					npc.velocity.X = 1f;
+					NPC.velocity.X = 1f;
 				}
-				if (npc.direction == 1 && npc.velocity.X < 0f && npc.velocity.X > -1f)
+				if (NPC.direction == 1 && NPC.velocity.X < 0f && NPC.velocity.X > -1f)
 				{
-					npc.velocity.X = -1f;
+					NPC.velocity.X = -1f;
 				}
 			}
-			if (npc.collideY)
+			if (NPC.collideY)
 			{
-				npc.velocity.Y = npc.oldVelocity.Y * -0.25f;
-				if (npc.velocity.Y > 0f && npc.velocity.Y < 1f)
+				NPC.velocity.Y = NPC.oldVelocity.Y * -0.25f;
+				if (NPC.velocity.Y > 0f && NPC.velocity.Y < 1f)
 				{
-					npc.velocity.Y = 1f;
+					NPC.velocity.Y = 1f;
 				}
-				if (npc.velocity.Y < 0f && npc.velocity.Y > -1f)
+				if (NPC.velocity.Y < 0f && NPC.velocity.Y > -1f)
 				{
-					npc.velocity.Y = -1f;
+					NPC.velocity.Y = -1f;
 				}
 			}
 			float num270 = 2.5f;
-			if (npc.direction == -1 && npc.velocity.X > -num270)
+			if (NPC.direction == -1 && NPC.velocity.X > -num270)
 			{
-				npc.velocity.X = npc.velocity.X - 0.1f;
-				if (npc.velocity.X > num270)
+				NPC.velocity.X = NPC.velocity.X - 0.1f;
+				if (NPC.velocity.X > num270)
 				{
-					npc.velocity.X = npc.velocity.X - 0.1f;
+					NPC.velocity.X = NPC.velocity.X - 0.1f;
 				}
 				else
 				{
-					if (npc.velocity.X > 0f)
+					if (NPC.velocity.X > 0f)
 					{
-						npc.velocity.X = npc.velocity.X + 0.05f;
+						NPC.velocity.X = NPC.velocity.X + 0.05f;
 					}
 				}
-				if (npc.velocity.X < -num270)
+				if (NPC.velocity.X < -num270)
 				{
-					npc.velocity.X = -num270;
+					NPC.velocity.X = -num270;
 				}
 			}
 			else
 			{
-				if (npc.direction == 1 && npc.velocity.X < num270)
+				if (NPC.direction == 1 && NPC.velocity.X < num270)
 				{
-					npc.velocity.X = npc.velocity.X + 0.1f;
-					if (npc.velocity.X < -num270)
+					NPC.velocity.X = NPC.velocity.X + 0.1f;
+					if (NPC.velocity.X < -num270)
 					{
-						npc.velocity.X = npc.velocity.X + 0.1f;
+						NPC.velocity.X = NPC.velocity.X + 0.1f;
 					}
 					else
 					{
-						if (npc.velocity.X < 0f)
+						if (NPC.velocity.X < 0f)
 						{
-							npc.velocity.X = npc.velocity.X - 0.05f;
+							NPC.velocity.X = NPC.velocity.X - 0.05f;
 						}
 					}
-					if (npc.velocity.X > num270)
+					if (NPC.velocity.X > num270)
 					{
-						npc.velocity.X = num270;
+						NPC.velocity.X = num270;
 					}
 				}
 			}
-			if (npc.directionY == -1 && (double)npc.velocity.Y > -2.5)
+			if (NPC.directionY == -1 && (double)NPC.velocity.Y > -2.5)
 			{
-				npc.velocity.Y = npc.velocity.Y - 0.04f;
-				if ((double)npc.velocity.Y > 2.5)
+				NPC.velocity.Y = NPC.velocity.Y - 0.04f;
+				if ((double)NPC.velocity.Y > 2.5)
 				{
-					npc.velocity.Y = npc.velocity.Y - 0.05f;
+					NPC.velocity.Y = NPC.velocity.Y - 0.05f;
 				}
 				else
 				{
-					if (npc.velocity.Y > 0f)
+					if (NPC.velocity.Y > 0f)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.03f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.03f;
 					}
 				}
-				if ((double)npc.velocity.Y < -2.5)
+				if ((double)NPC.velocity.Y < -2.5)
 				{
-					npc.velocity.Y = -2.5f;
+					NPC.velocity.Y = -2.5f;
 				}
 			}
 			else
 			{
-				if (npc.directionY == 1 && (double)npc.velocity.Y < 2.5)
+				if (NPC.directionY == 1 && (double)NPC.velocity.Y < 2.5)
 				{
-					npc.velocity.Y = npc.velocity.Y + 0.04f;
-					if ((double)npc.velocity.Y < -2.5)
+					NPC.velocity.Y = NPC.velocity.Y + 0.04f;
+					if ((double)NPC.velocity.Y < -2.5)
 					{
-						npc.velocity.Y = npc.velocity.Y + 0.05f;
+						NPC.velocity.Y = NPC.velocity.Y + 0.05f;
 					}
 					else
 					{
-						if (npc.velocity.Y < 0f)
+						if (NPC.velocity.Y < 0f)
 						{
-							npc.velocity.Y = npc.velocity.Y - 0.03f;
+							NPC.velocity.Y = NPC.velocity.Y - 0.03f;
 						}
 					}
-					if ((double)npc.velocity.Y > 2.5)
+					if ((double)NPC.velocity.Y > 2.5)
 					{
-						npc.velocity.Y = 2.5f;
+						NPC.velocity.Y = 2.5f;
 					}
 				}
 			}
@@ -275,86 +275,86 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 		//Projectile spawning code must not run for every single multiplayer client
 		void NonClientAttacks()
         {
-			npc.ai[1] += 0.35f;
-			if (npc.ai[1] >= 10f)
+			NPC.ai[1] += 0.35f;
+			if (NPC.ai[1] >= 10f)
 			{
 				if (Main.rand.Next(90) == 1)
 				{					
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 9);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(500) == 1)
 				{					
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(500) == 1)
 				{
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(1000) == 1)
 				{
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(300) == 1)
 				{					
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 11);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 11);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 
 				if (Main.rand.Next(205) == 1)
 				{
-					Projectile.NewProjectile(Main.player[npc.target].position.X - 100 + Main.rand.Next(300), Main.player[npc.target].position.Y - 530.0f,(float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f, Main.myPlayer);
+					Projectile.NewProjectile(Main.player[NPC.target].position.X - 100 + Main.rand.Next(300), Main.player[NPC.target].position.Y - 530.0f,(float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Enemy.EnemyMeteor>(), meteorDamage, 2.0f, Main.myPlayer);
 				}
 
 				if (Main.rand.Next(1200) == 1)
 				{					
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 4);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 4);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellTornado>(), tornadoDamage, 0f, Main.myPlayer, npc.target);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellTornado>(), tornadoDamage, 0f, Main.myPlayer, NPC.target);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(220) == 1)
 				{					
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 8);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(50) == 1)
 				{					
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 12);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(120) == 1)
 				{
-					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 5);
+					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
-					Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
-					Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
-					npc.ai[1] = 1f;
+					Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
+					Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					NPC.ai[1] = 1f;
 				}
 			}			
 		}
@@ -367,19 +367,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			{
 				chargeTimer = 0;
 				chargeDamageFlag = true;
-				npc.velocity = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 14) + Main.player[npc.target].velocity;
+				NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 14) + Main.player[NPC.target].velocity;
 			}
 			if (chargeDamageFlag == true)
 			{
-				npc.damage = 120;
+				NPC.damage = 120;
 			}
-			if (Math.Abs(npc.Center.X - Main.player[npc.target].Center.X) < 20)
+			if (Math.Abs(NPC.Center.X - Main.player[NPC.target].Center.X) < 20)
 			{
 				chargeDamageFlag = false;
-				npc.damage = 80;
+				NPC.damage = 80;
 			}
 			
-			if (npc.life <= npc.lifeMax / 3)
+			if (NPC.life <= NPC.lifeMax / 3)
 			{				
 				if (chaosHealed >= 1 && chaosHealed <= 3)
 				{
@@ -393,11 +393,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
 							UsefulFunctions.BroadcastText("Chaos continues to heal itself...", Color.Yellow);
 						}
-						npc.life += npc.lifeMax / 6;
-						if (npc.life > npc.lifeMax) npc.life = npc.lifeMax;
-						Projectile.NewProjectile(npc.Center.X, npc.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
-						Main.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 4);
-						npc.netUpdate = true;
+						NPC.life += NPC.lifeMax / 6;
+						if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+						Projectile.NewProjectile(NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
+						Main.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 4);
+						NPC.netUpdate = true;
 						chaosHealed += 1;
 					}
 				}
@@ -409,49 +409,49 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			int num = 1;
 			if (!Main.dedServ)
 			{
-				num = Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type];
+				num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
 			}
-			if (npc.velocity.X < 0)
+			if (NPC.velocity.X < 0)
 			{
-				npc.spriteDirection = -1;
+				NPC.spriteDirection = -1;
 			}
 			else
 			{
-				npc.spriteDirection = 1;
+				NPC.spriteDirection = 1;
 			}
-			npc.rotation = npc.velocity.X * 0.08f;
-			npc.frameCounter += 1.0;
-			if (npc.frameCounter >= 4.0)
+			NPC.rotation = NPC.velocity.X * 0.08f;
+			NPC.frameCounter += 1.0;
+			if (NPC.frameCounter >= 4.0)
 			{
-				npc.frame.Y = npc.frame.Y + num;
-				npc.frameCounter = 0.0;
+				NPC.frame.Y = NPC.frame.Y + num;
+				NPC.frameCounter = 0.0;
 			}
-			if (npc.frame.Y >= num * Main.npcFrameCount[npc.type])
+			if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
 			{
-				npc.frame.Y = 0;
+				NPC.frame.Y = 0;
 			}
 		}
 		#endregion
 
 		#region Gore
-		public override void NPCLoot()
+		public override void OnKill()
 		{
-			Projectile.NewProjectile((int)npc.position.X, (int)npc.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.ChaosDeathAnimation>(), 0, 0f, Main.myPlayer);
+			Projectile.NewProjectile((int)NPC.position.X, (int)NPC.position.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.ChaosDeathAnimation>(), 0, 0f, Main.myPlayer);
 			if (Main.expertMode)
 			{
-				npc.DropBossBags();
+				NPC.DropBossBags();
 			}
 			else
 			{
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3000);
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-				Item.NewItem(npc.getRect(), ModContent.ItemType<Items.SoulOfChaos>(), 3);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3000);
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulOfChaos>(), 3);
 			}
 		}
 		#endregion
