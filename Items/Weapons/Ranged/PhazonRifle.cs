@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
 
-        public override bool ConsumeAmmo(Player player)
+        public override bool CanConsumeAmmo(Item ammo, Player player)
         {
             return !(player.itemAnimation < Item.useAnimation - 2); //consume 1 ammo instead of 3
         }

@@ -26,9 +26,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             
         }
 
-        public override bool ConsumeAmmo(Player player) {
+        public override bool CanConsumeAmmo(Item ammo, Player player) {
             if (Main.rand.NextFloat(0, 1) < .5) { return false; }
-            return base.ConsumeAmmo(player);
+            return base.CanConsumeAmmo(ammo, player);
         }
 
         public override Vector2? HoldoutOffset() {

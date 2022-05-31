@@ -11,7 +11,6 @@ namespace tsorcRevamp.NPCs.Friendly
 	[AutoloadHead]
 	class TibianArcher : ModNPC
 	{
-		public override bool Autoload(ref string name) => true;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Tibian Archer");

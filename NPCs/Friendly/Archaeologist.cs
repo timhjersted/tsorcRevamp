@@ -9,9 +9,9 @@ using System.Collections.Generic;
 namespace tsorcRevamp.NPCs.Friendly
 {
 	[AutoloadHead]
+	[Autoload(false)]
 	class Archaeologist : ModNPC
 	{
-		public override bool Autoload(ref string name) => false;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Archaeologist");

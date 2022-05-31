@@ -14,7 +14,6 @@ using System.Collections.Generic;
 namespace tsorcRevamp.NPCs.Friendly {
 	[AutoloadHead]
 	class ShamanElder : ModNPC {
-		public override bool Autoload(ref string name) => true;
 		public static List<string> Names = new List<string> {
 			"Alo", "Dakota", "Esadowa", "Kai", "Koda", "Lonato", "Micah", "Taregan"
 		};

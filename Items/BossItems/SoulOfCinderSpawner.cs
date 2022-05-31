@@ -5,9 +5,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 
 namespace tsorcRevamp.Items.BossItems {
+    [Autoload(false)]
     class SoulOfCinderSpawner : ModItem {
-
-    	public override bool Autoload(ref string name) => false;
 
 		public override void SetDefaults() {
 			Item.width = 40;

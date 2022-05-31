@@ -9,9 +9,9 @@ using Steamworks;
 
 namespace tsorcRevamp.Tiles
 {
+	[Autoload(false)]
 	public class Bonfire : ModTile
 	{
-		public override bool Autoload(ref string name, ref string texture) => false;
         public override void SetStaticDefaults()
 		{
 			Main.tileFrameImportant[Type] = true;
@@ -92,9 +92,10 @@ namespace tsorcRevamp.Tiles
 			return false;
 		}
 	}
+
+	[Autoload(false)]
 	public class BonfireItem : ModItem
 	{
-		public override bool Autoload(ref string name) => false;
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Dark Souls Bonfire");

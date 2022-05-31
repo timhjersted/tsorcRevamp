@@ -10,9 +10,9 @@ using static tsorcRevamp.UsefulFunctions;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
     [AutoloadBossHead]
+    [Autoload(false)]
     class SoulOfCinder : ModNPC {
         
-        public override bool Autoload(ref string name) => false;
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
 
         public override void SetStaticDefaults() {

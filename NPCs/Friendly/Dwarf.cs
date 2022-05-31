@@ -17,7 +17,6 @@ namespace tsorcRevamp.NPCs.Friendly
     [AutoloadHead]
     class Dwarf : ModNPC
     {
-        public override bool Autoload(ref string name) => true;
 
         public static List<string> Names = new List<string> {
             "Unfoli", "Nollin", "Duroin", "Jloin", "Grefinnyr", "Nionwelf", "Kloni", "Fini", "Ofur", "Ofi", "Bompbi"

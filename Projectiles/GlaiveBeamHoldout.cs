@@ -100,7 +100,7 @@ namespace tsorcRevamp.Projectiles {
 			Projectile.timeLeft = 2;
 		}
 
-        public override bool CanDamage()
+        public override bool? CanDamage()
         {
             return false;
         }

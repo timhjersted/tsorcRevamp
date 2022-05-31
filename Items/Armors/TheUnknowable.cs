@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("25% chance to not consume ammo\nInfinite breath, waterwalk, no knockback\nSet Bonus: Ranged Stats & Movement +30% + Archery Skill + No Fall DMG");
+            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
         }
         public override void SetDefaults()
         {
@@ -19,10 +20,6 @@ namespace tsorcRevamp.Items.Armors
             Item.defense = 15;
             Item.value = 300000;
             Item.rare = ItemRarityID.LightPurple;
-        }
-        public override void DrawHair(ref bool drawHair, ref bool drawAltHair)
-        {
-            drawHair = true;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)

@@ -31,23 +31,16 @@ namespace tsorcRevamp.Prefixes
 			_power = power;
 		}
 
-		// Allow multiple prefix autoloading this way (permutations of the same prefix)
-		public override bool Autoload(ref string name)
+        public override void Load()
 		{
-			if (!base.Autoload(ref name))
-			{
-				return false;
-			}
-
-			Mod.AddPrefix("Refreshing", new Refreshing(1));
-			Mod.AddPrefix("Revitalizing", new Refreshing(2));
-			return false;
+			Mod.AddContent(new Refreshing(1));
+			Mod.AddContent(new Refreshing(2));
 		}
 
-		/*public override void Apply(Item item)
+        /*public override void Apply(Item item)
 			=> item.GetGlobalItem<tsorcInstancedGlobalItem>().refreshing = _power;*/
 
-		public override void ModifyValue(ref float valueMult)
+        public override void ModifyValue(ref float valueMult)
 		{
 			float multiplier = 1f + 0.1f * _power;
 			valueMult *= multiplier;

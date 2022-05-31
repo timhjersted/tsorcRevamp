@@ -16,8 +16,6 @@ namespace tsorcRevamp.NPCs.Friendly
     [AutoloadHead]
     class DwarvenGuard : ModNPC
     {
-        public override bool Autoload(ref string name) => true;
-
         public static List<string> Names = new List<string> {
             "Urbur", "Bafarm", "Kothurn", "Okjorn", "Rulik", "Norbirn", "Joulni", "Norta", "Biffidor", "Koroin", "Uorin"
         };

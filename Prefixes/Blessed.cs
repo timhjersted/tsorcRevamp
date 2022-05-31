@@ -31,19 +31,12 @@ namespace tsorcRevamp.Prefixes
 			_power = power;
 		}
 
-		// Allow multiple prefix autoloading this way (permutations of the same prefix)
-		public override bool Autoload(ref string name)
-		{
-			if (!base.Autoload(ref name))
-			{
-				return false;
-			}
-
-			Mod.AddPrefix("Blessed", new Blessed(1));
-			return false;
+        public override void Load()
+        {
+			Mod.AddContent(new Blessed(1));
 		}
 
-		public override void Apply(Item item)
+        public override void Apply(Item item)
 			=> item.GetGlobalItem<tsorcInstancedGlobalItem>().blessed = _power;
 
 		public override void ModifyValue(ref float valueMult)

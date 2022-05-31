@@ -11,7 +11,6 @@ using Terraria.Localization;
 namespace tsorcRevamp.NPCs.Friendly {
 	[AutoloadHead]
     class SolaireOfAstora : ModNPC {
-		public override bool Autoload(ref string name) => true;
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Warrior of Sunlight");
 			Main.npcFrameCount[NPC.type] = 25;

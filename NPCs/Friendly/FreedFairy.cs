@@ -16,8 +16,6 @@ namespace tsorcRevamp.NPCs.Friendly
 	[AutoloadHead]
 	class FreedFairy : ModNPC
 	{
-		public override bool Autoload(ref string name) => true;
-
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Freed Fairy");

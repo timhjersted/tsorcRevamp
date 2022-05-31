@@ -6,12 +6,8 @@ namespace tsorcRevamp.Buffs
 {
 	public class CrescentMoonlight : ModBuff
 	{
-		public override bool Autoload(ref string name, ref string texture)
-		{
-			// NPC only buff so we'll just assign it a useless buff icon.
-			texture = "tsorcRevamp/Buffs/ArmorDrug";
-			return base.Autoload(ref name, ref texture);
-		}
+		//Generic texture since this buff is enemy-only
+		public override string Texture => "tsorcRevamp/Buffs/ArmorDrug";
 
 		public override void SetStaticDefaults()
 		{
