@@ -1,10 +1,8 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -86,11 +84,11 @@ namespace tsorcRevamp.NPCs.Enemies
         //PROJECTILE HIT LOGIC
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, true);            
+            tsorcRevampAIs.RedKnightOnHit(NPC, true);
         }
-        
+
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
-        {           
+        {
             tsorcRevampAIs.RedKnightOnHit(NPC, projectile.melee);
         }
 
@@ -108,7 +106,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, 0.2f, true, 10, false, 0, 1000, 0.5f, 4, true);
 
 
-            if (Main.netMode != 1 && !Main.player[NPC.target].dead) 
+            if (Main.netMode != 1 && !Main.player[NPC.target].dead)
             {
                 NPC.localAI[1]++;
 
@@ -120,7 +118,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
                 }
 
-                
+
                 //CHANCE TO JUMP FORWARDS
                 if (NPC.Distance(player.Center) > 60 && NPC.velocity.Y == 0f && Main.rand.Next(500) == 1 && NPC.localAI[1] <= 166f)
                 {
@@ -154,11 +152,11 @@ namespace tsorcRevamp.NPCs.Enemies
                     //CHANCE TO JUMP AFTER DASH
                     if (Main.rand.Next(14) == 1 && NPC.localAI[1] <= 166f)
                     {
-                        
 
-                        
+
+
                         //npc.ai[0] = 0f;
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); 
+                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
                         if (Main.rand.Next(3) == 1)
                         {
                             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkFlame, NPC.velocity.X, NPC.velocity.Y);
@@ -252,9 +250,9 @@ namespace tsorcRevamp.NPCs.Enemies
                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.6f, Pitch = 0.7f }, NPC.Center); //inferno fork, almost same as fire (works)
-                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
-                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
-                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
+                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
+                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
+                                                                                                                                       //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
 
                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 81, 0.6f, 0f); //spawn slime mount, more like thunder flame burn
                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 88, 0.6f, 0f); //meteor staff more bass and fire
@@ -285,13 +283,13 @@ namespace tsorcRevamp.NPCs.Enemies
                         //FIRE
                         for (int pcy = 0; pcy < 2; pcy++)
                         {
-                            
+
 
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 10 + Main.rand.Next(10), (float)player.position.Y - 400f, (float)(-10 + Main.rand.Next(10)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
 
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-                            
+
                             NPC.netUpdate = true;
                         }
 
@@ -369,7 +367,7 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 1);
             if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
             if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1);
-            
+
 
             if (tsorcRevampWorld.SuperHardMode)
             {

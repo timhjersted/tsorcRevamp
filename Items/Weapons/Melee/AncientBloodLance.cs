@@ -1,15 +1,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class AncientBloodLance : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class AncientBloodLance : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ancient Blood Lance");
             Tooltip.SetDefault("Pierces multiple times on every hit.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 33;
             Item.knockBack = 6.5f;
 
@@ -18,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.useTime = 4;
             Item.shootSpeed = 8;
             //item.shoot = ProjectileID.DarkLance;
-            
+
             Item.height = 50;
             Item.width = 50;
 
@@ -34,11 +38,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DarkLance);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
-            
+
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

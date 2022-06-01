@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -24,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 0.8f;
             Projectile.tileCollide = true;
             Projectile.width = 8;
-            //aiType = ProjectileID.WoodenArrowFriendly; //gives more gravity
+            //AIType = ProjectileID.WoodenArrowFriendly; //gives more gravity
         }
 
         public override void AI()
@@ -45,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             //if (projectile.velocity.X <= 4 && projectile.velocity.Y <= 4 && projectile.velocity.X >= -4 && projectile.velocity.Y >= -4)
             //{
-             //   float accel = 1f + (Main.rand.Next(10, 30) * 0.001f);
+            //   float accel = 1f + (Main.rand.Next(10, 30) * 0.001f);
             //    projectile.velocity.X *= accel;
             //    projectile.velocity.Y *= accel;
             //}

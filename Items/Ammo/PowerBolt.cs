@@ -1,11 +1,13 @@
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Ammo {
-    public class PowerBolt : ModItem {
+namespace tsorcRevamp.Items.Ammo
+{
+    public class PowerBolt : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = true;
             Item.DamageType = DamageClass.Ranged;
             Item.ammo = Mod.Find<ModItem>("Bolt").Type;

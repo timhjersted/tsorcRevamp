@@ -3,12 +3,15 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Freezethrower : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class Freezethrower : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 24;
             Projectile.height = 24;
             Projectile.alpha = 255;
@@ -21,42 +24,57 @@ namespace tsorcRevamp.Projectiles {
             Projectile.DamageType = DamageClass.Ranged;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
-            if ((Main.rand.Next(5)) == 0) {
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if ((Main.rand.Next(5)) == 0)
+            {
                 target.AddBuff(BuffID.Frozen, 120);
             }
         }
 
-        public override void OnHitPvp(Player target, int damage, bool crit) {
-            if ((Main.rand.Next(5)) == 0) {
+        public override void OnHitPvp(Player target, int damage, bool crit)
+        {
+            if ((Main.rand.Next(5)) == 0)
+            {
                 target.AddBuff(BuffID.Frozen, 120);
             }
         }
 
-        public override void AI() {
-            if (Projectile.timeLeft > 80) {
+        public override void AI()
+        {
+            if (Projectile.timeLeft > 80)
+            {
                 Projectile.timeLeft = 80;
             }
-            if (Projectile.ai[0] > 7f) {
+            if (Projectile.ai[0] > 7f)
+            {
                 float num152 = 1f;
-                if (Projectile.ai[0] == 8f) {
+                if (Projectile.ai[0] == 8f)
+                {
                     num152 = 0.25f;
                 }
-                else {
-                    if (Projectile.ai[0] == 9f) {
+                else
+                {
+                    if (Projectile.ai[0] == 9f)
+                    {
                         num152 = 0.5f;
                     }
-                    else {
-                        if (Projectile.ai[0] == 10f) {
+                    else
+                    {
+                        if (Projectile.ai[0] == 10f)
+                        {
                             num152 = 0.75f;
                         }
                     }
                 }
                 Projectile.ai[0] += 1f;
-                if (Main.rand.Next(2) == 0) {
-                    for (int i = 0; i < 1; i++) {
+                if (Main.rand.Next(2) == 0)
+                {
+                    for (int i = 0; i < 1; i++)
+                    {
                         int num155 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 76, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1f);
-                        if (Main.rand.Next(3) == 0) {
+                        if (Main.rand.Next(3) == 0)
+                        {
                             Main.dust[num155].noGravity = true;
                             Main.dust[num155].scale *= 3f;
                             Main.dust[num155].velocity *= 2f;
@@ -67,7 +85,8 @@ namespace tsorcRevamp.Projectiles {
                     }
                 }
             }
-            else {
+            else
+            {
                 Projectile.ai[0] += 1f;
             }
             Projectile.rotation += 0.3f * (float)Projectile.direction;

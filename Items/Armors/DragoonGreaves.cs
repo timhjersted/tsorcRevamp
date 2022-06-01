@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Armors
             Item.value = 500000;
             Item.rare = ItemRarityID.Orange;
         }
-        
+
         public override void UpdateEquip(Player player)
         {
             player.doubleJumpCloud = true;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

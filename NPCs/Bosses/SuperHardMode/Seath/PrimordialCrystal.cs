@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -45,7 +43,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
             UsefulFunctions.DustRing(NPC.Center, 50, DustID.MagicMirror);
 
-            if (seathID == null || !Main.npc[seathID.Value].active) {
+            if (seathID == null || !Main.npc[seathID.Value].active)
+            {
                 seathID = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             }
             else
@@ -55,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 67, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 68, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 234, dustVel.X, dustVel.Y, 250, Color.White, 2f).noGravity = true;
-            }            
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -75,11 +74,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 Main.dust[dust].noGravity = true;
             }
 
-            for(int i = 0; i < Main.maxNPCs; i++)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if(Main.npc[i].type == ModContent.NPCType<SeathTheScalelessHead>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody2>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody3>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessLegs>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessTail>())
+                if (Main.npc[i].type == ModContent.NPCType<SeathTheScalelessHead>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody2>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessBody3>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessLegs>() || Main.npc[i].type == ModContent.NPCType<SeathTheScalelessTail>())
                 {
-                    if (Main.npc[i].active){
+                    if (Main.npc[i].active)
+                    {
                         int dustCount = 15;
                         if (NPC.CountNPCS(ModContent.NPCType<PrimordialCrystal>()) > 1)
                         {

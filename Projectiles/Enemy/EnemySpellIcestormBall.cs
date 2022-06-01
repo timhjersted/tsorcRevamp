@@ -1,13 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellIcestormBall : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellIcestormBall : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.hostile = true;
             Projectile.height = 16;
             Projectile.width = 16;
@@ -36,9 +38,10 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         }
 
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
 
-            for(int i = 0; i < 20; i++)
+            for (int i = 0; i < 20; i++)
             {
                 int thisDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
                 Main.dust[thisDust].noGravity = true;

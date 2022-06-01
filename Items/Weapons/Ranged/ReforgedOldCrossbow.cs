@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class ReforgedOldCrossbow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class ReforgedOldCrossbow : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Crossbow";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 19;
             Item.width = 28;
             Item.height = 14;
@@ -24,11 +27,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.value = PriceByRarity.Blue_1;
             Item.noMelee = true;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldCrossbow").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            
+
             recipe.Register();
         }
     }

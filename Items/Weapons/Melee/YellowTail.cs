@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class YellowTail : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class YellowTail : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Shatters strong defenses with high penetration(multi - hit damage)");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 35;
             Item.height = 35;
             Item.useStyle = ItemUseStyleID.Thrust;
@@ -26,12 +30,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.autoReuse = true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldShortsword, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

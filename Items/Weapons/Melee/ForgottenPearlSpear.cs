@@ -1,14 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class ForgottenPearlSpear : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class ForgottenPearlSpear : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             base.SetStaticDefaults();
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 52;
             Item.knockBack = 7f;
 

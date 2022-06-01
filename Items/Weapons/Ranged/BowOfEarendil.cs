@@ -1,16 +1,20 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class BowOfEarendil : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class BowOfEarendil : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bow of Earendil");
             Tooltip.SetDefault("Always aim for the heart" +
                                "\nLegendary");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.damage = 90;
             Item.height = 58;
@@ -33,13 +37,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofSight, 1);
             recipe.AddIngredient(ItemID.MoltenFury, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

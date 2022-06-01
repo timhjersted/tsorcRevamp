@@ -3,10 +3,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class Limit : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class Limit : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.width = 24;
             Item.height = 24;
@@ -28,15 +31,17 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             //item.glowMask = 271; was this actually trying to do something?
         }
 
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        {
             Vector2 mousePos = Main.MouseWorld;
             Vector2 playerToMouse = mousePos - player.Center;
 
-            if (playerToMouse.Length() > 60f) {
+            if (playerToMouse.Length() > 60f)
+            {
                 playerToMouse *= 60f / playerToMouse.Length();
                 mousePos = player.Center + playerToMouse;
             }
-            Projectile.NewProjectile(mousePos, new Vector2(speedX, speedY), ModContent.ProjectileType<Projectiles.Limit>(), Item.damage, Item.knockBack, Item.owner);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), mousePos, new Vector2(speedX, speedY), ModContent.ProjectileType<Projectiles.Limit>(), Item.damage, Item.knockBack, Item.owner);
             return false;
         }
     }

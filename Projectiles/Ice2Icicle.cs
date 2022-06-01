@@ -2,9 +2,12 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Ice2Icicle : ModProjectile {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Projectiles
+{
+    class Ice2Icicle : ModProjectile
+    {
+        public override void SetDefaults()
+        {
             Projectile.width = 24;
             Projectile.height = 64;
             Projectile.friendly = true;
@@ -14,7 +17,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 90;
         }
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
 
             if (Projectile.timeLeft <= 30)

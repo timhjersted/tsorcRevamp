@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles
         {
             Projectile.width = 45;
             Projectile.height = 45;
-            Projectile.timeLeft = 120; 
+            Projectile.timeLeft = 120;
             Projectile.light = 0.5f;
             Projectile.friendly = true;
             Projectile.hostile = false;
@@ -40,18 +40,22 @@ namespace tsorcRevamp.Projectiles
                     Projectile.frame = 0;
                 }
             }
-            if (Projectile.ai[0] >= 15f) { //this is the bit that makes it arc down
+            if (Projectile.ai[0] >= 15f)
+            { //this is the bit that makes it arc down
                 Projectile.ai[0] = 15f;
                 Projectile.velocity.Y += 0.1f;
             }
-            if (Projectile.velocity.Y > 16f) { //this bit caps down velocity, and thus also caps down rotation if fired at a positive angle
+            if (Projectile.velocity.Y > 16f)
+            { //this bit caps down velocity, and thus also caps down rotation if fired at a positive angle
                 Projectile.velocity.Y = 16f;
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90f); //simplified rotation code (no trig!)
         }
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++)
+            {
                 Vector2 projPosition = new Vector2(Projectile.position.X, Projectile.position.Y);
                 Dust.NewDust(projPosition, Projectile.width, Projectile.height, 7, 0f, 0f, 0, default, 1f);
             }

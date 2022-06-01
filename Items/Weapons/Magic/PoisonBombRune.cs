@@ -1,12 +1,16 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class PoisonBombRune : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class PoisonBombRune : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Creates 9 poison bombs on impact\n" + "Superior area denial, drains enemy life with the deadliest poison\n" + "Not necessarily a direct upgrade");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 16;
             Item.height = 28;
             Item.knockBack = 3;
@@ -24,13 +28,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.width = 20;
             Item.shoot = ModContent.ProjectileType<Projectiles.PoisonBombBall>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Stinger, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonFieldRune").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

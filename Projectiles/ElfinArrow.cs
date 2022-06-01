@@ -6,11 +6,14 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class ElfinArrow : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class ElfinArrow : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Elfin Arrow");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
@@ -34,7 +37,7 @@ namespace tsorcRevamp.Projectiles {
                 thisdust.velocity = Vector2.Zero;
             }
 
-            
+
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             homingStrength += 0.035f;
             if (topSpeed < 24)
@@ -62,7 +65,7 @@ namespace tsorcRevamp.Projectiles {
                 {
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {
-                        if(Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<ElfinTargeting>())
+                        if (Main.projectile[i] != null && Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<ElfinTargeting>())
                         {
                             Projectile.ai[0] = Main.projectile[i].whoAmI;
                         }
@@ -101,7 +104,7 @@ namespace tsorcRevamp.Projectiles {
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            for(int i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 Main.spriteBatch.Draw(texture,
                   Projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),

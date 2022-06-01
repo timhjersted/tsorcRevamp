@@ -1,16 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
-    class SerpentOfTheAbyssBody : ModNPC {
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
+{
+    class SerpentOfTheAbyssBody : ModNPC
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Serpent of the Abyss");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.netAlways = true;
             NPC.npcSlots = 1;
             NPC.width = 21;
@@ -45,7 +48,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
 
         int[] bodyTypes;
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
             return base.SpawnChance(spawnInfo);
         }
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
@@ -57,8 +61,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SerpentOfTheAbyssHead>(), bodyTypes, ModContent.NPCType<SerpentOfTheAbyssTail>(), 35, .8f, 17, 0.25f, false, false, false, true, true);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
-            if (Main.rand.Next(2) == 0) {
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            if (Main.rand.Next(2) == 0)
+            {
                 target.AddBuff(BuffID.CursedInferno, 180);
                 target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 1800);
             }

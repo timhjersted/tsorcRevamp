@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class FlamesOfTheNight : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class FlamesOfTheNight : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A full sprectral array of green flame will light up the skies");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -34,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofSight, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

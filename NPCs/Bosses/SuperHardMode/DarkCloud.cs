@@ -4,13 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using Terraria.GameContent.ItemDropRules;
-using Terraria.GameContent.NetModules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -44,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
             NPC.NPCLoot();
         }
-        
+
         #region Damage variables
         const float TRAIL_LENGTH = 12;
 
@@ -164,7 +160,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.netUpdate = true;
             }
 
-           
+
             //If it's the first phase
             if (firstPhase)
             {
@@ -194,26 +190,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 else
                 {
-                    CurrentMove  = new DarkCloudMove(DragoonLanceMove, DragoonLanceAttack, DarkCloudAttackID.DragoonLance, "Dragoon Lance");
+                    CurrentMove = new DarkCloudMove(DragoonLanceMove, DragoonLanceAttack, DarkCloudAttackID.DragoonLance, "Dragoon Lance");
                 }
                 AttackModeCounter++;
             }
 
-            if(AttackModeCounter == 5)
+            if (AttackModeCounter == 5)
             {
                 PrecalculateFirstTeleport();
             }
-        }        
+        }
 
-       
+
         //Randomly pick a new unused attack and reset attack variables
         void ChangeAttacks()
-        {           
+        {
             if (testAttack == -1)
-            {                
-                for(int i = 0; i < ActiveMoveList.Count; i++)
+            {
+                for (int i = 0; i < ActiveMoveList.Count; i++)
                 {
-                    if(ActiveMoveList[i].ID == NextAttackMode)
+                    if (ActiveMoveList[i].ID == NextAttackMode)
                     {
                         //Set the current move using the previous, stored attack mode now that it's had time to sync
                         CurrentMove = ActiveMoveList[i];
@@ -222,7 +218,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         ActiveMoveList.RemoveAt(i);
                         break;
                     }
-                    if(i == (ActiveMoveList.Count - 1) && Main.netMode != NetmodeID.Server)
+                    if (i == (ActiveMoveList.Count - 1) && Main.netMode != NetmodeID.Server)
                     {
                         Main.NewText("Move failed to set! NextAttackMode " + NextAttackMode + "ActiveMoveList.Count" + ActiveMoveList.Count);
                     }
@@ -230,9 +226,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 //If there's no moves left in the list, refill it   
                 if (ActiveMoveList.Count == 0)
-                {      
+                {
                     InitializeMoves();
-                }                
+                }
 
                 //Pick the next attack mode from the ones that remain, and store it in ai[0] (NextAttackMode) so it can sync
                 NextAttackMode = ActiveMoveList[Main.rand.Next(ActiveMoveList.Count)].ID;
@@ -247,7 +243,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.velocity = Vector2.Zero;
             AttackModeCounter = -1;
             AttackModeTally = 0;
-            nextWarpPoint = Vector2.Zero;            
+            nextWarpPoint = Vector2.Zero;
             InstantNetUpdate();
         }
 
@@ -256,33 +252,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override void SendExtraAI(BinaryWriter writer)
         {
             //Send the list of remaining moves
-            if(ActiveMoveList == null)
+            if (ActiveMoveList == null)
             {
                 writer.Write(0);
             }
             else
             {
-                writer.Write(ActiveMoveList.Count); 
+                writer.Write(ActiveMoveList.Count);
                 for (int i = 0; i < ActiveMoveList.Count; i++)
                 {
                     writer.Write(ActiveMoveList[i].ID);
                 }
             }
-            
+
 
             //A seed value that clients can use whenever they'd like to pick the next attack.
             //Would allow all clients to "randomly" roll the same attack right when it happens, instead of needing to do it early.
             //writer.Write(sendEntropy);
             //if (sendEntropy)
-           // {
-           //     NextWarpEntropy = Main.rand.Next();
-           //     writer.Write(NextWarpEntropy);
-           // }
+            // {
+            //     NextWarpEntropy = Main.rand.Next();
+            //     writer.Write(NextWarpEntropy);
+            // }
 
             //Send the next point to teleport to during this attack, and the first point for the next attack
             writer.WriteVector2(nextWarpPoint);
             writer.WriteVector2(preSelectedWarpPoint);
-;
+            ;
 
             if (CurrentMove == null)
             {
@@ -328,7 +324,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         CurrentMove = DefaultList[i];
                     }
                 }
-            }            
+            }
         }
 
         //These describe how the boss should move, and other things that should be done on the server and every client to keep it deterministic
@@ -337,7 +333,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //A few moves use teleports that need to be calculated in advance so their first warp can be pre-synced. That's done here.
         void PrecalculateFirstTeleport()
         {
-            if(NextAttackMode == DarkCloudAttackID.DivineSpark)
+            if (NextAttackMode == DarkCloudAttackID.DivineSpark)
             {
                 preSelectedWarpPoint = DivineSparkTeleport();
             }
@@ -418,7 +414,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void DivineSparkMove()
         {
             //If it's the first attack wait and charge for a moment
-            if (AttackModeTally <= 0) {
+            if (AttackModeTally <= 0)
+            {
 
                 if (AttackModeCounter == chargeTime)
                 {
@@ -437,7 +434,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
 
                     float factor = (AttackModeTally + 200f) / 200f;
-                    DarkCloudParticleEffect(-18 * factor, 200 * factor, AttackModeTally * 5);                    
+                    DarkCloudParticleEffect(-18 * factor, 200 * factor, AttackModeTally * 5);
                 }
             }
 
@@ -445,9 +442,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 //Clean up the old targeting lasers
                 List<GenericLaser> targetingList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
-                if(targetingList != null && targetingList.Count > 0)
+                if (targetingList != null && targetingList.Count > 0)
                 {
-                    foreach(GenericLaser thisLaser in targetingList)
+                    foreach (GenericLaser thisLaser in targetingList)
                     {
                         thisLaser.Projectile.Kill();
                     }
@@ -600,7 +597,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.DarkDivineSparkTargeting, NPC.whoAmI);
             for (int i = 0; i < laserList.Count; i++)
             {
-                if(!laserList[i].initialized)
+                if (!laserList[i].initialized)
                 {
                     laserList[i].LaserOrigin = NPC.Center;
                     laserList[i].TelegraphTime = 99999;
@@ -614,7 +611,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     laserList[i].LaserVolume = 0;
                     laserList[i].TargetingMode = 1;
                     laserList[i].initialized = true;
-                    
+
                     if (counterClockwise)
                     {
                         laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation - MathHelper.ToRadians((arcLength / 2) * i));
@@ -623,7 +620,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         laserList[i].LaserTarget = NPC.Center + new Vector2(1, 0).RotatedBy(initialTargetRotation + MathHelper.ToRadians((arcLength / 2) * i));
                     }
-                }                
+                }
             }
 
             if (AttackModeCounter == turnLength * 5)
@@ -685,7 +682,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 TeleportToArenaCenter();
                 targetPlayers = new List<Player>();
-                for(int i = 0; i < Main.maxPlayers; i++)
+                for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     if (Vector2.Distance(Main.player[i].Center, NPC.Center) < 5000)
                     {
@@ -723,7 +720,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Dust.NewDustPerfect(dustPos, DustID.ShadowbeamStaff, dustVel, 200).noGravity = true;
 
             }
-            
+
             //Spawn a ring of dust at the hard pull radius
             UsefulFunctions.DustRing(NPC.Center, 1900, DustID.ShadowbeamStaff, 50);
 
@@ -768,8 +765,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     p.immuneTime = 0;
                     p.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(p.name + " was spaghettified."), (int)damage, 1);
                 }
-            }            
-            
+            }
+
             //At the end of the attack, change attacks and spawn a burst of dust
             if (AttackModeCounter >= 1200)
             {
@@ -782,7 +779,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             if (AttackModeCounter == 1210)
             {
-                ChangeAttacks(); 
+                ChangeAttacks();
             }
         }
 
@@ -821,13 +818,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 NPC.noGravity = false;
                 NPC.noTileCollide = false;
-                NPC.Center = Target.Center + new Vector2(-500, 0);               
-            }            
+                NPC.Center = Target.Center + new Vector2(-500, 0);
+            }
 
             //Hold AttackModeCounter at 1 and keep refreshing the debuff until the target player lands, delaying the start of the attack phase
             if (Target.velocity.Y != 0 && AttackModeCounter == 2)
             {
-                AttackModeCounter = 1;               
+                AttackModeCounter = 1;
             }
 
             //Once the attack properly begins, refresh the debuff, teleport in front of the player, and prepare to dash
@@ -849,9 +846,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 DarkCloudParticleEffect(5);
             }
-            
+
             //Prevent it from moving along the y-axis for the duration of the attack
-            if(AttackModeCounter >= 3 && AttackModeCounter <= 210)
+            if (AttackModeCounter >= 3 && AttackModeCounter <= 210)
             {
                 NPC.velocity.Y = 0;
             }
@@ -861,7 +858,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 ChargingParticleEffect(AttackModeCounter - 3, 57);
             }
-            
+
             //Dash at the player. Once past them, slow down and chill for a moment.
             if (AttackModeCounter >= 60 && AttackModeCounter <= 150)
             {
@@ -904,7 +901,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             //Pick and store a point 505 units above the player (the extra 5 is to reduce how often it clips into the ground mid-slam, because terraria's (XNA's?) collision is hot garbage)
-            if(AttackModeCounter == 180)
+            if (AttackModeCounter == 180)
             {
                 targetPoint = Target.Center;
                 targetPoint.Y -= 505;
@@ -961,7 +958,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     ChargingParticleEffect((int)AttackModeCounter - 240, 20);
 
                     slamVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 20);
-                    
+
                     //Do not change X velocity if it would cause dark cloud to change directions mid-slam
                     if ((slamVelocity.X > 0 && NPC.velocity.X >= 0) || (slamVelocity.X < 0 && NPC.velocity.X <= 0))
                     {
@@ -971,16 +968,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         {
                             NPC.velocity = slamVelocity;
                         }
-                    }               
+                    }
 
                     NPC.velocity.Y = (AttackModeCounter - 240) / 1.5f;
                     if (NPC.velocity.Y > 35)
                     {
                         NPC.velocity.Y = 35;
                     }
-                }    
-                
-                if(NPC.velocity.X > 0)
+                }
+
+                if (NPC.velocity.X > 0)
                 {
                     NPC.direction = 1;
                 }
@@ -1006,7 +1003,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             //Telegraph teleport
-            if(AttackModeCounter > 330 && AttackModeCounter < 360)
+            if (AttackModeCounter > 330 && AttackModeCounter < 360)
             {
                 Vector2 warp = Target.Center;
                 warp.X += backstabOffset * Target.direction * -1;
@@ -1018,7 +1015,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             //Teleport behind the player
             if (AttackModeCounter == 360)
-            {               
+            {
                 Vector2 warp = Target.Center;
                 warp.X += backstabOffset * Target.direction * -1;
                 NPC.Center = warp;
@@ -1039,7 +1036,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             //Teleport behind the player again
             if (AttackModeCounter == 480)
-            {                
+            {
                 Vector2 warp = Target.Center;
                 warp.X += backstabOffset * Target.direction * -1;
                 NPC.Center = warp;
@@ -1047,7 +1044,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 DarkCloudParticleEffect(5);
             }
 
-            
+
             //Teleport above player
             if (AttackModeCounter == 600)
             {
@@ -1085,17 +1082,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                             {
                                 offset = Main.rand.NextVector2CircularEdge(i, i);
                             }
-                            
+
                             Vector2 velocity = new Vector2(7, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
-                            Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity * 5, Scale: 5).noGravity = true;                         
+                            Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, velocity * 5, Scale: 5).noGravity = true;
                         }
 
                         //Fire shockwave projectiles. This sorta has to be done here, not in Attack() like the other projectiles, because it's not time-based. When the NPC hits the ground depends on how far up it is.
                         //Just another way this attack is kinda sloppy and breaks the way I tried to set this boss up lol
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float projSpeed = 15;     
-                            for(int i = 0; i < 50; i++)
+                            float projSpeed = 15;
+                            for (int i = 0; i < 50; i++)
                             {
                                 Vector2 velocity = new Vector2(projSpeed, 0).RotatedByRandom(MathHelper.ToRadians(45));
                                 if (Main.rand.NextBool() == true)
@@ -1140,13 +1137,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             //End the attack phase
-            if(AttackModeCounter == 790)
+            if (AttackModeCounter == 790)
             {
                 ChangeAttacks();
             }
         }
 
-        
+
         float confinedBlastsRadius = 500;
         float currentBlastAngle = 0;
         void ConfinedBlastsMove()
@@ -1156,7 +1153,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Creates a safe region around the NPC, outside of which the player gets pulled in and eventually takes damage
             //Telegraph a series of blasts in different directions. Then fire them one by one with a 1 second delay
 
-            if(AttackModeCounter == 0)
+            if (AttackModeCounter == 0)
             {
                 TeleportToArenaCenter();
             }
@@ -1189,10 +1186,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Nuke grapples
             NukeGrapples();
 
-            
+
             float radius = Main.rand.Next((int)(confinedBlastsRadius + 2000 * (1 - intensity)), (int)(2000 + 2000 * (1 - intensity)));
             DarkCloudParticleEffect(-10, 100, radius);
-                
+
 
             //For each player in the list, check if they're out of the attack range. If so, pull them into it hard.
             float distance;
@@ -1260,12 +1257,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, dustVel, Scale: 5).noLight = true;
                         Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, -dustVel, Scale: 5).noLight = true;
                     }
-                    
+
                     //In-between each attack, nuke all dust that was telegraphing the previous one
                     //Hacky way to do this, but it works
-                    for(int i = 0; i < Main.maxDust; i++)
+                    for (int i = 0; i < Main.maxDust; i++)
                     {
-                        if(Main.dust[i].type == DustID.VenomStaff)
+                        if (Main.dust[i].type == DustID.VenomStaff)
                         {
                             Main.dust[i].active = false;
                             Main.dust[i].scale = 0;
@@ -1284,7 +1281,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, velocity, Scale: 2).noGravity = true;
                 }
             }
-            
+
             //Wait a second and a half to change attacks
             //Give the player time to move to a normal safe distance
             if (AttackModeCounter == 890)
@@ -1310,7 +1307,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     count++;
                     AttackModeCounter = 0;
                 }
-                if(count == 3)
+                if (count == 3)
                 {
                     AttackModeCounter = 0;
                     AttackModeTally = 1;
@@ -1332,7 +1329,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            if(AttackModeTally == 2)
+            if (AttackModeTally == 2)
             {
                 if (AttackModeCounter > 500)
                 {
@@ -1390,9 +1387,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (AttackModeCounter == 1200)
             {
-                for(int i = 0; i < Main.maxProjectiles; i++)
+                for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if(Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>())
+                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>())
                     {
                         for (int j = 0; j < 3; j++)
                         {
@@ -1418,7 +1415,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void AntiMatMove()
         {
             //Line up an Anti-Mat with a targeting laser, and spawn a handful of reflections around the player. After a delay, they open fire one by one.
-            if(AttackModeCounter % 300 == 0)
+            if (AttackModeCounter % 300 == 0)
             {
                 DarkCloudParticleEffect(-2);
 
@@ -1453,7 +1450,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (!laserList[i].initialized)
                 {
-                    laserList[i].LaserOrigin = NPC.Center;          
+                    laserList[i].LaserOrigin = NPC.Center;
                     laserList[i].TelegraphTime = 99999;
                     laserList[i].LaserLength = 4000;
                     //Forbidden secret color "half red"
@@ -1482,9 +1479,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 
             if (AttackModeCounter == 1200)
-            {                
+            {
                 ChangeAttacks();
-            }            
+            }
         }
 
         float slashesWarpRadius = 750;
@@ -1502,12 +1499,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 NPC.direction = -1;
-            }            
+            }
 
             //Skip the first one to give players time to react
             if (AttackModeCounter % 80 == 0 && AttackModeCounter != 80)
-            {                
-                DarkCloudParticleEffect(-2); 
+            {
+                DarkCloudParticleEffect(-2);
                 if (AttackModeCounter > 70)
                 {
                     NPC.Center = nextWarpPoint;
@@ -1521,7 +1518,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
             }
 
-            for(int i = 0; i < 50; i++)
+            for (int i = 0; i < 50; i++)
             {
                 Dust.NewDustPerfect(nextWarpPoint + Main.rand.NextVector2Circular(30, 60), DustID.ShadowbeamStaff, Main.rand.NextVector2CircularEdge(3, 3));
             }
@@ -1568,8 +1565,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(-0.5f, -0.5f), ModContent.ProjectileType<DarkCloudDragoonLance>(), dragoonLanceDamage, 0.5f, Main.myPlayer, 20);
                 DarkCloudParticleEffect(5, 15);
             }
-        }        
-        
+        }
+
         void DivineSparkAttack()
         {
             //Since most laser code has to be run both client and server side, this is just a placeholder.
@@ -1583,7 +1580,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + Main.rand.NextVector2CircularEdge(darkFlowRadius, darkFlowRadius), Vector2.Zero, ModContent.ProjectileType<DarkFlow>(), darkFlowDamage, 0.5f, Main.myPlayer, NPC.whoAmI, 1200 - AttackModeCounter);
             }
         }
-        
+
         void DivineSparkThirdsAttack()
         {
 
@@ -1591,7 +1588,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         void UltimaWeaponAttack()
         {
-            if(AttackModeCounter == 3)
+            if (AttackModeCounter == 3)
             {
                 //Spawn the sword.
                 //That's it. The rest of it happens within the sword's ai.
@@ -1628,7 +1625,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         //diff < pi / 4 means they're in the counter-clockwise half of one of them. diff > 3pi / 4 means they're in the clockwise half of the other.
                         float posDiff = Math.Abs(posAngle - workingAngle);
                         if (posDiff < MathHelper.PiOver4 || posDiff > (MathHelper.Pi - MathHelper.PiOver4))
-                        {                            
+                        {
                             if (Vector2.DistanceSquared(NPC.Center, p.Center) < confinedBlastsRadius * confinedBlastsRadius)
                             {
                                 float damage = confinedBlastDamage;
@@ -1654,7 +1651,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float count = 0;
         void FreezeBoltsAttack()
         {
-            if (AttackModeTally == 0) {
+            if (AttackModeTally == 0)
+            {
                 if ((AttackModeCounter - 40) % 20 == 0 && AttackModeCounter < 80 && count < 2)
                 {
                     float boltCount = 16;
@@ -1666,10 +1664,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         attackVel = attackVel.RotatedBy(MathHelper.TwoPi * (i / boltCount) + MathHelper.ToRadians(15 * tally));
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                     }
-                }                
+                }
             }
 
-            if (AttackModeTally == 1) {
+            if (AttackModeTally == 1)
+            {
                 float boltCount = 100;
                 int speed = 8;
                 //Store the angle 120 degrees counter clockwise of the target's current position
@@ -1681,7 +1680,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     attackAngle += MathHelper.ToRadians((180f / boltCount) * ((AttackModeCounter - 120) / 120f));
                     Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle);
-                    for(int i = 0; i < 5; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(i * MathHelper.TwoPi / 5), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                     }
@@ -1704,14 +1703,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if ((step % 5 == 0) && step < 25)
                     {
-                        count++; 
+                        count++;
                         Vector2 attackVel = new Vector2(speed, 0).RotatedBy(attackAngle + MathHelper.ToRadians(15 * count));
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(-MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel, ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, attackVel.RotatedBy(MathHelper.PiOver4), ModContent.ProjectileType<DarkFreezeBolt>(), freezeBoltDamage, 0.5f, Main.myPlayer);
 
                     }
-                }                
+                }
             }
         }
 
@@ -1739,12 +1738,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
                 //Vector2 projVelocity = UsefulFunctions.BallisticTrajectory(npc.Center, Target.Center, 10, 0.05f, true);
-                
+
             }
         }
 
         void AntiMatAttack()
-        {            
+        {
             if (AttackModeCounter % 300 == 15)
             {
                 for (int i = 0; i < 7; i++)
@@ -1752,7 +1751,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     Vector2 pos = Main.rand.NextVector2CircularEdge(700, 700) + Target.Center;
                     NPC.NewNPC(NPC.GetSource_FromAI(), (int)pos.X, (int)pos.Y, ModContent.NPCType<DarkCloudMirror>(), 0, DarkCloudAttackID.AntiMat, 60 + Main.rand.NextFloat(150));
                 }
-            }            
+            }
 
             if (AttackModeCounter % 300 == 299)
             {
@@ -1763,16 +1762,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         void TeleportingSlashesAttack()
-        {            
+        {
             if (AttackModeCounter == 0)
             {
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloudAttackID.TeleportingSlashes);
 
                 Vector2 spawnPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
-            } 
+            }
             if (AttackModeCounter % 20 == 0)
-            {                
+            {
                 Vector2 spawnPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
             }
@@ -1788,7 +1787,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void ChangePhases()
         {
             if (!changingPhases)
-            {                
+            {
                 InitializeMoves();
                 if (testAttack == -1)
                 {
@@ -1861,7 +1860,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 NPC.life = NPC.lifeMax;
                 changingPhases = false;
                 NPC.dontTakeDamage = false;
-                firstPhase = false;              
+                firstPhase = false;
             }
             phaseChangeCounter++;
         }
@@ -1893,7 +1892,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //The dust ring particle effect the boss uses
         void DarkCloudParticleEffect(float dustSpeed, float dustAmount = 50, float radius = 64)
         {
-            for(int i = 0; i < dustAmount; i++)
+            for (int i = 0; i < dustAmount; i++)
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius);
                 Vector2 velocity = new Vector2(dustSpeed, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
@@ -1945,10 +1944,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        static Texture2D darkCloudTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud"); 
+        static Texture2D darkCloudTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if(darkCloudTexture == null || darkCloudTexture.IsDisposed)
+            if (darkCloudTexture == null || darkCloudTexture.IsDisposed)
             {
                 darkCloudTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/SuperHardMode/DarkCloud");
             }
@@ -1959,11 +1958,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            for (float i = TRAIL_LENGTH - 1; i >= 0 ; i--)
+            for (float i = TRAIL_LENGTH - 1; i >= 0; i--)
             {
                 Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
             }
-           
+
             return true;
         }
 
@@ -2026,12 +2025,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
-            {                
+            {
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
                 Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
+                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;
             }
-            
+
 
             Rectangle sourceRectangle = new Rectangle(0, 0, antimatTexture.Width, antimatTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
@@ -2049,7 +2048,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float targetPoint = arrowRainTargetingVector.ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 80 == 20))
             {
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 20; i++)
+                {
                     Vector2 thisVel = arrowRainTargetingVector + Main.rand.NextVector2Circular(10, 10);
                     Dust.NewDustPerfect(NPC.Center, DustID.FireworkFountain_Green, thisVel).noGravity = true;
                 }
@@ -2079,7 +2079,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 };
 
             ActiveMoveList = new List<DarkCloudMove>();
-            List<DarkCloudMove> TempList = DefaultList; 
+            List<DarkCloudMove> TempList = DefaultList;
 
             if (validMoves != null)
             {
@@ -2101,7 +2101,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool OnGround()
         {
             bool standing_on_solid_tile = false;
-           
+
             int y_below_feet = (int)(NPC.position.Y + (float)NPC.height + 8f) / 16;
             int x_left_edge = (int)NPC.position.X / 16;
             int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
@@ -2172,7 +2172,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
             Main.GlobalTimerPaused = true;
-            
+
 
             if (Main.expertMode)
             {
@@ -2200,11 +2200,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
 
-           
+
             player.AddBuff(BuffID.BrokenArmor, 120 / expertScale, false); //broken armor
             player.AddBuff(BuffID.OnFire, 180 / expertScale, false); //on fire!
             player.AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //defense goes time on every hit
-            
+
         }
         #endregion
 
@@ -2214,7 +2214,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public static int[,] HarpyStatues = new int[2, 2] { { 5824, 1764 }, { 5831, 1764 } };
         public static void ActuatePyramid()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
 
                 //Destroy Lanterns (doing it like this prevents tiles from doing annoying things like dropping an item or spawning a boss)
                 for (int i = 0; i < 9; i++)
@@ -2227,7 +2228,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         //WorldGen.KillTile(Lanterns[i, 0], Lanterns[i, 1] + 1, noItem: true);
                     }
                 }
-                
+
                 //Bulbs
                 for (int i = 0; i < 6; i++)
                 {
@@ -2243,18 +2244,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
 
                 //Harpy statues
-                for(int i = 0; i < 2; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1]].ClearTile();
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 1] .ClearTile();
-                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 2] .ClearTile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1]] .ClearTile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 1] .ClearTile();
-                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 2] .ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 1].ClearTile();
+                    Main.tile[HarpyStatues[i, 0], HarpyStatues[i, 1] - 2].ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1]].ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 1].ClearTile();
+                    Main.tile[HarpyStatues[i, 0] + 1, HarpyStatues[i, 1] - 2].ClearTile();
                 }
 
                 //Base of the pyramid
-                for (int x = 5697; x < 5937; x++) {
+                for (int x = 5697; x < 5937; x++)
+                {
                     for (int y = 1696; y < 1773; y++)
                     {
                         Wiring.ActuateForced(x, y);
@@ -2269,19 +2271,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         Wiring.ActuateForced(x, y);
                     }
                 }
-                
+
                 //Tip of the pyramid
                 for (int x = 5814; x < 5843; x++)
                 {
                     for (int y = 1638; y < 1653; y++)
-                    {                                                   
+                    {
                         Wiring.ActuateForced(x, y);
                     }
                 }
 
                 //Covering the gap on the left
-                int offset = 0; 
-                for (int y = 1773; y < 1777; y++)                    
+                int offset = 0;
+                for (int y = 1773; y < 1777; y++)
                 {
                     for (int x = 5740; x < 5748; x++)
                     {
@@ -3101,25 +3103,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)((NPC.width / 2 + 16) * NPC.direction)) / 16f); // 16 pix in front of edge
                                                                                                                                          //  create? 5 tile high stack in front
                 if (Main.tile[x_in_front, y_above_feet] == null)
-                    Main.tile[x_in_front, y_above_feet] .ClearTile();
+                    Main.tile[x_in_front, y_above_feet].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    Main.tile[x_in_front, y_above_feet - 1] .ClearTile();
+                    Main.tile[x_in_front, y_above_feet - 1].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    Main.tile[x_in_front, y_above_feet - 2] .ClearTile();
+                    Main.tile[x_in_front, y_above_feet - 2].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    Main.tile[x_in_front, y_above_feet - 3] .ClearTile();
+                    Main.tile[x_in_front, y_above_feet - 3].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    Main.tile[x_in_front, y_above_feet + 1] .ClearTile();
+                    Main.tile[x_in_front, y_above_feet + 1].ClearTile();
                 //  create? 2 other tiles farther in front
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1] .ClearTile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
 
                 if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1] .ClearTile();
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
 
                 if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tile[x_in_front, y_above_feet - 1].TileType == 10 && can_pass_doors)
                 { // tile in front is active, is door and NPC can pass doors: trying to break door
@@ -3379,5 +3381,5 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             public const short Thunderstorm = 10;
             public const short DivineSparkThirds = 11;
         }
-    }    
+    }
 }

@@ -4,10 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellLightning4Ball : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellLightning4Ball : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.penetrate = 1;
@@ -16,13 +19,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.timeLeft = 250;
             Projectile.aiStyle = 0;
         }
-        public override void AI() {
+        public override void AI()
+        {
             if (Projectile.ai[0] != 0)
             {
                 Projectile.timeLeft = (int)Projectile.ai[0];
                 Projectile.ai[0] = 0;
             }
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
+            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
+            {
                 Projectile.soundDelay = 10;
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
                 Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 9, 0.1f, 0.3f);
@@ -35,11 +40,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Main.dust[num47].noGravity = true;
 
 
-            if (Projectile.velocity.X != 0f || Projectile.velocity.Y != 0f) {
+            if (Projectile.velocity.X != 0f || Projectile.velocity.Y != 0f)
+            {
                 Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) - 2.355f;
             }
 
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
                 return;
             }

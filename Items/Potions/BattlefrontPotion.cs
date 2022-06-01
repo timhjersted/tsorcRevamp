@@ -2,16 +2,20 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class BattlefrontPotion : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    public class BattlefrontPotion : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Increases damage by 30%, critical strike chance " +
                              "\nby 6%, defense by 12, and swing speed by 20%." +
                               "\nAlso gives Thorns and Battle potion effects." +
                              "\nDoes not stack with Demon Drug, Armor Drug, or Strength Potions.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -41,7 +45,8 @@ namespace tsorcRevamp.Items.Potions {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BattlePotion, 1);
             recipe.AddIngredient(ItemID.ThornsPotion, 1);
@@ -52,7 +57,7 @@ namespace tsorcRevamp.Items.Potions {
             recipe.AddIngredient(ModContent.ItemType<ArmorDrugPotion>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DemonDrugPotion>(), 1);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

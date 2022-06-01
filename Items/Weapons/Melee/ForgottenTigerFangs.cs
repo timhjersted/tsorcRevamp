@@ -1,13 +1,17 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenTigerFangs : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenTigerFangs : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Long and extremely sharp fighting claws.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Cyan;
@@ -22,13 +26,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = PriceByRarity.Cyan_9;
             Item.width = 18;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ForgottenKaiserKnuckles").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

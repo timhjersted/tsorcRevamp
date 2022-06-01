@@ -1,13 +1,17 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenImpHalberd : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenImpHalberd : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A crescent shaped spear used by imps.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 60;
             Item.knockBack = 6;
             Item.DamageType = DamageClass.Melee;

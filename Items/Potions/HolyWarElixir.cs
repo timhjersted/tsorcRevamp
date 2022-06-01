@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    class HolyWarElixir : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    class HolyWarElixir : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Will make you invincible.\nCannot be used again for 60 seconds after wearing off.")
                 ;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.height = 62;
             Item.consumable = true;
             Item.height = 34;
@@ -27,14 +30,17 @@ namespace tsorcRevamp.Items.Potions {
             Item.buffTime = 600;
         }
 
-        public override bool CanUseItem(Player player) {
-            if (player.HasBuff(ModContent.BuffType<Buffs.ElixirCooldown>())) {
+        public override bool CanUseItem(Player player)
+        {
+            if (player.HasBuff(ModContent.BuffType<Buffs.ElixirCooldown>()))
+            {
                 return false;
             }
             return base.CanUseItem(player);
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.AddBuff(ModContent.BuffType<Buffs.ElixirCooldown>(), 4200);
             return base.UseItem(player);
         }

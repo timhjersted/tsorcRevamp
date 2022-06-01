@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class DunlendingAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class DunlendingAxe : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A cruel hill-man's axe fashioned to kill men" +
                  "\nDeals massive damage to humans");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 5;
             Item.width = 48;
             Item.height = 44;
@@ -22,9 +26,10 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.rare = ItemRarityID.White;
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
 
-            if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>() 
+            if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Warlock>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.TibianAmazon>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.TibianValkyrie>()
@@ -32,13 +37,16 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Enemies.Necromancer>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
-                ) {
+                )
+            {
                 damage *= 4; // *2 > *4, lets make it actually useful shall we
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>()) {
+            if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
+            {
                 damage *= 6;
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>()) {
+            if (target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>())
+            {
                 damage *= 4;
             }
         }

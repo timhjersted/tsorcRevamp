@@ -1,7 +1,6 @@
-﻿using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
-using tsorcRevamp.NPCs;
+using Terraria.ModLoader;
 
 
 namespace tsorcRevamp.Projectiles

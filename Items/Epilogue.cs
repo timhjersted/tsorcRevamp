@@ -1,10 +1,13 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class Epilogue : ModItem {
+namespace tsorcRevamp.Items
+{
+    class Epilogue : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Congratulations! You have unlocked the true ending of the game!" +
                                "\nHaving defeated Gwyn, the portal that Attraidies opened at the moment of his death has closed." +
                                "\nAt last, you can finally feel the energies of the corruption losing their hold on the world," +
@@ -14,7 +17,8 @@ namespace tsorcRevamp.Items {
                                "\nas the hero of the age. Centuries from now, elders will be telling your story. The story of Red Cloud.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.maxStack = 1;
             Item.width = 20;
             Item.height = 20;

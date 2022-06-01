@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Achievements;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -50,8 +47,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (Projectile.velocity.X <= 10 && Projectile.velocity.Y <= 10 && Projectile.velocity.X >= -10 && Projectile.velocity.Y >= -10)
             {
-           //     projectile.velocity.X *= 1.01f;
-           //     projectile.velocity.Y *= 1.01f;
+                //     projectile.velocity.X *= 1.01f;
+                //     projectile.velocity.Y *= 1.01f;
             }
         }
 

@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
+namespace tsorcRevamp.Items.Accessories
+{
     [AutoloadEquip(EquipType.Back)]
 
     public class DarkmoonCloak : ModItem
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ItemID.StarCloak, 1);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

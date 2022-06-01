@@ -1,7 +1,8 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
     class AncientWarhammer : ModItem
     {
         public override void SetStaticDefaults()
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(ItemID.TheBreaker, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

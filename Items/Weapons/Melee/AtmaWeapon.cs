@@ -2,16 +2,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class AtmaWeapon : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class AtmaWeapon : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword that draws power from the wielder.\n" +
                                 "The true form of your father's sword revealed.\n" +
                                 "Does 105 damage when at full health, and 80 damage at half health, scaling with current HP.");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.stack = 1;
             Item.rare = ItemRarityID.LightPurple;
@@ -29,13 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 58;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Excalibur, 1);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
@@ -43,7 +48,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         //Jk, it's just 50 (the damage boost) / 55 (the weapon's base damage). It's used to convert the damage boost we come up with into a fraction of the base damage, since that's what add
         //It would've been easier to just use flat, but then it would have worked strangely with multiplicitive damage boosts or debuffs...
         static float multiplier = 0.90909090909f;
-        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
+        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+        {
             //Get the player's health percentage
             add += ((float)player.statLife / (float)player.statLifeMax2) * multiplier * player.GetDamage(DamageClass.Melee);
         }

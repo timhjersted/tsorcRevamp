@@ -1,15 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
-using Terraria.GameContent.NetModules;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles;
-using tsorcRevamp.Projectiles.Enemy;
 using tsorcRevamp.Projectiles.Enemy.DarkCloud;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
@@ -79,14 +74,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         Vector2 nextWarpPoint = Vector2.Zero;
         public override void AI()
-        {            
+        {
             Lighting.AddLight(NPC.Center, Color.Blue.ToVector3() * 0.5f);
             UsefulFunctions.DustRing(NPC.Center, 32, DustID.ShadowbeamStaff);
 
             if (MirrorAttackType == DarkCloud.DarkCloudAttackID.AntiMat)
             {
                 AntiMatMove();
-                if(Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     AntiMatAttack();
                 }
@@ -95,14 +90,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.active = false;
                 }
             }
-            
+
             if (MirrorAttackType == DarkCloud.DarkCloudAttackID.TeleportingSlashes)
             {
                 TeleportingSlashes();
             }
             AttackModeCounter++;
-            
-        }       
+
+        }
 
         //These describe how the boss should move, and other things that should be done on every client to keep it deterministic
         #region Movements
@@ -114,7 +109,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             List<GenericLaser> laserList = GenericLaser.GetLasersByID(GenericLaser.GenericLaserID.AntiMatTargeting, NPC.whoAmI);
-            if(laserList.Count > 0)
+            if (laserList.Count > 0)
             {
                 GenericLaser thisLaser = laserList[0];
                 if (!thisLaser.initialized)
@@ -133,19 +128,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     thisLaser.LaserVolume = 0;
                 }
 
-                Vector2 offset;                
+                Vector2 offset;
                 offset = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 128).RotatedBy(MathHelper.ToRadians(90));
                 offset *= ((300 - AttackModeCounter) / 300);
                 offset = offset.RotatedBy(MathHelper.ToRadians(AttackModeCounter + (120)));
-                thisLaser.LaserTarget = Target.Center + offset;                
-            }            
+                thisLaser.LaserTarget = Target.Center + offset;
+            }
         }
         #endregion
 
         //These describe projectiles the boss should shoot, and other things that should *not* be done for every multiplayer client
         #region Attacks
         void AntiMatAttack()
-        {           
+        {
             if (AttackModeCounter == AttackModeLimit)
             {
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 7), ModContent.ProjectileType<DarkAntiMatRound>(), antiMatDamage / 2, 0.5f, Main.myPlayer);
@@ -170,8 +165,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             else
             {
                 NPC.direction = -1;
-            }           
-            if(AttackModeCounter == 0)
+            }
+            if (AttackModeCounter == 0)
             {
                 //nextWarpPoint = npc.Center;
                 //npc.Center = new Vector2(10, 10);
@@ -196,7 +191,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
                 }
                 NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
-            }           
+            }
 
             if (AttackModeCounter == 240)
             {
@@ -210,14 +205,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
-       
+
         #region Teleport Functions
         //These functions make the boss move to various places (and mainly exist so I don't have to rewrite the same teleporting code 100 times...)
         void TeleportBehindPlayer()
         {
             DarkCloudParticleEffect(-2);
             NPC.Center = Main.player[NPC.target].Center;
-            if (Main.player[NPC.target].direction == 1) {
+            if (Main.player[NPC.target].direction == 1)
+            {
                 NPC.position.X -= 128;
             }
             else
@@ -250,7 +246,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //The dust ring particle effect the boss uses
         void DarkCloudParticleEffect(float dustSpeed, float dustAmount = 50)
         {
-            for(int i = 0; i < dustAmount; i++)
+            for (int i = 0; i < dustAmount; i++)
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
                 Vector2 velocity = new Vector2(dustSpeed, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
@@ -306,12 +302,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             float targetPoint = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 1).ToRotation();
             if (!Main.gamePaused && (AttackModeCounter % 3 == 0))
-            {                
+            {
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
                 Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
+                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;
             }
-            
+
 
             Rectangle sourceRectangle = new Rectangle(0, 0, antimatTexture.Width, antimatTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
@@ -320,7 +316,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         #endregion
 
-        
+
 
         public override void OnKill()
         {

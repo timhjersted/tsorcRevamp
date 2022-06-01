@@ -1,15 +1,16 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles {
-    class UltimaExplosion : ModProjectile {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Projectiles
+{
+    class UltimaExplosion : ModProjectile
+    {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[Projectile.type] = 8;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 250;
             Projectile.height = 172;
             Projectile.aiStyle = 5;
@@ -20,13 +21,16 @@ namespace tsorcRevamp.Projectiles {
             Projectile.ignoreWater = true;
             Projectile.aiStyle = 5;
         }
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.frameCounter++;
-            if (Projectile.frameCounter > 3) {
+            if (Projectile.frameCounter > 3)
+            {
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= 8) {
+            if (Projectile.frame >= 8)
+            {
                 Projectile.Kill();
                 return;
             }

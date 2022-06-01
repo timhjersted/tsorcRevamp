@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.SoulofNight, 3);
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>()) 
+            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
                 || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>())
                 || player.meleeEnchant == 1
                 || player.meleeEnchant == 2

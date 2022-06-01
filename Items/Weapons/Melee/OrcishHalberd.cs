@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class OrcishHalberd : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class OrcishHalberd : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Does random damage from 0 to 32" +
                                 "\nMaximum damage is increased by damage modifiers.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 32;
             Item.width = 48;
             Item.height = 48;
@@ -24,7 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = 7000;
         }
 
-        public override void HoldItem(Player player) {
+        public override void HoldItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }

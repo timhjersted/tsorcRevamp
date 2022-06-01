@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class TheBlackenedFlames : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class TheBlackenedFlames : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Has a chance to drain enemies' health quickly");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -30,7 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.BlackFire>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.Fireblossom, 50);
@@ -38,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofNight, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 65000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

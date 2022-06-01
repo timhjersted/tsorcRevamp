@@ -1,28 +1,22 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using ReLogic.Content;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameInput;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Potions.PermanentPotions;
-using tsorcRevamp.Buffs;
-using System;
-using Microsoft.Xna.Framework.Input;
-using Terraria.GameContent.NetModules;
-using Terraria.Localization;
-using System.IO;
-using Microsoft.Xna.Framework.Graphics;
-using tsorcRevamp.UI;
-using Terraria.GameContent;
-using ReLogic.Content;
 
-namespace tsorcRevamp {
-    public class tsorcRevampWorld : ModSystem {
+namespace tsorcRevamp
+{
+    public class tsorcRevampWorld : ModSystem
+    {
 
         public static bool DownedVortex;
         public static bool DownedNebula;
@@ -36,9 +30,10 @@ namespace tsorcRevamp {
 
         public static List<Vector2> LitBonfireList;
 
-       
 
-        public override void OnWorldLoad() {
+
+        public override void OnWorldLoad()
+        {
             DownedVortex = false;
             DownedNebula = false;
             DownedStardust = false;
@@ -54,7 +49,8 @@ namespace tsorcRevamp {
             Tiles.SoulSkellyGeocache.InitializeSkellys();
         }
 
-        public override void SaveWorldData(TagCompound tag) {
+        public override void SaveWorldData(TagCompound tag)
+        {
             List<string> downed = new List<string>();
 
             if (DownedVortex)
@@ -70,7 +66,8 @@ namespace tsorcRevamp {
             if (SuperHardMode)
                 world_state.Add("SuperHardMode");
             //This saves the fact that SuperHardMode has been disabled
-            if (world_state.Contains("SuperHardMode") && !SuperHardMode) {
+            if (world_state.Contains("SuperHardMode") && !SuperHardMode)
+            {
                 world_state.Remove("SuperHardMode");
             }
             if (TheEnd)
@@ -84,7 +81,8 @@ namespace tsorcRevamp {
             tsorcScriptedEvents.SaveScriptedEvents(tag);
         }
 
-        public override void LoadWorldData(TagCompound tag) {
+        public override void LoadWorldData(TagCompound tag)
+        {
             LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
 
@@ -100,7 +98,8 @@ namespace tsorcRevamp {
             CustomMap = worldStateList.Contains("CustomMap");
 
             //Faisafe. Checks some blocks near the top of one of the Wyvern Mage's tower that are unlikely to change. Even if they do, this shouldn't be necessary though. It's purely to be safe.
-            if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197) {
+            if (Framing.GetTileSafely(7102, 137).TileType == 54 && Framing.GetTileSafely(7103, 137).TileType == 357 && Framing.GetTileSafely(7104, 136).TileType == 357 && Framing.GetTileSafely(7105, 136).TileType == 197)
+            {
                 CustomMap = true;
             }
 
@@ -108,25 +107,32 @@ namespace tsorcRevamp {
 
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
-                if (Main.tile[5810, 1670] != null) {
-                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated) {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                if (Main.tile[5810, 1670] != null)
+                {
+                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
+                    {
                         NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
                     }
                 }
             }
         }
 
-        private void SaveSlain(TagCompound tag) {
+        private void SaveSlain(TagCompound tag)
+        {
             tag.Add("type", Slain.Keys.ToList());
             tag.Add("value", Slain.Values.ToList());
         }
 
-        private void LoadSlain(TagCompound tag) {
-            if (tag.ContainsKey("type")) {
+        private void LoadSlain(TagCompound tag)
+        {
+            if (tag.ContainsKey("type"))
+            {
                 List<int> list = tag.Get<List<int>>("type");
                 List<int> list2 = tag.Get<List<int>>("value");
-                for (int i = 0; i < list.Count; i++) {
+                for (int i = 0; i < list.Count; i++)
+                {
                     Slain.Add(list[i], list2[i]);
                 }
             }
@@ -134,7 +140,7 @@ namespace tsorcRevamp {
 
         public override void NetSend(BinaryWriter writer)
         {
-            if(Main.netMode == NetmodeID.Server)
+            if (Main.netMode == NetmodeID.Server)
             {
                 writer.Write(CustomMap);
                 writer.Write(SuperHardMode);
@@ -178,7 +184,7 @@ namespace tsorcRevamp {
             }
 
             int bonfireSize = reader.ReadInt32();
-            if(LitBonfireList == null)
+            if (LitBonfireList == null)
             {
                 LitBonfireList = new List<Vector2>();
             }
@@ -193,25 +199,32 @@ namespace tsorcRevamp {
             }
         }
 
-        public static bool JustPressed(Keys key) {
+        public static bool JustPressed(Keys key)
+        {
             return Main.keyState.IsKeyDown(key) && !Main.oldKeyState.IsKeyDown(key);
         }
 
 
         #region CampfireToBonfire (Is also Skelly Loot Cache replacement code)
 
-        public static void CampfireToBonfire() {
+        public static void CampfireToBonfire()
+        {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            for (int x = 0; x < Main.maxTilesX - 2; x++) {
-                for (int y = 0; y < Main.maxTilesY - 2; y++) {
+            for (int x = 0; x < Main.maxTilesX - 2; x++)
+            {
+                for (int y = 0; y < Main.maxTilesY - 2; y++)
+                {
 
                     //Campfire to Bonfire
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Campfire) {
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.Campfire)
+                    {
 
                         //kill the space above the campfire, to remove vines and such
-                        for (int q = 0; q < 3; q++) {
-                            for (int w = -2; w < 2; w++) {
-                                WorldGen.KillTile(x + q, y + w, false, false, true);  
+                        for (int q = 0; q < 3; q++)
+                        {
+                            for (int w = -2; w < 2; w++)
+                            {
+                                WorldGen.KillTile(x + q, y + w, false, false, true);
                             }
                         }
                         Dust.QuickBox(new Vector2(x + 1, y + 1) * 16, new Vector2(x + 2, y + 2) * 16, 2, Color.YellowGreen, null);
@@ -221,26 +234,34 @@ namespace tsorcRevamp {
                         ushort type = (ushort)ModContent.TileType<Tiles.BonfireCheckpoint>();
                         //reimplement WorldGen.Place3x4 minus SolidTile2 checking because this game is fucked 
                         {
-                            if (x+1 < 5 || x + 1 > Main.maxTilesX - 5 || y + 1 < 5 || y + 1 > Main.maxTilesY - 5) {
+                            if (x + 1 < 5 || x + 1 > Main.maxTilesX - 5 || y + 1 < 5 || y + 1 > Main.maxTilesY - 5)
+                            {
                                 return;
                             }
                             bool flag = true;
-                            for (int i = x + 1 - 1; i < x + 1 + 2; i++) {
-                                for (int j = y + 1 - 3; j < y + 1 + 1; j++) {
-                                    if (Main.tile[i, j] == null) {
+                            for (int i = x + 1 - 1; i < x + 1 + 2; i++)
+                            {
+                                for (int j = y + 1 - 3; j < y + 1 + 1; j++)
+                                {
+                                    if (Main.tile[i, j] == null)
+                                    {
                                         Main.tile[i, j].ClearTile();
                                     }
-                                    if (Main.tile[i, j].HasTile) {
+                                    if (Main.tile[i, j].HasTile)
+                                    {
                                         flag = false;
                                     }
                                 }
-                                if (Main.tile[i, y + 1 + 1] == null) {
+                                if (Main.tile[i, y + 1 + 1] == null)
+                                {
                                     Main.tile[i, y + 1 + 1].ClearTile();
                                 }
                             }
-                            if (flag) {
+                            if (flag)
+                            {
                                 int num = style * 54;
-                                for (int k = -3; k <= 0; k++) {
+                                for (int k = -3; k <= 0; k++)
+                                {
                                     short frameY = (short)((3 + k) * 18);
                                     Tile tile = Main.tile[x + 1 - 1, y + 1 + k];
                                     tile.HasTile = true;
@@ -264,7 +285,7 @@ namespace tsorcRevamp {
                     }
 
                     //Slime blocks to SkullLeft - SlimeBlock-PinkSlimeBlock (I tried to stick right and lefts together but the code refuses to work for both, I swear I'm not just being dumb) 
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.PinkSlimeBlock && Main.tile[x - 1, y].TileType == TileID.SlimeBlock) 
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == TileID.PinkSlimeBlock && Main.tile[x - 1, y].TileType == TileID.SlimeBlock)
                     {
 
                         //kill the space the skull occupies, to remove vines and such
@@ -280,25 +301,32 @@ namespace tsorcRevamp {
                         int style = 0;
                         ushort type = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
                         //reimplement WorldGen.Place2x2 minus SolidTile2 checking
-                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5) {
+                        if (x < 5 || x > Main.maxTilesX - 5 || y < 5 || y > Main.maxTilesY - 5)
+                        {
                             return;
                         }
                         short num = 0;
                         bool flag = true;
-                        for (int i = x - 1; i < x + 1; i++) {
-                            for (int j = y - 1; j < y + 1; j++) {
-                                if (Main.tile[i, j] == null) {
+                        for (int i = x - 1; i < x + 1; i++)
+                        {
+                            for (int j = y - 1; j < y + 1; j++)
+                            {
+                                if (Main.tile[i, j] == null)
+                                {
                                     Main.tile[i, j].ClearTile();
                                 }
-                                if (Main.tile[i, j].HasTile) {
+                                if (Main.tile[i, j].HasTile)
+                                {
                                     flag = false;
                                 }
                             }
-                            if (Main.tile[i, y + 1] == null) {
+                            if (Main.tile[i, y + 1] == null)
+                            {
                                 Main.tile[i, y + 1].ClearTile();
                             }
                         }
-                        if (flag) {
+                        if (flag)
+                        {
                             short num2 = (short)(36 * style);
                             Tile tile = Main.tile[x - 1, y - 1];
                             tile.HasTile = true;
@@ -616,8 +644,10 @@ namespace tsorcRevamp {
 
                 }
             }
-            for (int i = 0; i < 400; i++) {
-                if (Main.item[i].type == ItemID.Campfire && Main.item[i].active) {
+            for (int i = 0; i < 400; i++)
+            {
+                if (Main.item[i].type == ItemID.Campfire && Main.item[i].active)
+                {
                     Main.item[i].active = false; //delete ground items (in this case campfires)
                 }
             }
@@ -704,7 +734,7 @@ namespace tsorcRevamp {
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
                             Main.worldID = Main.rand.Next(9999999);
-                        }                        
+                        }
 
                         //Spawn in NPCs
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
@@ -745,7 +775,7 @@ namespace tsorcRevamp {
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4176;
                             Main.npc[npc].homeTileY = 690;
-                        }                        
+                        }
                     }
                 }
                 else
@@ -765,49 +795,62 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void PostUpdateEverything() {
+        public override void PostUpdateEverything()
+        {
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 CampfireToBonfire();
             bool charm = false;
-            foreach (Player p in Main.player) {
-                for (int i = 3; i <= 8; i++) {
-                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>()) {
+            foreach (Player p in Main.player)
+            {
+                for (int i = 3; i <= 8; i++)
+                {
+                    if (p.armor[i].type == ModContent.ItemType<Items.Accessories.CovenantOfArtorias>())
+                    {
                         charm = true;
                         break;
                     }
                 }
             }
-            if (charm) {
+            if (charm)
+            {
                 Main.bloodMoon = true;
                 Main.moonPhase = 0;
                 Main.dayTime = false;
                 Main.time = 16240.0;
-                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer) {
+                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
+                {
                     //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
                     NetMessage.SendData(MessageID.WorldData);
                 }
 
             }
-            if (!Main.dedServ) {
-                if (SuperHardMode) {
-                    for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+            if (!Main.dedServ)
+            {
+                if (SuperHardMode)
+                {
+                    for (int i = 0; i < TextureAssets.Moon.Length; i++)
+                    {
                         TextureAssets.Moon[i] = SHMMoon;
                     }
                     TextureAssets.Sun = SHMSun1;
                     TextureAssets.Sun2 = SHMSun2;
                     TextureAssets.Sun3 = SHMSun3;
                 }
-                if (TheEnd) { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
+                if (TheEnd)
+                { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
                     TextureAssets.Sun = VanillaSun1;
                     TextureAssets.Sun2 = VanillaSun2;
                     TextureAssets.Sun3 = VanillaSun3;
-                    if (VanillaMoonTextures == null) {
+                    if (VanillaMoonTextures == null)
+                    {
                         VanillaMoonTextures = new List<Asset<Texture2D>>();
-                        for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                        for (int i = 0; i < TextureAssets.Moon.Length; i++)
+                        {
                             VanillaMoonTextures.Add(ModContent.Request<Texture2D>("Terraria/Moon_" + i));
                         }
                     }
-                    for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                    for (int i = 0; i < TextureAssets.Moon.Length; i++)
+                    {
                         TextureAssets.Moon[i] = VanillaMoonTextures[i];
                     }
                 }
@@ -828,7 +871,7 @@ namespace tsorcRevamp {
                 UsefulFunctions.BroadcastText("You have vanquished the final guardian...", c);
                 UsefulFunctions.BroadcastText("The portal from The Abyss remains closed. All is at peace...", c);
             }
-            
+
             //These are outside of the if statements just so players can still disable hardmode or superhardmode if they happen to activate them again.
             Main.hardMode = false;
             tsorcRevampWorld.SuperHardMode = false;
@@ -865,7 +908,7 @@ namespace tsorcRevamp {
         {
             get
             {
-                if(Slain == null)
+                if (Slain == null)
                 {
                     return 0;
                 }

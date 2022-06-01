@@ -2,9 +2,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class DragoonGear : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class DragoonGear : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Gear worn by Dragoons.\n" +
                                 "200% melee damage if falling.\n" +
                                 "No damage from falling.\n" +
@@ -13,7 +16,8 @@ namespace tsorcRevamp.Items.Accessories {
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.width = 32;
             Item.height = 26;
@@ -23,7 +27,8 @@ namespace tsorcRevamp.Items.Accessories {
             Item.value = PriceByRarity.Purple_11;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonBoots").Type, 1);
@@ -31,11 +36,12 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.noFallDmg = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragoonHorn = true;
             player.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;

@@ -1,24 +1,27 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    public class CernosPrime : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    public class CernosPrime : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Fires three arrows. \nHold FIRE to charge. \nArrows are faster and more accurate when the bow is charged.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.CernosPrimeHeld>();
             Item.channel = true;
 
-            Item.damage = 795; 
+            Item.damage = 795;
             Item.width = 24;
             Item.height = 48;
-            Item.useTime = 48; 
+            Item.useTime = 48;
             Item.useAnimation = 48;
             Item.reuseDelay = 4;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -36,11 +39,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         }
 
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.CernosPrimeHeld>()] <= 0;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<SagittariusBow>(), 1);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 15);
@@ -48,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 30);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 300000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

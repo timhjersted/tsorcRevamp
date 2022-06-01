@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Muramassa : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Muramassa : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword crafted for magic users" +
                                "\nDeals +1 damage for every 20 mana the user has over 200" +
                                "\nCan be upgraded with 25,000 Dark Souls & 3 Souls of Light");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 48;
             Item.height = 48;
             Item.useAnimation = 18;
@@ -29,12 +33,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shootSpeed = 11f;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Muramasa, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

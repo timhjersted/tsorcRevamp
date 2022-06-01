@@ -4,7 +4,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -13,7 +12,7 @@ namespace tsorcRevamp.NPCs.Enemies
         //AI 
         bool slashing = false;
         bool jumpSlashing = false;
-        bool shielding = false; 
+        bool shielding = false;
 
 
         //Anim
@@ -197,109 +196,109 @@ namespace tsorcRevamp.NPCs.Enemies
 
             #region check if standing on a solid tile
             bool standing_on_solid_tile = false;
-                if (NPC.velocity.Y == 0f) // no jump/fall
+            if (NPC.velocity.Y == 0f) // no jump/fall
+            {
+                int x_left_edge = (int)NPC.position.X / 16;
+                int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
+                for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
                 {
-                    int x_left_edge = (int)NPC.position.X / 16;
-                    int x_right_edge = (int)(NPC.position.X + (float)NPC.width) / 16;
-                    for (int l = x_left_edge; l <= x_right_edge; l++) // check every block under feet
-                    {
-                        if (Main.tile[l, y_below_feet] == null) // null tile means ??
-                            return;
+                    if (Main.tile[l, y_below_feet] == null) // null tile means ??
+                        return;
 
-                        if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
-                        {
-                            standing_on_solid_tile = true;
-                            break; // one is enough so stop checking
-                        }
-                    } // END traverse blocks under feet
-                } // END no jump/fall
-                #endregion
+                    if (Main.tile[l, y_below_feet].HasTile && Main.tileSolid[(int)Main.tile[l, y_below_feet].TileType]) // tile exists and is solid
+                    {
+                        standing_on_solid_tile = true;
+                        break; // one is enough so stop checking
+                    }
+                } // END traverse blocks under feet
+            } // END no jump/fall
+            #endregion
 
             #region new Tile()s, jumping
-                if (standing_on_solid_tile && !slashing && !shielding && !jumpSlashing)  //  if standing on solid tile
+            if (standing_on_solid_tile && !slashing && !shielding && !jumpSlashing)  //  if standing on solid tile
+            {
+                int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
+                int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
+
+                if (NPC.position.Y > player.position.Y + 3 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 4f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                 {
-                    int x_in_front = (int)((NPC.position.X + (float)(NPC.width / 2) + (float)(15 * NPC.direction)) / 16f); // 15 pix in front of center of mass
-                    int y_above_feet = (int)((NPC.position.Y + (float)NPC.height - 15f) / 16f); // 15 pix above feet
-
-                    if (NPC.position.Y > player.position.Y + 3 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 4f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
-                    {
-                        slashing = true;
-                        NPC.ai[3] = 20;
-                        NPC.velocity.Y = -8f; // jump with power 8 if directly under player
-                        NPC.netUpdate = true;
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 1] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 1].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 2] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 2].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet - 3] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet - 3].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front, y_above_feet + 1] == null)
-                    {
-                        Main.tile[x_in_front, y_above_feet + 1].ClearTile();
-                    }
-                    //  create? 2 other tiles farther in front
-                    if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
-                    {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
-                    }
-
-                    if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
-                    {
-                        Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
-                    }
-
-                    else // standing on solid tile but not in front of a passable door
-                    {
-                        if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
-                        {  //  moving forward
-                            if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
-                            { // 3 blocks above ground level(head height) blocked
-                                if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
-                                { // 4 blocks above ground level(over head) blocked
-                                    NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
-                                    NPC.netUpdate = true;
-                                }
-                                else
-                                {
-                                    NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
-                                    NPC.netUpdate = true;
-                                }
-                            } // for everything else, head height clear:
-                            else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
-                            { // 2 blocks above ground level(mid body height) blocked
-                                NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
-                            { // 1 block above ground level(foot height) blocked
-                                NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
-                                NPC.netUpdate = true;
-                            }
-                            else if (NPC.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
-                            { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
-                                NPC.velocity.Y = -8f; // jump with power 8
-                                NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
-                                NPC.netUpdate = true;
-                            }
-                        } // END moving forward, still: standing on solid tile but not in front of a passable door
-                    }
+                    slashing = true;
+                    NPC.ai[3] = 20;
+                    NPC.velocity.Y = -8f; // jump with power 8 if directly under player
+                    NPC.netUpdate = true;
                 }
+
+                if (Main.tile[x_in_front, y_above_feet] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet - 1] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet - 1].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet - 2] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet - 2].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet - 3] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet - 3].ClearTile();
+                }
+
+                if (Main.tile[x_in_front, y_above_feet + 1] == null)
+                {
+                    Main.tile[x_in_front, y_above_feet + 1].ClearTile();
+                }
+                //  create? 2 other tiles farther in front
+                if (Main.tile[x_in_front + NPC.direction, y_above_feet - 1] == null)
+                {
+                    Main.tile[x_in_front + NPC.direction, y_above_feet - 1].ClearTile();
+                }
+
+                if (Main.tile[x_in_front + NPC.direction, y_above_feet + 1] == null)
+                {
+                    Main.tile[x_in_front + NPC.direction, y_above_feet + 1].ClearTile();
+                }
+
+                else // standing on solid tile but not in front of a passable door
+                {
+                    if ((NPC.velocity.X < 0f && NPC.spriteDirection == -1) || (NPC.velocity.X > 0f && NPC.spriteDirection == 1))
+                    {  //  moving forward
+                        if (Main.tile[x_in_front, y_above_feet - 2].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 2].TileType])
+                        { // 3 blocks above ground level(head height) blocked
+                            if (Main.tile[x_in_front, y_above_feet - 3].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 3].TileType])
+                            { // 4 blocks above ground level(over head) blocked
+                                NPC.velocity.Y = -8f; // jump with power 8 (for 4 block steps)
+                                NPC.netUpdate = true;
+                            }
+                            else
+                            {
+                                NPC.velocity.Y = -7f; // jump with power 7 (for 3 block steps)
+                                NPC.netUpdate = true;
+                            }
+                        } // for everything else, head height clear:
+                        else if (Main.tile[x_in_front, y_above_feet - 1].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet - 1].TileType])
+                        { // 2 blocks above ground level(mid body height) blocked
+                            NPC.velocity.Y = -6f; // jump with power 6 (for 2 block steps)
+                            NPC.netUpdate = true;
+                        }
+                        else if (Main.tile[x_in_front, y_above_feet].HasTile && Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet].TileType])
+                        { // 1 block above ground level(foot height) blocked
+                            NPC.velocity.Y = -5f; // jump with power 5 (for 1 block steps)
+                            NPC.netUpdate = true;
+                        }
+                        else if (NPC.directionY < 0 && (!Main.tile[x_in_front, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front, y_above_feet + 1].TileType]) && (!Main.tile[x_in_front + NPC.direction, y_above_feet + 1].HasTile || !Main.tileSolid[(int)Main.tile[x_in_front + NPC.direction, y_above_feet + 1].TileType]))
+                        { // rising? & jumps gaps & no solid tile ahead to step on for 2 spaces in front
+                            NPC.velocity.Y = -8f; // jump with power 8
+                            NPC.velocity.X = NPC.velocity.X * 1.5f; // jump forward hard as well; we're trying to jump a gap
+                            NPC.netUpdate = true;
+                        }
+                    } // END moving forward, still: standing on solid tile but not in front of a passable door
+                }
+            }
 
             #endregion
 
@@ -361,7 +360,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -60), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 18, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
-                            else 
+                            else
                             {
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(14, -20), new Vector2(0, 4f), ModContent.ProjectileType<Projectiles.Enemy.MediumWeaponSlash>(), 18, 5, Main.myPlayer, NPC.whoAmI, 0);
                             }
@@ -560,9 +559,9 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
-                #endregion
+            #endregion
         }
-        
+
 
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -774,32 +773,32 @@ namespace tsorcRevamp.NPCs.Enemies
                 return chance;
             }
 
-                if (spawnInfo.Water) return 0f;
-                if (spawnInfo.Player.ZoneGlowshroom) return 0f;
+            if (spawnInfo.Water) return 0f;
+            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
 
-                if (spawnInfo.Player.townNPCs > 1f) return 0f;
+            if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
-                if (Main.hardMode && spawnInfo.Lihzahrd) return 0.18f;
+            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.18f;
 
-                if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.23f;
-                if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.25f;
-                if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert) return 0.13f;
-                if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneUnderworldHeight) return 0.16f; //.08% is 4.28%
+            if (tsorcRevampWorld.SuperHardMode && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneUnderworldHeight)) return 0.23f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && !(Ocean || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.25f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert) return 0.13f;
+            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneUnderworldHeight) return 0.16f; //.08% is 4.28%
 
-                if (Main.expertMode && Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
+            if (Main.expertMode && Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
 
-                if (Main.expertMode && Main.bloodMoon && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
+            if (Main.expertMode && Main.bloodMoon && (NPC.downedBoss2 || NPC.downedBoss3)) return chance = 0.03f;
 
-                if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.035f;
-                if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.075f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.Player.ZoneOverworldHeight && Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.035f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.075f;
 
-                if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.06f;
-                if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.08f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && Main.dayTime && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.06f;
+            if ((NPC.downedBoss2 || NPC.downedBoss3) && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) && !Main.dayTime && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.08f;
 
-                if (NPC.downedBoss2 || NPC.downedBoss3 && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.025f;
+            if (NPC.downedBoss2 || NPC.downedBoss3 && !(Ocean || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return chance = 0.025f;
 
-                return chance;
-            
+            return chance;
+
         }
 
         public override void OnKill()

@@ -1,14 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class BoostPotion : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    public class BoostPotion : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Increases critical strike chance by 5%");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -23,7 +27,8 @@ namespace tsorcRevamp.Items.Potions {
             Item.buffType = ModContent.BuffType<Buffs.Boost>();
             Item.buffTime = 14400;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BattlePotion, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);

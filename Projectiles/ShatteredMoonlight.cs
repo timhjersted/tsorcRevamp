@@ -144,7 +144,7 @@ namespace tsorcRevamp.Projectiles
                 dust2.velocity *= 0;
                 dust2.noGravity = true;
             }
-            
+
             return false;
         }
 
@@ -183,7 +183,7 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Color alphalowered = Color.White * .4f;
             Texture2D textureGlow = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ShatteredMoonlightGlowmask];
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0f);

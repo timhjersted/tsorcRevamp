@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -65,7 +64,7 @@ namespace tsorcRevamp.Projectiles
                         int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 156, Projectile.velocity.X * 0f, Projectile.velocity.Y * 0f, 30, default(Color), .6f);
                         Main.dust[dust].noGravity = true;
                     }
-                }                
+                }
             }
         }
         public override bool? CanDamage()

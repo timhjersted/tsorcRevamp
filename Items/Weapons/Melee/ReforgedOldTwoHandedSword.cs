@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ReforgedOldTwoHandedSword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ReforgedOldTwoHandedSword : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldTwoHandedSword";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 25; //it's post EoC
             Item.width = 50;
             Item.height = 50;
@@ -19,11 +22,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.useTime = 30;
             Item.value = 15000;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldTwoHandedSword").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            
+
             recipe.Register();
         }
     }

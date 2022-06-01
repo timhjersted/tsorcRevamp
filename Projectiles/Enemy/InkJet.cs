@@ -1,17 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class InkJet : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class InkJet : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.timeLeft = 90;
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         {
             Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3());
             if (Main.GameUpdateCount % 4 == 0)
-            {                
+            {
                 Dust thisDust = Main.dust[Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Asphalt, Projectile.velocity.X, Projectile.velocity.Y, 0, new Color(), 4)];
                 thisDust.noGravity = true;
 
@@ -33,7 +34,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
             int buffLengthMod = 1;
             if (Main.expertMode)
             {

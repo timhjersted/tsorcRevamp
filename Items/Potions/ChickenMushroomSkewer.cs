@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Potions
             recipe.AddIngredient(Mod.Find<ModItem>("DeadChicken").Type, 1);
             recipe.AddIngredient(ItemID.PixieDust, 1);
             recipe.AddTile(TileID.Campfire);
-            
+
             recipe.Register();
         }
     }

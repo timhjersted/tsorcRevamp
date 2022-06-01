@@ -1,18 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class FlameJet : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class FlameJet : ModProjectile
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[Projectile.type] = 5;
         }
 
-        public override void SetDefaults() {
-            
+        public override void SetDefaults()
+        {
+
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.penetrate = 50;
@@ -23,7 +26,8 @@ namespace tsorcRevamp.Projectiles {
         }
 
         bool initialized = false;
-        public override void AI() {
+        public override void AI()
+        {
 
             if (!initialized)
             {
@@ -39,7 +43,7 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
 
-            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
             int segmentCount = Projectile.height / frameHeight;
             for (int i = 0; i < segmentCount; i++)
             {
@@ -56,11 +60,13 @@ namespace tsorcRevamp.Projectiles {
 
 
             Projectile.frameCounter++;
-            if (Projectile.frameCounter > 3) {
+            if (Projectile.frameCounter > 3)
+            {
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= 5) {
+            if (Projectile.frame >= 5)
+            {
                 Projectile.Kill();
                 return;
             }
@@ -90,7 +96,7 @@ namespace tsorcRevamp.Projectiles {
                     target.velocity = new Vector2(0, 10);
                 }
             }
-            
+
         }
 
         public static Texture2D flameJetTexture;
@@ -106,7 +112,7 @@ namespace tsorcRevamp.Projectiles {
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[projectile.type].Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, flameJetTexture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

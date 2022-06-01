@@ -1,8 +1,8 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -100,7 +100,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.ElectrosphereLauncher);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 125000);
             recipe.AddTile(TileID.MythrilAnvil);
-            
+
             recipe.Register();
 
         }

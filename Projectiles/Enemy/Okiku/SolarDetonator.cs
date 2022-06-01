@@ -4,10 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    public class SolarDetonator : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    public class SolarDetonator : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 0;
             Projectile.height = 16;
             Projectile.scale = 1.2f;
@@ -23,7 +26,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         const int LASER_COUNT = 6;
         int[] pickedDirections = new int[LASER_COUNT];
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation++;
 
             if (!spawnedLasers)
@@ -98,17 +102,18 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                     SolarLaser.MaxCharge = DetonationTime;
                 }
             }
-            
+
 
             //The closer it gets to detonating the more dust it spawns, up to 10 per frame
             //Note: Integer division
-            for(int i = 0; i < (int)(10 * ((float)((float)DetonationTime - (float)Projectile.timeLeft) / (float)DetonationTime)); i++) {
+            for (int i = 0; i < (int)(10 * ((float)((float)DetonationTime - (float)Projectile.timeLeft) / (float)DetonationTime)); i++)
+            {
                 Vector2 dustOffset = Main.rand.NextVector2CircularEdge(DetonationRange, DetonationRange);
                 Vector2 dustVel = Main.rand.NextVector2CircularEdge(8, 8);
                 Vector2 dustPos = dustOffset + Projectile.Center;
                 int dustDir = dustOffset.X < 0 ? -1 : 1;
 
-                Dust.NewDustPerfect(dustPos, 6, new Vector2(5 * dustDir, 0), 250, Color.White, 1.0f).noGravity = true;                
+                Dust.NewDustPerfect(dustPos, 6, new Vector2(5 * dustDir, 0), 250, Color.White, 1.0f).noGravity = true;
                 Dust.NewDustPerfect(Projectile.Center, 127, dustVel, 250, Color.White, 2.0f).noGravity = true;
             }
         }
@@ -124,8 +129,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                     fireball.tileCollide = false;
                 }
             }
-            
-            
+
+
             for (int i = 0; i < 50; i++)
             {
                 Vector2 dustVel = Main.rand.NextVector2CircularEdge(8, 8);
@@ -147,7 +152,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

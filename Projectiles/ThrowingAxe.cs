@@ -3,11 +3,14 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class ThrowingAxe : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class ThrowingAxe : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/ThrowingAxe";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 2;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Melee;

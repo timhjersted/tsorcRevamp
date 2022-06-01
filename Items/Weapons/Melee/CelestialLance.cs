@@ -3,16 +3,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class CelestialLance : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class CelestialLance : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Celestial Lance");
             Tooltip.SetDefault("Celestial lance fabled to hold sway over the world.\nGains 50% attack damage while falling. \nAlso has random chance to cast a healing spell on each strike.");
         }
 
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 300;
             Item.knockBack = 10f;
 
@@ -37,21 +41,24 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         }
 
-        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
-            if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0) {
+        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+        {
+            if (player.gravDir == 1f && player.velocity.Y > 0 || player.gravDir == -1f && player.velocity.Y < 0)
+            {
                 mult = 1.5f;
             }
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Longinus").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
             recipe.AddIngredient(ItemID.FallenStar, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 240000);
-            
+
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

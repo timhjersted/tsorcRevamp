@@ -8,16 +8,16 @@ namespace tsorcRevamp.Items.Weapons.Melee
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/HeavensTear";
         public override void SetStaticDefaults()
-	{
-		DisplayName.SetDefault("Heaven's Tear II");
+        {
+            DisplayName.SetDefault("Heaven's Tear II");
             Tooltip.SetDefault("'Heaven splits with each swing'\n" +
                                 "Does 2x damage to mages and ghosts...");
 
-	}
+        }
 
         public override void SetDefaults()
         {
-            
+
             Item.width = 32;
             Item.height = 32;
             //item.pretendType=389;
@@ -51,11 +51,11 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 220000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
-        
-        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit )
+
+        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
         {
             //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
             if (npc.FullName == "Tim") damage *= 2;

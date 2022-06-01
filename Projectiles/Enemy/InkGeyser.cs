@@ -1,16 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class InkGeyser : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class InkGeyser : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 80;
             Projectile.height = 80;
             Projectile.timeLeft = 240;
@@ -25,11 +27,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
         {
             if (timer < 120)
             {
-                timer++;                
+                timer++;
             }
             else
             {
-                if(!targetSet)
+                if (!targetSet)
                 {
                     targetSet = true;
                     targetPos = Main.player[(int)Projectile.ai[0]].Center;
@@ -66,8 +68,9 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
         }
 
-       
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
             int buffLengthMod = 1;
             if (Main.expertMode)
             {

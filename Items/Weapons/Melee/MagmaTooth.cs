@@ -4,13 +4,17 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class MagmaTooth : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class MagmaTooth : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Chance to light enemies on fire.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 40;
             Item.height = 40;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -26,22 +30,26 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.DamageType = DamageClass.Melee;
         }
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
-            if (Main.rand.Next(2) == 0) {
+        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        {
+            if (Main.rand.Next(2) == 0)
+            {
                 target.AddBuff(BuffID.OnFire, 300, false);
             }
         }
-        public override void MeleeEffects(Player player, Rectangle hitbox) {
+        public override void MeleeEffects(Player player, Rectangle hitbox)
+        {
             int dust = Dust.NewDust(new Vector2((float)hitbox.X, (float)hitbox.Y), hitbox.Width, hitbox.Height, 6, player.velocity.X, player.velocity.Y, 100, default, 2f);
             Main.dust[dust].noGravity = true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FieryGreatsword, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1700);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

@@ -4,11 +4,14 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Bolt3Ball : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class Bolt3Ball : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.penetrate = 1;
@@ -17,14 +20,16 @@ namespace tsorcRevamp.Projectiles {
             Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0.8f;
         }
-        public override void AI() {
+        public override void AI()
+        {
 
             if (Projectile.wet)
             {
                 Projectile.timeLeft = 0;
             }
 
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
+            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
+            {
                 Projectile.soundDelay = 10;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
@@ -36,16 +41,19 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[num47].noGravity = true;
 
 
-            if (Projectile.velocity.X != 0f || Projectile.velocity.Y != 0f) {
+            if (Projectile.velocity.X != 0f || Projectile.velocity.Y != 0f)
+            {
                 Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) - 2.355f;
             }
 
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
                 return;
             }
         }
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width / 2, Projectile.position.Y + Projectile.height / 2, Projectile.velocity.X, Projectile.velocity.Y, ModContent.ProjectileType<Bolt3Bolt>(), Projectile.damage, 8f, Projectile.owner);
         }
     }

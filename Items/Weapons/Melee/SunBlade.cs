@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class SunBlade : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class SunBlade : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword used to kill the undead" +
                                 "\nDoes 4x damage against the heartless");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.damage = 25;
             Item.height = 36;
@@ -25,7 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 36;
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //todo add mod NPCs to this list
             if (NPCID.Sets.Skeletons.Contains(target.type)
                     || target.type == NPCID.Zombie
@@ -60,13 +65,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             }
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(ItemID.LightsBane);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

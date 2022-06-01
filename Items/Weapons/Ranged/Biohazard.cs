@@ -1,8 +1,8 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -118,7 +118,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

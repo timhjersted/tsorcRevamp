@@ -1,22 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
-using Terraria.Enums;
-using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
+namespace tsorcRevamp.Projectiles.Enemy
+{
 
-    public class EnemyRedLaser : EnemyGenericLaser {
+    public class EnemyRedLaser : EnemyGenericLaser
+    {
 
-       
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser");
@@ -24,7 +17,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override string Texture => base.Texture;
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.friendly = false;
@@ -35,7 +29,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.hide = true;
 
             FollowHost = true;
-            LaserOrigin = Main.npc[HostIdentifier].Center;            
+            LaserOrigin = Main.npc[HostIdentifier].Center;
             TelegraphTime = 90;
             FiringDuration = 60;
             MaxCharge = 90;
@@ -57,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public override void AI()
         {
             NPC owner = Main.npc[(int)Projectile.ai[1]];
-            if(owner == null || owner.active == false)
+            if (owner == null || owner.active == false)
             {
                 Projectile.active = false;
                 return;

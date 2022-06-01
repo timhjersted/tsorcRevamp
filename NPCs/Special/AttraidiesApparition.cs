@@ -1,9 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using System;
-using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -35,7 +33,7 @@ namespace tsorcRevamp.NPCs.Special
         public override void AI()
         {
             Lighting.AddLight(NPC.Center, 1f, 0.75f, 1f);
-            
+
             int dust1 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 180, Color.Blue, 1f);
             Main.dust[dust1].noGravity = true;
 

@@ -1,15 +1,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class DragoonLance : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class DragoonLance : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Dragoon Lance");
             Tooltip.SetDefault("A spear forged from the fang of the Dragoon Serpent.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 100;
             Item.knockBack = 15f;
 
@@ -17,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.useAnimation = 11;
             Item.useTime = 1;
             Item.shootSpeed = 8;
-            
+
             Item.height = 74;
             Item.width = 74;
 
@@ -33,11 +37,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("GaeBolg").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
-            
+
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

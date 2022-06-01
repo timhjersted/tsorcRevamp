@@ -2,12 +2,16 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenIceBrand : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenIceBrand : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword imbued with ice.\n" + "Will randomly cast ice 2.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Pink;
             Item.damage = 52;
             Item.height = 42;
@@ -23,9 +27,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 42;
         }
 
-        public override bool? UseItem(Player player) {
-            if (Main.rand.Next(5) == 0) {
-                Projectile.NewProjectile(player.position.X, player.position.Y, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Ice2Ball>(), 20, 2.0f, player.whoAmI);
+        public override bool? UseItem(Player player)
+        {
+            if (Main.rand.Next(5) == 0)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position.X, player.position.Y, (float)(-40 + Main.rand.Next(80)) / 10, 14.9f, ModContent.ProjectileType<Projectiles.Ice2Ball>(), 20, 2.0f, player.whoAmI);
             }
             return true;
         }

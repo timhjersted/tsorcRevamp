@@ -1,16 +1,19 @@
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    public class ArtemisBow : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    public class ArtemisBow : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A bow forged to slay demon-gods.\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.ArtemisBowHeld>();
             Item.channel = true;
@@ -30,9 +33,10 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
             Item.shootSpeed = 18f;
         }
-        
 
-        public override void AddRecipes() {
+
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.GoldBow, 1);
@@ -41,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 75000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

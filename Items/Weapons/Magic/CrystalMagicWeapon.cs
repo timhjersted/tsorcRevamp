@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type); //lol idek how early you can get these but will do for now
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>()) 
+            if (player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
                 || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
                 || player.meleeEnchant == 1
                 || player.meleeEnchant == 2

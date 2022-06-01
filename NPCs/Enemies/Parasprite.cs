@@ -1,14 +1,14 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using System;
-using tsorcRevamp.Projectiles.Enemy;
 using static tsorcRevamp.SpawnHelper;
 
-namespace tsorcRevamp.NPCs.Enemies {
-    class Parasprite : ModNPC {
-        public override void SetDefaults() {
+namespace tsorcRevamp.NPCs.Enemies
+{
+    class Parasprite : ModNPC
+    {
+        public override void SetDefaults()
+        {
             NPC.width = 12;
             NPC.height = 12;
             NPC.aiStyle = 22;
@@ -30,33 +30,42 @@ namespace tsorcRevamp.NPCs.Enemies {
         bool init;
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
             bool underground = (spawnInfo.Player.position.Y >= (Main.maxTilesY / 2.43309f) * 16); //magic number
             float chance = 0;
             Player p = spawnInfo.Player;
 
-            if (spawnInfo.Player.ZoneHallow && underground && NPC.downedBoss3) { //it's spawning on the surface for some reason too
+            if (spawnInfo.Player.ZoneHallow && underground && NPC.downedBoss3)
+            { //it's spawning on the surface for some reason too
                 chance = 0.1f;
             }
-            if (Main.hardMode && Sky(p) && NoSpecialBiome(p)) {
+            if (Main.hardMode && Sky(p) && NoSpecialBiome(p))
+            {
                 chance = 0.2f;
             }
             return chance;
         }
 
-        public override void AI() { // some stuff has been shuffled around, since there's only 1 parasprite enemy instead of 4 (lol)
+        public override void AI()
+        { // some stuff has been shuffled around, since there's only 1 parasprite enemy instead of 4 (lol)
             NPC.velocity.Y += Main.rand.Next(-10, 10) / 8;
             NPC.velocity.X += Main.rand.Next(-10, 10) / 20;
-            if (NPC.ai[3] == 0) { // check if a sprite is allowed to spawn copies (see below)
+            if (NPC.ai[3] == 0)
+            { // check if a sprite is allowed to spawn copies (see below)
                 timer++;
-                if (timer >= 300) {
+                if (timer >= 300)
+                {
                     int totalParasprites = 0;
-                    for (int i = 0; i < 200; i++) {
-                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<Parasprite>()) {
+                    for (int i = 0; i < 200; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<Parasprite>())
+                        {
                             totalParasprites++;
                         }
                     }
-                    if (totalParasprites < 20) {
+                    if (totalParasprites < 20)
+                    {
                         int spawner = Main.rand.Next(2); // decide if a sprite is allowed to spawn more copies. only 1 in 2 parasprites can spawn copies, for lag reduction...
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -65,23 +74,28 @@ namespace tsorcRevamp.NPCs.Enemies {
                         }
                     }
                     timer = 0 - Main.rand.Next(200); // ...but they can spawn copies more frequently to make up for it
-                } 
+                }
             }
         }
 
-        public override bool PreAI() {
-            if (!init) {
+        public override bool PreAI()
+        {
+            if (!init)
+            {
                 spriteColor = (Main.rand.Next(3) * 2) + 1;
                 init = true;
             }
             return true;
         }
-        public override void FindFrame(int frameHeight) { // and this feels like magic
+        public override void FindFrame(int frameHeight)
+        { // and this feels like magic
             NPC.frameCounter++;
-            if (NPC.frameCounter == 2) {
+            if (NPC.frameCounter == 2)
+            {
                 NPC.frame.Y = spriteColor * frameHeight;
             }
-            if (NPC.frameCounter == 4) {
+            if (NPC.frameCounter == 4)
+            {
                 NPC.frame.Y = (spriteColor + 1) * frameHeight;
                 NPC.frameCounter = 0;
             }

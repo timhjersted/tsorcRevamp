@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
@@ -66,8 +66,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 return false;
             }
 
-            if (player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>()) 
-                || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>()) 
+            if (player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
+                || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>())
                 || player.meleeEnchant == 1
                 || player.meleeEnchant == 2
                 || player.meleeEnchant == 3

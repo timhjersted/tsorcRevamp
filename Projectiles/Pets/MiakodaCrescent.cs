@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
-using tsorcRevamp;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Pets
 {
@@ -23,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Pets
             Projectile.height = 16;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            aiType = ProjectileID.BabyHornet;
+            AIType = ProjectileID.BabyHornet;
             Projectile.scale = 0.85f;
             drawOffsetX = -8;
         }

@@ -3,9 +3,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class PurgingStone : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class PurgingStone : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Ash-colored stone encasing a skull" +
                                 "\nSecret treasure of Arstor, the Earl of Carim" +
                                 "\nAbsorbs curse build-up and breaks curse, restoring your max HP to 500" +
@@ -17,7 +20,8 @@ namespace tsorcRevamp.Items {
                                 "\nvia Life Crystals or Life Fruit");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 38;
             Item.height = 38;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -32,7 +36,8 @@ namespace tsorcRevamp.Items {
             Item.value = PriceByRarity.Pink_5;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
@@ -40,7 +45,7 @@ namespace tsorcRevamp.Items {
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
@@ -91,7 +96,7 @@ namespace tsorcRevamp.Items {
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(11, new TooltipLine(Mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
+            tooltips.Insert(11, new TooltipLine(Mod, "", $"Current max: {(player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)}"));
 
         }
     }

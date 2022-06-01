@@ -1,15 +1,18 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class Wyrmkiller : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class Wyrmkiller : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A sword used to kill wyverns and dragons." +
                                 "\nDoes 8x damage against flying beasts.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Green;
             Item.damage = 46;
             Item.height = 32;
@@ -24,16 +27,18 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 32;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBroadsword, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //what a mess lmao, should probably be a switch but im lazy
             if (target.type == NPCID.WyvernBody
                 || target.type == NPCID.WyvernBody2
@@ -72,7 +77,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessLegs>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessTail>()
-                ) {
+                )
+            {
                 damage *= 8;
             }
         }

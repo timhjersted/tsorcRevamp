@@ -1,11 +1,14 @@
-﻿using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class MagicalBall : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class MagicalBall : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 50;
             Projectile.height = 50;
             Projectile.aiStyle = 1;
@@ -17,7 +20,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.alpha = 255;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 4), Projectile.width, Projectile.height, 27, 0, 0, 100, default, 3.0f);
             Main.dust[dust].noGravity = true;
 

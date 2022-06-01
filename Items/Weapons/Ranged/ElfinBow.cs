@@ -1,17 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class ElfinBow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class ElfinBow : ModItem
+    {
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Never miss again\n" +
                 "Unleashes a storm of enchanted arrows that hunt down any enemy you select");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.damage = 350;
             Item.height = 58;
@@ -56,14 +58,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         {
             int randomness = 1;
             int target = -1;
-            if(thisProjectile != null && thisProjectile.type == ModContent.ProjectileType<Projectiles.ElfinTargeting>())
+            if (thisProjectile != null && thisProjectile.type == ModContent.ProjectileType<Projectiles.ElfinTargeting>())
             {
                 target = thisProjectile.whoAmI;
             }
 
             Vector2 projVel = new Vector2(speedX, speedY) + Main.rand.NextVector2CircularEdge(randomness, randomness);
-            Projectile.NewProjectile(player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), Item.damage, Item.knockBack, Main.myPlayer, target);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), Item.damage, Item.knockBack, Main.myPlayer, target);
             return false;
-        }       
+        }
     }
 }

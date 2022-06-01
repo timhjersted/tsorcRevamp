@@ -1,13 +1,17 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenKaiserKnuckles : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenKaiserKnuckles : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Great spiked knuckles.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Green;

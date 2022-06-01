@@ -1,17 +1,19 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class FlareTome : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class FlareTome : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A lost legendary tome.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 100;
             Item.height = 10;
             Item.knockBack = 4;

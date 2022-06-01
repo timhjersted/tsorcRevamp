@@ -4,17 +4,21 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class CursedSkull : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class CursedSkull : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/BossItems/BloodySkull";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons Skeletron, the First of the Dead." +
                                 "\nYou must use this at the demon altar in the ancient temple ruins" +
                                 "\nBut be warned, this battle will not be easy..." +
                                 "\nItem is not consumed so you can retry the fight until victory.");
 
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 12;
             Item.height = 12;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -34,7 +38,7 @@ namespace tsorcRevamp.Items.BossItems {
                 NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Skeletron has awoken!"), new Color(175, 75, 255));
             }
             NPC.NewNPC((int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
-            
+
             return true;
 
         }
@@ -66,13 +70,14 @@ namespace tsorcRevamp.Items.BossItems {
                 }
             }
         }
-        public override void AddRecipes() {
-            Recipe recipe = CreateRecipe();
+        public override void AddRecipes()
+        {
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.Bone, 10);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1);
+            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1);
             recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
     }
 }

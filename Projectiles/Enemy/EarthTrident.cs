@@ -1,6 +1,3 @@
-using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = true;
             Projectile.width = 16;
         }
-        
+
 
         public override bool PreKill(int timeleft)
         {

@@ -3,12 +3,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Enemies;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenRuneAxe : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenRuneAxe : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("4 times as effective against magic users.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Cyan;
             Item.damage = 105;
             Item.height = 46;
@@ -24,7 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 56;
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //todo add mod NPCs to this list
             if (target.type == NPCID.DarkCaster
                 || target.type == NPCID.GoblinSorcerer
@@ -50,17 +55,19 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerServant>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.MindflayerIllusion>()
                 || target.type == ModContent.NPCType<NPCs.Bosses.Fiends.LichKingDisciple>()
-                ) {
+                )
+            {
                 damage *= 4;
             }
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldAxe").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

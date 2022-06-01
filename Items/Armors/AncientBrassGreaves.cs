@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.IronGreaves, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

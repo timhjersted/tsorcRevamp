@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Potions
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("LostUndeadSoul").Type);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

@@ -2,10 +2,13 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Ice5Icicle : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class Ice5Icicle : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 32;
             Projectile.height = 88;
             Projectile.friendly = true;
@@ -18,7 +21,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.idStaticNPCHitCooldown = 8;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90); //this is really hacky but i dont care
         }
     }

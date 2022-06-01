@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class LampTome : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class LampTome : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A lost tome known to cure blindness.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Orange; //yes, even though it's hardmode
@@ -23,12 +27,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.width = 34;
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             int buffIndex = 0;
 
-            foreach (int buffType in player.buffType) {
+            foreach (int buffType in player.buffType)
+            {
 
-                if (buffType == BuffID.Darkness || buffType == BuffID.Blackout || buffType == BuffID.Obstructed) {
+                if (buffType == BuffID.Darkness || buffType == BuffID.Blackout || buffType == BuffID.Obstructed)
+                {
                     player.DelBuff(buffIndex);
                 }
                 buffIndex++;

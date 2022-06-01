@@ -3,11 +3,14 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors {
+namespace tsorcRevamp.Items.Armors
+{
     [AutoloadEquip(EquipType.Body)]
-    public class DragoonArmor2 : ModItem {
+    public class DragoonArmor2 : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Armors/DragoonArmor";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Dragoon Armor II");
             Tooltip.SetDefault("A reforged upgrade to the legendary Dragoon Armor.\n" +
                 "You are a master of all forces, the protector of Earth, the Hero of the age.\n" +
@@ -15,7 +18,8 @@ namespace tsorcRevamp.Items.Armors {
                 "Set bonus adds +38% to all stats and +6 HP Regen, while Dragoon Cloak effects kick in at 160 HP.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 18;
             Item.height = 18;
             Item.defense = 50;
@@ -23,12 +27,14 @@ namespace tsorcRevamp.Items.Armors {
             Item.rare = ItemRarityID.Orange;
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.starCloak = true;
             player.GetCritChance(DamageClass.Magic) += 3;
             player.GetDamage(DamageClass.Magic) += .05f;
 
-            if (player.statLife <= 160) {
+            if (player.statLife <= 160)
+            {
                 player.lifeRegen += 8;
                 player.statDefense += 12;
                 player.manaRegenBuff = true;
@@ -39,7 +45,8 @@ namespace tsorcRevamp.Items.Armors {
             }
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonArmor").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonCloak").Type, 1);
@@ -47,7 +54,7 @@ namespace tsorcRevamp.Items.Armors {
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

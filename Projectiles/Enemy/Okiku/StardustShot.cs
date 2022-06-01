@@ -1,24 +1,27 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    public class StardustShot : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    public class StardustShot : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 0;
             Projectile.height = 16;
             Projectile.scale = 1.2f;
             Projectile.tileCollide = false;
             Projectile.width = 16;
-            Projectile.hostile = false;            
+            Projectile.hostile = false;
         }
-        
+
         Projectiles.GenericLaser laser = null;
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation++;
 
             if (laser == null)
@@ -42,7 +45,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 laser.LaserTarget = Vector2.Lerp(laser.LaserTarget, Main.player[(int)Projectile.ai[0]].position, 0.02f);
             }
 
-            if (Main.rand.Next(2) == 0) {
+            if (Main.rand.Next(2) == 0)
+            {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.Center.X, (float)Projectile.Center.Y), Projectile.width, Projectile.height, 234, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;
             }
@@ -62,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
-            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

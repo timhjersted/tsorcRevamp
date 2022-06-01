@@ -1,9 +1,12 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class ThrowingSpear : ModItem {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class ThrowingSpear : ModItem
+    {
+        public override void SetDefaults()
+        {
             Item.consumable = true;
             Item.damage = 13;
             Item.height = 62;
@@ -23,7 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.shoot = ModContent.ProjectileType<Projectiles.ThrowingSpear>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);

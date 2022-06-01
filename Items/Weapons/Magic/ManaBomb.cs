@@ -1,14 +1,18 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class ManaBomb : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class ManaBomb : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Creates a magic vortex at your location that deals high damage over time");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 18;
             Item.height = 18;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -26,12 +30,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.MagicalBall>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

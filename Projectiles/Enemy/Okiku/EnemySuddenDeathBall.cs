@@ -1,13 +1,16 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    class EnemySuddenDeathBall : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    class EnemySuddenDeathBall : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 24;
             Projectile.height = 38;
             Projectile.aiStyle = 1;
@@ -19,17 +22,21 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             Projectile.ignoreWater = true;
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Sudden Death Ball");
         }
         #region AI
-        public override void AI() {
-            if (Projectile.ai[1] == 0f) {
+        public override void AI()
+        {
+            if (Projectile.ai[1] == 0f)
+            {
                 Projectile.ai[1] = 1f;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
                 return;
             }
@@ -37,7 +44,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         #endregion
 
         #region Kill
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<EnemySuddenDeathStrike>(), 0, 3f, Projectile.owner);

@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class EssenceOfTerraria : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class EssenceOfTerraria : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Essence of Terraria");
             Tooltip.SetDefault("Summons almost every boss at once." + "\nYou will never survive this.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 48;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -19,7 +23,8 @@ namespace tsorcRevamp.Items {
             Item.rare = ItemRarityID.Lime;
         }
 
-        public override bool? UseItem(Player player) { //todo keep adding bosses to this
+        public override bool? UseItem(Player player)
+        { //todo keep adding bosses to this
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.KingSlime);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.EyeofCthulhu);
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.EaterofWorldsHead);

@@ -1,13 +1,17 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class DivineSpark : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class DivineSpark : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Freaking huge magical laser");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;

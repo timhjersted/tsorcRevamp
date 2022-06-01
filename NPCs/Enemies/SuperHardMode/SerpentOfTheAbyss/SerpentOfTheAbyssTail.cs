@@ -3,14 +3,18 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
-    class SerpentOfTheAbyssTail : ModNPC {
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
+{
+    class SerpentOfTheAbyssTail : ModNPC
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Serpent of the Abyss");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.netAlways = true;
             NPC.npcSlots = 1;
             NPC.width = 21;
@@ -27,8 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
-            NPC.value = 500; 
-            
+            NPC.value = 500;
+
             bodyTypes = new int[33];
             int bodyID = ModContent.NPCType<SerpentOfTheAbyssBody>();
             for (int i = 0; i < 33; i++)
@@ -49,7 +53,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
             return false;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SerpentOfTheAbyssHead>(), bodyTypes, ModContent.NPCType<SerpentOfTheAbyssTail>(), 35, .8f, 17, 0.25f, false, false, false, true, true);
         }
     }

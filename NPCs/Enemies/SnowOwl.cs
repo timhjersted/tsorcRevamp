@@ -1,7 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.CloneDefaults(NPCID.CaveBat);
             AnimationType = NPCID.GiantBat;
-            aiType = NPCID.CaveBat;
+            AIType = NPCID.CaveBat;
             NPC.lifeMax = 15;
             NPC.damage = 20;
             NPC.scale = 1.1f;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 chance = 0.2f;
             }
-            
+
             //Otherwise it spawns in the frozen ocean and gets stuck in the ceiling
             if (spawnInfo.Water)
             {

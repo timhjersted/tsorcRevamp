@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class ReforgedOldLongbow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class ReforgedOldLongbow : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/OldLongbow";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.damage = 16;
             Item.height = 66;
@@ -25,11 +28,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.value = PriceByRarity.Blue_1;
 
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldLongbow").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            
+
             recipe.Register();
         }
     }

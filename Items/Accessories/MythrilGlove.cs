@@ -191,7 +191,7 @@ namespace tsorcRevamp.Items.Accessories
                 }
             }
         }
-        
+
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
@@ -201,7 +201,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

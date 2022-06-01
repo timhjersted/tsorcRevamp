@@ -1,14 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
-    class FarronHail : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Gwyn
+{
+    class FarronHail : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Gwyn/Petal";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.height = 16;
             Projectile.width = 16;
             Projectile.light = 0.8f;
@@ -20,14 +21,17 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
             Projectile.damage = 40;
         }
 
-        internal float AI_Owner {
+        internal float AI_Owner
+        {
             get => Projectile.ai[1];
             set => Projectile.ai[1] = value;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
-            if (Projectile.damage == 0) {
+            if (Projectile.damage == 0)
+            {
                 Projectile.alpha = 255;
                 Dust h = Dust.NewDustPerfect(Projectile.Center, DustID.Clentaminator_Cyan);
                 h.noGravity = true;
@@ -38,11 +42,14 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
 
         }
 
-        public override bool PreKill(int timeLeft) {
-            if (Projectile.damage != 0) {
-                for (int i = 0; i < 5; i++) {
+        public override bool PreKill(int timeLeft)
+        {
+            if (Projectile.damage != 0)
+            {
+                for (int i = 0; i < 5; i++)
+                {
                     Dust.NewDustPerfect(Projectile.Center, DustID.Clentaminator_Cyan);
-                } 
+                }
             }
             return true;
         }

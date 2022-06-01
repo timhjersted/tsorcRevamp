@@ -2,15 +2,17 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PhantomSeeker : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PhantomSeeker : ModProjectile
+    {
 
         private const string TexturePath = "tsorcRevamp/Projectiles/Comet";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.hostile = true;
             Projectile.penetrate = 3;
             Projectile.width = 15;
@@ -23,15 +25,18 @@ namespace tsorcRevamp.Projectiles {
 
         Vector2[] lastpos = new Vector2[20];
         int lastposindex = 0;
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X);
 
-            if (Projectile.timeLeft < 100) {
+            if (Projectile.timeLeft < 100)
+            {
                 Projectile.scale *= 0.9f;
                 Projectile.damage = 0;
             }
 
-            if (Projectile.timeLeft > 150 && Projectile.timeLeft < 500) {
+            if (Projectile.timeLeft > 150 && Projectile.timeLeft < 500)
+            {
                 Projectile.velocity.X -= (Projectile.position.X - Main.player[(int)Projectile.ai[0]].position.X) / 1300f;
                 Projectile.velocity.Y -= (Projectile.position.Y - Main.player[(int)Projectile.ai[0]].position.Y) / 1300f;
 
@@ -47,7 +52,7 @@ namespace tsorcRevamp.Projectiles {
         }
         public override void PostDraw(SpriteBatch sp, Color lightColor)
         {
-            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
+            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);

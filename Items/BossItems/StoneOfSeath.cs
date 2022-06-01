@@ -2,10 +2,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class StoneOfSeath : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class StoneOfSeath : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Stone of Seath");
             Tooltip.SetDefault("Summons Seath the Scaleless, a great dragon granted the title of Duke by Lord Gwyn for his \n" +
                 "assistance in defeating the Everlasting Dragons and given a fragment of a Lord Soul. Seath \n" +
@@ -14,7 +17,8 @@ namespace tsorcRevamp.Items.BossItems {
                 "into the Primordial Crystal, which he stole from the dragons when he defected.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.width = 38;
             Item.height = 34;
@@ -35,26 +39,28 @@ namespace tsorcRevamp.Items.BossItems {
             return canUse;
         }
 
-        public override bool? UseItem(Player player) {
-           
+        public override bool? UseItem(Player player)
+        {
+
             Main.NewText("Thy death will only fuel my immortality, Red... ", 175, 75, 255);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());            
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>());
             return true;
         }
 
-       
-        public override void AddRecipes() {
+
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
+                Recipe recipe = new Recipe(Mod);
+                recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 10);
                 recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 15);
-                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
                 recipe.AddTile(TileID.DemonAltar);
-                
-                recipe.Register();
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
             }
         }
-        
+
     }
 }

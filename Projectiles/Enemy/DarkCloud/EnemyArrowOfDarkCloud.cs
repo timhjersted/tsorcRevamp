@@ -1,9 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -23,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             DisplayName.SetDefault("Arrow of Dark Cloud");
         }
 
-        
+
         public override void AI()
         {
             //Secret forbidden color unlocked: Green 3

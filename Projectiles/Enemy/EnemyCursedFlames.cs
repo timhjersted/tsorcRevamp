@@ -1,15 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemyCursedFlames : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemyCursedFlames : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Enemy/Okiku/PoisonSmog";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.alpha = 150;
@@ -19,10 +21,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.light = 0.8f;
             Projectile.penetrate = 1;
             Projectile.hostile = true;
-            aiType = 96;
+            AIType = 96;
         }
 
-        public override bool PreKill(int timeLeft) {
+        public override bool PreKill(int timeLeft)
+        {
             Projectile.type = 95;
             return true;
         }
@@ -30,14 +33,16 @@ namespace tsorcRevamp.Projectiles.Enemy {
         int timer = 0;
         bool initialSetup = false;
         bool delayedMode = false;
-        public override void PostAI() {
-            
+        public override void PostAI()
+        {
+
             Projectile.rotation += 3f;
 
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 75, 0, 0, 50, Color.Chartreuse, 3.0f);
             Main.dust[dust].noGravity = true;
 
-            if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4) {
+            if (Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4)
+            {
                 float accel = 2f + (Main.rand.Next(10, 30) * 0.001f);
                 Projectile.velocity.X *= accel;
                 Projectile.velocity.Y *= accel;
@@ -65,7 +70,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 if (timer == 0)
                 {
                     float velocity = 8;
-                    if(Main.tile[(int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16].LiquidAmount != 0)
+                    if (Main.tile[(int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16].LiquidAmount != 0)
                     {
                         velocity = 5;
                     }
@@ -85,7 +90,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             return false;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
             int buffLengthMod = 1;
             if (Main.expertMode)
             {

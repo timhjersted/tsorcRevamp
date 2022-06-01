@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Pets
 {
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Pets
             Projectile.height = 16;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            aiType = ProjectileID.BabyHornet;
+            AIType = ProjectileID.BabyHornet;
             Projectile.scale = 1f;
             Projectile.scale = 0.85f;
             drawOffsetX = -8;
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles.Pets
             }
 
             if (Main.myPlayer == player.whoAmI && distanceToIdlePosition > 1500f)
-            { 
+            {
                 Projectile.position = idlePosition;
                 Projectile.velocity *= 0.1f;
                 Projectile.netUpdate = true;
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Pets
                     Main.dust[dust].noGravity = true;
                 }
             }
-            
+
             if (modPlayer.MiakodaEffectsTimer == 720 && MiakodaVol != 0) //sound effect the moment the timer reaches 420, to signal pet ability ready.
             {
                 string[] ReadySoundChoices = new string[] { "Sounds/Custom/MiakodaChaaa", "Sounds/Custom/MiakodaChao", "Sounds/Custom/MiakodaDootdoot", "Sounds/Custom/MiakodaHi", "Sounds/Custom/MiakodaOuuee" };

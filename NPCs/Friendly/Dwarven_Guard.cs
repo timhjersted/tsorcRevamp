@@ -1,16 +1,11 @@
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Weapons.Magic;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.Localization;
-using System.Collections.Generic;
-using Terraria.GameContent;
 
 namespace tsorcRevamp.NPCs.Friendly
 {

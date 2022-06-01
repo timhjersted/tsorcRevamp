@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.npcSlots = 5;
             NPC.knockBackResist = 0.1f;
             NPC.aiStyle = -1;
-            NPC.damage = 40; 
+            NPC.damage = 40;
             NPC.defense = 50;
             NPC.height = 40;
             NPC.width = 20;
@@ -265,7 +265,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     NPC.knockBackResist = 0;
                 }
-                else 
+                else
                 {
                     NPC.knockBackResist = 0.1f; //aparently it doesn't default back? 
                 }
@@ -281,8 +281,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 #region New Tile()s, jumping
                 if (standing_on_solid_tile)  //  if standing on solid tile
-                {                            
-                    if (NPC.position.Y > player.position.Y + 3 * 16 && NPC.position.Y < player.position.Y + 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0)) 
+                {
+                    if (NPC.position.Y > player.position.Y + 3 * 16 && NPC.position.Y < player.position.Y + 8 * 16 && Math.Abs(NPC.Center.X - player.Center.X) < 3f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0))
                     {
                         NPC.velocity.Y = -8f; // jump with power 8 if directly under player
                         NPC.netUpdate = true;
@@ -469,7 +469,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         stab.velocity.X = 5;
                     }
                 }
-                else 
+                else
                 {
                     if (AI_Timer == 34)
                     {
@@ -581,7 +581,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         power = (Math.Abs(NPC.Center.X - player.Center.X) / 16) * 4 / 10;
                         NPC.velocity.X += power;
                     }
-                    else 
+                    else
                     {
                         Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-28, +38), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 35, 5, Main.myPlayer, NPC.whoAmI, 0)];
                         stab.timeLeft = 2;
@@ -652,13 +652,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (AI_Timer == 30)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45.WithPitchVariance(.3f), NPC.Center);
-                    if (NPC.direction == 1) 
-                    { 
-                        NPC.velocity.X += 8.5f; 
+                    if (NPC.direction == 1)
+                    {
+                        NPC.velocity.X += 8.5f;
                         //Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center + new Vector2(80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, npc.whoAmI, 0)];
                     }
-                    else 
-                    { 
+                    else
+                    {
                         NPC.velocity.X -= 8.5f;
                         //Projectile stab = Main.projectile[Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center + new Vector2(-80, -2), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.Spearhead>(), 30, 5, Main.myPlayer, npc.whoAmI, 0)];
                     }
@@ -690,16 +690,16 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (Math.Abs(NPC.velocity.X) > 0.1f)
                     {
-                        if (NPC.direction == 1) 
-                        { 
+                        if (NPC.direction == 1)
+                        {
                             NPC.velocity.X -= .85f;
                             if (NPC.velocity.X < 0.2f)
                             {
                                 NPC.velocity.X = 0;
                             }
                         }
-                        else 
-                        { 
+                        else
+                        {
                             NPC.velocity.X += .85f;
                             if (NPC.velocity.X > -0.2f)
                             {

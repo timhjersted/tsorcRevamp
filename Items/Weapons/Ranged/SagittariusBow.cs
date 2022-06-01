@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class SagittariusBow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class SagittariusBow : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Fires two arrows\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
             Item.channel = true;
@@ -28,17 +31,19 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.shootSpeed = 21f;
         }
 
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.SagittariusBowHeld>()] <= 0;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ArtemisBow").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Ice1Tome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Ice1Tome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ice 1 Tome");
             Tooltip.SetDefault("A lost beginner's tome" +
                 "\nMultiple shots can be controlled and stacked" +
@@ -17,7 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost;
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 11;
             Item.height = 10;
             Item.knockBack = 0f;
@@ -51,12 +53,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

@@ -5,9 +5,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
-namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
+namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
+{
     [AutoloadBossHead]
-    public class DarkDragonMask : ModNPC {
+    public class DarkDragonMask : ModNPC
+    {
 
         public bool DragonSpawned = false;
         public bool DragonDead = false;
@@ -18,7 +20,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         int randPosX = 0;
         int nextRandPosX = 0;
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.width = 28;
             NPC.height = 44;
             NPC.aiStyle = -1;
@@ -38,34 +41,37 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.npcFrameCount[NPC.type] = 7;
             DisplayName.SetDefault("Attraidies");
         }
 
         public int ObscureDropDamage = 50;
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
         }
 
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
             //Basic despawn handler and passive dust
-            despawnHandler.TargetAndDespawn(NPC.whoAmI);            
+            despawnHandler.TargetAndDespawn(NPC.whoAmI);
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 1.0f);
             Main.dust[dust].noGravity = true;
 
             DispelGravitation();
 
             //Spawn dragon
-            if (DragonSpawned == false) {
+            if (DragonSpawned == false)
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
                     Main.npc[DragonIndex].velocity.Y = -10;
                 }
                 DragonSpawned = true;
-            }           
+            }
             if (!NPC.AnyNPCs(ModContent.NPCType<ShadowDragonHead>()))
             {
                 DragonDead = true;
@@ -74,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 {
                     randPosX = nextRandPosX;
                     nextRandPosX = Main.rand.Next(-250, 250);
-                    NPC.netUpdate = true;                    
+                    NPC.netUpdate = true;
                 }
 
                 //While we're in the "spam obscure drops" phase               
@@ -97,9 +103,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                         }
 
                         TimerRain = 0;
-                    }                    
+                    }
                 }
-                
+
                 //While we're in the "channeling dragon" phase
                 if (TimerSpawn > 600 && TimerSpawn < 780)
                 {
@@ -126,13 +132,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                 if (!Main.npc[DragonIndex].active || (Main.npc[DragonIndex].type != ModContent.NPCType<ShadowDragonHead>()))
                 {
                     int? newIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<ShadowDragonHead>());
-                    if(newIndex != null)
+                    if (newIndex != null)
                     {
                         DragonIndex = newIndex.Value;
                     }
                 }
 
-                NPC.Center = Main.npc[DragonIndex].Center;                
+                NPC.Center = Main.npc[DragonIndex].Center;
             }
         }
 
@@ -169,14 +175,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         }
 
         public override void OnKill()
-        {            
+        {
             for (int i = 0; i < 50; i++)
             {
                 int dustDeath = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 4f);
                 Main.dust[dustDeath].noGravity = true;
             }
 
-            if(Main.npc[DragonIndex].type == ModContent.NPCType<ShadowDragonHead>()){
+            if (Main.npc[DragonIndex].type == ModContent.NPCType<ShadowDragonHead>())
+            {
                 Main.npc[DragonIndex].life = 0;
             }
 
@@ -192,7 +199,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void FindFrame(int frameHeight) {
+        public override void FindFrame(int frameHeight)
+        {
 
             int num = 1;
             if (!Main.dedServ)

@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Ice2Tome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Ice2Tome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ice 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans, with a high rate of casting." +
                                 "\nCan be upgraded with 25,000 Dark Souls and 15 Souls of Light.");
@@ -14,8 +15,9 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost2;
-        public override void SetDefaults() {
-            Item.damage =  15;
+        public override void SetDefaults()
+        {
+            Item.damage = 15;
             Item.height = 10;
             Item.knockBack = 0f;
             Item.rare = ItemRarityID.Orange;
@@ -47,12 +49,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             }
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice1Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

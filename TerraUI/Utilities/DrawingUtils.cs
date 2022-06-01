@@ -1,10 +1,13 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
-namespace TerraUI.Utilities {
-    public static class DrawingUtils {
-        public static void DrawRectangleBox(SpriteBatch spriteBatch, Color borderColour, Color backColour, Rectangle rect, int borderWidth) {
+namespace TerraUI.Utilities
+{
+    public static class DrawingUtils
+    {
+        public static void DrawRectangleBox(SpriteBatch spriteBatch, Color borderColour, Color backColour, Rectangle rect, int borderWidth)
+        {
             Texture2D texture = UIUtils.GetTexture("1x1");
 
             spriteBatch.Draw(texture, new Rectangle(rect.X + borderWidth, rect.Y + borderWidth, rect.Width - (borderWidth * 2), rect.Height - (borderWidth * 2)), backColour);
@@ -14,10 +17,12 @@ namespace TerraUI.Utilities {
             spriteBatch.Draw(texture, new Rectangle(rect.X + rect.Width - borderWidth, rect.Y, borderWidth, rect.Height), new Rectangle(0, 0, 0, 0), borderColour);
         }
 
-        public static void DrawTerrariaStyledBox(SpriteBatch spriteBatch, Color colour, Rectangle rect, bool solid = false) {
+        public static void DrawTerrariaStyledBox(SpriteBatch spriteBatch, Color colour, Rectangle rect, bool solid = false)
+        {
             string add = "";
 
-            if(solid) {
+            if (solid)
+            {
                 add = "Solid";
             }
 

@@ -1,11 +1,14 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ReforgedOldLongsword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ReforgedOldLongsword : ModItem
+    {
 
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldLongsword";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 12;
             Item.width = 44;
             Item.height = 44;
@@ -20,11 +23,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.useTime = 21;
             Item.value = 7000;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldLongsword").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            
+
             recipe.Register();
         }
     }

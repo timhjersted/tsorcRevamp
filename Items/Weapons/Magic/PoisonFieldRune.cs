@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class PoisonFieldRune : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class PoisonFieldRune : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Creates a poisonous cloud at the point of impact." +
                                 "\nHigh duration and can damage many targets.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 14;
             Item.height = 28;
             Item.knockBack = 3f;
@@ -29,13 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.PoisonFieldBall>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.Stinger, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

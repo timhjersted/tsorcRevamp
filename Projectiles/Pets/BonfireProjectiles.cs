@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Mono.Cecil;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Pets {
-    public abstract class BonfireProjectiles : ModProjectile {
+namespace tsorcRevamp.Projectiles.Pets
+{
+    public abstract class BonfireProjectiles : ModProjectile
+    {
 
         public abstract int ChestType { get; }
         public abstract int ItemType { get; }
@@ -16,9 +15,12 @@ namespace tsorcRevamp.Projectiles.Pets {
 
         public abstract LegacySoundStyle UseSound { get; }
 
-        public override void AI() {
-            if (Projectile.ai[0] == 0f) {
-                if (Projectile.velocity.Length() < 0.1) {
+        public override void AI()
+        {
+            if (Projectile.ai[0] == 0f)
+            {
+                if (Projectile.velocity.Length() < 0.1)
+                {
                     Projectile.velocity.X = 0f;
                     Projectile.velocity.Y = 0f;
                     Projectile.ai[0] = 1f;
@@ -27,10 +29,12 @@ namespace tsorcRevamp.Projectiles.Pets {
                 }
 
                 Projectile.velocity *= 0.94f;
-                if (Projectile.velocity.X < 0f) {
+                if (Projectile.velocity.X < 0f)
+                {
                     Projectile.direction = -1;
                 }
-                else {
+                else
+                {
                     Projectile.direction = 1;
                 }
 
@@ -38,7 +42,8 @@ namespace tsorcRevamp.Projectiles.Pets {
                 return;
             }
 
-            if (Main.player[Projectile.owner].Center.X < Projectile.Center.X) {
+            if (Main.player[Projectile.owner].Center.X < Projectile.Center.X)
+            {
                 Projectile.direction = -1;
             }
             else
@@ -47,27 +52,33 @@ namespace tsorcRevamp.Projectiles.Pets {
             Projectile.spriteDirection = Projectile.direction;
             Projectile.ai[1] += 1f;
             float acceleration = 0.005f;
-            if (Projectile.ai[1] > 0f) {
+            if (Projectile.ai[1] > 0f)
+            {
                 Projectile.velocity.Y -= acceleration;
             }
-            else {
+            else
+            {
                 Projectile.velocity.Y += acceleration;
             }
 
-            if (Projectile.ai[1] >= 90f) {
+            if (Projectile.ai[1] >= 90f)
+            {
                 Projectile.ai[1] *= -1f;
             }
 
             StorageProjectileAI(Projectile);
         }
 
-        internal void StorageProjectileAI(Projectile proj) {
+        internal void StorageProjectileAI(Projectile proj)
+        {
             Player p = Main.LocalPlayer;
-            if (Main.gamePaused && !Main.gameMenu) {
+            if (Main.gamePaused && !Main.gameMenu)
+            {
                 return;
             }
             Vector2 projPosRelative = proj.position - Main.screenPosition;
-            if (!(Main.mouseX > projPosRelative.X) || !(Main.mouseX < projPosRelative.X + proj.width) || !(Main.mouseY > projPosRelative.Y) || !(Main.mouseY < projPosRelative.Y + proj.height)) {
+            if (!(Main.mouseX > projPosRelative.X) || !(Main.mouseX < projPosRelative.X + proj.width) || !(Main.mouseY > projPosRelative.Y) || !(Main.mouseY < projPosRelative.Y + proj.height))
+            {
                 return;
             }
 
@@ -77,7 +88,8 @@ namespace tsorcRevamp.Projectiles.Pets {
             int projTilePosY = (int)proj.Center.Y / 16;
             int lastTileRangeX = p.lastTileRangeX;
             int lastTileRangeY = p.lastTileRangeY;
-            if (pTilePosX < projTilePosX - lastTileRangeX || pTilePosX > projTilePosX + lastTileRangeX + 1 || pTilePosY < projTilePosY - lastTileRangeY || pTilePosY > projTilePosY + lastTileRangeY + 1) {
+            if (pTilePosX < projTilePosX - lastTileRangeX || pTilePosX > projTilePosX + lastTileRangeX + 1 || pTilePosY < projTilePosY - lastTileRangeY || pTilePosY > projTilePosY + lastTileRangeY + 1)
+            {
                 return;
             }
 
@@ -85,17 +97,20 @@ namespace tsorcRevamp.Projectiles.Pets {
             p.noThrow = 2;
             p.showItemIcon = true;
             p.showItemIcon2 = ItemType;
-            if (PlayerInput.UsingGamepad) {
+            if (PlayerInput.UsingGamepad)
+            {
                 p.GamepadEnableGrappleCooldown();
             }
-            if (!Main.mouseRight || !Main.mouseRightRelease || Player.StopMoneyTroughFromWorking != 0) {
+            if (!Main.mouseRight || !Main.mouseRightRelease || Player.StopMoneyTroughFromWorking != 0)
+            {
                 return;
             }
             Main.mouseRightRelease = false;
             p.tileInteractAttempted = true;
             p.tileInteractionHappened = true;
             p.releaseUseTile = false;
-            if (p.chest == ChestType) {
+            if (p.chest == ChestType)
+            {
                 Terraria.Audio.SoundEngine.PlaySound(UseSound);
                 p.chest = -1;
                 SetWhoAmI(p.GetModPlayer<tsorcRevampPlayer>(), -1);
@@ -117,7 +132,8 @@ namespace tsorcRevamp.Projectiles.Pets {
 
         }
     }
-    public class SafeProjectile : BonfireProjectiles {
+    public class SafeProjectile : BonfireProjectiles
+    {
         public override int ChestType => -3;
         public override int ItemType => ItemID.Safe;
         public override LegacySoundStyle UseSound => SoundID.Item37;
@@ -127,7 +143,8 @@ namespace tsorcRevamp.Projectiles.Pets {
             DisplayName.SetDefault("Soul Safe");
             Main.projFrames[Projectile.type] = 10;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 30;
             Projectile.height = 38;
             Projectile.tileCollide = false;
@@ -179,12 +196,14 @@ namespace tsorcRevamp.Projectiles.Pets {
             base.AI();
         }
     }
-    public class PiggyBankProjectile : BonfireProjectiles {
+    public class PiggyBankProjectile : BonfireProjectiles
+    {
         public override int ChestType => -2;
         public override int ItemType => ItemID.PiggyBank;
         public override LegacySoundStyle UseSound => SoundID.Item59;
 
-        public override void SetWhoAmI(tsorcRevampPlayer player, int value) {
+        public override void SetWhoAmI(tsorcRevampPlayer player, int value)
+        {
             player.chestPiggy = value;
             player.chestBank = -1;
             player.chestBankOpen = false;
@@ -194,7 +213,8 @@ namespace tsorcRevamp.Projectiles.Pets {
             DisplayName.SetDefault("Soul Piglett");
             Main.projFrames[Projectile.type] = 10;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.height = 24;
             Projectile.width = 24;
             Projectile.tileCollide = false;

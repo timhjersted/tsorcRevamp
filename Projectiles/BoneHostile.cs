@@ -1,8 +1,8 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
-using Microsoft.Xna.Framework;
 
 
 namespace tsorcRevamp.Projectiles
@@ -27,8 +27,8 @@ namespace tsorcRevamp.Projectiles
             {
                 Projectile.Kill();
             }
-                // This code makes the projectile bouncy.
-                if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 1f)
+            // This code makes the projectile bouncy.
+            if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 1f)
             {
                 Projectile.velocity.X = oldVelocity.X * -0.5f;
             }

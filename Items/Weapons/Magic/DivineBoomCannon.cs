@@ -1,13 +1,17 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class DivineBoomCannon : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class DivineBoomCannon : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DivineSpark";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Obliterates everything upon contact.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -25,12 +29,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.MasterBuster>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DivineSpark").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Epilogue").Type, 1);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

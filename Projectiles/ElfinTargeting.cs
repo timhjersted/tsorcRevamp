@@ -1,15 +1,17 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class ElfinTargeting : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class ElfinTargeting : ModProjectile
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Elfin Targeting");
         }
         public override void SetDefaults()
@@ -34,7 +36,7 @@ namespace tsorcRevamp.Projectiles {
 
                 //Ignore the weird math operations on 'size' here, it's all just fine-tuning how the dust ring scales with the size of the NPC being targeted
                 float size;
-                if(target.height > target.width)
+                if (target.height > target.width)
                 {
                     size = target.height;
                 }

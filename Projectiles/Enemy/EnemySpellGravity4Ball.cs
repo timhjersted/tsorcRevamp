@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellGravity4Ball : ModProjectile {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellGravity4Ball : ModProjectile
+    {
+        public override void SetDefaults()
+        {
             Projectile.width = 24;
             Projectile.height = 38;
             Projectile.hostile = true;
@@ -15,19 +17,24 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.ignoreWater = true;
         }
 
-        public override void AI() {
-            if (Projectile.ai[1] == 0f) {
+        public override void AI()
+        {
+            if (Projectile.ai[1] == 0f)
+            {
                 Projectile.ai[1] = 1f;
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
             }
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
                 return;
             }
         }
-        public override void Kill(int timeLeft) {
-            if (!Projectile.active) {
+        public override void Kill(int timeLeft)
+        {
+            if (!Projectile.active)
+            {
                 return;
             }
             Projectile.timeLeft = 0;

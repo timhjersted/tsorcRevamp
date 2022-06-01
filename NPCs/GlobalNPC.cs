@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs
             if (spawnInfo.Player.ZoneCrimson && !Main.hardMode)
             {
                 pool.Add(NPCID.LacBeetle, 0.02f);
-                pool.Add(NPCID.Drippler, 0.1f); 
+                pool.Add(NPCID.Drippler, 0.1f);
                 pool.Add(NPCID.BloodCrawler, 0.002f);
                 pool.Add(NPCID.BloodCrawlerWall, 0.002f);
             }
@@ -198,7 +198,7 @@ namespace tsorcRevamp.NPCs
             {
                 List<int> blockedNPCs = new List<int>();
 
-                foreach(int id in pool.Keys)
+                foreach (int id in pool.Keys)
                 {
                     ModNPC modNPC = NPCLoader.GetNPC(id);
 
@@ -208,7 +208,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-                foreach(int id in blockedNPCs)
+                foreach (int id in blockedNPCs)
                 {
                     pool.Remove(id);
                 }
@@ -224,7 +224,7 @@ namespace tsorcRevamp.NPCs
 
 
             //Peace candles do not activate if there is a) an invasion and b) the player is near the center of the world.
-            if((Main.invasionType == 0 || player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
+            if ((Main.invasionType == 0 || player.Center.X > 82016 || player.Center.X < 74560 || player.Center.Y > 16000))
             {
                 if (player.HasBuff(BuffID.PeaceCandle))
                 {
@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
-                if(Main.invasionType == 1)
+                if (Main.invasionType == 1)
                 {
                     player.buffImmune[BuffID.PeaceCandle] = true;
                     player.ZonePeaceCandle = false;
@@ -242,7 +242,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if(player.ZoneTowerSolar || player.ZoneTowerNebula || player.ZoneTowerStardust || player.ZoneTowerVortex)
+            if (player.ZoneTowerSolar || player.ZoneTowerNebula || player.ZoneTowerStardust || player.ZoneTowerVortex)
             {
                 spawnRate /= 2;
                 maxSpawns = (int)(maxSpawns * 1.5);
@@ -357,9 +357,9 @@ namespace tsorcRevamp.NPCs
                                 Main.StartInvasion();
                             }
                         }
-                                                
+
                         tsorcRevampWorld.Slain.Add(npc.type, 0);
-                        
+
                         if (Main.netMode == NetmodeID.Server)
                         {
                             NetMessage.SendData(MessageID.WorldData); //Slain only exists on the server. This tells the server to run NetSend(), which syncs this data with clients
@@ -435,7 +435,8 @@ namespace tsorcRevamp.NPCs
 
 
             #region Event saving and custom drops code
-            if(tsorcScriptedEvents.ActiveEvents != null && tsorcScriptedEvents.ActiveEvents.Count > 0) {
+            if (tsorcScriptedEvents.ActiveEvents != null && tsorcScriptedEvents.ActiveEvents.Count > 0)
+            {
                 foreach (ScriptedEvent thisEvent in tsorcScriptedEvents.ActiveEvents)
                 {
                     if (thisEvent.spawnedNPC != null && thisEvent.spawnedNPC.active && thisEvent.spawnedNPC.whoAmI == npc.whoAmI)
@@ -468,9 +469,9 @@ namespace tsorcRevamp.NPCs
                                     else
                                     {
                                         bool oneAlive = false;
-                                        foreach(bool thisBool in thisEvent.deadNPCs)
+                                        foreach (bool thisBool in thisEvent.deadNPCs)
                                         {
-                                            if(thisBool == false)
+                                            if (thisBool == false)
                                             {
                                                 oneAlive = true;
                                             }
@@ -607,7 +608,7 @@ namespace tsorcRevamp.NPCs
                 Main.dust[dust].noGravity = true;
 
                 int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.FireworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
-                Main.dust[dust2].noGravity = true;                
+                Main.dust[dust2].noGravity = true;
             }
 
             if (CrimsonBurn)
@@ -1103,7 +1104,8 @@ namespace tsorcRevamp.NPCs
             {
                 npc.realLife = -1;
             }
-            else if (npc.ai[3] > 0f) { 
+            else if (npc.ai[3] > 0f)
+            {
                 npc.realLife = (int)npc.ai[3];
             }
 
@@ -1111,7 +1113,7 @@ namespace tsorcRevamp.NPCs
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 //Tick down the sync counter, and if it hits 1 then sync them.
-                if(npc.localAI[0] == 1 && npc.localAI[0] > 0)
+                if (npc.localAI[0] == 1 && npc.localAI[0] > 0)
                 {
                     npc.netUpdate = true;
                     npc.localAI[0] = -1;
@@ -1340,7 +1342,7 @@ namespace tsorcRevamp.NPCs
                 }
                 if (canMove2) { canMove = true; }
             }
-            
+
 
 
             Vector2 npcCenter = npc.Center;
@@ -1352,11 +1354,11 @@ namespace tsorcRevamp.NPCs
             float dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
             if (npc.ai[1] > 0f && npc.ai[1] < (float)Main.npc.Length)
             {
-                
+
                 npcCenter = npc.Center;
                 float offsetX = Main.npc[(int)npc.ai[1]].Center.X - npcCenter.X;
                 float offsetY = Main.npc[(int)npc.ai[1]].Center.Y - npcCenter.Y;
-                
+
                 npc.rotation = (float)Math.Atan2((double)offsetY, (double)offsetX) + 1.57f;
                 dist = (float)Math.Sqrt((double)(offsetX * offsetX + offsetY * offsetY));
                 dist = (dist - (float)npc.width - (float)partDistanceAddon) / dist;
@@ -1364,7 +1366,7 @@ namespace tsorcRevamp.NPCs
                 offsetY *= dist;
                 npc.velocity = default(Vector2);
                 npc.position.X = npc.position.X + offsetX;
-                npc.position.Y = npc.position.Y + offsetY;                
+                npc.position.Y = npc.position.Y + offsetY;
             }
             else
             {
@@ -1481,7 +1483,7 @@ namespace tsorcRevamp.NPCs
 
         #endregion
 
-        
+
 
 
     }
@@ -2040,7 +2042,7 @@ namespace tsorcRevamp.NPCs
             return false;
         }
 
-       
+
     }
 
 
@@ -2065,7 +2067,7 @@ namespace tsorcRevamp.NPCs
         public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
             npc.aiStyle = -1;
-            BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);            
+            BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
         }
 
         ///<summary> 
@@ -2260,9 +2262,9 @@ namespace tsorcRevamp.NPCs
                 {
                     npc.velocity.X = 0;
                 }
-            }            
+            }
             //If not then accelerate (unless the npc is an aiming archer)
-            else if(!isArcher || npc.ai[2] == 0)
+            else if (!isArcher || npc.ai[2] == 0)
             {
                 if (npc.velocity.X < topSpeed && npc.direction == 1)
                 {
@@ -2287,7 +2289,7 @@ namespace tsorcRevamp.NPCs
 
             //Jumping and platform falling code, copied and edited from Firebomb Hollow
             int x_in_front;
-            if(npc.direction == -1)
+            if (npc.direction == -1)
             {
                 x_in_front = (int)(npc.position.X / 16f) - 1;
             }
@@ -2407,7 +2409,7 @@ namespace tsorcRevamp.NPCs
             else if (npc.ai[3] > 0)
             {
                 npc.ai[3] -= 10;
-            }      
+            }
         }
 
 
@@ -2436,13 +2438,13 @@ namespace tsorcRevamp.NPCs
         ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
         public static bool SimpleProjectile(NPC npc, ref float timer, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, int soundType = 0, int soundStyle = 0, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
         {
-            if(npc.ai[3] < 0)
+            if (npc.ai[3] < 0)
             {
                 timer = 0;
             }
             else
             {
-                if (incrementTimer &&  timer < timerCap)
+                if (incrementTimer && timer < timerCap)
                 {
                     timer++;
                 }
@@ -2460,7 +2462,7 @@ namespace tsorcRevamp.NPCs
                     }
                     return true;
                 }
-            }            
+            }
 
             return false;
         }
@@ -2520,19 +2522,19 @@ namespace tsorcRevamp.NPCs
                     {
                         //Skip to the next tile if any of the following is true:
                         //If the selected tile has lava above it, and the npc isn't immune
-                        if(Main.tile[(int)teleportTarget.X, y - 1].LiquidType && !npc.lavaImmune)
+                        if (Main.tile[(int)teleportTarget.X, y - 1].LiquidType && !npc.lavaImmune)
                         {
                             continue;
                         }
 
                         //The selected tile is closer than 8 blocks from the player
-                        else if(Vector2.DistanceSquared(Main.player[npc.target].Center / 16, new Vector2(teleportTarget.X, y)) < 64)
+                        else if (Vector2.DistanceSquared(Main.player[npc.target].Center / 16, new Vector2(teleportTarget.X, y)) < 64)
                         {
                             continue;
                         }
 
                         //If there are solid blocks in the way, leaving no room to teleport to
-                        else if(Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, y - 4, y - 1))
+                        else if (Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, y - 4, y - 1))
                         {
                             continue;
                         }
@@ -2543,14 +2545,14 @@ namespace tsorcRevamp.NPCs
                             continue;
                         }
 
-                        
+
                         //Then teleport and return
                         npc.position.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
                         npc.position.Y = (y * 16 - npc.height); //Subtract npc.height from y so block is under feet
                         npc.TargetClosest(true);
                         npc.netUpdate = true;
                         return;
-                        
+
                     }
                 }
             }
@@ -2584,7 +2586,7 @@ namespace tsorcRevamp.NPCs
             Vector2 newPosition = npc.Center;
 
             Vector2 diff = newPosition - oldPosition;
-            float length = diff.Length();            
+            float length = diff.Length();
             diff.Normalize();
             Vector2 offset = Vector2.Zero;
 
@@ -2605,7 +2607,7 @@ namespace tsorcRevamp.NPCs
                         Dust.NewDustPerfect(oldPosition + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
                     }
                 }
-            }       
+            }
         }
 
         public static void RedKnightOnHit(NPC npc, bool melee)
@@ -2623,7 +2625,7 @@ namespace tsorcRevamp.NPCs
                     npc.velocity.Y = -8f;
                     npc.velocity.X = -4f * npc.direction;
 
-                    
+
                     npc.localAI[1] = 160f;
 
                     npc.netUpdate = true;
@@ -2647,13 +2649,13 @@ namespace tsorcRevamp.NPCs
 
                     npc.netUpdate = true;
                 }
-                
+
                 //TELEPORT MELEE
                 if (Main.rand.Next(12) == 1)
                 {
                     Teleport(npc, 20, true);
                 }
-            }            
+            }
 
             if (!melee && Main.rand.NextBool())
             {
@@ -2710,7 +2712,7 @@ namespace tsorcRevamp.NPCs
                     Teleport(npc, 20, false);
                 }
             }
-            
+
         }
         #endregion
     }

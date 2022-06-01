@@ -2,7 +2,8 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
+namespace tsorcRevamp.Items
+{
     class EventReset : ModItem
     {
         public override void SetStaticDefaults()

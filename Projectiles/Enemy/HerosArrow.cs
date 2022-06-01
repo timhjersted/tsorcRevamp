@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -16,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.scale = 0.8f;
             Projectile.tileCollide = true;
-            aiType = 1;
+            AIType = 1;
             Projectile.width = 14;
         }
 
@@ -34,6 +32,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-        }       
+        }
     }
 }

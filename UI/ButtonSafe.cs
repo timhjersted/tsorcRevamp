@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.UI;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace tsorcRevamp.UI
 {

@@ -1,21 +1,23 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
+﻿
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class ForgottenIceBow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class ForgottenIceBow : ModItem
+    {
 
-        public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Casts magic shards of ice from your bow." + 
-                                "\nAttuned with the greatest powers when wielded by mages." + 
-                                "\nEach shot can be channeled with the powers of your mind once in the air." + 
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Casts magic shards of ice from your bow." +
+                                "\nAttuned with the greatest powers when wielded by mages." +
+                                "\nEach shot can be channeled with the powers of your mind once in the air." +
                                 "\nChanneling is useful for directing the shot directly above your enemies for maximum damage");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 110;
             Item.height = 58;
             Item.knockBack = 4;
@@ -36,7 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.Ice5Ball>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             //todo add ingredients
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ForgottenIceBowScroll").Type, 1);
@@ -45,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

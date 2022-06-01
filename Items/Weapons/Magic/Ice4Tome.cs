@@ -1,21 +1,23 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Ice4Tome : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Ice4Tome : ModItem
+    {
 
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ice 4 Tome");
             Tooltip.SetDefault("A lost legendary tome.");
         }
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost4;
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 120;
             Item.height = 10;
             Item.knockBack = 0f;
@@ -49,12 +51,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             }
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice3Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

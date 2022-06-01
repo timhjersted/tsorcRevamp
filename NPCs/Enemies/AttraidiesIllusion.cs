@@ -1,8 +1,8 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using System;
 using tsorcRevamp.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -45,19 +45,21 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1 
+            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesManifestation>()) < 1
                 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.DungeonMage>()) < 1)
             {
                 if (!Main.hardMode) { chance = .02f; }
                 else chance = .011f;
-                
+
             }
 
-            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(Mod.Find<ModNPC>("AttraidiesIllusion").Type)) {
+            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(Mod.Find<ModNPC>("AttraidiesIllusion").Type))
+            {
                 chance = .033f;
             }
 
-            if (spawnInfo.Player.ZoneJungle && Main.hardMode) {
+            if (spawnInfo.Player.ZoneJungle && Main.hardMode)
+            {
                 chance = .00625f;
             }
 
@@ -87,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 Main.dust[dust].noGravity = true;
             }
 
-            if (NPC.life < NPC.lifeMax * .66f  && NPC.life > NPC.lifeMax * .33f)
+            if (NPC.life < NPC.lifeMax * .66f && NPC.life > NPC.lifeMax * .33f)
             {
                 illusiontimer++;
                 if (illusiontimer > 40 && illusiontimer < 100)
@@ -224,7 +226,8 @@ namespace tsorcRevamp.NPCs.Enemies
                         int tp_y_target = Main.rand.Next((target_y_blockpos - tp_radius) - 62, (target_y_blockpos + tp_radius) - 24);  //  pick random tp point (centered on corner)
                         for (int m = tp_y_target; m < target_y_blockpos + tp_radius; m++) // traverse y downward to edge of radius
                         { // (tp_x_target,m) is block under its feet I think
-                            if ((m < target_y_blockpos - 15 || m > target_y_blockpos + 15 || tp_x_target < target_x_blockpos - 15 || tp_x_target > target_x_blockpos + 15) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].HasTile) { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
+                            if ((m < target_y_blockpos - 15 || m > target_y_blockpos + 15 || tp_x_target < target_x_blockpos - 15 || tp_x_target > target_x_blockpos + 15) && (m < y_blockpos - 5 || m > y_blockpos + 5 || tp_x_target < x_blockpos - 5 || tp_x_target > x_blockpos + 5) && Main.tile[tp_x_target, m].HasTile)
+                            { // over 13 blocks distant from player & over 5 block distant from old position & tile active(to avoid surface? want to tp onto a block?)
                                 bool safe_to_stand = true;
                                 bool dark_caster = false; // not a fighter type AI...
                                 if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors

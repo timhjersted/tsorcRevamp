@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -55,13 +54,13 @@ namespace tsorcRevamp.Items
         public override bool OnPickup(Player player)
         {
             bool openSlot = false;
-            for(int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
+            for (int i = 0; i < /*Main.maxInventory*/ 50; i++) //Main.maxInventory == 58 would include coin and ammo slots, we don't want to take those into account in this case
             {
                 if (player.inventory[i].IsAir || player.HasItem(ModContent.ItemType<SoulShekel>()))
                 {
                     openSlot = true;
                 }
-            }            
+            }
             if (openSlot)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
@@ -73,7 +72,7 @@ namespace tsorcRevamp.Items
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5);
-            
+
             recipe.Register();
 
             Recipe recipe2 = new Recipe(Mod);

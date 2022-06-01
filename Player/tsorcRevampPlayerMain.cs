@@ -21,7 +21,7 @@ namespace tsorcRevamp
     {
 
         public static List<int> startingItemsList;
-        
+
         public override void Initialize()
         {
             PermanentBuffToggles = new bool[54]; //todo dont forget to increment this if you add buffs to the dictionary
@@ -44,23 +44,27 @@ namespace tsorcRevamp
 
         }
 
-        public override void clientClone(ModPlayer clientClone) {
+        public override void clientClone(ModPlayer clientClone)
+        {
             tsorcRevampPlayer clone = clientClone as tsorcRevampPlayer;
             if (clone == null) { return; }
 
             clone.SoulSlot.Item = SoulSlot.Item.Clone();
         }
 
-        public override void SendClientChanges(ModPlayer clientPlayer) {
+        public override void SendClientChanges(ModPlayer clientPlayer)
+        {
             tsorcRevampPlayer oldClone = clientPlayer as tsorcRevampPlayer;
             if (oldClone == null) { return; }
 
-            if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item)) {
+            if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item))
+            {
                 SendSingleItemPacket(1, SoulSlot.Item, -1, Player.whoAmI);
             }
         }
 
-        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
+        public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
+        {
 
             //Sync soul slot
             ModPacket packet = Mod.GetPacket();
@@ -102,14 +106,14 @@ namespace tsorcRevamp
             };
 
             List<Item> PotionBagList = new List<Item>();
-            if(PotionBagItems == null)
+            if (PotionBagItems == null)
             {
-                PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];                
+                PotionBagItems = new Item[PotionBagUIState.POTION_BAG_SIZE];
             }
 
             for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
             {
-                if(PotionBagItems[i] == null)
+                if (PotionBagItems[i] == null)
                 {
                     PotionBagItems[i] = new Item();
                     PotionBagItems[i].SetDefaults(0);
@@ -146,16 +150,16 @@ namespace tsorcRevamp
 
 
             PotionBagItems = ((List<Item>)tag.GetList<Item>("PotionBag")).ToArray();
-            if(PotionBagItems.Length < PotionBagUIState.POTION_BAG_SIZE)
+            if (PotionBagItems.Length < PotionBagUIState.POTION_BAG_SIZE)
             {
                 Item[] TempArray = new Item[PotionBagUIState.POTION_BAG_SIZE];
-                for(int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                 {
                     if (i < PotionBagItems.Length)
                     {
                         TempArray[i] = PotionBagItems[i];
                     }
-                    if(TempArray[i] == null)
+                    if (TempArray[i] == null)
                     {
                         TempArray[i] = new Item();
                         TempArray[i].SetDefaults(0);
@@ -168,24 +172,30 @@ namespace tsorcRevamp
 
         public void SetDirection() => SetDirection(false);
 
-        private void SetDirection(bool resetForcedDirection) {
-            if (!Main.dedServ && Main.gameMenu) {
+        private void SetDirection(bool resetForcedDirection)
+        {
+            if (!Main.dedServ && Main.gameMenu)
+            {
                 Player.direction = 1;
 
                 return;
             }
 
-            if (!Player.pulley && (!Player.mount.Active || Player.mount.AllowDirectionChange) && (Player.itemAnimation <= 1)) {
-                if (forcedDirection != 0) {
+            if (!Player.pulley && (!Player.mount.Active || Player.mount.AllowDirectionChange) && (Player.itemAnimation <= 1))
+            {
+                if (forcedDirection != 0)
+                {
                     Player.direction = forcedDirection;
 
-                    if (resetForcedDirection) {
+                    if (resetForcedDirection)
+                    {
                         forcedDirection = 0;
                     }
                 }
             }
         }
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) {
+        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
+        {
             if (Player.HasBuff(ModContent.BuffType<Invincible>())) return false;
             /*
             player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
@@ -193,7 +203,8 @@ namespace tsorcRevamp
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
 
-        public override void OnHitAnything(float x, float y, Entity victim) {
+        public override void OnHitAnything(float x, float y, Entity victim)
+        {
             /*
             player.AddBuff(ModContent.BuffType<InCombat>(), 600); //10s 
             */
@@ -227,12 +238,12 @@ namespace tsorcRevamp
                 Player.statLifeMax -= 20;
             }
 
-            
+
 
             bool onePlayerAlive = false;
-            for(int i = 0; i < Main.maxPlayers; i++)
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                if(Main.player[i].active && !Main.player[i].dead)
+                if (Main.player[i].active && !Main.player[i].dead)
                 {
                     onePlayerAlive = true;
                 }
@@ -265,7 +276,7 @@ namespace tsorcRevamp
 
         public override bool ShiftClickSlot(Item[] inventory, int context, int slot)
         {
-            if(Player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
+            if (Player.HasItem(ModContent.ItemType<PotionBag>()) && (context == ItemSlot.Context.ChestItem || context == ItemSlot.Context.BankItem || context == ItemSlot.Context.InventoryItem))
             {
                 if (PotionBagUIState.IsValidPotion(inventory[slot]))
                 {
@@ -275,7 +286,7 @@ namespace tsorcRevamp
                     bool inPotionBag = false; //Is the item being clicked in the potion bag? Hard to tell, because the bag is treated like a normal inventory slot. We have to check manually.
                     for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
                     {
-                        if(item == PotionBagItems[i])
+                        if (item == PotionBagItems[i])
                         {
                             inPotionBag = true;
                         }
@@ -293,7 +304,7 @@ namespace tsorcRevamp
                             if (PotionBagItems[i].type == item.type && (PotionBagItems[i].stack + item.stack) <= PotionBagItems[i].maxStack)
                             {
                                 PotionBagItems[i].stack += item.stack;
-                                item.TurnToAir(); 
+                                item.TurnToAir();
                                 if (Main.netMode == 1 && Player.chest >= -1 && context == ItemSlot.Context.ChestItem)
                                 {
                                     NetMessage.SendData(32, -1, -1, null, Player.chest, slot);
@@ -303,9 +314,9 @@ namespace tsorcRevamp
                                 return true;
                             }
                         }
-                        
+
                         //If it got here, that means there's no existing stacks with room
-                         //So go through it again, finding the first empty slot instead
+                        //So go through it again, finding the first empty slot instead
                         if (emptySlot != null)
                         {
                             PotionBagItems[emptySlot.Value] = item.DeepClone();
@@ -332,7 +343,7 @@ namespace tsorcRevamp
                             if (Player.inventory[i].type == item.type && (Player.inventory[i].stack + item.stack) <= Player.inventory[i].maxStack)
                             {
                                 Player.inventory[i].stack += item.stack;
-                                item.TurnToAir();                                
+                                item.TurnToAir();
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
                                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
                                 return true;
@@ -342,14 +353,14 @@ namespace tsorcRevamp
                         if (emptySlot != null)
                         {
                             Player.inventory[emptySlot.Value] = item.DeepClone();
-                            item.TurnToAir(); 
+                            item.TurnToAir();
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
                             return true;
                         }
                     }
 
-                    
+
                 }
             }
             return false;
@@ -363,7 +374,7 @@ namespace tsorcRevamp
 
             Item PotionBagItem = new Item();
             PotionBagItem.SetDefaults(ModContent.ItemType<PotionBag>());
-            items.Add(PotionBagItem);            
+            items.Add(PotionBagItem);
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
@@ -403,7 +414,7 @@ namespace tsorcRevamp
                             Player.statLife = Player.statLifeMax2;
                         }
 
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f}, Player.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
                     }
@@ -483,7 +494,7 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentBoost = true;
-                        
+
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.75f }, Player.Center);
 
                         MiakodaEffectsTimer = 0;
@@ -516,17 +527,22 @@ namespace tsorcRevamp
                 float damageMult = Main.rand.NextFloat(0.0f, 0.8696f);
                 damage = (int)(damage * damageMult);
             }
-            if (crit) {
-                if (item.DamageType == DamageClass.Melee) {
+            if (crit)
+            {
+                if (item.DamageType == DamageClass.Melee)
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
-                else if (item.DamageType == DamageClass.Magic) {
+                else if (item.DamageType == DamageClass.Magic)
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
-                else if (item.DamageType == DamageClass.Ranged) {
+                else if (item.DamageType == DamageClass.Ranged)
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
-                else if (item.DamageType == DamageClass.Throwing) {
+                else if (item.DamageType == DamageClass.Throwing)
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
@@ -544,17 +560,22 @@ namespace tsorcRevamp
                 damage = (int)(damage * 0.55);
             }
 
-            if (crit) {
-                if (proj.CountsAsClass(DamageClass.Melee)) {
+            if (crit)
+            {
+                if (proj.CountsAsClass(DamageClass.Melee))
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
-                else if (proj.CountsAsClass(DamageClass.Magic)) {
+                else if (proj.CountsAsClass(DamageClass.Magic))
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
-                else if (proj.CountsAsClass(DamageClass.Ranged)) {
+                else if (proj.CountsAsClass(DamageClass.Ranged))
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
-                else if (proj.CountsAsClass(DamageClass.Throwing)) {
+                else if (proj.CountsAsClass(DamageClass.Throwing))
+                {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
@@ -745,7 +766,8 @@ namespace tsorcRevamp
             {
                 DragoonBootsEnable = !DragoonBootsEnable;
             }
-            if (tsorcRevamp.reflectionShiftKey.JustPressed) { 
+            if (tsorcRevamp.reflectionShiftKey.JustPressed)
+            {
                 if (ReflectionShiftEnabled)
                 {
                     if (Player.controlUp)
@@ -765,8 +787,8 @@ namespace tsorcRevamp
                         ReflectionShiftState.Y = 1;
                     }
                 }
-        }            
-        }        
+            }
+        }
 
         //On hit, subtract the mana cost and disable natural mana regen for a short period
         //The latter is absolutely necessary, because natural mana regen scales with your base mana
@@ -795,15 +817,15 @@ namespace tsorcRevamp
         }
 
         public override void OnEnterWorld(Player player)
-        {            
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !gotPickaxe)
             { //sandbox mode only, and only once
-                player.QuickSpawnItem(ModContent.ItemType<DiamondPickaxe>());
+                player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DiamondPickaxe>());
                 gotPickaxe = true;
             }
         }
 
-        
+
 
         public override void OnRespawn(Player player)
         {
@@ -811,16 +833,20 @@ namespace tsorcRevamp
             player.statLife = player.statLifeMax2;
         }
 
-        public static bool CheckBossZen() {
-            for (int i = 0; i < 200; i++) {
-                if (Main.npc[i].active && Main.npc[i].boss) {
+        public static bool CheckBossZen()
+        {
+            for (int i = 0; i < 200; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].boss)
+                {
                     return true;
                 }
             }
             return false;
         }
 
-        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk) {
+        public static float CheckReduceDefense(Vector2 Position, int Width, int Height, bool fireWalk)
+        {
 
             int playerTileXLeft = (int)(Position.X / 16f) - 1;
             int playerTileXRight = (int)((Position.X + Width) / 16f) + 2;
@@ -828,36 +854,45 @@ namespace tsorcRevamp
             int playerTileYTop = (int)((Position.Y + Height) / 16f) + 2;
 
             #region sanity
-            if (playerTileXLeft < 0) {
+            if (playerTileXLeft < 0)
+            {
                 playerTileXLeft = 0;
             }
-            if (playerTileXRight > Main.maxTilesX) {
+            if (playerTileXRight > Main.maxTilesX)
+            {
                 playerTileXRight = Main.maxTilesX;
             }
-            if (playerTileYBottom < 0) {
+            if (playerTileYBottom < 0)
+            {
                 playerTileYBottom = 0;
             }
-            if (playerTileYTop > Main.maxTilesY) {
+            if (playerTileYTop > Main.maxTilesY)
+            {
                 playerTileYTop = Main.maxTilesY;
             }
             #endregion
 
-            for (int i = playerTileXLeft; i < playerTileXRight; i++) {
-                for (int j = playerTileYBottom; j < playerTileYTop; j++) {
-                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile) {
+            for (int i = playerTileXLeft; i < playerTileXRight; i++)
+            {
+                for (int j = playerTileYBottom; j < playerTileYTop; j++)
+                {
+                    if (Main.tile[i, j] != null && Main.tile[i, j].HasTile)
+                    {
                         Vector2 TilePos;
                         TilePos.X = i * 16;
                         TilePos.Y = j * 16;
 
                         int type = Main.tile[i, j].TileType;
 
-                        if (DamageDir.ContainsKey(type) && !(fireWalk && type == 76)) {
+                        if (DamageDir.ContainsKey(type) && !(fireWalk && type == 76))
+                        {
                             float a = DamageDir[type];
                             float z = 0.5f;
                             if (Position.X + Width > TilePos.X - z &&
                                 Position.X < TilePos.X + 16f + z &&
                                 Position.Y + Height > TilePos.Y - z &&
-                                Position.Y < TilePos.Y + 16f + z) {
+                                Position.Y < TilePos.Y + 16f + z)
+                            {
                                 return a;
                             }
                         }
@@ -867,15 +902,19 @@ namespace tsorcRevamp
             return 0;
         }
 
-        public static float CheckSoulsMultiplier(Player player) {
+        public static float CheckSoulsMultiplier(Player player)
+        {
             float multiplier = 1f;
-            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing)
+            {
                 multiplier += 0.20f;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulSiphon)
+            {
                 multiplier += 0.2f;
             }
-            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().SOADrain)
+            {
                 multiplier += 0.4f;
             }
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
@@ -885,13 +924,15 @@ namespace tsorcRevamp
             return multiplier;
         }
 
-        public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new() {
+        public void DoPortableChest<T>(ref int whoAmI, ref bool toggle) where T : BonfireProjectiles, new()
+        {
             int projectileType = ModContent.ProjectileType<T>();
             T instance = ModContent.GetInstance<T>();
             int bankID = instance.ChestType;
             SoundStyle useSound = instance.UseSound;
 
-            if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType) {
+            if (Main.projectile[whoAmI].active && Main.projectile[whoAmI].type == projectileType)
+            {
                 int oldChest = Player.chest;
                 Player.chest = bankID;
                 toggle = true;
@@ -900,9 +941,11 @@ namespace tsorcRevamp
                 int num18 = (int)((Player.position.Y + Player.height * 0.5) / 16.0);
                 Player.chestX = (int)Main.projectile[whoAmI].Center.X / 16;
                 Player.chestY = (int)Main.projectile[whoAmI].Center.Y / 16;
-                if ((oldChest != bankID && oldChest != -1) || num17 < Player.chestX - Player.tileRangeX || num17 > Player.chestX + Player.tileRangeX + 1 || num18 < Player.chestY - Player.tileRangeY || num18 > Player.chestY + Player.tileRangeY + 1) {
+                if ((oldChest != bankID && oldChest != -1) || num17 < Player.chestX - Player.tileRangeX || num17 > Player.chestX + Player.tileRangeX + 1 || num18 < Player.chestY - Player.tileRangeY || num18 > Player.chestY + Player.tileRangeY + 1)
+                {
                     whoAmI = -1;
-                    if (Player.chest != -1) {
+                    if (Player.chest != -1)
+                    {
                         Terraria.Audio.SoundEngine.PlaySound(useSound);
                     }
 
@@ -914,7 +957,8 @@ namespace tsorcRevamp
                     Recipe.FindRecipes();
                 }
             }
-            else {
+            else
+            {
 
 
                 whoAmI = -1;
@@ -923,7 +967,8 @@ namespace tsorcRevamp
             }
         }
 
-        internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho) {
+        internal void SendSingleItemPacket(int message, Item item, int toWho, int fromWho)
+        {
             ModPacket packet = Mod.GetPacket();
             packet.Write((byte)message);
             packet.Write((byte)Player.whoAmI);
@@ -931,17 +976,22 @@ namespace tsorcRevamp
             packet.Send(toWho, fromWho);
         }
 
-        public void DoMultiCrits(ref int damage, float critType) {
+        public void DoMultiCrits(ref int damage, float critType)
+        {
             int critLevel = (int)(Math.Floor(critType / 100f));
-            if (critLevel != 0) {
-                if (critLevel > 1) {
-                    for (int i = 1; i < critLevel; i++) {
+            if (critLevel != 0)
+            {
+                if (critLevel > 1)
+                {
+                    for (int i = 1; i < critLevel; i++)
+                    {
                         damage *= 2;
                     }
                 }
-                if (Main.rand.Next(1, 101) <= critType - (100 * critLevel)) {
+                if (Main.rand.Next(1, 101) <= critType - (100 * critLevel))
+                {
                     damage *= 2;
-                } 
+                }
             }
         }
     }

@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class CursedFlamelash : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class CursedFlamelash : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 26;
             Item.height = 26;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -23,13 +26,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.CursedFlamelash>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Flamelash, 1);
             recipe.AddIngredient(ItemID.CursedFlame, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

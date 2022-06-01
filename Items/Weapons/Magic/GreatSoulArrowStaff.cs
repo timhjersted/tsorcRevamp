@@ -59,10 +59,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             return false;
         }
 
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        {
 
             Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 25f;
-            if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0)) {
+            if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
+            {
                 position += muzzleOffset;
                 position.Y += -14;
             }
@@ -72,7 +74,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             speedAbs = 7f / speedAbs; // for speed consistency
             mySpeedX *= speedAbs;
             mySpeedY *= speedAbs;
-            Projectile.NewProjectile(new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.GreatSoulArrow>(), damage, knockBack, player.whoAmI);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.GreatSoulArrow>(), damage, knockBack, player.whoAmI);
 
             return false;
         }
@@ -84,7 +86,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulSiphonPotion").Type);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

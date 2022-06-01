@@ -1,16 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class EphemeralThrowingSpear : ModProjectile {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Projectiles
+{
+    class EphemeralThrowingSpear : ModProjectile
+    {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[Projectile.type] = 4;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 19;
             Projectile.height = 19;
             Projectile.timeLeft = 180;
@@ -23,19 +26,24 @@ namespace tsorcRevamp.Projectiles {
             Projectile.width = 14;
             drawOffsetX = -10;
         }
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.ai[0] += 1f;
-            if (++Projectile.frameCounter >= 6) {
+            if (++Projectile.frameCounter >= 6)
+            {
                 Projectile.frameCounter = 0;
-                if (++Projectile.frame >= 4) {
+                if (++Projectile.frame >= 4)
+                {
                     Projectile.frame = 0;
                 }
             }
-            if (Projectile.ai[0] >= 15f) { 
+            if (Projectile.ai[0] >= 15f)
+            {
                 Projectile.ai[0] = 15f;
                 Projectile.velocity.Y += 0.1f;
             }
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90f);
@@ -43,9 +51,11 @@ namespace tsorcRevamp.Projectiles {
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 245, 0, 0, 50, default, 1.2f);
             Main.dust[dust].noGravity = true;
         }
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1, .6f);
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++)
+            {
                 Vector2 projPosition = new Vector2(Projectile.position.X, Projectile.position.Y);
                 Dust.NewDust(projPosition, Projectile.width, Projectile.height, 245, 0f, 0f, 0, default, 1f);
             }
@@ -60,7 +70,7 @@ namespace tsorcRevamp.Projectiles {
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 106, 34, 106), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
 

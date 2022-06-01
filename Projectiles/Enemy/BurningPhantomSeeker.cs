@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.expertMode) expertScaling = 2;
             Main.player[Main.myPlayer].AddBuff(BuffID.BrokenArmor, 120 / expertScaling, false); //broken armor
             Main.player[Main.myPlayer].AddBuff(BuffID.OnFire, 600 / expertScaling, false); //on fire
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); 
+            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false);
 
             if (Main.rand.Next(10) == 0)
             {
@@ -63,9 +63,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
         }
 
-        public override void PostDraw(SpriteBatch sp, Color lightColor)
+        public override void PostDraw(Color lightColor)
         {
-            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
+
+            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(251, 255, 0);
@@ -78,8 +79,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 lastpos[modlastposindex].Y += Main.rand.Next(-1, 1);
                 PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
-
-                sp.Draw(
+                Main.spriteBatch.Draw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,
@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
-                sp.Draw(
+                Main.spriteBatch.Draw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,

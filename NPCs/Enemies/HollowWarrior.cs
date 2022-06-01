@@ -4,7 +4,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -159,7 +158,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 NPC.netUpdate = true;
             }
-            
+
 
             if (Math.Abs(NPC.velocity.X) > 4f) //If moving at high speed, become knockback immune
             {
@@ -758,7 +757,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
         }
-    
+
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

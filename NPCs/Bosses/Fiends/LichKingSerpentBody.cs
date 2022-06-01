@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -28,8 +27,8 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
-            NPC.value = 460; 
-            
+            NPC.value = 460;
+
             bodyTypes = new int[43];
             int bodyID = ModContent.NPCType<LichKingSerpentBody>();
             for (int i = 0; i < 43; i++)
@@ -46,7 +45,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            NPC.damage = (int)(NPC.damage *  1.3 / tsorcRevampGlobalNPC.expertScale);
+            NPC.damage = (int)(NPC.damage * 1.3 / tsorcRevampGlobalNPC.expertScale);
             NPC.defense = NPC.defense += 12;
         }
 
@@ -55,7 +54,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             return false;
         }
 
-        
+
         public override void AI()
         {
 

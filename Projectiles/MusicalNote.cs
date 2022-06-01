@@ -1,10 +1,12 @@
-﻿using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class MusicalNote : ModProjectile {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Projectiles
+{
+    class MusicalNote : ModProjectile
+    {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 8;
             Projectile.friendly = true;
             Projectile.height = 10;

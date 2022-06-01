@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.IronChainmail, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

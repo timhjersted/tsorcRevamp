@@ -11,7 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             DisplayName.SetDefault("Crescent Moon Sword");
             Tooltip.SetDefault("Ringfinger Leonhard's weapon of choice," +
-                               "\na type of shotel imbued with the power of the moon" + 
+                               "\na type of shotel imbued with the power of the moon" +
                                "\nShoots beams of crescent moonlight that pierce walls");
         }
 

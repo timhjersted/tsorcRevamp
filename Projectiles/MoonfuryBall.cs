@@ -2,16 +2,19 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles
+{
 
-    public class MoonfuryBall : ModProjectile {
+    public class MoonfuryBall : ModProjectile
+    {
 
         private const string ChainTexturePath = "tsorcRevamp/Projectiles/chain";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 30;
             Projectile.height = 30;
             Projectile.friendly = true;
@@ -19,7 +22,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.DamageType = DamageClass.Melee;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
 
             var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 171, Projectile.velocity.X * 0.4f, Projectile.velocity.Y * 0.4f, 100, new Color(0, 255, 67), 1f);
@@ -29,7 +33,8 @@ namespace tsorcRevamp.Projectiles {
 
             var player = Main.player[Projectile.owner];
 
-            if (player.dead) {
+            if (player.dead)
+            {
                 Projectile.Kill();
                 return;
             }
@@ -49,15 +54,18 @@ namespace tsorcRevamp.Projectiles {
             // ai[1] == 1 or !projectile.tileCollide: forced retraction
 
 
-            if (Projectile.ai[0] == 0f) {
+            if (Projectile.ai[0] == 0f)
+            {
                 float maxChainLength = 160f; //pixels
                 Projectile.tileCollide = true;
-                if (currentChainLength > maxChainLength) {
+                if (currentChainLength > maxChainLength)
+                {
                     // If we reach maxChainLength, we change behavior.
                     Projectile.ai[0] = 1f;
                     Projectile.netUpdate = true;
                 }
-                else if (!player.channel) { //release mouse
+                else if (!player.channel)
+                { //release mouse
 
                     if (Projectile.velocity.Y < 0f)
                         Projectile.velocity.Y *= 0.9f;
@@ -66,7 +74,8 @@ namespace tsorcRevamp.Projectiles {
                     Projectile.velocity.X *= 0.9f;
                 }
             }
-            else if (Projectile.ai[0] == 1f) {
+            else if (Projectile.ai[0] == 1f)
+            {
                 float elasticFactorA = 14f / player.GetAttackSpeed(DamageClass.Melee);
                 float elasticFactorB = 0.9f / player.GetAttackSpeed(DamageClass.Melee);
                 float maxStretchLength = 300f; //flails force retract, even through walls, when they reach this length
@@ -74,7 +83,8 @@ namespace tsorcRevamp.Projectiles {
                 if (Projectile.ai[1] == 1f)
                     Projectile.tileCollide = false;
 
-                if (!player.channel || currentChainLength > maxStretchLength || !Projectile.tileCollide) {
+                if (!player.channel || currentChainLength > maxStretchLength || !Projectile.tileCollide)
+                {
                     Projectile.ai[1] = 1f;
 
                     if (Projectile.tileCollide)
@@ -92,15 +102,18 @@ namespace tsorcRevamp.Projectiles {
                 int restingChainLength = 60;
 
 
-                if (currentChainLength > restingChainLength || !Projectile.tileCollide) {
+                if (currentChainLength > restingChainLength || !Projectile.tileCollide)
+                {
                     var elasticAcceleration = vectorToPlayer * elasticFactorA / currentChainLength - Projectile.velocity;
                     elasticAcceleration *= elasticFactorB / elasticAcceleration.Length();
                     Projectile.velocity *= 0.98f;
                     Projectile.velocity += elasticAcceleration;
                 }
-                else {
+                else
+                {
 
-                    if (Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) < 6f) {
+                    if (Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) < 6f)
+                    {
                         Projectile.velocity.X *= 0.96f;
                         Projectile.velocity.Y += 0.2f;
                     }
@@ -114,12 +127,15 @@ namespace tsorcRevamp.Projectiles {
             //add shoot projectiles here (like flower pow)
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity) {
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
             //slow when bouncing
             bool shouldMakeSound = false;
 
-            if (oldVelocity.X != Projectile.velocity.X) {
-                if (Math.Abs(oldVelocity.X) > 4f) {
+            if (oldVelocity.X != Projectile.velocity.X)
+            {
+                if (Math.Abs(oldVelocity.X) > 4f)
+                {
                     shouldMakeSound = true;
                 }
 
@@ -127,8 +143,10 @@ namespace tsorcRevamp.Projectiles {
                 Projectile.velocity.X = -oldVelocity.X * 0.2f;
             }
 
-            if (oldVelocity.Y != Projectile.velocity.Y) {
-                if (Math.Abs(oldVelocity.Y) > 4f) {
+            if (oldVelocity.Y != Projectile.velocity.Y)
+            {
+                if (Math.Abs(oldVelocity.Y) > 4f)
+                {
                     shouldMakeSound = true;
                 }
 
@@ -137,7 +155,8 @@ namespace tsorcRevamp.Projectiles {
             }
             Projectile.ai[0] = 1f;
 
-            if (shouldMakeSound) {
+            if (shouldMakeSound)
+            {
                 Projectile.netUpdate = true;
                 Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y);
@@ -162,7 +181,8 @@ namespace tsorcRevamp.Projectiles {
 
             float rotation = remainingVectorToPlayer.ToRotation() - MathHelper.PiOver2;
 
-            if (Projectile.alpha == 0) {
+            if (Projectile.alpha == 0)
+            {
                 int direction = -1;
 
                 if (Projectile.Center.X < mountedCenter.X)
@@ -172,7 +192,8 @@ namespace tsorcRevamp.Projectiles {
             }
 
             //draw the chain
-            while (true) {
+            while (true)
+            {
                 float length = remainingVectorToPlayer.Length();
 
                 if (length < 25f || float.IsNaN(length))

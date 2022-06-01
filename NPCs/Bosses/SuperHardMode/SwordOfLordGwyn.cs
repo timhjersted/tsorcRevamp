@@ -1,21 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Accessories;
-using static tsorcRevamp.SpawnHelper;
 
-namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
-    class SwordOfLordGwyn : ModNPC {
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
+{
+    class SwordOfLordGwyn : ModNPC
+    {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sword of Lord Gwyn");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.npcSlots = 1;
             NPC.width = 152;
             NPC.height = 152;

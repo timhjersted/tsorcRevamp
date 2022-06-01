@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -21,7 +20,7 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, 6, 8), Color.White, Projectile.rotation, new Vector2(3, 4), Projectile.scale, SpriteEffects.None, 0);
 

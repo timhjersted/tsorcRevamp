@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, 18, 12), Color.White, Projectile.rotation, new Vector2(9, 6), Projectile.scale, SpriteEffects.None, 0);
 

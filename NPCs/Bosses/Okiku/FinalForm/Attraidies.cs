@@ -1,17 +1,18 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
-namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
+namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
+{
     [AutoloadBossHead]
-    class Attraidies : ModNPC {
+    class Attraidies : ModNPC
+    {
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.npcSlots = 10;
             NPC.damage = 70;
             NPC.defense = 25;
@@ -33,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             NPC.buffImmune[BuffID.Confused] = true;
             Main.npcFrameCount[NPC.type] = 3;
             bossBag = ModContent.ItemType<Items.BossBags.AttraidiesBag>();
-            despawnHandler = new NPCDespawnHandler("With your death, a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);            
+            despawnHandler = new NPCDespawnHandler("With your death, a dark shadow falls over the world...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
 
         public int ShadowOrbDamage = 80;
@@ -46,7 +47,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         public int LightningStrikeDamage = 130;
         public int DarkLaserDamage = 100;
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
             ShadowOrbDamage = ShadowOrbDamage / 2;
             CrystalShardsDamage = CrystalShardsDamage / 2;
             DeathBallDamage = DeathBallDamage / 2;
@@ -58,8 +60,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             DarkLaserDamage = DarkLaserDamage / 2;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-            if (NPC.AnyNPCs(ModContent.NPCType<Attraidies>())) {
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<Attraidies>()))
+            {
                 return 0;
             }
 
@@ -68,10 +72,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon;
             bool surface = nospecialbiome && !p.ZoneSkyHeight && (spawnInfo.SpawnTileY <= Main.worldSurface);
 
-            if (Main.hardMode && Main.bloodMoon && !tsorcRevampWorld.SuperHardMode && surface) {
+            if (Main.hardMode && Main.bloodMoon && !tsorcRevampWorld.SuperHardMode && surface)
+            {
                 chance = (1f / 38500f);
             }
-            
+
             return chance;
         }
 
@@ -96,7 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             set => NPC.ai[3] = value;
         }
 
-        
+
 
         public float ShadowShotCount = 0;
         public float CrystalShardsTimer = 0;
@@ -113,8 +118,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         NPCDespawnHandler despawnHandler;
         public override void AI()
         {
-           
-            
+
+
             //if(Main.netMode == NetmodeID.Server)
             //{
             //     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.npc.whoAmI);
@@ -147,7 +152,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             #region Dusts
             //Spawn dusts depending on his max life
-            if (NPC.life > (NPC.lifeMax / 2)) {
+            if (NPC.life > (NPC.lifeMax / 2))
+            {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 6, NPC.velocity.X, NPC.velocity.Y, 200, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
@@ -303,7 +309,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
             if (AttackMode == 4)
             {
-                Lighting.AddLight(NPC.position, Color.OrangeRed.ToVector3());               
+                Lighting.AddLight(NPC.position, Color.OrangeRed.ToVector3());
                 NPC.noGravity = true;
                 NPC.noTileCollide = true;
                 NewVelocity = new Vector2(0, 2f).RotatedByRandom(MathHelper.TwoPi);
@@ -323,7 +329,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 ChangeAttackModes();
             }
 
-            if(AttackMode == 6)
+            if (AttackMode == 6)
             {
                 NPC.noTileCollide = true;
                 if (AttackModeCounter == 5)
@@ -333,7 +339,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
                     //Gives the player infinite flight for the duration of the attack. Sticks around for a bit afterward as a bonus.                
                     UsefulFunctions.BroadcastText("You suddenly feel weightless...", Color.DeepSkyBlue);
-                    Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);                    
+                    Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.EarthAlignment>(), 1600);
                 }
 
                 NPC.velocity = Vector2.Zero;
@@ -349,7 +355,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 {
                     ChangeAttackModes();
                 }
-                
+
             }
             #endregion            
 
@@ -358,7 +364,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 #region Mode 0: Teleport and Fire Waves
-                if (AttackMode == 0) {
+                if (AttackMode == 0)
+                {
                     #region Shadow Orb Attack
                     if (ShadowShotCount < 60 && (TeleportTimer % 2 == 0))
                     {
@@ -507,12 +514,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
 
                 #region Mode 4: Solar Detonators
                 if (AttackMode == 4)
-                {                    
+                {
                     if (AttackModeCounter % 45 == 0 && AttackModeCounter < 730)
                     {
                         Vector2 position = Main.player[NPC.target].position + Main.rand.NextVector2Square(-600, 600);
                         Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), position, Vector2.Zero, ModContent.ProjectileType<SolarDetonator>(), SolarDetonationDamage, .5f, Main.myPlayer, NPC.target);
-                    }                    
+                    }
                 }
                 #endregion
 
@@ -532,13 +539,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                     }
                     if (AttackModeCounter == 5)
                     {
-                       Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
-                    }                   
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<DarkLaserHost>(), DarkLaserDamage, .5f, Main.myPlayer, NPC.whoAmI);
+                    }
                 }
                 #endregion
 
                 #region NPC Spawning
-                NPCSummonCooldown++; 
+                NPCSummonCooldown++;
                 if (NPCSummonCooldown >= 3600) //Can summon extra enemies once a minute
                 {
                     if (NPC.life > (NPC.lifeMax / 2))
@@ -585,7 +592,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                             DragonSpawned = 1;
                         }
                         #endregion
-                    }                    
+                    }
                 }
                 #endregion
             }
@@ -605,7 +612,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             float teleportAngle = (float)(Main.rand.Next(360) * (Math.PI / 180));
 
             Player Pt = Main.player[NPC.target];
-            
+
             Vector2 PtC = Pt.position + new Vector2(Pt.width / 2, Pt.height / 2);
             NPC.position.X = Pt.position.X + (float)((600 * Math.Cos(teleportAngle)) * -1);
             NPC.position.Y = Pt.position.Y - 35 + (float)((30 * Math.Sin(teleportAngle)) * -1);
@@ -613,7 +620,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             float MinDIST = 560f;
             float MaxDIST = 610f;
 
-            if(AttackMode == 2)
+            if (AttackMode == 2)
             {
                 MinDIST = 700f;
                 MaxDIST = 900f;
@@ -640,9 +647,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         void ChangeAttackModes()
         {
             AttraidiesTeleport();
-            
+
             //Check if every attack has been used, and if so then clear the array
-            for(int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++)
             {
                 if (UsedAttacks[i] == false)
                 {
@@ -663,7 +670,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 if (UsedAttacks[(int)AttackMode] == true)
                 {
                     repeat = true;
-                }                
+                }
             } while (repeat == true);
 
             UsedAttacks[(int)AttackMode] = true;
@@ -675,10 +682,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             TravelDir = 0;
-            
-            if(Main.netMode == NetmodeID.Server)
+
+            if (Main.netMode == NetmodeID.Server)
             {
-                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.NPC.whoAmI);
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, this.NPC.whoAmI);
             }
         }
 
@@ -692,7 +699,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void OnKill() {
+        public override void OnKill()
+        {
 
 
             Player player = Main.player[NPC.target];
@@ -731,7 +739,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
             }
 
-            if (!tsorcRevampWorld.SuperHardMode) {
+            if (!tsorcRevampWorld.SuperHardMode)
+            {
 
                 UsefulFunctions.BroadcastText("A portal from The Abyss has been opened!", new Color(255, 255, 60));
                 UsefulFunctions.BroadcastText("Artorias, the Ancient Knight of the Abyss has entered this world!...", new Color(255, 255, 60));
@@ -742,10 +751,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 tsorcRevampWorld.TheEnd = false;
             }
 
-            else {
+            else
+            {
 
                 UsefulFunctions.BroadcastText("The portal from The Abyss remains open...", new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder...", new Color(255, 255, 60));                
+                UsefulFunctions.BroadcastText("You must seek out the Shaman Elder...", new Color(255, 255, 60));
 
                 tsorcRevampWorld.SuperHardMode = true;
                 Main.hardMode = true;

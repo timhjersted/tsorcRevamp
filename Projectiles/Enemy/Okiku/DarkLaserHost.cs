@@ -1,14 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    public class DarkLaserHost : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    public class DarkLaserHost : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 0;
             Projectile.height = 16;
             Projectile.scale = 1.2f;
@@ -22,8 +23,9 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         GenericLaser[] DarkLasers;
         float RotationProgress;
 
-        public override void AI() {
-            
+        public override void AI()
+        {
+
             if (!instantiated)
             {
                 InstantiateLaser();
@@ -43,8 +45,8 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
 
         void InstantiateLaser()
         {
-            DarkLasers = new GenericLaser[5]; 
-            
+            DarkLasers = new GenericLaser[5];
+
             for (int i = 0; i < DarkLasers.Length; i++)
             {
                 if (DarkLasers[i] == null)
@@ -64,7 +66,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
         }
 
         public override bool PreDraw(ref Color lightColor)
-        {         
+        {
             return false;
         }
     }

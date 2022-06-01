@@ -1,15 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class EphemeralThrowingAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class EphemeralThrowingAxe : ModItem
+    {
 
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Passes through solid walls");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 30;
             Item.height = 34;
             Item.knockBack = 7;
@@ -33,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 40);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

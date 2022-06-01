@@ -1,13 +1,15 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class Bolt : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class Bolt : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/Bolt";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
@@ -18,11 +20,12 @@ namespace tsorcRevamp.Projectiles {
             Projectile.scale = (float)1;
             Projectile.tileCollide = true;
             Projectile.width = 5;
-            aiType = ProjectileID.WoodenArrowFriendly;
+            AIType = ProjectileID.WoodenArrowFriendly;
             Projectile.aiStyle = 1;
         }
 
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
         }

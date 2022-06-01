@@ -1,14 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class Freezethrower : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class Freezethrower : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Uses Gel as ammo." +
                                 "\nHas a chance to freeze");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 54;
             Item.height = 16;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -27,13 +31,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.shoot = ModContent.ProjectileType<Projectiles.Freezethrower>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Flamethrower, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 40000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class AttractionPotion : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    public class AttractionPotion : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons a blood moon. Only usable at night." +
                              "\nAlso gives Battle Potion effect.");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 20;
             Item.height = 26;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -25,10 +29,12 @@ namespace tsorcRevamp.Items.Potions {
             Item.buffType = ModContent.BuffType<Buffs.Attraction>();
             Item.buffTime = 36000;
         }
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return !Main.dayTime;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);

@@ -1,10 +1,13 @@
 ﻿using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class DevilSickle : ModProjectile {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Projectiles
+{
+    public class DevilSickle : ModProjectile
+    {
+        public override void SetDefaults()
+        {
             Projectile.width = 40;
             Projectile.height = 40;
             Projectile.scale = 0.9f;
@@ -15,7 +18,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
         }
-        public override void AI() {
+        public override void AI()
+        {
             int dust = Dust.NewDust(
             Projectile.position,
             Projectile.width,
@@ -30,24 +34,30 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[dust].noGravity = true;
             Projectile.rotation += Projectile.direction * 0.8f;
 
-            if (Projectile.velocity.X <= 7f && Projectile.velocity.Y <= 7f && Projectile.velocity.X >= -7f && Projectile.velocity.Y >= -7f) {
+            if (Projectile.velocity.X <= 7f && Projectile.velocity.Y <= 7f && Projectile.velocity.X >= -7f && Projectile.velocity.Y >= -7f)
+            {
                 Projectile.velocity.X *= 1.06f;
                 Projectile.velocity.Y *= 1.06f;
             }
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
-            if (Main.rand.Next(5) == 0) {
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (Main.rand.Next(5) == 0)
+            {
                 target.AddBuff(BuffID.OnFire, 420); //blaze it 
             }
         }
 
-        public override void OnHitPvp(Player target, int damage, bool crit) {
-            if (Main.rand.Next(5) == 0) {
+        public override void OnHitPvp(Player target, int damage, bool crit)
+        {
+            if (Main.rand.Next(5) == 0)
+            {
                 target.AddBuff(BuffID.OnFire, 420); //blaze it 
             }
         }
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
         }
     }

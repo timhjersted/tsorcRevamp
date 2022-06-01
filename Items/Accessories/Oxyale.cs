@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class Oxyale : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class Oxyale : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Gear worn by Dragoons\n" +
                                 "Allows you to breathe underwater and negates water physics");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.width = 32;
             Item.height = 26;
@@ -20,8 +24,10 @@ namespace tsorcRevamp.Items.Accessories {
             Item.value = PriceByRarity.Lime_7;
         }
 
-        public override void UpdateEquip(Player player) {
-            if (player.wet) {
+        public override void UpdateEquip(Player player)
+        {
+            if (player.wet)
+            {
                 player.gills = true;
                 player.ignoreWater = true;
             }

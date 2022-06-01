@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -10,33 +9,43 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.UI;
 
-namespace tsorcRevamp.Items {
-    public class tsorcGlobalItem : GlobalItem {
+namespace tsorcRevamp.Items
+{
+    public class tsorcGlobalItem : GlobalItem
+    {
         public static List<int> potionList;
         public static List<int> ammoList;
         public static List<int> torchList;
 
-        public override bool CanUseItem(Item item, Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
-                if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking) {
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (player.GetModPlayer<tsorcRevampPlayer>().isDodging || player.GetModPlayer<tsorcRevampEstusPlayer>().isDrinking)
+                {
                     return false;
                 }
 
-                if (item.damage >= 1 && item.useAnimation * .8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent == player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2) {
+                if (item.damage >= 1 && item.useAnimation * .8f > player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent == player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+                {
                     return true;
                 }
-                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.CountsAsClass(DamageClass.Melee) && !(item.type == ModContent.ItemType<Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.CernosPrime>())) {
+                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.CountsAsClass(DamageClass.Melee) && !(item.type == ModContent.ItemType<Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.CernosPrime>()))
+                {
                     return false;
                 }
-                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.GetAttackSpeed(DamageClass.Melee) * .8f && item.CountsAsClass(DamageClass.Melee)) {
+                else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.GetAttackSpeed(DamageClass.Melee) * .8f && item.CountsAsClass(DamageClass.Melee))
+                {
                     return false;
                 }
 
-                if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50 && (item.type == ModContent.ItemType<Weapons.Magic.DivineSpark>() || (item.type == ModContent.ItemType<Weapons.Magic.DivineBoomCannon>()))) {
+                if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 50 && (item.type == ModContent.ItemType<Weapons.Magic.DivineSpark>() || (item.type == ModContent.ItemType<Weapons.Magic.DivineBoomCannon>())))
+                {
                     return false;
                 }
 
-                if (item.healLife > 0) {
+                if (item.healLife > 0)
+                {
                     return false;
                 }
             }
@@ -45,54 +54,71 @@ namespace tsorcRevamp.Items {
 
         }
 
-        public override void SetDefaults(Item item) {
+        public override void SetDefaults(Item item)
+        {
             base.SetDefaults(item);
-            if (potionList == null) {
+            if (potionList == null)
+            {
                 populatePotions();
             }
-            if (ammoList == null) {
+            if (ammoList == null)
+            {
                 populateAmmo();
             }
-            if (torchList == null) {
+            if (torchList == null)
+            {
                 populateTorches();
             }
-            if (potionList.Contains(item.type)) {
+            if (potionList.Contains(item.type))
+            {
                 item.maxStack = 9999;
             }
-            else if (ammoList.Contains(item.type)) {
+            else if (ammoList.Contains(item.type))
+            {
                 item.maxStack = 9999;
             }
-            if (torchList.Contains(item.type)) {
+            if (torchList.Contains(item.type))
+            {
                 item.maxStack = 9999;
             }
-            if (item.type == ItemID.NebulaBlaze) {
+            if (item.type == ItemID.NebulaBlaze)
+            {
                 item.damage = (int)Math.Round(0.7f * item.damage);
             }
-            if (item.type == ItemID.NebulaArcanum) {
+            if (item.type == ItemID.NebulaArcanum)
+            {
                 item.damage = (int)Math.Round(0.5f * item.damage);
             }
-            if (item.type == ItemID.VortexBeater || item.type == ItemID.Phantasm) {
+            if (item.type == ItemID.VortexBeater || item.type == ItemID.Phantasm)
+            {
                 item.damage = (int)Math.Round(0.7f * item.damage);
             }
-            if (item.type == ItemID.DayBreak || item.type == ItemID.SolarEruption) {
+            if (item.type == ItemID.DayBreak || item.type == ItemID.SolarEruption)
+            {
                 item.damage = (int)Math.Round(0.5f * item.damage);
             }
 
-            if (item.damage >= 1 && !item.channel) {
+            if (item.damage >= 1 && !item.channel)
+            {
                 item.autoReuse = true;
             }
         }
 
-        public override void GrabRange(Item item, Player player, ref int grabRange) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoul>()) { //bossMagnet is set on every player when a boss is killed, in NPCLoot
+        public override void GrabRange(Item item, Player player, ref int grabRange)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet && item.type != ModContent.ItemType<DarkSoul>())
+            { //bossMagnet is set on every player when a boss is killed, in NPCLoot
                 grabRange *= 20;
             }
 
         }
 
-        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-            for (int i = 0; i < Main.maxProjectiles; i++) {
-                if (Main.projectile[i].aiStyle == 19 && Main.projectile[i].owner == player.whoAmI) {
+        public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].aiStyle == 19 && Main.projectile[i].owner == player.whoAmI)
+                {
                     Main.projectile[i].Kill();
                 }
             }
@@ -102,8 +128,10 @@ namespace tsorcRevamp.Items {
         }
 
 
-        public override bool GrabStyle(Item item, Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet) { //pulling items is faster and more consistent
+        public override bool GrabStyle(Item item, Player player)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().bossMagnet)
+            { //pulling items is faster and more consistent
                 Vector2 vectorItemToPlayer = player.Center - item.Center;
                 Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.4f;
                 item.velocity += movement;
@@ -111,59 +139,74 @@ namespace tsorcRevamp.Items {
             return base.GrabStyle(item, player);
         }
 
-        public override void HoldItem(Item item, Player player) {
+        public override void HoldItem(Item item, Player player)
+        {
             /*if (item.Prefix(mod.PrefixType("Blessed"))) //THIS LITERALY BLESSES EVERYTHING YOU TOUCH
             {
 				player.lifeRegen += 1;
             }*/
 
-            if (item.prefix == Mod.Find<ModPrefix>("Blessed").Type) {
+            if (item.prefix == Mod.Find<ModPrefix>("Blessed").Type)
+            {
                 player.lifeRegen += 1;
             }
         }
 
-        public override void UpdateAccessory(Item item, Player player, bool hideVisual) {
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type)) {
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
+        {
+            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type))
+            {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.02f;
             }
 
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type)) {
+            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type))
+            {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.04f;
             }
         }
 
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type)) {
-                TooltipLine line = new TooltipLine(Mod, "Refreshing", "+2% stamina recovery speed") {
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type))
+            {
+                TooltipLine line = new TooltipLine(Mod, "Refreshing", "+2% stamina recovery speed")
+                {
                     IsModifier = true
                 };
                 tooltips.Add(line);
             }
 
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type)) {
-                TooltipLine line = new TooltipLine(Mod, "Revitalizing", "+4% stamina recovery speed") {
+            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type))
+            {
+                TooltipLine line = new TooltipLine(Mod, "Revitalizing", "+4% stamina recovery speed")
+                {
                     IsModifier = true
                 };
                 tooltips.Add(line);
             }
         }
 
-        public override void MeleeEffects(Item item, Player player, Rectangle hitbox) {
+        public override void MeleeEffects(Item item, Player player, Rectangle hitbox)
+        {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (modPlayer.MiakodaCrescentBoost) {
+            if (modPlayer.MiakodaCrescentBoost)
+            {
                 int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 164, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 80, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (modPlayer.MiakodaNewBoost) {
+            if (modPlayer.MiakodaNewBoost)
+            {
                 int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 57, player.velocity.X * 1.2f, player.velocity.Y * 1.2f, 120, default(Color), 1.2f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (modPlayer.MagicWeapon) {
+            if (modPlayer.MagicWeapon)
+            {
                 Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.45f);
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 4; i++)
+                {
                     int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 68, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
                     Main.dust[dust].noGravity = true;
                 }
@@ -173,9 +216,11 @@ namespace tsorcRevamp.Items {
                 }
             }
 
-            if (modPlayer.GreatMagicWeapon) {
+            if (modPlayer.GreatMagicWeapon)
+            {
                 Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.55f);
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++)
+                {
                     int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 172, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
                     Main.dust[dust].noGravity = true;
                 }
@@ -189,9 +234,11 @@ namespace tsorcRevamp.Items {
                 }
             }
 
-            if (modPlayer.CrystalMagicWeapon) {
+            if (modPlayer.CrystalMagicWeapon)
+            {
                 Lighting.AddLight(new Vector2(hitbox.X, hitbox.Y), 0.3f, 0.3f, 0.55f);
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 2; i++)
+                {
                     int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 221, player.velocity.X * 1, player.velocity.Y * 1, 30, default(Color), .9f);
                     Main.dust[dust].noGravity = true;
                 }
@@ -206,80 +253,100 @@ namespace tsorcRevamp.Items {
             }
         }
 
-        public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit) {
+        public override void OnHitNPC(Item item, Player player, NPC target, int damage, float knockBack, bool crit)
+        {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (modPlayer.MiakodaCrescentBoost) {
+            if (modPlayer.MiakodaCrescentBoost)
+            {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 240);
             }
 
-            if (modPlayer.MiakodaNewBoost) {
+            if (modPlayer.MiakodaNewBoost)
+            {
                 target.AddBuff(BuffID.Midas, 300);
             }
 
-            if (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) {
+            if (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon)
+            {
                 SoundStyle WeaponSound = SoundID.NPCHit44;
                 WeaponSound.Volume = 0.3f;
                 SoundEngine.PlaySound(WeaponSound, target.position);
             }
 
-            if (modPlayer.CrystalMagicWeapon) {
+            if (modPlayer.CrystalMagicWeapon)
+            {
                 SoundStyle WeaponSound = SoundID.Item27;
                 WeaponSound.Volume = 0.3f;
                 SoundEngine.PlaySound(WeaponSound, target.position);
             }
         }
 
-        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage) {
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            if (item.CountsAsClass(DamageClass.Melee)) {
+            if (item.CountsAsClass(DamageClass.Melee))
+            {
                 /*Main.NewText("magicDamage: " + player.GetDamage(DamageClass.Magic));
 				Main.NewText("magicDamageMult: " + player.GetDamage(DamageClass.Magic)Mult);
 				Main.NewText((player.GetDamage(DamageClass.Magic) - player.GetDamage(DamageClass.Magic)Mult) * .5f);*/
 
-                if (modPlayer.MagicWeapon) {
+                if (modPlayer.MagicWeapon)
+                {
                     float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * .5f;
                     if (bonusDamage >= 0) { player.GetDamage(DamageClass.Melee) *= (1 + bonusDamage); }
 
-                    if (player.statManaMax2 >= 100) {
+                    if (player.statManaMax2 >= 100)
+                    {
                         player.GetDamage(DamageClass.Melee).Flat += (player.statManaMax2 - 100) / 60;
                     }
                 }
-                if (modPlayer.GreatMagicWeapon) {
+                if (modPlayer.GreatMagicWeapon)
+                {
                     float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * .75f;
                     if (bonusDamage >= 0) { player.GetDamage(DamageClass.Melee) *= (1 + bonusDamage); }
 
-                    if (player.statManaMax2 >= 100) {
+                    if (player.statManaMax2 >= 100)
+                    {
                         player.GetDamage(DamageClass.Melee).Flat += (player.statManaMax2 - 100) / 40;
                     }
                 }
-                if (modPlayer.CrystalMagicWeapon) {
+                if (modPlayer.CrystalMagicWeapon)
+                {
                     float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * 1f;
                     if (bonusDamage >= 0) { player.GetDamage(DamageClass.Melee) *= (1 + bonusDamage); }
 
-                    if (player.statManaMax2 >= 100) {
+                    if (player.statManaMax2 >= 100)
+                    {
                         player.GetDamage(DamageClass.Melee).Flat += (player.statManaMax2 - 100) / 20;
                     }
                 }
             }
 
-            if (modPlayer.BearerOfTheCurse && item.pick != 0) {
+            if (modPlayer.BearerOfTheCurse && item.pick != 0)
+            {
                 damage *= 0.5f;
             }
         }
 
-        public override bool OnPickup(Item item, Player player) {
-            if (PotionBagUIState.IsValidPotion(item) && player.HasItem(ModContent.ItemType<PotionBag>())) {
+        public override bool OnPickup(Item item, Player player)
+        {
+            if (PotionBagUIState.IsValidPotion(item) && player.HasItem(ModContent.ItemType<PotionBag>()))
+            {
                 Item[] PotionItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
                 int? emptySlot = null;
-                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++) {
-                    if (PotionItems[i].type == 0 && emptySlot == null) {
+                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
+                {
+                    if (PotionItems[i].type == 0 && emptySlot == null)
+                    {
                         emptySlot = i;
                     }
-                    if (PotionItems[i].type == item.type && (PotionItems[i].stack + item.stack) <= PotionItems[i].maxStack) {
+                    if (PotionItems[i].type == item.type && (PotionItems[i].stack + item.stack) <= PotionItems[i].maxStack)
+                    {
                         PotionItems[i].stack += item.stack;
                         string itemText = item.Name;
-                        if (item.stack > 1) {
+                        if (item.stack > 1)
+                        {
                             itemText += " (" + item.stack + ")";
                         }
                         CombatText.NewText(player.Hitbox, Color.Purple, itemText);
@@ -291,10 +358,12 @@ namespace tsorcRevamp.Items {
 
                 //If it got here, that means there's no existing stacks with room
                 //So go through it again, finding the first empty slot instead
-                if (emptySlot != null) {
+                if (emptySlot != null)
+                {
                     PotionItems[emptySlot.Value] = item;
                     string itemText = item.Name;
-                    if (item.stack > 1) {
+                    if (item.stack > 1)
+                    {
                         itemText += " (" + item.stack + ")";
                     }
                     CombatText.NewText(player.Hitbox, Color.Purple, itemText);
@@ -309,7 +378,8 @@ namespace tsorcRevamp.Items {
 
         #region PrefixChance (taken from Example Mod, leaving most original comments in)
 
-        public override bool? PrefixChance(Item item, int pre, UnifiedRandom rand) {
+        public override bool? PrefixChance(Item item, int pre, UnifiedRandom rand)
+        {
             // pre: The prefix being applied to the item, or the roll mode
             // -1 is when an item is naturally generated in a chest, crafted, purchased from an NPC, looted from a grab bag (excluding presents), or dropped by a slain enemy
             // -2 is when an item is rolled in the tinkerer
@@ -333,8 +403,10 @@ namespace tsorcRevamp.Items {
 			}*/
 
             // To prevent rolling of a prefix on spawn, return false when pre is -1
-            if (pre == -1) {
-                if (item.ModItem?.Mod == Mod) {
+            if (pre == -1)
+            {
+                if (item.ModItem?.Mod == Mod)
+                {
                     // All weapons/accesories from tsorcRevamp can have a prefix when they are crafted, bought, taken from a generated chest, opened, or dropped by an enemy
                     return true;
                 }
@@ -366,7 +438,8 @@ namespace tsorcRevamp.Items {
 
         #endregion
 
-        private void populatePotions() {
+        private void populatePotions()
+        {
             potionList = new List<int>()
             {
                 ItemID.LesserHealingPotion,
@@ -435,7 +508,8 @@ namespace tsorcRevamp.Items {
                 ItemID.RedPotion
             };
         }
-        private void populateAmmo() {
+        private void populateAmmo()
+        {
             ammoList = new List<int>()
             {
                 ItemID.MusketBall,
@@ -494,7 +568,8 @@ namespace tsorcRevamp.Items {
             };
         }
 
-        private void populateTorches() {
+        private void populateTorches()
+        {
             torchList = new List<int> {
                 ItemID.Torch,
                 ItemID.PurpleTorch,

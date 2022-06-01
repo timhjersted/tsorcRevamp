@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ThrowingAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ThrowingAxe : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = true;
             Item.damage = 14;
             Item.height = 34;
@@ -23,7 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shoot = ModContent.ProjectileType<Projectiles.ThrowingAxe>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);

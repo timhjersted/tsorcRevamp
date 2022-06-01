@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
     public class Sentenza : ModItem
     {
         public override void SetStaticDefaults()
-        { 
+        {
             DisplayName.SetDefault("Sentenza");
             Tooltip.SetDefault("Deals extra damage to hallowed creatures");
         }
@@ -41,14 +41,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.SoulofNight, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
         public override Vector2? HoldoutOffset()
-		{
-			return new Vector2(-6, -2);
-		}
+        {
+            return new Vector2(-6, -2);
+        }
 
         int ammoleft = 6;
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
@@ -66,22 +66,22 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                     {
                         if (player.direction == 1)
                         {
-                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
                         }
                         if (player.direction == -1)
                         {
-                            Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                            Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
                         }
                     }
                 }
 
                 if (player.direction == 1)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(-0.2f, -1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
                 }
                 if (player.direction == -1)
                 {
-                    Projectile.NewProjectile(player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, new Vector2(Main.rand.NextFloat(0.2f, 1.1f), Main.rand.NextFloat(-1.1f, -1.6f)), ModContent.ProjectileType<Projectiles.ShulletBellDark>(), 0, 0, Main.myPlayer);
                 }
 
                 ammoleft = 6;

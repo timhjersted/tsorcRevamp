@@ -1,12 +1,16 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class EnergyBombRune : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class EnergyBombRune : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons 9 electric energy orbs in a square at the point of impact.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 36;
             Item.height = 28;
             Item.knockBack = 4;
@@ -23,13 +27,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.mana = 50;
             Item.shoot = ModContent.ProjectileType<Projectiles.EnergyBombBall>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("EnergyFieldRune").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

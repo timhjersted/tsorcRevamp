@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class EnergyField : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class EnergyField : ModProjectile
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[Projectile.type] = 12;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 44;
             Projectile.height = 40;
             Projectile.friendly = true;
@@ -20,19 +24,23 @@ namespace tsorcRevamp.Projectiles {
             Projectile.timeLeft = 360;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.frameCounter++;
-            if (Projectile.frameCounter > 3) {
+            if (Projectile.frameCounter > 3)
+            {
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= 12) {
+            if (Projectile.frame >= 12)
+            {
                 Projectile.frame = 0;
                 return;
             }
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
             target.AddBuff(BuffID.Slow, 36000);
         }
     }

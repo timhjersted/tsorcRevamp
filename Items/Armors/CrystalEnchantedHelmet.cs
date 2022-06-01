@@ -45,12 +45,12 @@ namespace tsorcRevamp.Items.Armors
                 player.kbGlove = true;
             }
         }
-        
-        public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
         }
-        
+
         public override void UpdateArmorSet(Player player)
         {
             player.GetAttackSpeed(DamageClass.Melee) += 0.4f;
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.CrystalShard, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

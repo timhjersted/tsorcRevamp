@@ -4,10 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class DarkMirror : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class DarkMirror : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.width = 38;
             Item.height = 34;
@@ -21,7 +24,7 @@ namespace tsorcRevamp.Items.BossItems {
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {               
+            {
                 tooltips.Add(new TooltipLine(Mod, "DarkMirrorAdventure",
                 "You look into the mirror and see your reflection looking back at you... \n" +
                 "As you continue to gaze into the mirror, the background behind \n" +
@@ -31,7 +34,7 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else
             {
-                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault", 
+                tooltips.Add(new TooltipLine(Mod, "DarkMirrorDefault",
                 "You look into the mirror and see your reflection looking back at you... \n" +
                 "As you continue to gaze into the mirror, the background behind \n" +
                 "your reflection becomes murky, as if peering into a dark abyss... \n" +
@@ -40,7 +43,8 @@ namespace tsorcRevamp.Items.BossItems {
             }
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>());
@@ -49,7 +53,7 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else
             {
-                
+
                 for (int i = 0; i < 30; i++)
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(64, 64);
@@ -61,9 +65,9 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         double timeRate;
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
-            if(player.itemTime == 0)
+            if (player.itemTime == 0)
             {
                 if (!Main.dayTime)
                 {
@@ -75,7 +79,7 @@ namespace tsorcRevamp.Items.BossItems {
                 }
             }
 
-            if(player.itemTime > (Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
+            if (player.itemTime > (Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
             {
                 Main.time += timeRate;
             }

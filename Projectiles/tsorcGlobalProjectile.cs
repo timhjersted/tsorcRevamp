@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +8,8 @@ namespace tsorcRevamp.Projectiles
 {
     class tsorcGlobalProjectile : GlobalProjectile
     {
-        public override bool PreAI(Projectile projectile) {
+        public override bool PreAI(Projectile projectile)
+        {
             if (projectile.owner < Main.maxPlayers && Main.player[projectile.owner].active)
             {
                 Player player = Main.player[projectile.owner];
@@ -103,7 +103,7 @@ namespace tsorcRevamp.Projectiles
             }
 
             if (projectile.type == ProjectileID.IceBolt || projectile.type == ProjectileID.EnchantedBeam || projectile.type == ProjectileID.SwordBeam || projectile.type == ProjectileID.FrostBoltSword
-                || projectile.type == ProjectileID.LightBeam || projectile.type == ProjectileID.NightBeam || projectile.type == ProjectileID.TerraBeam) 
+                || projectile.type == ProjectileID.LightBeam || projectile.type == ProjectileID.NightBeam || projectile.type == ProjectileID.TerraBeam)
             {
                 projectile.ai[1]++;
                 if (projectile.ai[1] > 15)
@@ -129,19 +129,23 @@ namespace tsorcRevamp.Projectiles
             }
             return true;
         }
-        public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit) {
+        public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
+        {
             Player player = Main.player[projectile.owner];
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
 
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>()) {
+            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaCrescentBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaCrescent>())
+            {
                 target.AddBuff(ModContent.BuffType<Buffs.CrescentMoonlight>(), 180); // Adds the ExampleJavelin debuff for a very small DoT
             }
 
-            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>()) {
+            if (projectile.owner == Main.myPlayer && !projectile.hostile && modPlayer.MiakodaNewBoost && projectile.type != (int)ModContent.ProjectileType<MiakodaNew>())
+            {
                 target.AddBuff(BuffID.Midas, 300);
             }
 
-            if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.melee) {
+            if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.melee)
+            {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit44.WithVolume(0.3f), target.position);
             }
             if (projectile.owner == Main.myPlayer && modPlayer.CrystalMagicWeapon && projectile.melee)
@@ -170,10 +174,10 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {
-            if(projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
+            if (projectile.type == ProjectileID.SandBallFalling && projectile.velocity.X != 0)
             {
                 return false;
-            } 
+            }
 
             else
             {

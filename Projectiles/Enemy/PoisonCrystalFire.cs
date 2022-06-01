@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,7 +23,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.damage = 81;
             Projectile.light = 0.5f;
             Projectile.penetrate = 2;
-            //projectile.aiType = 8;
+            //projectile.AIType = 8;
             Projectile.tileCollide = true;
             //projectile.pretendType = 15;
             Projectile.DamageType = DamageClass.Magic;

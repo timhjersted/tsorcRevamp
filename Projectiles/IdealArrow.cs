@@ -6,11 +6,14 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class IdealArrow : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class IdealArrow : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/ArrowOfBard";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ideal Arrow");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
@@ -29,10 +32,10 @@ namespace tsorcRevamp.Projectiles {
 
         public override void AI()
         {
-			Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2; //This makes it rotate to face where it's moving
-             //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2; //This makes it rotate to face where it's moving
+                                                                                         //projectile.velocity.Y += (9.8f / 60); //This is its gravity. Comes out to about 0.16 per frame, which is actually really high!!
             Projectile.velocity.Y += 0.07f;
-            
+
             Dust thisdust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.MagicMirror, 0, 0, 0, default, 1f); //This creates a dust trail
             thisdust.velocity = Vector2.Zero; //This makes the dust stay still instead of wandering randomly
         }
@@ -69,7 +72,7 @@ namespace tsorcRevamp.Projectiles {
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            for(int i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 Main.spriteBatch.Draw(texture,
                   Projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),

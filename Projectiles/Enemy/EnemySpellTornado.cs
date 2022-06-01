@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -38,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Main.player[(int)Projectile.ai[0]] != null || Main.player[(int)Projectile.ai[0]].active)
             {
                 Projectile.velocity += UsefulFunctions.GenerateTargetingVector(Projectile.Center, Main.player[(int)Projectile.ai[0]].Center, 0.3f);
-                if(Projectile.velocity.X > maxSpeed)
+                if (Projectile.velocity.X > maxSpeed)
                 {
                     Projectile.velocity.X = maxSpeed;
                 }
@@ -66,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Projectile.frame++;
                     Projectile.frameCounter = 0;
                 }
-                if(Projectile.frame >= 12)
+                if (Projectile.frame >= 12)
                 {
                     Projectile.frame = 0;
                 }

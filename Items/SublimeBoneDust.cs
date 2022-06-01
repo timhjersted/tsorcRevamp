@@ -45,10 +45,10 @@ namespace tsorcRevamp.Items
                 return false;
             }
         }
-        
+
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 8f),
                 new Rectangle(0, 0, texture.Width, texture.Height), lightColor, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
 

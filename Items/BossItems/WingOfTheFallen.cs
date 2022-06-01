@@ -2,10 +2,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class WingOfTheFallen : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class WingOfTheFallen : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wing of the Fallen");
             Tooltip.SetDefault("Summons the Wyvern Mage, a powerful demon adept with the forces of magic and lightning\n" +
                 "The Wyvern Mage is known to command the loyalty of a fiery Wyvern with white scales as strong as steel\n" +
@@ -13,7 +16,8 @@ namespace tsorcRevamp.Items.BossItems {
                 "to return later when you've become stronger and possess greater abilities.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 28;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -26,18 +30,22 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
 
-        public override bool? UseItem(Player player) {
-            if (Main.dayTime) {
+        public override bool? UseItem(Player player)
+        {
+            if (Main.dayTime)
+            {
                 Main.NewText("The Wyvern Mage is not present in this dimension... Retry at night.", 175, 75, 255);
             }
-            else {
+            else
+            {
                 Main.NewText("It was a mistake to summon me... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>());
             }
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 Recipe recipe = CreateRecipe();
@@ -46,7 +54,7 @@ namespace tsorcRevamp.Items.BossItems {
                 recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                
+
                 recipe.Register();
             }
         }

@@ -1,9 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -25,13 +24,13 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             DisplayName.SetDefault("Dragoon Lance");
         }
 
-		public override void AI()
-		{
+        public override void AI()
+        {
             Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3());
-            if(Projectile.ai[0] > 0)
+            if (Projectile.ai[0] > 0)
             {
                 Projectile.ai[0]--;
-                if(Projectile.ai[0] == 0) 
+                if (Projectile.ai[0] == 0)
                 {
                     Projectile.velocity = new Vector2(-1, -30);
                 }
@@ -40,10 +39,10 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
                     Projectile.velocity = new Vector2(0, -1);
                 }
             }
-		}
+        }
 
-		#region Kill
-		public override void Kill(int timeLeft)
+        #region Kill
+        public override void Kill(int timeLeft)
         {
             if (!Projectile.active)
             {

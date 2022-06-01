@@ -1,14 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class FireBombBall : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class FireBombBall : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 9;
             Projectile.friendly = true;
             Projectile.height = 16;
@@ -19,8 +22,10 @@ namespace tsorcRevamp.Projectiles {
             Projectile.tileCollide = true;
         }
 
-        public override void AI() {
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
+        public override void AI()
+        {
+            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
+            {
                 Projectile.soundDelay = 10;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
@@ -28,11 +33,12 @@ namespace tsorcRevamp.Projectiles {
             int thisDust = Dust.NewDust(new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y), Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
             Main.dust[thisDust].noGravity = true;
 
-            Projectile.rotation += 0.3f;            
+            Projectile.rotation += 0.3f;
         }
 
-        public override void Kill(int timeLeft) {
-           
+        public override void Kill(int timeLeft)
+        {
+
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), Projectile.damage, 3f, Projectile.owner);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<FireField>(), Projectile.damage, 3f, Projectile.owner);

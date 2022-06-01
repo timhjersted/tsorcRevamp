@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using TerraUI.Objects;
 using TerraUI.Utilities;
 
-namespace TerraUI.Panels {
-    public class UIPanel : UIObject {
+namespace TerraUI.Panels
+{
+    public class UIPanel : UIObject
+    {
         /// <summary>
         /// Background color of the panel.
         /// </summary>
@@ -35,7 +37,8 @@ namespace TerraUI.Panels {
         /// <param name="backColor">background color of panel</param>
         /// <param name="backTexture">background texture of panel</param>
         /// <param name="parent">parent UIObject</param>
-        public UIPanel(Vector2 position, Vector2 size, bool drawStyledBox = true, Texture2D backTexture = null, UIObject parent = null) : base(position, size, parent, false) {
+        public UIPanel(Vector2 position, Vector2 size, bool drawStyledBox = true, Texture2D backTexture = null, UIObject parent = null) : base(position, size, parent, false)
+        {
             BackTexture = backTexture;
             DrawStyledBox = drawStyledBox;
 
@@ -48,17 +51,22 @@ namespace TerraUI.Panels {
         /// Draw the UIPanel.
         /// </summary>
         /// <param name="spriteBatch">drawing SpriteBatch</param>
-        public override void Draw(SpriteBatch spriteBatch) {
+        public override void Draw(SpriteBatch spriteBatch)
+        {
             Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)Size.X, (int)Size.Y);
 
-            if(BackTexture != null) {
+            if (BackTexture != null)
+            {
                 spriteBatch.Draw(BackTexture, Rectangle, Color.White);
             }
-            else {
-                if(DrawStyledBox) {
+            else
+            {
+                if (DrawStyledBox)
+                {
                     DrawingUtils.DrawTerrariaStyledBox(spriteBatch, BackColor, Rectangle);
                 }
-                else {
+                else
+                {
                     DrawingUtils.DrawRectangleBox(spriteBatch, BorderColor, BackColor, Rectangle, BorderWidth);
                 }
             }

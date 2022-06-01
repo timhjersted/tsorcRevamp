@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
 
 
 namespace tsorcRevamp.Projectiles
@@ -28,17 +28,17 @@ namespace tsorcRevamp.Projectiles
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-           if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 90)
-           {
+            if (Projectile.owner == Main.myPlayer && Projectile.timeLeft <= 90)
+            {
                 if (Main.rand.Next(3) == 0)
                 {
                     target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 180);
                 }
                 Projectile.timeLeft = 2;
-           }
+            }
 
-           else
-           {
+            else
+            {
                 Projectile.tileCollide = true;
                 // change the hitbox size, centered about the original projectile center. This makes the projectile damage enemies during the explosion.
                 Projectile.position.X = Projectile.position.X + (float)(Projectile.width / 2);
@@ -57,12 +57,12 @@ namespace tsorcRevamp.Projectiles
                 }
 
                 Projectile.timeLeft = 0;
-           }
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame * 32, 32, 32), Color.White, Projectile.rotation, new Vector2(16, 16), Projectile.scale, SpriteEffects.None, 0);
 

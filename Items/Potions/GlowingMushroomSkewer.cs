@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Potions
             recipe.AddIngredient(ItemID.RichMahogany, 1);
             recipe.AddIngredient(ItemID.GlowingMushroom, 1);
             recipe.AddTile(TileID.Campfire);
-            
+
             recipe.Register();
         }
     }

@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class OldBroadsword : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class OldBroadsword : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Does random damage from 0 to 26" +
                                 "\nMaximum damage is increased by damage modifiers.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 26;
             Item.width = 44;
             Item.height = 44;
@@ -25,7 +29,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = 7000;
         }
 
-        public override void HoldItem(Player player) {
+        public override void HoldItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }

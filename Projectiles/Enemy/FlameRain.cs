@@ -1,7 +1,4 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -13,7 +10,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 14;
             Projectile.height = 14;
             //projectile.pretendType = 85;
-            aiType = 79;
+            AIType = 79;
             Projectile.alpha = 100;
             Projectile.aiStyle = 1;
             Projectile.timeLeft = 600;

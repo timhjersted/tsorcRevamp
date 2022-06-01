@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -41,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
             return false;
-            
+
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

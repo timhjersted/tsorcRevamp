@@ -4,12 +4,15 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
 
-    public class PhasedMatterBlast : ModProjectile {
+    public class PhasedMatterBlast : ModProjectile
+    {
 
         public static Texture2D antiMatterBlastTexture;
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 35;
             Projectile.height = 35;
             Projectile.scale = 1f;
@@ -63,13 +66,13 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X + 10, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Torch, 0, 0, 200, Color.Red, 1f);
                 Main.dust[dust].noGravity = true;
             }
-        }       
-    
+        }
 
 
-        
+
+
         public override bool PreDraw(ref Color lightColor)
-        {            
+        {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
             {
@@ -77,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             }
             //Get the premultiplied, properly transparent texture
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PhasedMatterBlast];
-            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

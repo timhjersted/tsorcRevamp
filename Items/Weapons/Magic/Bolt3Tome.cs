@@ -3,17 +3,21 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class Bolt3Tome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class Bolt3Tome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bolt 3 Tome");
             Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
-                                "Only mages will be able to realize this tome's full potential. \n" + 
+                                "Only mages will be able to realize this tome's full potential. \n" +
                                 "Can be upgraded with 85,000 Dark Souls");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.damage = 35;
             Item.height = 10;
@@ -42,13 +46,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 15);
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt2Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

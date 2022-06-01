@@ -1,6 +1,5 @@
-using System;
-using System.IO;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -80,7 +79,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
             if (OptionSpawned == false)
             {
-                if(Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int wyvernID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Bosses.WyvernMage.MechaDragonHead>(), NPC.whoAmI);
                     Main.npc[wyvernID].velocity.Y = -10;
@@ -94,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             TeleportTimer++;
 
             //Check if the dragon is alive. If so, spawn less transparent dusts and fire more orbs
-            bool dragonAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());         
+            bool dragonAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
 
             int transparency = 100;
             if (!dragonAlive)
@@ -172,7 +171,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
                 }
-                    
+
                 if (Main.rand.Next(14) == 0 || (dragonAlive && Main.rand.Next(7) == 0)) //1 in 15 chance boss will summon an NPC, 1/7 if the dragon is dead
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -183,9 +182,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                     }
                 }
-            }               
-            
-            #endregion           
+            }
+
+            #endregion
         }
 
         #endregion revamped

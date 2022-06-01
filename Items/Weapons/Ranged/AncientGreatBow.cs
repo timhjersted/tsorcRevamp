@@ -1,13 +1,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    public class AncientGreatBow : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    public class AncientGreatBow : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ancient Great Bow");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
 
@@ -30,7 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.value = PriceByRarity.Green_2;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.DemonBow, 1);
@@ -38,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 4000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

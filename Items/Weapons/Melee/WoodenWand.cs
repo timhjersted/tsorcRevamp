@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class WoodenWand : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class WoodenWand : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("An unenchanted wooden wand \nCan be upgraded many different ways");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 34;
             Item.height = 34;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -25,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 5);
-            
+
             recipe.Register();
         }
     }

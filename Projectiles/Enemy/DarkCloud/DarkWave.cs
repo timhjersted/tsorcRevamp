@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -31,11 +29,11 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override bool PreDraw(ref Color lightColor)
         {
-            
+
             Vector2 offset = Main.rand.NextVector2CircularEdge(Projectile.width, Projectile.height);
             Vector2 velocity = new Vector2(-2, 0).RotatedBy(offset.ToRotation()) * Main.rand.NextFloat(2);
             Dust.NewDustPerfect(Projectile.Center + offset, DustID.ShadowbeamStaff, velocity, Scale: 3.5f).noGravity = true;
-               
+
             return false;
         }
     }

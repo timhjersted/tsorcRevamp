@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class EphemeralThrowingAxe2 : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class EphemeralThrowingAxe2 : ModItem
+    {
 
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/EphemeralThrowingAxe";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("An enchanted melee weapon that can be thrown through walls.\n" + "It does double damage against mages and other magic users.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = false;
             Item.damage = 40;
             Item.height = 34;
@@ -36,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(ItemID.AdamantiteBar, 6);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 12000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

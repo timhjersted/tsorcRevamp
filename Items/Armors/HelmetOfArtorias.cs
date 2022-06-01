@@ -58,8 +58,8 @@ namespace tsorcRevamp.Items.Armors
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.7f, 0.6f, 0.8f);
         }
-        
-        public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
             player.armorEffectDrawOutlinesForbidden = true;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

@@ -2,10 +2,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenAxe : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Blue;
             Item.damage = 18;
             Item.height = 30;
@@ -20,12 +23,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 30;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.StoneBlock, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

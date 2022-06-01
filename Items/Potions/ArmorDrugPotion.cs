@@ -2,16 +2,20 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class ArmorDrugPotion : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    public class ArmorDrugPotion : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Armor Drug");
             Tooltip.SetDefault("Increases defense by 13 for 3 minutes." +
                 "\nDoes not stack with Demon Drug, Strength, or Battlefront Potions.");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 14;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -41,13 +45,14 @@ namespace tsorcRevamp.Items.Potions {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Sapphire, 5);
             recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

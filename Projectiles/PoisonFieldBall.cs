@@ -4,10 +4,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-	class PoisonFieldBall : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PoisonFieldBall : ModProjectile
+    {
 
-		public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.friendly = true;
             Projectile.height = 16;
             Projectile.width = 16;
@@ -15,7 +18,7 @@ namespace tsorcRevamp.Projectiles {
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
-		}
+        }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             if (Main.rand.Next(4) == 0)
@@ -24,8 +27,10 @@ namespace tsorcRevamp.Projectiles {
             }
         }
 
-        public override void AI() {
-            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f) {
+        public override void AI()
+        {
+            if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
+            {
                 Projectile.soundDelay = 10;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
             }
@@ -52,14 +57,17 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[num47].position.Y = Projectile.position.Y + (float)(Projectile.height / 2) + (float)Main.rand.Next(-4, 5);
             Main.dust[num47].noGravity = true;
 
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
                 return;
             }
         }
 
-        public override void Kill(int timeLeft) {
-            if (!Projectile.active) {
+        public override void Kill(int timeLeft)
+        {
+            if (!Projectile.active)
+            {
                 return;
             }
             Projectile.timeLeft = 0;
@@ -67,7 +75,8 @@ namespace tsorcRevamp.Projectiles {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width / 2, Projectile.position.Y + Projectile.height / 2, Projectile.velocity.X, Projectile.velocity.Y, ModContent.ProjectileType<PoisonField>(), Projectile.damage, 1f, Projectile.owner);
 
-                for (int num40 = 0; num40 < 40; num40++) {
+                for (int num40 = 0; num40 < 40; num40++)
+                {
                     Vector2 arg_1394_0 = new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y);
                     int arg_1394_1 = Projectile.width;
                     int arg_1394_2 = Projectile.height;
@@ -82,8 +91,10 @@ namespace tsorcRevamp.Projectiles {
                     expr_13B1.velocity *= 1.2f;
                 }
             }
-            if (Projectile.owner == Main.myPlayer) {
-                if (Main.netMode != NetmodeID.SinglePlayer) {
+            if (Projectile.owner == Main.myPlayer)
+            {
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                {
                     NetMessage.SendData(MessageID.KillProjectile, -1, -1, null, Projectile.identity, (float)Projectile.owner, 0f, 0f, 0);
                 }
             }

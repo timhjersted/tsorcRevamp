@@ -2,16 +2,20 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class WandOfFrost : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class WandOfFrost : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wand of Frost");
             Tooltip.SetDefault("A powerful wand made for fighting magic users that can shoot through walls." +
                                 "\nCan be upgraded with 25,000 Dark Souls, 60 Crystal Shards, and 5 Souls of Light");
             Item.staff[Item.type] = true;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 35;
             Item.height = 30;
             Item.knockBack = 4;
@@ -29,16 +33,18 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.width = 30;
             Item.shoot = ModContent.ProjectileType<Projectiles.Icicle>();
         }
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
+        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        {
             target.AddBuff(BuffID.Frostburn, 360);
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe(); ;
             recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 100);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

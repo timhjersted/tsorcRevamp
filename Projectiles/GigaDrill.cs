@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class GigaDrill : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class GigaDrill : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.height = 22;
             Projectile.width = 22;
             Projectile.scale = 1.1f;

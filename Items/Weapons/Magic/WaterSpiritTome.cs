@@ -3,14 +3,18 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class WaterSpiritTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class WaterSpiritTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons frost spirits that can pass through walls." +
                                 "\nDamage grows as the spirits grow larger");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.HoldUp;
@@ -38,7 +42,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 100);
@@ -46,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofNight, 40);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

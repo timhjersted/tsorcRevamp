@@ -72,9 +72,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 
             NPC.netUpdate = false;
             NPC.ai[0]++; // Timer Scythe
-            
+
             NPC.ai[1]++; // Timer Teleport
-            
+
 
             // npc.ai[2]++; // Shots
 
@@ -104,9 +104,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
             }
 
-            
-                  
-                
+
+
+
 
             if (NPC.ai[1] >= 10)
             {
@@ -226,7 +226,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     int Random = Main.rand.Next(80);
                     int Paraspawn = 0;
                     if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
-                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X; 
+                    Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                     if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.MageShadow>(), 0);
                     Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                     NPC.active = true;
@@ -313,7 +313,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.RingOfPower>());
                 }
-            } else
+            }
+            else
             {
                 UsefulFunctions.BroadcastText("The souls of " + NPC.GivenOrTypeName + " have been released!", 175, 255, 75);
                 tsorcRevampWorld.Slain[ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()] = 1;

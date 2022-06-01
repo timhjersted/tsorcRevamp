@@ -2,19 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Enums;
-using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
+namespace tsorcRevamp.Projectiles.Enemy
+{
 
-    public class EnemyLightningStrike : EnemyGenericLaser {
+    public class EnemyLightningStrike : EnemyGenericLaser
+    {
 
         //Titled "EnemyLightningStrike", but could also be used for player projectiles (and indeed is right now).
         //Warning: Highly experimental. Many commented out things are unfinished and do not work yet, others are incomplete.
@@ -30,7 +27,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override string Texture => base.Texture;
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.friendly = false;
@@ -53,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             LaserSize = 1.3f;
             LaserColor = Color.Cyan;
             LaserTexture = TransparentTextureHandler.TransparentTextureType.Lightning;
-            
+
             LaserTextureBody = new Rectangle(0, 0, 10, 4);
             LaserSound = null;
 
@@ -84,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             if (FiringTimeLeft == 28)
             {
                 int dustCount = 4;
-                
+
                 if (branches.Count > 0)
                 {
                     for (int i = 0; i < branches.Count; i++)
@@ -98,7 +96,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                                 float lerpPercent = 0.8f * ((float)j / ((float)branches[i].Count - 1f));
 
                                 float scale = 1.7f;
-                                if(i == 0)
+                                if (i == 0)
                                 {
                                     scale = 2.2f;
                                     lerpPercent = 0;
@@ -147,7 +145,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                         {
                             //If it's the first set of splits, let them go longer
                             int segmentLimit = 3;
-                            if(i == 0)
+                            if (i == 0)
                             {
                                 segmentLimit = 12;
                             }
@@ -227,7 +225,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     bool segmentCollides = false;
                     if (!Collision.CanHit(currentBranch[i], 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(currentBranch[i], 1, 1, currentBranch[i + 1], 1, 1))
                     {
-                        if(!branch || (!Collision.CanHit(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1)))
+                        if (!branch || (!Collision.CanHit(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1) && !Collision.CanHitLine(Projectile.position, 1, 1, currentBranch[i + 1], 1, 1)))
                         {
                             segmentCollides = true;
                             branchCollided = true;
@@ -255,7 +253,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 currentAngles.Add((currentBranch[i] - currentBranch[i + 1]).ToRotation());
             }
 
-            if(currentBranch.Count > 0)
+            if (currentBranch.Count > 0)
             {
                 int dustCount = 3;
                 if (!branch)
@@ -282,7 +280,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     }
                 }
             }
-            
+
 
             return new Tuple<List<Vector2>, List<float>>(currentBranch, currentAngles);
         }
@@ -326,8 +324,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     float scaleFactor = (float)FiringTimeLeft / (float)FiringDuration;
 
                     Main.spriteBatch.End();
-                    Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);                   
-                                        
+                    Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
+
                     if (branches.Count > 0)
                     {
                         for (int i = 0; i < branches.Count; i++)
@@ -343,7 +341,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                                     Vector2 nextSegment = currentBranch[j + 1];
 
                                     float scale = 0.7f;
-                                    if(i == 0)
+                                    if (i == 0)
                                     {
                                         scale = 1;
                                     }
@@ -617,7 +615,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
             }
 
-            
+
 
             float i = 0;
             Vector2 diff = unit - start;
@@ -647,12 +645,12 @@ namespace tsorcRevamp.Projectiles.Enemy {
             {
                 Main.EntitySpriteDraw(texture, startPos - Main.screenPosition, tailFrame, color, r, new Vector2(tailRect.Width * .5f, tailRect.Height * .5f), scale, 0, 0);
             }*/
-            }
+        }
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if(branches == null || branches.Count == 0 || branches[0].Count == 0)
+            if (branches == null || branches.Count == 0 || branches[0].Count == 0)
             {
                 return false;
             }
@@ -694,7 +692,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             return collides;
         }
 
-        
+
         public override void CutTiles()
         {
             if (branches == null || branches.Count == 0 || branches[0].Count == 0)

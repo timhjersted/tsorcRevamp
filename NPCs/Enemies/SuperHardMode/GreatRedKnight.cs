@@ -1,10 +1,8 @@
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
 
 
 
@@ -324,7 +322,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (NPC.Distance(player.Center) > 70 && Main.rand.Next(3) == 0)
                 {
                     Player nT = Main.player[NPC.target];
-                    
+
 
                     for (int pcy = 0; pcy < 3; pcy++)
                     {
@@ -336,90 +334,90 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            
+
 
 
 
 
             //OFFENSIVE JUMPS
             if (poisonTimer >= 160 && poisonTimer <= 161 && NPC.Distance(player.Center) > 40)
+            {
+                //CHANCE TO JUMP 
+                if (Main.rand.Next(10) == 1)
                 {
-                    //CHANCE TO JUMP 
-                    if (Main.rand.Next(10) == 1)
+                    Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                    if (Main.rand.Next(3) == 1)
                     {
-                        Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                        if (Main.rand.Next(3) == 1)
-                        {
-                            //Dust.NewDust(npc.position, npc.width, npc.height, DustID.TeleportationPotion, npc.velocity.X, npc.velocity.Y);
-
-                        }
-                        NPC.velocity.Y = -9f; //9             
-                        NPC.TargetClosest(true);
-                        poisonTimer = 165;
-                        NPC.netUpdate = true;
+                        //Dust.NewDust(npc.position, npc.width, npc.height, DustID.TeleportationPotion, npc.velocity.X, npc.velocity.Y);
 
                     }
+                    NPC.velocity.Y = -9f; //9             
+                    NPC.TargetClosest(true);
+                    poisonTimer = 165;
+                    NPC.netUpdate = true;
+
+                }
             }
             //SPEAR ATTACK
             if (poisonTimer == 180f) //180 (without 2nd condition) and 185 created an insane attack && poisonTimer <= 181f
             {
-                    NPC.TargetClosest(true);
-                    //if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
-                    //{
-                        Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true																								
-                         speed += Main.player[NPC.target].velocity;
-                        //speed += Main.rand.NextVector2Circular(-4, -2);
+                NPC.TargetClosest(true);
+                //if (Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))
+                //{
+                Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true																								
+                speed += Main.player[NPC.target].velocity;
+                //speed += Main.rand.NextVector2Circular(-4, -2);
 
-                    if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
+                if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.6f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
+                                                                                                                              //go to poison attack
+                    poisonTimer = 185f;
+
+                    if (Main.rand.Next(3) == 1)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.6f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
-                        //go to poison attack
-                        poisonTimer = 185f;
+                        //or chance to reset
+                        poisonTimer = 1f;
 
-                            if (Main.rand.Next(3) == 1)
-                            {
-                                //or chance to reset
-                                poisonTimer = 1f;
-
-                            }
-                        
                     }
+
+                }
 
             }
 
-                //POISON ATTACK DUST TELEGRAPH
-                if (poisonTimer >= 185 && NPC.life >= 2001) //was 180
+            //POISON ATTACK DUST TELEGRAPH
+            if (poisonTimer >= 185 && NPC.life >= 2001) //was 180
+            {
+                //if(Main.rand.Next(60) == 0)
+                //{
+                Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
+                if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 10)
                 {
-                    //if(Main.rand.Next(60) == 0)
-                    //{
-                    Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
-                    if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 10)
-                    {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
-                    }
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Teleporter, NPC.velocity.X, NPC.velocity.Y);
+                }
 
-                    //POISON ATTACK
-                    if (poisonTimer >= 250 && Main.rand.Next(2) == 1) //30 was cool for great red knight
+                //POISON ATTACK
+                if (poisonTimer >= 250 && Main.rand.Next(2) == 1) //30 was cool for great red knight
+                {
+                    NPC.TargetClosest(true);
+                    //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
+                    if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
                     {
-                        NPC.TargetClosest(true);
-                        //if (Collision.CanHit(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height) && Vector2.Distance(npc.Center, Main.player[npc.target].Center) <= 500)
-                        if (Collision.CanHitLine(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
-                        {
-                            Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true																								
-                            speed2 += Main.player[NPC.target].velocity / 2;
+                        Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true																								
+                        speed2 += Main.player[NPC.target].velocity / 2;
 
                         if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
-                            {
-                                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 125, 0.3f, 0f); //phantasmal bolt fire 2
                         }
-                        if(poisonTimer >=255)
+                        if (poisonTimer >= 255)
                         { poisonTimer = 1f; }
-                        }
                     }
                 }
+            }
 
 
 
@@ -485,13 +483,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
         public override void OnKill()
-        {            
+        {
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 1").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 2").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 3").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 2").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 3").Type, 1f);
-            
+
             if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>(), 1 + Main.rand.Next(1));
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 3 + Main.rand.Next(3));
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1 + Main.rand.Next(1));
@@ -525,7 +523,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
     }
-  
+
 
 }
 

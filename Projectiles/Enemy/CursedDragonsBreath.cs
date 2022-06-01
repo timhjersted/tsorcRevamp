@@ -1,15 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class CursedDragonsBreath : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class CursedDragonsBreath : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 6;
             Projectile.height = 6;
-            aiType = 85;
+            AIType = 85;
             Projectile.alpha = 255;
             Projectile.aiStyle = 23;
             Projectile.damage = 80;
@@ -21,12 +23,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.MaxUpdates = 2;
         }
 
-        public override bool PreKill(int timeLeft) {
+        public override bool PreKill(int timeLeft)
+        {
             Projectile.type = 85;
             return true;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
             target.AddBuff(BuffID.OnFire, 300);
             target.AddBuff(BuffID.Bleeding, 3600);
             target.AddBuff(BuffID.Weak, 3600);

@@ -1,15 +1,16 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemyBolt4Bolt : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemyBolt4Bolt : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Bolt4Bolt";
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 250;
             Projectile.height = 450;
             Projectile.penetrate = 16;
@@ -22,8 +23,10 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Main.projFrames[Projectile.type] = 16;
         }
 
-        public override bool PreAI() {
-            if (Projectile.ai[0] == 0) {
+        public override bool PreAI()
+        {
+            if (Projectile.ai[0] == 0)
+            {
                 Projectile.velocity.X *= 0.001f;
                 Projectile.velocity.Y *= 0.001f;
                 Projectile.ai[0] = 1;
@@ -32,14 +35,17 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.frameCounter++;
             Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
 
-            if (Projectile.frame >= 16) {
+            if (Projectile.frame >= 16)
+            {
                 Projectile.frame = 15;
             }
-            if (Projectile.frameCounter > 71) { // (projFrames * 4.5) - 1
+            if (Projectile.frameCounter > 71)
+            { // (projFrames * 4.5) - 1
                 Projectile.alpha += 15;
             }
 
-            if (Projectile.alpha >= 255) {
+            if (Projectile.alpha >= 255)
+            {
                 Projectile.Kill();
             }
             return true;

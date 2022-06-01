@@ -37,7 +37,8 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Magic) += 15;
             player.manaCost -= 0.15f;
             player.GetDamage(DamageClass.Magic) += 0.15f;
-            if (player.statLife <= 140) {
+            if (player.statLife <= 140)
+            {
                 player.manaRegenBuff = true;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Green, 1.0f);
@@ -52,7 +53,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.MoltenHelmet, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1800);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

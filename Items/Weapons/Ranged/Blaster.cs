@@ -1,5 +1,5 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.Diamond, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
 
             recipe = new Recipe(Mod);
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             recipe.AddIngredient(ItemID.Diamond, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

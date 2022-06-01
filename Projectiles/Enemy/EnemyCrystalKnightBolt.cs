@@ -7,11 +7,11 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     public class EnemyCrystalKnightBolt : ModProjectile
     {
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Crystal Bolt");
-		}
-		public override void SetDefaults()
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Crystal Bolt");
+        }
+        public override void SetDefaults()
         {
             Projectile.aiStyle = 1;
             Projectile.hostile = true;
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.penetrate = 8;
             Projectile.scale = 1.3f;
             Projectile.tileCollide = true;
-            aiType = 4;
+            AIType = 4;
             Projectile.width = 16;
             Projectile.timeLeft = 300;
             Projectile.ignoreWater = true;
@@ -44,7 +44,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 15, false); //slowed
                 Main.player[Main.myPlayer].AddBuff(32, 300, false); //normal slow
-            } else
+            }
+            else
             {
                 Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 30, false); //slowed
                 Main.player[Main.myPlayer].AddBuff(32, 600, false); //normal slow

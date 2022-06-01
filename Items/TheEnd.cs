@@ -1,10 +1,13 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class TheEnd : ModItem {
+namespace tsorcRevamp.Items
+{
+    class TheEnd : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/DeathStrikeScroll";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon." +
                                "\nYou feel relieved, but notice your heart is still not at peace. Attraidies was known for his games." +
                                "\nEven in death you suspect his sway over the world has not ended." +
@@ -13,7 +16,8 @@ namespace tsorcRevamp.Items {
                                "\nCongratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.maxStack = 1;
             Item.width = 20;
             Item.height = 20;

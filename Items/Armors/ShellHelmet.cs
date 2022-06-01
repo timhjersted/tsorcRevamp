@@ -3,16 +3,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Armors {
+namespace tsorcRevamp.Items.Armors
+{
     [AutoloadEquip(EquipType.Head)]
-    class ShellHelmet : ModItem {
+    class ShellHelmet : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Armor made from the shell of a legenadry creature." +
                 "\nSet bonus: Archery skill and +19% ranged crit activates when health falls below 160" +
                 "\n+5% ranged crit otherwise");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 18;
             Item.height = 12;
             Item.value = 35000;
@@ -20,12 +24,15 @@ namespace tsorcRevamp.Items.Armors {
             Item.defense = 3;
         }
 
-        public override bool IsArmorSet(Item head, Item body, Item legs) {
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
             return body.type == ModContent.ItemType<ShellArmor>() && legs.type == ModContent.ItemType<ShellGreaves>();
         }
 
-        public override void UpdateArmorSet(Player player) {
-            if (player.statLife <= 160) {
+        public override void UpdateArmorSet(Player player)
+        {
+            if (player.statLife <= 160)
+            {
                 player.archery = true;
                 player.GetCritChance(DamageClass.Ranged) += 19;
 
@@ -33,18 +40,20 @@ namespace tsorcRevamp.Items.Armors {
                 Main.dust[dust].noGravity = true;
             }
 
-            else {
+            else
+            {
                 player.GetCritChance(DamageClass.Ranged) += 5;
             }
         }
 
-        public override void AddRecipes() {
-            Recipe recipe = CreateRecipe();
+        public override void AddRecipes()
+        {
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.NecroHelmet);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
         }
     }
 }

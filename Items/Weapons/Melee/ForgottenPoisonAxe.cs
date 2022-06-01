@@ -1,15 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class ForgottenPoisonAxe : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class ForgottenPoisonAxe : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The blade has been dipped in poison.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.rare = ItemRarityID.Pink;
             Item.damage = 76;
@@ -25,8 +28,10 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 50;
         }
 
-        public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit) {
-            if (Main.rand.Next(2) == 0) {
+        public override void OnHitNPC(Player player, NPC npc, int damage, float knockBack, bool crit)
+        {
+            if (Main.rand.Next(2) == 0)
+            {
                 npc.AddBuff(BuffID.Poisoned, 360, false);
             }
         }

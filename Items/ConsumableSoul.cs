@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(Item.Center, 0.05f, 0.18f, 0.02f);
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextFloat() < .3f)
@@ -84,10 +84,10 @@ namespace tsorcRevamp.Items
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.25f).WithPitchVariance(.3f), player.position); // Plays sound.
-                
+
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(Mod.Find<ModItem>("DarkSoul").Type, 50); // Gives player souls.
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 50); // Gives player souls.
                 }
 
                 for (int d = 0; d < 10; d++)
@@ -105,12 +105,12 @@ namespace tsorcRevamp.Items
             DisplayName.SetDefault("Soul of a Lost Undead");
             Tooltip.SetDefault("Consume to gain 200 souls");
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
             {
-                Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 80, default, .8f);
+                Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 80, default, .8f);
             }
 
             // This sets up the itemTime correctly.
@@ -125,12 +125,12 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f), player.position); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(Mod.Find<ModItem>("DarkSoul").Type, 200); // Gives player souls.
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 200); // Gives player souls.
                 }
 
                 for (int d = 0; d < 30; d++)
                 {
-                     Dust.NewDust(player.BottomLeft, player.width, player.height-40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
+                    Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .8f); // player.Bottom if offset to the right for some reason, player.BottomLeft is centered
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace tsorcRevamp.Items
             DisplayName.SetDefault("Soul of a Nameless Soldier");
             Tooltip.SetDefault("Consume to gain 800 souls");
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -167,10 +167,10 @@ namespace tsorcRevamp.Items
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.5f).WithPitchVariance(.3f), player.position); // Plays sound.
-                                                                                                            
+
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(Mod.Find<ModItem>("DarkSoul").Type, 800); // Gives player souls.
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 800); // Gives player souls.
                 }
 
                 for (int d = 0; d < 60; d++)
@@ -203,7 +203,7 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(Item.Center, 0.25f, 0.60f, 0.15f);
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -228,8 +228,8 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.75f).WithPitchVariance(.3f), player.position); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(Mod.Find<ModItem>("DarkSoul").Type, 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 250, 15, 0);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 2000); // Gives player souls.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item) player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 250, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards
@@ -288,7 +288,7 @@ namespace tsorcRevamp.Items
             return true;
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -314,8 +314,8 @@ namespace tsorcRevamp.Items
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(Mod.Find<ModItem>("DarkSoul").Type, 5000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 600, 15, 0);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 5000); // Gives player souls.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 600, 15, 0);
                 }
 
                 for (int d = 0; d < 100; d++) // Upwards
@@ -384,7 +384,7 @@ namespace tsorcRevamp.Items
             return true;
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.NextBool())
@@ -409,8 +409,8 @@ namespace tsorcRevamp.Items
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
-                    player.QuickSpawnItem(Mod.Find<ModItem>("DarkSoul").Type, 10000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, Mod.Find<ModProjectile>("SoulsplosionLarge").Type, 2000, 15, 0);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 10000); // Gives player souls.
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("SoulsplosionLarge").Type, 2000, 15, 0);
                 }
 
                 for (int d = 0; d < 100; d++) // Upwards

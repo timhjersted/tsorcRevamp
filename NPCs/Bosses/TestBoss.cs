@@ -1,9 +1,7 @@
-using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -39,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            if(projectile.type == ModContent.ProjectileType<Projectiles.BlackFirelet>())
+            if (projectile.type == ModContent.ProjectileType<Projectiles.BlackFirelet>())
             {
                 NPC.active = false;
             }
@@ -54,12 +52,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void OnKill()
         {
-           
+
         }
 
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
-            if(item.type == ItemID.WoodenHammer)
+            if (item.type == ItemID.WoodenHammer)
             {
                 NPC.life = 0;
             }

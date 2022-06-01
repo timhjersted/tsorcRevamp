@@ -1,9 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -48,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Projectile.position.X = owner.Center.X - difference - 42;
                 }
             }
-            
+
         }
     }
 }

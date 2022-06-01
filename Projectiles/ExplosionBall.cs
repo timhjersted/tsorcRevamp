@@ -1,16 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class ExplosionBall : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class ExplosionBall : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/GreatFireballBall";
 
-        public override void SetDefaults() {
-            Projectile.aiStyle = 9; 
+        public override void SetDefaults()
+        {
+            Projectile.aiStyle = 9;
             Projectile.friendly = true;
             Projectile.height = 16;
             Projectile.width = 16;

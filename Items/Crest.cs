@@ -2,9 +2,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    public abstract class Crest : ModItem { //crests are using an abstract so we dont have 6 different .cs files with essentially nothing in them
-        public override void SetDefaults() {
+namespace tsorcRevamp.Items
+{
+    public abstract class Crest : ModItem
+    { //crests are using an abstract so we dont have 6 different .cs files with essentially nothing in them
+        public override void SetDefaults()
+        {
             Item.width = 12;
             Item.height = 12;
             Item.rare = ItemRarityID.Blue;
@@ -12,12 +15,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class CrestOfFire : Crest {
-        public override void SetDefaults() {
+    public class CrestOfFire : Crest
+    {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Crest of Fire");
             Tooltip.SetDefault("A shard of blazing fury\n" +
                                "You don't know what it's for, but you're sure it's important.\n" +
@@ -26,12 +32,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class CrestOfWater : Crest {
-        public override void SetDefaults() {
+    public class CrestOfWater : Crest
+    {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Crest of Water");
             Tooltip.SetDefault("A shard of crystallized water\n" +
                                "A second piece. Are these artifacts part of a puzzle?\n" +
@@ -39,12 +48,15 @@ namespace tsorcRevamp.Items {
                                "sheltered from the blistering Western Winds, a Violet Glow illuminates the path.\"");
         }
     }
-    public class CrestOfEarth : Crest {
-        public override void SetDefaults() {
+    public class CrestOfEarth : Crest
+    {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Crest of Earth");
             Tooltip.SetDefault("A shard of pure minerals\n" +
                                "One of eight\n" +
@@ -53,12 +65,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class CrestOfCorruption : Crest {
-        public override void SetDefaults() {
+    public class CrestOfCorruption : Crest
+    {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Crest of Corruption");
             Tooltip.SetDefault("A shard of glowing demonite, oozing with phazon\n" +
                                "One of eight. On the underside it says simply:\n" +
@@ -66,12 +81,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class CrestOfSky : Crest {
-        public override void SetDefaults() {
+    public class CrestOfSky : Crest
+    {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Crest of Sky");
             Tooltip.SetDefault("Half of a shard of oxygenated carbonate\n" +
                                "Combined with the second half, this makes one of eight. On its side it contains a clue:\n" +
@@ -79,12 +97,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class CrestOfSteel : Crest {
-        public override void SetDefaults() {
+    public class CrestOfSteel : Crest
+    {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Crest of Steel");
             Tooltip.SetDefault("A shard of burning hot steel\n" +
                                "One of eight.\n" +

@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs.Special
                 NPC.life = 1;
                 NPC.dontTakeDamage = true;
                 NPC.ai[1] = 0;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter, NPC.Center); 
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter, NPC.Center);
                 int leftOrRightVel = Main.rand.Next(-1, 1);
                 if (leftOrRightVel == 0) { leftOrRightVel = 1; }
 

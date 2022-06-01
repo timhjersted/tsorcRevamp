@@ -1,11 +1,13 @@
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Ammo {
-    public class TeslaBolt : ModItem {
+namespace tsorcRevamp.Items.Ammo
+{
+    public class TeslaBolt : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = true;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 14;

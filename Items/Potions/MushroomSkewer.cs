@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Potions
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(ItemID.Mushroom, 1);
             recipe.AddTile(TileID.Campfire);
-            
+
             recipe.Register();
         }
     }

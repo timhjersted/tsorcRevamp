@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.aiStyle = 21;
             Main.npcFrameCount[NPC.type] = 8;
             NPC.timeLeft = 750;
-            aiType = 72;
+            AIType = 72;
             NPC.damage = 120;
             NPC.defense = 1000;
             NPC.HitSound = SoundID.NPCHit1;
@@ -26,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.behindTiles = true;
             NPC.dontTakeDamage = true;
-            	
+
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;

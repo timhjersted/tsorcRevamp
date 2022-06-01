@@ -1,9 +1,9 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 using static tsorcRevamp.SpawnHelper;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.CloneDefaults(NPCID.GoblinSorcerer);
             Main.npcFrameCount[NPC.type] = 2;
-            aiType = NPCID.GoblinSorcerer;
+            AIType = NPCID.GoblinSorcerer;
             NPC.lifeMax = 30;
             NPC.damage = 15;
             NPC.scale = 1f;

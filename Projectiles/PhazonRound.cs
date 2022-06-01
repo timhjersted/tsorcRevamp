@@ -1,14 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PhazonRound : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PhazonRound : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.scale = 0.7f;
@@ -23,11 +25,13 @@ namespace tsorcRevamp.Projectiles {
         int storedDamage = 0;
         bool hasExploded = false;
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit) {
-            target.AddBuff(ModContent.BuffType<Buffs.PhazonContamination>(), 600);            
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(ModContent.BuffType<Buffs.PhazonContamination>(), 600);
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
             Lighting.AddLight(Projectile.Center, Color.DarkBlue.ToVector3());
 
@@ -41,7 +45,7 @@ namespace tsorcRevamp.Projectiles {
             {
                 int speed = 2;
                 //Dust.NewDustPerfect(projectile.position, 29, Vector2.Zero, 120, default, 2f).noGravity = true;
-                Dust.NewDustPerfect(Projectile.position, DustID.FireworkFountain_Blue, (Projectile.velocity * 0.6f) + Main.rand.NextVector2Circular(speed, speed), 200, default, 0.8f).noGravity = true;                
+                Dust.NewDustPerfect(Projectile.position, DustID.FireworkFountain_Blue, (Projectile.velocity * 0.6f) + Main.rand.NextVector2Circular(speed, speed), 200, default, 0.8f).noGravity = true;
             }
         }
 
@@ -64,10 +68,10 @@ namespace tsorcRevamp.Projectiles {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
 
             for (int i = 0; i < 2; i++)
-            {               
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, Projectile.damage / 4, 0.5f, Projectile.owner);                
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, Projectile.damage / 4, 0.5f, Projectile.owner);
             }
-            
+
             Projectile.penetrate = 20;
             Projectile.width = 70;
             Projectile.height = 70;
@@ -93,7 +97,7 @@ namespace tsorcRevamp.Projectiles {
             }
             //Get the premultiplied, properly transparent texture
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.PhazonRound];
-            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

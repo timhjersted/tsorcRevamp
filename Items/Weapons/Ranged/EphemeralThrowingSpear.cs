@@ -2,13 +2,17 @@
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class EphemeralThrowingSpear : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class EphemeralThrowingSpear : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Passes through solid walls");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = true;
             Item.damage = 29;
             Item.height = 64;
@@ -26,7 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.width = 10;
             Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingSpear>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("RoyalThrowingSpear").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 5);

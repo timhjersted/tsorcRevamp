@@ -4,9 +4,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class CompactFrame : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class CompactFrame : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Used for making advanced weaponry, from a civilization not of this world\n" +
                                "The strange way it is unaffected by gravity reminds you of somewhere...");
 
@@ -15,12 +18,12 @@ namespace tsorcRevamp.Items {
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 2f;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed , 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0f);
 
                 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 2f;
                 spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0f);
@@ -29,7 +32,8 @@ namespace tsorcRevamp.Items {
         }
 
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 20;
             Item.height = 18;
             Item.maxStack = 99;

@@ -2,9 +2,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Ammo {
-    public class CruelArrow : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Ammo
+{
+    public class CruelArrow : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Cruel Arrow");
             Tooltip.SetDefault("An arrow fashioned to kill lost and forgotten souls...\n" +
                                 "Does 8x greater damage to some enemies\n" +
@@ -12,7 +15,8 @@ namespace tsorcRevamp.Items.Ammo {
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = true;
             Item.ammo = AmmoID.Arrow;
             Item.damage = 7;
@@ -27,7 +31,8 @@ namespace tsorcRevamp.Items.Ammo {
             Item.shoot = ModContent.ProjectileType<Projectiles.CruelArrow>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.WoodenArrow, 30);
             recipe.AddIngredient(ItemID.IronOre, 1);

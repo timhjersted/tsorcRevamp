@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class ShieldTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class ShieldTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Shield Tome");
             Tooltip.SetDefault("A lost legendary tome\n" +
                                 "Casts Shield on the player, raising defense by 62 for 30 seconds\n" +
                                 "Does not stack with Fog, Barrier or Wall spells");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.stack = 1;
             Item.width = 28;
             Item.height = 30;
@@ -26,7 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.value = PriceByRarity.Cyan_9;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 6);
@@ -34,23 +39,27 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.AddBuff(ModContent.BuffType<Buffs.Shield>(), 1800, false);
             return true;
         }
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
             {
                 return false;
             }
-            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>())) {
+            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()))
+            {
                 return false;
             }
-            else {
+            else
+            {
                 return true;
             }
         }

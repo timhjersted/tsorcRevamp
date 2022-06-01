@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.GoldGreaves, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

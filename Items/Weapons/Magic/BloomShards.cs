@@ -2,16 +2,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class BloomShards : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class BloomShards : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bloom Shards");
             Tooltip.SetDefault("Evokes blooming shards of radiant light\n" +
                                 "Close range");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.width = 24;
             Item.height = 28;
@@ -32,10 +36,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.value = PriceByRarity.Cyan_9;
         }
 
-        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit) {
+        public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
+        {
             int healEffect = damage / 10;
 
-            if (crit) {
+            if (crit)
+            {
                 healEffect *= 2;
             }
 
@@ -43,10 +49,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             player.HealEffect(healEffect);
         }
 
-        public override void OnHitPvp(Player player, Player target, int damage, bool crit) {
+        public override void OnHitPvp(Player player, Player target, int damage, bool crit)
+        {
             int healEffect = damage / 20;
 
-            if (crit) {
+            if (crit)
+            {
                 healEffect *= 2;
             }
 

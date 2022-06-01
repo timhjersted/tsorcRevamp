@@ -89,7 +89,7 @@ namespace tsorcRevamp.Items
             //Main.NewText("Stamina: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
             return true;
         }
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             // Each frame, make some dust
             if (Main.rand.Next(2) == 0)
@@ -119,7 +119,7 @@ namespace tsorcRevamp.Items
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     //player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.Top, player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, ProjectileID.DD2ExplosiveTrapT2Explosion, 250, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards
@@ -151,7 +151,7 @@ namespace tsorcRevamp.Items
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             var myrectangle = texture.Frame(1, 6, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(18, 24), Item.scale, SpriteEffects.None, 0f);
 

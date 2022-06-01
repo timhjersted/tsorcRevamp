@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Achievements;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -22,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.penetrate = 3;
             Projectile.light = .5f;
-            }
+        }
 
         public override void SetStaticDefaults()
         {
@@ -93,13 +91,13 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (!target)
             {
                 int targetIndex = GetClosestPlayer();
-                if(targetIndex != -1)
+                if (targetIndex != -1)
                 {
                     targetPlayer = Main.player[targetIndex];
                     target = true;
                 }
             }
-                
+
             if (target)
             {
                 Vector2 newMove = targetPlayer.Center - Projectile.Center;
@@ -124,7 +122,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Vector2 diff = Main.player[i].Center - Projectile.Center;
                 float distanceTo = (float)Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
-                if(distanceTo < distance)
+                if (distanceTo < distance)
                 {
                     distance = distanceTo;
                     closest = i;

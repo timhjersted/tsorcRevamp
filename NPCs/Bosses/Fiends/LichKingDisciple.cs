@@ -1,5 +1,5 @@
-using System;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -61,13 +61,13 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 {
                     OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), NPC.whoAmI);
                     Main.npc[OptionId].velocity.Y = -10;
-                }   
+                }
                 OptionSpawned = true;
             }
 
             NPC.ai[0]++; // Timer Scythe
             NPC.ai[1]++; // Timer Teleport
-                            // npc.ai[2]++; // Shots
+                         // npc.ai[2]++; // Shots
 
             if (NPC.life > 3000)
             {
@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 
                 NPC.ai[1] = 0;
                 NPC.ai[2] = 0;
-                
+
                 Player Pt = Main.player[NPC.target];
                 NPC.position.X = Pt.position.X + (float)((600 * Math.Cos(NPC.ai[3])) * -1);
                 NPC.position.Y = Pt.position.Y - 65 + (float)((30 * Math.Sin(NPC.ai[3])) * -1);
@@ -129,7 +129,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 }
                 NPC.position = Pt.position + Diff;
 
-                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Pt.Center, 12);           
+                NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Pt.Center, 12);
             }
 
             //end of W1k's Death code            

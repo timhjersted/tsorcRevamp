@@ -1,13 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class Ice3Tome : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class Ice3Tome : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ice 3 Tome");
             Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
                                 "Only mages will be able to realize this tome's full potential. \n" +
@@ -17,7 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         //This stores the original, true mana cost of the item. We have to change item.mana later to cause it to use less/none while it's not actually firing
         int storeManaCost3;
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true; //why was it the only one without autoreuse?
             Item.damage = 32;
             Item.height = 10;
@@ -52,13 +54,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             }
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Ice2Tome").Type, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 15);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

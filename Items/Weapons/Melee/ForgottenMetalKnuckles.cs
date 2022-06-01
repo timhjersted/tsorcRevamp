@@ -1,13 +1,17 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenMetalKnuckles : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenMetalKnuckles : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Iron knuckles that hit with extra weight.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Blue;

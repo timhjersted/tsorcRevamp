@@ -2,16 +2,20 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
 
-    public class OldMorningStar : ModItem {
+    public class OldMorningStar : ModItem
+    {
 
-        public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Does random damage from 0 to 24" +  
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Does random damage from 0 to 24" +
                                 "\nMaximum damage is increased by damage modifiers.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -31,7 +35,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shoot = ModContent.ProjectileType<Projectiles.OldMorningStar>();
         }
 
-        public override void HoldItem(Player player) {
+        public override void HoldItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }

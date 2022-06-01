@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class OldCrossbow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class OldCrossbow : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Ranged/Crossbow";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Does random damage from 0 to 38" +
                                 "\nMaximum damage is increased by damage modifiers.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 38;
             Item.width = 28;
             Item.height = 14;
@@ -30,7 +34,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.value = 9000;
             Item.noMelee = true;
         }
-        public override void HoldItem(Player player) {
+        public override void HoldItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }

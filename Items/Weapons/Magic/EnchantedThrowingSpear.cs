@@ -1,7 +1,8 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
     public class EnchantedThrowingSpear : ModItem
     {
 
@@ -41,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);
-            
+
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

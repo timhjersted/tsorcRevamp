@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenGaiaSword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenGaiaSword : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A blade made to slay the Witchking.\n" + "Does 3x damage and dispels the defensive shield of the Witchking");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Red;
             Item.autoReuse = true;
             Item.damage = 185;
@@ -37,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddTile(TileID.DemonAltar);
             
             recipe.Register();
-        }*/  
+        }*/
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
@@ -55,8 +59,10 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             }
         }
 
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
-            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) { 
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
+            if (target.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>())
+            {
                 damage *= 3;
             }
         }

@@ -1,9 +1,5 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -38,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Projectile.Kill();
                 return;
-            }           
+            }
         }
         #endregion
 
@@ -58,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 Projectile.damage = (int)((0.75 * target.statLife) + defense);
                 hitPlayer = 1;
-            }            
+            }
         }
     }
 }

@@ -1,17 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
 using static tsorcRevamp.oSpawnHelper;
 
-namespace tsorcRevamp.NPCs.Enemies {
-    public class Dunlending : ModNPC {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.NPCs.Enemies
+{
+    public class Dunlending : ModNPC
+    {
+        public override void SetStaticDefaults()
+        {
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.npcSlots = 1;
             NPC.knockBackResist = 0.4f;
             NPC.aiStyle = -1;
@@ -28,8 +31,10 @@ namespace tsorcRevamp.NPCs.Enemies {
             bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
         }
 
-        public override void HitEffect(int hitDirection, double damage) {
-            for (int i = 0; i < 5; i++) {
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            for (int i = 0; i < 5; i++)
+            {
                 int dustType = 5;
                 int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
                 Dust dust = Main.dust[dustIndex];
@@ -38,8 +43,10 @@ namespace tsorcRevamp.NPCs.Enemies {
                 dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
                 dust.noGravity = true;
             }
-            if (NPC.life <= 0) {
-                for (int i = 0; i < 25; i++) {
+            if (NPC.life <= 0)
+            {
+                for (int i = 0; i < 25; i++)
+                {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
                 }
 
@@ -56,7 +63,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
             var p = spawnInfo.Player;
 
             float chance = 0;
@@ -70,11 +78,13 @@ namespace tsorcRevamp.NPCs.Enemies {
             if (spawnInfo.Player.townNPCs > 1f) return 0f;
 
 
-            if (p.ZoneOverworldHeight) {
+            if (p.ZoneOverworldHeight)
+            {
                 if (Main.dayTime) chance = 0.067f;
                 else chance = 0.125f;
             }
-            if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p)) {
+            if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p))
+            {
                 if (Main.dayTime && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.067f;
                 if (!Main.dayTime && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.1f;
             }
@@ -88,7 +98,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
             return chance;
         }
-        public override void OnKill() {
+        public override void OnKill()
+        {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Torch, 1);
             Player player = Main.player[NPC.target];
 
@@ -101,33 +112,42 @@ namespace tsorcRevamp.NPCs.Enemies {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(20) == 0 ? 6 : 1); // 1/5 chance of 6, else 1
             }
 
-            if (Main.rand.NextFloat() < 0.6f) { //60%
+            if (Main.rand.NextFloat() < 0.6f)
+            { //60%
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion, Main.rand.Next(1, 3));
             }
 
-            if (Main.rand.NextFloat() < 0.1f) { //10%
+            if (Main.rand.NextFloat() < 0.1f)
+            { //10%
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BoostPotion>());
             }
-            if (Main.rand.Next(10) == 0) { //8%
+            if (Main.rand.Next(10) == 0)
+            { //8%
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 1, false, -1);
             }
 
-            if (Main.rand.Next(20) == 0) {
+            if (Main.rand.Next(20) == 0)
+            {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
             }
-            if (Main.rand.Next(20) == 0) {
+            if (Main.rand.Next(20) == 0)
+            {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion);
             }
-            if (Main.rand.Next(20) == 0) {
+            if (Main.rand.Next(20) == 0)
+            {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
             }
-            if (Main.rand.Next(20) == 0) {
+            if (Main.rand.Next(20) == 0)
+            {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BattlePotion);
             }
-            if (Main.rand.Next(50) == 0) { //2%
+            if (Main.rand.Next(50) == 0)
+            { //2%
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
             }
-            if (Main.rand.Next(100) == 0) { //1%
+            if (Main.rand.Next(100) == 0)
+            { //1%
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CrimsonPotion>());
             }
 

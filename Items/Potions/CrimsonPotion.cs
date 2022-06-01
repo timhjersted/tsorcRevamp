@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class CrimsonPotion : ModItem {
+namespace tsorcRevamp.Items.Potions
+{
+    public class CrimsonPotion : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Enemies within a ten tile radius are inflicted with \nCrimson Burn, which quickly drains life");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 14;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -24,12 +27,13 @@ namespace tsorcRevamp.Items.Potions {
             Item.buffType = ModContent.BuffType<Buffs.CrimsonDrain>();
             Item.buffTime = 18000;
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ThornsPotion, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

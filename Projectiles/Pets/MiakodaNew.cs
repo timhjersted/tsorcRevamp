@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Pets
 {
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Pets
             Projectile.height = 16;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            aiType = ProjectileID.BabyHornet;
+            AIType = ProjectileID.BabyHornet;
             Projectile.scale = 0.85f;
             drawOffsetX = -8;
         }
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Projectiles.Pets
 
             if (modPlayer.MiakodaNewDust2) //splash effect and sound once player gets crit+heal.
             {
-                
+
                 if (MiakodaVol != 0)
                 {
                     string[] AmgerySoundChoices = new string[] { "Sounds/Custom/MiakodaScream", "Sounds/Custom/MiakodaChaoExcl", "Sounds/Custom/MiakodaUwuu" };

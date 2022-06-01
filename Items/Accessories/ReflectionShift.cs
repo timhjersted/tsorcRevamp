@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,14 +8,17 @@ using Terraria.Utilities;
 namespace tsorcRevamp.Items.Accessories
 {
     [AutoloadEquip(EquipType.Shoes)]
-    public class ReflectionShift : ModItem {
-        public override void SetStaticDefaults() {
+    public class ReflectionShift : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Your full potential trancends even space and time" +
                                 "\nDouble tap any direction or press the hotkey to [c/9803fc:shift]" +
                                 "\nWhile shifting you are [c/9803fc:completely intangable] for a brief moment");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 40;
             Item.height = 40;
             Item.accessory = true;

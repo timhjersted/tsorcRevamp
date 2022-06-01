@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.BossItems
                                 "\nSaid to protect the one who carries it in times of despair" +
                                 "\nUse this at the top of The Temple Shrine of The Wall if your first attempt" +
                                 "\ndoes not succeed. (Use it don't drop it in lava.)"); //+
-                                //"\nBut first: save, quit and reload before each time you resummon him.");
+                                                                                        //"\nBut first: save, quit and reload before each time you resummon him.");
         }
         public override void SetDefaults()
         {
@@ -42,11 +42,11 @@ namespace tsorcRevamp.Items.BossItems
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Recipe recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.GuideVoodooDoll, 3);
             recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
+            recipe.SetResult(this, 1);
+            recipe.AddRecipe();
         }
     }
 }

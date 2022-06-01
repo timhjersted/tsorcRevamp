@@ -4,8 +4,10 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PoisonBombBall : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PoisonBombBall : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/PoisonFieldBall";
         public override void SetDefaults()
@@ -74,8 +76,8 @@ namespace tsorcRevamp.Projectiles {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width, Projectile.position.Y + Projectile.height * -2, 0, 0, ModContent.ProjectileType<PoisonField2>(), Projectile.damage, 1f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width * 4, Projectile.position.Y + Projectile.height * -2, 0, 0, ModContent.ProjectileType<PoisonField2>(), Projectile.damage, 1f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width * -2, Projectile.position.Y + Projectile.height * -2, 0, 0, ModContent.ProjectileType<PoisonField2>(), Projectile.damage, 1f, Projectile.owner);
-            
-            for (int num40 = 0; num40 < 40; num40++)
+
+                for (int num40 = 0; num40 < 40; num40++)
                 {
                     Vector2 arg_1394_0 = new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y);
                     int arg_1394_1 = Projectile.width;

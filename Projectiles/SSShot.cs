@@ -36,12 +36,12 @@ namespace tsorcRevamp.Projectiles
             }
             if (Main.rand.Next(6) == 0)
             {
-                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 245, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .5f);
-                    Main.dust[dust].noGravity = true;
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 245, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .5f);
+                Main.dust[dust].noGravity = true;
             }
             {
-                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 91, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .6f);
-                    Main.dust[dust].noGravity = true;
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 91, Projectile.velocity.X * -0.2f, Projectile.velocity.Y * -0.2f, 70, default(Color), .6f);
+                Main.dust[dust].noGravity = true;
             }
 
             if (Projectile.owner == Main.myPlayer && Projectile.timeLeft == 3)
@@ -55,7 +55,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, Projectile.frame, 14, 38), Color.White, Projectile.rotation, new Vector2(7, 0), Projectile.scale, SpriteEffects.None, 0);
 

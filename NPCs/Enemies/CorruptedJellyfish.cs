@@ -1,7 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.CloneDefaults(NPCID.PinkJellyfish);
             AnimationType = NPCID.PinkJellyfish;
-            aiType = NPCID.PinkJellyfish;
+            AIType = NPCID.PinkJellyfish;
             NPC.lifeMax = 118;
             NPC.damage = 35;
             NPC.scale = 1f;

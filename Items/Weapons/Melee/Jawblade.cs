@@ -1,12 +1,16 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class Jawblade : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class Jawblade : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A blade of bone and fangs");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 68;
             Item.height = 76;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -30,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

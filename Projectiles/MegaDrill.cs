@@ -2,13 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class MegaDrill : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class MegaDrill : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.penetrate = 10;
@@ -24,7 +26,8 @@ namespace tsorcRevamp.Projectiles {
 
         Vector2[] lastpos = new Vector2[20];
         int lastposindex = 0;
-        public override void AI() {
+        public override void AI()
+        {
 
             Player projOwner = Main.player[Projectile.owner];
             projOwner.heldProj = Projectile.whoAmI; //this makes it appear in front of the player
@@ -32,7 +35,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.velocity.Y = (float)Math.Sin(Projectile.rotation) * 10;
             Projectile.velocity.X = (float)Math.Cos(Projectile.rotation) * 10;
 
-            if (Projectile.timeLeft < 100) {
+            if (Projectile.timeLeft < 100)
+            {
                 Projectile.scale *= 0.9f;
                 Projectile.damage = 500;
             }
@@ -40,7 +44,8 @@ namespace tsorcRevamp.Projectiles {
 
             int projectilePosX = (int)(Projectile.position.X + Projectile.width / 2) / 16;
             int projectilePosY = (int)(Projectile.position.Y + Projectile.width / 2) / 16;
-            if (Main.tile[projectilePosX, projectilePosY].HasTile) {
+            if (Main.tile[projectilePosX, projectilePosY].HasTile)
+            {
                 WorldGen.KillTile(projectilePosX, projectilePosY, false, false, false);
                 Projectile.timeLeft -= 50;
             }
@@ -50,13 +55,15 @@ namespace tsorcRevamp.Projectiles {
             if (lastposindex > 19) lastposindex = 0;
         }
 
-        public override bool PreDraw(SpriteBatch sp, Color lightColor) {
-            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<MegaDrill>()];
+        public override bool PreDraw(SpriteBatch sp, Color lightColor)
+        {
+            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<MegaDrill>()];
             Rectangle fromrect = new Rectangle(0, 0, Projectile.width, Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(10, 50, 255, 0);
             int modlastposindex = lastposindex;
-            for (int i = 0; i < 19; i++) {
+            for (int i = 0; i < 19; i++)
+            {
                 float rotmod = Main.rand.Next(-100, 100) / 100f;
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 lastpos[modlastposindex].X += Main.rand.Next(-1, 1);
@@ -80,7 +87,8 @@ namespace tsorcRevamp.Projectiles {
             }
             modlastposindex = lastposindex;
 
-            for (int i = 0; i < 19; i++) {
+            for (int i = 0; i < 19; i++)
+            {
                 float rotmod = Main.rand.Next(-100, 100) / 100f;
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 PC = lastpos[modlastposindex] + new Vector2(Projectile.width / 2, Projectile.height / 2);

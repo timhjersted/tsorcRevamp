@@ -1,15 +1,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
 
-    public class MythrilFlail : ModItem {
+    public class MythrilFlail : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             base.SetStaticDefaults();
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 32;
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -28,13 +32,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shoot = ModContent.ProjectileType<Projectiles.MythrilBall>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Chain, 3);
             recipe.AddIngredient(ItemID.MythrilBar, 17);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2500);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

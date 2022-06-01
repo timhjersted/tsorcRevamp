@@ -1,6 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,12 +7,12 @@ namespace tsorcRevamp.Projectiles.Enemy
 {
     class EnemySpellAbyssStorm : ModProjectile
     {
-		public override void SetStaticDefaults()
-		{
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Dark Wave Storm");
-		}
+        }
 
-		public override void SetDefaults()
+        public override void SetDefaults()
         {
             Projectile.width = 194;
             Projectile.height = 194;
@@ -44,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 //Fade out after reaching max radius, and then despawn
                 dustCount /= 2;
-                if(dustCount <= 0)
+                if (dustCount <= 0)
                 {
                     Projectile.Kill();
                     return;

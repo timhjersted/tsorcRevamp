@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static tsorcRevamp.SpawnHelper;
 
-namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
-    class VampireBat : ModNPC {
+namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
+{
+    class VampireBat : ModNPC
+    {
 
         public override void SetStaticDefaults()
         {
@@ -14,11 +14,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             Main.npcFrameCount[NPC.type] = 8;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.width = 48;
             NPC.height = 36;
             NPC.aiStyle = 14;
-            aiType = NPCID.CaveBat;
+            AIType = NPCID.CaveBat;
             NPC.timeLeft = 750;
             NPC.damage = 98;
             NPC.defense = 70;
@@ -38,22 +39,27 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             NPC.damage = (int)(NPC.damage / 2);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
             Player p = spawnInfo.Player;
-            if (tsorcRevampWorld.SuperHardMode) {
-                if (p.ZoneCorrupt || p.ZoneCrimson) {
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                if (p.ZoneCorrupt || p.ZoneCrimson)
+                {
                     return 0.125f;
                 }
-                else if (Underworld(p)) {
+                else if (Underworld(p))
+                {
                     return 0.0167f;
                 }
             }
             return 0;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             base.AI();
-            
+
         }
 
         public int frame = 0;
@@ -75,11 +81,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             }
         }
 
-        public override void OnKill() {
+        public override void OnKill()
+        {
             base.NPCLoot();
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
             target.AddBuff(ModContent.BuffType<Buffs.SlowedLifeRegen>(), 3600);
             target.AddBuff(BuffID.Poisoned, 3600);
             target.AddBuff(BuffID.Bleeding, 3600);

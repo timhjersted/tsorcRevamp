@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -41,14 +40,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.SoulofLight, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
         public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.Barrier>(), 1200, false);
-            //Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
+            // Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, mod.ProjectileType("Barrier"), 0, 0f, player.whoAmI, 0f, 0f);
             return true;
         }
         public override bool CanUseItem(Player player)
@@ -58,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             {
                 return false;
             }
-            
+
             if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Wall>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
             {
                 return false;

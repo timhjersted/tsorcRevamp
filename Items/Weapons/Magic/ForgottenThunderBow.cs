@@ -1,15 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class ForgottenThunderBow : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class ForgottenThunderBow : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Casts a bolt of lightning from your bow, doing massive damage over time. ");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 140;
             Item.height = 58;
             Item.knockBack = 4;
@@ -27,7 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.width = 16;
             Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ForgottenThunderBowScroll").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt4Tome").Type, 1);
@@ -35,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

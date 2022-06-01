@@ -1,27 +1,34 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using Microsoft.Xna.Framework.Graphics;
 using TerraUI.Objects;
-using ReLogic.Graphics;
+using tsorcRevamp.Items;
 
-namespace tsorcRevamp {
+namespace tsorcRevamp
+{
     //UI
-    public partial class tsorcRevampPlayer {
-        internal static bool SoulSlotCondition(Item item) {
-            if (item.type != ModContent.ItemType<DarkSoul>()) {
+    public partial class tsorcRevampPlayer
+    {
+        internal static bool SoulSlotCondition(Item item)
+        {
+            if (item.type != ModContent.ItemType<DarkSoul>())
+            {
                 return false;
             }
             return true;
         }
-        internal void DrawSoulSlotBackground(UIObject sender, SpriteBatch spriteBatch) {
+        internal void DrawSoulSlotBackground(UIObject sender, SpriteBatch spriteBatch)
+        {
             UIItemSlot slot = (UIItemSlot)sender;
 
-            if (ShouldDrawSoulSlot()) {
+            if (ShouldDrawSoulSlot())
+            {
                 slot.OnDrawBackground(spriteBatch);
 
-                if (slot.Item.stack == 0) {
+                if (slot.Item.stack == 0)
+                {
                     Texture2D tex = ModContent.GetInstance<tsorcRevamp>().GetTexture("UI/SoulSlotBackground");
                     Vector2 origin = tex.Size() / 2f * Main.inventoryScale;
                     Vector2 position = slot.Rectangle.TopLeft();
@@ -39,11 +46,14 @@ namespace tsorcRevamp {
                 }
             }
         }
-        internal static bool ShouldDrawSoulSlot() {
+        internal static bool ShouldDrawSoulSlot()
+        {
             return (Main.playerInventory);
         }
-        public void Draw(SpriteBatch spriteBatch) {
-            if (!ShouldDrawSoulSlot()) {
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            if (!ShouldDrawSoulSlot())
+            {
                 return;
             }
 

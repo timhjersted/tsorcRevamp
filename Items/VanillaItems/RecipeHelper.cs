@@ -2,19 +2,25 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp {
+namespace tsorcRevamp
+{
 
-    public class tsorcGlobalRecipe : GlobalRecipe {
-        public override void OnCraft(Item item, Recipe recipe) {
+    public class tsorcGlobalRecipe : GlobalRecipe
+    {
+        public override void OnCraft(Item item, Recipe recipe)
+        {
             tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
-            foreach (Item ingredient in recipe.requiredItem) {
-                if (ingredient.type == ModContent.ItemType<Items.DarkSoul>()) {
+            foreach (Item ingredient in recipe.requiredItem)
+            {
+                if (ingredient.type == ModContent.ItemType<Items.DarkSoul>())
+                {
 
                     //a recipe with souls will only be craftable if you have enough souls, even if theyre in soul slot
                     modPlayer.SoulSlot.Item.stack -= ingredient.stack;
 
                     //if you have exactly enough for the recipe
-                    if (modPlayer.SoulSlot.Item.stack == 0) {
+                    if (modPlayer.SoulSlot.Item.stack == 0)
+                    {
                         modPlayer.SoulSlot.Item.TurnToAir();
                     }
 
@@ -25,49 +31,60 @@ namespace tsorcRevamp {
             base.OnCraft(item, recipe);
         }
     }
-    public static class RecipeHelper {
+    public static class RecipeHelper
+    {
 
-        public static void RecipeRemover(int ItemRecipeToRemove) {
+        public static void RecipeRemover(int ItemRecipeToRemove)
+        {
             //removes ANY recipe that results in ItemRecipeToRemove
-            for (int i = 0; i < Recipe.numRecipes; i++) {
+            for (int i = 0; i < Recipe.numRecipes; i++)
+            {
                 Recipe recipe = Main.recipe[i];
 
-                if (recipe.HasResult(ItemRecipeToRemove)) {
+                if (recipe.HasResult(ItemRecipeToRemove))
+                {
                     recipe.DisableRecipe();
                 }
             }
-            
+
         }
 
-        public static void RecipeIngredientAdder(int ItemRecipeToEdit, int ItemIngredientToAdd, int ItemCount = 1) {
+        public static void RecipeIngredientAdder(int ItemRecipeToEdit, int ItemIngredientToAdd, int ItemCount = 1)
+        {
             //any recipe that results in ItemRecipeToEdit will have ItemIngredientToAdd added to it, with ItemCount amount (default 1)
 
-            for (int i = 0; i < Recipe.numRecipes; i++) {
+            for (int i = 0; i < Recipe.numRecipes; i++)
+            {
                 Recipe recipe = Main.recipe[i];
 
-                if (recipe.HasResult(ItemRecipeToEdit)) {
+                if (recipe.HasResult(ItemRecipeToEdit))
+                {
                     recipe.AddIngredient(ItemIngredientToAdd, ItemCount);
                 }
             }
         }
 
-        public static void ExactRecipeRemover2Ingredients(int Ingredient1, int Ingredient2, int CraftingStation, int RecipeResult) {
+        public static void ExactRecipeRemover2Ingredients(int Ingredient1, int Ingredient2, int CraftingStation, int RecipeResult)
+        {
             //this method is for when there's an item whose recipe needs to be removed, but we can't use RecipeRemover
             //that usually means we're giving it a custom recipe somewhere else, since RecipeRemover runs on any recipe that results in that item
             //using exact recipes is thus required. not sure if we need to do this again, but if we do, now theres a method
 
-            for (int i = 0; i < Recipe.numRecipes; i++) {
+            for (int i = 0; i < Recipe.numRecipes; i++)
+            {
                 Recipe recipe = Main.recipe[i];
 
-                if (recipe.HasIngredient(Ingredient1) 
+                if (recipe.HasIngredient(Ingredient1)
                     && recipe.HasIngredient(Ingredient2)
                     && recipe.HasTile(CraftingStation)
-                    && recipe.HasResult(RecipeResult)) {
-                        recipe.DisableRecipe();
+                    && recipe.HasResult(RecipeResult))
+                {
+                    recipe.DisableRecipe();
                 }
             }
         }
-        public static void EditRecipes() {
+        public static void EditRecipes()
+        {
             RecipeRemover(ItemID.AdamantiteDrill);
             RecipeRemover(ItemID.AdamantitePickaxe);
             RecipeRemover(ItemID.AngelWings);

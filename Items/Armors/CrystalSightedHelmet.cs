@@ -52,8 +52,8 @@ namespace tsorcRevamp.Items.Armors
             player.GetDamage(DamageClass.Melee) += 0.15f;
             player.enemySpawns = true;
         }
-        
-        public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
         }
@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.CrystalShard, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

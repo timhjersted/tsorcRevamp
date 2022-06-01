@@ -5,31 +5,38 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using tsorcRevamp;
+
+namespace tsorcRevamp.Items
+{
+    public class GreatMagicMirror : ModItem
+    {
 
 
-namespace tsorcRevamp.Items {
-    public class GreatMagicMirror : ModItem {
 
-
-
-        int playerXLocation(Player player) {
+        int playerXLocation(Player player)
+        {
             return (int)((player.position.X + player.width / 2.0 + 8.0) / 16.0);
         }
-        int playerYLocation(Player player) {
+        int playerYLocation(Player player)
+        {
             return (int)((player.position.Y + player.height) / 16.0);
         }
 
-        bool checkWarpLocation(int x, int y) {
-            if (x < 10 || x > Main.maxTilesX - 10 || y < 10 || y > Main.maxTilesY - 10) {
+        bool checkWarpLocation(int x, int y)
+        {
+            if (x < 10 || x > Main.maxTilesX - 10 || y < 10 || y > Main.maxTilesY - 10)
+            {
                 Main.NewText("Your warp is outside the world!", 255, 240, 20);
                 return false;
             }
 
-            for (int sanityX = x - 1; sanityX < x + 1; sanityX++) {
-                for (int sanityY = y - 3; sanityY < y; sanityY++) {
+            for (int sanityX = x - 1; sanityX < x + 1; sanityX++)
+            {
+                for (int sanityY = y - 3; sanityY < y; sanityY++)
+                {
                     Tile tile = Framing.GetTileSafely(sanityX, sanityY);
-                    if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType]) {
+                    if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
+                    {
                         WorldGen.KillTile(sanityX, sanityY);
                     }
 
@@ -39,78 +46,94 @@ namespace tsorcRevamp.Items {
         }
 
         double warpSetDelay;
-        public void Initialize() {
+        public void Initialize()
+        {
             warpSetDelay = Main.time - 120.0;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.CloneDefaults(ItemID.MagicMirror);
             Item.accessory = true;
             Item.value = 25000;
             Item.useTime = 240;
             Item.useAnimation = 240;
-            
+
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Equip this in an accessory slot anywhere to create a new warp point." +
                                 "\nActivate by left-clicking the mirror in your toolbar." +
                                 "\nWarp point saves on quit." +
-                                "\nReduces defense to 0 and slows movement while equipped and setting your warp point." + 
+                                "\nReduces defense to 0 and slows movement while equipped and setting your warp point." +
                                 "\nChannel time is four seconds and you cannot move during the channel.");
         }
 
-        public override bool CanUseItem(Player player) {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
+        public override bool CanUseItem(Player player)
+        {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
                 Main.NewText("The Curse prevents you from using this!", Color.OrangeRed);
                 return false;
             }
 
-            if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet)
+            {
                 Main.NewText("You haven't set a location!", 255, 240, 20);
                 return false;
             }
-            else if (player.GetModPlayer<tsorcRevampPlayer>().warpWorld != Main.worldID) {
+            else if (player.GetModPlayer<tsorcRevampPlayer>().warpWorld != Main.worldID)
+            {
                 Main.NewText("This mirror is set in a different world!", 255, 240, 20);
                 return false;
             }
             return base.CanUseItem(player);
         }
-        public override void UseStyle(Player player) {
-            if(player != Main.LocalPlayer)
+        public override void UseStyle(Player player, Rectangle rectangle)
+        {
+            if (player != Main.LocalPlayer)
             {
                 return;
             }
 
-            if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY)) {
-                if (player.itemTime > (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4) {
+            if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY))
+            {
+                if (player.itemTime > (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
+                {
                     player.velocity = Vector2.Zero;
                     player.gravDir = 1;
                     player.fallStart = (int)player.Center.Y;
                     player.position.Y -= 0.4f;
                 }
-                if (Main.rand.NextBool() && player.itemTime != 0) { //ambient dust during use
+                if (Main.rand.NextBool() && player.itemTime != 0)
+                { //ambient dust during use
 
                     // position, width, height, type, speed.X, speed.Y, alpha, color, scale
                     Dust.NewDust(player.position, player.width, player.height, 57, 0f, 0.5f, 150, default(Color), 1f + (float)(4 - (Item.useAnimation / (Item.useAnimation - player.itemTime))));
                 }
 
-                if (player.itemTime == 0) {
+                if (player.itemTime == 0)
+                {
                     Main.NewText("Picking up where you left off...", 255, 240, 20);
                     player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
                 }
-                else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4) {
+                else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
+                {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
 
 
-                    for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (source)
+                    for (int dusts = 0; dusts < 70; dusts++)
+                    { //dusts on tp (source)
                         Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f, 150, default(Color), 1.5f);
                     }
 
                     //destroy grapples
                     player.grappling[0] = -1;
                     player.grapCount = 0;
-                    for (int p = 0; p < 1000; p++) {
-                        if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7) {
+                    for (int p = 0; p < 1000; p++)
+                    {
+                        if (Main.projectile[p].active && Main.projectile[p].owner == player.whoAmI && Main.projectile[p].aiStyle == 7)
+                        {
                             Main.projectile[p].Kill();
                         }
                     }
@@ -122,25 +145,30 @@ namespace tsorcRevamp.Items {
                     player.SafeTeleport(destination);
                     player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 1); //1
 
-                    for (int dusts = 0; dusts < 70; dusts++) { //dusts on tp (destination)
+                    for (int dusts = 0; dusts < 70; dusts++)
+                    { //dusts on tp (destination)
                         Dust.NewDust(player.position, player.width, player.height, 57, player.velocity.X * 0.5f, (player.velocity.Y * 0.5f) + 0.5f * 0.5f, 150, default(Color), 1.5f);
                     }
 
                 }
             }
-            else {
+            else
+            {
                 Main.NewText("Your warp location is broken! Please file a bug report!", 255, 240, 20);
             }
 
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips) {
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
             Player player = Main.LocalPlayer;
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) {
+            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-                if (ttindex != -1) {// if we find one
-                                    //insert the extra tooltip line
+                if (ttindex != -1)
+                {// if we find one
+                 //insert the extra tooltip line
 
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "BotCNoGreaterMM", "[c/ca1e00:The curse prevents you from using this!]"));
 
@@ -148,23 +176,27 @@ namespace tsorcRevamp.Items {
             }
         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual) {
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
             if (player != Main.LocalPlayer)
             {
                 return;
             }
             player.moveSpeed -= 2f;
             player.statDefense -= player.statDefense;
-            if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet) {
+            if (!player.GetModPlayer<tsorcRevampPlayer>().warpSet)
+            {
                 player.GetModPlayer<tsorcRevampPlayer>().warpX = playerXLocation(player);
                 player.GetModPlayer<tsorcRevampPlayer>().warpY = playerYLocation(player);
                 player.GetModPlayer<tsorcRevampPlayer>().warpWorld = Main.worldID;
                 player.GetModPlayer<tsorcRevampPlayer>().warpSet = true;
                 Main.NewText("New warp location set!", 255, 240, 30);
             }
-            else {
+            else
+            {
                 double timeDifference = Main.time - warpSetDelay;
-                if ((timeDifference > 120.0) || (timeDifference < 0.0)) {
+                if ((timeDifference > 120.0) || (timeDifference < 0.0))
+                {
                     player.GetModPlayer<tsorcRevampPlayer>().warpX = playerXLocation(player);
                     player.GetModPlayer<tsorcRevampPlayer>().warpY = playerYLocation(player);
                     player.GetModPlayer<tsorcRevampPlayer>().warpWorld = Main.worldID;
@@ -175,12 +207,13 @@ namespace tsorcRevamp.Items {
             }
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MagicMirror, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

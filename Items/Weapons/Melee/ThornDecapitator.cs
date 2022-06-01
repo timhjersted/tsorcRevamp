@@ -1,15 +1,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class ThornDecapitator : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class ThornDecapitator : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Thorn Decapitator");
             Tooltip.SetDefault("");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
 
 
@@ -31,14 +35,15 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             //item.prefixType=483;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.BladeofGrass, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

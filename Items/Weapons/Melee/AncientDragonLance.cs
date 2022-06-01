@@ -1,15 +1,19 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class AncientDragonLance : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class AncientDragonLance : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Said to pierce any armor, even through walls" +
                 "\nCan hit multiple times");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 12;
             Item.knockBack = 4f;
 
@@ -18,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.useTime = 3;
             Item.shootSpeed = 7;
             //item.shoot = ProjectileID.DarkLance;
-            
+
             Item.height = 50;
             Item.width = 50;
 
@@ -33,11 +37,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Trident);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
-            
+
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

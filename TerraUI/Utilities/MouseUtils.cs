@@ -1,33 +1,39 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 using Terraria;
 using Terraria.GameInput;
 
-namespace TerraUI.Utilities {
-    public static class MouseUtils {
+namespace TerraUI.Utilities
+{
+    public static class MouseUtils
+    {
         /// <summary>
         /// The mouse position rectangle.
         /// </summary>
-        public static Rectangle Rectangle {
+        public static Rectangle Rectangle
+        {
             get { return new Rectangle(Main.mouseX, Main.mouseY, 1, 1); }
         }
 
         /// <summary>
         /// The mouse position.
         /// </summary>
-        public static Vector2 Position {
+        public static Vector2 Position
+        {
             get { return new Vector2(Main.mouseX, Main.mouseY); }
         }
-        
+
         /// <summary>
         /// Check if a button was just pressed.
         /// </summary>
         /// <param name="mouseButton">button to check</param>
         /// <returns>whether button was just pressed</returns>
-        public static bool JustPressed(MouseButtons mouseButton) {
-            if(GetButtonState(mouseButton, PlayerInput.MouseInfoOld) == ButtonState.Released &&
-               GetButtonState(mouseButton, PlayerInput.MouseInfo) == ButtonState.Pressed) {
+        public static bool JustPressed(MouseButtons mouseButton)
+        {
+            if (GetButtonState(mouseButton, PlayerInput.MouseInfoOld) == ButtonState.Released &&
+               GetButtonState(mouseButton, PlayerInput.MouseInfo) == ButtonState.Pressed)
+            {
                 return true;
             }
 
@@ -39,9 +45,11 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="mouseButton">button to check</param>
         /// <returns>whether button was just released</returns>
-        public static bool JustReleased(MouseButtons mouseButton) {
-            if(GetButtonState(mouseButton, PlayerInput.MouseInfoOld) == ButtonState.Pressed &&
-               GetButtonState(mouseButton, PlayerInput.MouseInfo) == ButtonState.Released) {
+        public static bool JustReleased(MouseButtons mouseButton)
+        {
+            if (GetButtonState(mouseButton, PlayerInput.MouseInfoOld) == ButtonState.Pressed &&
+               GetButtonState(mouseButton, PlayerInput.MouseInfo) == ButtonState.Released)
+            {
                 return true;
             }
 
@@ -52,9 +60,12 @@ namespace TerraUI.Utilities {
         /// Check if any button has just been pressed.
         /// </summary>
         /// <returns>whether any button has just been pressed</returns>
-        public static bool AnyButtonPressed() {
-            foreach(MouseButtons button in Enum.GetValues(typeof(MouseButtons))) {
-                if(JustPressed(button)) {
+        public static bool AnyButtonPressed()
+        {
+            foreach (MouseButtons button in Enum.GetValues(typeof(MouseButtons)))
+            {
+                if (JustPressed(button))
+                {
                     return true;
                 }
             }
@@ -67,9 +78,12 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="pressedButton">pressed button</param>
         /// <returns>whether any button has just been pressed</returns>
-        public static bool AnyButtonPressed(out MouseButtons pressedButton) {
-            foreach(MouseButtons button in Enum.GetValues(typeof(MouseButtons))) {
-                if(JustPressed(button)) {
+        public static bool AnyButtonPressed(out MouseButtons pressedButton)
+        {
+            foreach (MouseButtons button in Enum.GetValues(typeof(MouseButtons)))
+            {
+                if (JustPressed(button))
+                {
                     pressedButton = button;
                     return true;
                 }
@@ -83,9 +97,12 @@ namespace TerraUI.Utilities {
         /// Check if any button has just been released.
         /// </summary>
         /// <returns>whether any button has just been released</returns>
-        public static bool AnyButtonReleased() {
-            foreach(MouseButtons button in Enum.GetValues(typeof(MouseButtons))) {
-                if(JustReleased(button)) {
+        public static bool AnyButtonReleased()
+        {
+            foreach (MouseButtons button in Enum.GetValues(typeof(MouseButtons)))
+            {
+                if (JustReleased(button))
+                {
                     return true;
                 }
             }
@@ -98,9 +115,12 @@ namespace TerraUI.Utilities {
         /// </summary>
         /// <param name="releasedButton">released button</param>
         /// <returns>whether any button has just been released</returns>
-        public static bool AnyButtonReleased(out MouseButtons releasedButton) {
-            foreach(MouseButtons button in Enum.GetValues(typeof(MouseButtons))) {
-                if(JustReleased(button)) {
+        public static bool AnyButtonReleased(out MouseButtons releasedButton)
+        {
+            foreach (MouseButtons button in Enum.GetValues(typeof(MouseButtons)))
+            {
+                if (JustReleased(button))
+                {
                     releasedButton = button;
                     return true;
                 }
@@ -116,8 +136,10 @@ namespace TerraUI.Utilities {
         /// <param name="mouseButton">mouse button</param>
         /// <param name="mouseState">mouse state</param>
         /// <returns>state of given mouse button</returns>
-        public static ButtonState GetButtonState(MouseButtons mouseButton, MouseState mouseState) {
-            switch(mouseButton) {
+        public static ButtonState GetButtonState(MouseButtons mouseButton, MouseState mouseState)
+        {
+            switch (mouseButton)
+            {
                 case MouseButtons.Left:
                     return mouseState.LeftButton;
                 case MouseButtons.Middle:

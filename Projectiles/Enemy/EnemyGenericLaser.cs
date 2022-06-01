@@ -2,19 +2,19 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Enums;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
+namespace tsorcRevamp.Projectiles.Enemy
+{
 
-    public class EnemyGenericLaser : ModProjectile {
+    public class EnemyGenericLaser : ModProjectile
+    {
 
         //Generic laser class
         //Lets you easily create lasers of any size and color, and give them a variety of behaviors
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         //Set to 0 for normal behavior
         //Set to 1 to only display the transparent 'targeting' beam
         //Set to 2 to draw in full, but still do no damage
-        public int TargetingMode = 0; 
+        public int TargetingMode = 0;
 
         //Should the laser be offset from the center of its source? If so, how much?
         public Vector2 LaserOffset = new Vector2(0, 0);
@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         public Rectangle LaserTextureBody = new Rectangle(0, 0, 46, 28);
         public Rectangle LaserTextureTail = new Rectangle(0, 30, 46, 28);
         public Rectangle LaserTextureHead = new Rectangle(0, 60, 46, 28);
-        
+
         public Rectangle LaserTargetingBody = new Rectangle(0, 0, 46, 28);
         public Rectangle LaserTargetingTail = new Rectangle(0, 30, 46, 28);
         public Rectangle LaserTargetingHead = new Rectangle(0, 60, 46, 28);
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         private const float MOVE_DISTANCE = 20f;
 
         public float Distance = 0;
-        
+
         /*{
             get => projectile.ai[0];
             set => projectile.ai[0] = value;
@@ -144,7 +144,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             set => Projectile.ai[1] = value;
         }
 
-        public float Charge {
+        public float Charge
+        {
             get => Projectile.localAI[0];
             set => Projectile.localAI[0] = value;
         }
@@ -157,7 +158,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             DisplayName.SetDefault("DefaultLaserName");
 
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.friendly = false;
@@ -182,7 +184,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
-                
+
                 //Additive lasers get drawn on their own outside the predraw hook in a specific context
                 if (Additive && !AdditiveContext)
                 {
@@ -199,7 +201,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     color = Color.White;
                 }
 
-                if(FiringTimeLeft <= 10)
+                if (FiringTimeLeft <= 10)
                 {
                     color *= FiringTimeLeft / 10f;
                 }
@@ -219,19 +221,19 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     color = Color.White;
                 }
-                
+
                 color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
 
-                
+
                 DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
                         Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
-            
+
             return false;
         }
 
         public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, Rectangle headRect, Rectangle bodyRect, Rectangle tailRect, float rotation = 0f, float scale = 1f, Color color = default)
-        {           
+        {
 
             //Defines an area where laser segments should actually draw, 100 pixels larger on each side than the screen
             Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
@@ -281,7 +283,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             if (FiringTimeLeft <= 0 || !IsAtMaxCharge || TargetingMode != 0)
             {
                 return false;
@@ -304,7 +307,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            for(int i = 0; i < LaserDebuffs.Count; i++)
+            for (int i = 0; i < LaserDebuffs.Count; i++)
             {
                 target.AddBuff(LaserDebuffs[i], DebuffTimers[i]);
             }
@@ -322,10 +325,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Main.dust[dust].noGravity = true;
             Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
             dust = Dust.NewDust(endpoint, 30, 30, LaserDust, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
-            Main.dust[dust].noGravity = true;            
-        }        
+            Main.dust[dust].noGravity = true;
+        }
 
-        public override void AI() {
+        public override void AI()
+        {
             Vector2 origin = GetOrigin();
 
             if (!ProjectileSource)
@@ -335,14 +339,14 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     Projectile.active = false;
                 }
             }
-            
+
 
             Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;
             Projectile.timeLeft = 2;
 
 
-            
-            
+
+
             ChargeLaser();
             if (LaserDust != 0)
             {
@@ -436,11 +440,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
             shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, Projectile.rotation);
         }
 
-        public void ChargeLaser() {
-            if (Charge < MaxCharge || MaxCharge == 0) {
+        public void ChargeLaser()
+        {
+            if (Charge < MaxCharge || MaxCharge == 0)
+            {
                 Charge++;
                 //Only play the sound once, on the frame it hits max charge
-                if(Charge == MaxCharge || MaxCharge == 0)
+                if (Charge == MaxCharge || MaxCharge == 0)
                 {
                     if (LaserSound != null)
                     {
@@ -463,10 +469,11 @@ namespace tsorcRevamp.Projectiles.Enemy {
         }
 
 
-        private void CastLights() {
+        private void CastLights()
+        {
             // Cast a light along the line of the laser
             Color currentColor;
-            if(lightColor == null)
+            if (lightColor == null)
             {
                 currentColor = LaserColor;
             }
@@ -488,7 +495,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Vector2 unit = Projectile.velocity * -1;
             Vector2 origin = GetOrigin();
             Vector2 dustPos = origin + Projectile.velocity;
-            
+
 
             if (Charge >= MaxCharge)
             {
@@ -520,14 +527,15 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
             }
             else
-            {                
+            {
                 return LaserOrigin + LaserOffset;
             }
         }
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void CutTiles() {
+        public override void CutTiles()
+        {
             if (Charge == MaxCharge)
             {
                 DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;

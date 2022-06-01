@@ -1,8 +1,8 @@
-﻿using Terraria;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace tsorcRevamp.Items.Weapons.Ranged
 {
@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             DisplayName.SetDefault("Toxic Catalyzer");
             Tooltip.SetDefault("Left-click shots tag and poison enemies"
                                 + "\nRight-click shots detonate tags"
-                                +"\nThe more tags, the greater the explosion and damage");
+                                + "\nThe more tags, the greater the explosion and damage");
 
         }
 

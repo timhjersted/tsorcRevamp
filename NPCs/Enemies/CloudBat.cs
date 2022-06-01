@@ -1,7 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.CloneDefaults(NPCID.CaveBat);
             AnimationType = NPCID.GiantBat;
-            aiType = NPCID.CaveBat;
+            AIType = NPCID.CaveBat;
             NPC.lifeMax = 35;
             NPC.damage = 45;
             NPC.scale = 1f;
@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (Main.hardMode)
             {
-                chance = SpawnCondition.Sky.Chance * 0.2f; 
+                chance = SpawnCondition.Sky.Chance * 0.2f;
             }
             return chance;
         }

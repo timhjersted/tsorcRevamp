@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class MysteriousIdol : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class MysteriousIdol : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("May attract the archaeologist to stay in your town if held in your inventory.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 18;
             Item.height = 20;
             Item.rare = ItemRarityID.Blue;
@@ -16,13 +20,14 @@ namespace tsorcRevamp.Items {
             Item.maxStack = 1;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBar, 3);
             recipe.AddIngredient(ItemID.Ruby, 5);
             recipe.AddIngredient(ItemID.Diamond, 5);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

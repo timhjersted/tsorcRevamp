@@ -1,8 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Buffs
 {

@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -57,17 +56,17 @@ namespace tsorcRevamp.Projectiles
             Main.player[Main.myPlayer].AddBuff(39, 300 / expertScaling, false); //cursed inferno
             Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.FracturingArmor>(), 3600, false); //
 
-       
-            if(Main.rand.Next(10) == 0)
-            Main.player[Main.myPlayer].AddBuff(35, 120 / expertScaling, false); //silenced
+
+            if (Main.rand.Next(10) == 0)
+                Main.player[Main.myPlayer].AddBuff(35, 120 / expertScaling, false); //silenced
             Main.player[Main.myPlayer].AddBuff(32, 600 / expertScaling, false); //slow
             Main.player[Main.myPlayer].AddBuff(39, 600 / expertScaling, false); //cursed inferno
-         }
+        }
 
         public override void PostDraw(Color lightColor)
         {
-        Random rand1 = new Random((int)Main.GameUpdateCount);
-            Texture2D MyTexture = Main.projectileTexture[ModContent.ProjectileType<Projectiles.Comet>()];
+            Random rand1 = new Random((int)Main.GameUpdateCount);
+            Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);

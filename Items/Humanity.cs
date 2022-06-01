@@ -5,15 +5,19 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class Humanity : ModItem {
-        public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Permanently increases maximum life by 20" + 
+namespace tsorcRevamp.Items
+{
+    class Humanity : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Permanently increases maximum life by 20" +
                                "\nWon't increase max HP over the maximum achieved " +
                                "\nvia Life Crystals or Life Fruit");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 16;
             Item.height = 24;
             Item.rare = ItemRarityID.Green;
@@ -26,18 +30,22 @@ namespace tsorcRevamp.Items {
             Item.consumable = true;
         }
 
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return (player.statLifeMax < player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP);
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
 
             player.statLifeMax += 20;
             player.statLife += 20; //BOTC can still heal from this, as you can in DS
-            if (Main.myPlayer == player.whoAmI) {
+            if (Main.myPlayer == player.whoAmI)
+            {
                 player.HealEffect(20, true);
             }
-            if (player.statLifeMax > 500) {
+            if (player.statLifeMax > 500)
+            {
                 player.statLife = player.statLifeMax2;
                 player.statLifeMax = 500;
             }
@@ -53,13 +61,13 @@ namespace tsorcRevamp.Items {
             if (ttindex != -1)
             {// if we find one
              //insert the extra tooltip line
-                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", $"Current max: { (player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP) }"));
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", $"Current max: {(player.GetModPlayer<tsorcRevampPlayer>().MaxAcquiredHP)}"));
             }
         }
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
 
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(0, 4), Item.scale, SpriteEffects.None, 0f);
 
             return false;

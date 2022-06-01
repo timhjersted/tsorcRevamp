@@ -2,9 +2,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    class GreaterRestorationPotion : ModItem {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    class GreaterRestorationPotion : ModItem
+    {
+        public override void SetDefaults()
+        {
             Item.width = 20;
             Item.height = 26;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -20,10 +23,12 @@ namespace tsorcRevamp.Items.Potions {
             Item.UseSound = SoundID.Item3;
         }
 
-        public override void GetHealLife(Player player, bool quickHeal, ref int healValue) {
+        public override void GetHealLife(Player player, bool quickHeal, ref int healValue)
+        {
             healValue = 300;
         }
-        public override void GetHealMana(Player player, bool quickHeal, ref int healValue) {
+        public override void GetHealMana(Player player, bool quickHeal, ref int healValue)
+        {
             healValue = 300;
         }
     }

@@ -2,10 +2,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class LostScrollOfGwyn : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class LostScrollOfGwyn : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Lost Scroll of Gwyn");
             Tooltip.SetDefault("Used to summon Gwyn, Lord of Cinder. \n" +
                 //"You must enter The Abyss with the Covenant of Artorias equipped to summon Lord Gwyn.  \n" +
@@ -15,7 +18,8 @@ namespace tsorcRevamp.Items.BossItems {
                 "Only the true warrior of the age will survive this fight. ");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.width = 38;
             Item.height = 34;
@@ -27,7 +31,8 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()))
             {
                 return false;
@@ -35,25 +40,27 @@ namespace tsorcRevamp.Items.BossItems {
             //if (!Main.bloodMoon) {
             //    Main.NewText("Lord Gwyn ignores your call... you must enter The Abyss to summon the Lord of Cinder!", 175, 75, 255);
             //}
-            else {
+            else
+            {
                 Main.NewText("Defeat me, and you shall inherit the fire of this world... ", 175, 75, 255);
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>());
             }
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = CreateRecipe();
+                Recipe recipe = new Recipe(Mod);
                 recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<SoulOfChaos>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
                 recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
                 recipe.AddTile(TileID.DemonAltar);
-                
-                recipe.Register();
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
             }
         }
     }

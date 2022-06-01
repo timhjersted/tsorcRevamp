@@ -1,16 +1,19 @@
 ﻿using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class FieryEgg : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class FieryEgg : ModItem
+    {
 
-        public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Summons The Rage \n" + "Must be used in the underworld.");
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Summons The Rage \n" + "You must sacrifice this at the Demon Altar \n" + "within the Cathedral in the Underworld");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.width = 12;
             Item.height = 12;
@@ -22,28 +25,33 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
 
-        public override bool? UseItem(Player player) {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheRage>())) {
+        public override bool? UseItem(Player player)
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            {
                 return false;
             }
-            else if (!player.ZoneUnderworldHeight) {
+            else if (!player.ZoneUnderworldHeight)
+            {
                 Main.NewText("You can only use this in the Underworld.");
             }
-            else {
+            else
+            {
                 NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheRage>());
             }
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = CreateRecipe();
+                Recipe recipe = new Recipe(Mod);
                 recipe.AddIngredient(ItemID.CobaltOre, 30);
                 recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddTile(TileID.DemonAltar);
-                
-                recipe.Register();
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
             }
         }
     }

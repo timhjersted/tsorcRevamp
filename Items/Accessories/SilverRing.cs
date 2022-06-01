@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class SilverRing : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class SilverRing : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Grants 4 defense");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 22;
             Item.accessory = true;
@@ -16,16 +20,18 @@ namespace tsorcRevamp.Items.Accessories {
             Item.rare = ItemRarityID.White;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 2);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 400);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.statDefense += 4;
         }
 

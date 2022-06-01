@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class WereBane : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class WereBane : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("WereBane");
             Tooltip.SetDefault("A sword used to kill werewolves instantly." +
                                 "\nDoes 8x damage to werewolves.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.damage = 32;
             Item.height = 42;
@@ -26,16 +30,18 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.UseSound = SoundID.Item1;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBroadsword, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             if (target.type == NPCID.Werewolf) damage *= 16;
         }
     }

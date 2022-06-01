@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenMurakumo : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenMurakumo : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Pink;
             Item.damage = 45;

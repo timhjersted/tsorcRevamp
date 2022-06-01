@@ -1,13 +1,15 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    public class CruelArrow : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    public class CruelArrow : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Items/Ammo/CruelArrow";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 1;
             Projectile.friendly = true;
             Projectile.height = 10;
@@ -20,7 +22,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
 
-        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit )
+        public void OnHitNPC(Player P, NPC npc, int damage, float KB, bool crit)
         {
             if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostoftheForgottenKnight>()) damage *= 8;
             if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheForgottenWarrior>()) damage *= 8;
@@ -39,7 +41,8 @@ namespace tsorcRevamp.Projectiles {
             if (npc.type == ModContent.NPCType<NPCs.Enemies.GhostOfTheDarkmoonKnight>()) damage *= 8;
         }
 
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Collision.HitTiles(Projectile.position + Projectile.velocity, Projectile.velocity, Projectile.width, Projectile.height);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
         }

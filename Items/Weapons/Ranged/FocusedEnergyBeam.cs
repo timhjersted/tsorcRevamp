@@ -2,16 +2,20 @@ using Microsoft.Xna.Framework;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    public class FocusedEnergyBeam : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    public class FocusedEnergyBeam : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Uses Tesla Bolts for ammo\n" +
                         "Fires a single high damage beam that obliterates weaker enemies on contact...\n" +
                         "A weapon from a civilization not of this world...");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
 
@@ -32,7 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.value = PriceByRarity.Red_10;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
@@ -42,11 +47,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override Vector2? HoldoutOffset() {
+        public override Vector2? HoldoutOffset()
+        {
             return new Vector2(-6, 0);
         }
     }

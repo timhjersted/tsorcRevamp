@@ -1,14 +1,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class Ragnarok : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class Ragnarok : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ragnarok");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.stack = 1;
             Item.rare = ItemRarityID.Cyan;
             Item.useTurn = true;

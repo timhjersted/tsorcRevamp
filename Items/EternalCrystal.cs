@@ -31,22 +31,22 @@ namespace tsorcRevamp.Items
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Lighting.AddLight(Item.Center, .5f, .35f, .35f);
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             Texture2D textureglow = Mod.GetTexture("Items/EternalCrystal_Glow");
             var myrectangle = texture.Frame(1, 25, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0.1f);
             spriteBatch.Draw(textureglow, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0f);
-			
+
             itemframeCounter++;
 
-			if (itemframeCounter < 4)
-			{
-				itemframe = 0;
-			}
-			else if (itemframeCounter < 8)
-			{
-				itemframe = 1;
-			}
+            if (itemframeCounter < 4)
+            {
+                itemframe = 0;
+            }
+            else if (itemframeCounter < 8)
+            {
+                itemframe = 1;
+            }
             else if (itemframeCounter < 12)
             {
                 itemframe = 2;
@@ -140,9 +140,9 @@ namespace tsorcRevamp.Items
                 itemframe = 24;
             }
             else
-			{
-			    itemframeCounter = 0;
-			}
+            {
+                itemframeCounter = 0;
+            }
 
 
             if (Main.rand.Next(50) == 0) //Yellow

@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class ForgottenBurningFist : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class ForgottenBurningFist : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Randomly casts a great fireball explosion.");
         }
 
-        public override void SetDefaults() { 
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.damage = 62;
             Item.width = 22;
@@ -24,7 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.rare = ItemRarityID.LightRed;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
@@ -32,21 +37,23 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 30000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override bool? UseItem(Player player) {
-            if (Main.rand.Next(40) == 0) {
-                Projectile.NewProjectile(
-                player.position.X,
-                player.position.Y,
-                (float)(-40 + Main.rand.Next(80)) / 10,
-                14.9f,
-                ModContent.ProjectileType<Projectiles.GreatFireballBall>(),
-                70,
-                2.0f,
-                player.whoAmI);
+        public override bool? UseItem(Player player)
+        {
+            if (Main.rand.Next(40) == 0)
+            {
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item),
+               player.position.X,
+               player.position.Y,
+               (float)(-40 + Main.rand.Next(80)) / 10,
+               14.9f,
+               ModContent.ProjectileType<Projectiles.GreatFireballBall>(),
+               70,
+               2.0f,
+               player.whoAmI);
             }
             return true;
         }

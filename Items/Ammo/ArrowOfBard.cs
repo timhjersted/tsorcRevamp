@@ -2,15 +2,19 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Ammo {
-    public class ArrowOfBard : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Ammo
+{
+    public class ArrowOfBard : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Arrow of Bard");
             Tooltip.SetDefault("\"The arrow which slew Smaug.\"");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.stack = 1;
             Item.consumable = true;
@@ -30,7 +34,8 @@ namespace tsorcRevamp.Items.Ammo {
             Item.rare = ItemRarityID.Orange;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.MythrilBar, 1);

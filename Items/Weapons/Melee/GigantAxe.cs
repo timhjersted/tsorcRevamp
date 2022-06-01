@@ -2,12 +2,16 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class GigantAxe : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class GigantAxe : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("An axe used to kill humans.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Cyan;
             Item.damage = 330;
             Item.height = 80;
@@ -20,7 +24,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = PriceByRarity.Cyan_9;
             Item.width = 84;
         }
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             //todo add mod NPCs to this list
             if (target.type == ModContent.NPCType<NPCs.Bosses.HeroofLumelia>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Warlock>()
@@ -31,7 +36,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 || target.type == ModContent.NPCType<NPCs.Enemies.RedCloudHunter>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.Assassin>()
                 || target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>()
-                || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>()) { 
+                || target.type == ModContent.NPCType<NPCs.Enemies.Dunlending>())
+            {
                 damage *= 2;
             }
         }

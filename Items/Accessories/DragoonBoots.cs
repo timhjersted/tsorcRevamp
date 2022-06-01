@@ -2,9 +2,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class DragoonBoots : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class DragoonBoots : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Steel Boots made for Dragoons.\n" +
                                 "No damage from falling.\n" +
                                 "Faster Jump, which also results in a higher jump.\n" +
@@ -12,7 +15,8 @@ namespace tsorcRevamp.Items.Accessories {
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.accessory = true;
             Item.width = 32;
             Item.height = 26;
@@ -20,7 +24,8 @@ namespace tsorcRevamp.Items.Accessories {
             Item.rare = ItemRarityID.Red;
             Item.value = PriceByRarity.Red_10;
         }
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.noFallDmg = true;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().DragoonBoots = true;
         }

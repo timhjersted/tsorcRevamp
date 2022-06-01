@@ -3,18 +3,22 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
+namespace tsorcRevamp.Items.Accessories
+{
     [AutoloadEquip(EquipType.Shoes)]
 
-    public class SupersonicBoots : ModItem {
-        public override void SetStaticDefaults() {
+    public class SupersonicBoots : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Supersonic movement speed, rocket boots effect, knockback protection, and water-walking if moving fast enough." +
-                                "\nDoes not work if Hermes Boots or Spectre Boots are equipped." + 
+                                "\nDoes not work if Hermes Boots or Spectre Boots are equipped." +
                                 "\nSpeed boost is multiplied by movement speed boosts." +
                                 "\nCan be upgraded eventually with 1 Cloud in a Balloon, 1 Angel Wings & 20000 Dark Souls.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 32;
             Item.height = 28;
             Item.accessory = true;
@@ -22,13 +26,14 @@ namespace tsorcRevamp.Items.Accessories {
             Item.rare = ItemRarityID.Orange;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpectreBoots, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 7000);
             recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register(); 
+
+            recipe.Register();
 
             Recipe recipe2 = new Recipe(Mod);
             recipe2.AddIngredient(ItemID.LightningBoots, 1);
@@ -45,20 +50,24 @@ namespace tsorcRevamp.Items.Accessories {
             recipe3.AddRecipe();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.noKnockback = true;
             player.moveSpeed += 0.2f;
             player.rocketBoots = 2;
 
             bool restricted = false;
-            for (int i = 3; i <= 8; i++) {
+            for (int i = 3; i <= 8; i++)
+            {
                 if (player.mount.Active || player.armor[i].type == ItemID.HermesBoots || player.armor[i].type == ItemID.SpectreBoots
-					|| player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
-					|| player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots) {
+                    || player.armor[i].type == ItemID.LightningBoots || player.armor[i].type == ItemID.FlurryBoots
+                    || player.armor[i].type == ItemID.FrostsparkBoots || player.armor[i].type == ItemID.SailfishBoots)
+                {
                     restricted = true;
                 }
             }
-            if (!restricted) {
+            if (!restricted)
+            {
                 player.GetModPlayer<tsorcRevampPlayer>().supersonicLevel = 1;
 
                 /** W1K's original code
@@ -80,7 +89,8 @@ namespace tsorcRevamp.Items.Accessories {
                 } **/
 
 
-                if (player.velocity.X > 6 || player.velocity.X < -6) {
+                if (player.velocity.X > 6 || player.velocity.X < -6)
+                {
                     player.waterWalk = true;
                     int sonicDust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 16, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, default, 2f);
                     Main.dust[sonicDust].noGravity = true;

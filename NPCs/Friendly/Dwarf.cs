@@ -1,17 +1,14 @@
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Items;
-using tsorcRevamp.Items.Accessories;
-using tsorcRevamp.Items.Weapons.Magic;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.Localization;
-using System.Collections.Generic;
 using static tsorcRevamp.Tiles.SweatyCyclopsForge;
-using Terraria.GameContent;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -107,9 +104,9 @@ namespace tsorcRevamp.NPCs.Friendly
         }
 
         public override void OnChatButtonClicked(bool firstButton, ref bool shop)
-        {            
+        {
             shop = true;
-            return;            
+            return;
         }
 
         #region Setup Shop

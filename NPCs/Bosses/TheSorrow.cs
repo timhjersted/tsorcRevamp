@@ -8,12 +8,15 @@ using tsorcRevamp.Projectiles.Enemy;
 namespace tsorcRevamp.NPCs.Bosses
 {
     [AutoloadBossHead]
-    class TheSorrow : ModNPC {
-        public override void SetStaticDefaults() {
+    class TheSorrow : ModNPC
+    {
+        public override void SetStaticDefaults()
+        {
             Main.npcFrameCount[NPC.type] = 7;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.aiStyle = -1;
             NPC.lifeMax = 26600;
             NPC.damage = 95;
@@ -66,23 +69,28 @@ namespace tsorcRevamp.NPCs.Bosses
             Main.dust[dust].noGravity = true;
 
 
-            if (NPC.ai[3] == 0) {
+            if (NPC.ai[3] == 0)
+            {
                 NPC.alpha = 0;
                 NPC.dontTakeDamage = false;
                 if (NPC.ai[2] < 600)
                 {
-                    if (Main.player[NPC.target].position.X < vector8.X) {
+                    if (Main.player[NPC.target].position.X < vector8.X)
+                    {
                         if (NPC.velocity.X > -8) { NPC.velocity.X -= 0.22f; }
                     }
-                    if (Main.player[NPC.target].position.X > vector8.X) {
+                    if (Main.player[NPC.target].position.X > vector8.X)
+                    {
                         if (NPC.velocity.X < 8) { NPC.velocity.X += 0.22f; }
                     }
 
-                    if (Main.player[NPC.target].position.Y < vector8.Y + 300) {
+                    if (Main.player[NPC.target].position.Y < vector8.Y + 300)
+                    {
                         if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
                         else NPC.velocity.Y -= 0.07f;
                     }
-                    if (Main.player[NPC.target].position.Y > vector8.Y + 300) {
+                    if (Main.player[NPC.target].position.Y > vector8.Y + 300)
+                    {
                         if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
                         else NPC.velocity.Y += 0.07f;
                     }
@@ -101,7 +109,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                         int type = ModContent.ProjectileType<WaterTrail>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
-                        
+
                         //Get the vector that points from the NPC to the player
                         Vector2 difference = Main.player[NPC.target].Center - NPC.Center;
 
@@ -139,7 +147,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     //Then chill for a second.
                     //This exists to delay switching to the 'charging' pattern for a moment to give time for the player to make distance
                     NPC.velocity.X *= 0.95f;
-                    NPC.velocity.Y *= 0.95f; 
+                    NPC.velocity.Y *= 0.95f;
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 132, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 200, default, 1f);
                 }
                 else if (NPC.ai[2] >= 690 && NPC.ai[2] < 1290)
@@ -147,7 +155,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     int dashSpeed = 18;
                     NPC.velocity.X *= 0.98f;
                     NPC.velocity.Y *= 0.98f;
-                    if ((NPC.velocity.X < 2f) && (NPC.velocity.X > -2f) && (NPC.velocity.Y < 2f) && (NPC.velocity.Y > -2f)) {
+                    if ((NPC.velocity.X < 2f) && (NPC.velocity.X > -2f) && (NPC.velocity.Y < 2f) && (NPC.velocity.Y > -2f))
+                    {
                         float rotation = (float)Math.Atan2((vector8.Y) - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), (vector8.X) - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         NPC.velocity.X = (float)(Math.Cos(rotation) * dashSpeed) * -1;
                         NPC.velocity.Y = (float)(Math.Sin(rotation) * dashSpeed) * -1;
@@ -155,21 +164,26 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 else NPC.ai[2] = 0;
             }
-            else {
+            else
+            {
                 NPC.ai[3]++;
                 NPC.alpha = 200;
                 NPC.dontTakeDamage = true;
-                if (Main.player[NPC.target].position.X < vector8.X) {
+                if (Main.player[NPC.target].position.X < vector8.X)
+                {
                     if (NPC.velocity.X > -6) { NPC.velocity.X -= 0.22f; }
                 }
-                if (Main.player[NPC.target].position.X > vector8.X) {
+                if (Main.player[NPC.target].position.X > vector8.X)
+                {
                     if (NPC.velocity.X < 6) { NPC.velocity.X += 0.22f; }
                 }
-                if (Main.player[NPC.target].position.Y < vector8.Y) {
+                if (Main.player[NPC.target].position.Y < vector8.Y)
+                {
                     if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.8f;
                     else NPC.velocity.Y -= 0.07f;
                 }
-                if (Main.player[NPC.target].position.Y > vector8.Y) {
+                if (Main.player[NPC.target].position.Y > vector8.Y)
+                {
                     if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.8f;
                     else NPC.velocity.Y += 0.07f;
                 }
@@ -195,56 +209,71 @@ namespace tsorcRevamp.NPCs.Bosses
                     }
                     NPC.ai[1] = -180;
                 }
-                if (NPC.ai[3] == 100) {
+                if (NPC.ai[3] == 100)
+                {
                     NPC.ai[3] = 1;
                     NPC.life += 200; //amount boss heals when going invisible
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
-                if (NPC.ai[1] >= 0) {
+                if (NPC.ai[1] >= 0)
+                {
                     NPC.ai[3] = 0;
-                    for (int i = 0; i < 40; i++) {
+                    for (int i = 0; i < 40; i++)
+                    {
                         Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 0, new Color(), 3f);
                     }
                 }
             }
         }
 
-        public override void FindFrame(int frameHeight) {
+        public override void FindFrame(int frameHeight)
+        {
             int num = 1;
-            if (!Main.dedServ) {
+            if (!Main.dedServ)
+            {
                 num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
             }
-            if (NPC.velocity.X < 0) {
+            if (NPC.velocity.X < 0)
+            {
                 NPC.spriteDirection = -1;
             }
-            else {
+            else
+            {
                 NPC.spriteDirection = 1;
             }
             NPC.rotation = NPC.velocity.X * 0.08f;
             NPC.frameCounter += 1.0;
-            if (NPC.frameCounter >= 4.0) {
+            if (NPC.frameCounter >= 4.0)
+            {
                 NPC.frame.Y = NPC.frame.Y + num;
                 NPC.frameCounter = 0.0;
             }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type]) {
+            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+            {
                 NPC.frame.Y = 0;
             }
-            if (NPC.ai[3] == 0) {
+            if (NPC.ai[3] == 0)
+            {
                 NPC.alpha = 0;
             }
-            else {
+            else
+            {
                 NPC.alpha = 200;
             }
         }
-        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit) {
+        public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
             hitTime = 0;
             NPC.ai[0] += (float)damage;
-            if (NPC.ai[0] > (NPC.lifeMax / 10)) {
+            if (NPC.ai[0] > (NPC.lifeMax / 10))
+            {
                 NPC.ai[3] = 1; //begin invulnerability state
-                for (int i = 0; i < 50; i++) { //dustsplosion on invulnerability
+                for (int i = 0; i < 50; i++)
+                { //dustsplosion on invulnerability
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 4, 0, 0, 100, default, 3f);
                 }
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 20; i++)
+                {
                     Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 29, 0, 0, 100, default, 3f);
                 }
                 NPC.ai[1] = -180;
@@ -260,7 +289,8 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override void OnKill() {
+        public override void OnKill()
+        {
             for (int num36 = 0; num36 < 100; num36++)
             {
                 int dust = Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 29, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, new Color(), 9f);
@@ -270,12 +300,14 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 132, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
             }
-            if (Main.expertMode) {
+            if (Main.expertMode)
+            {
                 NPC.DropBossBags();
             }
-            else {
+            else
+            {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1); 
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1);
             }
         }
     }

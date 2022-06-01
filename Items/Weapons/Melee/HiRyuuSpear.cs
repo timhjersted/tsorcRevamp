@@ -1,14 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class HiRyuuSpear : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class HiRyuuSpear : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("HiRyuu Spear");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 128; //was 78
             Item.knockBack = 7f;
 

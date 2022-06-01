@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class OldSabre : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class OldSabre : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Does random damage from 0 to 14" +
                                 "\nMaximum damage is increased by damage modifiers.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 14;
             Item.width = 34;
             Item.height = 38;
@@ -24,7 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.useTime = 21;
             Item.value = 3000;
         }
-        public override void HoldItem(Player player) {
+        public override void HoldItem(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().OldWeapon = true;
         }
     }

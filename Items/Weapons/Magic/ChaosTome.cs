@@ -1,12 +1,16 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class ChaosTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class ChaosTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Casts a purple flame that can pass through solid objects.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -26,7 +30,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.ChaosBall2>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 15);
@@ -34,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofSight, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 40000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

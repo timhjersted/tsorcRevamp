@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Pets
             Item.buffType = ModContent.BuffType<Buffs.MiakodaCrescent>();
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             if (player.whoAmI == Main.myPlayer && player.itemTime == 0)
             {
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Pets
                 recipe.AddIngredient(Mod.Find<ModItem>("MiakodaFull").Type);
                 recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                
+
                 recipe.Register();
             }
             {
@@ -49,7 +49,7 @@ namespace tsorcRevamp.Items.Pets
                 recipe.AddIngredient(Mod.Find<ModItem>("MiakodaNew").Type);
                 recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                
+
                 recipe.Register();
             }
         }

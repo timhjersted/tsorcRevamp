@@ -7,78 +7,78 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-	public class HumanityPhantom : ModNPC
-	{
-		public override void SetStaticDefaults()
-		{
-			Main.npcFrameCount[NPC.type] = 8;
-		}
+    public class HumanityPhantom : ModNPC
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.npcFrameCount[NPC.type] = 8;
+        }
 
-		public override void SetDefaults()
-		{
-			//npc.CloneDefaults(NPCID.Wraith);
-			NPC.width = 20;
-			NPC.height = 46;
-			NPC.aiStyle = -1; //Unique AI
-			NPC.damage = 50;
-			NPC.knockBackResist = 0;
-			NPC.defense = 8;
-			NPC.scale = Main.rand.NextFloat(0.5f, 1f);
-			if (!Main.hardMode) NPC.lifeMax = (int)(150 * NPC.scale);
-			else NPC.lifeMax = (int)(500 * NPC.scale);
-			if (tsorcRevampWorld.SuperHardMode) NPC.lifeMax *= 5;
-			NPC.value = 1000;
-			NPC.buffImmune[BuffID.Confused] = true;
-			NPC.buffImmune[BuffID.Poisoned] = true;
-			NPC.buffImmune[BuffID.Venom] = true;
-			NPC.buffImmune[BuffID.CursedInferno] = true;
-			NPC.buffImmune[BuffID.Frostburn] = true;
-			NPC.buffImmune[BuffID.OnFire] = true;
-			NPC.buffImmune[BuffID.ShadowFlame] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.CrescentMoonlight>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.DarkInferno>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.CrimsonBurn>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.ElectrocutedBuff>()] = true;
-			NPC.buffImmune[ModContent.BuffType<Buffs.PolarisElectrocutedBuff>()] = true;
-			NPC.noGravity = true;
-			NPC.noTileCollide = true;
-			NPC.DeathSound = SoundID.NPCDeath1;
-			NPC.HitSound = SoundID.NPCHit1;
-		}
+        public override void SetDefaults()
+        {
+            //npc.CloneDefaults(NPCID.Wraith);
+            NPC.width = 20;
+            NPC.height = 46;
+            NPC.aiStyle = -1; //Unique AI
+            NPC.damage = 50;
+            NPC.knockBackResist = 0;
+            NPC.defense = 8;
+            NPC.scale = Main.rand.NextFloat(0.5f, 1f);
+            if (!Main.hardMode) NPC.lifeMax = (int)(150 * NPC.scale);
+            else NPC.lifeMax = (int)(500 * NPC.scale);
+            if (tsorcRevampWorld.SuperHardMode) NPC.lifeMax *= 5;
+            NPC.value = 1000;
+            NPC.buffImmune[BuffID.Confused] = true;
+            NPC.buffImmune[BuffID.Poisoned] = true;
+            NPC.buffImmune[BuffID.Venom] = true;
+            NPC.buffImmune[BuffID.CursedInferno] = true;
+            NPC.buffImmune[BuffID.Frostburn] = true;
+            NPC.buffImmune[BuffID.OnFire] = true;
+            NPC.buffImmune[BuffID.ShadowFlame] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.CrescentMoonlight>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.DarkInferno>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.CrimsonBurn>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.ToxicCatDrain>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.ViruCatDrain>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.ElectrocutedBuff>()] = true;
+            NPC.buffImmune[ModContent.BuffType<Buffs.PolarisElectrocutedBuff>()] = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.HitSound = SoundID.NPCHit1;
+        }
 
-		public override float SpawnChance(NPCSpawnInfo spawnInfo) //Spawns in extremely deep, dark places.
-		{
-			float chance = 0;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) //Spawns in extremely deep, dark places.
+        {
+            float chance = 0;
 
-			if (spawnInfo.SpawnTileY >= Main.maxTilesY - 400)
-			{
-				if (spawnInfo.Player.ZoneRockLayerHeight && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.SpiderUnsafe) //This is at the very bottom of the chasm. Accessible pre-HM. Still difficult to encounter them as the area isn't really big enough to allow them to spawn offscreen
-				{
-					chance = 2f;
-				}
+            if (spawnInfo.SpawnTileY >= Main.maxTilesY - 400)
+            {
+                if (spawnInfo.Player.ZoneRockLayerHeight && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.SpiderUnsafe) //This is at the very bottom of the chasm. Accessible pre-HM. Still difficult to encounter them as the area isn't really big enough to allow them to spawn offscreen
+                {
+                    chance = 2f;
+                }
 
-				if ((spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.ObsidianBrickUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TitanstoneBlock)) //Gwyns tomb entrance, a SHM cave under the krakens arena, and the caves leading up to the Witchking
-				{
-					chance = 1.5f;
-				}
+                if ((spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight) && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.ObsidianBrickUnsafe || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.TitanstoneBlock)) //Gwyns tomb entrance, a SHM cave under the krakens arena, and the caves leading up to the Witchking
+                {
+                    chance = 1.5f;
+                }
 
-				if (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) < Main.maxTilesX / 3 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Inner third of the map, abyss wall. This is the heart of the abyss, SHM
-				{
-					chance = 10f;
-				}
-			}
-			return chance;
-		}
+                if (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) < Main.maxTilesX / 3 && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.StarlitHeavenWallpaper) //Inner third of the map, abyss wall. This is the heart of the abyss, SHM
+                {
+                    chance = 10f;
+                }
+            }
+            return chance;
+        }
 
         public override void AI()
         {
-			Player player = Main.LocalPlayer;
-			NPC.TargetClosest(true);
+            Player player = Main.LocalPlayer;
+            NPC.TargetClosest(true);
 
-			/*Vector2 difference = Main.player[npc.target].Center - npc.Center; //Distance between player center and npc center
+            /*Vector2 difference = Main.player[npc.target].Center - npc.Center; //Distance between player center and npc center
 			Vector2 velocity = new Vector2(0.5f, 0.5f).RotatedBy(difference.ToRotation()); //Give it velocity so it can face the right direction
 
 			if (Main.player[npc.target].Distance(npc.Center) < 500f)
@@ -87,91 +87,91 @@ namespace tsorcRevamp.NPCs.Enemies
 			}
 			else npc.velocity = new Vector2(0, 0);*/
 
-			Vector2 targetPosition = Main.player[NPC.target].position; // get a local copy of the targeted player's position
-			Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
+            Vector2 targetPosition = Main.player[NPC.target].position; // get a local copy of the targeted player's position
+            Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
 
-			if (Main.player[NPC.target].Distance(NPC.Center) < 500f)
-			{
-				if (Main.player[NPC.target].position.X < vector8.X)
-				{
-					if (NPC.velocity.X > -7) { NPC.velocity.X = - 0.5f; }
-				}
-				if (Main.player[NPC.target].position.X > vector8.X)
-				{
-					if (NPC.velocity.X < 7) { NPC.velocity.X = 0.5f; }
-				}
-
-				if (Main.player[NPC.target].position.Y < vector8.Y)
-				{
-					if (NPC.velocity.Y > 0f) NPC.velocity.Y = -0.5f;
-					else NPC.velocity.Y = -0.5f;
-				}
-				if (Main.player[NPC.target].position.Y > vector8.Y)
-				{
-					if (NPC.velocity.Y < 0f) NPC.velocity.Y = 0.5f;
-					else NPC.velocity.Y = 0.5f;
-				}
-			}
-			else
+            if (Main.player[NPC.target].Distance(NPC.Center) < 500f)
             {
-				NPC.velocity = Vector2.Zero;
+                if (Main.player[NPC.target].position.X < vector8.X)
+                {
+                    if (NPC.velocity.X > -7) { NPC.velocity.X = -0.5f; }
+                }
+                if (Main.player[NPC.target].position.X > vector8.X)
+                {
+                    if (NPC.velocity.X < 7) { NPC.velocity.X = 0.5f; }
+                }
+
+                if (Main.player[NPC.target].position.Y < vector8.Y)
+                {
+                    if (NPC.velocity.Y > 0f) NPC.velocity.Y = -0.5f;
+                    else NPC.velocity.Y = -0.5f;
+                }
+                if (Main.player[NPC.target].position.Y > vector8.Y)
+                {
+                    if (NPC.velocity.Y < 0f) NPC.velocity.Y = 0.5f;
+                    else NPC.velocity.Y = 0.5f;
+                }
             }
-		}
+            else
+            {
+                NPC.velocity = Vector2.Zero;
+            }
+        }
 
         public override void OnKill()
         {
             if (Main.rand.NextFloat() <= NPC.scale - .3f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1); // 0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-			Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.HumanityPhantom];
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.HumanityPhantom];
 
-			spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(0, NPC.frame.Y, 48, 68), Color.White, NPC.rotation, new Vector2(24, 34), NPC.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(0, NPC.frame.Y, 48, 68), Color.White, NPC.rotation, new Vector2(24, 34), NPC.scale, SpriteEffects.None, 0);
 
-			return false;
-		}
+            return false;
+        }
 
         public override void FindFrame(int frameHeight)
         {
-			NPC.frameCounter++;
+            NPC.frameCounter++;
 
-			if (NPC.frameCounter < 12)
-			{
-				NPC.frame.Y = 0 * frameHeight;
-			}
-			else if (NPC.frameCounter < 24)
-			{
-				NPC.frame.Y = 1 * frameHeight;
-			}
-			else if (NPC.frameCounter < 36)
-			{
-				NPC.frame.Y = 2 * frameHeight;
-			}
-			else if (NPC.frameCounter < 48)
-			{
-				NPC.frame.Y = 3 * frameHeight;
-			}
-			else if (NPC.frameCounter < 60)
-			{
-				NPC.frame.Y = 4 * frameHeight;
-			}
-			else if (NPC.frameCounter < 72)
-			{
-				NPC.frame.Y = 5 * frameHeight;
-			}
-			else if (NPC.frameCounter < 84)
-			{
-				NPC.frame.Y = 6 * frameHeight;
-			}
-			else if (NPC.frameCounter < 96)
-			{
-				NPC.frame.Y = 7 * frameHeight;
-			}
-			else
-			{
-				NPC.frameCounter = 0;
-			}
-		}
+            if (NPC.frameCounter < 12)
+            {
+                NPC.frame.Y = 0 * frameHeight;
+            }
+            else if (NPC.frameCounter < 24)
+            {
+                NPC.frame.Y = 1 * frameHeight;
+            }
+            else if (NPC.frameCounter < 36)
+            {
+                NPC.frame.Y = 2 * frameHeight;
+            }
+            else if (NPC.frameCounter < 48)
+            {
+                NPC.frame.Y = 3 * frameHeight;
+            }
+            else if (NPC.frameCounter < 60)
+            {
+                NPC.frame.Y = 4 * frameHeight;
+            }
+            else if (NPC.frameCounter < 72)
+            {
+                NPC.frame.Y = 5 * frameHeight;
+            }
+            else if (NPC.frameCounter < 84)
+            {
+                NPC.frame.Y = 6 * frameHeight;
+            }
+            else if (NPC.frameCounter < 96)
+            {
+                NPC.frame.Y = 7 * frameHeight;
+            }
+            else
+            {
+                NPC.frameCounter = 0;
+            }
+        }
     }
 }

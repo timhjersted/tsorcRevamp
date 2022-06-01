@@ -1,7 +1,7 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -12,11 +12,11 @@ namespace tsorcRevamp.NPCs.Enemies
             DisplayName.SetDefault("Resentful Seedling");
             Main.npcFrameCount[NPC.type] = 7;
         }
-    
+
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.CorruptBunny);
-            aiType = NPCID.CorruptBunny;
+            AIType = NPCID.CorruptBunny;
             NPC.width = 10;
             NPC.height = 16;
             NPC.HitSound = SoundID.NPCHit33;

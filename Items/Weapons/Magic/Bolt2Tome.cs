@@ -3,10 +3,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class Bolt2Tome : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class Bolt2Tome : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bolt 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans." +
                                 "\nDrops a lightning strike upon collision" +
@@ -15,7 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.damage = 17;
             Item.height = 10;
@@ -45,12 +49,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt1Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 8000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

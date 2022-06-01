@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class BarrowBlade : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class BarrowBlade : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Wrought with spells of a fierce power." +
                                 "\nDispels the defensive shields of Artorias and the Witchking");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Quest; //so people know it's important
             Item.damage = 26;
             Item.height = 32;
@@ -25,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.width = 32;
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
-        {            
+        {
             target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
@@ -34,10 +38,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
                 shadowPacket.Write(target.whoAmI);
                 shadowPacket.Send();
-            }            
+            }
         }
-        
-        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {
+
+        public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
+        {
             target.AddBuff(ModContent.BuffType<Buffs.DispelShadow>(), 36000);
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
@@ -46,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
                 shadowPacket.Write((byte)tsorcPacketID.DispelShadow);
                 shadowPacket.Write(target.whoAmI);
                 shadowPacket.Send();
-            }            
+            }
         }
     }
 }

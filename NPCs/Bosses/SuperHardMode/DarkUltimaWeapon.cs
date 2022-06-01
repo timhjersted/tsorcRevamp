@@ -1,9 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 {
@@ -21,7 +20,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.scale = 1.2f;
             NPC.damage = DarkCloud.swordDamage;
             NPC.behindTiles = false;
-            AttackModeCounter = 3;            
+            AttackModeCounter = 3;
         }
 
         public override void SetStaticDefaults()
@@ -53,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool spawnedSubProjectiles = false;
         public override void AI()
         {
-            if(HolderDarkCloud.active == false)
+            if (HolderDarkCloud.active == false)
             {
                 NPC.active = false;
             }
@@ -198,7 +197,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //Maybe add dust?
                 }
 
-                
+
                 AttackModeCounter++;
             }
 
@@ -221,7 +220,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     spawnedSubProjectiles = true;
                 }
                 AttackModeCounter++;
-                if(HolderDarkCloud.Center.X < Target.Center.X)
+                if (HolderDarkCloud.Center.X < Target.Center.X)
                 {
                     NPC.rotation = MathHelper.ToRadians(-20);
                     NPC.Center = HolderDarkCloud.Center + new Vector2(0, 55);
@@ -232,9 +231,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     NPC.Center = HolderDarkCloud.Center + new Vector2(10, 55);
                 }
-                
+
                 if (AttackModeCounter == 640)
-                {                    
+                {
                     NPC.active = false;
                 }
             }
@@ -250,7 +249,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         void InHand()
         {
             NPC.direction = HolderDarkCloud.direction;
-            Vector2 offset = new Vector2(0, 45);          
+            Vector2 offset = new Vector2(0, 45);
 
             if (AttackModeCounter < 120)
             {
@@ -260,7 +259,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 offset.Y = 75;
             }
-            
+
             NPC.Center = HolderDarkCloud.Center + offset;
         }
 

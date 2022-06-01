@@ -1,13 +1,14 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenRisingSun : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenRisingSun : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 22;
             Item.height = 22;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -27,7 +28,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.rare = ItemRarityID.Red;
         }
 
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.ForgottenRisingSun>()] < 10;
         }
     }

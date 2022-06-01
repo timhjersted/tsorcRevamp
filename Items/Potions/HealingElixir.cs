@@ -4,13 +4,17 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    class HealingElixir : ModItem {
-        public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Heals the player of a multitude of debuffs" + 
+namespace tsorcRevamp.Items.Potions
+{
+    class HealingElixir : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Heals the player of a multitude of debuffs" +
                                 "\nGrants the rapid healing buff");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 14;
             Item.height = 24;
             Item.consumable = true;

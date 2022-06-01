@@ -6,17 +6,17 @@ namespace tsorcRevamp.Items.Weapons.Melee
 {
     public class HeavensTear : ModItem
     {
-	public override void SetStaticDefaults()
-	{
-		DisplayName.SetDefault("Heaven's Tear");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Heaven's Tear");
             Tooltip.SetDefault("'Heaven splits with each swing'\n");
-                                //"Does 2x damage to mages and ghosts...");
+            //"Does 2x damage to mages and ghosts...");
 
-	}
+        }
 
         public override void SetDefaults()
         {
-            
+
             Item.width = 32;
             Item.height = 32;
             //item.pretendType=389;
@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.scale = (float)1;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Red;
-            Item.shootSpeed = (float)14; 
+            Item.shootSpeed = (float)14;
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
@@ -50,11 +50,12 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit) {
+        public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit)
+        {
             //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
             if (npc.FullName == "Tim") damage *= 2;
             else if (npc.FullName == "Dark Caster") damage *= 2;

@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             speedAbs = 7f / speedAbs; // for speed consistency
             mySpeedX *= speedAbs;
             mySpeedY *= speedAbs;
-            Projectile.NewProjectile(new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.FarronDart>(), damage, knockBack, player.whoAmI);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.FarronDart>(), damage, knockBack, player.whoAmI);
 
             return false;
         }
@@ -86,7 +86,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

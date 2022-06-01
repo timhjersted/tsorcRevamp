@@ -2,9 +2,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class WoodenFlute : ModItem {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class WoodenFlute : ModItem
+    {
+        public override void SetDefaults()
+        {
             Item.damage = 10;
             Item.height = 10;
             Item.knockBack = 4;
@@ -22,13 +25,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.width = 34;
             Item.shoot = ModContent.ProjectileType<Projectiles.MusicalNote>();
         }
-        
-        public override void AddRecipes() {
+
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 220);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

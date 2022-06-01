@@ -1,7 +1,8 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
     class ReforgedOldSabre : ModItem
     {
         public override string Texture => "tsorcRevamp/Items/Weapons/Melee/OldSabre";
@@ -27,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldSabre").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            
+
             recipe.Register();
         }
     }

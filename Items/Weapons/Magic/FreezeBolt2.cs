@@ -1,14 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class FreezeBolt2 : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class FreezeBolt2 : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Freeze Bolt II");
             Tooltip.SetDefault("Casts a fast-moving bolt of ice");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -27,14 +31,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.FreezeBolt>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt").Type, 1);
             recipe.AddIngredient(ItemID.FallenStar, 30);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

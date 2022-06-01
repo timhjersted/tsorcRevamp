@@ -1,17 +1,19 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellLightning3Bolt : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellLightning3Bolt : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Bolt3Bolt";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[Projectile.type] = 12;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 130;
             Projectile.height = 164;
             Projectile.penetrate = 8;
@@ -20,19 +22,23 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.DamageType = DamageClass.Magic;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
             Projectile.frameCounter++;
             Projectile.frame = (int)Math.Floor((double)Projectile.frameCounter / 4);
 
-            if (Projectile.frame >= 12) {
+            if (Projectile.frame >= 12)
+            {
                 Projectile.frame = 10;
             }
-            if (Projectile.frameCounter > 53) { // (projFrames * 4.5) - 1
+            if (Projectile.frameCounter > 53)
+            { // (projFrames * 4.5) - 1
                 Projectile.alpha += 15;
             }
 
-            if (Projectile.alpha >= 255) {
+            if (Projectile.alpha >= 255)
+            {
                 Projectile.Kill();
             }
         }

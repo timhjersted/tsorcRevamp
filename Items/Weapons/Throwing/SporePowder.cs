@@ -1,10 +1,13 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Throwing {
-    class SporePowder : ModItem {
+namespace tsorcRevamp.Items.Weapons.Throwing
+{
+    class SporePowder : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 22;
             Item.height = 26;
             Item.maxStack = 500;
@@ -23,7 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Throwing {
             Item.DamageType = DamageClass.Throwing;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.JungleSpores, 1);
             recipe.AddTile(TileID.Bottles);

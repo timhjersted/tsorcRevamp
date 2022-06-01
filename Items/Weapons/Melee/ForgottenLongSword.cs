@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenLongSword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenLongSword : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Green;

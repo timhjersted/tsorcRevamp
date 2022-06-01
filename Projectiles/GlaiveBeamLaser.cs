@@ -9,9 +9,11 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
+namespace tsorcRevamp.Projectiles
+{
 
-    public class GlaiveBeamLaser : ModProjectile {
+    public class GlaiveBeamLaser : ModProjectile
+    {
 
         //Fair warning: This is an absolute garbled mess right now, mostly as the result of experimentation.
         //Expect it to look pretty different in the future.
@@ -20,12 +22,14 @@ namespace tsorcRevamp.Projectiles {
         private const float MOVE_DISTANCE = 20f;
         public const int FIRING_TIME = 120;
 
-        public float Distance {
+        public float Distance
+        {
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
         }
 
-        public float Charge {
+        public float Charge
+        {
             get => Projectile.localAI[0];
             set => Projectile.localAI[0] = value;
         }
@@ -34,7 +38,8 @@ namespace tsorcRevamp.Projectiles {
 
         public int FiringTimeLeft = 0;
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 10;
             Projectile.height = 10;
             Projectile.friendly = true;
@@ -132,11 +137,13 @@ namespace tsorcRevamp.Projectiles {
             return origin;
         }
 
-        public override bool PreDraw(ref Color lightColor) {           
+        public override bool PreDraw(ref Color lightColor)
+        {
             //Get the premultiplied, properly transparent texture
-            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeam];           
+            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeam];
 
-            if (IsAtMaxCharge && FiringTimeLeft > 0) {
+            if (IsAtMaxCharge && FiringTimeLeft > 0)
+            {
                 float scale = 0.4f;
 
                 DrawLaser(Main.spriteBatch, texture, GetOrigin(),
@@ -145,19 +152,21 @@ namespace tsorcRevamp.Projectiles {
             return false;
         }
 
-        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, int damage, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50) {
+        public void DrawLaser(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 unit, float step, int damage, float rotation = 0f, float scale = 1f, float maxDist = 2000f, Color color = default, int transDist = 50)
+        {
             float r = unit.ToRotation() + rotation;
-            
+
             // Draws the laser 'body'
-            for (float i = transDist; i <= Distance; i += step) {
+            for (float i = transDist; i <= Distance; i += step)
+            {
 
                 Color c = Color.White;
                 var origin = start + i * unit;
-                
+
                 Main.EntitySpriteDraw(texture, origin - Main.screenPosition, new Rectangle(0, 0, 46, 28), i < transDist ? Color.Transparent : c, r, new Vector2(46 * .5f, 28 * .5f), scale, 0, 0);
 
                 //If it's at the end, draws the end of the laser
-                if((i + step) > Distance)
+                if ((i + step) > Distance)
                 {
                     i += step;
                     origin = start + i * unit;
@@ -167,7 +176,8 @@ namespace tsorcRevamp.Projectiles {
             CastLights();
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             if ((!IsAtMaxCharge) || FiringTimeLeft <= 0) return false;
 
 
@@ -196,7 +206,7 @@ namespace tsorcRevamp.Projectiles {
             Main.dust[dust].noGravity = true;
             Main.dust[dust].shader = GameShaders.Armor.GetSecondaryShader(107, Main.LocalPlayer);
             dust = Dust.NewDust(endpoint, 30, 30, 130, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 20, default, 1.0f);
-            Main.dust[dust].noGravity = true;            
+            Main.dust[dust].noGravity = true;
         }
 
         private float HostGlaiveBeamIndex
@@ -205,7 +215,8 @@ namespace tsorcRevamp.Projectiles {
             set => Projectile.ai[1] = value;
         }
 
-        public override void AI() { 
+        public override void AI()
+        {
 
             FiringTimeLeft--;
             if (FiringTimeLeft == 0)
@@ -219,7 +230,7 @@ namespace tsorcRevamp.Projectiles {
             Projectile.timeLeft = 2;
 
             UpdatePlayer(player);
-            ChargeLaser(player); 
+            ChargeLaser(player);
 
             if (Charge < MAX_CHARGE) return;
 
@@ -236,7 +247,7 @@ namespace tsorcRevamp.Projectiles {
             {
                 dust = Dust.NewDust(endpoint, 16, 16, 127, speed.X * 1.2f + Main.rand.Next(-5, 5), speed.Y * 1.2f + Main.rand.Next(-5, 5), 20, default, 3.5f);
                 Main.dust[dust].noGravity = true;
-            }            
+            }
             if (Main.rand.Next(2) == 1)
             {
                 dust = Dust.NewDust(endpoint, 16, 16, 130, speed.X, speed.Y, 20, default, 1.0f);
@@ -256,7 +267,8 @@ namespace tsorcRevamp.Projectiles {
             //}
         }
 
-        private void SetLaserPosition(Player player) {
+        private void SetLaserPosition(Player player)
+        {
             for (Distance = MOVE_DISTANCE; Distance <= 2200f; Distance += 5f)
             {
                 Vector2 origin = GetOrigin();
@@ -282,18 +294,22 @@ namespace tsorcRevamp.Projectiles {
             shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, Projectile.rotation);
         }
 
-        private void ChargeLaser(Player player) {
-            if (!player.channel) {
+        private void ChargeLaser(Player player)
+        {
+            if (!player.channel)
+            {
                 Projectile.Kill();
             }
-            else {
+            else
+            {
                 Vector2 offset = Projectile.velocity;
                 offset *= MOVE_DISTANCE - 20;
                 Vector2 pos = GetOrigin() + offset - new Vector2(10, 10);
-                if (Charge < MAX_CHARGE) {
+                if (Charge < MAX_CHARGE)
+                {
                     Charge++;
                     //Only play the sound once, on the frame it hits max charge
-                    if(Charge == MAX_CHARGE)
+                    if (Charge == MAX_CHARGE)
                     {
                         Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GlaiveBeam").WithVolume(50f));
                         FiringTimeLeft = FIRING_TIME;
@@ -304,9 +320,11 @@ namespace tsorcRevamp.Projectiles {
             }
         }
 
-        private void UpdatePlayer(Player player) {
+        private void UpdatePlayer(Player player)
+        {
             // Multiplayer support here, only run this code if the client running it is the owner of the projectile
-            if (Projectile.owner == Main.myPlayer) {
+            if (Projectile.owner == Main.myPlayer)
+            {
                 Vector2 diff = Main.MouseWorld - GetOrigin();
                 diff.Normalize();
                 Projectile.velocity = diff;
@@ -322,7 +340,8 @@ namespace tsorcRevamp.Projectiles {
             player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * dir, Projectile.velocity.X * dir); // Set the item rotation to where we are shooting
         }
 
-        private void CastLights() {
+        private void CastLights()
+        {
             // Cast a light along the line of the laser
             DelegateMethods.v3_1 = new Vector3(1f, 0f, 0f);
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * (Distance - MOVE_DISTANCE), 8, DelegateMethods.CastLight);
@@ -330,7 +349,8 @@ namespace tsorcRevamp.Projectiles {
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void CutTiles() {
+        public override void CutTiles()
+        {
             if (Charge == MAX_CHARGE)
             {
                 DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;

@@ -3,14 +3,18 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class DragoonCloak : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class DragoonCloak : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Combines the effects of the Dark, Light and Darkmoon Cloak into one all-powerful protective cloak." +
                                  "\nA large amount of Dark Souls were used to preserve each cloak's potency.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 22;
             Item.defense = 2;
@@ -19,7 +23,8 @@ namespace tsorcRevamp.Items.Accessories {
             Item.rare = ItemRarityID.LightPurple;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("LightCloak").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkCloak").Type);
@@ -27,11 +32,12 @@ namespace tsorcRevamp.Items.Accessories {
             recipe.AddIngredient(ItemID.ChlorophyteBar, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             int i2 = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int j2 = (int)(player.position.Y + 2f) / 16;
             Lighting.AddLight(i2, j2, 0.92f, 0.8f, 0.65f);
@@ -43,7 +49,8 @@ namespace tsorcRevamp.Items.Accessories {
             player.GetDamage(DamageClass.Magic) += .05f;
 
 
-            if (player.statLife <= 120) {
+            if (player.statLife <= 120)
+            {
                 player.lifeRegen += 12;
                 player.statDefense += 15;
                 player.manaRegenBuff = true;

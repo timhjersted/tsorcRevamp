@@ -4,14 +4,18 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class DestructionElement : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class DestructionElement : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Used for making high damage guns\n" +
                                "The strange way it feels warm to the touch reminds you of somewhere...");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 32;
             Item.height = 32;
             Item.rare = ItemRarityID.Red;
@@ -22,7 +26,7 @@ namespace tsorcRevamp.Items {
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;

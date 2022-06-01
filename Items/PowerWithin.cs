@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items
             }
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             if (player.itemTime == 0)
             {

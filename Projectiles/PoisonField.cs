@@ -1,17 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class PoisonField : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class PoisonField : ModProjectile
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.projFrames[Projectile.type] = 5;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 32;
             Projectile.height = 28;
             Projectile.friendly = true;
@@ -33,7 +36,8 @@ namespace tsorcRevamp.Projectiles {
             }
         }
 
-        public override void AI() {
+        public override void AI()
+        {
 
             if (Main.rand.Next(10) == 0)
             {
@@ -58,11 +62,13 @@ namespace tsorcRevamp.Projectiles {
             }
 
             Projectile.frameCounter++;
-            if (Projectile.frameCounter > 5) {
+            if (Projectile.frameCounter > 5)
+            {
                 Projectile.frame++;
                 Projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= 5) {
+            if (Projectile.frame >= 5)
+            {
                 Projectile.frame = 0;
                 return;
             }

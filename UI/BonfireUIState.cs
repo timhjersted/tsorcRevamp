@@ -1,13 +1,14 @@
-﻿using tsorcRevamp.UI;
-using Terraria.UI;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI;
 
-namespace tsorcRevamp.UI {
-    class BonfireUIState : UIState {
+namespace tsorcRevamp.UI
+{
+    class BonfireUIState : UIState
+    {
         public tsorcDragableUIPanel BonfireUI;
         //public tsorcUIHoverTextButton ButtonSetSpawn;
         //public tsorcUIHoverTextButton ButtonPiggyBank;
@@ -16,7 +17,8 @@ namespace tsorcRevamp.UI {
 
         public static bool Visible = false;
 
-        public override void OnInitialize() {
+        public override void OnInitialize()
+        {
             // Here we define our container UIElement. In DragableUIPanel.cs, you can see that DragableUIPanel is a UIPanel with a couple added features.
             BonfireUI = new tsorcDragableUIPanel();
             BonfireUI.SetPadding(0);
@@ -65,20 +67,21 @@ namespace tsorcRevamp.UI {
             // Since BonfireUI will move, this proper organization will move ButtonSetSpawn, closeButton, and moneyDiplay properly when BonfireUI moves.
         }
 
-        private void ButtonSetSpawnClicked(UIMouseEvent evt, UIElement listeningElement) {
+        private void ButtonSetSpawnClicked(UIMouseEvent evt, UIElement listeningElement)
+        {
             Player player = Main.LocalPlayer;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick, player.Center);
             int spawnX = (int)((player.position.X + player.width / 2.0) / 16.0);
             int spawnY = (int)((player.position.Y + player.height) / 16.0);
 
             //Main.NewText("spawnX is " + spawnX + ", spawnY is " + spawnY);
-           //Main.NewText("Player.SpawnX is " + player.SpawnX + ", Player.SpawnY is " + player.SpawnY);
+            //Main.NewText("Player.SpawnX is " + player.SpawnX + ", Player.SpawnY is " + player.SpawnY);
 
             if (player.SpawnX != spawnX && player.SpawnY != spawnY)
             {
                 player.ChangeSpawn(spawnX, spawnY);
                 player.FindSpawn();
-                if(Main.netMode != NetmodeID.Server)
+                if (Main.netMode != NetmodeID.Server)
                 {
                     Main.NewText("Spawn point set!", 255, 240, 20, false);
                 }
@@ -93,14 +96,17 @@ namespace tsorcRevamp.UI {
             }
         }
 
-        private void ButtonPiggyBankClicked(UIMouseEvent evt, UIElement listeningElement) {
+        private void ButtonPiggyBankClicked(UIMouseEvent evt, UIElement listeningElement)
+        {
             Player player = Main.LocalPlayer;
             //Tile tile = Main.tile
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item59);
 
             bool anyBanks = false;
-            foreach (Projectile projectile in Main.projectile) {
-                if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>() && projectile.owner == player.whoAmI) {
+            foreach (Projectile projectile in Main.projectile)
+            {
+                if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>() && projectile.owner == player.whoAmI)
+                {
                     //kill any active when the button is pressed again
                     anyBanks = true;
                     projectile.active = false;
@@ -114,19 +120,23 @@ namespace tsorcRevamp.UI {
                 }*/
 
             }
-            if (!anyBanks) { //only spawn a safe if there is no existing safe
+            if (!anyBanks)
+            { //only spawn a safe if there is no existing safe
                 //Main.playerInventory = true; //force open inventory
                 Projectile.NewProjectile(new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }
-        private void ButtonSafeClicked(UIMouseEvent evt, UIElement listeningElement) {
+        private void ButtonSafeClicked(UIMouseEvent evt, UIElement listeningElement)
+        {
             bool anySafes = false;
             Player player = Main.player[Main.myPlayer];
             Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuOpen, player.Center);
 
-            foreach (Projectile projectile in Main.projectile) {
-                if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI) {
+            foreach (Projectile projectile in Main.projectile)
+            {
+                if (projectile.active && projectile.type == ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>() && projectile.owner == player.whoAmI)
+                {
                     anySafes = true;
                     projectile.active = false;
                     player.chest = -1;
@@ -137,7 +147,8 @@ namespace tsorcRevamp.UI {
                     player.chest = -1;
                 }*/
             }
-            if (!anySafes) {
+            if (!anySafes)
+            {
                 //Main.playerInventory = true;
                 Projectile.NewProjectile(new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();

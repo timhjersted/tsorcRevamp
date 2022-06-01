@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Achievements;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -46,7 +43,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             Projectile.rotation += 1f;
-           
+
             if (Main.rand.Next(2) == 0)
             {
 

@@ -1,15 +1,19 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class RTQ2Sword : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class RTQ2Sword : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("RTQ2 Sword");
             Tooltip.SetDefault("Causes stars to rain from the sky" +
                                 "\nMagnetic to stars.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 14;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Swing;

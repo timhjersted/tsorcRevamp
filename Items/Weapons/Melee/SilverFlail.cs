@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class SilverFlail : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class SilverFlail : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 32;
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -30,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(ItemID.Chain, 2);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 100);
             recipe.AddTile(TileID.Anvils);
-            
+
             recipe.Register();
         }
     }

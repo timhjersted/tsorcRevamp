@@ -1,13 +1,17 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class DeathStrikeScroll : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class DeathStrikeScroll : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The scroll reads \"Exori mort.\"");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 100;
             Item.height = 10;
             Item.knockBack = 1;

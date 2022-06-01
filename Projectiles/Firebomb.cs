@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (target.type == NPCID.EaterofWorldsHead || target.type == NPCID.EaterofWorldsBody || target.type == NPCID.EaterofWorldsTail)
             {
-                damage /= 2; 
+                damage /= 2;
             }
             Projectile.timeLeft = 2; //sets it to 2 frames, to let the explosion ai kick in. Setdefaults is -1 pen, this allows it to only hit one npc, then run explosion ai.
             Projectile.netUpdate = true;

@@ -1,14 +1,16 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
+using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.GameInput;
 using TerraUI.Utilities;
 using Input = Microsoft.Xna.Framework.Input;
 
-namespace TerraUI.Objects {
-    public class UITextBox : UIObjectBordered {
+namespace TerraUI.Objects
+{
+    public class UITextBox : UIObjectBordered
+    {
         private const int frameDelay = 11;
         private int selectionStart = 0;
         private int leftArrow = 0;
@@ -23,19 +25,24 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The text displayed in the UITextBox.
         /// </summary>
-        public string Text {
+        public string Text
+        {
             get { return text; }
-            set {
+            set
+            {
                 string oldText = text;
 
-                if(!string.IsNullOrEmpty(Strip)) {
+                if (!string.IsNullOrEmpty(Strip))
+                {
                     text = Regex.Replace(value, Strip, "");
                 }
-                else {
+                else
+                {
                     text = value;
                 }
 
-                if(!text.Equals(oldText) && TextChanged != null) {
+                if (!text.Equals(oldText) && TextChanged != null)
+                {
                     TextChanged(this, new ValueChangedEventArgs<string>(oldText, text));
                 }
             }
@@ -55,16 +62,21 @@ namespace TerraUI.Objects {
         /// <summary>
         /// The index where the selection in the UITextBox begins.
         /// </summary>
-        public int SelectionStart {
+        public int SelectionStart
+        {
             get { return selectionStart; }
-            set {
-                if(value < 0) {
+            set
+            {
+                if (value < 0)
+                {
                     selectionStart = 0;
                 }
-                else if(value > Text.Length) {
+                else if (value > Text.Length)
+                {
                     selectionStart = Text.Length;
                 }
-                else {
+                else
+                {
                     selectionStart = value;
                 }
             }
@@ -84,7 +96,8 @@ namespace TerraUI.Objects {
         /// <param name="borderWidth">border width around box</param>
         /// <param name="parent">parent object</param>
         public UITextBox(Vector2 position, Vector2 size, DynamicSpriteFont font, string text = "", string strip = "",
-            byte borderWidth = 2, UIObject parent = null) : base(position, size, borderWidth, parent, true, true) {
+            byte borderWidth = 2, UIObject parent = null) : base(position, size, borderWidth, parent, true, true)
+        {
             Text = text;
             Focused = false;
             Font = font;
@@ -97,7 +110,8 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Give the object focus.
         /// </summary>
-        public override void Focus() {
+        public override void Focus()
+        {
             base.Focus();
             SelectionStart = Text.Length;
         }
@@ -105,30 +119,40 @@ namespace TerraUI.Objects {
         /// <summary>
         /// Update the object. Call during any Update() function.
         /// </summary>
-        public override void Update() {
-            if(Focused) {
+        public override void Update()
+        {
+            if (Focused)
+            {
                 bool skip = false;
 
-                if(Text.Length > 0) {
-                    if(KeyboardUtils.JustPressed(Input.Keys.Left) || KeyboardUtils.HeldDown(Input.Keys.Left)) {
-                        if(leftArrow == 0) {
+                if (Text.Length > 0)
+                {
+                    if (KeyboardUtils.JustPressed(Input.Keys.Left) || KeyboardUtils.HeldDown(Input.Keys.Left))
+                    {
+                        if (leftArrow == 0)
+                        {
                             SelectionStart--;
                             leftArrow = frameDelay;
                         }
                         leftArrow--;
                         skip = true;
                     }
-                    else if(KeyboardUtils.JustPressed(Input.Keys.Right) || KeyboardUtils.HeldDown(Input.Keys.Right)) {
-                        if(rightArrow == 0) {
+                    else if (KeyboardUtils.JustPressed(Input.Keys.Right) || KeyboardUtils.HeldDown(Input.Keys.Right))
+                    {
+                        if (rightArrow == 0)
+                        {
                             SelectionStart++;
                             rightArrow = frameDelay;
                         }
                         rightArrow--;
                         skip = true;
                     }
-                    else if(KeyboardUtils.JustPressed(Input.Keys.Delete) || KeyboardUtils.HeldDown(Input.Keys.Delete)) {
-                        if(delete == 0) {
-                            if(SelectionStart < Text.Length) {
+                    else if (KeyboardUtils.JustPressed(Input.Keys.Delete) || KeyboardUtils.HeldDown(Input.Keys.Delete))
+                    {
+                        if (delete == 0)
+                        {
+                            if (SelectionStart < Text.Length)
+                            {
                                 Text = Text.Remove(SelectionStart, 1);
                             }
                             delete = frameDelay;
@@ -136,17 +160,20 @@ namespace TerraUI.Objects {
                         delete--;
                         skip = true;
                     }
-                    else if(KeyboardUtils.JustPressed(Input.Keys.Enter)) {
+                    else if (KeyboardUtils.JustPressed(Input.Keys.Enter))
+                    {
                         Unfocus();
                     }
-                    else {
+                    else
+                    {
                         leftArrow = 0;
                         rightArrow = 0;
                         delete = 0;
                     }
                 }
 
-                if(!skip) {
+                if (!skip)
+                {
                     int oldLength = Text.Length;
                     string substring = Text.Substring(0, SelectionStart);
 
@@ -155,24 +182,28 @@ namespace TerraUI.Objects {
 
                     // first, we check if the length of the string has changed, indicating
                     // text has been added or removed
-                    if(input.Length != substring.Length) {
+                    if (input.Length != substring.Length)
+                    {
                         // we remove the old text and replace it with the new, storing it
                         // in a temporary variable
                         string newText = Text.Remove(0, SelectionStart).Insert(0, input);
 
                         // now if the text is smaller than previously or, if not, the string is
                         // an appropriate size,
-                        if(newText.Length < Text.Length || Font.MeasureString(newText).X < Size.X - 12) {
+                        if (newText.Length < Text.Length || Font.MeasureString(newText).X < Size.X - 12)
+                        {
                             // we set the old text to the new text
                             Text = newText;
 
                             // if the length of the text is now longer,
-                            if(Text.Length > oldLength) {
+                            if (Text.Length > oldLength)
+                            {
                                 // adjust the selection start accordingly
                                 SelectionStart += (Text.Length - oldLength);
                             }
                             // or if the length of the text is now shorter
-                            else if(Text.Length < oldLength) {
+                            else if (Text.Length < oldLength)
+                            {
                                 // adjust the selection start accordingly
                                 SelectionStart -= (oldLength - Text.Length);
                             }
@@ -183,20 +214,23 @@ namespace TerraUI.Objects {
 
             base.Update();
         }
-        
+
         /// <summary>
         /// Draw the UITextBox.
         /// </summary>
         /// <param name="spriteBatch">drawing SpriteBatch</param>
-        public override void Draw(SpriteBatch spriteBatch) {
+        public override void Draw(SpriteBatch spriteBatch)
+        {
             Rectangle = new Rectangle((int)RelativePosition.X, (int)RelativePosition.Y, (int)Size.X, (int)Size.Y);
 
             DrawingUtils.DrawRectangleBox(spriteBatch, BorderColor, BackColor, Rectangle, BorderWidth);
 
-            if(Focused) {
+            if (Focused)
+            {
                 spriteBatch.DrawString(Font, Text.Insert(SelectionStart, "|"), RelativePosition + new Vector2(2), TextColor);
             }
-            else {
+            else
+            {
                 spriteBatch.DrawString(Font, Text, RelativePosition + new Vector2(2), TextColor);
             }
 

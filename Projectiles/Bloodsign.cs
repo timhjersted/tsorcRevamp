@@ -21,7 +21,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 36000;
             Projectile.alpha = 254; //start nearly invis
         }
-        public float AI_Projectile_Lifetime {
+        public float AI_Projectile_Lifetime
+        {
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
         }
@@ -38,9 +39,11 @@ namespace tsorcRevamp.Projectiles
                 playerReturned = true;
             }
 
-            if (playerReturned) {
+            if (playerReturned)
+            {
                 Projectile.alpha += 1;
-                if (Projectile.alpha > 254) {
+                if (Projectile.alpha > 254)
+                {
                     Projectile.Kill();
                 }
             }
@@ -48,18 +51,19 @@ namespace tsorcRevamp.Projectiles
             {
                 Projectile.alpha -= 4; //increase visibility
             }
-            
+
             //movement
             if (AI_Projectile_Lifetime <= 60)
             {
                 Projectile.velocity.Y = -.9f; //float up for 1 second
             }
-            else {
+            else
+            {
                 Projectile.velocity.Y = 0f; //stop upwards velocity
             }
 
             //animation
-            
+
             if (++Projectile.frameCounter >= 5)
             {
                 Projectile.frameCounter = 0;
@@ -70,7 +74,7 @@ namespace tsorcRevamp.Projectiles
             }
 
         }
-        public override bool CanDamage()
+        public override bool? CanDamage()
         {
             return false;
         }

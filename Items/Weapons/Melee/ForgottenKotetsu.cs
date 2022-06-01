@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ForgottenKotetsu : ModItem { // post skeletron, sold by solaire
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ForgottenKotetsu : ModItem
+    { // post skeletron, sold by solaire
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.rare = ItemRarityID.Orange;

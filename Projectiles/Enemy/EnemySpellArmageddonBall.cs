@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -88,7 +87,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 newColor = default(Color);
                 num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
             }
-            Projectile.active = false;           
+            Projectile.active = false;
         }
         #endregion
 

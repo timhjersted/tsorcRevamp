@@ -2,15 +2,19 @@
 using Terraria.ModLoader;
 
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class HighCaliberRifle : ModItem {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class HighCaliberRifle : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Incredible damage at the cost of 2.5 second cooldown between shots" +
                                 "\nRemember to hold your breath.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 700;
             Item.height = 22;
             Item.noMelee = true;
@@ -29,13 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.width = 66;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Megashark, 1);
             recipe.AddIngredient(ItemID.IllegalGunParts, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 80000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

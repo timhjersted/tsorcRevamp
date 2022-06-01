@@ -125,7 +125,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, true, 10, false, 26, 1000, 0.3f, 1.1f, true);
 
-            
+
             #region melee movement
 
             Player player3 = Main.player[NPC.target];
@@ -211,7 +211,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
             #endregion
-            
+
 
             #region Charge
             //CHARGE UNTIL DESPERATE PHASE
@@ -271,7 +271,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         {
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 6, .01f, -.5f); //magic mirror
                         }
-                        
+
                         NPC.velocity.X = 0f;
                         NPC.velocity.Y = 0f;
 
@@ -310,7 +310,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         Terraria.Audio.SoundEngine.PlaySound(3, (int)NPC.position.X, (int)NPC.position.Y, 30, 0.8f, -.3f); //3, 21 demon; 3,30 nimbus
                     }
 
-                    if (breath) 
+                    if (breath)
                     {
 
                         NPC.velocity.X = 0f;
@@ -514,7 +514,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitfinalDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                                                                                                                                                                                                            //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
+                                                                                                                                                                                                                                      //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 21, 0.2f, .1f); //3, 21 water
                             Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.1f, 0.2f);
                         }
 

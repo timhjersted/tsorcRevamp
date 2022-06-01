@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Enemies {
-    class ViciousSpit : ModNPC {
-        public override void SetDefaults() {
+namespace tsorcRevamp.NPCs.Enemies
+{
+    class ViciousSpit : ModNPC
+    {
+        public override void SetDefaults()
+        {
             NPC.width = 16;
             NPC.height = 16;
             NPC.aiStyle = -1;
@@ -26,8 +28,10 @@ namespace tsorcRevamp.NPCs.Enemies {
             NPC.damage = (int)(NPC.damage / 2);
         }
 
-        public override void AI() {
-            if (NPC.target == 255) {
+        public override void AI()
+        {
+            if (NPC.target == 255)
+            {
                 NPC.TargetClosest();
                 //Vector2 shotOrigin = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
                 //float distX = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2) - shotOrigin.X;
@@ -38,24 +42,29 @@ namespace tsorcRevamp.NPCs.Enemies {
                 //npc.velocity.Y = distY * distAbs;
             }
             NPC.ai[0] += 1f;
-            if (NPC.ai[0] > 3f) {
+            if (NPC.ai[0] > 3f)
+            {
                 NPC.ai[0] = 3f;
             }
-            if (NPC.ai[0] == 2f) {
+            if (NPC.ai[0] == 2f)
+            {
                 NPC.position += NPC.velocity;
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCKilled, (int)NPC.position.X, (int)NPC.position.Y, 9);
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < 20; i++)
+                {
                     int spawnDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y + 2f), NPC.width, NPC.height, 26, 0f, 0f, 100, default, 1.8f);
                     Main.dust[spawnDust].velocity += NPC.velocity;
                     Main.dust[spawnDust].noGravity = true;
                 }
             }
 
-            if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height)) {
+            if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
+            {
                 _ = Main.netMode;
                 NPC.StrikeNPCNoInteraction(999, 0f, 0);
             }
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2; j++)
+            {
                 int trailDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y + 2f), NPC.width, NPC.height, 26, NPC.velocity.X * 0.1f, NPC.velocity.Y * 0.1f, 80, default, 1.3f);
                 Main.dust[trailDust].velocity *= 0.3f;
                 Main.dust[trailDust].noGravity = true;

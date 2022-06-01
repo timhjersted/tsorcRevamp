@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class WallTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class WallTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wall Tome");
             Tooltip.SetDefault("A lost tome that is consumed on use\n" +
                                "Casts Wall on the player, raising defense by 25 for 25 seconds" +
@@ -14,7 +16,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                                "\nCannot be used again for 60 seconds after wearing off");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.stack = 1;
             Item.width = 28;
             Item.height = 30;
@@ -32,28 +35,34 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronskinPotion);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 600);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.AddBuff(ModContent.BuffType<Buffs.Wall>(), 1500, false);
             player.AddBuff(ModContent.BuffType<Buffs.ShieldCooldown>(), 5100); //85 seconds (60 seconds downtime)
             return true;
         }
-        public override bool CanUseItem(Player player) {
-            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>())) {
+        public override bool CanUseItem(Player player)
+        {
+            if (player.HasBuff(ModContent.BuffType<Buffs.ShieldCooldown>()))
+            {
                 return false;
             }
-            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>())) {
+            if (player.HasBuff(ModContent.BuffType<Buffs.Fog>()) || player.HasBuff(ModContent.BuffType<Buffs.Barrier>()) || player.HasBuff(ModContent.BuffType<Buffs.Shield>()))
+            {
                 return false;
             }
-            else {
+            else
+            {
                 return true;
             }
         }

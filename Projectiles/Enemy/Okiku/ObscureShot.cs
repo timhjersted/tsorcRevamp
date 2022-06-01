@@ -1,13 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy.Okiku {
-    public class ObscureShot : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy.Okiku
+{
+    public class ObscureShot : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 0;
             Projectile.hostile = true;
             Projectile.height = 9;
@@ -17,20 +19,24 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             Projectile.timeLeft = 1500;
         }
 
-        public override bool PreKill(int timeLeft) {
+        public override bool PreKill(int timeLeft)
+        {
             Projectile.type = 44; //killpretendtype
             return true;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation++;
 
-            if (Main.rand.Next(2) == 0) {
+            if (Main.rand.Next(2) == 0)
+            {
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, 62, 0, 0, 100, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;
             }
 
-            if (Projectile.velocity.X <= 6 && Projectile.velocity.Y <= 6 && Projectile.velocity.X >= -6 && Projectile.velocity.Y >= -6) {
+            if (Projectile.velocity.X <= 6 && Projectile.velocity.Y <= 6 && Projectile.velocity.X >= -6 && Projectile.velocity.Y >= -6)
+            {
                 Projectile.velocity.X *= 1.02f;
                 Projectile.velocity.Y *= 1.02f;
             }
@@ -50,7 +56,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             //Get the premultiplied, properly transparent texture
-            int frameHeight = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

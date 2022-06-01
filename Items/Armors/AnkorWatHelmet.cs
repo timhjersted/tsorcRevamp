@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Armors
             return body.type == ModContent.ItemType<AnkorWatChestplate>() && legs.type == ModContent.ItemType<AnkorWatLeggings>();
         }
 
-       public override void UpdateArmorSet(Player player)
+        public override void UpdateArmorSet(Player player)
         {
             player.manaRegenBuff = true;
             player.statManaMax2 += 160;
@@ -46,10 +46,11 @@ namespace tsorcRevamp.Items.Armors
             Main.dust[dust].noGravity = true;
         }
 
-        public override void ArmorSetShadows (Player player){
+        public override void ArmorSetShadows(Player player)
+        {
 
             player.armorEffectDrawShadow = true;
-            
+
         }
 
         public override void AddRecipes()
@@ -58,7 +59,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.HallowedHeadgear, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

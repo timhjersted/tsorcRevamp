@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Achievements;
 
 namespace tsorcRevamp.Projectiles.Enemy
 {
@@ -35,17 +32,17 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.PotionSickness, 600); 
+            target.AddBuff(BuffID.PotionSickness, 600);
             Projectile.timeLeft = 2;
         }
-        
-        
+
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Projectile.timeLeft = 2;
             return true;
         }
-        
+
         public override void AI()
         {
             Projectile.rotation += 1f;
@@ -88,13 +85,13 @@ namespace tsorcRevamp.Projectiles.Enemy
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].fadeIn = .5f + (float)Main.rand.Next(5) * 0.1f;
                     Main.dust[dustIndex].noGravity = true;
-                    
+
                 }
             }
-            
-            
 
-            
+
+
+
         }
 
         public override void Kill(int timeLeft)

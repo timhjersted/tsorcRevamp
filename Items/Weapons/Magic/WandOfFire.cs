@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class WandOfFire : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class WandOfFire : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wand of Fire");
             Item.staff[Item.type] = true;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.width = 12;
             Item.height = 17;
@@ -28,12 +32,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.FireBall>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2300);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

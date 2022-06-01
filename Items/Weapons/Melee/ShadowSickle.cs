@@ -1,10 +1,13 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class ShadowSickle : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class ShadowSickle : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Blue;
             Item.damage = 16;
             Item.width = 32;
@@ -19,12 +22,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = 13500;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DemoniteBar, 10);
             recipe.AddIngredient(ItemID.ShadowScale, 6);
             recipe.AddTile(TileID.Anvils);
-            
+
             recipe.Register();
         }
     }

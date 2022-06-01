@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles {
-    class SporePowder : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class SporePowder : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 50;
             Projectile.height = 50;
             Projectile.scale = 0.8f;
@@ -20,15 +20,19 @@ namespace tsorcRevamp.Projectiles {
             Projectile.thrown = true;
         }
 
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.velocity *= 0.95f;
             Projectile.ai[0] += 1f;
-            if (Projectile.ai[0] == 180f) {
+            if (Projectile.ai[0] == 180f)
+            {
                 Projectile.Kill();
             }
-            if (Projectile.ai[1] == 0f) {
+            if (Projectile.ai[1] == 0f)
+            {
                 Projectile.ai[1] = 1f;
-                for (int k = 0; k < 30; k++) {
+                for (int k = 0; k < 30; k++)
+                {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 44, Projectile.velocity.X, Projectile.velocity.Y, 50, default(Color), 1f);
                 }
             }

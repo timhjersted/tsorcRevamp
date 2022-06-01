@@ -3,16 +3,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class Bolt4Tome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class Bolt4Tome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Bolt 4 Tome");
             Tooltip.SetDefault("A lost legendary tome. You command the forces of the sky.\n" +
                                 "Only the most powerful mages will be able to cast this spell.");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 100;
             Item.height = 10;
             Item.width = 34;
@@ -40,12 +44,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt3Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 85000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

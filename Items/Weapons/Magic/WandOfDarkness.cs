@@ -1,18 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-
+﻿
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class WandOfDarkness : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class WandOfDarkness : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wand of Darkness");
             Tooltip.SetDefault("Shoots a piercing bolt of darkness");
             Item.staff[Item.type] = true;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.width = 12;
             Item.height = 17;
@@ -30,12 +33,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.ShadowBall>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("WoodenWand").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 150);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

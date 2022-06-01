@@ -4,7 +4,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
+namespace tsorcRevamp.Projectiles.Enemy
+{
     class EnemySpellLightning3Ball : ModProjectile
     {
         public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 Projectile.timeLeft = (int)Projectile.ai[0];
                 timeleftSet = true;
             }
-            if(Projectile.ai[1] != 0)
+            if (Projectile.ai[1] != 0)
             {
                 Projectile.aiStyle = 1;
             }

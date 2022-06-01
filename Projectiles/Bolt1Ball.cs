@@ -1,13 +1,15 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Bolt1Ball : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class Bolt1Ball : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.penetrate = 1;
@@ -17,7 +19,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.light = 0.3f;
             Projectile.knockBack = 0f;
         }
-        public override void AI() {
+        public override void AI()
+        {
 
             if (Projectile.wet)
             {
@@ -64,7 +67,8 @@ namespace tsorcRevamp.Projectiles {
                 Main.dust[n1337].velocity *= 1f;
             }
 
-            if (Projectile.velocity.Y > 16f) {
+            if (Projectile.velocity.Y > 16f)
+            {
                 Projectile.velocity.Y = 16f;
                 return;
             }
@@ -76,7 +80,8 @@ namespace tsorcRevamp.Projectiles {
                 target.AddBuff(Mod.Find<ModBuff>("ElectrocutedBuff").Type, 120);
             }
         }
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), Projectile.velocity.X, Projectile.velocity.Y, ModContent.ProjectileType<Bolt1Bolt>(), (this.Projectile.damage), 3.5f, Projectile.owner);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53.WithPitchVariance(.3f).WithVolume(.8f), new Vector2(Projectile.position.X, Projectile.position.Y));
         }

@@ -5,13 +5,17 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    public abstract class Titanite : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    public abstract class Titanite : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A rare and valuable ore");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 16;
             Item.height = 16;
             Item.rare = ItemRarityID.LightRed;
@@ -19,24 +23,27 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class BlueTitanite : Titanite {
-        public override void SetStaticDefaults() {
+    public class BlueTitanite : Titanite
+    {
+        public override void SetStaticDefaults()
+        {
             base.SetStaticDefaults();
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {            
+        {
             tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "", "Ice cold to the touch, it glows with enchanted power"));
         }
 
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
@@ -50,12 +57,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class RedTitanite : Titanite {
-        public override void SetStaticDefaults() {
+    public class RedTitanite : Titanite
+    {
+        public override void SetStaticDefaults()
+        {
             base.SetStaticDefaults();
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
@@ -67,7 +77,7 @@ namespace tsorcRevamp.Items {
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;
@@ -81,12 +91,15 @@ namespace tsorcRevamp.Items {
         }
     }
 
-    public class WhiteTitanite : Titanite {
-        public override void SetStaticDefaults() {
+    public class WhiteTitanite : Titanite
+    {
+        public override void SetStaticDefaults()
+        {
             base.SetStaticDefaults();
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             base.SetDefaults();
         }
 
@@ -97,7 +110,7 @@ namespace tsorcRevamp.Items {
         float rotation = 0;
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Main.itemTexture[Item.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             for (int i = 0; i < 4; i++)
             {
                 rotation += 0.01f;

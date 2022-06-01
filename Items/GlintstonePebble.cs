@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
 
 
 namespace tsorcRevamp.Items
@@ -53,7 +52,7 @@ namespace tsorcRevamp.Items
             }
         }
 
-        public override void UseStyle(Player player)
+        public override void UseStyle(Player player, Rectangle rectangle)
         {
             if (player.itemTime == 0)
             {
@@ -108,14 +107,14 @@ namespace tsorcRevamp.Items
                 int damage = (int)((8 * (player.GetDamage(DamageClass.Magic) + player.GetDamage(DamageClass.Generic) - 1) * 3) * player.GetDamage(DamageClass.Generic));
 
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                { 
+                {
                     damage = (int)(damage * 1.2f); //because player.GetDamage(DamageClass.Generic)Mult isnt taking it into accound for some reason :/
                     player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20;
                 }
 
                 for (int i = 0; i < 7; i++)
                 {
-                    Projectile.NewProjectile(player.Center + new Vector2(4 * player.direction, - 20), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.GlintstoneSpeck>(), damage, 2.5f, Main.myPlayer);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center + new Vector2(4 * player.direction, -20), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.GlintstoneSpeck>(), damage, 2.5f, Main.myPlayer);
                 }
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
@@ -145,7 +144,8 @@ namespace tsorcRevamp.Items
             }
 
             Color color = Color.White * 0.8f;
-            Texture2D texture = Main.itemTexture[Item.type];
+
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             spriteBatch.Draw(texture, new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
                 new Rectangle(0, 0, texture.Width, texture.Height), color, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
         }

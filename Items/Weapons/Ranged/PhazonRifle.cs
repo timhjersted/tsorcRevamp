@@ -1,16 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class PhazonRifle : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class PhazonRifle : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Three round burst \nOnly the first shot consumes ammo\nPhazon rounds are extremely volatile");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 50;
             Item.height = 18;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -57,7 +59,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddIngredient(ItemID.MythrilBar, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

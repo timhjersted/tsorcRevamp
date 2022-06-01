@@ -1,18 +1,21 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using System.Collections.Generic;
-using Terraria;
 
-namespace tsorcRevamp.Items.Potions {
-    public class DemonDrugPotion : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    public class DemonDrugPotion : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Demon Drug");
             Tooltip.SetDefault("Increases damage by 20% for 3 minutes\n" +
                                 "However, also lowers defence by 20\n" +
                                 "Does not stack with Armor Drug, Strength, or Battlefront Potions.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 14;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -41,12 +44,13 @@ namespace tsorcRevamp.Items.Potions {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

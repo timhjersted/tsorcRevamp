@@ -1,13 +1,14 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Bosses.Okiku;
 
-namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
+namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
+{
     [AutoloadBossHead]
-    public class DarkShogunMask : ModNPC {
+    public class DarkShogunMask : ModNPC
+    {
         private bool initiate;
 
         public float RotSpeed;
@@ -20,7 +21,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
 
         public bool Transform;
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.width = 28;
             NPC.height = 44;
             NPC.damage = 0;
@@ -39,49 +41,62 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, 54);
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.npcFrameCount[NPC.type] = 3;
             DisplayName.SetDefault("Mindflayer King");
         }
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
         }
-        public override void FindFrame(int frameHeight) {
+        public override void FindFrame(int frameHeight)
+        {
 
-            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2)) {
+            if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+            {
                 NPC.frameCounter = 0;
                 NPC.frame.Y = 0;
-                if (NPC.position.X > Main.player[NPC.target].position.X) {
+                if (NPC.position.X > Main.player[NPC.target].position.X)
+                {
                     NPC.spriteDirection = -1;
                 }
-                else {
+                else
+                {
                     NPC.spriteDirection = 1;
                 }
             }
             int num = 1;
-            if (!Main.dedServ) {
+            if (!Main.dedServ)
+            {
                 num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
             }
 
             if (NPC.velocity.X > 1.5f) NPC.frame.Y = num;
             if (NPC.velocity.X < -1.5f) NPC.frame.Y = num * 2;
             if (NPC.velocity.X > -1.5f && NPC.velocity.X < 1.5f) NPC.frame.Y = 0;
-            if (ShieldBroken) {
+            if (ShieldBroken)
+            {
                 if (NPC.alpha > 40) NPC.alpha -= 1;
                 if (NPC.alpha < 40) NPC.alpha += 1;
             }
-            else {
+            else
+            {
                 if (NPC.alpha < 200) NPC.alpha += 1;
                 if (NPC.alpha > 200) NPC.alpha -= 1;
             }
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
-            if (damage > NPC.life || damage * 2 > NPC.life) {
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (damage > NPC.life || damage * 2 > NPC.life)
+            {
                 crit = false;
                 damage = NPC.life - 50;
             }
         }
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit) {
-            if (damage > NPC.life || damage * 2 > NPC.life) {
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (damage > NPC.life || damage * 2 > NPC.life)
+            {
                 crit = false;
                 damage = NPC.life - 50;
             }
@@ -92,33 +107,41 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
-            if (!initiate) {
+            if (!initiate)
+            {
                 RotSpeed = 0.015f;
                 NPC.alpha = 255;
                 initiate = true;
             }
-            if (!Transform) {
+            if (!Transform)
+            {
 
-                if (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) < NPC.position.X + (NPC.width / 2) - 500 || Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) > NPC.position.X + (NPC.width / 2) + 500 || Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) < NPC.position.Y + (NPC.height / 2) - 500 || Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) > NPC.position.Y + (NPC.height / 2) + 500) {
+                if (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) < NPC.position.X + (NPC.width / 2) - 500 || Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) > NPC.position.X + (NPC.width / 2) + 500 || Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) < NPC.position.Y + (NPC.height / 2) - 500 || Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) > NPC.position.Y + (NPC.height / 2) + 500)
+                {
                     float rotation = (float)Math.Atan2((NPC.position.Y + (NPC.height / 2)) - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2)), (NPC.position.X + (NPC.width / 2)) - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2)));
                     Main.player[NPC.target].position.X += (float)(Math.Cos(rotation) * 5);
                     Main.player[NPC.target].position.Y += (float)(Math.Sin(rotation) * 5);
                 }
 
-                if (OptionSpawned == false) {
+                if (OptionSpawned == false)
+                {
                     int RealLifeId = 0;
-                    for (int j = 0; j < 6; j++) {
+                    for (int j = 0; j < 6; j++)
+                    {
                         int rotball = NPC.NewNPC(NPC.GetSource_FromAI(), (int)((NPC.position.X + (NPC.width / 2) - (Main.npc[j].width)) + Math.Sin(NPC.rotation + ((360 / 10) * (1 + j))) * 300), (int)((NPC.position.Y + (NPC.height / 2) - (Main.npc[j].height)) + Math.Cos(NPC.rotation + ((360 / 10) * (1 + j))) * 300), ModContent.NPCType<DamnedSoul>(), 0);
                         Main.npc[rotball].ai[0] = j;
                         Main.npc[rotball].ai[1] = NPC.whoAmI;
-                        for (int i = 0; i < 20; i++) {
+                        for (int i = 0; i < 20; i++)
+                        {
                             int dustDeath = Dust.NewDust(new Vector2(Main.npc[rotball].position.X, Main.npc[rotball].position.Y), Main.npc[rotball].width, Main.npc[rotball].height, 54, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 200, Color.White, 4f);
                             Main.dust[dustDeath].noGravity = true;
                         }
-                        if (j == 0) {
+                        if (j == 0)
+                        {
                             RealLifeId = rotball;
                         }
-                        else {
+                        else
+                        {
                             Main.npc[rotball].realLife = RealLifeId;
                         }
                     }
@@ -127,16 +150,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
 
                 NPC.netUpdate = true;
                 NPC.ai[2] += 4;
-                
-                if (ShieldBroken) {
+
+                if (ShieldBroken)
+                {
                     if (RotSpeed < 0.03f) RotSpeed += 0.0003f;
                     NPC.dontTakeDamage = false;
                 }
-                else {
-                    if (RotDir == true) {
+                else
+                {
+                    if (RotDir == true)
+                    {
                         RotSpeed += 0.00005f;
                     }
-                    if (RotDir == false) {
+                    if (RotDir == false)
+                    {
                         RotSpeed -= 0.00005f;
                     }
                     if (RotSpeed > 0.02f) RotDir = false;
@@ -145,13 +172,17 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                 }
                 NPC.ai[3] += RotSpeed;
 
-                for (int i = 0; i < 200; i++) {
-                    if (Main.npc[i].ai[1] == NPC.whoAmI && Main.npc[i].type == ModContent.NPCType<DamnedSoul>()) {
-                        if (Main.npc[i].life <= 1000) {
+                for (int i = 0; i < 200; i++)
+                {
+                    if (Main.npc[i].ai[1] == NPC.whoAmI && Main.npc[i].type == ModContent.NPCType<DamnedSoul>())
+                    {
+                        if (Main.npc[i].life <= 1000)
+                        {
                             ShieldBroken = true;
                             Main.npc[i].dontTakeDamage = true;
                         }
-                        else {
+                        else
+                        {
                             ShieldBroken = false;
                             Main.npc[i].dontTakeDamage = false;
                         }
@@ -162,19 +193,24 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                     }
                 }
 
-                if (NPC.ai[2] < 600) {
-                    if (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) < NPC.position.X + (NPC.width / 2)) {
+                if (NPC.ai[2] < 600)
+                {
+                    if (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) < NPC.position.X + (NPC.width / 2))
+                    {
                         if (NPC.velocity.X > -2) { NPC.velocity.X -= 0.05f; }
                     }
-                    if (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) > NPC.position.X + (NPC.width / 2)) {
+                    if (Main.player[NPC.target].position.X + (Main.player[NPC.target].width / 2) > NPC.position.X + (NPC.width / 2))
+                    {
                         if (NPC.velocity.X < 2) { NPC.velocity.X += 0.05f; }
                     }
 
-                    if (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) < NPC.position.Y + (NPC.height / 2)) {
+                    if (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) < NPC.position.Y + (NPC.height / 2))
+                    {
                         if (NPC.velocity.Y > 0f) NPC.velocity.Y -= 0.2f;
                         else NPC.velocity.Y -= 0.01f;
                     }
-                    if (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) > NPC.position.Y + (NPC.height / 2)) {
+                    if (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height / 2) > NPC.position.Y + (NPC.height / 2))
+                    {
                         if (NPC.velocity.Y < 0f) NPC.velocity.Y += 0.2f;
                         else NPC.velocity.Y += 0.01f;
                     }
@@ -190,15 +226,18 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                 }
 
             }
-            else {
+            else
+            {
                 NPC.ai[2]++;
                 NPC.velocity.X = 0;
                 NPC.velocity.Y = 0;
                 if (RotSpeed > 0.002f) RotSpeed -= 0.0001f;
                 NPC.dontTakeDamage = true;
                 NPC.ai[3] *= 1.01f;
-                for (int i = 0; i < 200; i++) {
-                    if (Main.npc[i].ai[1] == NPC.whoAmI && Main.npc[i].type == ModContent.NPCType<DamnedSoul>()) {
+                for (int i = 0; i < 200; i++)
+                {
+                    if (Main.npc[i].ai[1] == NPC.whoAmI && Main.npc[i].type == ModContent.NPCType<DamnedSoul>())
+                    {
                         Main.npc[i].damage = 0;
                         Main.npc[i].dontTakeDamage = true;
                         Main.npc[i].scale = 3;
@@ -208,19 +247,22 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                     }
                 }
 
-                if (NPC.ai[2] > 250 && NPC.ai[2] < 500) {
+                if (NPC.ai[2] > 250 && NPC.ai[2] < 500)
+                {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (NPC.ai[2] > 500 && NPC.ai[2] < 700) {
+                if (NPC.ai[2] > 500 && NPC.ai[2] < 700)
+                {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
                     dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
                 }
-                if (NPC.ai[2] > 700) {
+                if (NPC.ai[2] > 700)
+                {
                     Color color = new Color();
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                     Main.dust[dust].noGravity = true;
@@ -232,8 +274,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                     Main.dust[dust].noGravity = true;
                 }
 
-                if (NPC.ai[2] > 900) {
-                    for (int i = 0; i < 50; i++) {
+                if (NPC.ai[2] > 900)
+                {
+                    for (int i = 0; i < 50; i++)
+                    {
                         Color color = new Color();
                         int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                         Main.dust[dust].noGravity = true;
@@ -244,7 +288,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                         dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 4f);
                         Main.dust[dust].noGravity = true;
                     }
-                    for (int i = 0; i < 200; i++) {
+                    for (int i = 0; i < 200; i++)
+                    {
                         if (Main.npc[i].type == ModContent.NPCType<DamnedSoul>())
                         {
                             Main.npc[i].active = false;

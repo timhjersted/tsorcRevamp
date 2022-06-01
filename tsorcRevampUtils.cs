@@ -2,117 +2,140 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp {
+namespace tsorcRevamp
+{
 
     //using static tsorcRevamp.SpawnHelper;
-    public static class SpawnHelper {
+    public static class SpawnHelper
+    {
 
         //undergroundJungle, undergroundEvil, and undergroundHoly are deliberately missing. call Cavern && p.zone instead.
 
-        public static bool Cavern(Player p) { //if youre calling Cavern without a p.zone check, also call NoSpecialBiome
+        public static bool Cavern(Player p)
+        { //if youre calling Cavern without a p.zone check, also call NoSpecialBiome
             return p.position.Y >= Main.rockLayer && p.position.Y <= Main.rockLayer * 25;
         }
 
-        public static bool NoSpecialBiome(Player p) {
+        public static bool NoSpecialBiome(Player p)
+        {
             return (!p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon);
         }
 
-        public static bool Sky(Player p) { //p.ZoneSkyHeight is more restrictive than this, so use this if an enemy uses it
+        public static bool Sky(Player p)
+        { //p.ZoneSkyHeight is more restrictive than this, so use this if an enemy uses it
             return p.position.Y < Main.worldSurface * 0.44999998807907104;
         }
 
-        public static bool Surface(Player p) {
+        public static bool Surface(Player p)
+        {
             return !Sky(p) && (p.position.Y < Main.worldSurface); //dont need to check nospecialbiome here since we're already calling Sky
         }
 
-        public static bool Underground(Player p) {
+        public static bool Underground(Player p)
+        {
             return Main.worldSurface > p.position.Y && p.position.Y < Main.rockLayer;
-        } 
+        }
 
-        public static bool Underworld(Player p) {
+        public static bool Underworld(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile > Main.maxTilesY - 190;
         }
     }
 
     //using static tsorcRevamp.oSpawnHelper;
-    public static class oSpawnHelper { 
+    public static class oSpawnHelper
+    {
 
-        public static bool oCavern(Player p) {
+        public static bool oCavern(Player p)
+        {
             return (p.position.Y >= (Main.rockLayer * 17)) && (p.position.Y < (Main.rockLayer * 24));
         }
 
-        public static bool oCavernByTile(Player p) {
+        public static bool oCavernByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile >= (Main.maxTilesY * 0.4f) && playerYTile < (Main.maxTilesY * 0.6f);
         }
 
-        public static bool oMagmaCavern(Player p) {
+        public static bool oMagmaCavern(Player p)
+        {
             return (p.position.Y >= (Main.rockLayer * 24)) && (p.position.Y < (Main.rockLayer * 32));
         }
 
-        public static bool oMagmaCavernByTile(Player p) {
+        public static bool oMagmaCavernByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile >= (Main.maxTilesY * 0.6f) && playerYTile < (Main.maxTilesY * 0.8f);
         }
 
-        public static bool oSky(Player p) {
+        public static bool oSky(Player p)
+        {
             return p.position.Y <= Main.rockLayer * 4;
         }
 
-        public static bool oSkyByTile(Player p) {
+        public static bool oSkyByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile < (Main.maxTilesY * 0.1f);
         }
 
-        public static bool oSurface(Player p) {
+        public static bool oSurface(Player p)
+        {
             return !p.ZoneSkyHeight && (p.position.Y <= Main.worldSurface);
         }
 
-        public static bool oUnderground(Player p) {
+        public static bool oUnderground(Player p)
+        {
             return (p.position.Y >= (Main.rockLayer * 13)) && (p.position.Y < (Main.rockLayer * 17));
         }
 
-        public static bool oUndergroundByTile(Player p) {
+        public static bool oUndergroundByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return playerYTile >= (Main.maxTilesY * 0.3f) && playerYTile < (Main.maxTilesY * 0.4f);
         }
 
-        public static bool oUnderSurface(Player p) {
+        public static bool oUnderSurface(Player p)
+        {
             return (p.position.Y > (Main.rockLayer * 8)) && (p.position.Y < (Main.rockLayer * 13));
         }
 
-        public static bool oUnderSurfaceByTile(Player p) {
+        public static bool oUnderSurfaceByTile(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return (playerYTile >= (Main.maxTilesY * 0.2f) && playerYTile < (Main.maxTilesY * 0.3f));
         }
 
-        public static bool oUnderworld(Player p) {
+        public static bool oUnderworld(Player p)
+        {
             return p.position.Y >= (Main.rockLayer * 32);
         }
 
-        public static bool oUnderworldByHeight(Player p) {
+        public static bool oUnderworldByHeight(Player p)
+        {
             int playerYTile = (int)(p.Bottom.Y + 8f) / 16;
             return (playerYTile >= (Main.maxTilesY * 0.8f));
         }
     }
 
-    public static class VariousConstants {
+    public static class VariousConstants
+    {
         public const int CUSTOM_MAP_WORLD_ID = 44874972;
         public const string MUSIC_MOD_URL = "https://github.com/timhjersted/tsorcDownload/raw/main/tsorcMusic.tmod";
         public const string MAP_URL = "https://github.com/timhjersted/tsorcDownload/raw/main/the-story-of-red-cloud.wld";
         public const string CHANGELOG_URL = "https://raw.githubusercontent.com/timhjersted/tsorcDownload/main/changelog.txt";
     }
 
-    public static class PriceByRarity { 
-        
+    public static class PriceByRarity
+    {
+
         //minimal exploration. pre-hardmode ores. likely no items that craft from souls will use this
         public static readonly int White_0 = Item.buyPrice(platinum: 0, gold: 0, silver: 40, copper: 0);
 
@@ -136,16 +159,16 @@ namespace tsorcRevamp {
 
         //plantera, golem, chlorophyte
         public static readonly int Lime_7 = Item.buyPrice(platinum: 0, gold: 47, silver: 50, copper: 0);
-        
+
         //post-plantera dungeon, martian madness, pumpkin/frost moon
         public static readonly int Yellow_8 = Item.buyPrice(platinum: 0, gold: 55, silver: 0, copper: 0);
-        
+
         //lunar fragments, dev armor. seldom used in vanilla
         public static readonly int Cyan_9 = Item.buyPrice(platinum: 0, gold: 67, silver: 50, copper: 0);
-        
+
         //luminite, lunar fragment gear, moon lord drops
         public static readonly int Red_10 = Item.buyPrice(platinum: 0, gold: 80, silver: 0, copper: 0);
-        
+
         //no vanilla items have purple rarity base. only cyan and red with modifiers can be purple. im guessing on the price.
         public static readonly int Purple_11 = Item.buyPrice(platinum: 1, gold: 20, silver: 0, copper: 0);
 
@@ -167,7 +190,7 @@ namespace tsorcRevamp {
         {
             Vector2 distance = target - source;
             distance.Normalize();
-            return distance * speed;            
+            return distance * speed;
         }
 
         ///<summary> 
@@ -237,7 +260,7 @@ namespace tsorcRevamp {
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
 
-            if(texture == null || texture.IsDisposed)
+            if (texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(projectile.ModProjectile.Texture);
             }
@@ -282,7 +305,7 @@ namespace tsorcRevamp {
             float xTerm = ((point.X - center.X) * (point.X - center.X)) / (width * width);
             float yTerm = ((point.Y - center.Y) * (point.Y - center.Y)) / (height * height);
 
-            if(xTerm + yTerm < 1)
+            if (xTerm + yTerm < 1)
             {
                 return true;
             }
@@ -318,13 +341,13 @@ namespace tsorcRevamp {
             {
                 NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
             }
-            if(Main.netMode == NetmodeID.SinglePlayer)
+            if (Main.netMode == NetmodeID.SinglePlayer)
             {
                 Main.NewText(text, color);
             }
         }
 
-        
+
         ///<summary> 
         ///Gets the first npc of a given type. Basically NPC.AnyNPC, except it actually returns what it finds.
         ///Uses nullable ints, aka "int?". Will return null if it can't find one.
@@ -339,10 +362,10 @@ namespace tsorcRevamp {
                     return i;
                 }
             }
-            
-            return null;            
+
+            return null;
         }
-        
+
         ///<summary> 
         ///Gets the closest Enemy NPC to a given point. Returns that NPC's whoami.
         ///Uses nullable ints, will return null if it can't find one (like in the rare but possible situation where there *are* no NPCs). You've been warned!
@@ -378,7 +401,7 @@ namespace tsorcRevamp {
         {
             if (Main.tile.GetUpperBound(0) > tilePos.X && Main.tile.GetUpperBound(1) > tilePos.Y)
             {
-                Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];                
+                Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];
 
                 //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
                 if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
@@ -422,35 +445,42 @@ namespace tsorcRevamp {
         ///<param name="rotateTowards">Should the projectile maintain topSpeed speed and rotate towards targets, instead of standard homing?</param>
         ///<param name="homingStrength">The homing strength coefficient. Unused if rotateTowards.</param>
         ///<param name="needsLineOfSight">Does the projectile need line of sight to home on a target?</param>
-        public static void HomeOnEnemy(Projectile projectile, float homingRadius, float topSpeed, bool rotateTowards = false, float homingStrength = 1f, bool needsLineOfSight = false) {
+        public static void HomeOnEnemy(Projectile projectile, float homingRadius, float topSpeed, bool rotateTowards = false, float homingStrength = 1f, bool needsLineOfSight = false)
+        {
             if (!projectile.active || !projectile.friendly) return;
             const int BASE_STRENGTH = 30;
 
             Vector2 targetLocation = Vector2.UnitY;
             bool foundTarget = false;
 
-            for (int i = 0; i < 200; i++) {
+            for (int i = 0; i < 200; i++)
+            {
                 if (!Main.npc[i].active) continue;
                 float toNPCEdge = (Main.npc[i].width / 2) + (Main.npc[i].height / 2); //make homing on larger targets more consistent
 
                 //WithinRange is just faster Distance (skips sqrt)
-                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1))) {
+                if (Main.npc[i].CanBeChasedBy(projectile) && projectile.WithinRange(Main.npc[i].Center, homingRadius + toNPCEdge) && (!needsLineOfSight || Collision.CanHitLine(projectile.Center, 1, 1, Main.npc[i].Center, 1, 1)))
+                {
                     targetLocation = Main.npc[i].Center;
                     foundTarget = true;
                     break;
                 }
             }
 
-            if (foundTarget) {
+            if (foundTarget)
+            {
                 Vector2 homingDirection = Vector2.Normalize(targetLocation - projectile.Center);
                 projectile.velocity = (projectile.velocity * (BASE_STRENGTH / homingStrength) + homingDirection * topSpeed) / ((BASE_STRENGTH / homingStrength) + 1);
             }
-            if (rotateTowards) {
-                if (projectile.velocity.Length() < topSpeed) {
+            if (rotateTowards)
+            {
+                if (projectile.velocity.Length() < topSpeed)
+                {
                     projectile.velocity *= topSpeed / projectile.velocity.Length();
                 }
             }
-            if (projectile.velocity.Length() > topSpeed) {
+            if (projectile.velocity.Length() > topSpeed)
+            {
                 projectile.velocity *= topSpeed / projectile.velocity.Length();
             }
         }
@@ -510,7 +540,7 @@ namespace tsorcRevamp {
         public static double CompareAngles(Vector2 firstVector, Vector2 secondVector)
         {
             double a1 = firstVector.ToRotation();
-            if(a1 < 0)
+            if (a1 < 0)
             {
                 a1 = MathHelper.TwoPi + a1;
             }
@@ -526,7 +556,7 @@ namespace tsorcRevamp {
             //The largest angle between two points on a circle should be Pi radians at most
             //If comparing them clockwise resulted in a bigger number, then compare them counterclockwise
             //Also shift them both over by a quadrant to avoid comparing across the 0/TwoPi breakpoint
-            if(Math.Abs(c) > MathHelper.Pi)
+            if (Math.Abs(c) > MathHelper.Pi)
             {
                 a1 += MathHelper.PiOver2;
                 a2 += MathHelper.PiOver2;
@@ -547,7 +577,8 @@ namespace tsorcRevamp {
         /// <summary>
         /// No more fall damage from teleports!
         /// </summary>
-        public static void SafeTeleport(this Player player, Vector2 destination) {
+        public static void SafeTeleport(this Player player, Vector2 destination)
+        {
             player.position.X = destination.X;
             player.position.Y = destination.Y;
             player.gravDir = 1;
@@ -641,7 +672,8 @@ namespace tsorcRevamp {
         /// Returns the character's position from (pos + 1) frames ago. Direct array access, beware out of bounds access
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 OldPos(this Player player, int pos) {
+        public static Vector2 OldPos(this Player player, int pos)
+        {
             return player.GetModPlayer<tsorcRevampPlayer>().oldPos[pos];
         }
     }

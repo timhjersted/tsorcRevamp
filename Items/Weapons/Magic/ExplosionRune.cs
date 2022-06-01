@@ -1,13 +1,17 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class ExplosionRune : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class ExplosionRune : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Projectile that explodes with 5 small fireballs at the point of impact.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.consumable = false;
             Item.damage = 40;
             Item.height = 28;
@@ -27,7 +31,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.ExplosionBall>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
@@ -35,7 +40,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

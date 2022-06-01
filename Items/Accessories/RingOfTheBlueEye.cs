@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             if (!hideVisual && player.direction == -1)
             {
-                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f); 
+                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.1f;
                 Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 1f;
@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             if (player.direction == -1)
             {
-                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f); 
+                int dust = Dust.NewDust(player.position + new Vector2(1, 9), 2, 2, 111, 0f, 0f, 100, default(Color), .6f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity *= 0.1f;
                 Main.dust[dust].velocity.Y = Main.dust[dust].velocity.Y - 1f;

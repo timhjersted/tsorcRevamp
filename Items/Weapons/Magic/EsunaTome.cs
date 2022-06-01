@@ -2,12 +2,16 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class EsunaTome : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class EsunaTome : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("A lost tome known to cure all but the rarest of ailments.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Cyan;
@@ -22,14 +26,16 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.width = 34;
         }
 
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             int buffIndex = 0;
 
-            foreach (int buffType in player.buffType) {
+            foreach (int buffType in player.buffType)
+            {
 
-                if ((buffType == BuffID.Bleeding) 
-                    || (buffType == BuffID.Poisoned) 
-                    || (buffType == BuffID.Confused) 
+                if ((buffType == BuffID.Bleeding)
+                    || (buffType == BuffID.Poisoned)
+                    || (buffType == BuffID.Confused)
                     || (buffType == BuffID.BrokenArmor)
                     || (buffType == BuffID.Darkness)
                     || (buffType == BuffID.OnFire)
@@ -38,7 +44,8 @@ namespace tsorcRevamp.Items.Weapons.Magic {
                     || (buffType == BuffID.CursedInferno)
                     || (buffType == BuffID.Cursed) // why are these in here? you can't use this item if you have cursed or silenced 
                     || (buffType == BuffID.Silenced) // the original tsorc mod has these in here, so im leaving them, but im *well* aware of how stupid this is
-                    ) {
+                    )
+                {
                     player.buffTime[buffIndex] = 0;
                 }
                 buffIndex++;
@@ -46,14 +53,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("HealingElixir").Type, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.HallowedMask, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

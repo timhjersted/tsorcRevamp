@@ -1,14 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Bolt2Ball : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class Bolt2Ball : ModProjectile
+    {
 
         public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 16;
             Projectile.height = 16;
             Projectile.penetrate = 1;
@@ -17,7 +19,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0.3f;
         }
-        public override void AI() {
+        public override void AI()
+        {
 
             if (Projectile.wet)
             {
@@ -73,7 +76,8 @@ namespace tsorcRevamp.Projectiles {
             }
         }
 
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width / 2, Projectile.position.Y + Projectile.height / 2, Projectile.velocity.X, Projectile.velocity.Y, ModContent.ProjectileType<Bolt2Bolt>(), Projectile.damage, 4f, Projectile.owner);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53.WithPitchVariance(.3f).WithVolume(.8f), new Vector2(Projectile.position.X, Projectile.position.Y));
 

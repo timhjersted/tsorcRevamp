@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
-using Microsoft.Xna.Framework.Graphics;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, 6, 8), Color.White, Projectile.rotation, new Vector2(3, 4), Projectile.scale, SpriteEffects.None, 0);
 
@@ -42,40 +42,40 @@ namespace tsorcRevamp.Projectiles
 
         public override void AI()
         {
-			if (Projectile.velocity.X > 0) //if going right
-			{
-				for (int d = 0; d < 4; d++)
-				{
-					int num44 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 2), Projectile.width, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-					Main.dust[num44].noGravity = true;
-					Main.dust[num44].velocity *= 0f;
-				}
-
-				for (int d = 0; d < 4; d++)
-				{
-					int num45 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 2), Projectile.width - 4, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), .5f);
-					Main.dust[num45].noGravity = true;
-					Main.dust[num45].velocity *= 0f;
-					Main.dust[num45].fadeIn *= 1f;
-				}
-			}
-			else //if going left
+            if (Projectile.velocity.X > 0) //if going right
             {
-				for (int d = 0; d < 4; d++)
-				{
-					int num44 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 1), Projectile.width, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
-					Main.dust[num44].noGravity = true;
-					Main.dust[num44].velocity *= 0f;
-				}
+                for (int d = 0; d < 4; d++)
+                {
+                    int num44 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 2), Projectile.width, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                    Main.dust[num44].noGravity = true;
+                    Main.dust[num44].velocity *= 0f;
+                }
 
-				for (int d = 0; d < 4; d++)
-				{
-					int num45 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 1), Projectile.width - 4, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), .5f);
-					Main.dust[num45].noGravity = true;
-					Main.dust[num45].velocity *= 0f;
-					Main.dust[num45].fadeIn *= 1f;
-				}
-			}
+                for (int d = 0; d < 4; d++)
+                {
+                    int num45 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 2), Projectile.width - 4, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), .5f);
+                    Main.dust[num45].noGravity = true;
+                    Main.dust[num45].velocity *= 0f;
+                    Main.dust[num45].fadeIn *= 1f;
+                }
+            }
+            else //if going left
+            {
+                for (int d = 0; d < 4; d++)
+                {
+                    int num44 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 1), Projectile.width, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), 1f);
+                    Main.dust[num44].noGravity = true;
+                    Main.dust[num44].velocity *= 0f;
+                }
+
+                for (int d = 0; d < 4; d++)
+                {
+                    int num45 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y - 1), Projectile.width - 4, Projectile.height, 68, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default(Color), .5f);
+                    Main.dust[num45].noGravity = true;
+                    Main.dust[num45].velocity *= 0f;
+                    Main.dust[num45].fadeIn *= 1f;
+                }
+            }
 
             Lighting.AddLight(Projectile.Center, .200f, .200f, .350f);
 

@@ -128,7 +128,7 @@ namespace tsorcRevamp.NPCs.Bosses
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player thisPlayer = Main.player[i];
-                if(thisPlayer != null && thisPlayer.active)
+                if (thisPlayer != null && thisPlayer.active)
                 {
                     thisPlayer.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 300);
                 }
@@ -150,7 +150,7 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                if(dustRadius > dustMin)
+                if (dustRadius > dustMin)
                 {
                     dustRadius -= 0.25f;
                 }
@@ -164,8 +164,8 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 dustVel = dir.RotatedBy(MathHelper.Pi / 2) * speed;
                     Dust dustID = Dust.NewDustPerfect(dustPos, 173, dustVel, 200);
                     dustID.noGravity = true;
-                }                
-                
+                }
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     fireballTimer += (Main.rand.Next(2, 5) * 0.1f) * 1.1;
@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Terraria.Audio.SoundEngine.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
             }
             else if (!is_archer || NPC.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
-            {               
+            {
 
                 if (NPC.velocity.X == 0f)
                 {
@@ -797,7 +797,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         boredTimer++;
                         if (boredTimer > tBored)
                         {
-                            boredResetT = 0;                            
+                            boredResetT = 0;
                             NPC.directionY = -1;
                             if (NPC.velocity.Y > 0f)
                             {
@@ -828,7 +828,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         #region damage counter then lunge
         public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
-            {
+        {
             comboDamage += (float)damage;
             if (comboDamage > 90)
             {

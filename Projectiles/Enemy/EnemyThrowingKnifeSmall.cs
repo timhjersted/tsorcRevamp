@@ -24,10 +24,10 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = .5f; //was .8
             Projectile.tileCollide = true;
             Projectile.width = 18; //was 8
-            aiType = ProjectileID.WoodenArrowFriendly;
+            AIType = ProjectileID.WoodenArrowFriendly;
         }
 
-        
+
         public override bool PreKill(int timeLeft)
         {
             Projectile.type = 0;
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
             {
-                
+
                 Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
                 for (int i = 0; i < 10; i++)
                 {

@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    public class MeteorShower : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    public class MeteorShower : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Causes meteorites to rain from the sky.");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -26,27 +30,28 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.DamageType = DamageClass.Magic;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
         public override bool? UseItem(Player player)
         {
-            Projectile.NewProjectile(
-                (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),
-                (float)player.position.Y - 800.0f,
-                (float)(Main.rand.Next(-40, 40)) / 10,
-                14.9f,
-                ModContent.ProjectileType<Projectiles.MeteorShower>(),
-                50,
-                2.0f,
-                player.whoAmI);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item),
+               (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),
+               (float)player.position.Y - 800.0f,
+               (float)(Main.rand.Next(-40, 40)) / 10,
+               14.9f,
+               ModContent.ProjectileType<Projectiles.MeteorShower>(),
+               50,
+               2.0f,
+               player.whoAmI);
             return true;
         }
     }

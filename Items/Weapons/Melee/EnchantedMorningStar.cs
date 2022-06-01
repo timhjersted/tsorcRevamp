@@ -1,15 +1,19 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
 
-    public class EnchantedMorningStar : ModItem {
+    public class EnchantedMorningStar : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Enchantment does increased damage against mages and ghosts.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 28;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -29,13 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shoot = ModContent.ProjectileType<Projectiles.EnchantedMorningStar>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldMorningStar").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

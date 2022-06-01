@@ -38,8 +38,8 @@ namespace tsorcRevamp.Items.Armors
             player.GetCritChance(DamageClass.Melee) += 7;
             player.lifeRegen += 13;
         }
-        
-         public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
         }
@@ -50,7 +50,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.CobaltHelmet, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

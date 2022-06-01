@@ -1,14 +1,13 @@
-using System;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.Localization;
-using System.Reflection;
-using Terraria.DataStructures;
 
 namespace tsorcRevamp
 {
@@ -246,7 +245,7 @@ namespace tsorcRevamp
 
             //KRAKEN
             ScriptedEvent KrakenEvent = new ScriptedEvent(new Vector2(1821, 1702), 30, ModContent.NPCType<NPCs.Bosses.Fiends.WaterFiendKraken>(), DustID.MagicMirror, true, true, "The Water Fiend rises!", Color.Blue, false, SuperHardModeCustomCondition);
-            
+
             //GWYN
             ScriptedEvent GwynEvent = new ScriptedEvent(new Vector2(832, 1244), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, "Gwyn has awoken to bring your journey to its final end...", Color.Red, false, SuperHardModeCustomCondition);
 
@@ -255,7 +254,7 @@ namespace tsorcRevamp
 
             //WITCHKING
             ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, "The Witchking has been waiting for you...", Color.Red, false, SuperHardModeCustomCondition);
-            
+
             //BLIGHT
             ScriptedEvent BlightEvent = new ScriptedEvent(new Vector2(8174, 866), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), DustID.MagicMirror, true, true, "The Blight surfaces from the ocean!", Color.Blue, false, SuperHardModeCustomCondition);
             //BlightEvent.SetCustomStats(50000, 30, 50);
@@ -265,7 +264,7 @@ namespace tsorcRevamp
 
             //WYVERN MAGE SHADOW-SHM
             ScriptedEvent WyvernMageShadowEvent = new ScriptedEvent(new Vector2(6432, 196), 20, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), DustID.MagicMirror, true, true, "The Wyvern Mage has been freed from its cage!", Color.Blue, false, SuperHardModeCustomCondition);
-          
+
             //DARK CLOUD
             ScriptedEvent DarkCloudEvent = new ScriptedEvent(new Vector2(5828, 1760), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>(), DustID.ShadowbeamStaff, true, true, "Your shadow self has manifested from your darkest fears...", Color.Blue, false, SuperHardModeCustomCondition);
 
@@ -309,7 +308,7 @@ namespace tsorcRevamp
 
             //GOBLIN TINKERER  SPAWN EVENT
             ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, default, 31, true, true, "", default, false, TinkererCondition, TinkererAction);
-            
+
             //MECHANIC SPAWN EVENT
             ScriptedEvent SpawnMechanic = new ScriptedEvent(new Vector2(294, 1366), 100, default, 31, true, true, "", default, false, MechanicCondition, MechanicAction);
 
@@ -439,7 +438,7 @@ namespace tsorcRevamp
             InactiveEvents = new List<ScriptedEvent>();
             foreach (KeyValuePair<ScriptedEventType, ScriptedEvent> eventValuePair in ScriptedEventDict)
             {
-                InactiveEvents.Add(eventValuePair.Value);                
+                InactiveEvents.Add(eventValuePair.Value);
             }
 
             ActiveEvents = new List<ScriptedEvent>();
@@ -508,7 +507,7 @@ namespace tsorcRevamp
         {
             return !Main.dayTime;
         }
-        
+
         public static bool HardModeCustomCondition()
         {
             return Main.hardMode;
@@ -532,7 +531,8 @@ namespace tsorcRevamp
             }
         }
 
-        public static bool TinkererCondition() {
+        public static bool TinkererCondition()
+        {
             return !NPC.AnyNPCs(NPCID.GoblinTinkerer);
         }
 
@@ -563,9 +563,9 @@ namespace tsorcRevamp
             {
                 return true;
             }
-            else 
-            { 
-                return false; 
+            else
+            {
+                return false;
             }
         }
 
@@ -578,11 +578,13 @@ namespace tsorcRevamp
             else { return false; }
         }
 
-        public static bool MechanicCondition() {
+        public static bool MechanicCondition()
+        {
             return !NPC.AnyNPCs(NPCID.Mechanic);
         }
-        
-        public static bool WizardCondition() {
+
+        public static bool WizardCondition()
+        {
             return !NPC.AnyNPCs(NPCID.Wizard);
         }
 
@@ -633,11 +635,11 @@ namespace tsorcRevamp
             return false;
         }
 
-       
-       public static bool StormCustomAction(Player player, ScriptedEvent thisEvent)
+
+        public static bool StormCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null); 
-            return true;   
+            typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+            return true;
         }
 
         public static bool SetNightCustomAction(Player player, ScriptedEvent thisEvent)
@@ -684,7 +686,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
-                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;                
+                NPCs.Enemies.RedKnight ourRedKnightPain = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;
                 ourRedKnightPain.redKnightsSpearDamage = 20;
             }
             return true;
@@ -695,7 +697,7 @@ namespace tsorcRevamp
         {
             if (thisEvent.spawnedNPC.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
-                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;                
+                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.spawnedNPC.ModNPC;
                 ourRedKnight.redKnightsSpearDamage = 19;
                 ourRedKnight.redMagicDamage = 19;
             }
@@ -704,7 +706,8 @@ namespace tsorcRevamp
 
         //i dont want this event to last forever, so just spawn the tinkerer and immediately end the event
         //... is what it SHOULD do?
-        public static bool TinkererAction(Player player, ScriptedEvent thisEvent) {
+        public static bool TinkererAction(Player player, ScriptedEvent thisEvent)
+        {
             NPC.NewNPC(4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
             NPC.savedGoblin = true;
             thisEvent.endEvent = true;
@@ -828,14 +831,16 @@ namespace tsorcRevamp
             return false;
         }
 
-        public static bool MechanicAction(Player player, ScriptedEvent thisEvent) {
+        public static bool MechanicAction(Player player, ScriptedEvent thisEvent)
+        {
             NPC.NewNPC(277 * 16, 1366 * 16, NPCID.Mechanic);
             NPC.savedMech = true;
             thisEvent.endEvent = true;
             return true;
         }
 
-        public static bool WizardAction(Player player, ScriptedEvent thisEvent) {
+        public static bool WizardAction(Player player, ScriptedEvent thisEvent)
+        {
             NPC.NewNPC(7322 * 16, 603 * 16, NPCID.Wizard);
             NPC.savedWizard = true;
             thisEvent.endEvent = true;
@@ -882,7 +887,7 @@ namespace tsorcRevamp
                     else
                     {
                         UsefulFunctions.BroadcastText("ERROR: Failed to convert string " + eventTypeStrings[i] + "to enum. Please report this!! You can do so in our discord: https://discord.gg/kSptDbe", Color.Red);
-                    }               
+                    }
                 }
             }
 
@@ -934,7 +939,7 @@ namespace tsorcRevamp
                         float speed = 2f;
                         if (!InactiveEvents[i].square)
                         {
-                            
+
                             //If the player is nearby, display some dust to make the region visible to them
                             //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
                             if ((InactiveEvents[i].visible && distance < 6000000) || InactiveEvents[i].npcToSpawn == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000)
@@ -942,7 +947,7 @@ namespace tsorcRevamp
                                 float sqrtRadius = (float)Math.Sqrt(InactiveEvents[i].radius);
                                 for (int j = 0; j < dustPerTick; j++)
                                 {
-                                   
+
                                     Vector2 dir = Main.rand.NextVector2CircularEdge(sqrtRadius, sqrtRadius);
                                     Vector2 dustPos = InactiveEvents[i].centerpoint + dir;
                                     if (Collision.CanHit(InactiveEvents[i].centerpoint, 0, 0, dustPos, 0, 0))
@@ -1055,8 +1060,8 @@ namespace tsorcRevamp
                 //Run any active events
                 for (int i = 0; i < ActiveEvents.Count; i++)
                 {
-                        ActiveEvents[i].RunEvent(player);
-                }                
+                    ActiveEvents[i].RunEvent(player);
+                }
             }
             else
             {
@@ -1171,7 +1176,7 @@ namespace tsorcRevamp
             eventPacket.Write((byte)tsorcPacketID.SyncEventDust);
             eventPacket.Write(NetworkEvents.Count);
 
-            foreach(NetworkEvent thisEvent in NetworkEvents)
+            foreach (NetworkEvent thisEvent in NetworkEvents)
             {
                 eventPacket.WriteVector2(thisEvent.centerpoint);
                 eventPacket.Write(thisEvent.radius);
@@ -1183,7 +1188,7 @@ namespace tsorcRevamp
         }
         public static void RefreshEvents()
         {
-            foreach(ScriptedEvent currentEvent in DisabledEvents)
+            foreach (ScriptedEvent currentEvent in DisabledEvents)
             {
                 InactiveEvents.Add(currentEvent);
             }
@@ -1344,7 +1349,7 @@ namespace tsorcRevamp
             {
                 newDamage = damage;
             }
-            if(souls != null)
+            if (souls != null)
             {
                 newSouls = souls;
             }
@@ -1377,12 +1382,12 @@ namespace tsorcRevamp
             //If it has a custom action, then run it. If it returns true, mark it as finished and do not run it again.
             if (hasCustomAction && !finishedCustomAction)
             {
-                if(CustomAction(player, this))
+                if (CustomAction(player, this))
                 {
                     finishedCustomAction = true;
                 }
             }
-            
+
             //Updates timer *after* running actions
             eventTimer++;
 
@@ -1431,7 +1436,7 @@ namespace tsorcRevamp
             if (endEvent)
             {
                 EndEvent(true);
-            }            
+            }
         }
 
         public void SpawnNPC()
@@ -1455,7 +1460,7 @@ namespace tsorcRevamp
                     {
                         spawnedNPCs[i].damage = newDamage.Value;
                     }
-                    if(newSouls != null)
+                    if (newSouls != null)
                     {
                         if (Main.expertMode)
                         {
@@ -1510,20 +1515,21 @@ namespace tsorcRevamp
         public void EndEvent(bool eventCompleted)
         {
             //Save the event if it's marked as a saved event and it is 'completed' (either by a customaction forcibly ending it, or by all the NPC's being killed)
-            if (eventCompleted && save) {
+            if (eventCompleted && save)
+            {
                 foreach (KeyValuePair<tsorcScriptedEvents.ScriptedEventType, ScriptedEvent> pair in tsorcScriptedEvents.ScriptedEventDict)
                 {
                     if (pair.Value == this)
                     {
                         tsorcScriptedEvents.ScriptedEventValues[pair.Key] = true;
                     }
-                }                
+                }
             }
             //Otherwise if it wasn't completed, then despawn the NPC's and re-add it to DisabledEvents to be re-initialized once the player respawns
             else
             {
                 tsorcScriptedEvents.DisabledEvents.Add(this);
-                if(spawnedNPC != null)
+                if (spawnedNPC != null)
                 {
                     if (spawnedNPC.active && spawnedNPC.boss == false)
                     {
@@ -1534,9 +1540,9 @@ namespace tsorcRevamp
                         }
                     }
                 }
-                if(spawnedNPCs.Count > 0)
+                if (spawnedNPCs.Count > 0)
                 {
-                    foreach(NPC thisNPC in spawnedNPCs)
+                    foreach (NPC thisNPC in spawnedNPCs)
                     {
                         if (thisNPC.active)
                         {

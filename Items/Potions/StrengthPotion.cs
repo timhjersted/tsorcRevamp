@@ -2,15 +2,19 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class StrengthPotion : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Potions
+{
+    public class StrengthPotion : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Increases damage by 15%, critical strike chance " +
                              "\nby 2%, defense by 15, and swing speed by 15%." +
                              "\nDoes not stack with Demon Drug, Armor Drug, or Battlefront Potions.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 20;
             Item.height = 26;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -39,14 +43,15 @@ namespace tsorcRevamp.Items.Potions {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Deathweed, 1);
             recipe.AddIngredient(ItemID.Diamond, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

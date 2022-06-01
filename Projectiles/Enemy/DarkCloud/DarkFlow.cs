@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 {
@@ -38,7 +36,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             //Could these all be one line? Sure. Would make it even more obnoxious to figure out what it does, though
             Vector2 target = UsefulFunctions.GenerateTargetingVector(Projectile.Center, darkCloud.Center, 8);
             Projectile.velocity = target;
-            Projectile.velocity += (2.2f * ((initialDistance - distance)/initialDistance) * target.RotatedBy(MathHelper.ToRadians(90)));
+            Projectile.velocity += (2.2f * ((initialDistance - distance) / initialDistance) * target.RotatedBy(MathHelper.ToRadians(90)));
 
             //Only spawn dust that will actually be onscreen
             if (Vector2.Distance(Projectile.Center, Main.player[Main.myPlayer].Center) < 1000)
@@ -56,7 +54,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
 
         public override bool PreDraw(ref Color lightColor)
         {
-            
+
             return false;
         }
 

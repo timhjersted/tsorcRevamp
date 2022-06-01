@@ -2,11 +2,14 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Ammo {
+namespace tsorcRevamp.Items.Ammo
+{
 
-    public class Bolt : ModItem {
+    public class Bolt : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.stack = 1;
             Item.consumable = true;
@@ -25,7 +28,8 @@ namespace tsorcRevamp.Items.Ammo {
             Item.shoot = ModContent.ProjectileType<Projectiles.Bolt>(); //dont forget to make it shoot a projectile
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.Wood, 1);

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -25,19 +23,19 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.scale = 1f;
             Projectile.tileCollide = true;
-			Projectile.timeLeft = 0;
+            Projectile.timeLeft = 0;
         }
 
-		public override void AI()
-		{		
-			
-		}
+        public override void AI()
+        {
 
-		public override void Kill(int timeLeft)
+        }
+
+        public override void Kill(int timeLeft)
         {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStorm>(), Projectile.damage, 8f, Projectile.owner);
             //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 110, 0.3f, -0.01f); //crystal serpent split, paper, thud, faint high squeel 
         }
 
-	}
+    }
 }

@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class GoldenHairpin : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class GoldenHairpin : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Halves the mana needed for spells");
 
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
 
             Item.width = 32;
             Item.height = 26;
@@ -18,7 +22,8 @@ namespace tsorcRevamp.Items.Accessories {
             Item.value = PriceByRarity.Cyan_9;
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.manaCost -= 0.50f;
         }
     }

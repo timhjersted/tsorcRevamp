@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -195,11 +194,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        
+
 
 
         #region Debuffs
-        public override void OnHitPlayer(Player player, int target, bool crit) 
+        public override void OnHitPlayer(Player player, int target, bool crit)
         {
 
             if (Main.rand.Next(2) == 0)
@@ -281,7 +280,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     0);
             }
         }
-        
+
 
         #region gore
         public override void OnKill()

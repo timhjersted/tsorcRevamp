@@ -3,17 +3,23 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.VanillaItems {
-    class TooltipHelper : GlobalItem {
+namespace tsorcRevamp.Items.VanillaItems
+{
+    class TooltipHelper : GlobalItem
+    {
 
         //this method adds potentially multiple tooltip lines to the end of an item's tooltip stack 
-        public static void SimpleModTooltip(Mod mod, Item item, List<TooltipLine> tooltips, int ItemID, string TipToAdd1, string TipToAdd2 = null) { 
-            if (item.type == ItemID) {
+        public static void SimpleModTooltip(Mod mod, Item item, List<TooltipLine> tooltips, int ItemID, string TipToAdd1, string TipToAdd2 = null)
+        {
+            if (item.type == ItemID)
+            {
                 int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
-                if (ttindex != -1) {// if we find one
+                if (ttindex != -1)
+                {// if we find one
                     //insert the extra tooltip line
                     tooltips.Insert(ttindex + 1, new TooltipLine(mod, "", TipToAdd1));
-                    if (TipToAdd2 != null ) {
+                    if (TipToAdd2 != null)
+                    {
                         tooltips.Insert(ttindex + 2, new TooltipLine(mod, "", TipToAdd2));
                     }
                 }
@@ -35,7 +41,8 @@ namespace tsorcRevamp.Items.VanillaItems {
 
         }
 
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a");
             //SimpleModTooltip(mod, item, tooltips, ItemID., "a", "b");
             //SimpleModTooltip(mod, item, tooltips, ItemID.FlaskofFire, "Adds 10% melee damage");  don't do this. flask of fire's tooltip goes at a specific index, not the end
@@ -84,7 +91,7 @@ namespace tsorcRevamp.Items.VanillaItems {
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && player.whoAmI == Main.myPlayer)
             {
-                SimpleModTooltip(Mod, item, tooltips, ItemID.ShinePotion,"Has no effect on the [c/6d8827:Bearer of the Curse]");
+                SimpleModTooltip(Mod, item, tooltips, ItemID.ShinePotion, "Has no effect on the [c/6d8827:Bearer of the Curse]");
             }
 
         }

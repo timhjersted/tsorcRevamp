@@ -1,18 +1,19 @@
-﻿using System;
-using Terraria;
-using Terraria.ModLoader;
+﻿using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
+using Terraria.ModLoader;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
-using Terraria.DataStructures;
 
-namespace tsorcRevamp.Items {
-    class ModRecipeHelper {
-        
-        public static void AddRecipes() {
+namespace tsorcRevamp.Items
+{
+    class ModRecipeHelper
+    {
+
+        public static void AddRecipes()
+        {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
-            
+
             #region add s tier potion recipes
             PermaPotionRecipeS(mod, ModContent.ItemType<ArmorDrugPotion>(), ModContent.ItemType<PermanentArmorDrug>());
             PermaPotionRecipeS(mod, ModContent.ItemType<BattlefrontPotion>(), ModContent.ItemType<PermanentBattlefrontPotion>());
@@ -83,12 +84,12 @@ namespace tsorcRevamp.Items {
             .AddTile(TileID.DemonAltar);
             recipe.Register();
 
-             recipe = mod.CreateRecipe(ModContent.ItemType<PermanentGravitationPotion>(), 1)
-            .AddIngredient(ModContent.ItemType<DarkSoul>(), 15000)
-            .AddIngredient(ItemID.GravitationPotion)
-            .AddIngredient(ItemID.SoulofLight)
-            .AddIngredient(ModContent.ItemType<EternalCrystal>(), 2)
-            .AddTile(TileID.DemonAltar);
+            recipe = mod.CreateRecipe(ModContent.ItemType<PermanentGravitationPotion>(), 1)
+           .AddIngredient(ModContent.ItemType<DarkSoul>(), 15000)
+           .AddIngredient(ItemID.GravitationPotion)
+           .AddIngredient(ItemID.SoulofLight)
+           .AddIngredient(ModContent.ItemType<EternalCrystal>(), 2)
+           .AddTile(TileID.DemonAltar);
             recipe.Register();
             #endregion 
 
@@ -102,14 +103,17 @@ namespace tsorcRevamp.Items {
             recipe = mod.CreateRecipe(ItemID.MagicMirror)
             .AddRecipeGroup(tsorcRevampSystems.UpgradedMirrors)
             .AddTile(TileID.DemonAltar)
-            .AddOnCraftCallback(delegate (Recipe recipe, Item item) { //refund the player's souls when they revert to a base mirror
-                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100); }
+            .AddOnCraftCallback(delegate (Recipe recipe, Item item)
+            { //refund the player's souls when they revert to a base mirror
+                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100);
+            }
             );
             recipe.Register();
         }
 
         #region permanent potion recipes
-        public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
+        public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion)
+        {
             Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 100000)
             .AddIngredient(IngredientPotion)
@@ -117,7 +121,8 @@ namespace tsorcRevamp.Items {
             .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-        public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion) {
+        public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion)
+        {
             Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 30000)
             .AddIngredient(IngredientPotion)
@@ -125,7 +130,8 @@ namespace tsorcRevamp.Items {
             .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-        public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion) {
+        public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion)
+        {
             Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 15000)
             .AddIngredient(IngredientPotion)
@@ -133,7 +139,8 @@ namespace tsorcRevamp.Items {
             .AddTile(TileID.DemonAltar);
             recipe.Register();
         }
-        public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion) {
+        public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion)
+        {
             Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
             .AddIngredient(ModContent.ItemType<DarkSoul>(), 5000)
             .AddIngredient(IngredientPotion)

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.Leather, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 65);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

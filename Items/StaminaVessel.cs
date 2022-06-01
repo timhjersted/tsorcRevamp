@@ -1,9 +1,9 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 namespace tsorcRevamp.Items
 {
@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items
         {
             Player player = Main.LocalPlayer;
 
-            tooltips.Insert(4, new TooltipLine(Mod, "", $"Consumed so far: { (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - 100) / 5}"));
+            tooltips.Insert(4, new TooltipLine(Mod, "", $"Consumed so far: {(player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - 100) / 5}"));
 
         }
 

@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             for (int i = 0; i < numberProjectiles; i++)
             {
                 Vector2 perturbedSpeed = new Vector2(speedX, speedY).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
-                Projectile.NewProjectile(position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
             }
             return false;
         }
@@ -107,7 +107,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             }
             if (baseTexture == null || baseTexture.IsDisposed)
             {
-                baseTexture = Main.itemTexture[Item.type];
+                baseTexture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             }
 
             spriteBatch.Draw(baseTexture, position, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), drawColor, 0f, origin, scale, SpriteEffects.None, 0.1f);
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             }
             if (baseTexture == null || baseTexture.IsDisposed)
             {
-                baseTexture = Main.itemTexture[Item.type];
+                baseTexture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             }
 
             spriteBatch.Draw(baseTexture, Item.Center - Main.screenPosition, new Rectangle(0, 0, baseTexture.Width, baseTexture.Height), lightColor, rotation, new Vector2(Item.width / 2, Item.height / 2), Item.scale, SpriteEffects.None, 0.1f);
@@ -139,7 +139,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

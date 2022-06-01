@@ -1,7 +1,8 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
     public class SilverSpear : ModItem
     {
 
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 10);
-            
+
             recipe.AddTile(TileID.Anvils);
             recipe.Register();
         }

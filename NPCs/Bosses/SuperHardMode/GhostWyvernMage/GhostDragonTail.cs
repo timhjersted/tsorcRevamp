@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -81,7 +80,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //}
 
             //Color color = new Color();
-            int dust1 = Dust.NewDust(new Vector2((float) NPC.position.X, (float) NPC.position.Y), NPC.width, NPC.height, Type:DustID.Snow, 0, 0, 100, Color.White, 1.0f);//npc.position.Y+10
+            int dust1 = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.Snow, 0, 0, 100, Color.White, 1.0f);//npc.position.Y+10
             Main.dust[dust1].noGravity = true;
 
         }

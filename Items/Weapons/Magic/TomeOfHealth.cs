@@ -3,16 +3,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class TomeOfHealth : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class TomeOfHealth : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Tome of Health");
             Tooltip.SetDefault("Spell tome that heals 220 HP" +
                                 "\nShares cooldown with potions" +
                                 "\nCannot be used with \"Quick Heal\"");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.height = 38;
             Item.useTurn = true;
             Item.rare = ItemRarityID.LightRed;
@@ -25,10 +29,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.mana = 240;
         }
 
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
             return (!player.HasBuff(BuffID.PotionSickness) && !player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse);
         }
-        public override bool? UseItem(Player player) {
+        public override bool? UseItem(Player player)
+        {
             player.statLife += 220;
             if (player.statLife > player.statLifeMax2) player.statLife = player.statLifeMax2;
             player.HealEffect(220, true);
@@ -55,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 7000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

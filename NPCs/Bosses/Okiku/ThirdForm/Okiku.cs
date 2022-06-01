@@ -1,14 +1,16 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.IO;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
 
-namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
+namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
+{
     [AutoloadBossHead]
-    public class Okiku : ModNPC {
+    public class Okiku : ModNPC
+    {
         int lookMode;
         int attackPhase;
         int subPhase;
@@ -19,7 +21,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
         bool Initialized;
 
         public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.width = 58;
             NPC.height = 120;
             NPC.aiStyle = -1;
@@ -43,29 +46,37 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             NPC.buffImmune[70] = true;
             despawnHandler = new NPCDespawnHandler("You've been slain at the hand of Attraidies...", Color.DarkMagenta, DustID.PurpleCrystalShard);
         }
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
-            if (damage > NPC.life || damage * 2 > NPC.life) {
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (damage > NPC.life || damage * 2 > NPC.life)
+            {
                 crit = false;
                 damage = NPC.life - 50;
             }
         }
-        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit) {
-            if (damage > NPC.life || damage * 2 > NPC.life) {
+        public override void ModifyHitByItem(Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (damage > NPC.life || damage * 2 > NPC.life)
+            {
                 crit = false;
                 damage = NPC.life - 50;
             }
         }
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.npcFrameCount[NPC.type] = 3;
             DisplayName.SetDefault("Mindflayer Illusion");
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) {
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
+        {
         }
 
-        public void Teleport(float X, float Y) {
+        public void Teleport(float X, float Y)
+        {
             int dustDeath = 0;
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 20; i++)
+            {
                 dustDeath = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10), 200, Color.White, 4f);
                 Main.dust[dustDeath].noGravity = true;
             }
@@ -73,7 +84,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             NPC.position.Y = Y;
             NPC.velocity.X = 0;
             NPC.velocity.Y = 0;
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 20; i++)
+            {
                 dustDeath = Dust.NewDust(new Vector2(X, Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.White, 4f);
                 Main.dust[dustDeath].noGravity = true;
             }
@@ -96,7 +108,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
         public override void AI()
         {
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
-            if (!Initialized) {
+            if (!Initialized)
+            {
                 lookMode = 0;
                 attackPhase = -1;
                 subPhase = 0;
@@ -109,8 +122,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 UsefulFunctions.BroadcastText("You've done well, Red. But it's not over yet.", new Color(150, 150, 150));
             }
 
-            for (int i = 0; i < 10; i++) {
-                if (Main.player[NPC.target].buffType[i] == 18) {
+            for (int i = 0; i < 10; i++)
+            {
+                if (Main.player[NPC.target].buffType[i] == 18)
+                {
                     Main.player[NPC.target].buffType[i] = 0;
                     Main.player[NPC.target].buffTime[i] = 0;
                     if (Main.netMode != NetmodeID.Server && Main.myPlayer == NPC.target)
@@ -123,14 +138,16 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
 
             Vector2 center = new Vector2(NPC.position.X + (NPC.width / 2), NPC.position.Y + (NPC.height / 2));
             genericTimer++;
-            if (attackPhase == -1) {
+            if (attackPhase == -1)
+            {
                 lookMode = 1;
                 phaseTime = 120;
             }
 
             if (attackPhase == 0) // PHASE 0
             {
-                if (!phaseStarted) {
+                if (!phaseStarted)
+                {
                     lookMode = 1;
                     phaseTime = 90;
                     if (teleportLeft)
@@ -149,7 +166,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 if (NPC.position.X > Main.player[NPC.target].position.X) left = true;
                 genericTimer2++;
                 NPC.velocity.Y = -10;
-                if (genericTimer2 == 15) {
+                if (genericTimer2 == 15)
+                {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         if (left)
@@ -172,8 +190,10 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     subPhase = nextSubPhase;
                     nextSubPhase = Main.rand.Next(2);
                     NPC.netUpdate = true;
-                    for (int lol = 0; lol < Main.projectile.Length; lol++) {
-                        if (Main.projectile[lol].active && Main.projectile[lol].type == ModContent.ProjectileType<CrazyOrb>()) {
+                    for (int lol = 0; lol < Main.projectile.Length; lol++)
+                    {
+                        if (Main.projectile[lol].active && Main.projectile[lol].type == ModContent.ProjectileType<CrazyOrb>())
+                        {
                             subPhase = 0;
                             break;
                         }
@@ -184,7 +204,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                     phaseStarted = true;
                 }
                 genericTimer2++;
-                if (genericTimer2 >= 50) {
+                if (genericTimer2 >= 50)
+                {
                     if (subPhase == 0) // SUB PHASE 0
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -214,7 +235,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
 
             if (attackPhase == 2) // PHASE 2
             {
-                if (!phaseStarted) {
+                if (!phaseStarted)
+                {
                     lookMode = 2;
                     phaseTime = 90;
                     CircleTeleport();
@@ -227,7 +249,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 genericTimer2++;
                 NPC.velocity.X *= 0.99f;
                 NPC.velocity.Y *= 0.99f;
-                if (genericTimer2 >= 20) {
+                if (genericTimer2 >= 20)
+                {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float rotation = (float)Math.Atan2(center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -240,7 +263,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
 
             if (attackPhase == 3) // PHASE 3
             {
-                if (!phaseStarted) {
+                if (!phaseStarted)
+                {
                     lookMode = 2;
                     phaseTime = 180;
                     CircleTeleport();
@@ -251,7 +275,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 NPC.velocity.X = (float)(Math.Cos(rotation) * 4) * -1;
                 NPC.velocity.Y = (float)(Math.Sin(rotation) * 4) * -1;
                 genericTimer2++;
-                if (genericTimer2 >= 12) {
+                if (genericTimer2 >= 12)
+                {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         rotation = (float)Math.Atan2(center.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -262,7 +287,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 }
             }
 
-            if (genericTimer >= phaseTime) {
+            if (genericTimer >= phaseTime)
+            {
                 attackPhase = nextAttackPhase;
                 nextAttackPhase = Main.rand.Next(4);
                 NPC.netUpdate = true;
@@ -271,7 +297,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
                 phaseStarted = false;
             }
 
-            if (NPC.life <= NPC.lifeMax / 2) {
+            if (NPC.life <= NPC.lifeMax / 2)
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int NewOkiku = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X, (int)center.Y, ModContent.NPCType<BrokenOkiku>(), 0);
@@ -295,43 +322,56 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             nextWarpAngle = reader.ReadSingle();
         }
 
-        public override void FindFrame(int currentFrame) {
+        public override void FindFrame(int currentFrame)
+        {
             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X, NPC.velocity.Y, 100, Color.White, 1f);
             Main.dust[dust].noGravity = true;
 
-            if (lookMode == 0) {
-                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2)) {
+            if (lookMode == 0)
+            {
+                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+                {
                     NPC.frameCounter = 0;
                     NPC.frame.Y = 0;
-                    if (NPC.position.X > Main.player[NPC.target].position.X) {
+                    if (NPC.position.X > Main.player[NPC.target].position.X)
+                    {
                         NPC.spriteDirection = -1;
                     }
-                    else {
+                    else
+                    {
                         NPC.spriteDirection = 1;
                     }
                 }
             }
-            if (lookMode == 1) {
-                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2)) {
+            if (lookMode == 1)
+            {
+                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+                {
                     NPC.frameCounter = 0;
                     NPC.frame.Y = 0;
-                    if (NPC.position.X > Main.player[NPC.target].position.X) {
+                    if (NPC.position.X > Main.player[NPC.target].position.X)
+                    {
                         NPC.spriteDirection = -1;
                     }
-                    else {
+                    else
+                    {
                         NPC.spriteDirection = 1;
                     }
                 }
             }
 
-            if (lookMode == 2) {
-                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2)) {
+            if (lookMode == 2)
+            {
+                if ((NPC.velocity.X > -2 && NPC.velocity.X < 2) && (NPC.velocity.Y > -2 && NPC.velocity.Y < 2))
+                {
                     NPC.frameCounter = 0;
                     NPC.frame.Y = 0;
-                    if (NPC.position.X > Main.player[NPC.target].position.X) {
+                    if (NPC.position.X > Main.player[NPC.target].position.X)
+                    {
                         NPC.spriteDirection = -1;
                     }
-                    else {
+                    else
+                    {
                         NPC.spriteDirection = 1;
                     }
                 }
@@ -342,7 +382,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
         {
             return false;
         }
-        public override void OnKill() {
+        public override void OnKill()
+        {
             if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);

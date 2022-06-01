@@ -2,9 +2,12 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Icicle : ModProjectile {
-        public override void SetDefaults() {
+namespace tsorcRevamp.Projectiles
+{
+    class Icicle : ModProjectile
+    {
+        public override void SetDefaults()
+        {
             //projectile.aiStyle = 9;
             Projectile.friendly = true;
             Projectile.penetrate = 3;

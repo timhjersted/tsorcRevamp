@@ -65,7 +65,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldHalberd").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            
+
             recipe.Register();
 
         }

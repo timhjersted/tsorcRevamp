@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Potions {
-    public class ShockwavePotion : ModItem {
+namespace tsorcRevamp.Items.Potions
+{
+    public class ShockwavePotion : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Hold DOWN to increase fall speed \nCreate a damaging shockwave when you land \nwhich grows in strength based on distance fallen");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.EatFood;
@@ -24,14 +27,15 @@ namespace tsorcRevamp.Items.Potions {
             Item.buffTime = 12600;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Blinkroot, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
             recipe.AddIngredient(ItemID.Meteorite, 1);
             recipe.AddTile(TileID.Bottles);
-            
+
             recipe.Register();
         }
     }

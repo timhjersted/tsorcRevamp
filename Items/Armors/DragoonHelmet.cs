@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -52,10 +51,10 @@ namespace tsorcRevamp.Items.Armors
             //player.wings = 34; // looks like Jim's Wings
             //player.wingsLogic = 34;
             player.wingTimeMax = 180;
-            
+
         }
-        
-        public override void ArmorSetShadows (Player player)
+
+        public override void ArmorSetShadows(Player player)
         {
             player.armorEffectDrawShadow = true;
         }
@@ -67,7 +66,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ModContent.ItemType<SoulOfLife>(), 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

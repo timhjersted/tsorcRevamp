@@ -2,9 +2,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class CovenantOfArtorias : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class CovenantOfArtorias : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Covenant of Artorias");
             Tooltip.SetDefault("Allows you to enter The Abyss when worn. Remove the ring to escape from The Abyss!" +
                                 "\nThe Abyss pervades the entire world, like a mirror of our own, but the darkness it holds is far greater." +
@@ -15,7 +18,8 @@ namespace tsorcRevamp.Items.Accessories {
                                 "\n+7% Critical strike chance");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 26;
             Item.accessory = true;
@@ -23,16 +27,18 @@ namespace tsorcRevamp.Items.Accessories {
             Item.rare = ItemRarityID.Cyan;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 16000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.GetDamage(DamageClass.Generic) += 0.07f;
             player.moveSpeed += 0.07f;
             player.GetCritChance(DamageClass.Magic) += 7;
@@ -43,7 +49,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.fireWalk = true;
             player.enemySpawns = true;
         }
-        
+
 
     }
 }

@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 
-namespace tsorcRevamp.Projectiles {
-    class Comet : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class Comet : ModProjectile
+    {
         public override void SetDefaults()
         {
             Projectile.hostile = true;
@@ -22,7 +23,8 @@ namespace tsorcRevamp.Projectiles {
 
         Vector2[] lastpos = new Vector2[20];
         int lastposindex = 0;
-        public override void AI() {
+        public override void AI()
+        {
             Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X);
 
 
@@ -31,7 +33,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.velocity.Y = (float)Math.Sin(Projectile.rotation) * Projectile.ai[1];
             Projectile.velocity.X = (float)Math.Cos(Projectile.rotation) * Projectile.ai[1];
 
-            if (Projectile.timeLeft < 100) {
+            if (Projectile.timeLeft < 100)
+            {
                 Projectile.scale *= 0.9f;
                 Projectile.damage = 0;
             }
@@ -42,13 +45,15 @@ namespace tsorcRevamp.Projectiles {
 
         }
 
-        public override void PostDraw(Color lightColor) {
+        public override void PostDraw(Color lightColor)
+        {
             Random rand1 = new Random((int)Main.GameUpdateCount);
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
             Vector2 PC;
             Color targetColor = new Color(0, 50, 255, 0);
             int modlastposindex = lastposindex;
-            for (int i = 0; i < 19; i++) {
+            for (int i = 0; i < 19; i++)
+            {
                 float rotmod = rand1.Next(-100, 100) / 100f;
                 float scalemod = rand1.Next(50, 150) / 100f;
                 lastpos[modlastposindex].X += rand1.Next(-1, 1);
@@ -57,7 +62,7 @@ namespace tsorcRevamp.Projectiles {
 
 
                 Main.EntitySpriteDraw(
-                            Main.projectileTexture[Projectile.type],
+                            (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,
@@ -74,13 +79,14 @@ namespace tsorcRevamp.Projectiles {
             modlastposindex = lastposindex;
             rand1 = new Random((int)Main.GameUpdateCount);
 
-            for (int i = 0; i < 19; i++) {
+            for (int i = 0; i < 19; i++)
+            {
                 float rotmod = rand1.Next(-100, 100) / 100f;
                 float scalemod = rand1.Next(50, 150) / 100f;
                 PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
                 Main.EntitySpriteDraw(
-                            Main.projectileTexture[Projectile.type],
+                            (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type],
                             PC - Main.screenPosition,
                             fromrect,
                             targetColor,

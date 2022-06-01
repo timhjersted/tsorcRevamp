@@ -2,17 +2,18 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
 
     public class CobaltHalberd : ModItem
     {
         public override void SetStaticDefaults()
-	{
-		DisplayName.SetDefault("Cobalt Halberd");
-        Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +
-                            "\nSwing strike does 25% more damage");
+        {
+            DisplayName.SetDefault("Cobalt Halberd");
+            Tooltip.SetDefault("Left-click to stab like a spear, right-click to swing" +
+                                "\nSwing strike does 25% more damage");
 
-	}
+        }
 
         public override void SetDefaults()
         {
@@ -67,7 +68,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
 
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

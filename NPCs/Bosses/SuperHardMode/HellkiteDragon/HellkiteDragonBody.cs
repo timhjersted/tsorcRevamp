@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.width = 44;
             NPC.height = 44;
             drawOffsetY = 49;
-            
+
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;
@@ -55,20 +54,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
-                
-                    for (int num36 = 0; num36 < 50; num36++)
-                    {
-                        Color color = new Color();
-                        int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 10f);
-                        Main.dust[dust].noGravity = false;
-                        dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
-                        Main.dust[dust].noGravity = false;
-                        dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
-                        Main.dust[dust].noGravity = false;
-                        dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 10.0f);
-                        Main.dust[dust].noGravity = true;
-                        //npc.netUpdate = true; //new
-                    }
+
+                for (int num36 = 0; num36 < 50; num36++)
+                {
+                    Color color = new Color();
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 10f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, ProjectileID.GoldenShowerFriendly, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 100, color, 6f);
+                    Main.dust[dust].noGravity = false;
+                    dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 62, 0, 0, 100, Color.White, 10.0f);
+                    Main.dust[dust].noGravity = true;
+                    //npc.netUpdate = true; //new
+                }
                 NPC.life = 0;
                 NPC.HitEffect(0, 10.0);
                 NPCLoot();

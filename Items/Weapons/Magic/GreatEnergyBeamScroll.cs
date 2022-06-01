@@ -1,13 +1,17 @@
-﻿using Terraria.ModLoader;
-using Terraria.ID;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class GreatEnergyBeamScroll : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class GreatEnergyBeamScroll : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The scroll reads \"Exevo gran vix lux.\"");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 55;
             Item.height = 10;
             Item.knockBack = 1;

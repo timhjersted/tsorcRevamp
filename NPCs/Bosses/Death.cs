@@ -4,7 +4,6 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 
 namespace tsorcRevamp.NPCs.Bosses
 {
@@ -101,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 Main.dust[dust].noGravity = true;
             }
 
-            
+
             if (NPC.ai[0] >= 12 && NPC.ai[2] < 5)
             {
                 float speed = 0.5f;
@@ -115,7 +114,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 NPC.ai[0] = 0;
                 NPC.ai[2]++;
             }
-            
+
 
             if (NPC.ai[1] >= 40)
             {
@@ -134,8 +133,8 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
 
                 NPC.ai[2] = 0;
-                NPC.ai[1] = 0;                
-               
+                NPC.ai[1] = 0;
+
                 NPC.position.X = Main.player[NPC.target].position.X + (float)((600 * Math.Cos(nextWarpAngle)) * -1);
                 NPC.position.Y = Main.player[NPC.target].position.Y + (float)((600 * Math.Sin(nextWarpAngle)) * -1);
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -189,7 +188,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
         public override void HitEffect(int hitDirection, double damage)
         {
-            if(NPC.life <= 0)
+            if (NPC.life <= 0)
             {
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
 

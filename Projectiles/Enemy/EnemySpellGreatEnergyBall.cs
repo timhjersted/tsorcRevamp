@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    class EnemySpellGreatEnergyBall : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
+    class EnemySpellGreatEnergyBall : ModProjectile
+    {
         public override string Texture => "tsorcRevamp/Projectiles/Bolt1Ball";
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.aiStyle = 1;
             Projectile.timeLeft = 100;
             Projectile.width = 16;
@@ -16,7 +18,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
         }
-        public override void Kill(int timeLeft) {
+        public override void Kill(int timeLeft)
+        {
             Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 94, 0.09f, .0f); // electric thud quick
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyStrike>(), Projectile.damage, 3f, Projectile.owner);
@@ -24,8 +27,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
             int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
             Main.dust[num41].noGravity = true;
             Main.dust[num41].velocity *= 2f;
-            Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 1f);                
-            
+            Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 1f);
+
         }
 
     }

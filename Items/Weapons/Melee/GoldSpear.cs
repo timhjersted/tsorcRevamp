@@ -1,14 +1,18 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    public class GoldSpear : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    public class GoldSpear : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             base.SetStaticDefaults();
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 13;
             Item.knockBack = 4f;
 
@@ -33,10 +37,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.GoldBar, 10);
-            
+
             recipe.AddTile(TileID.Anvils);
             recipe.Register();
         }

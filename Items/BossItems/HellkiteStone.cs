@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class HellkiteStone : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class HellkiteStone : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Summons a Hellkite Dragon from the sky...");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.width = 38;
             Item.height = 34;
@@ -21,8 +25,9 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
 
-        public override bool? UseItem(Player player) {
-            
+        public override bool? UseItem(Player player)
+        {
+
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>());
             return true;
         }
@@ -41,15 +46,16 @@ namespace tsorcRevamp.Items.BossItems {
             return true;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            { 
-                Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 3);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
-            recipe.AddTile(TileID.DemonAltar);
-            
-            recipe.Register();
+            {
+                Recipe recipe = new Recipe(Mod);
+                recipe.AddIngredient(Mod.GetItem("RedTitanite"), 3);
+                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
+                recipe.AddTile(TileID.DemonAltar);
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
             }
         }
     }

@@ -4,7 +4,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items.Potions;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -701,50 +700,50 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
             }
-        
+
 
             //Dash Stab
             //if (/*!shielding && !slashing && !jumpSlashing*/)
             //{
-                if (NPC.Distance(player.Center) < 160 && NPC.Distance(player.Center) >= 55 && NPC.velocity.Y == 0 && Math.Abs(NPC.Center.Y - player.Center.Y) < 4.5f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0) && (NPC.ai[3] >= 48 || (NPC.ai[1] == 488 && jumpSlashing))) //If timer is at 0 and player is within range
-                {
-                    NPC.TargetClosest(true);
-                    stabbing = true;
-                    shielding = false;
-                    jumpSlashing = false;
-                    NPC.ai[1] = 430;
-                    slashing = false;
-                    NPC.ai[3] = 0; //Reset timer
-                }
+            if (NPC.Distance(player.Center) < 160 && NPC.Distance(player.Center) >= 55 && NPC.velocity.Y == 0 && Math.Abs(NPC.Center.Y - player.Center.Y) < 4.5f * 16 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0) && (NPC.ai[3] >= 48 || (NPC.ai[1] == 488 && jumpSlashing))) //If timer is at 0 and player is within range
+            {
+                NPC.TargetClosest(true);
+                stabbing = true;
+                shielding = false;
+                jumpSlashing = false;
+                NPC.ai[1] = 430;
+                slashing = false;
+                NPC.ai[3] = 0; //Reset timer
+            }
 
-                if (stabbing)
-                {
-                    ++NPC.ai[1];
+            if (stabbing)
+            {
+                ++NPC.ai[1];
 
-                    if (NPC.ai[1] < 436)
+                if (NPC.ai[1] < 436)
+                {
+                    if (NPC.direction == 1)
                     {
-                        if (NPC.direction == 1)
+                        NPC.velocity.X -= 0.15f;
+                        if (NPC.velocity.X < 0)
                         {
-                            NPC.velocity.X -= 0.15f;
-                            if (NPC.velocity.X < 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
-                        }
-
-                        else
-                        {
-                            NPC.velocity.X += 0.15f;
-                            if (NPC.velocity.X > 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            NPC.velocity.X = 0;
                         }
                     }
 
-                    if (NPC.ai[1] == 436) //If timer is 46
+                    else
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45.WithVolume(1f).WithPitchVariance(.3f), NPC.position); //Play slash/swing sound
+                        NPC.velocity.X += 0.15f;
+                        if (NPC.velocity.X > 0)
+                        {
+                            NPC.velocity.X = 0;
+                        }
+                    }
+                }
+
+                if (NPC.ai[1] == 436) //If timer is 46
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45.WithVolume(1f).WithPitchVariance(.3f), NPC.position); //Play slash/swing sound
 
                     if (lifePercentage <= 60)
                     {
@@ -780,77 +779,77 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                 }
 
-                    if (NPC.ai[1] > 450 && NPC.ai[1] < 489)
+                if (NPC.ai[1] > 450 && NPC.ai[1] < 489)
+                {
+                    if (NPC.direction == 1)
                     {
-                        if (NPC.direction == 1)
+                        NPC.velocity.X -= 0.3f;
+                        if (NPC.velocity.X < 0)
                         {
-                            NPC.velocity.X -= 0.3f;
-                            if (NPC.velocity.X < 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
-                        }
-
-                        else
-                        {
-                            NPC.velocity.X += 0.3f;
-                            if (NPC.velocity.X > 0)
-                            {
-                                NPC.velocity.X = 0;
-                            }
+                            NPC.velocity.X = 0;
                         }
                     }
 
-                    if (NPC.ai[1] > 489)
+                    else
                     {
-                        NPC.ai[1] = 280;
-                        stabbing = false;
+                        NPC.velocity.X += 0.3f;
+                        if (NPC.velocity.X > 0)
+                        {
+                            NPC.velocity.X = 0;
+                        }
                     }
-
                 }
+
+                if (NPC.ai[1] > 489)
+                {
+                    NPC.ai[1] = 280;
+                    stabbing = false;
+                }
+
+            }
             //}
 
 
             //Shielding Flame/Fire Attack
 
             //if (shielding || npc.ai[2] > 300 || )
-           //{
-                NPC.ai[2]++;
+            //{
+            NPC.ai[2]++;
 
-                if (!jumpSlashing && !slashing && !stabbing && NPC.velocity.Y == 0 && (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0) || shielding))
+            if (!jumpSlashing && !slashing && !stabbing && NPC.velocity.Y == 0 && (Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0) || shielding))
+            {
+                if (NPC.ai[2] > 300 && NPC.ai[2] <= 310)
                 {
-                    if (NPC.ai[2] > 300 && NPC.ai[2] <= 310)
-                    {
-                        if (NPC.direction == 1) { NPC.velocity.X -= 0.15f; }
-                        else { NPC.velocity.X += 0.15f; }
-                    }
+                    if (NPC.direction == 1) { NPC.velocity.X -= 0.15f; }
+                    else { NPC.velocity.X += 0.15f; }
+                }
 
-                    if (NPC.ai[2] > 310)
-                    {
-                        NPC.velocity.X = 0;
-                        shielding = true;
-                    }
+                if (NPC.ai[2] > 310)
+                {
+                    NPC.velocity.X = 0;
+                    shielding = true;
+                }
 
-                    if (NPC.ai[2] > 380 && NPC.ai[2] < 460 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
+                if (NPC.ai[2] > 380 && NPC.ai[2] < 460 && NPC.Distance(player.Center) > 55 && NPC.Distance(player.Center) < 300)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1f, 0), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), 20, 0f, Main.myPlayer);
+                        Main.projectile[num54].timeLeft = 25;
+                        //play breath sound
+                        if (Main.rand.Next(3) == 0)
                         {
-                            int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + (20f * NPC.direction), NPC.Center.Y, 8f * NPC.direction, Main.rand.NextFloat(-1f, 0), ModContent.ProjectileType<Projectiles.Enemy.SmallFlameJet>(), 20, 0f, Main.myPlayer); 
-                            Main.projectile[num54].timeLeft = 25;
-                            //play breath sound
-                            if (Main.rand.Next(3) == 0)
-                            {
-                                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.3f, .1f); //flame thrower sound
-                            }
-                    }
-                    }
-
-                    if (NPC.ai[2] > 530)
-                    {
-                        shielding = false;
-                        NPC.ai[2] = 0;
+                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 34, 0.3f, .1f); //flame thrower sound
+                        }
                     }
                 }
+
+                if (NPC.ai[2] > 530)
+                {
+                    shielding = false;
+                    NPC.ai[2] = 0;
+                }
+            }
             //}
             #endregion
         }

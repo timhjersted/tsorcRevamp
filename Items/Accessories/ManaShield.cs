@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 50);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

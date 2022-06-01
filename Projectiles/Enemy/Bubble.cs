@@ -4,18 +4,21 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles.Enemy {
-    
-	class Bubble : ModProjectile {
+namespace tsorcRevamp.Projectiles.Enemy
+{
 
-        public override void SetDefaults() {
-			Projectile.hostile = true;
-			Projectile.height = 20;
-			Projectile.penetrate = 2;
-			Projectile.DamageType = DamageClass.Ranged;
-			Projectile.tileCollide = false;
-			//aiType = 1;
-			Projectile.width = 20;
+    class Bubble : ModProjectile
+    {
+
+        public override void SetDefaults()
+        {
+            Projectile.hostile = true;
+            Projectile.height = 20;
+            Projectile.penetrate = 2;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.tileCollide = false;
+            //AIType = 1;
+            Projectile.width = 20;
             Projectile.timeLeft = 360;
         }
 
@@ -43,6 +46,6 @@ namespace tsorcRevamp.Projectiles.Enemy {
         {
             Projectile.type = ProjectileID.WaterBolt;
             return true;
-        }        
+        }
     }
 }

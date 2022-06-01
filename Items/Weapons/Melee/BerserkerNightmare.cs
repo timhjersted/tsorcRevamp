@@ -1,11 +1,14 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
 
-    public class BerserkerNightmare : ModItem { 
+    public class BerserkerNightmare : ModItem
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 32;
             Item.height = 32;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -24,12 +27,13 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shoot = ModContent.ProjectileType<Projectiles.BerserkerSphere>();
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DaoofPow, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 

@@ -4,13 +4,16 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class Ice2Ball : ModProjectile {
-		public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
+namespace tsorcRevamp.Projectiles
+{
+    class Ice2Ball : ModProjectile
+    {
+        public override string Texture => "tsorcRevamp/Projectiles/Ice1Ball";
 
-		public bool isChanneled;
-		int projCount = 0;
-		public override void SetDefaults() {
+        public bool isChanneled;
+        int projCount = 0;
+        public override void SetDefaults()
+        {
             Projectile.friendly = true;
             Projectile.height = 16;
             Projectile.DamageType = DamageClass.Magic;
@@ -21,19 +24,19 @@ namespace tsorcRevamp.Projectiles {
 
             //Iterate through the projectile array
             for (int i = 0; i < Main.projectile.Length; i++)
-			{
-				//For each, check if it's modded. If so, check if it's the Ice2Ball.
-				if (Main.projectile[i].ModProjectile != null && Main.projectile[i].ModProjectile is Projectiles.Ice2Ball)
-				{
-					//Cast it to an Ice2Ball so we can check if it's currently being channeled, and make sure it's still active
-					if (((Projectiles.Ice2Ball)Main.projectile[i].ModProjectile).isChanneled && Main.projectile[i].active)
-					{
-						//If so, then up the count
-						projCount++;
-					}
-				}
-			}
-		}
+            {
+                //For each, check if it's modded. If so, check if it's the Ice2Ball.
+                if (Main.projectile[i].ModProjectile != null && Main.projectile[i].ModProjectile is Projectiles.Ice2Ball)
+                {
+                    //Cast it to an Ice2Ball so we can check if it's currently being channeled, and make sure it's still active
+                    if (((Projectiles.Ice2Ball)Main.projectile[i].ModProjectile).isChanneled && Main.projectile[i].active)
+                    {
+                        //If so, then up the count
+                        projCount++;
+                    }
+                }
+            }
+        }
 
         public override void AI()
         {

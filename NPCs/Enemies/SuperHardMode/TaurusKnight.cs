@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -113,7 +112,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             projectileTimer++;
-            if(clearLineofSight)
+            if (clearLineofSight)
             {
                 //Fire rain and disruptor
                 if (projectileTimer > 225)
@@ -190,7 +189,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             }
         }
-    
+
 
         static Texture2D spearTexture;
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -203,7 +202,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             //TELEGRAPH DUSTS
-            if (tridentTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))  
+            if (tridentTimer >= 117 && Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
             {
                 Lighting.AddLight(NPC.Center, Color.Yellow.ToVector3() * 1f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                 if (Main.rand.Next(2) == 1)
@@ -214,18 +213,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 //if (npc.ai[2] >= 150)
                 //{
-                
-                    SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                    if (NPC.spriteDirection == -1)
-                    {
-                        spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
-                    }
 
-                
+                SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                if (NPC.spriteDirection == -1)
+                {
+                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, -MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing left (8, 38 work)
+                }
+                else
+                {
+                    spriteBatch.Draw(spearTexture, NPC.Center - Main.screenPosition, new Rectangle(0, 0, spearTexture.Width, spearTexture.Height), drawColor, MathHelper.PiOver2, new Vector2(8, 38), NPC.scale, effects, 0); // facing right, first value is height, higher number is higher
+                }
+
+
             }
         }
 

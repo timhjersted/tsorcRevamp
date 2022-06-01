@@ -2,14 +2,18 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class DragonStone : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class DragonStone : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Imbues swords with fire, raises damage dealt by 5% and provides immunity to" +
                                 "\nmost flying creatures, lava, catching on fire, knockback, and fire blocks.");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 26;
             Item.height = 26;
             Item.accessory = true;
@@ -28,7 +32,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
         */
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.GetDamage(DamageClass.Generic) += 0.05f;
             player.noKnockback = true;
             player.fireWalk = true;

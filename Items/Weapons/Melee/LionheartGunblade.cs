@@ -2,13 +2,17 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class LionheartGunblade : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class LionheartGunblade : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("\"Of gunblades, the finest model is the Lionheart.\"");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.damage = 50;
             Item.width = 66;
             Item.height = 26;

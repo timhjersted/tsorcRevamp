@@ -1,18 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-
+﻿
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Magic {
-    class WandOfDarkness2 : ModItem {
+namespace tsorcRevamp.Items.Weapons.Magic
+{
+    class WandOfDarkness2 : ModItem
+    {
         public override string Texture => "tsorcRevamp/Items/Weapons/Magic/WandOfDarkness";
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Wand of Darkness II");
             Tooltip.SetDefault("Greater damage and higher knockback");
             Item.staff[Item.type] = true;
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.autoReuse = true;
             Item.width = 12;
             Item.height = 17;
@@ -30,12 +33,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.ShadowBall>();
         }
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("WandOfDarkness").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2700);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

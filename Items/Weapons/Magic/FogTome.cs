@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
 {
-    public class FogTome : ModItem 
+    public class FogTome : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -40,13 +39,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(Mod.Find<ModItem>("HealingElixir").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
 
 
-        public override bool? UseItem(Player player) 
+        public override bool? UseItem(Player player)
         {
             player.AddBuff(ModContent.BuffType<Buffs.Fog>(), 900, false);
             return true;

@@ -1,22 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
-using tsorcRevamp.Items.Armors;
-using tsorcRevamp.Items.Accessories;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace tsorcRevamp.NPCs.Enemies {
-    class GhostOfTheDarkmoonKnight : ModNPC {
+namespace tsorcRevamp.NPCs.Enemies
+{
+    class GhostOfTheDarkmoonKnight : ModNPC
+    {
 
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Ghost of the Darkmoon Knight");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             NPC.height = 40;
             NPC.width = 20;
             NPC.damage = 38;
@@ -52,7 +52,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
             if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.Player.ZoneDungeon)
             {
-                return 0.2f; 
+                return 0.2f;
             }
             if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
             {
@@ -67,16 +67,20 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
         #endregion
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) {
-            if (Main.rand.Next(4) == 0) {
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            if (Main.rand.Next(4) == 0)
+            {
                 target.AddBuff(BuffID.Bleeding, 300);
                 target.AddBuff(BuffID.Poisoned, 300);
                 target.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800);
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage) {
-            if (NPC.life <= 0) {
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            if (NPC.life <= 0)
+            {
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Darkmoon Knight Gore 1").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Black Knight Gore 2").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Black Knight Gore 3").Type, 1f);
@@ -85,7 +89,8 @@ namespace tsorcRevamp.NPCs.Enemies {
             }
         }
 
-        public override void OnKill() {
+        public override void OnKill()
+        {
 
             if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.GigantAxe>(), 1, false, -1);
             if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
@@ -127,12 +132,13 @@ namespace tsorcRevamp.NPCs.Enemies {
                     NPC.damage = 70;
                     chargeDamage = 0;
                 }
-            }         
+            }
         }
 
         static Texture2D spearTexture;
         static Texture2D darkKnightGlow = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
 
             int spriteWidth = NPC.frame.Width; //use same number as ini frameCount
             int spriteHeight = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
@@ -146,12 +152,13 @@ namespace tsorcRevamp.NPCs.Enemies {
             int offsetY = (int)(NPC.position.Y + NPC.height - Main.screenPosition.Y - spritePosDifY);
 
             SpriteEffects flop = SpriteEffects.None;
-            if (NPC.spriteDirection == 1) {
+            if (NPC.spriteDirection == 1)
+            {
                 flop = SpriteEffects.FlipHorizontally;
             }
 
             //Glowing Eye Effect
-            for (int i = 1; i > -1; i--) 
+            for (int i = 1; i > -1; i--)
             {
                 //draw 3 levels of trail
                 int alphaVal = 255 - (1 * i);

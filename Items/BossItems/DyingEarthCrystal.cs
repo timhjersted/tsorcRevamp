@@ -1,16 +1,19 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.BossItems {
-    class DyingEarthCrystal : ModItem {
+namespace tsorcRevamp.Items.BossItems
+{
+    class DyingEarthCrystal : ModItem
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The fading Crystal of Earth. \n" + "Will summon Lich. \n" + "Item is non-consumable");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.LightRed;
             Item.width = 12;
             Item.height = 12;
@@ -28,23 +31,25 @@ namespace tsorcRevamp.Items.BossItems {
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>());
             return true;
         }
-        public override bool CanUseItem(Player player) {
+        public override bool CanUseItem(Player player)
+        {
 
             return (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Fiends.EarthFiendLich>()));
         }
 
-       
-        public override void AddRecipes() {
+
+        public override void AddRecipes()
+        {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = CreateRecipe();
-                recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 10);
-                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
+                Recipe recipe = new Recipe(Mod);
+                recipe.AddIngredient(Mod.GetItem("WhiteTitanite"), 10);
+                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
                 recipe.AddTile(TileID.DemonAltar);
-                
-                recipe.Register();
+                recipe.SetResult(this, 1);
+                recipe.AddRecipe();
             }
         }
-       
+
     }
 }

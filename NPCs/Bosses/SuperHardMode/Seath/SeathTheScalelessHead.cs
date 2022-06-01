@@ -1,13 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 {
@@ -122,7 +118,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     {
                         int crystal = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
                         Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
-                        if(NPC.life >= (NPC.lifeMax / 2))
+                        if (NPC.life >= (NPC.lifeMax / 2))
                         {
                             firstCrystalSpawned = true;
                         }
@@ -150,7 +146,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (Main.rand.Next(255) == 0)
             {
                 breath = true;
-               // Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0); This roar sound got very annoying
+                // Terraria.Audio.SoundEngine.PlaySound(15, -1, -1, 0); This roar sound got very annoying
             }
             if (breath)
             {
@@ -188,7 +184,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
-                    } 
+                    }
                 }
                 Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
             }
@@ -199,7 +195,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
 
             int[] bodyTypes = new int[] { ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessLegs>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody>(), ModContent.NPCType<SeathTheScalelessBody2>(), ModContent.NPCType<SeathTheScalelessBody3>(), ModContent.NPCType<SeathTheScalelessBody3>() };
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);            
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<SeathTheScalelessHead>(), bodyTypes, ModContent.NPCType<SeathTheScalelessTail>(), 13, 6f, 10f, 0.17f, true, false, true, false, false);
         }
         #endregion
 
@@ -227,7 +223,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             }
         }
 
-        public  override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
             SetImmune(projectile, NPC);
         }
@@ -260,7 +256,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
 
         public static Texture2D texture;
         public static void SeathInvulnerableEffect(NPC npc, SpriteBatch spriteBatch, ref Texture2D texture, float scale = 1.5f)
-        {            
+        {
             if (texture == null || texture.IsDisposed)
             {
                 texture = (Texture2D)ModContent.Request<Texture2D>(npc.ModNPC.Texture);
@@ -275,7 +271,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
                 Vector2 origin = sourceRectangle.Size() / 2f;
-                spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White , npc.rotation, origin, scale, effects, 0f);
+                spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.White, npc.rotation, origin, scale, effects, 0f);
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
 

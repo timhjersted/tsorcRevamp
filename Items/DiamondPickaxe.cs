@@ -1,10 +1,13 @@
-﻿using Terraria.ModLoader;
+﻿using Terraria;
 using Terraria.ID;
-using Terraria;
+using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items {
-    class DiamondPickaxe : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items
+{
+    class DiamondPickaxe : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("An ideal pickaxe for exploring..." +
                                 "\nThe diamond tip has been imbued with magic from a celestial being." +
                                 "\nBecause of this, it can do no harm to living creatures, but its tip breaks through blocks" +
@@ -12,7 +15,8 @@ namespace tsorcRevamp.Items {
                                 "\nyou can hardly see it, yet using it feels effortless...");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 22;
             Item.height = 22;
             Item.useStyle = ItemUseStyleID.Swing;
@@ -25,16 +29,18 @@ namespace tsorcRevamp.Items {
             Item.knockBack = 1;
         }
 
-        public override bool? CanHitNPC(Player player, NPC target) {
+        public override bool? CanHitNPC(Player player, NPC target)
+        {
             return false;
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperPickaxe, 1);
             recipe.AddIngredient(ItemID.Diamond, 6);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

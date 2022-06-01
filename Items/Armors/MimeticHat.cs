@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Armors
             recipe.AddIngredient(ItemID.JungleHat, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
     }

@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Projectiles {
-    class CursedFlames : ModProjectile {
+namespace tsorcRevamp.Projectiles
+{
+    class CursedFlames : ModProjectile
+    {
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Projectile.width = 20;
             Projectile.height = 20;
             Projectile.scale = 1.3f;
@@ -21,8 +23,10 @@ namespace tsorcRevamp.Projectiles {
             Projectile.idStaticNPCHitCooldown = 4;
         }
 
-        public override void AI() {
-            for (int i = 0; i < 2; i++) {
+        public override void AI()
+        {
+            for (int i = 0; i < 2; i++)
+            {
                 int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y),
                                          Projectile.width,
                                          Projectile.height,
@@ -38,9 +42,11 @@ namespace tsorcRevamp.Projectiles {
             }
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity) {
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
 
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++)
+            {
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y),
                                              Projectile.width,
                                              Projectile.height,

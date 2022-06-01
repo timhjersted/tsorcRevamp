@@ -2,16 +2,20 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Accessories {
-    public class CovetousSilverSerpentRing : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Accessories
+{
+    public class CovetousSilverSerpentRing : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("An ancient relic forged and lost many centuries ago" +
-                                "\nOne of the 4 Kings of Arradius was said to wear this ring" + 
-                                "\nIncreases the number of souls dropped from fallen creatures by 20% but reduces defense by 15" + 
+                                "\nOne of the 4 Kings of Arradius was said to wear this ring" +
+                                "\nIncreases the number of souls dropped from fallen creatures by 20% but reduces defense by 15" +
                                 "\nThe ring glows with a bright white light");
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 22;
             Item.accessory = true;
@@ -31,7 +35,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
         */
 
-        public override void UpdateEquip(Player player) {
+        public override void UpdateEquip(Player player)
+        {
             player.GetModPlayer<tsorcRevampPlayer>().SilverSerpentRing = true;
             int posX = (int)(player.position.X + (float)(player.width / 2) + (float)(8 * player.direction)) / 16;
             int posY = (int)(player.position.Y + 2f) / 16;

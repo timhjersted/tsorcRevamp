@@ -4,16 +4,20 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
-    class MoonlightGreatsword : ModItem {
+namespace tsorcRevamp.Items.Weapons.Melee
+{
+    class MoonlightGreatsword : ModItem
+    {
 
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("The Moonlight Greatsword, the sword of legend..." +
                                 "\nGlows and gains magic damage scaling at night" +
                                 "\nLaunches glimmering waves of moonlight");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.rare = ItemRarityID.Pink;
             Item.damage = 2000;
             Item.height = 72;
@@ -71,7 +75,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             {
                 spriteBatch.Draw(glowTexture, position, new Rectangle(0, 0, glowTexture.Width, glowTexture.Height), Color.White, 0f, origin, scale, SpriteEffects.None, 0.1f);
             }
-            
+
             return false;
         }
 

@@ -1,10 +1,13 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Buffs {
-    class ElixirCooldown : ModBuff {
+namespace tsorcRevamp.Buffs
+{
+    class ElixirCooldown : ModBuff
+    {
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             DisplayName.SetDefault("Elixir Cooldown");
             Description.SetDefault("You cannot drink Holy War Elixirs!");
             Main.debuff[Type] = true;

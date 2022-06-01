@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
 {
-    
+
     class MageShadow : ModNPC
     {
         public override void SetDefaults()
@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.alpha = 249;
-            
+
             NPC.lavaImmune = true;
             NPC.value = 0;
             NPC.width = 28;
@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
-            
+
         }
 
 
@@ -49,21 +49,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             lightningDamage = (int)(lightningDamage / 2);
         }
 
-       
+
 
 
         #region AI
-        
+
         public override void AI()
         {
-            
-           
+
+
 
             NPC.netUpdate = false;
             NPC.ai[0]++; // Timer Scythe
-            
+
             NPC.ai[1]++; // Timer Teleport
-            
+
 
             // npc.ai[2]++; // Shots
 
@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, Type: DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y, 150, Color.Blue, 1f);
                 Main.dust[dust].noGravity = true;
             }
-            
+
 
             if (Main.netMode != 2)
             {
@@ -203,7 +203,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                     }
                 }
 
-                
+
             }
 
             NPC.ai[3] += 1; // my attempt at adding the timer that switches back to the shadow orb

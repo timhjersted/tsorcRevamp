@@ -1,39 +1,32 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Items;
 using Terraria.UI;
-using Terraria.GameContent.UI;
+using tsorcRevamp.Items;
 using tsorcRevamp.UI;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using static tsorcRevamp.MethodSwaps;
-using static tsorcRevamp.ILEdits;
-using System.IO;
-using Terraria.ModLoader.IO;
-using Terraria.Graphics.Shaders;
-using Terraria.Graphics.Effects;
-using ReLogic.Graphics;
-using System.Net;
-using System.Reflection;
-using System.ComponentModel;
-using Terraria.DataStructures;
-using Terraria.GameContent;
 
-namespace tsorcRevamp {
-    class tsorcRevampSystems : ModSystem {
+namespace tsorcRevamp
+{
+    class tsorcRevampSystems : ModSystem
+    {
         Texture2D BonfireMinimapTexture;
         public static RecipeGroup UpgradedMirrors;
-        public override void PostDrawFullscreenMap(ref string mouseText) {
-            if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.Bonfire>())) {
+        public override void PostDrawFullscreenMap(ref string mouseText)
+        {
+            if (Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
+            {
                 DrawMinimapBonfires();
             }
         }
 
-        public void DrawMinimapBonfires() {
-            if (BonfireMinimapTexture == null || BonfireMinimapTexture.IsDisposed) {
+        public void DrawMinimapBonfires()
+        {
+            if (BonfireMinimapTexture == null || BonfireMinimapTexture.IsDisposed)
+            {
                 BonfireMinimapTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/MinimapBonfire", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             }
 
@@ -60,7 +53,8 @@ namespace tsorcRevamp {
             float mapScale = Main.mapFullscreenScale / Main.UIScale;
             Vector2 scaledMapCoords = Main.mapFullscreenPos * mapScale * -1;
             scaledMapCoords += scrCenter;
-            foreach (Vector2 bonfirePoint in tsorcRevampWorld.LitBonfireList) {
+            foreach (Vector2 bonfirePoint in tsorcRevampWorld.LitBonfireList)
+            {
                 Vector2 bonfireDrawCoords = bonfirePoint;
                 bonfireDrawCoords.X += 1.5f;
                 bonfireDrawCoords.Y += 1f;
@@ -69,35 +63,43 @@ namespace tsorcRevamp {
 
                 //Step 3: While drawing check if it's in-range of the cursor, and if so give it a rainbow backdrop
                 float hoverRange = 32 / Main.mapFullscreenScale;
-                if ((mouseTile - bonfirePoint).Length() <= hoverRange) {
-                    for (int i = 0; i < 4; i++) {
+                if ((mouseTile - bonfirePoint).Length() <= hoverRange)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
                         Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
                         Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords + offsetPositon, null, Main.DiscoColor, 0, BonfireMinimapTexture.Size() / 2, 1.04f, SpriteEffects.None, 1);
                     }
                     Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 1f, SpriteEffects.None, 1);
 
                     //Step 4: Check if they're left-clicking, and close the minimap + teleport them if so
-                    if (Main.mouseLeft) {
+                    if (Main.mouseLeft)
+                    {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, Main.LocalPlayer.position);
                         UsefulFunctions.SafeTeleport(Main.LocalPlayer, new Vector2(bonfirePoint.X, bonfirePoint.Y - 1) * 16);
                         Main.mapFullscreen = false;
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, bonfirePoint * 16);
                     }
                 }
-                else {
+                else
+                {
                     Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, Color.White, 0, BonfireMinimapTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
                 }
             }
         }
 
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
+        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+        {
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
             int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (mouseTextIndex != -1) {
+            if (mouseTextIndex != -1)
+            {
                 layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: BonfireUI",
-                    delegate {
-                        if (BonfireUIState.Visible) {
+                    delegate
+                    {
+                        if (BonfireUIState.Visible)
+                        {
 
                             mod._bonfireUIState.Draw(Main.spriteBatch, new GameTime());
                         }
@@ -108,10 +110,12 @@ namespace tsorcRevamp {
             }
 
             int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
-            if (resourceBarIndex != -1) {
+            if (resourceBarIndex != -1)
+            {
                 layers.Insert(resourceBarIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Dark Soul Counter UI",
-                    delegate {
+                    delegate
+                    {
                         mod._darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
                         return true;
                     },
@@ -120,10 +124,12 @@ namespace tsorcRevamp {
             }
 
             int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
-            if (inventoryIndex != -1) {
+            if (inventoryIndex != -1)
+            {
                 layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Emerald Herald UI",
-                    delegate {
+                    delegate
+                    {
                         mod.EmeraldHeraldUserInterface.Draw(Main.spriteBatch, new GameTime());
                         return true;
                     },
@@ -132,10 +138,12 @@ namespace tsorcRevamp {
             }
 
             int resourceBarIndex2 = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
-            if (resourceBarIndex2 != -1) {
+            if (resourceBarIndex2 != -1)
+            {
                 layers.Insert(resourceBarIndex2, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Estus Flask UI",
-                    delegate {
+                    delegate
+                    {
                         mod._estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
                         return true;
                     },
@@ -144,11 +152,14 @@ namespace tsorcRevamp {
             }
 
             int potionBagIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (potionBagIndex != -1) {
+            if (potionBagIndex != -1)
+            {
                 layers.Insert(potionBagIndex, new LegacyGameInterfaceLayer(
                     "tsorcRevamp: Potion Bag UI",
-                    delegate {
-                        if (PotionBagUIState.Visible) {
+                    delegate
+                    {
+                        if (PotionBagUIState.Visible)
+                        {
                             mod.PotionBagUserInterface.Draw(Main.spriteBatch, new GameTime());
                         }
                         return true;
@@ -158,48 +169,58 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void AddRecipeGroups() {
-            UpgradedMirrors = new RecipeGroup(() => "Upgraded Mirrors", 
+        public override void AddRecipeGroups()
+        {
+            UpgradedMirrors = new RecipeGroup(() => "Upgraded Mirrors",
                 ModContent.ItemType<GreatMagicMirror>(),
                 ModContent.ItemType<VillageMirror>()
             );
             RecipeGroup.RegisterGroup("tsorcRevamp:UpgradedMirrors", UpgradedMirrors);
         }
 
-        public override void UpdateUI(GameTime gameTime) {
+        public override void UpdateUI(GameTime gameTime)
+        {
             tsorcRevamp mod = ModContent.GetInstance<tsorcRevamp>();
-            if (BonfireUIState.Visible) {
+            if (BonfireUIState.Visible)
+            {
                 mod._bonfireUIState?.Update(gameTime);
             }
-            if (DarkSoulCounterUIState.Visible) {
+            if (DarkSoulCounterUIState.Visible)
+            {
                 mod._darkSoulCounterUIState?.Update(gameTime);
             }
 
             mod.EmeraldHeraldUserInterface?.Update(gameTime);
 
-            if (EstusFlaskUIState.Visible) {
+            if (EstusFlaskUIState.Visible)
+            {
                 mod._estusFlaskUIState?.Update(gameTime);
             }
 
-            if (PotionBagUIState.Visible) {
+            if (PotionBagUIState.Visible)
+            {
                 mod.PotionBagUserInterface.Update(gameTime);
             }
         }
 
-        public override void PostDrawInterface(SpriteBatch spriteBatch) {
+        public override void PostDrawInterface(SpriteBatch spriteBatch)
+        {
             tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.Draw(spriteBatch);
         }
 
-        public override void Unload() {
+        public override void Unload()
+        {
             UpgradedMirrors = null;
         }
 
-        public override void PreSaveAndQuit() {
+        public override void PreSaveAndQuit()
+        {
             TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Sun");
             TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Sun2");
             TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Sun3");
-            for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+            for (int i = 0; i < TextureAssets.Moon.Length; i++)
+            {
                 TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Moon_" + i);
             }
         }

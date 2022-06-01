@@ -1,17 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Ranged {
-    class QuadroCannon : ModItem {
-        public override void SetStaticDefaults() {
+namespace tsorcRevamp.Items.Weapons.Ranged
+{
+    class QuadroCannon : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             Tooltip.SetDefault("Four shot burst" +
                                 "\nOnly the first shot consumes ammo" +
                                 "\nFires a spread of four bullets with each shot");
         }
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.width = 64;
             Item.height = 24;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -38,7 +41,8 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             return new Vector2(-6, 2);
         }
 
-        public override void AddRecipes() {
+        public override void AddRecipes()
+        {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("PhazonRifle").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
@@ -46,11 +50,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);
             recipe.AddTile(TileID.DemonAltar);
-            
+
             recipe.Register();
         }
 
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        {
             int ShotAmt = 4;
             int spread = 24;
             float spreadMult = 0.05f;
@@ -60,20 +65,21 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
             {
                 position -= muzzleOffset;
-            }               
-                
+            }
+
             for (int i = 0; i < ShotAmt; i++)
             {
                 float vX = speedX + Main.rand.Next(-spread, spread + 1) * spreadMult;
                 float vY = speedY + Main.rand.Next(-spread, spread + 1) * spreadMult;
-                Projectile.NewProjectile(position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), position, new Vector2(vX, vY), type, damage, knockBack, player.whoAmI);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, -1, -1, 11);
             }
-            
+
             return false;
         }
 
-        public override bool CanConsumeAmmo(Item ammo, Player player) {
+        public override bool CanConsumeAmmo(Item ammo, Player player)
+        {
             return !(player.itemAnimation < Item.useAnimation - 2);
         }
     }
