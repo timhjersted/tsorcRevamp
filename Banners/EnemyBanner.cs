@@ -44,8 +44,8 @@ namespace tsorcRevamp.Banners {
             TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.SolidBottom, TileObjectData.newTile.Width, 0);
             TileObjectData.newTile.StyleWrapLimit = 111;
             TileObjectData.addTile(Type);
-            dustType = -1;
-            disableSmartCursor = true;
+            //dustType = -1;
+            TileID.Sets.DisableSmartCursor[Type] = true;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Banner");
             AddMapEntry(new Color(13, 88, 130), name);
@@ -317,7 +317,7 @@ namespace tsorcRevamp.Banners {
                 default:
                     return;
             }
-            Item.NewItem(i * 16, j * 16, 16, 48, Mod.Find<ModItem>(item).Type);
+            Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), i * 16, j * 16, 16, 48, Mod.Find<ModItem>(item).Type);
         }
 
 
@@ -589,8 +589,8 @@ namespace tsorcRevamp.Banners {
                     default:
                         return;
                 }
-                player.NPCBannerBuff[Mod.Find<ModNPC>(type).Type] = true;
-                player.hasBanner = true;
+                Main.SceneMetrics.NPCBannerBuff[Mod.Find<ModNPC>(type).Type] = true;
+                Main.SceneMetrics.hasBanner = true;
             }
         }
 
