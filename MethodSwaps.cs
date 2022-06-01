@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -26,24 +28,20 @@ namespace tsorcRevamp
 
             On.Terraria.WorldGen.UpdateLunarApocalypse += StopMoonLord;
 
-            On.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
-
             On.Terraria.Player.TileInteractionsCheckLongDistance += SignTextPatch;
 
             On.Terraria.NPC.SpawnNPC += BossZenPatch;
 
             On.Terraria.Main.DrawMenu += DownloadMapButton;
 
-            On.Terraria.Main.DrawPlayer += StaminaBar;
-
-            On.Terraria.Main.DrawPlayer += CurseMeter;
+            On.Terraria.Graphics.Renderers.LegacyPlayerRenderer.DrawPlayer += StaminaBar;
+            On.Terraria.Graphics.Renderers.LegacyPlayerRenderer.DrawPlayer += CurseMeter;
 
             On.Terraria.Main.StartInvasion += BlockInvasions;
 
             On.Terraria.NPC.AI_037_Destroyer += DestroyerAIRevamp;
 
-            On.Terraria.Utilities.NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
-
+            NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
 
             On.Terraria.NPC.AI_111_DD2LightningBug += LightningBugTeleport;
 
@@ -60,7 +58,6 @@ namespace tsorcRevamp
 
             On.Terraria.Main.DrawNPCs += DrawNPCsPatch;
         }
-
         private static void DrawNPCsPatch(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             orig(self, behindTiles);
@@ -86,7 +83,8 @@ namespace tsorcRevamp
                     laser.AdditiveContext = true;
                     if ((laser.IsAtMaxCharge && laser.TargetingMode == 0) || (laser.TargetingMode == 2))
                     {
-                        laser.PreDraw(Main.spriteBatch, Lighting.GetColor((int)laser.Projectile.Center.X / 16, (int)(laser.Projectile.Center.Y / 16f)));
+                        Color color = Lighting.GetColor((int)laser.Projectile.Center.X / 16, (int)(laser.Projectile.Center.Y / 16f));
+                        laser.PreDraw(ref color);
                     }
                     laser.AdditiveContext = false;
                 }
@@ -159,7 +157,7 @@ namespace tsorcRevamp
             if (player.CountBuffs() == Player.MaxBuffs)
                 return;
 
-            if (item.stack <= 0 || item.type <= 0 || item.buffType <= 0 || item.summon || item.buffType == 90)
+            if (item.stack <= 0 || item.type <= 0 || item.buffType <= 0 || item.CountsAsClass(DamageClass.Summon) || item.buffType == 90)
                 return;
 
             int buffType = item.buffType;
@@ -195,7 +193,7 @@ namespace tsorcRevamp
                 }
             }
 
-            if (player.whoAmI == Main.myPlayer && item.type == ItemID.Carrot && !Main.cEd)
+            if (player.whoAmI == Main.myPlayer && item.type == ItemID.Carrot && !Main.runningCollectorsEdition)
                 validItem = false;
 
             if (buffType == BuffID.FairyBlue)
@@ -289,7 +287,7 @@ namespace tsorcRevamp
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, this handles all of it.
         private static void UsePotion(Item item, Player player)
         {
-            Terraria.Audio.SoundEngine.PlaySound(item.UseSound, player.position);
+            SoundEngine.PlaySound((SoundStyle)item.UseSound, player.position);
             if (item.potion)
             {
                 if (item.type == 227)
@@ -336,7 +334,7 @@ namespace tsorcRevamp
                 player.AddBuff(item.buffType, buffTime);
             }
 
-            Terraria.Audio.SoundEngine.PlaySound(item.UseSound, player.position);
+            SoundEngine.PlaySound((SoundStyle)item.UseSound, player.position);
 
             if (ItemLoader.ConsumeItem(item, player))
                 item.stack--;
@@ -368,31 +366,70 @@ namespace tsorcRevamp
 
 
         //allow spawns to be set outside a valid house (for bonfires)
-        internal static void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self)
+        internal static void SpawnPatch(On.Terraria.Player.orig_Spawn orig, Player self, PlayerSpawnContext context)
         {
-            Main.InitLifeBytes();
+            Main.LocalPlayer.creativeInterface = false;
+            self._funkytownAchievementCheckCooldown = 100;
+            bool flag = false;
+            if (context == PlayerSpawnContext.SpawningIntoWorld)
+            {
+                if (Main.netMode == 0 && self.unlockedBiomeTorches)
+                {
+                    NPC nPC = new NPC();
+                    nPC.SetDefaults(664);
+                    Main.BestiaryTracker.Kills.RegisterKill(nPC);
+                }
+                if (self.dead)
+                {
+                    //Player.AdjustRespawnTimerForWorldJoining(self);
+                    {
+                        if (Main.myPlayer != self.whoAmI || !self.dead) {
+                            return;
+                        }
+                        long num = DateTime.UtcNow.ToBinary() - self.lastTimePlayerWasSaved;
+                        if (num > 0) {
+                            int num2 = Utils.Clamp((int)(Utils.Clamp(new TimeSpan(num).TotalSeconds, 0.0, 1000.0) * 60.0), 0, self.respawnTimer);
+                            self.respawnTimer -= num2;
+                            if (self.respawnTimer == 0) {
+                                self.dead = false;
+                            }
+                        }
+                    }
+                    if (self.dead)
+                    {
+                        flag = true;
+                    }
+                }
+            }
+            self.StopVanityActions();
+            if (self.whoAmI == Main.myPlayer)
+            {
+                Main.NotifyOfEvent(GameNotificationType.SpawnOrDeath);
+            }
             if (self.whoAmI == Main.myPlayer)
             {
                 if (Main.mapTime < 5)
                 {
                     Main.mapTime = 5;
                 }
-                Main.quickBG = 10;
+                Main.instantBGTransitionCounter = 10;
                 self.FindSpawn();
-                if (!SpawnCheck(self))
+                if (SpawnCheck(self))
                 {
-                    if (!Player.CheckSpawn(self.SpawnX, self.SpawnY))
-                    {
-                        self.SpawnX = -1;
-                        self.SpawnY = -1;
-                    }
+                    self.SpawnX = -1;
+                    self.SpawnY = -1;
                 }
                 Main.maxQ = true;
+                NPC.ResetNetOffsets();
             }
-            if (Main.netMode == NetmodeID.MultiplayerClient && self.whoAmI == Main.myPlayer)
+            if (Main.netMode == 1 && self.whoAmI == Main.myPlayer)
             {
-                NetMessage.SendData(MessageID.SpawnPlayer, -1, -1, null, Main.myPlayer);
-                Main.gameMenu = false;
+                NetMessage.SendData(12, -1, -1, null, Main.myPlayer, (int)(byte)context);
+            }
+            if (self.whoAmI == Main.myPlayer && context == PlayerSpawnContext.SpawningIntoWorld)
+            {
+                self.SetPlayerDataToOutOfClassFields();
+                Main.ReleaseHostAndPlayProcess();
             }
             self.headPosition = Vector2.Zero;
             self.bodyPosition = Vector2.Zero;
@@ -400,56 +437,105 @@ namespace tsorcRevamp
             self.headRotation = 0f;
             self.bodyRotation = 0f;
             self.legRotation = 0f;
+            self.rabbitOrderFrame.Reset();
             self.lavaTime = self.lavaMax;
-            if (self.statLife <= 0)
+            if (!flag)
             {
-                int num = self.statLifeMax2 / 2;
-                self.statLife = 100;
-                if (num > self.statLife)
+                if (self.statLife <= 0)
                 {
-                    self.statLife = num;
+                    int num = self.statLifeMax2 / 2;
+                    self.statLife = 100;
+                    if (num > self.statLife)
+                    {
+                        self.statLife = num;
+                    }
+                    self.breath = self.breathMax;
+                    if (self.spawnMax)
+                    {
+                        self.statLife = self.statLifeMax2;
+                        self.statMana = self.statManaMax2;
+                    }
                 }
-                self.breath = self.breathMax;
-                if (self.spawnMax)
+                self.immune = true;
+                if (self.dead)
                 {
-                    self.statLife = self.statLifeMax2;
-                    self.statMana = self.statManaMax2;
+                    PlayerLoader.OnRespawn(self);
                 }
+                self.dead = false;
+                self.immuneTime = 0;
             }
-            self.immune = true;
-            if (self.dead)
-            {
-                PlayerHooks.OnRespawn(self);
-            }
-            self.dead = false;
-            self.immuneTime = 0;
             self.active = true;
+            Vector2 position = self.position;
             if (self.SpawnX >= 0 && self.SpawnY >= 0)
             {
+                _ = self.SpawnX;
+                _ = self.SpawnY;
+                //self.Spawn_SetPosition(self.SpawnX, self.SpawnY);
                 self.position.X = self.SpawnX * 16 + 8 - self.width / 2;
                 self.position.Y = self.SpawnY * 16 - self.height;
             }
-            else
-            {
-                self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
-                self.position.Y = Main.spawnTileY * 16 - self.height;
-                for (int i = Main.spawnTileX - 1; i < Main.spawnTileX + 2; i++)
-                {
-                    for (int j = Main.spawnTileY - 3; j < Main.spawnTileY; j++)
-                    {
-                        if (Main.tile[i, j] != null)
-                        {
-                            if (Main.tileSolid[Main.tile[i, j].TileType] && !Main.tileSolidTop[Main.tile[i, j].TileType])
-                            {
-                                WorldGen.KillTile(i, j);
-                            }
-                            if (Main.tile[i, j].LiquidAmount > 0)
-                            {
-                                Main.tile[i, j].LiquidType = 0;
-                                Main.tile[i, j].LiquidAmount = 0;
-                                WorldGen.SquareTileFrame(i, j);
+            else {
+                int spawnTileX = Main.spawnTileX;
+                int spawnTileY = Main.spawnTileY;
+                if (!IsAreaAValidWorldSpawn(spawnTileX, spawnTileY)) {
+                    bool test = false;
+                    if (!test) {
+                        for (int i = 0; i < 30; i++) {
+                            if (IsAreaAValidWorldSpawn(spawnTileX, spawnTileY - i)) {
+                                spawnTileY -= i;
+                                test = true;
+                                break;
                             }
                         }
+                    }
+                    if (!test) {
+                        for (int j = 0; j < 30; j++) {
+                            if (IsAreaAValidWorldSpawn(spawnTileX, spawnTileY - j)) {
+                                spawnTileY -= j;
+                                test = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (test) {
+                        //self.Spawn_SetPosition(spawnTileX, spawnTileY);
+                        self.position.X = spawnTileX * 16 + 8 - self.width / 2;
+                        self.position.Y = spawnTileY * 16 - self.height;
+                        return;
+                    }
+                    //self.Spawn_SetPosition(Main.spawnTileX, Main.spawnTileY);
+                    self.position.X = Main.spawnTileX * 16 + 8 - self.width / 2;
+                    self.position.Y = Main.spawnTileY * 16 - self.height;
+                    if (!IsAreaAValidWorldSpawn(Main.spawnTileX, Main.spawnTileY)) {
+                        ForceClearArea(Main.spawnTileX, Main.spawnTileY);
+                    }
+                }
+                else {
+                    //spawnTileY = Player.Spawn_DescendFromDefaultSpace(spawnTileX, spawnTileY);
+                    {
+                        int x = spawnTileX;
+                        int y = spawnTileY;
+                        for (int i = 0; i < 50; i++) {
+                            bool test = false;
+                            for (int j = -1; j <= 1; j++) {
+                                Tile tile = Main.tile[x + j, y + i];
+                                if (tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || !Main.tileSolidTop[tile.TileType])) {
+                                    test = true;
+                                    break;
+                                }
+                            }
+                            if (test) {
+                                y += i;
+                                break;
+                            }
+                        }
+                        spawnTileY = y;
+                    }
+                    //self.Spawn_SetPosition(spawnTileX, spawnTileY);
+                    self.position.X = spawnTileX * 16 + 8 - self.width / 2;
+                    self.position.Y = spawnTileY * 16 - self.height;
+                    if (!IsAreaAValidWorldSpawn(spawnTileX, spawnTileY)) {
+                        ForceClearArea(spawnTileX, spawnTileY);
                     }
                 }
             }
@@ -460,36 +546,142 @@ namespace tsorcRevamp
             self.fallStart2 = self.fallStart;
             self.velocity.X = 0f;
             self.velocity.Y = 0f;
-            for (int k = 0; k < 3; k++)
+            self.ResetAdvancedShadows();
+            for (int i = 0; i < 3; i++)
             {
                 self.UpdateSocialShadow();
             }
             self.oldPosition = self.position + self.BlehOldPositionFixer;
-            self.talkNPC = -1;
+            self.SetTalkNPC(-1);
             if (self.whoAmI == Main.myPlayer)
             {
                 Main.npcChatCornerItem = 0;
             }
-            if (self.pvpDeath)
+            if (!flag)
             {
-                self.pvpDeath = false;
-                self.immuneTime = 300;
-                self.statLife = self.statLifeMax;
-            }
-            else
-            {
-                self.immuneTime = 60;
+                if (self.pvpDeath)
+                {
+                    self.pvpDeath = false;
+                    self.immuneTime = 300;
+                    self.statLife = self.statLifeMax;
+                }
+                else
+                {
+                    self.immuneTime = 60;
+                }
+                if (self.immuneTime > 0 && !self.hostile)
+                {
+                    self.immuneNoBlink = true;
+                }
             }
             if (self.whoAmI == Main.myPlayer)
             {
-                Main.BlackFadeIn = 255;
-                Main.renderNow = true;
-                if (Main.netMode == NetmodeID.MultiplayerClient)
+                if (context == PlayerSpawnContext.SpawningIntoWorld)
                 {
-                    Netplay.newRecent();
+                    Main.LocalGolfState.SetScoreTime();
                 }
-                Main.screenPosition.X = self.position.X + self.width / 2 - Main.screenWidth / 2;
-                Main.screenPosition.Y = self.position.Y + self.height / 2 - Main.screenHeight / 2;
+                float num2 = Vector2.Distance(position, self.position);
+                Vector2 val = new Vector2((float)Main.screenWidth, (float)Main.screenHeight);
+                bool flag2 = num2 < val.Length() / 2f + 100f;
+                if (flag2)
+                {
+                    Main.SetCameraLerp(0.1f, 0);
+                    flag2 = true;
+                }
+                else
+                {
+                    Main.BlackFadeIn = 255;
+                    Lighting.Clear();
+                    Main.screenLastPosition = Main.screenPosition;
+                    Main.instantBGTransitionCounter = 10;
+                }
+                if (!flag2)
+                {
+                    Main.renderNow = true;
+                }
+                if (Main.netMode == 1)
+                {
+                    Netplay.AddCurrentServerToRecentList();
+                }
+                if (!flag2)
+                {
+                    Main.screenPosition.X = self.position.X + (float)(self.width / 2) - (float)(Main.screenWidth / 2);
+                    Main.screenPosition.Y = self.position.Y + (float)(self.height / 2) - (float)(Main.screenHeight / 2);
+                    self.ForceUpdateBiomes();
+                }
+            }
+            if (flag)
+            {
+                self.immuneAlpha = 255;
+            }
+            //self.UpdateGraveyard(now: true);
+            //im reflecting this. i dont even care any more.
+            //if you dont want it to lag, stop dying.
+            //im exhausted okay? im tired. im so tired. i never stop being tired.
+            Assembly tml = self.GetType().Assembly;
+            Type playerclass = null;
+            foreach (Type T in tml.GetTypes()) {
+                if (T.Name == "Player") {
+                    playerclass = T;
+                    break;
+                }
+            }
+            MethodInfo[] methods = playerclass.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+            for (int i = 0; i < methods.Length - 1; i++) {
+                if (methods[i].Name == "UpdateGraveyard") {
+                    methods[i].Invoke(self, new object[] { true });
+                }
+            }
+
+            if (self.whoAmI == Main.myPlayer && context == PlayerSpawnContext.ReviveFromDeath && self.difficulty == 3)
+            {
+                self.AutoFinchStaff();
+            }
+        }
+        
+        internal static bool IsAreaAValidWorldSpawn(int floorX, int floorY) {
+            for (int i = floorX - 1; i < floorX + 2; i++) {
+                for (int j = floorY - 3; j < floorY; j++) {
+                    if (Main.tile[i, j] != null) {
+                        if (Main.tile[i, j].HasUnactuatedTile && Main.tileSolid[Main.tile[i, j].TileType] && !Main.tileSolidTop[Main.tile[i, j].TileType]) {
+                            return false;
+                        }
+                        if (Main.tile[i, j].LiquidAmount > 0) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        internal static void ForceClearArea(int floorX, int floorY) {
+            for (int i = floorX - 1; i < floorX + 2; i++) {
+                for (int j = floorY - 3; j < floorY; j++) {
+                    if (!(Main.tile[i, j] != null)) {
+                        continue;
+                    }
+                    Tile tile = Main.tile[i, j];
+                    if (tile.HasUnactuatedTile) {
+                        bool[] tileSolid = Main.tileSolid;
+                        tile = Main.tile[i, j];
+                        if (tileSolid[tile.TileType]) {
+                            bool[] tileSolidTop = Main.tileSolidTop;
+                            tile = Main.tile[i, j];
+                            if (!tileSolidTop[tile.TileType]) {
+                                WorldGen.KillTile(i, j);
+                            }
+                        }
+                    }
+                    tile = Main.tile[i, j];
+                    if (tile.LiquidAmount > 0) {
+                        tile = Main.tile[i, j];
+                        tile.LiquidType = 0;
+                        tile = Main.tile[i, j];
+                        tile.LiquidAmount = 0;
+                        WorldGen.SquareTileFrame(i, j);
+                    }
+                }
             }
         }
 
@@ -503,7 +695,7 @@ namespace tsorcRevamp
                 {
                     if (i + self.SpawnX > 0 && j + self.SpawnY > 0)
                     {
-                        if (Main.tile.GetUpperBound(0) > self.SpawnX && Main.tile.GetUpperBound(1) > self.SpawnY)
+                        if (Main.tile.Width > self.SpawnX && Main.tile.Height > self.SpawnY)
                         {
                             if (Main.tile[i + self.SpawnX, j + self.SpawnY] != null)
                             {
@@ -597,185 +789,6 @@ namespace tsorcRevamp
             }
         }
 
-        //allow souls in the soul slot to be included in calculations for craftable recipes
-        internal static void SoulSlotRecipesPatch(On.Terraria.Recipe.orig_FindRecipes orig)
-        {
-            int num = Main.availableRecipe[Main.focusRecipe];
-            float num2 = Main.availableRecipeY[Main.focusRecipe];
-            for (int i = 0; i < Recipe.maxRecipes; i++)
-            {
-                Main.availableRecipe[i] = 0;
-            }
-            Main.numAvailableRecipes = 0;
-            if (Main.guideItem.type > 0 && Main.guideItem.stack > 0 && Main.guideItem.Name != "")
-            {
-                for (int j = 0; j < Recipe.maxRecipes && Main.recipe[j].createItem.type != 0; j++)
-                {
-                    for (int k = 0; k < Recipe.maxRequirements && Main.recipe[j].requiredItem[k].type != 0; k++)
-                    {
-                        if (Main.guideItem.IsTheSameAs(Main.recipe[j].requiredItem[k]) || Main.recipe[j].useWood(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].useSand(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].useIronBar(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].useFragment(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].AcceptedByItemGroups(Main.guideItem.type, Main.recipe[j].requiredItem[k].type) || Main.recipe[j].usePressurePlate(Main.guideItem.type, Main.recipe[j].requiredItem[k].type))
-                        {
-                            Main.availableRecipe[Main.numAvailableRecipes] = j;
-                            Main.numAvailableRecipes++;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Dictionary<int, int> dictionary = new Dictionary<int, int>();
-                Item[] array = null;
-                Item item = null;
-                array = Main.player[Main.myPlayer].inventory;
-                for (int l = 0; l < 58; l++)
-                {
-                    item = array[l];
-                    if (item.stack > 0)
-                    {
-                        if (dictionary.ContainsKey(item.netID))
-                        {
-                            dictionary[item.netID] += item.stack;
-                        }
-                        else
-                        {
-                            dictionary[item.netID] = item.stack;
-                        }
-                    }
-                }
-                //new
-                item = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>().SoulSlot.Item;
-                if (item.stack > 0)
-                {
-                    if (dictionary.ContainsKey(item.netID))
-                    {
-                        dictionary[item.netID] += item.stack;
-                    }
-                    else
-                    {
-                        dictionary[item.netID] = item.stack;
-                    }
-                }
-                //end new
-                if (Main.player[Main.myPlayer].chest != -1)
-                {
-                    if (Main.player[Main.myPlayer].chest > -1)
-                    {
-                        array = Main.chest[Main.player[Main.myPlayer].chest].item;
-                    }
-                    else if (Main.player[Main.myPlayer].chest == -2)
-                    {
-                        array = Main.player[Main.myPlayer].bank.item;
-                    }
-                    else if (Main.player[Main.myPlayer].chest == -3)
-                    {
-                        array = Main.player[Main.myPlayer].bank2.item;
-                    }
-                    else if (Main.player[Main.myPlayer].chest == -4)
-                    {
-                        array = Main.player[Main.myPlayer].bank3.item;
-                    }
-                    for (int m = 0; m < 40; m++)
-                    {
-                        item = array[m];
-                        if (item.stack > 0)
-                        {
-                            if (dictionary.ContainsKey(item.netID))
-                            {
-                                dictionary[item.netID] += item.stack;
-                            }
-                            else
-                            {
-                                dictionary[item.netID] = item.stack;
-                            }
-                        }
-                    }
-                }
-                for (int n = 0; n < Recipe.maxRecipes && Main.recipe[n].createItem.type != 0; n++)
-                {
-                    bool flag = true;
-                    if (flag)
-                    {
-                        for (int num3 = 0; num3 < Recipe.maxRequirements && Main.recipe[n].requiredTile[num3] != -1; num3++)
-                        {
-                            if (!Main.player[Main.myPlayer].adjTile[Main.recipe[n].requiredTile[num3]])
-                            {
-                                flag = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (flag)
-                    {
-                        for (int num4 = 0; num4 < Recipe.maxRequirements; num4++)
-                        {
-                            item = Main.recipe[n].requiredItem[num4];
-                            if (item.type == 0)
-                            {
-                                break;
-                            }
-                            int num5 = item.stack;
-                            bool flag2 = false;
-                            foreach (int key in dictionary.Keys)
-                            {
-                                if (Main.recipe[n].useWood(key, item.type) || Main.recipe[n].useSand(key, item.type) || Main.recipe[n].useIronBar(key, item.type) || Main.recipe[n].useFragment(key, item.type) || Main.recipe[n].AcceptedByItemGroups(key, item.type) || Main.recipe[n].usePressurePlate(key, item.type))
-                                {
-                                    num5 -= dictionary[key];
-                                    flag2 = true;
-                                }
-                            }
-                            if (!flag2 && dictionary.ContainsKey(item.netID))
-                            {
-                                num5 -= dictionary[item.netID];
-                            }
-                            if (num5 > 0)
-                            {
-                                flag = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (flag)
-                    {
-                        bool num9 = !Main.recipe[n].needWater || Main.player[Main.myPlayer].adjWater || Main.player[Main.myPlayer].adjTile[172];
-                        bool flag3 = !Main.recipe[n].needHoney || Main.recipe[n].needHoney == Main.player[Main.myPlayer].adjHoney;
-                        bool flag4 = !Main.recipe[n].needLava || Main.recipe[n].needLava == Main.player[Main.myPlayer].adjLava;
-                        bool flag5 = !Main.recipe[n].needSnowBiome || Main.player[Main.myPlayer].ZoneSnow;
-                        if (!(num9 && flag3 && flag4 && flag5))
-                        {
-                            flag = false;
-                        }
-                    }
-                    if (flag && RecipeHooks.RecipeAvailable(Main.recipe[n]))
-                    {
-                        Main.availableRecipe[Main.numAvailableRecipes] = n;
-                        Main.numAvailableRecipes++;
-                    }
-                }
-            }
-            for (int num6 = 0; num6 < Main.numAvailableRecipes; num6++)
-            {
-                if (num == Main.availableRecipe[num6])
-                {
-                    Main.focusRecipe = num6;
-                    break;
-                }
-            }
-            if (Main.focusRecipe >= Main.numAvailableRecipes)
-            {
-                Main.focusRecipe = Main.numAvailableRecipes - 1;
-            }
-            if (Main.focusRecipe < 0)
-            {
-                Main.focusRecipe = 0;
-            }
-            float num7 = Main.availableRecipeY[Main.focusRecipe] - num2;
-            for (int num8 = 0; num8 < Recipe.maxRecipes; num8++)
-            {
-                Main.availableRecipeY[num8] -= num7;
-            }
-        }
-
         //stop sign text from drawing when the player is too far away / does not have line of sight to the sign
         internal static void SignTextPatch(On.Terraria.Player.orig_TileInteractionsCheckLongDistance orig, Player self, int myX, int myY)
         {
@@ -816,8 +829,8 @@ namespace tsorcRevamp
                         if (num6 != -1)
                         {
                             Main.signHover = num6;
-                            self.showItemIcon = false;
-                            self.showItemIcon2 = -1;
+                            self.cursorItemIconEnabled = false;
+                            self.cursorItemIconID = -1;
                         }
                     }
                 }
@@ -836,7 +849,8 @@ namespace tsorcRevamp
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {
-                if (!Main.player[i].active || Main.player[i].dead) { continue; }
+                if (!Main.player[i].active || Main.player[i].dead)
+                { continue; }
                 if (Main.player[i].HasBuff(ModContent.BuffType<Buffs.BossZenBuff>()))
                 {
                     BossZen = true;
@@ -844,7 +858,8 @@ namespace tsorcRevamp
                 }
             }
 
-            if (BossZen) { return; }
+            if (BossZen)
+            { return; }
             else
             {
                 orig();
@@ -880,7 +895,7 @@ namespace tsorcRevamp
                 string userMapFileName = "\\TheStoryofRedCloud.wld";
                 string worldsFolder = Main.SavePath + "\\Worlds";
 
-                Vector2 downloadTextOrigin = Main.fontMouseText.MeasureString(downloadText);
+                Vector2 downloadTextOrigin = FontAssets.MouseText.Value.MeasureString(downloadText);
                 float textScale = 2;
                 Vector2 downloadTextPosition = new Vector2((Main.screenWidth / 2) - (downloadTextOrigin.X * 0.5f * textScale), 120 + (80 * 6));
 
@@ -958,8 +973,8 @@ namespace tsorcRevamp
                     }
                 }
                 Main.spriteBatch.Begin();
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, new Vector2(downloadTextPosition.X + 2, downloadTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, downloadText, new Vector2(downloadTextPosition.X + 2, downloadTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
+                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
                 Main.spriteBatch.End();
             }
 
@@ -997,7 +1012,7 @@ namespace tsorcRevamp
                     }
 
                     float musicTextScale = 2;
-                    Vector2 musicTextOrigin = Main.fontMouseText.MeasureString(musicText);
+                    Vector2 musicTextOrigin = FontAssets.MouseText.Value.MeasureString(musicText);
                     Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2) - musicTextOrigin.X * 0.5f * musicTextScale, 70 + (80 * 6));
                     Color musicTextColor = Main.DiscoColor;
 
@@ -1015,8 +1030,8 @@ namespace tsorcRevamp
                     }
 
                     Main.spriteBatch.Begin();
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
-                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, musicText, new Vector2(musicTextPosition.X + 2, musicTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, musicTextScale, SpriteEffects.None, 0);
+                    DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, musicText, musicTextPosition, musicTextColor, 0, Vector2.Zero, musicTextScale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0);
                     Main.spriteBatch.End();
                 }
             }
@@ -1027,9 +1042,9 @@ namespace tsorcRevamp
             }
         }
 
-        internal static void StaminaBar(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow)
+        internal static void StaminaBar(On.Terraria.Graphics.Renderers.LegacyPlayerRenderer.orig_DrawPlayer orig, Terraria.Graphics.Renderers.LegacyPlayerRenderer self, Terraria.Graphics.Camera camera, Player drawPlayer, Vector2 position, float rotation, Vector2 rotationOrigin, float shadow, float scale)
         {
-            orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
+            orig(self, camera, drawPlayer, position, rotation, rotationOrigin, shadow, scale);
 
             if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
@@ -1082,9 +1097,9 @@ namespace tsorcRevamp
             return croppedImage;
         }
 
-        internal static void CurseMeter(On.Terraria.Main.orig_DrawPlayer orig, Main self, Player drawPlayer, Vector2 Position, float rotation, Vector2 rotationOrigin, float shadow)
+        internal static void CurseMeter(On.Terraria.Graphics.Renderers.LegacyPlayerRenderer.orig_DrawPlayer orig, Terraria.Graphics.Renderers.LegacyPlayerRenderer self, Terraria.Graphics.Camera camera, Player drawPlayer, Vector2 position, float rotation, Vector2 rotationOrigin, float shadow, float scale)
         {
-            orig(self, drawPlayer, Position, rotation, rotationOrigin, shadow);
+            orig(self, camera, drawPlayer, position, rotation, rotationOrigin, shadow, scale);
 
             if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu)
             {
@@ -1211,7 +1226,7 @@ namespace tsorcRevamp
                             num5 = 136;
 
                         //Spawn probes
-                        num2 = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)npc.height), num5, npc.whoAmI);
+                        num2 = NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)npc.height), num5, npc.whoAmI);
                         Main.npc[num2].ai[3] = npc.whoAmI;
                         Main.npc[num2].realLife = npc.whoAmI;
                         Main.npc[num2].ai[1] = num3;
@@ -1396,7 +1411,7 @@ namespace tsorcRevamp
                         num24 = 20f;
 
                     npc.soundDelay = (int)num24;
-                    Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, npc.position);
                 }
 
                 num22 = (float)Math.Sqrt(num20 * num20 + num21 * num21);
