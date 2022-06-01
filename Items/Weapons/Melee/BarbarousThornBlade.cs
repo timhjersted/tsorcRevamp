@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             for (int i = 0; i < numberProjectiles; i++)
             {
                 Vector2 perturbedSpeed = new Vector2(speedX, speedY).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
-                Projectile.NewProjectile(position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
+                Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
             }
             return false;
         }

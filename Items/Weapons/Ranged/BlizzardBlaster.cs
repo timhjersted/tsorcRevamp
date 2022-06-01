@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             if (targetList.Count != 0) {
                 targetList.Sort((NPC a, NPC b) => (int)(Vector2.Distance(a.Center, player.Center) - Vector2.Distance(b.Center, player.Center)));
                 for (int j = 0; j < targetList.Count; j++) {
-                    int projectile = Projectile.NewProjectile(player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
+                    int projectile = Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), player.Center, Vector2.Zero, type, damage, knockBack, player.whoAmI);
                     BlizzardBlasterShot BlizzardBlasterShot = Main.projectile[projectile].ModProjectile as BlizzardBlasterShot;
                     BlizzardBlasterShot.target = targetList[j];
                     if (j >= 5) {

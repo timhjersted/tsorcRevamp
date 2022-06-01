@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             y = player.position.Y - 800f;
 
             for (int i = 0; i < 5; i++) {
-                Projectile.NewProjectile(x + ((i * 40) - 80), y, speedX, speedY, type, damage, knockback, owner);
+                Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), x + ((i * 40) - 80), y, speedX, speedY, type, damage, knockback, owner);
             }
             return true;
         }

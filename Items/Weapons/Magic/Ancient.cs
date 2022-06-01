@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -79,7 +80,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             int damage = (int)(Item.damage * player.GetDamage(DamageClass.Magic));
             float knockback = player.inventory[player.selectedItem].knockBack;
 
-            Projectile.NewProjectile(position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);
 
             return true;
         }

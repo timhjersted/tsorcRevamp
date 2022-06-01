@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             speedAbs = 7f / speedAbs; // for speed consistency
             mySpeedX *= speedAbs;
             mySpeedY *= speedAbs;
-            Projectile.NewProjectile(new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.SoulArrow>(), damage, knockBack, player.whoAmI);
+            Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), new Vector2(position.X, position.Y), new Vector2(mySpeedX, mySpeedY), ModContent.ProjectileType<Projectiles.SoulArrow>(), damage, knockBack, player.whoAmI);
 
 			return false;
 		}
