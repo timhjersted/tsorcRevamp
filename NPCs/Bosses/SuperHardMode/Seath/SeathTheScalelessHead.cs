@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     int crystalVelocity = 16;
                     if (!firstCrystalSpawned && NPC.life <= (2 * NPC.lifeMax / 3) || !secondCrystalSpawned && NPC.life <= (NPC.lifeMax / 3))
                     {
-                        int crystal = NPC.NewNPC((int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
+                        int crystal = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
                         Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
                         if(NPC.life >= (NPC.lifeMax / 2))
                         {
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            int crystal = NPC.NewNPC((int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
+                            int crystal = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<PrimordialCrystal>(), default, NPC.whoAmI);
                             Main.npc[crystal].velocity = Main.rand.NextVector2CircularEdge(-crystalVelocity, crystalVelocity);
                         }
                         finalCrystalsSpawned = true;

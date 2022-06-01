@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Main.NewText("Slogra has emerged from the depths!", 175, 75, 255);
                 //NPC.SpawnOnPlayer(P.whoAmI, ModContent.NPCType<NPCs.Bosses.Gaibon>());
-                //NPC.NewNPC((int)P.position.X + 400, (int)P.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+                //NPC.NewNPC(NPC.GetSource_FromAI(), (int)P.position.X + 400, (int)P.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
                 return 1;
             }*/
 
@@ -175,7 +175,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         {
                             Vector2 dir = Vector2.UnitX.RotatedByRandom(MathHelper.Pi);
                             Vector2 projPos = NPC.Center + dir * dustRadius * 16;
-                            int spawned = NPC.NewNPC((int)projPos.X, (int)projPos.Y, NPCID.BurningSphere, 0);
+                            int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)projPos.X, (int)projPos.Y, NPCID.BurningSphere, 0);
                             Main.npc[spawned].damage = burningSphereDamage;
                             Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2));
                             if (Main.netMode == NetmodeID.Server)
@@ -506,7 +506,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 //{
                 //if ((customspawn1 < 1) && (comboDamage > 1) && Main.rand.Next(2)==1)
                 //	{
-                //		int Spawned = NPC.NewNPC((int) npc.position.X+(npc.width/2), (int) npc.position.Y+(npc.height/2), "Gaibon", 0);
+                //		int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int) npc.position.X+(npc.width/2), (int) npc.position.Y+(npc.height/2), "Gaibon", 0);
                 //		Main.npc[Spawned].velocity.Y = -8;
                 //		Main.npc[Spawned].velocity.X = Main.rand.Next(-10,10)/10;
                 //		customspawn1 += 1;

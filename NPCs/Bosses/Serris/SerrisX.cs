@@ -38,11 +38,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			//If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
 			if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) || NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>()) > 1)
 			{
-				despawnHandler = new NPCDespawnHandler(DustID.Torchwork_Blue);
+				despawnHandler = new NPCDespawnHandler(DustID.Firework_Blue);
 			}
 			else
 			{
-				despawnHandler = new NPCDespawnHandler("Serris returns to the depths of its temple...", Color.Cyan, DustID.Torchwork_Blue);
+				despawnHandler = new NPCDespawnHandler("Serris returns to the depths of its temple...", Color.Cyan, DustID.Firework_Blue);
 			}
 		}
 
@@ -155,7 +155,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 						Vector2 dir = Main.rand.NextVector2CircularEdge(250, 250);
 						Vector2 dustPos = NPC.Center + dir;
 						Vector2 dustVel = UsefulFunctions.GenerateTargetingVector(dustPos, NPC.Center, 12);
-						Dust.NewDustPerfect(dustPos, DustID.Torchwork_Blue, dustVel, 200).noGravity = true;
+						Dust.NewDustPerfect(dustPos, DustID.Firework_Blue, dustVel, 200).noGravity = true;
 					}
 					projCooldown--;
 					secondaryCooldown--;
@@ -269,7 +269,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris-X Gore 3").Type, 1f);
 			for (int num36 = 0; num36 < 70; num36++)
 			{
-				int dust = Dust.NewDust(NPC.position, (int)(NPC.width), (int)(NPC.height), DustID.Torchwork_Blue, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
+				int dust = Dust.NewDust(NPC.position, (int)(NPC.width), (int)(NPC.height), DustID.Firework_Blue, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
 				Main.dust[dust].noGravity = true;
 			}
 

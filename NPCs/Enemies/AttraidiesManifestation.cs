@@ -259,8 +259,8 @@ namespace tsorcRevamp.NPCs.Enemies
 					int Paraspawn = 0;
 					int Paraspawn2 = 0;
 
-					if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.CursedSkull, 0);
-					if (Random == 5) Paraspawn2 = NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
+					if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.CursedSkull, 0);
+					if (Random == 5) Paraspawn2 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
 					Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
 					Main.npc[Paraspawn2].velocity.X = NPC.velocity.X;
 					Main.npc[Paraspawn2].lifeMax = 200;

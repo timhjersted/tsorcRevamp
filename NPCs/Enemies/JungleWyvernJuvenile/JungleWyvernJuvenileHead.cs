@@ -116,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 							npcType = ModContent.NPCType<JungleWyvernJuvenileTail>();
 							break;
 					}
-					int num122 = NPC.NewNPC((int)(NPC.position.X + NPC.width / 2), (int)(NPC.position.Y + (float)NPC.height), npcType, NPC.whoAmI);
+					int num122 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + NPC.width / 2), (int)(NPC.position.Y + (float)NPC.height), npcType, NPC.whoAmI);
 					Main.npc[num122].ai[2] = NPC.whoAmI;
 					Main.npc[num122].realLife = NPC.whoAmI;
 					Main.npc[num122].ai[1] = num119;

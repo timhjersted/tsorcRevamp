@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					int npcIndex = -1;
 
-					npcIndex = NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.JungleBat);
+					npcIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.JungleBat);
 
 					if (npcIndex >= 0)
 					{
@@ -184,8 +184,8 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item97, NPC.Center);
 						int npcIndex = -1;
-						//NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height - 118) + npc.velocity.Y), NPCID.LittleHornetLeafy);
-						npcIndex = NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.LittleHornetLeafy);
+						//NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.position.X + (float)(npc.width / 2) + npc.velocity.X), (int)(npc.position.Y + (float)(npc.height - 118) + npc.velocity.Y), NPCID.LittleHornetLeafy);
+						npcIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.LittleHornetLeafy);
 
 						if (npcIndex >= 0)
 						{
@@ -197,7 +197,7 @@ namespace tsorcRevamp.NPCs.Enemies
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item76, NPC.Center);
 						int npcIndex2 = -1;
 
-						npcIndex2 = NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.JungleBat);
+						npcIndex2 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height - 118) + NPC.velocity.Y), NPCID.JungleBat);
 
 						if (npcIndex2 >= 0)
 						{

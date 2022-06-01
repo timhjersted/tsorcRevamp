@@ -169,7 +169,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 if (Main.rand.Next(500) == 0)
                 {
-                    int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.VampireBat>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.VampireBat>(), 0);
 
                     if (Main.netMode == NetmodeID.Server)
                     {

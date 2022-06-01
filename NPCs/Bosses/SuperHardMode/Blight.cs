@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.boss = true;
             NPC.buffImmune[BuffID.Confused] = true;
             bossBag = ModContent.ItemType<Items.BossBags.BlightBag>();
-            despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Torchwork_Blue);
+            despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
         int phantomSeekerDamage = 58;
@@ -63,13 +63,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (Main.expertMode) expertScale = 2;
             if (Main.rand.Next(4) == 0) {
 
-                target.AddBuff(36, 180 / expertScale, false); //broken armor
-                target.AddBuff(20, 3600 / expertScale, false); //poisoned
-                target.AddBuff(30, 1800 / expertScale, false); //bleeding
+                target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
+                target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false); //poisoned
+                target.AddBuff(BuffID.Bleeding, 1800 / expertScale, false); //bleeding
 
             }
 
-            if (Main.rand.Next(2) == 0) {
+            if (Main.rand.NextBool(2)) {
 
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
                 target.AddBuff(BuffID.CursedInferno, 180 / expertScale, false); //cursed inferno

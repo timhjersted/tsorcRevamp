@@ -324,7 +324,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				{
 					int Random = Main.rand.Next(80);
 					int Paraspawn = 0;
-					if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Parasprite>(), 0);
+					if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Parasprite>(), 0);
 					Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
 					NPC.active = true;
 				}

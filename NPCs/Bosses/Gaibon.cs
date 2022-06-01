@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (Main.rand.Next(45) == 1)
 					{
 						Vector2 randomSpawn = Main.rand.NextVector2CircularEdge(200, 200);
-						int spawned = NPC.NewNPC((int)(NPC.position.X + randomSpawn.X), (int)(NPC.position.Y + randomSpawn.Y), NPCID.BurningSphere, 0);
+						int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + randomSpawn.X), (int)(NPC.position.Y + randomSpawn.Y), NPCID.BurningSphere, 0);
 						Main.npc[spawned].damage = burningSphereDamage;
 						Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2));
 						if (Main.netMode == NetmodeID.Server)

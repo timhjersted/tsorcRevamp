@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			{
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					OptionId = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingDisciple>(), NPC.whoAmI);
+					OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingDisciple>(), NPC.whoAmI);
 					Main.npc[OptionId].velocity.Y = -10;
 					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, OptionId, 0f, 0f, 0f, 0);
 				}

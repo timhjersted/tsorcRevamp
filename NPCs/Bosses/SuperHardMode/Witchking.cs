@@ -318,7 +318,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             customAi1 += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (customAi1 >= 10f) {
                 if ((customspawn1 < 36) && Main.rand.Next(800) == 1) { //was 2 and 900
-                    int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.GhostOfTheDarkmoonKnight>(), 0);
                     Main.npc[Spawned].velocity.Y = -8;
                     Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                     NPC.ai[0] = 20 - Main.rand.Next(180); //was 80

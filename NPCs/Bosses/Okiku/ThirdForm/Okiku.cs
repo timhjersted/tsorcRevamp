@@ -274,7 +274,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             if (NPC.life <= NPC.lifeMax / 2) {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int NewOkiku = NPC.NewNPC((int)center.X, (int)center.Y, ModContent.NPCType<BrokenOkiku>(), 0);
+                    int NewOkiku = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X, (int)center.Y, ModContent.NPCType<BrokenOkiku>(), 0);
                     Main.npc[NewOkiku].life = NPC.life;
                 }
                 NPC.active = false;

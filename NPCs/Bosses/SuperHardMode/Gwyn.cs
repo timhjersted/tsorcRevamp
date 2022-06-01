@@ -418,7 +418,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					if ((customspawn1 < 16) && Main.rand.Next(200) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Hellbat, 0);
+						int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Hellbat, 0);
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 						NPC.ai[0] = 20 - Main.rand.Next(80);
@@ -430,7 +430,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					}
 					if ((customspawn2 < 5) && Main.rand.Next(350) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.BlackKnight>(), 0);
+						int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.BlackKnight>(), 0);
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 						NPC.ai[0] = 20 - Main.rand.Next(80);
@@ -443,7 +443,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
 					if ((customspawn3 < 1) && Main.rand.Next(550) == 1)
 					{
-						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SwordOfLordGwyn>(), 0);
+						int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SwordOfLordGwyn>(), 0);
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 						NPC.ai[0] = 20 - Main.rand.Next(80);

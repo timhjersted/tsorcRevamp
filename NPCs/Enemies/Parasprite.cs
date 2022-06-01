@@ -60,7 +60,7 @@ namespace tsorcRevamp.NPCs.Enemies {
                         int spawner = Main.rand.Next(2); // decide if a sprite is allowed to spawn more copies. only 1 in 2 parasprites can spawn copies, for lag reduction...
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int NewSprite = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Parasprite>(), 0, 0, 0, 0, spawner);
+                            int NewSprite = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Parasprite>(), 0, 0, 0, 0, spawner);
                             Main.npc[NewSprite].velocity.X = -NPC.velocity.X * 2;
                         }
                     }

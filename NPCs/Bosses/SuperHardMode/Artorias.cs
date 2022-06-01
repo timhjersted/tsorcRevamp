@@ -300,7 +300,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				if (customAi1 >= 10f) {
 
 					if ((customspawn2 < 24) && Main.rand.Next(1950) == 1) {
-						int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
+						int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Enemies.LothricBlackKnight>(), 0); // Spawns Lothric Black Knight
 						Main.npc[Spawned].velocity.Y = -8;
 						Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 						NPC.ai[0] = 20 - Main.rand.Next(80);

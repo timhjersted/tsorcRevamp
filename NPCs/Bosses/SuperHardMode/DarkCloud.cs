@@ -1394,7 +1394,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int j = 0; j < 3; j++)
                         {
-                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.TorchworkFountain_Green, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
+                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.FireworkFountain_Green, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
                             Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.ShadowbeamStaff, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
                         }
                         Main.projectile[i].Kill();
@@ -1593,7 +1593,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 //Spawn the sword.
                 //That's it. The rest of it happens within the sword's ai.
-                NPC.NewNPC((int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<DarkUltimaWeapon>(), 0, NPC.whoAmI);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X, (int)NPC.position.Y, ModContent.NPCType<DarkUltimaWeapon>(), 0, NPC.whoAmI);
             }
         }
 
@@ -1748,7 +1748,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 pos = Main.rand.NextVector2CircularEdge(700, 700) + Target.Center;
-                    NPC.NewNPC((int)pos.X, (int)pos.Y, ModContent.NPCType<DarkCloudMirror>(), 0, DarkCloudAttackID.AntiMat, 60 + Main.rand.NextFloat(150));
+                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)pos.X, (int)pos.Y, ModContent.NPCType<DarkCloudMirror>(), 0, DarkCloudAttackID.AntiMat, 60 + Main.rand.NextFloat(150));
                 }
             }            
 
@@ -1764,15 +1764,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {            
             if (AttackModeCounter == 0)
             {
-                NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloudAttackID.TeleportingSlashes);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloudAttackID.TeleportingSlashes);
 
                 Vector2 spawnPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
-                NPC.NewNPC((int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
             } 
             if (AttackModeCounter % 20 == 0)
             {                
                 Vector2 spawnPoint = Target.Center + Main.rand.NextVector2CircularEdge(slashesWarpRadius, slashesWarpRadius);
-                NPC.NewNPC((int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<DarkCloudMirror>(), ai0: DarkCloudAttackID.TeleportingSlashes);
             }
         }
 
@@ -2004,7 +2004,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         Vector2 thisPos = NPC.Center + startPos + Main.rand.NextVector2Circular(50, 50);
                         Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                        Dust.NewDustPerfect(thisPos, DustID.TorchworkFountain_Blue, thisVel).noGravity = true;
+                        Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Blue, thisVel).noGravity = true;
                     }
                     DarkCloudParticleEffect(-2, 1);
                 }
@@ -2027,7 +2027,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {                
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
                 Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                Dust.NewDustPerfect(thisPos, DustID.TorchworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
+                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
             }
             
 
@@ -2049,7 +2049,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 20; i++) {
                     Vector2 thisVel = arrowRainTargetingVector + Main.rand.NextVector2Circular(10, 10);
-                    Dust.NewDustPerfect(NPC.Center, DustID.TorchworkFountain_Green, thisVel).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, DustID.FireworkFountain_Green, thisVel).noGravity = true;
                 }
             }
 
@@ -2652,7 +2652,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     //npc.TargetClosest(true);
                     if ((customspawn1 < 1) && Main.rand.Next(1000) == 1)
                     {
-                        int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.CrystalKnight>(), 0);
+                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.CrystalKnight>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                         NPC.ai[0] = 20 - Main.rand.Next(80);
@@ -2664,7 +2664,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                     if ((customspawn2 < 2) && Main.rand.Next(3500) == 1)
                     {
-                        int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
+                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                         NPC.ai[0] = 20 - Main.rand.Next(80);
@@ -2679,7 +2679,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if ((customspawn3 < 0) && Main.rand.Next(9950) == 1)
                     {
-                        int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
+                        int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
                         Main.npc[Spawned].velocity.Y = -8;
                         Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
                         NPC.ai[0] = 20 - Main.rand.Next(80);

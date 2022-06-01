@@ -1029,7 +1029,7 @@ namespace tsorcRevamp.NPCs {
                     }
                     if (Main.netMode != 1)
                     {
-                        int num334 = NPC.NewNPC((int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)(npc.height / 2) + 20f), 117, 1);
+                        int num334 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)(npc.height / 2) + 20f), 117, 1);
                         Main.npc[num334].velocity.X = npc.direction * 8;
                     }
                 }
@@ -1279,7 +1279,7 @@ namespace tsorcRevamp.NPCs {
                             }
                             if (num352 >= 0)
                             {
-                                int num357 = NPC.NewNPC((int)npc.position.X, (int)num342, 115, npc.whoAmI);
+                                int num357 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)npc.position.X, (int)num342, 115, npc.whoAmI);
                                 Main.npc[num357].ai[0] = (float)num352 * 0.1f - 0.05f;
                             }
                         }
@@ -1290,17 +1290,17 @@ namespace tsorcRevamp.NPCs {
                     npc.localAI[0] = 2f;
                     num342 = (Main.wofB + Main.wofT) / 2;
                     num342 = (num342 + (float)Main.wofT) / 2f;
-                    int num358 = NPC.NewNPC((int)npc.position.X, (int)num342, 114, npc.whoAmI);
+                    int num358 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)npc.position.X, (int)num342, 114, npc.whoAmI);
                     Main.npc[num358].ai[0] = 1f;
                     num342 = (Main.wofB + Main.wofT) / 2;
                     num342 = (num342 + (float)Main.wofB) / 2f;
-                    num358 = NPC.NewNPC((int)npc.position.X, (int)num342, 114, npc.whoAmI);
+                    num358 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)npc.position.X, (int)num342, 114, npc.whoAmI);
                     Main.npc[num358].ai[0] = -1f;
                     num342 = (Main.wofB + Main.wofT) / 2;
                     num342 = (num342 + (float)Main.wofB) / 2f;
                     for (int num359 = 0; num359 < 11; num359++)
                     {
-                        num358 = NPC.NewNPC((int)npc.position.X, (int)num342, 115, npc.whoAmI);
+                        num358 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)npc.position.X, (int)num342, 115, npc.whoAmI);
                         Main.npc[num358].ai[0] = (float)num359 * 0.1f - 0.05f;
                     }
                 }
@@ -1892,7 +1892,7 @@ namespace tsorcRevamp.NPCs {
                 if (Main.netMode != 1 && npc.ai[1] <= 0f && Main.player[npc.target].active && !Main.player[npc.target].dead && npc.Distance(Main.player[npc.target].Center) < 1080f && Main.player[npc.target].position.Y - npc.position.Y < 700f) {
                     Vector2 vector136 = npc.Top + new Vector2((float)(-npc.width) * 0.33f, -20f) + new Vector2((float)npc.width * 0.66f, 20f) * Utils.RandomVector2(Main.rand, 0f, 1f);
                     Vector2 velocity8 = -Vector2.UnitY.RotatedByRandom(0.78539818525314331) * (7f + Main.rand.NextFloat() * 5f);
-                    int num508 = NPC.NewNPC((int)vector136.X, (int)vector136.Y, 519, npc.whoAmI);
+                    int num508 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)vector136.X, (int)vector136.Y, 519, npc.whoAmI);
                     Main.npc[num508].velocity = velocity8;
                     Main.npc[num508].netUpdate = true;
                     npc.ai[1] = 60f;
@@ -2089,7 +2089,7 @@ namespace tsorcRevamp.NPCs {
                             position.X += vector112.X * 10f;
                             position.Y += vector112.Y * 10f;
                             if (Main.netMode != 1) {
-                                int num711 = NPC.NewNPC((int)position.X, (int)position.Y, 5);
+                                int num711 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)position.X, (int)position.Y, 5);
                                 Main.npc[num711].velocity.X = vector112.X;
                                 Main.npc[num711].velocity.Y = vector112.Y;
                                 if (Main.netMode == 2 && num711 < 200) {
@@ -2202,7 +2202,7 @@ namespace tsorcRevamp.NPCs {
                     position2.X += vector185.X * 10f;
                     position2.Y += vector185.Y * 10f;
                     if (Main.netMode != 1) {
-                        int num833 = NPC.NewNPC((int)position2.X, (int)position2.Y, 5);
+                        int num833 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)position2.X, (int)position2.Y, 5);
                         Main.npc[num833].velocity.X = vector185.X;
                         Main.npc[num833].velocity.Y = vector185.Y;
                         if (Main.netMode == 2 && num833 < 200) {

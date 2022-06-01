@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (Main.rand.Next(600) == 0)
 			{
-				NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IlluminantBat);
+				NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.IlluminantBat);
 			}
 
 			//BIG ATTACK DUST CIRCLE

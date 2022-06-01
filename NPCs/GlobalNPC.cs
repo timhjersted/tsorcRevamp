@@ -606,7 +606,7 @@ namespace tsorcRevamp.NPCs
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust].noGravity = true;
 
-                int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.TorchworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
+                int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.FireworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust2].noGravity = true;                
             }
 
@@ -1141,7 +1141,7 @@ namespace tsorcRevamp.NPCs
                             int npcType = (m == wormLength - 2 ? tailType : bodyTypes[m]);
 
                             //Spawn the npc
-                            int newnpcID = NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), npcType, npc.whoAmI);
+                            int newnpcID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), npcType, npc.whoAmI);
 
                             //Set the new piece's Head ID to the head
                             Main.npc[newnpcID].ai[3] = (float)npc.whoAmI;
@@ -1179,16 +1179,16 @@ namespace tsorcRevamp.NPCs
                             }
                             npc.ai[2] = (float)(wormLength - 2);
                             int nextPiece = (bodyTypes.Length == 0 ? tailType : bodyTypes[0]);
-                            npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), nextPiece, npc.whoAmI);
+                            npc.ai[0] = (float)NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), nextPiece, npc.whoAmI);
                         }
                         else
                         if ((npc.type != headType && npc.type != tailType) && npc.ai[2] > 0f)
                         {
-                            npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), bodyTypes[wormLength - 3 - (int)npc.ai[2]], npc.whoAmI);
+                            npc.ai[0] = (float)NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), bodyTypes[wormLength - 3 - (int)npc.ai[2]], npc.whoAmI);
                         }
                         else
                         {
-                            npc.ai[0] = (float)NPC.NewNPC((int)(npc.Center.X), (int)(npc.Center.Y), tailType, npc.whoAmI);
+                            npc.ai[0] = (float)NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), tailType, npc.whoAmI);
                         }
                         if (!split)
                         {
@@ -2602,7 +2602,7 @@ namespace tsorcRevamp.NPCs
                     }
                     else
                     {
-                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID.TorchworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
                     }
                 }
             }       

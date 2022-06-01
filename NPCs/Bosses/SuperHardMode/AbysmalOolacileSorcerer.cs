@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			NPC.buffImmune[BuffID.Confused] = true;
 			NPC.buffImmune[BuffID.OnFire] = true;
 			bossBag = ModContent.ItemType<Items.BossBags.OolacileSorcererBag>();
-			despawnHandler = new NPCDespawnHandler("The Abysmal Oolacile Sorcerer has shattered your mind...", Color.DarkRed, DustID.Torchwork_Red);
+			despawnHandler = new NPCDespawnHandler("The Abysmal Oolacile Sorcerer has shattered your mind...", Color.DarkRed, DustID.Firework_Red);
 		}
 
 
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			{
 				if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightPhantom>()) < 200) && Main.rand.Next(130) == 1)
 				{
-					int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
+					int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightPhantom>(), 0);
 					Main.npc[Spawned].velocity.Y = -8;
 					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 					if (Main.netMode == 2)
@@ -156,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 				if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.BarrowWightNemesis>()) < 2) && Main.rand.Next(3000) == 1)
 				{
-					int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
+					int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.BarrowWightNemesis>(), 0);
 					Main.npc[Spawned].velocity.Y = -8;
 					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 					if (Main.netMode == 2)
@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				}
 				if ((NPC.CountNPCS(ModContent.NPCType<Enemies.SuperHardMode.TaurusKnight>()) < 1) && Main.rand.Next(2050) == 1)
 				{
-					int Spawned = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
+					int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), 0);
 					Main.npc[Spawned].velocity.Y = -8;
 					Main.npc[Spawned].velocity.X = Main.rand.Next(-10, 10) / 10;
 					if (Main.netMode == 2)
@@ -253,7 +253,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 							bool dark_caster = false; // not a fighter type AI...
 							if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
 								safe_to_stand = false;
-							else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
+							else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
 								safe_to_stand = false;
 
 							if (safe_to_stand && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))

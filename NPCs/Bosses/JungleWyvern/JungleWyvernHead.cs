@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 							npcType = ModContent.NPCType<JungleWyvernTail>();
 							break;
 					}
-					int num122 = NPC.NewNPC((int)(NPC.position.X + NPC.width / 2), (int)(NPC.position.Y + (float)NPC.height), npcType, NPC.whoAmI);
+					int num122 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + NPC.width / 2), (int)(NPC.position.Y + (float)NPC.height), npcType, NPC.whoAmI);
 					Main.npc[num122].ai[2] = NPC.whoAmI;
 					Main.npc[num122].realLife = NPC.whoAmI;
 					Main.npc[num122].ai[1] = num119;
@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern {
 				{
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						NPC.NewNPC((int)NPC.position.X + Main.rand.Next(-20, 20), (int)NPC.position.Y + Main.rand.Next(-20, 20), Mod.Find<ModNPC>("JungleWyvernJuvenileHead").Type);
+						NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + Main.rand.Next(-20, 20), (int)NPC.position.Y + Main.rand.Next(-20, 20), Mod.Find<ModNPC>("JungleWyvernJuvenileHead").Type);
 					}
 					juvenileSpawnTimer = 0;
 				}

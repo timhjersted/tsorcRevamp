@@ -39,11 +39,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			//If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
 			if (NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1)
 			{
-				despawnHandler = new NPCDespawnHandler(DustID.Torchwork_Blue);
+				despawnHandler = new NPCDespawnHandler(DustID.Firework_Blue);
 			}
 			else
 			{
-				despawnHandler = new NPCDespawnHandler("Serris retreats to the depths of its temple...", Color.Cyan, DustID.Torchwork_Blue);
+				despawnHandler = new NPCDespawnHandler("Serris retreats to the depths of its temple...", Color.Cyan, DustID.Firework_Blue);
 			}
 		}
 		public override void SetStaticDefaults()
@@ -137,11 +137,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 					{
 						if (num36 >= 0 && num36 < 14)
 						{
-							srs = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.Serris.SerrisBody>(), NPC.whoAmI);
+							srs = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.Serris.SerrisBody>(), NPC.whoAmI);
 						}
 						else
 						{
-							srs = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.Serris.SerrisTail>(), NPC.whoAmI);
+							srs = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Bosses.Serris.SerrisTail>(), NPC.whoAmI);
 						}
 						if(num36 == 0)
                         {
@@ -214,7 +214,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			if (!(NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1))
 			{
 				UsefulFunctions.BroadcastText("Serris has transformed!", Color.Cyan);
-				NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2)), (int)(NPC.position.Y + (float)NPC.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
+				NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2)), (int)(NPC.position.Y + (float)NPC.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
 			}
 			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris Gore 1").Type, 1f);
 		}

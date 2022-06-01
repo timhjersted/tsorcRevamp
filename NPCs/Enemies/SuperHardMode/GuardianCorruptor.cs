@@ -213,7 +213,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
 
                         for (int i = 0; i < shotCount; i++) {
                             Vector2 shotDirection = new Vector2((distX * distAbs) / 1.5f, (distY * distAbs) / 1.5f);
-                            int guardianSpit = NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height / 2) + NPC.velocity.Y), ModContent.NPCType<ViciousSpit>());
+                            int guardianSpit = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height / 2) + NPC.velocity.Y), ModContent.NPCType<ViciousSpit>());
                             Main.npc[guardianSpit].velocity = 1.5f * shotDirection.RotatedBy(MathHelper.ToRadians(12 - (12 * i)));
                         }
                     }

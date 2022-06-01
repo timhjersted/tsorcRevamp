@@ -61,7 +61,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
             if (DragonSpawned == false) {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    DragonIndex = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
+                    DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
                     Main.npc[DragonIndex].velocity.Y = -10;
                 }
                 DragonSpawned = true;
@@ -113,7 +113,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
                     ChannellingDragon = false;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        DragonIndex = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
+                        DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
                         Main.npc[DragonIndex].velocity.Y = -10;
                     }
                     TimerSpawn = 0;
@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
                 UsefulFunctions.BroadcastText("??????????????????? A booming laughter echoes all around you!", new Color(175, 75, 255));
             }
         }

@@ -7,6 +7,10 @@ namespace tsorcRevamp.Items.Armors
     [AutoloadEquip(EquipType.Head)]
     public class AncientBrassHelmet : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
+        }
 
         public override void SetDefaults()
         {
@@ -20,10 +24,6 @@ namespace tsorcRevamp.Items.Armors
         public override bool IsArmorSet(Item head, Item body, Item legs)
         {
             return body.type == ModContent.ItemType<AncientBrassArmor>() && legs.type == ModContent.ItemType<AncientBrassGreaves>();
-        }
-        public override void DrawHair(ref bool drawHair, ref bool drawAltHair)
-        {
-            drawAltHair = true;
         }
 
         public override void UpdateArmorSet(Player player)

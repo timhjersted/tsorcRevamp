@@ -548,20 +548,20 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         int SpawnSelection = Main.rand.Next(4);
                         if (SpawnSelection == 0)
                         {
-                            NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 406 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
-                            NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 406 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 406 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 406 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.ChaosElemental, 0);
                         }
                         if (SpawnSelection == 1)
                         {
-                            NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 800 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<Enemies.MindflayerIllusion>());
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 800 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<Enemies.MindflayerIllusion>());
                         }
                         if (SpawnSelection == 2)
                         {
-                            NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 900 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<AttraidiesMimic>());
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 900 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<AttraidiesMimic>());
                         }
                         if (SpawnSelection == 3)
                         {
-                            NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 900 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<Enemies.DiscipleOfAttraidies>());
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 900 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 500 - this.NPC.width / 2, ModContent.NPCType<Enemies.DiscipleOfAttraidies>());
                         }
                         NPCSummonCooldown = 0;
                     }
@@ -574,7 +574,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                         }
                         if (DragonSpawned == 0)
                         {
-                            int OptionId = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.ShadowDragonHead>(), NPC.whoAmI);
+                            int OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.ShadowDragonHead>(), NPC.whoAmI);
                             Main.npc[OptionId].velocity.Y = -10;
                             if (Main.netMode == NetmodeID.Server)
                             {

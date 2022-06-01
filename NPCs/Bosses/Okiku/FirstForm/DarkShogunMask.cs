@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                 if (OptionSpawned == false) {
                     int RealLifeId = 0;
                     for (int j = 0; j < 6; j++) {
-                        int rotball = NPC.NewNPC((int)((NPC.position.X + (NPC.width / 2) - (Main.npc[j].width)) + Math.Sin(NPC.rotation + ((360 / 10) * (1 + j))) * 300), (int)((NPC.position.Y + (NPC.height / 2) - (Main.npc[j].height)) + Math.Cos(NPC.rotation + ((360 / 10) * (1 + j))) * 300), ModContent.NPCType<DamnedSoul>(), 0);
+                        int rotball = NPC.NewNPC(NPC.GetSource_FromAI(), (int)((NPC.position.X + (NPC.width / 2) - (Main.npc[j].width)) + Math.Sin(NPC.rotation + ((360 / 10) * (1 + j))) * 300), (int)((NPC.position.Y + (NPC.height / 2) - (Main.npc[j].height)) + Math.Cos(NPC.rotation + ((360 / 10) * (1 + j))) * 300), ModContent.NPCType<DamnedSoul>(), 0);
                         Main.npc[rotball].ai[0] = j;
                         Main.npc[rotball].ai[1] = NPC.whoAmI;
                         for (int i = 0; i < 20; i++) {
@@ -250,7 +250,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm {
                             Main.npc[i].active = false;
                         }
                     }
-                    NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.DarkDragonMask>(), 0);
+                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.DarkDragonMask>(), 0);
                     NPC.active = false;
                 }
             }

@@ -193,7 +193,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
+                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DarkUltimaWeapon>(), ai0: NPC.whoAmI, ai2: DarkCloud.DarkCloudAttackID.TeleportingSlashes);
                 }
                 NPC.velocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Target.Center, 17);
             }           
@@ -309,7 +309,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {                
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
                 Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                Dust.NewDustPerfect(thisPos, DustID.TorchworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
+                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
             }
             
 

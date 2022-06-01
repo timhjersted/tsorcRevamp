@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				skeletonsSpawned += 1;
 
 				if (Main.netMode != NetmodeID.MultiplayerClient) {
-					int spawnedNPC = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, NPCID.ArmoredSkeleton, 0);
+					int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPCID.ArmoredSkeleton, 0);
 					if (Main.netMode == NetmodeID.Server)
 					{
 						NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawnedNPC, 0f, 0f, 0f, 0);

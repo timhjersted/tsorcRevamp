@@ -59,7 +59,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    OptionId = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), NPC.whoAmI);
+                    OptionId = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<LichKingSerpentHead>(), NPC.whoAmI);
                     Main.npc[OptionId].velocity.Y = -10;
                 }   
                 OptionSpawned = true;

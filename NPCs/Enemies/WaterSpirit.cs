@@ -53,15 +53,15 @@ namespace tsorcRevamp.NPCs.Enemies
 			if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 1].LiquidAmount == 0) return 0; //this means if there is no water above , don't spawn
 			if (Main.rand.Next(15) == 0)
 			{
-				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 65, 0);
+				NPC.NewNPC(NPC.GetSource_FromAI(), spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 65, 0);
 			}
 			if (Main.rand.Next(10) == 0)
 			{
-				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 67, 0);
+				NPC.NewNPC(NPC.GetSource_FromAI(), spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 67, 0);
 			}
 			else
 			{
-				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 64, 0);
+				NPC.NewNPC(NPC.GetSource_FromAI(), spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 64, 0);
 			}
 			**/
 			return 0;

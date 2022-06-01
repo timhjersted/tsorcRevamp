@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             {
                 if(Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int wyvernID = NPC.NewNPC((int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Bosses.WyvernMage.MechaDragonHead>(), NPC.whoAmI);
+                    int wyvernID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<Bosses.WyvernMage.MechaDragonHead>(), NPC.whoAmI);
                     Main.npc[wyvernID].velocity.Y = -10;
                     Main.npc[wyvernID].netUpdate = true;
                 }
@@ -177,9 +177,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        int Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
-                        Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
+                        Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 636 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, ModContent.NPCType<Enemies.BarrowWight>(), 0);
                         Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
                     }
                 }

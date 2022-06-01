@@ -146,17 +146,17 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						if ((Main.rand.Next(8) == 0) && (NPC.CountNPCS(Mod.Find<ModNPC>("LivingShroomThief").Type) < 1))
 						{
-							NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("LivingShroomThief").Type));
+							NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("LivingShroomThief").Type));
 						}
 						else
 						{
-							NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("LivingShroom").Type));
+							NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("LivingShroom").Type));
 						}
 						NPC.netUpdate = true;
 					}
 					else
 					{
-						NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("ResentfulSeedling").Type));
+						NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2) + NPC.velocity.X), (int)(NPC.position.Y + (float)(NPC.height) + NPC.velocity.Y), (Mod.Find<ModNPC>("ResentfulSeedling").Type));
 					}
 						//play sound, make dust
 						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);

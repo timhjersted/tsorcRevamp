@@ -131,7 +131,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						spawnType = ModContent.NPCType<NPCs.Enemies.SuperHardMode.HydrisElemental>(); //NPCID.ChaosElemental;
 					}
 
-					int spawnedNPC = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, spawnType, 0);
+					int spawnedNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, spawnType, 0);
 					if (Main.netMode == NetmodeID.Server)
 					{
 						NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawnedNPC, 0f, 0f, 0f, 0);

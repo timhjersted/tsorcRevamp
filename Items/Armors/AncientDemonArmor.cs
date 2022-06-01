@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Armors
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Forged by those who brave Annihilation.\nMana Regen Skill activates when health falls below 160 \nSet bonus: +15% Magic Critical Chance, -15% Mana Usage, +15% Magic Damage");
+            ArmorIDs.Body.Sets.HidesHands[Item.bodySlot] = false;
         }
 
         public override void SetDefaults()
@@ -20,11 +21,6 @@ namespace tsorcRevamp.Items.Armors
             Item.defense = 13;
             Item.value = 40000;
             Item.rare = ItemRarityID.Orange;
-        }
-
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
         }
         public override void UpdateEquip(Player player)
         {

@@ -260,10 +260,10 @@ namespace tsorcRevamp.NPCs.Enemies
 					{
 						int Random = Main.rand.Next(80);
 						int Paraspawn = 0;
-						if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 736 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.CursedSkull, 0);
-						if (Random == 0) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 700 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - this.NPC.width / 2, NPCID.CursedSkull, 0);
-						if (Random == 15 && Main.hardMode) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X - 700 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - this.NPC.width / 2, NPCID.Wraith, 0);
-						if (Random == 15 && Main.hardMode) Paraspawn = NPC.NewNPC((int)Main.player[this.NPC.target].position.X + 750 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - this.NPC.width / 2, NPCID.Wraith, 0);
+						if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 736 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - 16 - this.NPC.width / 2, NPCID.CursedSkull, 0);
+						if (Random == 0) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 700 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - this.NPC.width / 2, NPCID.CursedSkull, 0);
+						if (Random == 15 && Main.hardMode) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X - 700 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - this.NPC.width / 2, NPCID.Wraith, 0);
+						if (Random == 15 && Main.hardMode) Paraspawn = NPC.NewNPC(NPC.GetSource_FromAI(), (int)Main.player[this.NPC.target].position.X + 750 - this.NPC.width / 2, (int)Main.player[this.NPC.target].position.Y - this.NPC.width / 2, NPCID.Wraith, 0);
 
 						Main.npc[Paraspawn].velocity.X = NPC.velocity.X;
 						NPC.active = true;
