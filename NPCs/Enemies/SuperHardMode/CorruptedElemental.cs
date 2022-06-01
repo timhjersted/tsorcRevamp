@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			NPC.npcSlots = 1;
 			NPC.width = 18;
 			NPC.height = 40;
-			animationType = 120;
+			AnimationType = 120;
 			Main.npcFrameCount[NPC.type] = 15;
 			NPC.knockBackResist = 0.1f;
 			

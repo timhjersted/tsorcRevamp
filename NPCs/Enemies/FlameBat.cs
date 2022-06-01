@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			NPC.value = 270;
 			NPC.lavaImmune = true;
 			Main.npcFrameCount[NPC.type] = 4;
-			animationType = 93;
+			AnimationType = 93;
 			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.FlameBatBanner>();
 

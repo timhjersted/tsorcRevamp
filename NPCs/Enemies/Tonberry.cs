@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			NPC.npcSlots = 5;
 			Main.npcFrameCount[NPC.type] = 16;
-			animationType = 28;
+			AnimationType = 28;
 			NPC.knockBackResist = 0.2f;
 			NPC.aiStyle = 3;
 			NPC.damage = 0;

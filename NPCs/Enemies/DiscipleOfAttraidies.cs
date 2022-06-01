@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             NPC.width = 28;
             NPC.knockBackResist = 0.2f;
             Main.npcFrameCount[NPC.type] = 3;
-            animationType = NPCID.GoblinSorcerer;
+            AnimationType = NPCID.GoblinSorcerer;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;

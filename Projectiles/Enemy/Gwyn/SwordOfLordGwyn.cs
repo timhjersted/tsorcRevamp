@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
             Rectangle sourceRectangle = new Rectangle(0, 0, frameWidth, frameHeight);
             Vector2 origin = new Vector2(0, frameHeight);
             Color drawColor = Projectile.GetAlpha(lightColor);
-            Main.Main.EntitySpriteDraw(Main.projectileTexture[Projectile.type],
+            Main.EntitySpriteDraw(Main.projectileTexture[Projectile.type],
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
                 sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
 

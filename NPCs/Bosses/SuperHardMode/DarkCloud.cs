@@ -27,11 +27,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             NPC.npcSlots = 10;
             Main.npcFrameCount[NPC.type] = 16;
-            animationType = 28;
+            AnimationType = 28;
             NPC.aiStyle = 3;
             NPC.height = 40;
             NPC.width = 20;
-            music = 12;
+            Music = 12;
             NPC.damage = 200;
             NPC.defense = 80;
             NPC.lifeMax = 300000;
@@ -40,7 +40,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 1500000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
-            bossBag = ModContent.ItemType<Items.BossBags.DarkCloudBag>();
+            BossBag = ModContent.ItemType<Items.BossBags.DarkCloudBag>();
             despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
             NPC.NPCLoot();
         }

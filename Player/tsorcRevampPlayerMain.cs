@@ -1,21 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using tsorcRevamp.Items;
-using tsorcRevamp.Buffs;
-using System;
-using TerraUI.Objects;
 using Terraria.UI;
-using Terraria.Audio;
+using TerraUI.Objects;
+using tsorcRevamp.Buffs;
+using tsorcRevamp.Items;
 using tsorcRevamp.Projectiles.Pets;
-using Terraria.Localization;
 using tsorcRevamp.UI;
-using System.IO;
 
 namespace tsorcRevamp
 {
@@ -218,7 +216,7 @@ namespace tsorcRevamp
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            Projectile.NewProjectile(Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
+            Projectile.NewProjectile(Player.GetSource_Misc("Bloodsign"), Player.Bottom, new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Bloodsign>(), 0, 0, Player.whoAmI);
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath58.WithVolume(0.8f).WithPitchVariance(.3f), player.position);
 
             //you died sound                    \
@@ -645,20 +643,22 @@ namespace tsorcRevamp
 
         public override void OnHitByNPC(NPC npc, int damage, bool crit)
         {
+            //Todo: All of these accessories should use Player.GetSource_Accessory() as their source
+            //They don't because that requires getting the inventory item casuing this effect. I'll do it later if I remember.
             if (Player.GetModPlayer<tsorcRevampPlayer>().BoneRevenge)
             {
                 if (!Main.hardMode)
                 {
                     for (int b = 0; b < 8; b++)
                     {
-                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
                 else
                 {
                     for (int b = 0; b < 12; b++)
                     {
-                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
             }
@@ -667,11 +667,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 7f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 80, 9f, 0, 0, 0);
                 }
             }
             if (npc.type == NPCID.SkeletronPrime && Main.rand.Next(2) == 0)
@@ -689,14 +689,14 @@ namespace tsorcRevamp
                 {
                     for (int b = 0; b < 8; b++)
                     {
-                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3f, 3f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 20, 4f, 0, 0, 0);
                     }
                 }
                 else
                 {
                     for (int b = 0; b < 12; b++)
                     {
-                        Projectile.NewProjectile(Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
+                        Projectile.NewProjectile(Player.GetSource_Misc("Bone Revenge"), Player.position, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), -4), ModContent.ProjectileType<Projectiles.BoneRevenge>(), 40, 5f, 0, 0, 0);
                     }
                 }
             }
@@ -705,11 +705,11 @@ namespace tsorcRevamp
             {
                 if (!Main.hardMode)
                 {
-                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 40, 6f, 0, 0, 0);
                 }
                 else
                 {
-                    Projectile.NewProjectile(Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
+                    Projectile.NewProjectile(Player.GetSource_Misc("Soul Sickle"), Player.Center, new Vector2(Player.velocity.X * 0.0001f, 0f), ModContent.ProjectileType<Projectiles.SoulSickle>(), 60, 8f, 0, 0, 0);
                 }
             }
             if (projectile.type == ProjectileID.DeathLaser && Main.rand.Next(2) == 0)

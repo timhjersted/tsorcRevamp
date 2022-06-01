@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses
             Main.npcFrameCount[NPC.type] = 16;
             NPC.width = 38;
             NPC.height = 32;
-            animationType = 28;
+            AnimationType = 28;
             NPC.aiStyle = 3;
             NPC.timeLeft = 22750;
             NPC.damage = 45;

@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			NPC.buffImmune[BuffID.Confused] = true;
 			bannerItem = ModContent.ItemType<Banners.RedCloudHunterBanner>();
 
-			animationType = NPCID.SkeletonArcher;
+			AnimationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[NPC.type] = 20;
 
 			if (Main.hardMode)

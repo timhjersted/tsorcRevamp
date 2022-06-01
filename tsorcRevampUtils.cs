@@ -242,7 +242,7 @@ namespace tsorcRevamp {
                 texture = (Texture2D)ModContent.Request<Texture2D>(projectile.ModProjectile.Texture);
             }
 
-            int frameHeight = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
+            int frameHeight = texture.Height / Main.projFrames[projectile.type];
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;

@@ -82,10 +82,10 @@ namespace tsorcRevamp.Projectiles {
 
             for (int i = 0; i < 3; i++)
             {
-                //Main.Main.EntitySpriteDraw(texture,
+                //Main.EntitySpriteDraw(texture,
                 //  projectile.Center - Main.screenPosition, sourceRectangle, Color.White * (1 / (i + 2)), projectile.rotation + 0.05f + (0.05f * i), origin, projectile.scale, spriteEffects, 0f);
             }
-            //Main.Main.EntitySpriteDraw(texture,
+            //Main.EntitySpriteDraw(texture,
             //    projectile.Center - Main.screenPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
             */
             return false;

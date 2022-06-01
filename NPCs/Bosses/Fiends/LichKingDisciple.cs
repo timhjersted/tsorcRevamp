@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             NPC.npcSlots = 1;
             Main.npcFrameCount[NPC.type] = 3;
-            animationType = 29;
+            AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 40;
             NPC.defense = 20;

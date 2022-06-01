@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 12500;
             NPC.knockBackResist = 0.1f;
-            animationType = 28;
+            AnimationType = 28;
             Main.npcFrameCount[NPC.type] = 16;
             banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();

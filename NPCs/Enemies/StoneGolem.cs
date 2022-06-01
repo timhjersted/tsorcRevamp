@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             NPC.defense = 14;
             NPC.value = 250;
             NPC.knockBackResist = 0.35f;
-            animationType = NPCID.GraniteGolem;
+            AnimationType = NPCID.GraniteGolem;
             banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
         }

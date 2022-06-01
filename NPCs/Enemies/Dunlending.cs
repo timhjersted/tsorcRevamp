@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Enemies {
             NPC.value = 150;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath2;
-            animationType = NPCID.PossessedArmor;
+            AnimationType = NPCID.PossessedArmor;
             banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();
         }

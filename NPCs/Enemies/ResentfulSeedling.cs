@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.damage = 10;
             NPC.lifeMax = 14;
             NPC.defense = 6;
-            animationType = NPCID.CorruptBunny;
+            AnimationType = NPCID.CorruptBunny;
             NPC.value = 0;
             banner = NPC.type;
             bannerItem = ModContent.ItemType<Banners.ResentfulSeedlingBanner>();

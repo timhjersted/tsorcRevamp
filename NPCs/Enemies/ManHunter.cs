@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.ManHunterBanner>();
 
-			animationType = NPCID.SkeletonArcher;
+			AnimationType = NPCID.SkeletonArcher;
 			Main.npcFrameCount[NPC.type] = 20;
 
 			if (Main.hardMode)

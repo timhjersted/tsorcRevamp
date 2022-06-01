@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		public override void SetDefaults()
 		{
 			Main.npcFrameCount[NPC.type] = 2;
-			animationType = 29;
+			AnimationType = 29;
 			NPC.aiStyle = 0;
 			NPC.damage = 50;
 			NPC.defense = 28;

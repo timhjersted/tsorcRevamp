@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 			NPC.npcSlots = 2;
 			Main.npcFrameCount[NPC.type] = 3;
-			animationType = 29;
+			AnimationType = 29;
 			NPC.aiStyle = 0;
 			NPC.damage = 96;
 			NPC.defense = 92;

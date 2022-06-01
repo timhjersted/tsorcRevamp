@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			Main.npcFrameCount[NPC.type] = 2;
 			NPC.width = 70;
 			NPC.height = 70;
-			animationType = 62;
+			AnimationType = 62;
 			NPC.aiStyle = 22;
 			NPC.damage = 50;
 			//It genuinely had none in the original.

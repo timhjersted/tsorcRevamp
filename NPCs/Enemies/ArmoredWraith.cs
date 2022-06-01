@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.Wraith);
-            animationType = NPCID.Wraith;
+            AnimationType = NPCID.Wraith;
             aiType = NPCID.CaveBat;
             NPC.lifeMax = 75;
             NPC.damage = 48;

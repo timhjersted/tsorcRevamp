@@ -116,7 +116,7 @@ namespace tsorcRevamp.Projectiles {
                 Vector2 startPosition = new Vector2(projectile.Center.X, projectile.position.Y);
                 Vector2 drawPosition = startPosition - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
                 drawPosition.Y += (frameHeight * i) + (frameHeight / 2);
-                Main.Main.EntitySpriteDraw(flameJetTexture, drawPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                Main.EntitySpriteDraw(flameJetTexture, drawPosition, sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
             }*/
 
             return false;

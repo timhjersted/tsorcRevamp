@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Tooltip.SetDefault("Full-auto submachine gun with high RoF\n50% chance to not consume ammo");
         }
         public override void SetDefaults() {
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
             Item.useTime = Item.useAnimation = 2; //brrrrrr
             Item.damage = 38;
@@ -35,11 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             return new Vector2(-16f, 0f);
         }
 
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
-            Vector2 offset = new Vector2(speedX, speedY).RotatedByRandom(MathHelper.ToRadians(6));
-            speedX = offset.X;
-            speedY = offset.Y;
-            return true;
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+        {
+            velocity = velocity.RotatedByRandom(MathHelper.ToRadians(6));
         }
 
         public override void AddRecipes() {

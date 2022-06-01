@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.PinkJellyfish);
-            animationType = NPCID.PinkJellyfish;
+            AnimationType = NPCID.PinkJellyfish;
             aiType = NPCID.PinkJellyfish;
             NPC.lifeMax = 118;
             NPC.damage = 35;

@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetDefaults()
         {
             NPC.CloneDefaults(NPCID.CaveBat);
-            animationType = NPCID.GiantBat;
+            AnimationType = NPCID.GiantBat;
             aiType = NPCID.CaveBat;
             NPC.lifeMax = 15;
             NPC.damage = 20;

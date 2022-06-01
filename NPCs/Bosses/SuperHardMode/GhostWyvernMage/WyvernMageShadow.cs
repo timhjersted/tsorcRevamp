@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         {
             NPC.npcSlots = 3;
             Main.npcFrameCount[NPC.type] = 3;
-            animationType = 29;
+            AnimationType = 29;
             NPC.aiStyle = 0;
             NPC.damage = 90;
             NPC.defense = 56;

@@ -39,7 +39,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
 			NPC.knockBackResist = 0.5f;
-			animationType = NPCID.DyeTrader;
+			AnimationType = NPCID.DyeTrader;
 		}
 		public override void AI()
 		{

@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			NPC.damage = trueContactDamage;
 			NPC.defense = 35;
 			NPC.aiStyle = -1;
-			animationType = -1;
+			AnimationType = -1;
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath6;
 			NPC.lifeMax = 500000;

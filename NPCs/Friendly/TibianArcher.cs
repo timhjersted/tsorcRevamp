@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Friendly
 			NPC.HitSound = SoundID.NPCHit1;
 			NPC.DeathSound = SoundID.NPCDeath1;
 			NPC.knockBackResist = 0.3f;
-			animationType = NPCID.Guide;
+			AnimationType = NPCID.Guide;
 		}
 
 		public override string GetChat()

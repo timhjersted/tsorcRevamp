@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
 
-			animationType = NPCID.Skeleton;
+			AnimationType = NPCID.Skeleton;
 			Main.npcFrameCount[NPC.type] = 15;
 		}
 

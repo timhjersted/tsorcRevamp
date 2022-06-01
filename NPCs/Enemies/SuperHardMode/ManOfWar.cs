@@ -11,7 +11,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
             NPC.width = 26;
             NPC.height = 26;
             Main.npcFrameCount[NPC.type] = 7;
-            animationType = NPCID.GreenJellyfish;
+            AnimationType = NPCID.GreenJellyfish;
             NPC.aiStyle = 18;
             NPC.timeLeft = 750;
             NPC.damage = 120;

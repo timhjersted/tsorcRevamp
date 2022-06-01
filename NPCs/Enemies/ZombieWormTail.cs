@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void SetDefaults()
 		{
-			animationType = 10;
+			AnimationType = 10;
 			NPC.netAlways = true;
 			NPC.width = 38;
 			NPC.height = 20;

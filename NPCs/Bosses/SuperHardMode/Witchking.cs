@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            animationType = NPCID.PossessedArmor;
+            AnimationType = NPCID.PossessedArmor;
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
             bossBag = ModContent.ItemType<Items.BossBags.WitchkingBag>();
             despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);

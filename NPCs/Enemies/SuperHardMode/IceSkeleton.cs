@@ -9,7 +9,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
         public override void SetDefaults() {
             Main.npcFrameCount[NPC.type] = 15;
             NPC.npcSlots = 1;
-            animationType = NPCID.AngryBones;
+            AnimationType = NPCID.AngryBones;
             NPC.width = 18;
             NPC.height = 40;
             NPC.knockBackResist = .3f;

@@ -10,7 +10,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
     {
         public override void SetDefaults()
         {
-            animationType = 10;
+            AnimationType = 10;
             NPC.netAlways = true;
             NPC.npcSlots = 1;
             NPC.width = 21;

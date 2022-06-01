@@ -99,7 +99,7 @@ namespace tsorcRevamp.Projectiles {
             Vector2 origin = sourceRectangle.Size() / 2f;
             //origin.X = (float)(projectile.spriteDirection == 1 ? sourceRectangle.Width - 20 : 20);
             Color drawColor = Projectile.GetAlpha(lightColor);
-            Main.Main.EntitySpriteDraw(texture,
+            Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
                 sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
 

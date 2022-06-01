@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses
 		{
 			NPC.npcSlots = 5;
 			Main.npcFrameCount[NPC.type] = 16;
-			animationType = 28;
+			AnimationType = 28;
 			NPC.aiStyle = 3;
 			NPC.height = 40;
 			NPC.width = 20;
@@ -40,8 +40,9 @@ namespace tsorcRevamp.NPCs.Bosses
 			NPC.rarity = 4;
 			NPC.buffImmune[BuffID.Confused] = true;
 			NPC.buffImmune[BuffID.OnFire] = true;
-			banner = NPC.type;
-			bannerItem = ModContent.ItemType<Banners.HeroOfLumeliaBanner>();
+			
+			Banner = NPC.type;
+			BannerItem = ModContent.ItemType<Banners.HeroOfLumeliaBanner>();
 			despawnHandler = new NPCDespawnHandler("The hero of Lumelia stands victorious...", Color.Gold, DustID.GoldFlame);
 		}
 
@@ -882,7 +883,7 @@ namespace tsorcRevamp.NPCs.Bosses
 							bool dark_caster = false; // not a fighter type AI...
 							if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
 								safe_to_stand = false;
-							else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
+							else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
 								safe_to_stand = false;
 
 							if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))

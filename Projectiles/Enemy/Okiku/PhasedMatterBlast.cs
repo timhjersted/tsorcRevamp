@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku {
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
             Color drawColor = Projectile.GetAlpha(lightColor);
-            Main.Main.EntitySpriteDraw(texture,
+            Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
                 sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
 

@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
 
-			animationType = NPCID.GoblinWarrior;
+			AnimationType = NPCID.GoblinWarrior;
 			Main.npcFrameCount[NPC.type] = 16;
 
 			if (Main.hardMode)

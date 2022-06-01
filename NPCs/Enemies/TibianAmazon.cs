@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			
 
-			animationType = NPCID.Skeleton;
+			AnimationType = NPCID.Skeleton;
 			NPC.aiStyle = -1;
 			NPC.height = 40;
 			NPC.width = 20;

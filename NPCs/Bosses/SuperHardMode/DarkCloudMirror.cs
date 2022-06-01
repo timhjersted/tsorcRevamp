@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             NPC.npcSlots = 10;
             Main.npcFrameCount[NPC.type] = 16;
-            animationType = 0;
+            AnimationType = 0;
             NPC.aiStyle = 0;
             NPC.height = 40;
             NPC.width = 20;

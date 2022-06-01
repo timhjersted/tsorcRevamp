@@ -12,7 +12,8 @@ namespace tsorcRevamp.NPCs.Bosses
 		public override void SetDefaults()
 		{
 			Main.npcFrameCount[NPC.type] = 16;
-			animationType = 28;
+			
+			AnimationType = 28;
 			NPC.height = 120;
 			NPC.width = 50;
 			NPC.damage = 44;
@@ -316,7 +317,7 @@ namespace tsorcRevamp.NPCs.Bosses
 					{
 						int lob2 = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, fireBreathDamage, 0f, Main.myPlayer);
 
-						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -.5ff }, NPC.Center);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -.5f }, NPC.Center);
 
 					}
 					if (NPC.localAI[1] >= 195f)

@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.DworcVenomsniperBanner>();
 
-			animationType = NPCID.Skeleton;
+			AnimationType = NPCID.Skeleton;
 			Main.npcFrameCount[NPC.type] = 15;
 		}
 

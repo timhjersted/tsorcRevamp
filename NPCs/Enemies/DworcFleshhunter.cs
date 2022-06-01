@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			banner = NPC.type;
 			bannerItem = ModContent.ItemType<Banners.DworcFleshhunterBanner>();
 
-			animationType = NPCID.Skeleton;
+			AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;
         }
 
