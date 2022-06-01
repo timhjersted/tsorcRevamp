@@ -5,9 +5,10 @@ using Terraria.ID;
 using Terraria.Localization;
 using tsorcRevamp.Items.Potions;
 using tsorcRevamp.Items.Potions.PermanentPotions;
+using Terraria.DataStructures;
 
 namespace tsorcRevamp.Items {
-    class RecipeHelper {
+    class ModRecipeHelper {
         
         public static void AddRecipes() {
             Mod mod = ModContent.GetInstance<tsorcRevamp>();
@@ -74,99 +75,73 @@ namespace tsorcRevamp.Items {
             PermaPotionRecipeC(mod, ItemID.BowlofSoup, ModContent.ItemType<PermanentSoup>());
             #endregion
             #region special perma recipes
-            Recipe recipe = new Recipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
-            recipe.AddIngredient(ItemID.GravitationPotion, 20);
-            recipe.AddIngredient(ItemID.SoulofFlight, 1);
-            recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(ModContent.ItemType<PermanentGravitationPotion>());
-            recipe.AddRecipe();
+            Recipe recipe = mod.CreateRecipe(ModContent.ItemType<PermanentGravitationPotion>(), 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 30000)
+            .AddIngredient(ItemID.GravitationPotion)
+            .AddIngredient(ItemID.SoulofFlight)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>(), 3)
+            .AddTile(TileID.DemonAltar);
+            recipe.Register();
 
-            recipe = new Recipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
-            recipe.AddIngredient(ItemID.ObsidianSkinPotion, 20);
-            recipe.AddIngredient(ItemID.SoulofLight, 1);
-            recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(ModContent.ItemType<PermanentObsidianSkinPotion>());
-            recipe.AddRecipe();
+             recipe = mod.CreateRecipe(ModContent.ItemType<PermanentGravitationPotion>(), 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 15000)
+            .AddIngredient(ItemID.GravitationPotion)
+            .AddIngredient(ItemID.SoulofLight)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>(), 2)
+            .AddTile(TileID.DemonAltar);
+            recipe.Register();
             #endregion 
-            
 
-            Recipe recipe1 = new Recipe(mod);
-            recipe1.AddIngredient(ItemID.FallenStar);
-            recipe1.AddIngredient(ItemID.Gel, 2);
-            recipe1.AddIngredient(ItemID.Bottle, 10);
-            recipe1.AddTile(TileID.Bottles);
-            recipe1.SetResult(ItemID.LesserManaPotion, 10);
-            recipe1.AddRecipe();
+            recipe = mod.CreateRecipe(ItemID.LesserManaPotion, 10)
+            .AddIngredient(ItemID.FallenStar)
+            .AddIngredient(ItemID.Gel, 2)
+            .AddIngredient(ItemID.Bottle, 10)
+            .AddTile(TileID.Bottles);
+            recipe.Register();
 
-            ReverseMirror recipe2 = new ReverseMirror(mod);
-            recipe2.AddRecipeGroup("tsorcRevamp:UpgradedMirrors", 1);
-            recipe2.AddTile(TileID.DemonAltar);
-            recipe2.SetResult(ItemID.MagicMirror);
-            recipe2.AddRecipe();
+            recipe = mod.CreateRecipe(ItemID.MagicMirror)
+            .AddRecipeGroup(tsorcRevampSystems.UpgradedMirrors)
+            .AddTile(TileID.DemonAltar)
+            .AddOnCraftCallback(delegate (Recipe recipe, Item item) { //refund the player's souls when they revert to a base mirror
+                Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100); }
+            );
+            recipe.Register();
         }
-
-
 
         #region permanent potion recipes
         public static void PermaPotionRecipeS(Mod mod, int IngredientPotion, int ResultPotion) {
-            Recipe recipe = new Recipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 100000);
-            recipe.AddIngredient(IngredientPotion);
-            recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 5);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(ResultPotion, 1);
-            recipe.AddRecipe();
+            Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 100000)
+            .AddIngredient(IngredientPotion)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>(), 5)
+            .AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
         public static void PermaPotionRecipeA(Mod mod, int IngredientPotion, int ResultPotion) {
-            Recipe recipe = new Recipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 30000);
-            recipe.AddIngredient(IngredientPotion);
-            recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 3);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(ResultPotion, 1);
-            recipe.AddRecipe();
+            Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 30000)
+            .AddIngredient(IngredientPotion)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>(), 3)
+            .AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
         public static void PermaPotionRecipeB(Mod mod, int IngredientPotion, int ResultPotion) {
-            Recipe recipe = new Recipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 15000);
-            recipe.AddIngredient(IngredientPotion);
-            recipe.AddIngredient(ModContent.ItemType<EternalCrystal>(), 2);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(ResultPotion, 1);
-            recipe.AddRecipe();
+            Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 15000)
+            .AddIngredient(IngredientPotion)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>(), 2)
+            .AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
         public static void PermaPotionRecipeC(Mod mod, int IngredientPotion, int ResultPotion) {
-            Recipe recipe = new Recipe(mod);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 5000);
-            recipe.AddIngredient(IngredientPotion);
-            recipe.AddIngredient(ModContent.ItemType<EternalCrystal>());
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(ResultPotion, 1);
-            recipe.AddRecipe();
+            Recipe recipe = mod.CreateRecipe(ResultPotion, 1)
+            .AddIngredient(ModContent.ItemType<DarkSoul>(), 5000)
+            .AddIngredient(IngredientPotion)
+            .AddIngredient(ModContent.ItemType<EternalCrystal>())
+            .AddTile(TileID.DemonAltar);
+            recipe.Register();
         }
         #endregion
-
-        public static void AddRecipeGroups() {
-            RecipeGroup group = new RecipeGroup(() => "Upgraded Mirrors", new int[] {
-                ModContent.ItemType<GreatMagicMirror>(),
-                ModContent.ItemType<VillageMirror>()
-            });
-            RecipeGroup.RegisterGroup("tsorcRevamp:UpgradedMirrors", group);
-        }
-
-    }
-
-    public class ReverseMirror : Recipe { //custom recipe to refund the player their souls if they revert their mirror
-        public ReverseMirror(Mod mod) : base(mod) { } //constructor declares which mod we're in
-
-        public override void OnCraft(Item item) {
-            Item.NewItem(Main.LocalPlayer.getRect(), ModContent.ItemType<DarkSoul>(), 100);
-            //recipes cant have 2 results, so just spawn 100 souls on the player when they use a ReverseMirror recipe
-        }
 
     }
 }

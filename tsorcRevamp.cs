@@ -41,12 +41,12 @@ namespace tsorcRevamp {
         public static List<int> PlaceAllowedModTiles;
 
         internal BonfireUIState BonfireUIState;
-        private UserInterface _bonfireUIState;
+        internal UserInterface _bonfireUIState; //"but zeo!", you say
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
-        private UserInterface _darkSoulCounterUIState;
+        internal UserInterface _darkSoulCounterUIState; //"prefacing a name with an underscore is supposed to be for private fields!"
         internal UserInterface EmeraldHeraldUserInterface;
         internal EstusFlaskUIState EstusFlaskUIState;
-        private UserInterface _estusFlaskUIState;
+        internal UserInterface _estusFlaskUIState; //"but reader! i dont care!" says zeo
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
 
@@ -115,115 +115,19 @@ namespace tsorcRevamp {
 
             if (!Main.dedServ) {
                 Main.instance.LoadNPC(NPCID.TheDestroyer);
-                TextureAssets.Npc[NPCID.TheDestroyer] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_134");
+                TextureAssets.Npc[NPCID.TheDestroyer] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_134");
                 Main.instance.LoadNPC(NPCID.TheDestroyerBody);
-                TextureAssets.Npc[NPCID.TheDestroyerBody] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_135");
+                TextureAssets.Npc[NPCID.TheDestroyerBody] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_135");
                 Main.instance.LoadNPC(NPCID.TheDestroyerTail);
-                TextureAssets.Npc[NPCID.TheDestroyerTail] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_136");
+                TextureAssets.Npc[NPCID.TheDestroyerTail] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_136");
                 Main.instance.LoadGore(156);
-                TextureAssets.Gore[156] = GetTexture("NPCs/Bosses/TheDestroyer/Gore_156");
+                TextureAssets.Gore[156] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/Gore_156");
                 Main.instance.LoadNPC(NPCID.Probe);
-                TextureAssets.Npc[NPCID.Probe] = GetTexture("NPCs/Bosses/TheDestroyer/NPC_139");
+                TextureAssets.Npc[NPCID.Probe] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_139");
             }
 
             UpdateCheck();
         }
-
-
-
-        public override void UpdateUI(GameTime gameTime) {
-            if (BonfireUIState.Visible) {
-                _bonfireUIState?.Update(gameTime);
-            }
-            if (DarkSoulCounterUIState.Visible)
-            {
-                _darkSoulCounterUIState?.Update(gameTime);
-            }
-
-            EmeraldHeraldUserInterface?.Update(gameTime);
-
-            if (EstusFlaskUIState.Visible)
-            {
-                _estusFlaskUIState?.Update(gameTime);
-            }
-
-            if (PotionBagUIState.Visible)
-            {
-                PotionBagUserInterface.Update(gameTime);
-            }
-        }
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
-            int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if (mouseTextIndex != -1) {
-                layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: BonfireUI",
-                    delegate {
-                        if (BonfireUIState.Visible) {
-
-                            _bonfireUIState.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
-            if (resourceBarIndex != -1) {
-                layers.Insert(resourceBarIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Dark Soul Counter UI",
-                    delegate {
-                        _darkSoulCounterUIState.Draw(Main.spriteBatch, new GameTime());
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int inventoryIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
-            if (inventoryIndex != -1)
-            {
-                layers.Insert(inventoryIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Emerald Herald UI",
-                    delegate {
-                        EmeraldHeraldUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int resourceBarIndex2 = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
-            if (resourceBarIndex2 != -1)
-            {
-                layers.Insert(resourceBarIndex2, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Estus Flask UI",
-                    delegate {
-                        _estusFlaskUIState.Draw(Main.spriteBatch, new GameTime());
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-
-            int potionBagIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
-            if(potionBagIndex != -1)
-            {
-                layers.Insert(potionBagIndex, new LegacyGameInterfaceLayer(
-                    "tsorcRevamp: Potion Bag UI",
-                    delegate {
-                        if (PotionBagUIState.Visible)
-                        {
-                            PotionBagUserInterface.Draw(Main.spriteBatch, new GameTime());
-                        }
-                        return true;
-                    },
-                    InterfaceScaleType.UI)
-                );
-            }
-        }
-
 
         private void PopulateArrays() {
             #region KillAllowed list
@@ -691,32 +595,12 @@ namespace tsorcRevamp {
             }
         }
         public override void AddRecipes() {
-            RecipeHelper.AddRecipes();
+            ModRecipeHelper.AddRecipes();
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
                 RecipeHelper.EditRecipes(); 
             }
         }
-
-        public override void AddRecipeGroups() {
-            RecipeHelper.AddRecipeGroups();
-        }
-
-        public override void PreSaveAndQuit() {
-            TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun");
-            TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
-            TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
-            for (int i = 0; i < TextureAssets.Moon.Length; i++) {
-                TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i);
-            }
-        }
-
-        public override void PostDrawInterface(SpriteBatch spriteBatch) {
-            tsorcRevampPlayer modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.Draw(spriteBatch);
-        }
-
-        
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) {
             int message = reader.ReadByte(); //(byte) 1;
@@ -788,11 +672,11 @@ namespace tsorcRevamp {
                     while (count > 32000)
                     {
                         //UsefulFunctions.ServerText("Dropping " + 32000 + "souls");
-                        Item.NewItem(position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
+                        Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position + Main.rand.NextVector2Circular(10, 10), ModContent.ItemType<Items.DarkSoul>(), 32000);
                         count -= 32000;
                     }
 
-                    Item.NewItem(position, ModContent.ItemType<Items.DarkSoul>(), count);
+                    Item.NewItem(new EntitySource_Misc("¯\\_(ツ)_/¯"), position, ModContent.ItemType<Items.DarkSoul>(), count);
                     //UsefulFunctions.NewItemInstanced(position, new Vector2(1, 1), ModContent.ItemType<Items.DarkSoul>(), count);
                 }
             }
@@ -1724,7 +1608,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerVortex, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveVortex = true;
                                     NPC.ShieldStrengthTowerVortex = NPC.ShieldStrengthTowerMax;
@@ -1747,7 +1631,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerNebula, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveNebula = true;
                                     NPC.ShieldStrengthTowerNebula = NPC.ShieldStrengthTowerMax;
@@ -1770,7 +1654,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerStardust, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveStardust = true;
                                     NPC.ShieldStrengthTowerStardust = NPC.ShieldStrengthTowerMax;
@@ -1793,7 +1677,7 @@ namespace tsorcRevamp {
                             {
                                 if (tsorcRevampWorld.SuperHardMode)
                                 {
-                                    int p = NPC.NewNPC((i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
+                                    int p = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), (i * 16) + 8, (j * 16) - 64, NPCID.LunarTowerSolar, 1);
                                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, p);
                                     NPC.TowerActiveSolar = true;
                                     NPC.ShieldStrengthTowerSolar = NPC.ShieldStrengthTowerMax;

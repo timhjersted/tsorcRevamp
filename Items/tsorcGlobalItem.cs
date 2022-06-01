@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items {
 	{
 		public static List<int> potionList;
 		public static List<int> ammoList;
+		public static List<int> torchList;
 
 		public override bool CanUseItem(Item item, Player player)
         {
@@ -62,12 +63,18 @@ namespace tsorcRevamp.Items {
 			{
 				populateAmmo();
 			}
+			if (torchList == null) {
+				populateTorches();
+            }
 			if (potionList.Contains(item.type))
 			{
 				item.maxStack = 9999;
 			}
 			else if (ammoList.Contains(item.type))
             {
+				item.maxStack = 9999;
+            }
+			if (torchList.Contains(item.type)) {
 				item.maxStack = 9999;
             }
 			if(item.type == ItemID.NebulaBlaze)
@@ -558,6 +565,31 @@ namespace tsorcRevamp.Items {
 			};
 		}
 
-		
+		private void populateTorches() {
+			torchList = new List<int> {
+				ItemID.Torch,
+				ItemID.PurpleTorch,
+				ItemID.YellowTorch,
+				ItemID.BlueTorch,
+				ItemID.GreenTorch,
+				ItemID.RedTorch,
+				ItemID.OrangeTorch,
+				ItemID.WhiteTorch,
+				ItemID.IceTorch,
+				ItemID.PinkTorch,
+				ItemID.BoneTorch,
+				ItemID.UltrabrightTorch,
+				ItemID.DemonTorch,
+				ItemID.CursedTorch,	
+				ItemID.IchorTorch,
+				ItemID.RainbowTorch,
+				ItemID.DesertTorch,
+				ItemID.CoralTorch,
+				ItemID.CorruptTorch,
+				ItemID.CrimsonTorch,
+				ItemID.HallowedTorch,
+				ItemID.JungleTorch
+            }
+        }
     }
 }
