@@ -63,14 +63,14 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("DragoonHelmet"), 1);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DragoonHelmet").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
-            recipe.AddIngredient(Mod.GetItem("DyingWindShard"), 10);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 40000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DyingWindShard").Type, 10);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 40000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

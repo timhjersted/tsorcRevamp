@@ -25,14 +25,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.FireFieldBall>();
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 8);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 12000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 12000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

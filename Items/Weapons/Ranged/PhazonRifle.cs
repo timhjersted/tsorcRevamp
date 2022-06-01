@@ -51,14 +51,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ClockworkAssaultRifle);
             recipe.AddIngredient(ItemID.MeteoriteBar, 30);
             recipe.AddIngredient(ItemID.MythrilBar, 5);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 15000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

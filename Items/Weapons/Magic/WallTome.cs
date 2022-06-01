@@ -33,12 +33,12 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronskinPotion);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 600);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 600);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override bool? UseItem(Player player) {

@@ -42,18 +42,18 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BattlePotion, 1);
             recipe.AddIngredient(ItemID.ThornsPotion, 1);
             recipe.AddIngredient(ItemID.IronskinPotion, 1);
             recipe.AddIngredient(ItemID.ArcheryPotion, 1);
-            recipe.AddIngredient(Mod.GetItem("BoostPotion"), 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BoostPotion").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<StrengthPotion>(), 1);
             recipe.AddIngredient(ModContent.ItemType<ArmorDrugPotion>(), 1);
             recipe.AddIngredient(ModContent.ItemType<DemonDrugPotion>(), 1);
             recipe.AddTile(TileID.Bottles);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

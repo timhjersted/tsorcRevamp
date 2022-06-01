@@ -24,13 +24,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.EnergyBombBall>();
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(Mod.GetItem("EnergyFieldRune"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 15000);
+            recipe.AddIngredient(Mod.Find<ModItem>("EnergyFieldRune").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

@@ -39,15 +39,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("PhazonRifle"), 1);
-            recipe.AddIngredient(Mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddIngredient(Mod.GetItem("WhiteTitanite"), 25);
-            recipe.AddIngredient(Mod.GetItem("Humanity"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 120000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("PhazonRifle").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 25);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {

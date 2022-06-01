@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.BossItems {
     class FieryEgg : ModItem {
 
         public override void SetStaticDefaults() {
-            Tooltip.SetDefault("Summons The Rage \n" + "You must sacrifice this at the Demon Altar \n" + "within the Cathedral in the Underworld");
+            Tooltip.SetDefault("Summons The Rage \n" + "Must be used in the underworld.");
         }
 
         public override void SetDefaults() {
@@ -38,12 +38,12 @@ namespace tsorcRevamp.Items.BossItems {
         public override void AddRecipes() {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = new Recipe(Mod);
+                Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.CobaltOre, 30);
                 recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this, 1);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
         }
     }

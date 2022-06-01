@@ -24,14 +24,14 @@ namespace tsorcRevamp.Items.Potions {
             Item.buffTime = 14400;
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BattlePotion, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.Gel, 5);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(this, 5);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

@@ -32,12 +32,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.IronBar, 4);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 600);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 600);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

@@ -33,14 +33,14 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             target.AddBuff(BuffID.Frostburn, 360);
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod); ;
-            recipe.AddIngredient(Mod.GetItem("WandOfFrost"), 1);
+            Recipe recipe = CreateRecipe(); ;
+            recipe.AddIngredient(Mod.Find<ModItem>("WandOfFrost").Type, 1);
             recipe.AddIngredient(ItemID.CrystalShard, 60);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 25000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 25000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

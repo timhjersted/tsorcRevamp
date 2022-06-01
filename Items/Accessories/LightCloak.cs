@@ -22,12 +22,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override void UpdateEquip(Player player) {

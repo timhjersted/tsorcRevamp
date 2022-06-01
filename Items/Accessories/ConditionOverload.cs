@@ -24,14 +24,14 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HellstoneBar, 3);
             recipe.AddIngredient(ItemID.CursedFlame, 3);
             recipe.AddIngredient(ItemID.Stinger, 3);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

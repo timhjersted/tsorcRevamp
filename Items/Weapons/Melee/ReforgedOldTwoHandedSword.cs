@@ -20,11 +20,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = 15000;
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("OldTwoHandedSword"));
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("OldTwoHandedSword").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

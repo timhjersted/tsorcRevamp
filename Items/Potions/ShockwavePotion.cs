@@ -25,14 +25,14 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Blinkroot, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 1);
             recipe.AddIngredient(ItemID.Meteorite, 1);
             recipe.AddTile(TileID.Bottles);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

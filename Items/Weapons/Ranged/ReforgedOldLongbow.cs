@@ -26,11 +26,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
 
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("OldLongbow"));
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("OldLongbow").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

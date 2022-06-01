@@ -37,14 +37,14 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater);
             recipe.AddIngredient(ItemID.Bone, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("LostUndeadSoul").Type);
             recipe.AddTile(TileID.Bottles);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

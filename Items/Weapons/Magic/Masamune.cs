@@ -27,16 +27,16 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(ItemID.SoulofLight, 3);
-            recipe.AddIngredient(Mod.GetItem("Murassame"), 1);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 10);
-            recipe.AddIngredient(Mod.GetItem("GhostWyvernSoul"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 250000);
+            recipe.AddIngredient(Mod.Find<ModItem>("Murassame").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
+            recipe.AddIngredient(Mod.Find<ModItem>("GhostWyvernSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 250000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

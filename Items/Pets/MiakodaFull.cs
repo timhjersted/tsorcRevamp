@@ -38,20 +38,20 @@ namespace tsorcRevamp.Items.Pets
         public override void AddRecipes()
         {
             {
-                Recipe recipe = new Recipe(Mod);
-                recipe.AddIngredient(Mod.GetItem("MiakodaCrescent"));
-                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 100);
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(Mod.Find<ModItem>("MiakodaCrescent").Type);
+                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
             {
-                Recipe recipe = new Recipe(Mod);
-                recipe.AddIngredient(Mod.GetItem("MiakodaNew"));
-                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 100);
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(Mod.Find<ModItem>("MiakodaNew").Type);
+                recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
         }
     }

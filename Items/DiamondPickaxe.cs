@@ -30,12 +30,12 @@ namespace tsorcRevamp.Items {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperPickaxe, 1);
             recipe.AddIngredient(ItemID.Diamond, 6);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

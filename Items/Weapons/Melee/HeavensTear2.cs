@@ -42,17 +42,17 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
 
-            recipe.AddIngredient(Mod.GetItem("HeavensTear"), 1);
-            recipe.AddIngredient(Mod.GetItem("Humanity"), 15);
+            recipe.AddIngredient(Mod.Find<ModItem>("HeavensTear").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 15);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>());
-            recipe.AddIngredient(Mod.GetItem("RedTitanite"), 20);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 220000);
+            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 220000);
 
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
         
         public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit )

@@ -31,15 +31,15 @@ namespace tsorcRevamp.Items.Ammo {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.MythrilBar, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 10);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 10);
-            recipe.AddRecipe();
+            recipe.Register();
         }
 
 

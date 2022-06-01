@@ -40,15 +40,15 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("DragoonArmor"), 1);
-            recipe.AddIngredient(Mod.GetItem("DragoonCloak"), 1);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DragoonArmor").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DragoonCloak").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<DragonEssence>(), 10);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 90000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

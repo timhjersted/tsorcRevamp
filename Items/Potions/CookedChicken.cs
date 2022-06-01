@@ -47,11 +47,11 @@ namespace tsorcRevamp.Items.Potions {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("DeadChicken"), 1);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DeadChicken").Type, 1);
             recipe.AddTile(TileID.CookingPots);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

@@ -36,12 +36,12 @@ namespace tsorcRevamp.Items.Accessories {
             player.minionDamage -= 0.25f;
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("IronShield"));
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("IronShield").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 

@@ -45,15 +45,15 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("Longinus"), 1);
-            recipe.AddIngredient(Mod.GetItem("WhiteTitanite"), 20);
-            recipe.AddIngredient(Mod.GetItem("CursedSoul"), 30);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("Longinus").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 30);
             recipe.AddIngredient(ItemID.FallenStar, 20);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 240000);
-            recipe.SetResult(this, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 240000);
+            
             recipe.AddTile(TileID.DemonAltar);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

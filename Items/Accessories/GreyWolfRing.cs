@@ -24,14 +24,14 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("WolfRing"), 1);
-			recipe.AddIngredient(Mod.GetItem("BandOfSupremeCosmicPower"), 1);
-			recipe.AddIngredient(Mod.GetItem("PoisonbloodRing"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 100000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("WolfRing").Type, 1);
+			recipe.AddIngredient(Mod.Find<ModItem>("BandOfSupremeCosmicPower").Type, 1);
+			recipe.AddIngredient(Mod.Find<ModItem>("PoisonbloodRing").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 100000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override void UpdateEquip(Player player) {

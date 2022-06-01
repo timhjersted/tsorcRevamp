@@ -24,13 +24,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.shoot = ModContent.ProjectileType<Projectiles.RoyalThrowingSpear>();
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 20);
             recipe.AddIngredient(ItemID.StoneBlock, 20);
             recipe.AddIngredient(ItemID.SilverCoin, 50);
             recipe.AddTile(TileID.Anvils);
             recipe.SetResult(this, 100);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

@@ -37,23 +37,23 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
 
 
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1200);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
             recipe = new Recipe(Mod);
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.LeadBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1200);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override Vector2? HoldoutOffset()

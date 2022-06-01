@@ -93,15 +93,15 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void AddRecipes()
         {
 
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "GWPulsar");
             recipe.AddIngredient(ItemID.LihzahrdPowerCell, 2);
             recipe.AddIngredient(ItemID.ShroomiteBar, 10);
             recipe.AddIngredient(ItemID.ElectrosphereLauncher);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 125000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 125000);
             recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
         }
     }

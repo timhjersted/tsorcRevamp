@@ -28,12 +28,12 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ShadowGreaves, 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

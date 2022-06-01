@@ -23,20 +23,20 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
-            recipe.AddIngredient(Mod.GetItem("SupersonicBoots"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
+            recipe.AddIngredient(Mod.Find<ModItem>("SupersonicBoots").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
             Recipe recipe2 = new Recipe(Mod);
             recipe2.AddIngredient(ModContent.ItemType<ImprovedCloudInABalloon>(), 1);
             recipe2.AddIngredient(ItemID.AngelWings, 1);
             recipe2.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
-            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 20000);
+            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe2.AddTile(TileID.DemonAltar);
             recipe2.SetResult(this, 1);
             recipe2.AddRecipe();

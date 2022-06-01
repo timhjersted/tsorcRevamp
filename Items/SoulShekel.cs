@@ -71,18 +71,18 @@ namespace tsorcRevamp.Items
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 5);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5);
+            
+            recipe.Register();
 
             Recipe recipe2 = new Recipe(Mod);
-            recipe2.AddIngredient(Mod.GetItem("DarkSoul"), 50);
+            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50);
             recipe2.SetResult(this, 10);
             recipe2.AddRecipe();
 
             Recipe recipe3 = new Recipe(Mod);
-            recipe3.AddIngredient(Mod.GetItem("DarkSoul"), 500);
+            recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
             recipe3.SetResult(this, 100);
             recipe3.AddRecipe();
         }

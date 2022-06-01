@@ -24,11 +24,11 @@ namespace tsorcRevamp.Items.Weapons.Throwing {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.JungleSpores, 1);
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(this, 5);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

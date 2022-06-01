@@ -38,18 +38,18 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.SniperRifle, 1);
-            recipe.AddIngredient(Mod.GetItem("DestructionElement"), 1);
-            recipe.AddIngredient(Mod.GetItem("SoulOfChaos"), 1);
-            recipe.AddIngredient(Mod.GetItem("Humanity"), 20);
-            recipe.AddIngredient(Mod.GetItem("CursedSoul"), 100);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 240000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfChaos").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 100);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 240000);
 
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
         public override void HoldItem(Player player)
         {

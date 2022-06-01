@@ -73,13 +73,13 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilBar, 15);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 15000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
         }
 
@@ -119,13 +119,13 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("GazingShield"), 1);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("GazingShield").Type, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 10);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 30000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 30000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
         }
     }
@@ -165,14 +165,14 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("BeholderShield"), 1);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(Mod.GetItem("SoulOfAttraidies"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 60000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("BeholderShield").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
         }
     }
@@ -204,13 +204,13 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("BeholderShield2"), 1);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 2);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 120000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("BeholderShield2").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 2);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
 
         }
     }

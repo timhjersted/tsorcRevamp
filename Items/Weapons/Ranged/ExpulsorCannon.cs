@@ -33,17 +33,17 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("QuadroCannon"), 1);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(Mod.GetItem("FlameOfTheAbyss"), 30);
-            //recipe.AddIngredient(mod.GetItem("SoulOfBlight"), 1);
-            recipe.AddIngredient(Mod.GetItem("SoulOfChaos"), 1);
-            recipe.AddIngredient(Mod.GetItem("CursedSoul"), 90);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 280000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("QuadroCannon").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 30);
+            //recipe.AddIngredient(Mod.Find<ModItem>("SoulOfBlight").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfChaos").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 90);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 280000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
             int ShotAmt = 4;

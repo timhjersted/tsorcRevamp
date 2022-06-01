@@ -28,15 +28,15 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.value = PriceByRarity.Yellow_8;
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Excalibur, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 5);
             recipe.AddIngredient(ItemID.SoulofSight, 5);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 85000);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 85000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         static Texture2D glowTexture;

@@ -28,15 +28,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("ForgottenThunderBowScroll"), 1);
-            recipe.AddIngredient(Mod.GetItem("Bolt4Tome"), 1);
-            recipe.AddIngredient(Mod.GetItem("SoulOfArtorias"), 1);
-            recipe.AddIngredient(Mod.GetItem("Humanity"), 30);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 200000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("ForgottenThunderBowScroll").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("Bolt4Tome").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 30);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 200000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

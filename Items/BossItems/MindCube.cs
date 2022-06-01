@@ -44,24 +44,24 @@ namespace tsorcRevamp.Items.BossItems {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
 
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
                 recipe.AddIngredient(ItemID.LightShard, 99);
                 recipe.AddIngredient(ItemID.DarkShard, 99);
             }
-            recipe.AddIngredient(Mod.GetItem("CrestOfFire"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfWater"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfEarth"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfSky"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfCorruption"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfSteel"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfLife"), 1);
-            recipe.AddIngredient(Mod.GetItem("CrestOfStone"), 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfFire").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfWater").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfEarth").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfSky").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfCorruption").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfSteel").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfLife").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("CrestOfStone").Type, 1);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

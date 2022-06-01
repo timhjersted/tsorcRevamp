@@ -34,15 +34,15 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("DragoonLance"), 1);
-            recipe.AddIngredient(Mod.GetItem("FlameOfTheAbyss"), 10);
-            recipe.AddIngredient(Mod.GetItem("SoulOfArtorias"), 1);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 170000);
-            recipe.SetResult(this, 1);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("DragoonLance").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 10);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 170000);
+            
             recipe.AddTile(TileID.DemonAltar);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

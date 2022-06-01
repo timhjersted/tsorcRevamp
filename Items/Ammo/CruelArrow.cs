@@ -28,13 +28,13 @@ namespace tsorcRevamp.Items.Ammo {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.WoodenArrow, 30);
             recipe.AddIngredient(ItemID.IronOre, 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 15); //480 DS per 1000, I think that's fair. 
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15); //480 DS per 1000, I think that's fair. 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 30);
-            recipe.AddRecipe();
+            recipe.Register();
         }
 
 

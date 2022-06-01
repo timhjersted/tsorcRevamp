@@ -18,13 +18,13 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         /*public override void AddRecipes() {
-            Recipe recipe = new Recipe(mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofFlight, 70);
-            recipe.AddIngredient(mod.GetItem("RedTitanite"), 1);
-            recipe.AddIngredient(mod.GetItem("DarkSoul"), 10000);
+            recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
         */
 

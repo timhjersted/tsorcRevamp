@@ -79,13 +79,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("SoulArrowStaff"));
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 3000);
-            recipe.AddIngredient(Mod.GetItem("SoulSiphonPotion"));
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulArrowStaff").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulSiphonPotion").Type);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

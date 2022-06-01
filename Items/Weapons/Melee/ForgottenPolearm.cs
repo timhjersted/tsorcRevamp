@@ -34,12 +34,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<EphemeralDust>(), 35);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 6000);
-            recipe.SetResult(this, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
+            
             recipe.AddTile(TileID.DemonAltar);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

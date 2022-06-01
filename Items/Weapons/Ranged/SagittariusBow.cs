@@ -33,12 +33,12 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("ArtemisBow"), 1);
-            recipe.AddIngredient(Mod.GetItem("BlueTitanite"), 5);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 90000);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("ArtemisBow").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
+            
         }
     }
 }

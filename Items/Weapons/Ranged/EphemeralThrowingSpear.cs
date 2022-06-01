@@ -27,13 +27,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.shoot = ModContent.ProjectileType<Projectiles.EphemeralThrowingSpear>();
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("RoyalThrowingSpear"), 30);
-            recipe.AddIngredient(Mod.GetItem("EphemeralDust"), 5);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 90);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("RoyalThrowingSpear").Type, 30);
+            recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 5);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90);
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this, 30);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

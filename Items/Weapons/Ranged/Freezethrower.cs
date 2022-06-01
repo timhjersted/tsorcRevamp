@@ -28,13 +28,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Flamethrower, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 30);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 40000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 40000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

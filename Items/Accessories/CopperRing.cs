@@ -18,12 +18,12 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperBar, 2);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 300);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 300);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
  

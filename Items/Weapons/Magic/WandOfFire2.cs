@@ -30,13 +30,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Stinger, 3);
-            recipe.AddIngredient(Mod.GetItem("WandOfFire"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 2300);
+            recipe.AddIngredient(Mod.Find<ModItem>("WandOfFire").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2300);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

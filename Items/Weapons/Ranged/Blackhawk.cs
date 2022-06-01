@@ -36,13 +36,13 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Revolver);
             recipe.AddIngredient(ItemID.SoulofNight, 10);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 6000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 6000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override Vector2? HoldoutOffset()

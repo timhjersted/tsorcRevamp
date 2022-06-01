@@ -36,15 +36,15 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.MeteoriteBar, 25);
             recipe.AddIngredient(ItemID.SandBlock, 150);
-            recipe.AddIngredient(Mod.GetItem("FlameOfTheAbyss"), 20);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 120000);
+            recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 20);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override bool? UseItem(Player player) {

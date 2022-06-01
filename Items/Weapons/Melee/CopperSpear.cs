@@ -34,11 +34,11 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperBar, 10);
-            recipe.SetResult(this, 1);
+            
             recipe.AddTile(TileID.Anvils);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

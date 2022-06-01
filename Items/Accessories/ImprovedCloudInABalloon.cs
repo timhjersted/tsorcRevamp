@@ -18,13 +18,13 @@ namespace tsorcRevamp.Items.Accessories {
         }
  
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CloudinaBottle, 1);
-            recipe.AddIngredient(Mod.GetItem("ImprovedShinyRedBalloon"), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 500);
+            recipe.AddIngredient(Mod.Find<ModItem>("ImprovedShinyRedBalloon").Type, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
  
         public override void UpdateEquip(Player player) {

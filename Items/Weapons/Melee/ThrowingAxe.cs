@@ -24,12 +24,12 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);
             recipe.AddTile(TileID.Anvils);
             recipe.SetResult(this, 40);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

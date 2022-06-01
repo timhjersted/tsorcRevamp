@@ -24,11 +24,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);
             recipe.SetResult(this, 30);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

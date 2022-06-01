@@ -37,13 +37,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes() //recipe/progression subject to change
         {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("GreatMagicWeapon"));
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 50000);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul")); //lol idek how early you can get these but will do for now
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("GreatMagicWeapon").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type); //lol idek how early you can get these but will do for now
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override bool? UseItem(Player player)

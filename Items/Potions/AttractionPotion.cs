@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Potions {
             return !Main.dayTime;
         }
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.Vertebrae, 10);
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Potions {
             recipe.AddIngredient(ItemID.Lens, 1);
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(this, 5);
-            recipe.AddRecipe();
+            recipe.Register();
             recipe = new Recipe(Mod);
             recipe.AddIngredient(ItemID.BottledWater, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.Potions {
             recipe.AddIngredient(ItemID.Lens, 1);
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(this, 5);
-            recipe.AddRecipe();
+            recipe.Register();
         }
     }
 }

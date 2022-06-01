@@ -194,15 +194,15 @@ namespace tsorcRevamp.Items.Accessories
         
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TitanGlove);
             recipe.AddIngredient(ItemID.MythrilBar, 10);
-            recipe.AddIngredient(Mod.GetItem("GuardianSoul"));
-            recipe.AddIngredient(Mod.GetItem("SoulOfAttraidies"));
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 50000);
+            recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

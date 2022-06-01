@@ -29,13 +29,13 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
-            recipe.AddIngredient(Mod.GetItem("FireSpiritTome3"), 1);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome3").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 215000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 215000);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

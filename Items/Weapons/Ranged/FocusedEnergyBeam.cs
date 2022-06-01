@@ -33,17 +33,17 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void AddRecipes() {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<RedTitanite>(), 3);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 3);
-            recipe.AddIngredient(Mod.GetItem("CompactFrame"));
-            recipe.AddIngredient(Mod.GetItem("DestructionElement"));
+            recipe.AddIngredient(Mod.Find<ModItem>("CompactFrame").Type);
+            recipe.AddIngredient(Mod.Find<ModItem>("DestructionElement").Type);
             recipe.AddIngredient(ItemID.SpaceGun, 1);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 90000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
 
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
 
         public override Vector2? HoldoutOffset() {
