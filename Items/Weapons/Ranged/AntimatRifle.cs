@@ -68,7 +68,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override bool Shoot(Player P, ref Vector2 Pos, ref float speedX, ref float speedY, ref int type, ref int DMG, ref float KB) {
 
             type = ModContent.ProjectileType<Projectiles.AntiMaterialRound>();
-            Projectile.NewProjectile(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), Pos.X, Pos.Y, speedX, speedY, type, DMG, KB, P.whoAmI);
+            Projectile.NewProjectile(Pos.X, Pos.Y, speedX, speedY, type, DMG, KB, P.whoAmI);
             return false;
         }
 

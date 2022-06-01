@@ -39,7 +39,6 @@ namespace tsorcRevamp.Items.Weapons.Magic {
         public override bool? UseItem(Player player)
         {
             Projectile.NewProjectile(
-                new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"),
                 (float)(Main.mouseX + Main.screenPosition.X) - 100 + Main.rand.Next(200),
                 (float)player.position.Y - 800.0f,
                 (float)(Main.rand.Next(-40, 40)) / 10,

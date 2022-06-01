@@ -33,7 +33,7 @@ namespace tsorcRevamp.Tiles {
             b = 0.1f;
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY) {
-            Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), i * 16, j * 16, 16, 32, ModContent.ItemType<SweatyCyclopsForgeItem>());
+            Item.NewItem(i * 16, j * 16, 16, 32, ModContent.ItemType<SweatyCyclopsForgeItem>());
         }
 
         public class SweatyCyclopsForgeItem : ModItem {

@@ -39,7 +39,6 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override bool? UseItem(Player player) {
             if (Main.rand.Next(40) == 0) {
                 Projectile.NewProjectile(
-                new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), 
                 player.position.X,
                 player.position.Y,
                 (float)(-40 + Main.rand.Next(80)) / 10,

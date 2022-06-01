@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.BossItems
         public override bool? UseItem(Player player)
         {
             Main.NewText("A Gate has been opened. The Wall of Flesh has passed into this dimension!... ", 175, 75, 255);
-            NPC.NewNPC(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), (int)Main.player[Main.myPlayer].position.X - (1070), (int)Main.player[Main.myPlayer].position.Y - 150, NPCID.WallofFlesh, 1);
+            NPC.NewNPC((int)Main.player[Main.myPlayer].position.X - (1070), (int)Main.player[Main.myPlayer].position.Y - 150, NPCID.WallofFlesh, 1);
             return true;
         }
         public override void AddRecipes()

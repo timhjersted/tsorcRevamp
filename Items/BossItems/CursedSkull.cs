@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems {
             {
                 NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Skeletron has awoken!"), new Color(175, 75, 255));
             }
-            NPC.NewNPC(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), (int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
+            NPC.NewNPC((int)player.position.X - 1070, (int)player.position.Y - 150, NPCID.SkeletronHead, 0);
             
             return true;
 

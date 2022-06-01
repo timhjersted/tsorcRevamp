@@ -35,8 +35,8 @@ namespace tsorcRevamp.Items.BossItems {
             }
             else {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, -1, -1, 0);
-                NPC.NewNPC(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), (int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
-                NPC.NewNPC(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), (int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
+                NPC.NewNPC((int)player.position.X + 1000, (int)player.position.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>(), 0);
+                NPC.NewNPC((int)player.position.X - 1000, (int)player.position.Y - 200, ModContent.NPCType<NPCs.Bosses.Slogra>(), 0);
             }
             return true;
         }
