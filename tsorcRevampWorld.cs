@@ -22,7 +22,7 @@ using Terraria.GameContent;
 using ReLogic.Content;
 
 namespace tsorcRevamp {
-    public class tsorcRevampWorld : ModWorld {
+    public class tsorcRevampWorld : ModSystem {
 
         public static bool DownedVortex;
         public static bool DownedNebula;
@@ -38,7 +38,7 @@ namespace tsorcRevamp {
 
        
 
-        public override void Initialize() {
+        public override void OnWorldLoad() {
             DownedVortex = false;
             DownedNebula = false;
             DownedStardust = false;
@@ -54,42 +54,37 @@ namespace tsorcRevamp {
             Tiles.SoulSkellyGeocache.InitializeSkellys();
         }
 
-		public override TagCompound Save() {
-
+        public override void SaveWorldData(TagCompound tag) {
             List<string> downed = new List<string>();
 
-            if (DownedVortex) downed.Add("DownedVortex");
-            if (DownedNebula) downed.Add("DownedNebula");
-            if (DownedStardust) downed.Add("DownedStardust");
-            if (DownedSolar) downed.Add("DownedSolar");
+            if (DownedVortex)
+                downed.Add("DownedVortex");
+            if (DownedNebula)
+                downed.Add("DownedNebula");
+            if (DownedStardust)
+                downed.Add("DownedStardust");
+            if (DownedSolar)
+                downed.Add("DownedSolar");
 
-            List<string> world_state= new List<string>();
-            if (SuperHardMode) world_state.Add("SuperHardMode");
+            List<string> world_state = new List<string>();
+            if (SuperHardMode)
+                world_state.Add("SuperHardMode");
             //This saves the fact that SuperHardMode has been disabled
-            if(world_state.Contains("SuperHardMode") && !SuperHardMode)
-            {
+            if (world_state.Contains("SuperHardMode") && !SuperHardMode) {
                 world_state.Remove("SuperHardMode");
             }
-            if (TheEnd) world_state.Add("TheEnd");
-            if (CustomMap) world_state.Add("CustomMap");
+            if (TheEnd)
+                world_state.Add("TheEnd");
+            if (CustomMap)
+                world_state.Add("CustomMap");
 
-            TagCompound tagCompound = new TagCompound
-			{
-                {"downed", downed},
-                {"world_state", world_state},
-            };
-			SaveSlain(tagCompound);
-            tsorcScriptedEvents.SaveScriptedEvents(tagCompound);
-            return tagCompound;
-		}
-
-		private void SaveSlain(TagCompound tag) {
-            tag.Add("type", Slain.Keys.ToList());
-            tag.Add("value", Slain.Values.ToList());
+            tag.Add("downed", downed);
+            tag.Add("world_state", world_state);
+            SaveSlain(tag);
+            tsorcScriptedEvents.SaveScriptedEvents(tag);
         }
 
-        public override void Load(TagCompound tag)
-        {
+        public override void LoadWorldData(TagCompound tag) {
             LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
 
@@ -110,19 +105,21 @@ namespace tsorcRevamp {
             }
 
             LitBonfireList = GetActiveBonfires();
-            
+
 
             //If the player leaves the world or turns off their computer in the middle of the fight or whatever, this will de-actuate the pyramid for them next time they load
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-            {
-                if (Main.tile[5810, 1670] != null)
-                {
-                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)
-                    {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems) {
+                if (Main.tile[5810, 1670] != null) {
+                    if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated) {
                         NPCs.Bosses.SuperHardMode.DarkCloud.ActuatePyramid();
                     }
                 }
             }
+        }
+
+        private void SaveSlain(TagCompound tag) {
+            tag.Add("type", Slain.Keys.ToList());
+            tag.Add("value", Slain.Values.ToList());
         }
 
         private void LoadSlain(TagCompound tag) {
@@ -245,18 +242,21 @@ namespace tsorcRevamp {
                                 int num = style * 54;
                                 for (int k = -3; k <= 0; k++) {
                                     short frameY = (short)((3 + k) * 18);
-                                    Main.tile[x + 1 - 1, y + 1 + k].HasTile = true;
-                                    Main.tile[x + 1 - 1, y + 1 + k].TileFrameY = frameY;
-                                    Main.tile[x + 1 - 1, y + 1 + k].TileFrameX = (short)num;
-                                    Main.tile[x + 1 - 1, y + 1 + k].TileType = type;
-                                    Main.tile[x + 1, y + 1 + k].HasTile = true;
-                                    Main.tile[x + 1, y + 1 + k].TileFrameY = frameY;
-                                    Main.tile[x + 1, y + 1 + k].TileFrameX = (short)(num + 18);
-                                    Main.tile[x + 1, y + 1 + k].TileType = type;
-                                    Main.tile[x + 1 + 1, y + 1 + k].HasTile = true;
-                                    Main.tile[x + 1 + 1, y + 1 + k].TileFrameY = frameY;
-                                    Main.tile[x + 1 + 1, y + 1 + k].TileFrameX = (short)(num + 36);
-                                    Main.tile[x + 1 + 1, y + 1 + k].TileType = type;
+                                    Tile tile = Main.tile[x + 1 - 1, y + 1 + k];
+                                    tile.HasTile = true;
+                                    tile.TileFrameY = frameY;
+                                    tile.TileFrameX = (short)num;
+                                    tile.TileType = type;
+                                    tile = Main.tile[x + 1, y + 1 + k];
+                                    tile.HasTile = true;
+                                    tile.TileFrameY = frameY;
+                                    tile.TileFrameX = (short)(num + 18);
+                                    tile.TileType = type;
+                                    tile = Main.tile[x + 1 + 1, y + 1 + k];
+                                    tile.HasTile = true;
+                                    tile.TileFrameY = frameY;
+                                    tile.TileFrameX = (short)(num + 36);
+                                    tile.TileType = type;
                                 }
                             }
 
@@ -300,22 +300,26 @@ namespace tsorcRevamp {
                         }
                         if (flag) {
                             short num2 = (short)(36 * style);
-                            Main.tile[x - 1, y - 1].HasTile = true;
-                            Main.tile[x - 1, y - 1].TileFrameY = num;
-                            Main.tile[x - 1, y - 1].TileFrameX = num2;
-                            Main.tile[x - 1, y - 1].TileType = type;
-                            Main.tile[x, y - 1].HasTile = true;
-                            Main.tile[x, y - 1].TileFrameY = num;
-                            Main.tile[x, y - 1].TileFrameX = (short)(num2 + 18);
-                            Main.tile[x, y - 1].TileType = type;
-                            Main.tile[x - 1, y].HasTile = true;
-                            Main.tile[x - 1, y].TileFrameY = (short)(num + 18);
-                            Main.tile[x - 1, y].TileFrameX = num2;
-                            Main.tile[x - 1, y].TileType = type;
-                            Main.tile[x, y].HasTile = true;
-                            Main.tile[x, y].TileFrameY = (short)(num + 18);
-                            Main.tile[x, y].TileFrameX = (short)(num2 + 18);
-                            Main.tile[x, y].TileType = type;
+                            Tile tile = Main.tile[x - 1, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
                         }
                     }
 
@@ -363,22 +367,26 @@ namespace tsorcRevamp {
                         if (flag)
                         {
                             short num2 = (short)(36 * style);
-                            Main.tile[x - 1, y - 1].HasTile = true;
-                            Main.tile[x - 1, y - 1].TileFrameY = num;
-                            Main.tile[x - 1, y - 1].TileFrameX = num2;
-                            Main.tile[x - 1, y - 1].TileType = type;
-                            Main.tile[x, y - 1].HasTile = true;
-                            Main.tile[x, y - 1].TileFrameY = num;
-                            Main.tile[x, y - 1].TileFrameX = (short)(num2 + 18);
-                            Main.tile[x, y - 1].TileType = type;
-                            Main.tile[x - 1, y].HasTile = true;
-                            Main.tile[x - 1, y].TileFrameY = (short)(num + 18);
-                            Main.tile[x - 1, y].TileFrameX = num2;
-                            Main.tile[x - 1, y].TileType = type;
-                            Main.tile[x, y].HasTile = true;
-                            Main.tile[x, y].TileFrameY = (short)(num + 18);
-                            Main.tile[x, y].TileFrameX = (short)(num2 + 18);
-                            Main.tile[x, y].TileType = type;
+                            Tile tile = Main.tile[x - 1, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y - 1];
+                            tile.HasTile = true;
+                            tile.TileFrameY = num;
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = num2;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = (short)(num + 18);
+                            tile.TileFrameX = (short)(num2 + 18);
+                            tile.TileType = type;
                         }
                     }
 
@@ -421,18 +429,21 @@ namespace tsorcRevamp {
                         if (flag)
                         {
                             short num = (short)(54 * style);
-                            Main.tile[x - 1, y].HasTile = true;
-                            Main.tile[x - 1, y].TileFrameY = 0;
-                            Main.tile[x - 1, y].TileFrameX = num;
-                            Main.tile[x - 1, y].TileType = type;
-                            Main.tile[x, y].HasTile = true;
-                            Main.tile[x, y].TileFrameY = 0;
-                            Main.tile[x, y].TileFrameX = (short)(num + 18);
-                            Main.tile[x, y].TileType = type;
-                            Main.tile[x + 1, y].HasTile = true;
-                            Main.tile[x + 1, y].TileFrameY = 0;
-                            Main.tile[x + 1, y].TileFrameX = (short)(num + 36);
-                            Main.tile[x + 1, y].TileType = type;
+                            Tile tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = num;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x + 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 36);
+                            tile.TileType = type;
                         }
                     }
 
@@ -475,18 +486,21 @@ namespace tsorcRevamp {
                         if (flag)
                         {
                             short num = (short)(54 * style);
-                            Main.tile[x - 1, y].HasTile = true;
-                            Main.tile[x - 1, y].TileFrameY = 0;
-                            Main.tile[x - 1, y].TileFrameX = num;
-                            Main.tile[x - 1, y].TileType = type;
-                            Main.tile[x, y].HasTile = true;
-                            Main.tile[x, y].TileFrameY = 0;
-                            Main.tile[x, y].TileFrameX = (short)(num + 18);
-                            Main.tile[x, y].TileType = type;
-                            Main.tile[x + 1, y].HasTile = true;
-                            Main.tile[x + 1, y].TileFrameY = 0;
-                            Main.tile[x + 1, y].TileFrameX = (short)(num + 36);
-                            Main.tile[x + 1, y].TileType = type;
+                            Tile tile = Main.tile[x - 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = num;
+                            tile.TileType = type;
+                            tile = Main.tile[x, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 18);
+                            tile.TileType = type;
+                            tile = Main.tile[x + 1, y];
+                            tile.HasTile = true;
+                            tile.TileFrameY = 0;
+                            tile.TileFrameX = (short)(num + 36);
+                            tile.TileType = type;
                         }
                     }
 
@@ -536,10 +550,11 @@ namespace tsorcRevamp {
                         {
                             for (int l = num2; l < num2 + 3; l++)
                             {
-                                Main.tile[k, l].HasTile = true;
-                                Main.tile[k, l].TileType = type;
-                                Main.tile[k, l].TileFrameX = (short)(num4 + 18 * (k - num));
-                                Main.tile[k, l].TileFrameY = (short)(num5 + 18 * (l - num2));
+                                Tile tile = Main.tile[k, l];
+                                tile.HasTile = true;
+                                tile.TileType = type;
+                                tile.TileFrameX = (short)(num4 + 18 * (k - num));
+                                tile.TileFrameY = (short)(num5 + 18 * (l - num2));
                             }
                         }
                     }
@@ -590,10 +605,11 @@ namespace tsorcRevamp {
                         {
                             for (int l = num2; l < num2 + 3; l++)
                             {
-                                Main.tile[k, l].HasTile = true;
-                                Main.tile[k, l].TileType = type;
-                                Main.tile[k, l].TileFrameX = (short)(num4 + 18 * (k - num));
-                                Main.tile[k, l].TileFrameY = (short)(num5 + 18 * (l - num2));
+                                Tile tile = Main.tile[k, l];
+                                tile.HasTile = true;
+                                tile.TileType = type;
+                                tile.TileFrameX = (short)(num4 + 18 * (k - num));
+                                tile.TileFrameY = (short)(num5 + 18 * (l - num2));
                             }
                         }
                     }
@@ -614,9 +630,9 @@ namespace tsorcRevamp {
             int bonfireType = ModContent.TileType<Tiles.BonfireCheckpoint>();
 
             //Only check every 3 tiles horizontally and every 4 vertically, since bonfires are 3x4 and we only want to add each of them once
-            for (int i = 1; i < (Main.tile.GetUpperBound(0) - 1); i += 3)
+            for (int i = 1; i < (Main.tile.Width - 1); i += 3)
             {
-                for (int j = 1; j < (Main.tile.GetUpperBound(1) - 1); j += 4)
+                for (int j = 1; j < (Main.tile.Height - 1); j += 4)
                 {
                     //Check if each tile is a bonfire, and is the left frame, and does not have a bonfire above it (aka just the top left tile of a bonfire)
                     if (Main.tile[i, j] != null && Main.tile[i, j].HasTile && Main.tile[i, j].TileType == bonfireType)
@@ -651,7 +667,7 @@ namespace tsorcRevamp {
         //}
 
         bool initialized = false;
-        public override void PreUpdate()
+        public override void PreUpdatePlayers()
         {
             //Only do this on the first tick after loading
             if (!initialized)
@@ -693,39 +709,39 @@ namespace tsorcRevamp {
                         //Spawn in NPCs
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.EmeraldHerald>()))
                         {
-                            NPC.NewNPC(4510 * 16, 737 * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
+                            NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4510 * 16, 737 * 16, ModContent.NPCType<NPCs.Friendly.EmeraldHerald>());
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.Dwarf>()))
                         {
-                            int npc = NPC.NewNPC(4301 * 16, 697 * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4301 * 16, 697 * 16, ModContent.NPCType<NPCs.Friendly.Dwarf>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4301;
                             Main.npc[npc].homeTileY = 697;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.ShamanElder>()))
                         {
-                            int npc = NPC.NewNPC(4124 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4124 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.ShamanElder>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4124;
                             Main.npc[npc].homeTileY = 690;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianArcher>()))
                         {
-                            int npc = NPC.NewNPC(4145 * 16, 682 * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4145 * 16, 682 * 16, ModContent.NPCType<NPCs.Friendly.TibianArcher>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4145;
                             Main.npc[npc].homeTileY = 682;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>()))
                         {
-                            int npc = NPC.NewNPC(4370 * 16, 667 * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4370 * 16, 667 * 16, ModContent.NPCType<NPCs.Friendly.SolaireOfAstora>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4370;
                             Main.npc[npc].homeTileY = 667;
                         }
                         if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
                         {
-                            int npc = NPC.NewNPC(4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4176;
                             Main.npc[npc].homeTileY = 690;
@@ -749,8 +765,7 @@ namespace tsorcRevamp {
             }
         }
 
-        public override void PostUpdate() {
-            
+        public override void PostUpdateEverything() {
             if (JustPressed(Keys.Home) && JustPressed(Keys.NumPad0)) //they have to be pressed *on the same tick*. you can't hold one and then press the other.
                 CampfireToBonfire();
             bool charm = false;
@@ -767,7 +782,7 @@ namespace tsorcRevamp {
                 Main.moonPhase = 0;
                 Main.dayTime = false;
                 Main.time = 16240.0;
-                if (Main.GlobalTime % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer) {
+                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer) {
                     //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
                     NetMessage.SendData(MessageID.WorldData);
                 }
@@ -786,12 +801,10 @@ namespace tsorcRevamp {
                     TextureAssets.Sun = VanillaSun1;
                     TextureAssets.Sun2 = VanillaSun2;
                     TextureAssets.Sun3 = VanillaSun3;
-                    if (VanillaMoonTextures == null)
-                    {
-                        VanillaMoonTextures = new List<Texture2D>();
-                        for (int i = 0; i < TextureAssets.Moon.Length; i++)
-                        {
-                            VanillaMoonTextures.Add((Texture2D)ModContent.Request<Texture2D>("Terraria/Moon_" + i));
+                    if (VanillaMoonTextures == null) {
+                        VanillaMoonTextures = new List<Asset<Texture2D>>();
+                        for (int i = 0; i < TextureAssets.Moon.Length; i++) {
+                            VanillaMoonTextures.Add(ModContent.Request<Texture2D>("Terraria/Moon_" + i));
                         }
                     }
                     for (int i = 0; i < TextureAssets.Moon.Length; i++) {
