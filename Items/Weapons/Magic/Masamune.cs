@@ -1,7 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Items.Weapons.Melee {
+namespace tsorcRevamp.Items.Weapons.Magic {
     class Masamune : ModItem {
         public override void SetStaticDefaults() {
             Tooltip.SetDefault("The blade almost cannot be seen it cuts so fast, ripping enemies to shreds in seconds." +
@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.rare = ItemRarityID.Red;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Red_10;
-            Item.DamageType = DamageClass.Melee;
+            Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             Item.shootSpeed = 13f;
         }
