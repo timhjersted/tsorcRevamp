@@ -43,9 +43,9 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                 {
 
-                    int poisonball = Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.Projectile.damage), 1f, Projectile.owner);
+                    int poisonball = Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.Projectile.damage), 1f, Projectile.owner);
 
-                    Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.Projectile.damage), 1f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height)), new Vector2(0, 0), ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrike>(), (int)(this.Projectile.damage), 1f, Projectile.owner);
                     Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                     int arg_1394_1 = Projectile.width;
                     int arg_1394_2 = Projectile.height;
@@ -71,7 +71,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
                     if (Main.netMode == 2)
                     {
-                        NetMessage.SendData(27, -1, -1, null, poisonball, 0f, 0f, 0f, 0); // where b is the index of the projectile spawned; i.e. int b = Projectile.NewProjectile(stuff);
+                        NetMessage.SendData(27, -1, -1, null, poisonball, 0f, 0f, 0f, 0); // where b is the index of the projectile spawned; i.e. int b = Projectile.NewProjectile(Projectile.GetSource_FromThis(), stuff);
                     }
 
                 }

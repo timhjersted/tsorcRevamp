@@ -606,7 +606,7 @@ namespace tsorcRevamp.NPCs
                 int dust = Dust.NewDust(npc.position, npc.width, npc.height, 185, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust].noGravity = true;
 
-                int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.FireworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
+                int dust2 = Dust.NewDust(npc.position, npc.width, npc.height, DustID.TorchworkFountain_Blue, (npc.velocity.X * 0.2f), npc.velocity.Y * 0.2f, 100, default, 1f);
                 Main.dust[dust2].noGravity = true;                
             }
 
@@ -843,7 +843,7 @@ namespace tsorcRevamp.NPCs
 
                         p.timeLeft = 2;
 
-                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), projectile.knockBack, projectile.owner, tags, 0);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.ToxicCatExplosion>(), (int)(projectile.damage * 1.8f), projectile.knockBack, projectile.owner, tags, 0);
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ToxicCatDrain>());
 
@@ -881,7 +881,7 @@ namespace tsorcRevamp.NPCs
                         //Main.NewText(pitch);
                         p.timeLeft = 2;
 
-                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.VirulentCatExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.ViruCatDrain>());
 
@@ -918,7 +918,7 @@ namespace tsorcRevamp.NPCs
 
                         p.timeLeft = 2;
 
-                        Projectile.NewProjectile(p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), p.Center, npc.velocity, ModContent.ProjectileType<Projectiles.BiohazardExplosion>(), (projectile.damage * 2), projectile.knockBack, projectile.owner, tags, 0);
 
                         int buffindex = npc.FindBuffIndex(ModContent.BuffType<Buffs.BiohazardDrain>());
 
@@ -1302,7 +1302,7 @@ namespace tsorcRevamp.NPCs
                 {
                     for (int tY = tileY; tY < tileCenterY; tY++)
                     {
-                        if (Main.tile[tX, tY] != null && ((Main.tile[tX, tY].HasTile && (Main.tileSolid[(int)Main.tile[tX, tY].TileType] || (Main.tileSolidTop[(int)Main.tile[tX, tY].TileType] && Main.tile[tX, tY].TileFrameY == 0))) || Main.tile[tX, tY].liquid > 64))
+                        if (Main.tile[tX, tY] != null && ((Main.tile[tX, tY].HasTile && (Main.tileSolid[(int)Main.tile[tX, tY].TileType] || (Main.tileSolidTop[(int)Main.tile[tX, tY].TileType] && Main.tile[tX, tY].TileFrameY == 0))) || Main.tile[tX, tY].LiquidAmount > 64))
                         {
                             Vector2 tPos;
                             tPos.X = (float)(tX * 16);
@@ -1685,7 +1685,7 @@ namespace tsorcRevamp.NPCs
                         npc.TargetClosest(true); // target and face closest player
                         if (npc.localAI[0] == (float)(shotRate / 2))  //  fire at halfway through; first half of delay is aim, 2nd half is cooldown
                         {
-                            int proj = Projectile.NewProjectile(npc.Center.X, npc.Center.Y, angle.X, angle.Y, shotType, shotPow, 0f, Main.myPlayer, -1);
+                            int proj = Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, angle.X, angle.Y, shotType, shotPow, 0f, Main.myPlayer, -1);
                             Main.projectile[proj].netUpdate = true;
                             if (Math.Abs(angle.Y) > Math.Abs(angle.X) * 2f) // target steeply above/below NPC
                             {
@@ -2147,7 +2147,7 @@ namespace tsorcRevamp.NPCs
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
                         }
                         if (soundType > 0)
                         {
@@ -2452,7 +2452,7 @@ namespace tsorcRevamp.NPCs
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
-                        Projectile.NewProjectile(npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer, ai0, ai1);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer, ai0, ai1);
                     }
                     if (soundType > 0)
                     {
@@ -2602,7 +2602,7 @@ namespace tsorcRevamp.NPCs
                     }
                     else
                     {
-                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID.FireworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
+                        Dust.NewDustPerfect(oldPosition + dustPoint, DustID.TorchworkFountain_Pink, diff * 5, 200, default, 0.8f).noGravity = true;
                     }
                 }
             }       

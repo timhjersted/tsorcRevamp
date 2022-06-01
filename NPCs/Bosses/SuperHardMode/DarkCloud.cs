@@ -535,7 +535,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 //Spawn the big laser
                 if (AttackModeCounter % turnLength == chargeTime)
                 {
-                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
+                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GenericLaser>(), divineSparkDamage, 0.5f, Main.myPlayer, (float)GenericLaser.GenericLaserID.DarkDivineSpark, NPC.whoAmI);
                 }
             }
 
@@ -1394,7 +1394,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         for (int j = 0; j < 3; j++)
                         {
-                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.FireworkFountain_Green, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
+                            Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.TorchworkFountain_Green, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
                             Dust.NewDust(Main.projectile[i].position, Main.projectile[i].width, Main.projectile[i].height, DustID.ShadowbeamStaff, Main.projectile[i].velocity.X * 0.8f, Main.projectile[i].velocity.Y * 0.8f);
                         }
                         Main.projectile[i].Kill();
@@ -2004,7 +2004,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         Vector2 thisPos = NPC.Center + startPos + Main.rand.NextVector2Circular(50, 50);
                         Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                        Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Blue, thisVel).noGravity = true;
+                        Dust.NewDustPerfect(thisPos, DustID.TorchworkFountain_Blue, thisVel).noGravity = true;
                     }
                     DarkCloudParticleEffect(-2, 1);
                 }
@@ -2027,7 +2027,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {                
                 Vector2 thisPos = NPC.Center + new Vector2(0, 128).RotatedBy(targetPoint - MathHelper.PiOver2) + Main.rand.NextVector2Circular(32, 32);
                 Vector2 thisVel = UsefulFunctions.GenerateTargetingVector(thisPos, NPC.Center + Main.rand.NextVector2Circular(10, 10), 8);
-                Dust.NewDustPerfect(thisPos, DustID.FireworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
+                Dust.NewDustPerfect(thisPos, DustID.TorchworkFountain_Red, thisVel, 100, default, 0.5f).noGravity = true;                
             }
             
 
@@ -2049,7 +2049,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 for (int i = 0; i < 20; i++) {
                     Vector2 thisVel = arrowRainTargetingVector + Main.rand.NextVector2Circular(10, 10);
-                    Dust.NewDustPerfect(NPC.Center, DustID.FireworkFountain_Green, thisVel).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, DustID.TorchworkFountain_Green, thisVel).noGravity = true;
                 }
             }
 

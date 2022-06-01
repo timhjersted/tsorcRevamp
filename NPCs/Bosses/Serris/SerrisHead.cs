@@ -39,11 +39,11 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 			//If one already exists, don't add text to the others despawnhandler (so it doesn't show duplicate messages if you die)
 			if (NPC.CountNPCS(ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>()) > 1)
 			{
-				despawnHandler = new NPCDespawnHandler(DustID.Firework_Blue);
+				despawnHandler = new NPCDespawnHandler(DustID.Torchwork_Blue);
 			}
 			else
 			{
-				despawnHandler = new NPCDespawnHandler("Serris retreats to the depths of its temple...", Color.Cyan, DustID.Firework_Blue);
+				despawnHandler = new NPCDespawnHandler("Serris retreats to the depths of its temple...", Color.Cyan, DustID.Torchwork_Blue);
 			}
 		}
 		public override void SetStaticDefaults()
@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
 				UsefulFunctions.BroadcastText("Serris has transformed!", Color.Cyan);
 				NPC.NewNPC((int)(NPC.position.X + (float)(NPC.width / 2)), (int)(NPC.position.Y + (float)NPC.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
 			}
-			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Serris Gore 1"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris Gore 1").Type, 1f);
 		}
 		public override void FindFrame(int currentFrame)
 		{

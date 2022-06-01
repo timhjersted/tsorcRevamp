@@ -231,7 +231,7 @@ namespace tsorcRevamp.Projectiles.Summon {
                     Vector2 vector7 = vector - Projectile.Center;
                     vector7.Normalize();
                     vector7 *= shotSpeed;
-                    int num30 = Projectile.NewProjectile(Projectile.Center.X, Projectile.Center.Y, vector7.X, vector7.Y, shotType, Projectile.damage, 0f, Main.myPlayer);
+                    int num30 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center.X, Projectile.Center.Y, vector7.X, vector7.Y, shotType, Projectile.damage, 0f, Main.myPlayer);
                     Main.projectile[num30].timeLeft = 300;
                     Main.projectile[num30].netUpdate = true;
                     Projectile.netUpdate = true;

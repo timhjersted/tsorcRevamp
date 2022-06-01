@@ -469,13 +469,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		#region gore
 		public override void OnKill()
 		{
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 1"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 2"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 3"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 3"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 2"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 3"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Tetsujin Gore 3"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 1"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 2"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 3"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 3"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 2"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 3"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 3"), 0.9f);
 			if(Main.rand.Next(2) == 0)
             {
 				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CompactFrame>());

@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                     Vector2 shiftSpeed = new Vector2(Projectile.velocity.X, Projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (AI_Projectile_Split_Rate - 1))); //evenly divide the projectiles among the spread angle
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int projIndex = Projectile.NewProjectile(Projectile.position, shiftSpeed, ModContent.ProjectileType<MiracleVines>(), Projectile.damage, Projectile.knockBack, Projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
+                        int projIndex = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, shiftSpeed, ModContent.ProjectileType<MiracleVines>(), Projectile.damage, Projectile.knockBack, Projectile.owner, AI_Split_Count + 1, 0); //the AI_Split_Count+1 here is what makes the recursion work. child projectiles inherit their parent's AI_Split_Count, plus one.
                         if (Main.netMode == NetmodeID.Server)
                         {
                             NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, projIndex);
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             }
 
             if (AI_Timer % 4 == 0) { //spawn a trail vine every 3 frames
-                Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), new Vector2(Projectile.velocity.X * 0.01f, Projectile.velocity.Y * 0.01f), ModContent.ProjectileType<MiracleVinesTrail>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2)), new Vector2(Projectile.velocity.X * 0.01f, Projectile.velocity.Y * 0.01f), ModContent.ProjectileType<MiracleVinesTrail>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                 for (int j = -1; j < 2; j++) {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 18, Projectile.velocity.X * 1.1f, Projectile.velocity.Y * 1.1f, 170, default, 0.7f); //emit dust sideways when trail vines are spawned
                 }

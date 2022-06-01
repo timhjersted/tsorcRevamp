@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles {
 
                         if ((ammoLocation != 0) && (player.inventory[ammoLocation].stack > 0)) {
                             //the projectile damage math has to be cast like this for it to work! it wont work if you just cast the result! do not change it! 
-                            Projectile.NewProjectile(Projectile.Center, projectileVelocity, ammoProjectileType, (int)(Projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), Projectile.knockBack, Projectile.owner);
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.GetSource_FromThis(), Projectile.Center, projectileVelocity, ammoProjectileType, (int)(Projectile.damage * ((float)charge / (float)MAX_CHARGE_COUNT)), Projectile.knockBack, Projectile.owner);
                             if (player.inventory[ammoLocation].type != ItemID.EndlessQuiver) {
                                 player.inventory[ammoLocation].stack--;
                                 if (player.inventory[ammoLocation].stack == 0) {

@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Enemies
 			/**
 			//if(Y >= Main.rockLayer) return false; //this is for being above the grey background
 			if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].type != 53) return 0; //this means 'if the tile you spawn on is not sand , dont spawn'
-			if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 1].liquid == 0) return 0; //this means if there is no water above , don't spawn
+			if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 1].LiquidAmount == 0) return 0; //this means if there is no water above , don't spawn
 			if (Main.rand.Next(15) == 0)
 			{
 				NPC.NewNPC(spawnInfo.SpawnTileX * 16 + 8, spawnInfo.SpawnTileY * 16, 65, 0);

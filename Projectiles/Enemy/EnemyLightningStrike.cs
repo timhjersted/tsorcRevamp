@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             base.ChargeLaser();
 
             //Dust on player when  using
-            Dust.NewDustPerfect(Projectile.position, DustID.FireworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
+            Dust.NewDustPerfect(Projectile.position, DustID.TorchworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
 
             //Dust along lightning lines
             if (FiringTimeLeft == 28)

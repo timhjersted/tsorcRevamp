@@ -460,22 +460,22 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 				for (int i = 0; i < activeTiles.Count; i++)
 				{
 					//Set it to full/empty
-					Main.tile[(int)activeTiles[i].X, (int)activeTiles[i].Y].liquid = (byte)liquidLevel;
+					Main.tile[(int)activeTiles[i].X, (int)activeTiles[i].Y].LiquidAmount = (byte)liquidLevel;
 
 					//And add any adjacent unchanged tiles to the nextTiles list
-					if (!nextTiles.Contains(activeTiles[i] + up) && Main.tile[(int)(activeTiles[i] + up).X, (int)(activeTiles[i] + up).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + up))
+					if (!nextTiles.Contains(activeTiles[i] + up) && Main.tile[(int)(activeTiles[i] + up).X, (int)(activeTiles[i] + up).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + up))
 					{
 						nextTiles.Add(activeTiles[i] + up);
 					}
-					if (!nextTiles.Contains(activeTiles[i] + right) && Main.tile[(int)(activeTiles[i] + right).X, (int)(activeTiles[i] + right).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + right))
+					if (!nextTiles.Contains(activeTiles[i] + right) && Main.tile[(int)(activeTiles[i] + right).X, (int)(activeTiles[i] + right).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + right))
 					{
 						nextTiles.Add(activeTiles[i] + right);
 					}
-					if (!nextTiles.Contains(activeTiles[i] + left) && Main.tile[(int)(activeTiles[i] + left).X, (int)(activeTiles[i] + left).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + left))
+					if (!nextTiles.Contains(activeTiles[i] + left) && Main.tile[(int)(activeTiles[i] + left).X, (int)(activeTiles[i] + left).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + left))
 					{
 						nextTiles.Add(activeTiles[i] + left);
 					}
-					if (!nextTiles.Contains(activeTiles[i] + down) && Main.tile[(int)(activeTiles[i] + down).X, (int)(activeTiles[i] + down).Y].liquid != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + down))
+					if (!nextTiles.Contains(activeTiles[i] + down) && Main.tile[(int)(activeTiles[i] + down).X, (int)(activeTiles[i] + down).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + down))
 					{
 						nextTiles.Add(activeTiles[i] + down);
 					}
@@ -619,14 +619,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 		}
 		public override void OnKill()
 		{
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 1"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 2"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 3"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 4"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 5"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 6"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 7"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Water Fiend Kraken Gore 8"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 1").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 2").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 3").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 4").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 5").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 6").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 7").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Water Fiend Kraken Gore 8").Type, 1f);
 
 			if (Main.expertMode)
 			{

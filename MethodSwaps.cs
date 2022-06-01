@@ -428,9 +428,9 @@ namespace tsorcRevamp {
                             if (Main.tileSolid[Main.tile[i, j].TileType] && !Main.tileSolidTop[Main.tile[i, j].TileType]) {
                                 WorldGen.KillTile(i, j);
                             }
-                            if (Main.tile[i, j].liquid > 0) {
-                                Main.tile[i, j].LiquidType = false;
-                                Main.tile[i, j].liquid = 0;
+                            if (Main.tile[i, j].LiquidAmount > 0) {
+                                Main.tile[i, j].LiquidType = 0;
+                                Main.tile[i, j].LiquidAmount = 0;
                                 WorldGen.SquareTileFrame(i, j);
                             }
                         }
@@ -1079,7 +1079,7 @@ namespace tsorcRevamp {
                     {
                         Vector2 dustVel = npc.velocity + Main.rand.NextVector2Circular(14, 14);
 
-                        Dust.NewDustPerfect(npc.Center, DustID.Fire, dustVel, Scale: 6).noGravity = true;
+                        Dust.NewDustPerfect(npc.Center, DustID.Torch, dustVel, Scale: 6).noGravity = true;
                         Dust thisDust = Dust.NewDustPerfect(npc.Center, 130, dustVel * 2f, Scale: 3.5f);
                         thisDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
                     }
@@ -1165,7 +1165,7 @@ namespace tsorcRevamp {
                 {
                     for (int l = num14; l < num15; l++)
                     {
-                        if (Main.tile[k, l] != null && ((Main.tile[k, l].HasUnactuatedTile && (Main.tileSolid[Main.tile[k, l].TileType] || (Main.tileSolidTop[Main.tile[k, l].TileType] && Main.tile[k, l].TileFrameY == 0))) || Main.tile[k, l].liquid > 64))
+                        if (Main.tile[k, l] != null && ((Main.tile[k, l].HasUnactuatedTile && (Main.tileSolid[Main.tile[k, l].TileType] || (Main.tileSolidTop[Main.tile[k, l].TileType] && Main.tile[k, l].TileFrameY == 0))) || Main.tile[k, l].LiquidAmount > 64))
                         {
                             vector2.X = k * 16;
                             vector2.Y = l * 16;

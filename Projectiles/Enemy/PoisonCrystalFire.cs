@@ -42,7 +42,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
 
 
-            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Fire, 0, 0, 100, Color.Red, 2.0f);
+            int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Torch, 0, 0, 100, Color.Red, 2.0f);
             Main.dust[dust].noGravity = false;
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)

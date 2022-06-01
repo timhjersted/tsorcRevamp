@@ -1052,7 +1052,7 @@ namespace tsorcRevamp.NPCs {
                     {
                         try
                         {
-                            if (WorldGen.SolidTile(num340, num339) || Main.tile[num340, num339].liquid > 0)
+                            if (WorldGen.SolidTile(num340, num339) || Main.tile[num340, num339].LiquidAmount > 0)
                             {
                                 num338++;
                             }
@@ -1093,7 +1093,7 @@ namespace tsorcRevamp.NPCs {
                     {
                         try
                         {
-                            if (WorldGen.SolidTile(num341, num339) || Main.tile[num341, num339].liquid > 0)
+                            if (WorldGen.SolidTile(num341, num339) || Main.tile[num341, num339].LiquidAmount > 0)
                             {
                                 num338++;
                             }
@@ -1466,7 +1466,7 @@ namespace tsorcRevamp.NPCs {
                         num362 *= num363;
                         vector38.X += num361;
                         vector38.Y += num362;
-                        int num369 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector38.X, vector38.Y, num361, num362, num368, num367, 0f, Main.myPlayer, 1);
+                        int num369 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector38.X, vector38.Y, num361, num362, num368, num367, 0f, Main.myPlayer, 1);
                     }
                 }
 
@@ -1503,7 +1503,7 @@ namespace tsorcRevamp.NPCs {
                     num222 *= num223;
                     int num224 = 18;
                     int num225 = 44;
-                    int num226 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                    int num226 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
                     Main.projectile[num226].timeLeft = 420;
                     npc.ai[3] = 0f;
 
@@ -1521,7 +1521,7 @@ namespace tsorcRevamp.NPCs {
                     num222 *= num223;
                     int num224 = 21;
                     int num225 = 44;
-                    int num226 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
+                    int num226 = Projectile.NewProjectile(npc.GetSource_FromThis(), vector28.X, vector28.Y, num221, num222, num225, num224, 0f, Main.myPlayer);
                     Main.projectile[num226].timeLeft = 420;
                     npc.ai[3] = 0f;
 
@@ -1748,7 +1748,7 @@ namespace tsorcRevamp.NPCs {
                                     if (num494 - 1 < 0) {
                                         value52 = Vector2.Zero;
                                     }
-                                    num485 = Projectile.NewProjectile(NPC.GetSource_FromThis(), item.X, item.Y, value52.X, value52.Y, 540, 0, 0f, Main.myPlayer, (float)(-num486) * 10f, 0.5f + Main.rand.NextFloat() * 0.5f);
+                                    num485 = Projectile.NewProjectile(npc.GetSource_FromThis(), item.X, item.Y, value52.X, value52.Y, 540, 0, 0f, Main.myPlayer, (float)(-num486) * 10f, 0.5f + Main.rand.NextFloat() * 0.5f);
                                     list3.Add(item + value52);
                                     if (num486 < num483 && list2[0].Item2 > 0) {
                                         list2.Add(Tuple.Create(item + value52, num494 - 1, num492));
@@ -1823,10 +1823,10 @@ namespace tsorcRevamp.NPCs {
                             point14.Y--;
                         }
                         if (flag99) {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), point14.X * 16 + 8, point14.Y * 16 + 24, 0f, 0f, 579, 0, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), point14.X * 16 + 8, point14.Y * 16 + 24, 0f, 0f, 579, 0, 0f, Main.myPlayer);
                         }
                         else {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), point14.X * 16 + 8, point14.Y * 16 + 17, 0f, 0f, 578, 0, 1f, Main.myPlayer);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), point14.X * 16 + 8, point14.Y * 16 + 17, 0f, 0f, 578, 0, 1f, Main.myPlayer);
                         }
                     }
                     if (Main.netMode != 1 && npc.ai[1] <= 0f && Main.player[npc.target].active && !Main.player[npc.target].dead && npc.Distance(Main.player[npc.target].Center) < 1080f && Main.player[npc.target].position.Y - npc.position.Y < 400f && NPC.CountNPCS(427) + NPC.CountNPCS(426) * 3 + NPC.CountNPCS(428) < 20) {
@@ -1859,7 +1859,7 @@ namespace tsorcRevamp.NPCs {
                                     flag102 = false;
                                 }
                                 if (flag102) {
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), num505 * 16 + 8, num506 * 16 + 8, 0f, 0f, 579, 0, 0f, Main.myPlayer);
+                                    Projectile.NewProjectile(npc.GetSource_FromThis(), num505 * 16 + 8, num506 * 16 + 8, 0f, 0f, 579, 0, 0f, Main.myPlayer);
                                     flag100 = true;
                                     break;
                                 }
@@ -2222,9 +2222,9 @@ namespace tsorcRevamp.NPCs {
                     else {
                         Terraria.Audio.SoundEngine.PlaySound(3, (int)npc.position.X, (int)npc.position.Y);
                         for (int num844 = 0; num844 < 2; num844++) {
-                            Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
-                            Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
-                            Gore.NewGore(NPC.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 6);
+                            Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
+                            Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 7);
+                            Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 6);
                         }
                         for (int num855 = 0; num855 < 20; num855++) {
                             Dust.NewDust(npc.position, npc.width, npc.height, 5, (float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f);
@@ -2637,7 +2637,7 @@ namespace tsorcRevamp.NPCs {
                 if (Main.GameUpdateCount % cooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, npc.target, npc.whoAmI);
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, npc.target, npc.whoAmI);
                 }
             }
 
@@ -2649,12 +2649,12 @@ namespace tsorcRevamp.NPCs {
                     dustPos.Normalize();
                     dustPos *= 48;
                     dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
-                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Fire, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
+                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
                     if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
                     {
                         Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 35, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 35, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
                     }
                 }
 
@@ -2664,7 +2664,7 @@ namespace tsorcRevamp.NPCs {
                     dustPos.Normalize();
                     dustPos *= 48;
                     dustPos = dustPos.RotatedBy(MathHelper.ToRadians(6 * destroyerChargeTimer));
-                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Fire, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
+                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
                 }
 
                 //Aims in a ring around the player
@@ -2692,7 +2692,7 @@ namespace tsorcRevamp.NPCs {
                         //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
                         if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, style, npc.whoAmI);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, style, npc.whoAmI);
                         }
                     }                    
                 }
@@ -2703,7 +2703,7 @@ namespace tsorcRevamp.NPCs {
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
                     if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4)
                     {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
+                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
                     }
                 }
 
@@ -2750,7 +2750,7 @@ namespace tsorcRevamp.NPCs {
                             dustPos.Normalize();
                             dustPos *= 48;
                             dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
-                            Dust.NewDustPerfect(npc.Center + dustPos, DustID.Fire, npc.velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
+                            Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, npc.velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
                             //Accelerate over time
                             float factor = (400 + destroyerChargeTimer) / 400f;
@@ -2805,7 +2805,7 @@ namespace tsorcRevamp.NPCs {
                                 for (int i = 0; i < 3; i++)
                                 {
                                     subRotation += 2 * MathHelper.Pi / 3;
-                                    Projectile.NewProjectile(NPC.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -3, npc.whoAmI);
+                                    Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -3, npc.whoAmI);
                                 }
                             }
                         }
@@ -2830,7 +2830,7 @@ namespace tsorcRevamp.NPCs {
                                 Vector2 laserVel = new Vector2(-1, 1).RotatedBy(laserRotation); //Aim down left
                                 for (int i = 0; i < 15; i++)
                                 {
-                                    horizontalLasers.Add(Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
+                                    horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
                                     startPos += step;
                                 }
 
@@ -2839,7 +2839,7 @@ namespace tsorcRevamp.NPCs {
                                 laserVel = new Vector2(1, 1).RotatedBy(laserRotation); //Aim down right
                                 for (int i = 0; i < 15; i++)
                                 {
-                                    verticalLasers.Add(Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
+                                    verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
                                     startPos += step;
                                 }
 
@@ -3007,7 +3007,7 @@ namespace tsorcRevamp.NPCs {
                         int npcTileX = (int)(npc.Center.X / 16f);
                         int npcTileY = (int)(npc.Center.Y / 16f);
                         if (!WorldGen.SolidTile(npcTileX, npcTileY)) {
-                            Main.tile[npcTileX, npcTileY].liquid = 0;
+                            Main.tile[npcTileX, npcTileY].LiquidAmount = 0;
                             Main.tile[npcTileX, npcTileY].LiquidType = false;
                             Main.tile[npcTileX, npcTileY].LiquidType = false;
                             WorldGen.SquareTileFrame(npcTileX, npcTileY);

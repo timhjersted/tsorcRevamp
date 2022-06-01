@@ -143,7 +143,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
 
         public override void HitEffect(int hitDirection, double damage) {
             if (NPC.life <= 0) {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Lich King Serpent Head Gore"));
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Lich King Serpent Head Gore"));
             }
         }
 

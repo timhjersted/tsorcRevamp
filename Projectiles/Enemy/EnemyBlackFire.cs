@@ -118,8 +118,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 				velX *= len + var;
 				velY *= len + var;
 
-				//if(projectile.owner == Main.myPlayer) Projectile.NewProjectile(projectile.position.X + (float)(projectile.width-5), projectile.position.Y + (float)(projectile.height-5), 0, 0, flam, 72, 0, projectile.owner);
-				Projectile.NewProjectile(Projectile.position.X, Projectile.position.Y, velX, velY, flam, damg, 0, Projectile.owner);
+				//if(projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), projectile.position.X + (float)(projectile.width-5), projectile.position.Y + (float)(projectile.height-5), 0, 0, flam, 72, 0, projectile.owner);
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X, Projectile.position.Y, velX, velY, flam, damg, 0, Projectile.owner);
 			}
 
 			// setup projectile for explosion

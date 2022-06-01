@@ -19,6 +19,7 @@ using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using tsorcRevamp.UI;
 using Terraria.GameContent;
+using ReLogic.Content;
 
 namespace tsorcRevamp {
     public class tsorcRevampWorld : ModWorld {
@@ -631,14 +632,14 @@ namespace tsorcRevamp {
             return BonfireList;
         }
 
-        Texture2D SHMSun1 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
-        Texture2D SHMSun2 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun2");
-        Texture2D SHMSun3 = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
-        Texture2D SHMMoon = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMMoon");
-        Texture2D VanillaSun1 = (Texture2D)ModContent.Request<Texture2D>("Terraria/Sun");
-        Texture2D VanillaSun2 = (Texture2D)ModContent.Request<Texture2D>("Terraria/Sun2");
-        Texture2D VanillaSun3 = (Texture2D)ModContent.Request<Texture2D>("Terraria/Sun3");
-        List<Texture2D> VanillaMoonTextures;
+        Asset<Texture2D> SHMSun1 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
+        Asset<Texture2D> SHMSun2 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun2");
+        Asset<Texture2D> SHMSun3 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
+        Asset<Texture2D> SHMMoon = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMMoon");
+        Asset<Texture2D> VanillaSun1 = ModContent.Request<Texture2D>("Terraria/Sun");
+        Asset<Texture2D> VanillaSun2 = ModContent.Request<Texture2D>("Terraria/Sun2");
+        Asset<Texture2D> VanillaSun3 = ModContent.Request<Texture2D>("Terraria/Sun3");
+        List<Asset<Texture2D>> VanillaMoonTextures;
 
         //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely
         //because of other code improving dungeon spawn detection

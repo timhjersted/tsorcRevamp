@@ -1041,10 +1041,10 @@ namespace tsorcRevamp.NPCs.Enemies
 				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.GetGoreSlot("Gores/CosmicCrystalLizard_Gore1"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.GetGoreSlot("Gores/CosmicCrystalLizard_Gore2"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.GetGoreSlot("Gores/CosmicCrystalLizard_Gore3"), 1f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.GetGoreSlot("Gores/CosmicCrystalLizard_Gore4"), 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("Gores/CosmicCrystalLizard_Gore1").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("Gores/CosmicCrystalLizard_Gore2").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("Gores/CosmicCrystalLizard_Gore3").Type, 1f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("Gores/CosmicCrystalLizard_Gore4").Type, 1f);
 
 		}
 	}

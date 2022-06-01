@@ -171,8 +171,8 @@ namespace tsorcRevamp.Projectiles {
             Projectile.timeLeft = 0;
             {
                 if (projCount <= 3) Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 27);
-                Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), Projectile.velocity.X, 5, ModContent.ProjectileType<Projectiles.Ice2Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 2), Projectile.position.Y + (float)(Projectile.height), Projectile.velocity.X, 5, ModContent.ProjectileType<Projectiles.Ice2Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), Projectile.velocity.X, 5, ModContent.ProjectileType<Projectiles.Ice2Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 2), Projectile.position.Y + (float)(Projectile.height), Projectile.velocity.X, 5, ModContent.ProjectileType<Projectiles.Ice2Icicle>(), (int)(Projectile.damage), 3f, Projectile.owner);
                 for (int num40 = 0; num40 < 20; num40++)
                 {
                     Color newColor = default(Color);

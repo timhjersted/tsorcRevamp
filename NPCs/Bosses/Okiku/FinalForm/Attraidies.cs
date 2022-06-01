@@ -713,7 +713,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
                 vel = Main.rand.NextVector2Circular(20, 20);
                 Dust.NewDust(NPC.Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
                 Main.dust[dust].noGravity = true;
-                Dust.NewDust(NPC.Center, 30, 30, DustID.Fire, vel.X, vel.Y, 200, default, 3f);
+                Dust.NewDust(NPC.Center, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
             }
 
             if (Main.expertMode)

@@ -91,12 +91,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (NPC.life > 200)
 			{
-				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
+				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 2f);
 				Main.dust[dust].noGravity = true;
 			}
 			else if (NPC.life <= 200)
 			{
-				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
+				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, NPC.velocity.X, NPC.velocity.Y, 200, Color.Violet, 3f);
 				Main.dust[dust].noGravity = true;
 			}
 
@@ -122,7 +122,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedY *= num51;
 							int damage = (int)(14f * NPC.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.DemonSpirit>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 120;
 							//Main.projectile[num54].aiStyle = 4;
 							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies
 							speedY *= num51;
 							int damage = 32;//(int) (14f * npc.scale);
 							int type = ModContent.ProjectileType<Projectiles.Enemy.PurpleCrush>();//44;//0x37; //14;
-							int num54 = Projectile.NewProjectile(vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
+							int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
 							Main.projectile[num54].timeLeft = 170;
 							//Main.projectile[num54].aiStyle = 19;
 							Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
@@ -164,9 +164,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 				Color color = new Color();
-				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
+				int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
-				dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Fire, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
+				dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Torch, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
 				dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Wraith, Main.rand.Next(-20, 20) * 2, Main.rand.Next(-20, 20) * 2, 200, color, 3f);
 				Main.dust[dust].noGravity = true;
@@ -270,7 +270,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				{
 					Main.tile[centeredXInTiles, tileIterator].ClearTile();
 				}
-				if ((Main.tile[centeredXInTiles, tileIterator].HasTile && Main.tileSolid[(int)Main.tile[centeredXInTiles, tileIterator].TileType]) || Main.tile[centeredXInTiles, tileIterator].liquid > 0)
+				if ((Main.tile[centeredXInTiles, tileIterator].HasTile && Main.tileSolid[(int)Main.tile[centeredXInTiles, tileIterator].TileType]) || Main.tile[centeredXInTiles, tileIterator].LiquidAmount > 0)
 				{
 					/**if (num269 <= num260 + 1)
 				//	{

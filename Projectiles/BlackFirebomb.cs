@@ -129,7 +129,7 @@ namespace tsorcRevamp.Projectiles
 
                     // Random upward vector.
                     Vector2 vel = new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-6, -2));
-                    Projectile.NewProjectile(Projectile.Center, vel, ProjectileID.MolotovFire, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, 1);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ProjectileID.MolotovFire, Projectile.damage, Projectile.knockBack, Projectile.owner, 0, 1);
                 }
             }
             // Fire Dust spawn

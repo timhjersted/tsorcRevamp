@@ -142,9 +142,9 @@ namespace tsorcRevamp.Projectiles {
             Projectile.timeLeft = 0;
             {
                 if (projCount <= 3) Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
-                Projectile.NewProjectile(Projectile.position.X + Projectile.width, Projectile.position.Y + Projectile.height, 0, 5, ModContent.ProjectileType<Ice3Icicle>(), Projectile.damage, 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.position.X + Projectile.width * 4, Projectile.position.Y + Projectile.height * 2, 0, 5, ModContent.ProjectileType<Ice3Icicle>(), Projectile.damage, 3f, Projectile.owner);
-                Projectile.NewProjectile(Projectile.position.X + Projectile.width * -2, Projectile.position.Y + Projectile.height * 2, 0, 5, ModContent.ProjectileType<Ice3Icicle>(), Projectile.damage, 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width, Projectile.position.Y + Projectile.height, 0, 5, ModContent.ProjectileType<Ice3Icicle>(), Projectile.damage, 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width * 4, Projectile.position.Y + Projectile.height * 2, 0, 5, ModContent.ProjectileType<Ice3Icicle>(), Projectile.damage, 3f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width * -2, Projectile.position.Y + Projectile.height * 2, 0, 5, ModContent.ProjectileType<Ice3Icicle>(), Projectile.damage, 3f, Projectile.owner);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;
                 int arg_1394_2 = Projectile.height;

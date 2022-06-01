@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemySpellLightning4Bolt>(), (int)(this.Projectile.damage), 8f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemySpellLightning4Bolt>(), (int)(this.Projectile.damage), 8f, Projectile.owner);
             }
         }
     }

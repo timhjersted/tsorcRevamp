@@ -59,7 +59,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemySpellLightning3Bolt>(), Projectile.damage, 8f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<EnemySpellLightning3Bolt>(), Projectile.damage, 8f, Projectile.owner);
             }
             Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
             int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, DustID.MagicMirror, 0f, 0f, 100, default, 1f);

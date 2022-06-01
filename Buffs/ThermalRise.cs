@@ -18,7 +18,7 @@ namespace tsorcRevamp.Buffs {
         {
             Vector2 dustPos = player.position;
             dustPos.Y += player.Hitbox.Height; //Spawn dust at their feet
-            Dust.NewDustDirect(dustPos, player.width, 0, DustID.Fire, 0, 5).velocity.X = 0;
+            Dust.NewDustDirect(dustPos, player.width, 0, DustID.Torch, 0, 5).velocity.X = 0;
 
             dustPos = player.Center + Main.rand.NextVector2Circular(80, 80);
             Dust.NewDustDirect(dustPos, 0, 0, 259, 0, -5, Scale: 1).noGravity = true;

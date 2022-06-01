@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items
         {
             if (Main.rand.Next(10) == 0)
             {
-                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 10, Item.position.Y + 10), 16, 16, DustID.Fire, Item.velocity.X, Item.velocity.Y - 2f, 100, default(Color), .8f)];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Item.position.X + 10, Item.position.Y + 10), 16, 16, DustID.Torch, Item.velocity.X, Item.velocity.Y - 2f, 100, default(Color), .8f)];
                 dust.noGravity = true;
                 dust.velocity += Item.velocity;
                 dust.fadeIn = 1f;

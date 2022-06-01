@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
                 for (int i = 0; i < 2; i++) {
                     int flipflop = (((i % 2) * 2) - 1); //alternates -1 and 1
                     Vector2 shotVelocity = new Vector2(0, this.shotVelocity * flipflop).RotatedBy(Projectile.rotation);
-                    Projectile.NewProjectile(
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), 
                             Projectile.Center + shotVelocity,
                             shotVelocity,
                             ModContent.ProjectileType<BulletHellShot>(),

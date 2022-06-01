@@ -233,7 +233,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(5, 5);
                     Vector2 dustPos = NPC.Center + dir;
                     Vector2 dustVel = new Vector2(5, 0).RotatedBy(dir.ToRotation());
-                    Dust dust = Dust.NewDustPerfect(dustPos, DustID.Firework_Red, dustVel, 100);
+                    Dust dust = Dust.NewDustPerfect(dustPos, DustID.Torchwork_Red, dustVel, 100);
                     dust.noGravity = true;
                     dust.scale = 1.2f;
                 }

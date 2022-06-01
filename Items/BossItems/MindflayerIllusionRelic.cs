@@ -54,7 +54,7 @@ namespace tsorcRevamp.Items.BossItems {
                 Main.dust[dust].noGravity = true;
                 Dust.NewDust(vfx, 30, 30, dustType, vel.X, vel.Y, 240, default, 5f);
                 Main.dust[dust].noGravity = true;
-                Dust.NewDust(vfx, 30, 30, DustID.Fire, vel.X, vel.Y, 200, default, 3f);
+                Dust.NewDust(vfx, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
 
                 Dust.NewDustPerfect(player.position, dustType, vel, 100, default, 5f).noGravity = true;
             }

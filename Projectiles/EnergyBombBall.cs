@@ -105,15 +105,15 @@ namespace tsorcRevamp.Projectiles {
            
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
-            Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 4), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * -2), 0, 0, ModContent.ProjectileType<EnergyField>(), Projectile.damage, 5f, Projectile.owner);
 
 
             for (int num40 = 0; num40 < 20; num40++) {

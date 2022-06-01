@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles {
         }
 
         public override void Kill(int timeLeft) {
-            Projectile.NewProjectile(Projectile.position.X + Projectile.width / 2, Projectile.position.Y + Projectile.height / 2, Projectile.velocity.X, Projectile.velocity.Y, ModContent.ProjectileType<Bolt2Bolt>(), Projectile.damage, 4f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + Projectile.width / 2, Projectile.position.Y + Projectile.height / 2, Projectile.velocity.X, Projectile.velocity.Y, ModContent.ProjectileType<Bolt2Bolt>(), Projectile.damage, 4f, Projectile.owner);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit53.WithPitchVariance(.3f).WithVolume(.8f), new Vector2(Projectile.position.X, Projectile.position.Y));
 
         }

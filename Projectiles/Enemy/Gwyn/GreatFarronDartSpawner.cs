@@ -33,7 +33,7 @@ namespace  tsorcRevamp.Projectiles.Enemy.Gwyn {
             if (AI_Timer == 1) {
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
                     //zero damage means it's a telegraphing tracer not an actual bullet
-                    Projectile.NewProjectile(Projectile.position, Projectile.velocity * 0.75f, ModContent.ProjectileType<GreatFarronDart>(), 0, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Projectile.velocity * 0.75f, ModContent.ProjectileType<GreatFarronDart>(), 0, 0);
                 }
                 Projectile.velocity *= 0.01f;
             }
@@ -41,7 +41,7 @@ namespace  tsorcRevamp.Projectiles.Enemy.Gwyn {
             if (AI_Timer == Math.Floor(AI_Interval / 2)) {
 
                 if (Main.netMode != NetmodeID.MultiplayerClient) {
-                    Projectile.NewProjectile(Projectile.position, Projectile.velocity * 100, ModContent.ProjectileType<GreatFarronDart>(), Projectile.damage, 1);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Projectile.velocity * 100, ModContent.ProjectileType<GreatFarronDart>(), Projectile.damage, 1);
                 }
 
             }

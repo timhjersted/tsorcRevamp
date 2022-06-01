@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 0;
             {
                 Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
-                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * +3f), Projectile.position.Y + (float)(Projectile.height * +5.5f), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddon>(), Projectile.damage, 8f, Projectile.owner);
+                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * +3f), Projectile.position.Y + (float)(Projectile.height * +5.5f), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddon>(), Projectile.damage, 8f, Projectile.owner);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;
                 int arg_1394_2 = Projectile.height;

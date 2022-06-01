@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			NPC.noTileCollide = true;
 			NPC.noGravity = true;
 			bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
-			despawnHandler = new NPCDespawnHandler(DustID.Fire);
+			despawnHandler = new NPCDespawnHandler(DustID.Torch);
 		}
 
 		public override void SetStaticDefaults()
@@ -400,15 +400,15 @@ namespace tsorcRevamp.NPCs.Bosses
 		#region gore
 		public override void OnKill()
 		{
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 1"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 2"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 3"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 4"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 2"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 3"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Gaibon Gore 4"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 1").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 2").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 3").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 4").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 2").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 3").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Gaibon Gore 4").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
+			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
 			
 			if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>()))
 			{

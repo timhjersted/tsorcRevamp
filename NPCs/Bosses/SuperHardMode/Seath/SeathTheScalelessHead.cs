@@ -238,7 +238,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             if (NPC.life <= 0)
             {
                 //Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), "Seath the Scaleless Head Gore", 1f, -1);
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Seath the Scaleless Head Gore"), 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Seath the Scaleless Head Gore").Type, 1f);
                 //Main.gore[a].timeLeft = 1800; int a = Gore.New..etc
 
                 if (Main.expertMode)

@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn {
             AI_Timer++;
             if (AI_Timer == 1) {
                 Main.NewText("here");
-                Projectile.NewProjectile(new Vector2(Projectile.Center.X - Projectile.width, Projectile.Center.Y), new Vector2(0, 1), ModContent.ProjectileType<BulletHellLaser>(), Projectile.damage, 0);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.Center.X - Projectile.width, Projectile.Center.Y), new Vector2(0, 1), ModContent.ProjectileType<BulletHellLaser>(), Projectile.damage, 0);
             }
             Dust.NewDust(Projectile.Center, 1, 1, DustID.Clentaminator_Purple);
             if (AI_Timer > 300) {

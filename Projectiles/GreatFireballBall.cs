@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles {
 			Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 			if (Projectile.owner == Main.myPlayer)
 			{
-				Projectile.NewProjectile(Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<GreatFireball>(), Projectile.damage, 6f, Projectile.owner);
+				Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<GreatFireball>(), Projectile.damage, 6f, Projectile.owner);
 			}
 
 			for (int i = 0; i < 5; i++)

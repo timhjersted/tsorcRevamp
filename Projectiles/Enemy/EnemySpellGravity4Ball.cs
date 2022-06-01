@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
             Projectile.timeLeft = 0;
             {
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
-                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16)), new Vector2(0, 0), ModContent.ProjectileType<EnemySpellGravity4Strike>(), 1, 3f, Projectile.owner);
+                if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16)), new Vector2(0, 0), ModContent.ProjectileType<EnemySpellGravity4Strike>(), 1, 3f, Projectile.owner);
                 Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int num41 = Dust.NewDust(projectilePos, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
                 Main.dust[num41].noGravity = true;

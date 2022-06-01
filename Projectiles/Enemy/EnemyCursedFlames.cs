@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 if (timer == 0)
                 {
                     float velocity = 8;
-                    if(Main.tile[(int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16].liquid != 0)
+                    if(Main.tile[(int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16].LiquidAmount != 0)
                     {
                         velocity = 5;
                     }

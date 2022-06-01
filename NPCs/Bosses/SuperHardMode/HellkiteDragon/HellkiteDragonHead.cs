@@ -159,9 +159,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
 
         public override void OnKill()
         {
-            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.GetGoreSlot("Gores/Hellkite Dragon Head Gore"), 1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.GetGoreSlot("Gores/Blood Splat"), 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Hellkite Dragon Head Gore").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
 
             if (Main.expertMode)
             {

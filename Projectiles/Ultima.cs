@@ -28,7 +28,7 @@ namespace tsorcRevamp.Projectiles {
 			}
 			if (Projectile.frame >= 13) {
 				Projectile.Kill();
-				if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<UltimaExplosion>(), 500, 8f, Projectile.owner);
+				if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height / 2), 0, 0, ModContent.ProjectileType<UltimaExplosion>(), 500, 8f, Projectile.owner);
 				return;
 			}
 			{

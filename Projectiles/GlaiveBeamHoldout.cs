@@ -202,7 +202,7 @@ namespace tsorcRevamp.Projectiles {
 			int damage = Projectile.damage;
 			float knockback = Projectile.knockBack;
 
-			Projectile.NewProjectile(Projectile.Center, beamVelocity, ModContent.ProjectileType<GlaiveBeamLaser>(), damage, knockback, Projectile.owner, 0, uuid);
+			Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, beamVelocity, ModContent.ProjectileType<GlaiveBeamLaser>(), damage, knockback, Projectile.owner, 0, uuid);
 
 			// After creating the beams, mark the Prism as having an important network event. This will make Terraria sync its data to other players ASAP.
 			Projectile.netUpdate = true;

@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
 		public override void Kill(int timeLeft)
         {
-            Projectile.NewProjectile(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStorm>(), Projectile.damage, 8f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStorm>(), Projectile.damage, 8f, Projectile.owner);
             //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 110, 0.3f, -0.01f); //crystal serpent split, paper, thud, faint high squeel 
         }
 

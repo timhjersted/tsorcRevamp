@@ -127,10 +127,10 @@ namespace tsorcRevamp.Projectiles {
 			{
 				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
 				if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2)) {
-					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
+					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
 				}
 				else {
-					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.position.X + (float)(Projectile.width * -4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
+					if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<SuddenDeathStrike>(), Projectile.damage, 4f, Projectile.owner);
 				}
 				Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
 				int arg_1394_1 = Projectile.width;
