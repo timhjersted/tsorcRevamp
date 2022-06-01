@@ -94,20 +94,20 @@ namespace tsorcRevamp {
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc 
 					|| item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
 				{
-					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * .8f);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.GetAttackSpeed(DamageClass.Melee) * .8f);
 				}
 
 				// Stamina drain for boomerangs
 				if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
 				{
-					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * 1f);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.GetAttackSpeed(DamageClass.Melee) * 1f);
 				}
 
 				// Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.
 				if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick != 0 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
 				{
-					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * .2f);
+					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.GetAttackSpeed(DamageClass.Melee) * .2f);
 				}
 
 				// Stamina drain for flails and yoyos
@@ -138,19 +138,19 @@ namespace tsorcRevamp {
 				}
 
 				// Magic & Throwing
-				if (item.damage >= 1 && (Item.DamageType = DamageClass.Magic;|| item.DamageType == DamageClass.Throwing) && Player.itemAnimation == Player.itemAnimationMax - 1)
+				if (item.damage >= 1 && (item.CountsAsClass(DamageClass.Magic) || item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				// Summoner
-				if (item.damage >= 1 && item.summon && Player.itemAnimation == Player.itemAnimationMax - 1)
+				if (item.damage >= 1 && item.CountsAsClass(DamageClass.Summon) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
 
 				// Classless? Just in case? 
-				if (item.damage >= 1 && (!item.DamageType == DamageClass.Melee && !item.DamageType == DamageClass.Ranged && !Item.DamageType = DamageClass.Magic;&& !item.summon && !item.DamageType == DamageClass.Throwing) && Player.itemAnimation == Player.itemAnimationMax - 1)
+				if (item.damage >= 1 && (!item.CountsAsClass(DamageClass.Magic) && !item.CountsAsClass(DamageClass.Ranged) && !item.CountsAsClass(DamageClass.Magic) && !item.CountsAsClass(DamageClass.Summon) && !item.CountsAsClass(DamageClass.Throwing)) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
@@ -262,23 +262,19 @@ namespace tsorcRevamp {
 			if (isDodging == true)
             {
 				
-				int choice = Main.rand.Next(4);
-				if (choice == 0)
-				{
-					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.0f); //0.1f is volume, 1f is 100%, .1f is 10%; the last variable is pitch. -.8f to .8f is a lot
-				}
-				else if (choice == 1)
-				{
-					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll2"), 0.1f, 0.0f);
-				}
-				else if (choice == 2)
-				{
-					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.4f);
-				}
-				else if (choice == 3)
-				{
-					Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Player.position.X, (int)Player.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/roll1"), 0.1f, 0.2f);
-				}
+				int choice = Main.rand.Next(2);
+				//switch expressions are the only good thing to come out of the 1.4 change PepeLaugh
+                string soundFile = choice switch {
+                    0 => "Sounds/DarkSouls/roll1",
+                    1 => "Sounds/DarkSouls/roll2",
+                    _ => "Sounds/DarkSouls/roll1",
+                };
+                SoundStyle rollSound = new SoundStyle(soundFile) {
+                    Volume = 0.1f,
+                    PitchVariance = 0.4f
+                };
+                SoundEngine.PlaySound(rollSound, Player.position);
+				
 
 			}
 			//only subtract stamina on a successful roll
