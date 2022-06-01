@@ -3,6 +3,28 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp {
+
+    public class tsorcGlobalRecipe : GlobalRecipe {
+        public override void OnCraft(Item item, Recipe recipe) {
+            tsorcRevampPlayer modPlayer = Main.player[Main.myPlayer].GetModPlayer<tsorcRevampPlayer>();
+            foreach (Item ingredient in recipe.requiredItem) {
+                if (ingredient.type == ModContent.ItemType<Items.DarkSoul>()) {
+
+                    //a recipe with souls will only be craftable if you have enough souls, even if theyre in soul slot
+                    modPlayer.SoulSlot.Item.stack -= ingredient.stack;
+
+                    //if you have exactly enough for the recipe
+                    if (modPlayer.SoulSlot.Item.stack == 0) {
+                        modPlayer.SoulSlot.Item.TurnToAir();
+                    }
+
+                }
+            }
+            //force a recipe recalculation so you cant craft things without enough souls
+            Recipe.FindRecipes();
+            base.OnCraft(item, recipe);
+        }
+    }
     public static class RecipeHelper {
 
         public static void RecipeRemover(int ItemRecipeToRemove) {
