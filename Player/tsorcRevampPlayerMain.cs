@@ -495,7 +495,7 @@ namespace tsorcRevamp
             { //Miakoda New Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.CountsAsClass(DamageClass.Summon)))
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaNewDust2 = true;
@@ -545,16 +545,16 @@ namespace tsorcRevamp
             }
 
             if (crit) {
-                if (proj.melee) {
+                if (proj.CountsAsClass(DamageClass.Melee)) {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
-                else if (proj.magic) {
+                else if (proj.CountsAsClass(DamageClass.Magic)) {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
-                else if (proj.ranged) {
+                else if (proj.CountsAsClass(DamageClass.Ranged)) {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
-                else if (proj.thrown) {
+                else if (proj.CountsAsClass(DamageClass.Throwing)) {
                     DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
@@ -931,7 +931,7 @@ namespace tsorcRevamp
             packet.Send(toWho, fromWho);
         }
 
-        public void DoMultiCrits(ref int damage, int critType) {
+        public void DoMultiCrits(ref int damage, float critType) {
             int critLevel = (int)(Math.Floor(critType / 100f));
             if (critLevel != 0) {
                 if (critLevel > 1) {
