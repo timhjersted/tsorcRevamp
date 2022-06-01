@@ -14,7 +14,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.maxStack = 1;
             Item.rare = ItemRarityID.LightRed;
             Item.shootSpeed = 4;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.mana = 10;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;

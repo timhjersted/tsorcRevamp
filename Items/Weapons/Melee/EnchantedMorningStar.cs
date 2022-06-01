@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Green_2;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.EnchantedMorningStar>();
         }
 

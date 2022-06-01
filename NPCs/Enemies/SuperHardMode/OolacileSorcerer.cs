@@ -151,7 +151,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int type = ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>();//44;//0x37; //14;
 						int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, darkBeadDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 550;
-						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 						NPC.ai[0] = 0;
 						NPC.ai[2]++;
 					}
@@ -309,7 +309,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, seekerDamage, 0f, Main.myPlayer);
 						Main.projectile[num54].timeLeft = 750;
 						//Main.projectile[num54].aiStyle=1;
-						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 						NPC.ai[1] = 1f;
 					}
 					NPC.netUpdate = true;
@@ -396,18 +396,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Oolacile Sorcerer Gore 3").Type, 1f);
 			}
 
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
-			if (Main.rand.Next(99) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>());
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CursedSoul>());
-			if (Main.rand.Next(99) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.BossItems.AbysmalStone>());
-			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			//if (Main.rand.Next(99) < 7) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.PiercingPotion>());
-			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			//if (Main.rand.Next(99) < 7) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>());
-			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
-			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+			if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>());
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CursedSoul>());
+			if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.AbysmalStone>());
+			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
+			//if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.PiercingPotion>());
+			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
+			//if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>());
+			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
+			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
+			if (Main.rand.Next(99) < 7) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
 
 		}
 		#endregion

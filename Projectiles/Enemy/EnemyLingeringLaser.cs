@@ -305,13 +305,13 @@ namespace tsorcRevamp.Projectiles.Enemy {
 
                 for(int i = 0; i < 10; i++)
                 {
-                    DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                    DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
                             Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
                 }
             }
             else
             {
-                base.PreDraw(spriteBatch, lightColor);
+                base.PreDraw(lightColor);
             }
 
             return false;

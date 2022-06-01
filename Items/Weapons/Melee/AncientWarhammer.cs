@@ -15,7 +15,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         {
 
             Item.rare = ItemRarityID.Green;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.damage = 32;
             Item.height = 38;
             Item.width = 38;

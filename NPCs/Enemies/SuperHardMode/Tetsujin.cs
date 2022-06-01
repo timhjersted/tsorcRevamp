@@ -478,14 +478,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Tetsujin Gore 3"), 0.9f);
 			if(Main.rand.Next(2) == 0)
             {
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CompactFrame>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CompactFrame>());
 			}
 			else
             {
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DestructionElement>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DestructionElement>());
 			}
 
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Ammo.TeslaBolt>(), 200 + Main.rand.Next(30));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Ammo.TeslaBolt>(), 200 + Main.rand.Next(30));
 		}
 		#endregion
 	}

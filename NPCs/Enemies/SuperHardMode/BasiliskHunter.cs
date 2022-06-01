@@ -409,7 +409,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
                                 //DesertDjinnCurse; ProjectileID.DD2DrakinShot
 
-                                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
 
                             }
                             if (NPC.localAI[1] >= 154f)
@@ -453,7 +453,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 5f, Main.myPlayer); //5f was 0f in the example that works
-                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
 
                         }
 
@@ -646,8 +646,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Blood Splat").Type, 1.1f);
                 }
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CursedSoul>(), 3 + Main.rand.Next(3));
-                if (Main.rand.Next(100) < 8) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CursedSoul>(), 3 + Main.rand.Next(3));
+                if (Main.rand.Next(100) < 8) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
             }
         }
     }

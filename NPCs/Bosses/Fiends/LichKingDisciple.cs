@@ -198,7 +198,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             }
             if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
             }
 
 

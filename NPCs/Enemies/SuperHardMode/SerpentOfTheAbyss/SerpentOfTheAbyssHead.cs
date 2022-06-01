@@ -133,10 +133,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss {
         }
 
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Humanity>(), 2);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), 2);
 
             if (Main.rand.Next(12) == 0) {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Humanity>(), Main.rand.Next(3, 6));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Humanity>(), Main.rand.Next(3, 6));
             }
 
         }

@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Red;
             Item.shootSpeed = 18;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 50;
             Item.UseSound = SoundID.Item21;

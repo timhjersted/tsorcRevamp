@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Ammo {
             Item.height = 28;
             Item.knockBack = (float)4;
             Item.maxStack = 2000;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.scale = (float)1;
             Item.shootSpeed = (float)3.5f;
             Item.useAnimation = 100;

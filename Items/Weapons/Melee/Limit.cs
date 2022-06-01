@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.noUseGraphic = true;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.channel = true;
             Item.noMelee = true;
             Item.shoot = ModContent.ProjectileType<Projectiles.Limit>();

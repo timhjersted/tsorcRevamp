@@ -445,7 +445,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         int lob = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ProjectileID.DD2DrakinShot, poisonStrikeDamage, 0f, Main.myPlayer);
 
-                        Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
 
                     }
 
@@ -492,9 +492,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 2").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 3").Type, 1f);
             
-            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>(), 1 + Main.rand.Next(1));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 3 + Main.rand.Next(3));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1 + Main.rand.Next(1));
+            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>(), 1 + Main.rand.Next(1));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 3 + Main.rand.Next(3));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1 + Main.rand.Next(1));
         }
 
 

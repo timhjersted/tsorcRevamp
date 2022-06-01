@@ -245,8 +245,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 5);
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 7);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 5);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 7);
         }
         #endregion
     }

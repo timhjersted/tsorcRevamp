@@ -229,7 +229,7 @@ namespace tsorcRevamp {
         ///<param name="spriteBatch">The currently open SpriteBatch</param>
         ///<param name="projectile">The projectile to be drawn</param>
         ///<param name="texture">An empty static Texture2D variable that this function can use to cache the projectile's texture.</param>
-        public static void DrawSimpleLitProjectile(SpriteBatch spriteBatch, Projectile projectile, ref Texture2D texture)
+        public static void DrawSimpleLitProjectile(Projectile projectile, ref Texture2D texture)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)
@@ -246,7 +246,7 @@ namespace tsorcRevamp {
             int startY = frameHeight * projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.spriteBatch.Draw(texture,
+            Main.EntitySpriteDraw(texture,
                 projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
                 sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
         }

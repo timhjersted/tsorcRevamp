@@ -121,7 +121,7 @@ namespace tsorcRevamp.NPCs.Enemies
 					int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, demonSpiritDamage, 0f, Main.myPlayer);
 					Main.projectile[num54].timeLeft = 120;
 					//Main.projectile[num54].aiStyle = 11; //11 was 4
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[0] = 0;
 					NPC.ai[2]++;
 				}
@@ -330,27 +330,27 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player player = Main.player[NPC.target];
 
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
-			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion, 2);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
+			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 2);
 
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
 			{
-				if (Main.rand.Next(100) < 35) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-				if (Main.rand.Next(100) < 35) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+				if (Main.rand.Next(100) < 35) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+				if (Main.rand.Next(100) < 35) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
 			}
 			else
 			{
-				if (Main.rand.Next(100) < 50) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 3);
+				if (Main.rand.Next(100) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 3);
 			}
 
-			if (Main.rand.Next(100) < 50) Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion, 1);
-			Item.NewItem(NPC.getRect(), ItemID.IronskinPotion, 1);
-			if (Main.rand.Next(100) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>());
-			if (Main.rand.Next(100) < 1) Item.NewItem(NPC.getRect(), ItemID.GillsPotion, 1);
-			if (Main.rand.Next(100) < 1) Item.NewItem(NPC.getRect(), ItemID.HunterPotion, 1);
-			if (Main.rand.Next(100) < 60) Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion, 2);
-			if (Main.rand.Next(100) < 10) Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, 1);
-			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.getRect(), ItemID.ShinePotion, 1);
+			if (Main.rand.Next(100) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion, 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
+			if (Main.rand.Next(100) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WandOfFrost>());
+			if (Main.rand.Next(100) < 1) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GillsPotion, 1);
+			if (Main.rand.Next(100) < 1) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion, 1);
+			if (Main.rand.Next(100) < 60) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion, 2);
+			if (Main.rand.Next(100) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1);
+			if (Main.rand.Next(100) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion, 1);
 
 			UsefulFunctions.BroadcastText("The Attraidies Illusion has been defeated...", 150, 150, 150);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Mindflayer Gore 1").Type, 1f);

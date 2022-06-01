@@ -183,7 +183,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			{
 				Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 7);
 				Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileDarkBead>(), darkBeadDamage, 0f, Main.myPlayer);
-				Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+				Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 				DarkBeadShotTimer = 0;
 				DarkBeadShotCounter++;
 			}
@@ -204,7 +204,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 				{
 					Vector2 projVelocity = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<Projectiles.Enemy.OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPCSpawningTimer = 1f;
 				}
 			}
@@ -345,12 +345,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			}
 			else
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 10);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>());
-				if (Main.rand.Next(1) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 10);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DuskCrownRing>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
+				if (Main.rand.Next(1) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5);
 			}
 		}
 		#endregion

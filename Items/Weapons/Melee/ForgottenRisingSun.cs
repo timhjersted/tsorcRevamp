@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.ForgottenRisingSun>();
             Item.rare = ItemRarityID.Red;
         }

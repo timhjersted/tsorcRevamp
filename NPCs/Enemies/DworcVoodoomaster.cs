@@ -37,37 +37,37 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player player = Main.player[NPC.target];
 
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.BossItems.CursedSkull>());
-			//if (Main.rand.Next(20) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Armors.TibalMask>()); TO-DO
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.FlaskofFire);
-			if (Main.rand.Next(12) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-			if (Main.rand.Next(25) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
-			if (Main.rand.Next(12) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
-			Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 3));
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.CursedSkull>());
+			//if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Armors.TibalMask>()); TO-DO
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.FlaskofFire);
+			if (Main.rand.Next(12) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
+			if (Main.rand.Next(25) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
+			if (Main.rand.Next(12) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
+			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 3));
 
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(5) == 0)
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 			}
 			else
 			{
-				Item.NewItem(NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(3, 5));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(3, 5));
 			}
 
-			if (Main.rand.Next(25) == 0) Item.NewItem(NPC.getRect(), ItemID.GillsPotion);
-			if (Main.rand.Next(25) == 0) Item.NewItem(NPC.getRect(), ItemID.HunterPotion);
-			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion, Main.rand.Next(1, 3));
-			if (Main.rand.Next(12) == 0) Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.ShinePotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.SpelunkerPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.SwiftnessPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.WaterWalkingPotion);
-			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ItemID.BattlePotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.SpellTome);
+			if (Main.rand.Next(25) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GillsPotion);
+			if (Main.rand.Next(25) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion);
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion, Main.rand.Next(1, 3));
+			if (Main.rand.Next(12) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingPotion);
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BattlePotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpellTome);
 		}
 
 		float poisonStrikeTimer = 0;
@@ -193,8 +193,8 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Dworc Gore 3").Type, 1f);
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Dworc Gore 2").Type, 1f);
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Dworc Gore 3").Type, 1f);
-				Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion, 1);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion, 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), 1);
 			}
 		}
 		#endregion

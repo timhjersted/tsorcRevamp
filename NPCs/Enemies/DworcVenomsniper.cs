@@ -30,25 +30,25 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void OnKill()
 		{
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
-			if (Main.rand.Next(8) == 0) Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.ArcheryPotion);
-			if (Main.rand.Next(100) == 0) Item.NewItem(NPC.getRect(), ItemID.GillsPotion);
-			if (Main.rand.Next(100) == 0) Item.NewItem(NPC.getRect(), ItemID.HunterPotion);
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion);
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.ShinePotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.SpelunkerPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.SwiftnessPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.WaterWalkingPotion);
-			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.getRect(), ItemID.BattlePotion);
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
+			if (Main.rand.Next(8) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion);
+			if (Main.rand.Next(100) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GillsPotion);
+			if (Main.rand.Next(100) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion);
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion);
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingPotion);
+			if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BattlePotion);
 		}
 
 		//Spawns in the Jungle, mostly Underground and in the Cavern.

@@ -286,7 +286,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm {
             potionType = ItemID.GreaterHealingPotion;
         }
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
         }
     }
 }

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.channel = true;
             Item.autoReuse = true;
             Item.shootSpeed = 11;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 100;
             storeManaCost4 = Item.mana;

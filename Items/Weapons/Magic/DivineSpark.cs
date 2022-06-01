@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.mana = 3;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.channel = true;
             Item.shoot = ModContent.ProjectileType<Projectiles.MasterBuster>();
         }

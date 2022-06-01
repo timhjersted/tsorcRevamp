@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shootSpeed = 14;
             Item.mana = 5;
             Item.value = PriceByRarity.Red_10;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
         }
 

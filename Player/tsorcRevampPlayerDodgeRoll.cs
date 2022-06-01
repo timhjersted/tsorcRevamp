@@ -90,7 +90,7 @@ namespace tsorcRevamp {
 				}
 
 				// Stamina drain for most (hopefully) swords and spears
-				if (item.damage >= 1 && item.melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
+				if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && !(item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc 
 					|| item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>() || item.type == ItemID.FlyingKnife))
 				{
@@ -98,20 +98,20 @@ namespace tsorcRevamp {
 				}
 
 				// Stamina drain for boomerangs
-				if (item.damage >= 1 && item.melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
+				if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick == 0 && (item.type == ItemID.WoodenBoomerang || item.type == ItemID.EnchantedBoomerang || item.type == ItemID.FruitcakeChakram 
 					|| item.type == ItemID.BloodyMachete || item.type == ItemID.IceBoomerang || item.type == ItemID.ThornChakram || item.type == ItemID.Flamarang || item.type == ItemID.LightDisc || item.type == ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>()))
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * 1f);
 				}
 
 				// Stamina drain for pickaxes. They take you down to 30 stamina but keep working infinitely to allow for a roll or a hit or 2 on an enemy in self defence when mining. Pickaxe damage halved in GlobalItem to prevent usage as weapon.
-				if (item.damage >= 1 && item.melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick != 0 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
+				if (item.damage >= 1 && item.DamageType == DamageClass.Melee && Player.itemAnimation == Player.itemAnimationMax - 1 && item.pick != 0 && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 30)
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= (item.useAnimation * Player.meleeSpeed * .2f);
 				}
 
 				// Stamina drain for flails and yoyos
-				if (item.damage >= 1 && item.useStyle == ItemUseStyleID.Shoot && item.melee && Player.itemAnimation != 0
+				if (item.damage >= 1 && item.useStyle == ItemUseStyleID.Shoot && item.DamageType == DamageClass.Melee && Player.itemAnimation != 0
 					&& (item.type != ItemID.Spear && item.type != ItemID.Trident && item.type != ItemID.TheRottedFork && item.type != ItemID.Swordfish && item.type != ItemID.DarkLance
 					&& item.type != ItemID.CobaltNaginata && item.type != ItemID.PalladiumPike && item.type != ItemID.MythrilHalberd && item.type != ItemID.OrichalcumHalberd
 					&& item.type != ItemID.AdamantiteGlaive && item.type != ItemID.TitaniumTrident && item.type != ItemID.Gungnir && item.type != ItemID.ChlorophytePartisan
@@ -131,14 +131,14 @@ namespace tsorcRevamp {
 				}
 
 				// Ranged
-				if (item.damage >= 1 && item.ranged && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
+				if (item.damage >= 1 && item.DamageType == DamageClass.Ranged && Player.itemAnimation == Player.itemAnimationMax - 1 && !(item.type == ItemID.PiranhaGun))
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 					
 				}
 
 				// Magic & Throwing
-				if (item.damage >= 1 && (item.magic || item.thrown) && Player.itemAnimation == Player.itemAnimationMax - 1)
+				if (item.damage >= 1 && (Item.DamageType = DamageClass.Magic;|| item.DamageType == DamageClass.Throwing) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}
@@ -150,7 +150,7 @@ namespace tsorcRevamp {
 				}
 
 				// Classless? Just in case? 
-				if (item.damage >= 1 && (!item.melee && !item.ranged && !item.magic && !item.summon && !item.thrown) && Player.itemAnimation == Player.itemAnimationMax - 1)
+				if (item.damage >= 1 && (!item.DamageType == DamageClass.Melee && !item.DamageType == DamageClass.Ranged && !Item.DamageType = DamageClass.Magic;&& !item.summon && !item.DamageType == DamageClass.Throwing) && Player.itemAnimation == Player.itemAnimationMax - 1)
 				{
 					Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= ReduceStamina(item.useAnimation);
 				}

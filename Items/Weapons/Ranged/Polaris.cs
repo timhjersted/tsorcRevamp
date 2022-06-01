@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         public override void SetDefaults()
         {
             Item.damage = 175;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.crit = 0;
             Item.width = 56;
             Item.height = 28;

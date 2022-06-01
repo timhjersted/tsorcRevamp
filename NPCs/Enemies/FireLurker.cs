@@ -193,13 +193,13 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Blood Splat").Type, 1.1f);
 			}
 
-			if (Main.rand.Next(100) < 50) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
-			if (Main.rand.Next(100) < 30) Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
+			if (Main.rand.Next(100) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
+			if (Main.rand.Next(100) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
 
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
 			}
 			
 

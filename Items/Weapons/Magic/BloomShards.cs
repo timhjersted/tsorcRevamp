@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shootSpeed = 11f;
             Item.mana = 5;
             Item.noMelee = true;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.value = PriceByRarity.Cyan_9;
         }
 

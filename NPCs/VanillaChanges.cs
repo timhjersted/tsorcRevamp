@@ -3026,13 +3026,13 @@ namespace tsorcRevamp.NPCs {
             Player player = Main.player[npc.target];
 
             if (npc.type == NPCID.BigStinger) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
             }
 
             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && !Main.expertMode) {
                  
-                Item.NewItem(npc.getRect(), ItemID.DemoniteOre, 4);
-                Item.NewItem(npc.getRect(), ItemID.ShadowScale, 4);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.DemoniteOre, 4);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.ShadowScale, 4);
             }
 
             if ((npc.type >= NPCID.BigHornetStingy && npc.type <= NPCID.LittleHornetFatty) ||
@@ -3041,85 +3041,85 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.MossHornet ||
                                 (npc.type >= NPCID.HornetFatty && npc.type <= NPCID.HornetStingy)) {
                 if (Main.rand.NextFloat() >= .66f) { // 33% chance in revamped
-                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
+                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type);
                 }
             }
             
             if (npc.type == NPCID.KingSlime) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 500);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 500);
                 if (!Main.expertMode) {
-                    Item.NewItem(npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
+                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.GoldCoin, 10); //obtained from boss bag in Expert mode (see tsorcGlobalItem for boss bag edits)
                 }
             }
 
             if (npc.type == NPCID.QueenBee) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 1000);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 1000);
             }
 
             if (npc.type == NPCID.TheDestroyer && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
-                Item.NewItem(npc.getRect(), ModContent.ItemType<RTQ2>());
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfCorruption>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<RTQ2>());
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<RTQ2>());
 
                 
             }
             
             if (npc.type == NPCID.SkeletronHead && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                Item.NewItem(npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronHead) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
-                Item.NewItem(npc.getRect(), ItemID.AngelWings, 1, false, -1);
-                Item.NewItem(npc.getRect(), ItemID.AngelWings, 1, false, -1);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronPrime) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.AngelWings, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.AngelWings, 1, false, -1);
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.SkeletronPrime) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
             }
             if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<DarkSoul>(), 1000);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSky>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), 1000);
             }
 
             if (npc.netID == NPCID.GreenSlime) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
             }
 
             if (npc.netID == NPCID.RedSlime)
             {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 2);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 2);
             }
 
             if ((npc.type == NPCID.Mimic || npc.type == NPCID.BigMimicCorruption || npc.type == NPCID.BigMimicCrimson || npc.type == NPCID.BigMimicHallow)) {
                 if (Main.rand.Next(10) == 0) {
-                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("SymbolOfAvarice").Type);
+                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("SymbolOfAvarice").Type);
                 }
             }
 
             if (npc.type == NPCID.EyeofCthulhu && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), ItemID.HerosHat);
-                Item.NewItem(npc.getRect(), ItemID.HerosShirt);
-                Item.NewItem(npc.getRect(), ItemID.HerosPants);
-                Item.NewItem(npc.getRect(), ItemID.HermesBoots, 1, false, -1);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.HerosHat);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.HerosShirt);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.HerosPants);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.HermesBoots, 1, false, -1);
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.EyeofCthulhu) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
 
             }
 
             if (npc.type == NPCID.WallofFlesh && !Main.expertMode)
             {
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.WallofFlesh) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPCID.WallofFlesh) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<EstusFlaskShard>());
             }
 
             if (npc.type == NPCID.PossessedArmor && Main.rand.Next(50) == 0 && !Main.expertMode) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
             }
 
             if ((npc.type == NPCID.PossessedArmor || npc.type == NPCID.Wraith) && Main.rand.Next(25) == 0 && Main.expertMode) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("WallTome").Type);
             }
 
             if (npc.type == NPCID.Shark && Main.rand.Next(20) == 0) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("CoralSword").Type, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("CoralSword").Type, 1, false, -1);
             }
 
             if (Main.rand.Next(25) == 0 && ((npc.type >= NPCID.BigPantlessSkeleton && npc.type <= NPCID.SmallSkeleton) ||
@@ -3130,21 +3130,21 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.Skeleton ||
                                 npc.type == NPCID.ArmoredSkeleton ||
                                 npc.type == NPCID.SkeletonArcher)) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
             if (npc.type == NPCID.Vulture && Main.rand.Next(10) == 0) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
             if (npc.type == NPCID.Wraith) {
-                Item.NewItem(npc.getRect(), ItemID.Heart);
-                Item.NewItem(npc.getRect(), ItemID.Heart);
-                Item.NewItem(npc.getRect(), ItemID.Heart);
-                Item.NewItem(npc.getRect(), ItemID.Heart);
-                Item.NewItem(npc.getRect(), ItemID.Heart);
-                Item.NewItem(npc.getRect(), ItemID.Heart);
-                Item.NewItem(npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Heart);
 
             }
             
@@ -3159,46 +3159,46 @@ namespace tsorcRevamp.NPCs {
                                 npc.type == NPCID.ZombieEskimo ||
                                 npc.type == NPCID.FemaleZombie ||
                                 (npc.type >= NPCID.PincushionZombie && npc.type <= NPCID.TwiggyZombie))) {
-                Item.NewItem(npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
 
             if (npc.type == NPCID.GoblinArcher || npc.type == NPCID.GoblinPeon || npc.type == NPCID.GoblinWarrior || npc.type == NPCID.GoblinSorcerer || npc.type == NPCID.GoblinThief) {
 
                 if (Main.rand.Next(200) == 0) { // 0.5%
-                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("Pulsar").Type, 1, false, -1);
+                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("Pulsar").Type, 1, false, -1);
                 }
 
                 else if (Main.rand.Next(200) == 0) { // 0.5% 
-                    Item.NewItem(npc.getRect(), Mod.Find<ModItem>("ToxicCatalyzer").Type, 1, false, -1);
+                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("ToxicCatalyzer").Type, 1, false, -1);
                 }
             }
             if (npc.type == NPCID.Plantera && !Main.expertMode)
             {
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<SoulOfLife>(), 6);                
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfLife>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SoulOfLife>(), 6);                
             }
             if (npc.type == NPCID.Golem && !Main.expertMode)
             {
                 if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                 {
-                    Item.NewItem(npc.getRect(), ModContent.ItemType<BrokenPicksaw>());
+                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<BrokenPicksaw>());
                 }
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
-                Item.NewItem(npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfStone>(), 1);
             }
             if (npc.type == NPCID.Snatcher || npc.type == NPCID.ManEater || npc.type == NPCID.AngryTrapper)
             {
-                if (Main.rand.Next(3) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+                if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
             }
             if (npc.type == NPCID.HornetLeafy || npc.type == NPCID.BigHornetLeafy || npc.type == NPCID.LittleHornetLeafy)
             {
-                if (Main.rand.Next(5) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+                if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
             }
             if (npc.type == NPCID.WallCreeper || npc.type == NPCID.WallCreeperWall || npc.type == NPCID.BlackRecluse || npc.type == NPCID.BlackRecluseWall)
             {
-                if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>());
-                if (Main.rand.Next(10) == 0 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
+                if (Main.rand.Next(10) == 0 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Humanity>());
             }
 
 

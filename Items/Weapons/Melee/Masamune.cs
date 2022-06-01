@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.rare = ItemRarityID.Red;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Red_10;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.HealingWater>();
             Item.shootSpeed = 13f;
         }

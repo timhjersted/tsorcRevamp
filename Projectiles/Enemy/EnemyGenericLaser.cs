@@ -205,7 +205,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 }
 
 
-                DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
+                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
                     Projectile.velocity, LaserTextureHead, LaserTextureBody, LaserTextureTail, -1.57f, LaserSize, color);
             }
             else if (TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
@@ -223,7 +223,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 color *= 0.65f + 0.35f * (float)(Math.Sin(Main.GameUpdateCount / 5f));
 
                 
-                DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
                         Projectile.velocity, LaserTargetingHead, LaserTargetingBody, LaserTargetingTail, -1.57f, 0.37f, color);
             }
             

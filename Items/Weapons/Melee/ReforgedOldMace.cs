@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.height = 36;
             Item.knockBack = 6.5f;
             Item.maxStack = 1;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.scale = .9f;
             Item.useAnimation = 22;
             Item.rare = ItemRarityID.White;

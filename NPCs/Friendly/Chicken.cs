@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Friendly {
 
 		public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DeadChicken>());
 		}
 
 		public override void AI()

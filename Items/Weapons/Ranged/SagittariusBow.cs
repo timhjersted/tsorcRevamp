@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Tooltip.SetDefault("Fires two arrows\nHold FIRE to charge\nArrows are faster and more accurate when the bow is charged");
         }
         public override void SetDefaults() {
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.SagittariusBowHeld>();
             Item.channel = true;
             Item.damage = 548;

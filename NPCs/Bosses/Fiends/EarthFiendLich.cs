@@ -375,14 +375,14 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
 			}
 			else
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
 				if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
 				{
-					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
 				}
 			}
 		}

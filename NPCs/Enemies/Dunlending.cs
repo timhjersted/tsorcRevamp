@@ -89,49 +89,49 @@ namespace tsorcRevamp.NPCs.Enemies {
             return chance;
         }
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ItemID.Torch, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Torch, 1);
             Player player = Main.player[NPC.target];
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(10) == 0)
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(20) == 0 ? 3 : 1); // 1/5 chance of 3, else 1
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>(), Main.rand.Next(20) == 0 ? 3 : 1); // 1/5 chance of 3, else 1
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(20) == 0 ? 6 : 1); // 1/5 chance of 6, else 1
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(20) == 0 ? 6 : 1); // 1/5 chance of 6, else 1
             }
 
             if (Main.rand.NextFloat() < 0.6f) { //60%
-                Item.NewItem(NPC.getRect(), ItemID.ShinePotion, Main.rand.Next(1, 3));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion, Main.rand.Next(1, 3));
             }
 
             if (Main.rand.NextFloat() < 0.1f) { //10%
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<BoostPotion>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BoostPotion>());
             }
             if (Main.rand.Next(10) == 0) { //8%
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.DunlendingAxe>(), 1, false, -1);
             }
 
             if (Main.rand.Next(20) == 0) {
-                Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
             }
             if (Main.rand.Next(20) == 0) {
-                Item.NewItem(NPC.getRect(), ItemID.SpelunkerPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion);
             }
             if (Main.rand.Next(20) == 0) {
-                Item.NewItem(NPC.getRect(), ItemID.SwiftnessPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
             }
             if (Main.rand.Next(20) == 0) {
-                Item.NewItem(NPC.getRect(), ItemID.BattlePotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BattlePotion);
             }
             if (Main.rand.Next(50) == 0) { //2%
-                Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
             }
             if (Main.rand.Next(100) == 0) { //1%
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<CrimsonPotion>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CrimsonPotion>());
             }
 
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
         }
     }
 }

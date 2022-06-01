@@ -28,11 +28,11 @@ namespace tsorcRevamp.Items {
 				{
 					return true;
 				}
-				else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.melee && !(item.type == ModContent.ItemType<Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.CernosPrime>()))
+				else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * .8f && !item.DamageType == DamageClass.Melee && !(item.type == ModContent.ItemType<Weapons.Ranged.SagittariusBow>() || item.type == ModContent.ItemType<Weapons.Ranged.ArtemisBow>() || item.type == ModContent.ItemType<Weapons.Ranged.CernosPrime>()))
 				{
 					return false;
 				}
-				else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && item.melee)
+				else if (item.damage >= 1 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < item.useAnimation * player.meleeSpeed * .8f && item.DamageType == DamageClass.Melee)
 				{
 					return false;
 				}
@@ -283,7 +283,7 @@ namespace tsorcRevamp.Items {
 		public override void ModifyWeaponDamage(Item item, Player player, ref float add, ref float mult, ref float flat)
 		{
 			tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-			if (item.melee)
+			if (item.DamageType == DamageClass.Melee)
 			{
 				/*Main.NewText("magicDamage: " + player.magicDamage);
 				Main.NewText("magicDamageMult: " + player.magicDamageMult);
@@ -580,7 +580,7 @@ namespace tsorcRevamp.Items {
 				ItemID.BoneTorch,
 				ItemID.UltrabrightTorch,
 				ItemID.DemonTorch,
-				ItemID.CursedTorch,	
+				ItemID.CursedTorch,
 				ItemID.IchorTorch,
 				ItemID.RainbowTorch,
 				ItemID.DesertTorch,
@@ -589,7 +589,7 @@ namespace tsorcRevamp.Items {
 				ItemID.CrimsonTorch,
 				ItemID.HallowedTorch,
 				ItemID.JungleTorch
-            }
+			};
         }
     }
 }

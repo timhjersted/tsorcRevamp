@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.noMelee = true;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.ShadowBall>();
         }
         public override void AddRecipes() {

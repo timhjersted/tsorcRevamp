@@ -10,7 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.height = 14;
             Item.knockBack = 4;
             Item.maxStack = 1;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.scale = 1;
             Item.crit = 16;
             Item.useAnimation = 45;

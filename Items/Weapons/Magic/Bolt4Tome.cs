@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Lime;
             Item.shootSpeed = (float)6;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 350;
             Item.useAnimation = 30;

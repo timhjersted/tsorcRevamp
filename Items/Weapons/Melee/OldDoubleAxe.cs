@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.width = 36;
             Item.height = 36;
             Item.knockBack = 5;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
             Item.useAnimation = 26; // Slowed, why was this so fast??
             Item.rare = ItemRarityID.White;

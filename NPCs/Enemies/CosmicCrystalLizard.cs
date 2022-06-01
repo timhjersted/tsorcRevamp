@@ -1003,42 +1003,42 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 400);
-			Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type); //always drops 1
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 400);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type); //always drops 1
 
 			if (Main.rand.NextFloat() >= 0.2f) // 80% chance
 			{
-				Item.NewItem(NPC.getRect(), ItemID.EndurancePotion);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion);
 			}
 			if (Main.rand.NextFloat() >= 0.2f) // 80% chance
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("SoulSiphonPotion").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("SoulSiphonPotion").Type);
 			}
 
 
 			if (NPC.lifeMax == 20 || NPC.lifeMax == 19) //the higher the npc.lifeMax, the higher the chance of getting a second crystal
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 			else if (NPC.lifeMax == 18 && Main.rand.NextFloat() >= 0.15f)
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 			else if (NPC.lifeMax == 17 && Main.rand.NextFloat() >= 0.3f)
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 			else if (NPC.lifeMax == 16 && Main.rand.NextFloat() >= 0.45f)
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 			else if (NPC.lifeMax == 15 && Main.rand.NextFloat() >= 0.6f)
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 			else if (NPC.lifeMax == 14 && Main.rand.NextFloat() >= 0.75f)
 			{
-				Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("EternalCrystal").Type);
 			}
 
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.15f, (float)Main.rand.Next(-30, 31) * 0.15f), Mod.Find<ModGore>("Gores/CosmicCrystalLizard_Gore1").Type, 1f);

@@ -362,17 +362,17 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
 		public override void OnKill()
 		{
 
-			//Item.NewItem(npc.getRect(), ItemID.Sapphire, Main.rand.Next(1, 3));
-			//Item.NewItem(npc.getRect(), ItemID.Ruby, Main.rand.Next(1, 3));
-			//Item.NewItem(npc.getRect(), ItemID.Topaz, Main.rand.Next(1, 3));
-			//Item.NewItem(npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
-			//Item.NewItem(npc.getRect(), ItemID.Emerald, Main.rand.Next(1, 3));
-			//Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
-			//Item.NewItem(npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
-			//if (Main.rand.Next(99) < 50) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.CompactFrame>());
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Sapphire, Main.rand.Next(1, 3));
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Ruby, Main.rand.Next(1, 3));
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Topaz, Main.rand.Next(1, 3));
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Emerald, Main.rand.Next(1, 3));
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
+			//Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.Amethyst, Main.rand.Next(1, 3));
+			//if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.CompactFrame>());
 
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.GoldenKey, 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GoldenKey, 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>(), 1);
 		}
 	}
 }

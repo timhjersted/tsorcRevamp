@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.shootSpeed = 21;
             Item.mana = 12;
             Item.value = PriceByRarity.Pink_5;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.CursedFlames>();
         }
 

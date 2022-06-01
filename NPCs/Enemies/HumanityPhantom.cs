@@ -120,7 +120,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.NextFloat() <= NPC.scale - .3f) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1); // 0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time
+            if (Main.rand.NextFloat() <= NPC.scale - .3f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1); // 0.5f scale phantoms have 20% chance of dropping, scaling up towards 1f scale phantoms dropping humanity 70% of the time
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

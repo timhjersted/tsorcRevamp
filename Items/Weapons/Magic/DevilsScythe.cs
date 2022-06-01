@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.mana = 14;
             Item.noMelee = true;
             Item.value = PriceByRarity.Orange_3;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
         }
 
         public override bool? UseItem(Player player) {

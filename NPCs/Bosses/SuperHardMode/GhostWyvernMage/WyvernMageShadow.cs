@@ -182,7 +182,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                         //ModContent.ProjectileType<Projectiles.Enemy.EnemySporeTrap>()
                         //DesertDjinnCurse; ProjectileID.DD2DrakinShot
 
-                        Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.5f);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.5f }, NPC.Center);
                         if (Timer2 >= 300)
                         {
                             Timer2 = -200 - Main.rand.Next(1250);
@@ -309,9 +309,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
                 else
                 {
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.RingOfPower>());
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.RingOfPower>());
                 }
             } else
             {

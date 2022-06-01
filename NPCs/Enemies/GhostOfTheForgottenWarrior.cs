@@ -45,8 +45,8 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void OnKill()
 		{
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), Main.rand.Next(15, 26));
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>());
 		}
 
 		#region Spawn
@@ -137,7 +137,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Wild Warrior Gore 3").Type, 1f);
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Wild Warrior Gore 2").Type, 1f);
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Wild Warrior Gore 3").Type, 1f);
-				if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.GoldenKey, 1);
+				if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GoldenKey, 1);
 			}
 		}
 	}

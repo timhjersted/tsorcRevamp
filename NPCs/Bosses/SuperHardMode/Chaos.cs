@@ -283,7 +283,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 9);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), fireBreathDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(500) == 1)
@@ -291,7 +291,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellIcestormBall>(), iceStormDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(500) == 1)
@@ -299,7 +299,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatFireballBall>(), greatFireballDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(1000) == 1)
@@ -307,7 +307,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellBlazeBall>(), blazeBallDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(300) == 1)
@@ -315,7 +315,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 11);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.CrazedPurpleCrush>(), purpleCrushDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 
@@ -329,7 +329,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 4);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellTornado>(), tornadoDamage, 0f, Main.myPlayer, NPC.target);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(220) == 1)
@@ -337,7 +337,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 8);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.ObscureSeeker>(), obscureSeekerDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(50) == 1)
@@ -345,7 +345,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 12);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.PoisonCrystalFire>(), crystalFireDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 				if (Main.rand.Next(120) == 1)
@@ -353,7 +353,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 					Vector2 projTarget = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 5);
 					projTarget += Main.rand.NextVector2Circular(3, 3);
 					Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projTarget.X, projTarget.Y, ModContent.ProjectileType<Projectiles.Enemy.FireTrails>(), fireTrailsDamage, 0f, Main.myPlayer);
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 					NPC.ai[1] = 1f;
 				}
 			}			
@@ -443,15 +443,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 			}
 			else
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3000);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulOfChaos>(), 3);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUHelmet>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUTorso>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Armors.PowerArmorNUGreaves>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.FlareTome>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.ElfinBow>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 3000);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfChaos>(), 3);
 			}
 		}
 		#endregion

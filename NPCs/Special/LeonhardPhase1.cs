@@ -542,18 +542,18 @@ namespace tsorcRevamp.NPCs.Special
                 if (NPC.ai[1] == 120) //When timer is 120
                 {
                     //Main.NewText("[c/CCCCCC:???:] Very good, a worthy opponent. Take these, for your trouble", 109, 145, 138); //Send message to chat
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1);
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 25);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.NamelessSoldierSoul>(), 1);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.StaminaVessel>(), 1);
 
                 }
 

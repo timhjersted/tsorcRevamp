@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightRed_4;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.HeavenSword>();
             Item.rare = ItemRarityID.LightRed;
         }

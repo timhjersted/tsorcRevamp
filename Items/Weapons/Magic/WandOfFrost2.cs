@@ -18,7 +18,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.knockBack = 6;
             Item.rare = ItemRarityID.Pink; //yes, despite not taking any mech boss items
             Item.shootSpeed = 13f;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.mana = 25;
             Item.useAnimation = 26;
             Item.autoReuse = true;

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons {
 			Item.UseSound = SoundID.Item11;
 			Item.useTurn = true;
 			Item.noMelee = true;
-			Item.magic = true;
+			Item.DamageType = DamageClass.Magic;
 			Item.autoReuse = true;
 			Item.value = 10000;
 			Item.useStyle = ItemUseStyleID.Shoot;
@@ -40,13 +40,11 @@ namespace tsorcRevamp.Items.Weapons {
 			Item.shoot = ModContent.ProjectileType<Projectiles.BlackFirelet>();
 		}
 
-		public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
+        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack) {
 			Main.NewText(player.position / 16);
 
 
-			Vector2 projVel = new Vector2(speedX, speedY);
-			projVel.Normalize();
-			Projectile.NewProjectile(player.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
+			Projectile.NewProjectile(player.Center, speed, ModContent.ProjectileType<Projectiles.Enemy.EnemyLightningStrike>(), damage, knockBack, Main.myPlayer);
 
 
 			/*

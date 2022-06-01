@@ -40,16 +40,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(3, 6));
-			Item.NewItem(NPC.getRect(), ItemID.ArcheryPotion);
-			Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ItemID.FlaskofFire);
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-			Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(3, 6));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.FlaskofFire);
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
 		}
 
 

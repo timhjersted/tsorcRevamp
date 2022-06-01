@@ -18,8 +18,8 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shoot = ProjectileID.PurificationPowder;
             Item.shootSpeed = 10;
             Item.useAmmo = AmmoID.Bullet;
-            Item.ranged = true;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Ranged;
+            Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 15;
             Item.UseSound = SoundID.Item1;
             Item.useStyle = ItemUseStyleID.Swing;

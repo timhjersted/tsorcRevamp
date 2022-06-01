@@ -61,12 +61,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             int expertScale = 1;
             if (Main.expertMode) expertScale = 2;
-            if (Main.rand.Next(4) == 0) {
+            if (Main.rand.NextBool(4)) {
 
                 target.AddBuff(BuffID.BrokenArmor, 180 / expertScale, false); //broken armor
                 target.AddBuff(BuffID.Poisoned, 3600 / expertScale, false); //poisoned
                 target.AddBuff(BuffID.Bleeding, 1800 / expertScale, false); //bleeding
-
             }
 
             if (Main.rand.NextBool(2)) {
@@ -87,7 +86,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //If it's too far away, target the closest player and charge them
             if (Math.Abs(Main.player[NPC.target].position.X - NPC.position.X) > 2800 || Math.Abs(Main.player[NPC.target].position.Y - NPC.position.Y) > 2200)
             {
-                if (Main.rand.Next(450) == 1)
+                if (Main.rand.NextBool(450))
                 {
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -159,7 +158,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             NPC.ai[1] += (Main.rand.Next(2, 5) * 0.1f) * NPC.scale;
             if (NPC.ai[1] >= 8f) {
-                if (Main.rand.Next(450) == 1) {
+                if (Main.rand.NextBool(450)) {
                     chargeDamageFlag = true;
                     Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                     float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
@@ -406,8 +405,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 5));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 5));
             }
         }
     }

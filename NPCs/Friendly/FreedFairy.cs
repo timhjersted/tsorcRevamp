@@ -95,7 +95,7 @@ namespace tsorcRevamp.NPCs.Friendly
 				//Drop one for each player
 				for (int i = 0; i < Main.ActivePlayersCount; i++)
 				{
-					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.Oxyale>());
+					Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Oxyale>());
 				}
 				droppedOxyale = true;
 			}

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.Pink_5;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
         }
         public override void MeleeEffects(Player player, Rectangle hitbox) {
             //This is the same general effect done with the Fiery Greatsword

@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.height = 58;
             Item.knockBack = 5;
             Item.noMelee = true;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.rare = ItemRarityID.Red;
             Item.scale = 0.9f;
             Item.shoot = ProjectileID.PurificationPowder;

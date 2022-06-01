@@ -942,21 +942,21 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
-            Item.NewItem(NPC.getRect(), ItemID.Heart);
-            Item.NewItem(NPC.getRect(), ItemID.Heart);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 5 + Main.rand.Next(1, 4));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
 
 
-            //if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenKotetsu>(), 1, false, -1);
-            //if (Main.rand.Next(10) == 0) Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
-            if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
-            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.getRect(), ItemID.RagePotion); }
-            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.getRect(), ItemID.WrathPotion); }
+            //if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenKotetsu>(), 1, false, -1);
+            //if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Accessories.SpikedIronShield>(), 1, false, -1);
+            if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.LostUndeadSoul>());
+            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RagePotion); }
+            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WrathPotion); }
         }
 
         #region Drawing and Animation

@@ -297,8 +297,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
             }
 
-            if (Main.rand.Next(99) < 30) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>());
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 2);
+            if (Main.rand.Next(99) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 2);
         }
         #endregion
 

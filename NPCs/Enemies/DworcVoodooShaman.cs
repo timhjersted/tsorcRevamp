@@ -33,17 +33,17 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void OnKill()
 		{
-			if (Main.rand.Next(16) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
-			if (Main.rand.NextFloat() >= .2f) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
-			if (Main.rand.Next(16) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
-			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.getRect(), ItemID.FlaskofFire);
-			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
-			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
-			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
-			Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 6));
-			Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion, Main.rand.Next(1, 4));
-			Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
+			if (Main.rand.Next(16) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfCosmicPower>());
+			if (Main.rand.NextFloat() >= .2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>());
+			if (Main.rand.Next(16) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>());
+			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.FlaskofFire);
+			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>());
+			if (Main.rand.Next(50) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>());
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>());
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion, Main.rand.Next(1, 6));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion, Main.rand.Next(1, 4));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, Main.rand.Next(1, 5));
 		}
 
 		//Spawns in the Jungle and in the Cavern in HM.

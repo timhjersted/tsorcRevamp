@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.height = 30;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Blue;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 60;
             Item.UseSound = SoundID.Item82;

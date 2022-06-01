@@ -109,11 +109,11 @@ namespace tsorcRevamp.NPCs.Enemies
 							coinsdropped++;
 							if (Main.rand.Next(10) == 0)
 							{
-								Item.NewItem(NPC.Bottom, ItemID.Diamond);
+								Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
 							}
 							else
 							{
-								Item.NewItem(NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
+								Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
 							}
 						}
 					}
@@ -126,11 +126,11 @@ namespace tsorcRevamp.NPCs.Enemies
 							coinsdropped++;
 							if (Main.rand.Next(10) == 0)
 							{
-								Item.NewItem(NPC.Bottom, ItemID.Diamond);
+								Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
 							}
 							else
 							{
-								Item.NewItem(NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
+								Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
 							}
 						}
 					}
@@ -218,11 +218,11 @@ namespace tsorcRevamp.NPCs.Enemies
 					coindroptimer = 0;
 					if (Main.rand.Next(8) == 0)
 					{
-						Item.NewItem(NPC.Bottom, ItemID.Diamond);
+						Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
 					}
 					else
 					{
-						Item.NewItem(NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
+						Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
 					}
 				}
 			}
@@ -325,18 +325,18 @@ namespace tsorcRevamp.NPCs.Enemies
 				coinsdropped++;
 				if (Main.rand.Next(8) == 0)
 				{
-					Item.NewItem(NPC.Bottom, ItemID.Diamond);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Diamond);
 				}
 				else
 				{
-					Item.NewItem(NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.SilverCoin, Main.rand.Next(3, 7));
 				}
 			}
 		}
 		public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), ItemID.Mushroom, Main.rand.Next(1, 3));
-			Item.NewItem(NPC.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Mushroom, Main.rand.Next(1, 3));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ThrowingKnife, Main.rand.Next(20, 50));
 		}
 	}
 }

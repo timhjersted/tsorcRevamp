@@ -220,14 +220,14 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-                Item.NewItem(NPC.getRect(), ItemID.MidnightRainbowDye, 5);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
                 if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
                 {
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
                 }
             }
         }

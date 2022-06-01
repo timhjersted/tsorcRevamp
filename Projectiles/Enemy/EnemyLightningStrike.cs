@@ -307,7 +307,7 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     for (int i = 0; i < branches[0].Count - 1; i++)
                     {
-                        DrawLightning(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[0][i],
+                        DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], branches[0][i],
                                 branches[0][i + 1], LaserTargetingHead, LaserTextureBody, LaserTargetingTail, Vector2.Distance(branches[0][i], branches[0][i + 1]), branchAngles[0][i], 0.2f, LaserColor * 0.9f);
                     }
                 }
@@ -325,8 +325,8 @@ namespace tsorcRevamp.Projectiles.Enemy {
                 {
                     float scaleFactor = (float)FiringTimeLeft / (float)FiringDuration;
 
-                    spriteBatch.End();
-                    spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);                   
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);                   
                                         
                     if (branches.Count > 0)
                     {
@@ -347,18 +347,17 @@ namespace tsorcRevamp.Projectiles.Enemy {
                                     {
                                         scale = 1;
                                     }
-
-                                    DrawLightning(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], segment,
+                                    DrawLightning(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], segment,
                                             nextSegment, LaserTargetingHead, LaserTextureBody, LaserTargetingTail, Vector2.Distance(segment, nextSegment), currentAngles[j], scale * scaleFactor, LaserColor * scaleFactor * scaleFactor);
                                 }
                             }
                         }
                     }
 
-                    spriteBatch.End();
+                    Main.spriteBatch.End();
 
                     //Revert to normal spritebatch mode
-                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix); new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
 
 
 

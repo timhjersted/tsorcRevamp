@@ -389,9 +389,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				Dust.NewDust(NPC.position, NPC.height, NPC.width, 45, 0.2f, 0.2f, 200, default(Color), 4f);
 				Dust.NewDust(NPC.position, NPC.height, NPC.width, 45, 0.2f, 0.2f, 200, default(Color), 2f);
 				Dust.NewDust(NPC.position, NPC.height, NPC.width, 45, 0.2f, 0.2f, 200, default(Color), 4f);
-				if (Main.rand.Next(99) < 20) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>());
-				if (Main.rand.Next(99) < 2) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CursedSoul>(), 3);
+				if (Main.rand.Next(99) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>());
+				if (Main.rand.Next(99) < 2) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CursedSoul>(), 3);
 			}
 		}
 		#endregion

@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         }
 
         public override void SetDefaults() {
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = ProjectileID.PurificationPowder;
 
 

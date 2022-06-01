@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.autoReuse = true;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
 
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.LightRed_4;

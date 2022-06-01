@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.noMelee = true;
             Item.value = PriceByRarity.LightPurple_6;
             Item.useAmmo = AmmoID.Bullet;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
         }
 
         public override void AddRecipes() {

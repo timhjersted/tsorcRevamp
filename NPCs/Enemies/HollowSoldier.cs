@@ -806,19 +806,19 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player player = Main.player[NPC.target];
 
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulShekel>(), 1 + Main.rand.Next(0, 2));
 
-            if (Main.rand.Next(30) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(15) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
-            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
-            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.getRect(), ItemID.CobaltShield, 1, false, -1);
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("FadingSoul").Type);
-            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.getRect(), ItemID.IronskinPotion); }
-            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.getRect(), ItemID.EndurancePotion); }
+            if (Main.rand.Next(30) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0 && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenLongSword>(), 1, false, -1);
+            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.IronShield>(), 1, false, -1);
+            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.CobaltShield, 1, false, -1);
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("FadingSoul").Type);
+            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion); }
+            if (Main.rand.Next(3) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion); }
         }
 
         #region Drawing and Animation

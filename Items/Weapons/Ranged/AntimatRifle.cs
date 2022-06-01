@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.rare = ItemRarityID.Red;
             Item.scale = (float)0.9;
             Item.useAmmo = AmmoID.Bullet;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = AmmoID.Bullet;
             Item.shootSpeed = 10;
             //item.pretendType=96;

@@ -37,7 +37,7 @@ namespace tsorcRevamp.Projectiles {
         }
         public override bool PreDraw(ref Color lightColor) {
             if (IsAtMaxCharge) {
-                DrawLaser(spriteBatch, Main.projectileTexture[Projectile.type], Main.player[Projectile.owner].Center,
+                DrawLaser(Main.spriteBatch, Main.projectileTexture[Projectile.type], Main.player[Projectile.owner].Center,
                     Projectile.velocity, 10, Projectile.damage, -1.57f, 1f, 1000f, Color.White, (int)MOVE_DISTANCE);
             }
 

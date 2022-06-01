@@ -368,52 +368,52 @@ namespace tsorcRevamp.NPCs.Enemies
             Player player = Main.player[NPC.target];
             UsefulFunctions.BroadcastText("The Attraidies Illusion has been vanquished...", 190, 140, 150);
 
-            Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("HealingElixir").Type);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("HealingElixir").Type);
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (Main.rand.NextFloat() <= .5f))
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 2);
             }
 
             if (Main.rand.NextFloat() <= .05f)
             {
-                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("AquamarineRing").Type, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("AquamarineRing").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .3f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.GoldenKey);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GoldenKey);
             }
             if (Main.rand.NextFloat() <= .9f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
             }
             if (Main.rand.NextFloat() <= .4f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
             }
             if (Main.rand.NextFloat() <= .01f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.GillsPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GillsPotion);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.HunterPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion);
             }
             if (Main.rand.NextFloat() <= .6f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion);
             }
             if (Main.rand.NextFloat() <= .8f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion);
             }
             if (Main.rand.NextFloat() <= .2f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.ShinePotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion);
             }
         }
     }

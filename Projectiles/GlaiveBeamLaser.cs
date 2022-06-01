@@ -139,7 +139,7 @@ namespace tsorcRevamp.Projectiles {
             if (IsAtMaxCharge && FiringTimeLeft > 0) {
                 float scale = 0.4f;
 
-                DrawLaser(spriteBatch, texture, GetOrigin(),
+                DrawLaser(Main.spriteBatch, texture, GetOrigin(),
                     Projectile.velocity, 28 * scale, Projectile.damage, -1.57f, scale, 2000f, Color.White, (int)MOVE_DISTANCE);
             }
             return false;

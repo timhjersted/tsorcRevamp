@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Orange_3;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
         }
 
         public override void AddRecipes() {

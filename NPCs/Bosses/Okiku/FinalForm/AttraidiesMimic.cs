@@ -265,7 +265,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
         }
 
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
         }
     }
 }

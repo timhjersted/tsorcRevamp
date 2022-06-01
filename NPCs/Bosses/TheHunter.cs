@@ -274,9 +274,9 @@ namespace tsorcRevamp.NPCs.Bosses
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CrestOfEarth>(), 2);
-                Item.NewItem(NPC.getRect(), ItemID.WaterWalkingBoots, 1, false, -1);
-                Item.NewItem(NPC.getRect(), ItemID.Drax, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfEarth>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingBoots, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Drax, 1, false, -1);
             }
         }
     }

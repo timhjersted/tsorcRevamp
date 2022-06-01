@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.noMelee = true;
             Item.UseSound = SoundID.Item8;
             Item.value = 3000;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.FarronDart>();
             Item.rare = ItemRarityID.Blue;
         }

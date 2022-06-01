@@ -642,9 +642,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 			//}
 			//else
 			//{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>(), 4);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>(), 4);
 			//}
 		}
 		#endregion

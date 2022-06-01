@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Pink;
             Item.value = PriceByRarity.Pink_5;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
         }
 
         public override void AddRecipes() {

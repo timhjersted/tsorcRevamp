@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.useAmmo = AmmoID.Gel;
             Item.noMelee = true;
             Item.value = PriceByRarity.LightPurple_6;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<Projectiles.Freezethrower>();
         }
 

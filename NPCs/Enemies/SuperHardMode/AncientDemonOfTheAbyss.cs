@@ -132,9 +132,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Ancient Demon Gore 2").Type, 1f);
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Ancient Demon Gore 3").Type, 1f);
 
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1 + Main.rand.Next(1));
-				if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 10);
-				if (Main.rand.Next(99) < 2) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Ragnarok>(), 1);
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1 + Main.rand.Next(1));
+				if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 10);
+				if (Main.rand.Next(99) < 2) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.Ragnarok>(), 1);
 			}
 		}
 		#endregion

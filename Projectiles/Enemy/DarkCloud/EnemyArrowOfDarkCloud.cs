@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
         static Texture2D texture;
         public override bool PreDraw(ref Color lightColor)
         {
-            UsefulFunctions.DrawSimpleLitProjectile(spriteBatch, Projectile, ref texture);
+            UsefulFunctions.DrawSimpleLitProjectile(Projectile, ref texture);
             return false;
         }
 
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy.DarkCloud
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);

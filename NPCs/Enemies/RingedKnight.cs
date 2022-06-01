@@ -1048,14 +1048,14 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            if (Main.rand.Next(4) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
-            if (Main.rand.Next(4) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>());
-            Item.NewItem(NPC.getRect(), ItemID.Heart);
-            Item.NewItem(NPC.getRect(), ItemID.Heart);
-            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientFireSword>(), 1, false, PrefixID.Legendary);
-            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.getRect(), ItemID.RagePotion); }
-            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.getRect(), ItemID.WrathPotion); }
-            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
+            if (Main.rand.Next(4) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            if (Main.rand.Next(4) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientFireSword>(), 1, false, PrefixID.Legendary);
+            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RagePotion); }
+            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WrathPotion); }
+            if (Main.rand.NextFloat() < 0.6f) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
 
         }
 

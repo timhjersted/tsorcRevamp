@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.knockBack = 4f;
             Item.UseSound = SoundID.Item1;
             Item.value = PriceByRarity.Blue_1;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.rare = ItemRarityID.Blue;
         }
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit) {

@@ -54,21 +54,21 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			Player player = Main.player[NPC.target];
 
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion);
 
 			if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(8) == 0)
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 			}
 			else
 			{
-				Item.NewItem(NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(1, 3));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, Main.rand.Next(1, 3));
 			}
 
-			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ItemID.HunterPotion);
-			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ItemID.SwiftnessPotion);
-			Item.NewItem(NPC.getRect(), ItemID.ArcheryPotion);
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion);
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SwiftnessPotion);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion);
 		}
 
 

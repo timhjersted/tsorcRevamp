@@ -26,11 +26,11 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
-            Item.NewItem(NPC.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
-            if (Main.rand.Next(6) == 0) Item.NewItem(NPC.getRect(), ItemID.EndurancePotion);
-            if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
-            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.StoneBlock, Main.rand.Next(5, 11));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronOre, Main.rand.Next(1, 4)); //for ironskin potions/other
+            if (Main.rand.Next(6) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.EndurancePotion);
+            if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            if (Main.rand.Next(15) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.RadiantLifegem>());
 
 
 

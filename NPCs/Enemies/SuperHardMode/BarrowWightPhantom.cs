@@ -347,7 +347,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				Dust.NewDust(NPC.position, NPC.height, NPC.width, 45, 0.2f, 0.2f, 200, default(Color), 4f);
 				Dust.NewDust(NPC.position, NPC.height, NPC.width, 45, 0.2f, 0.2f, 200, default(Color), 2f);
 				Dust.NewDust(NPC.position, NPC.height, NPC.width, 45, 0.2f, 0.2f, 200, default(Color), 4f);
-				if (Main.rand.Next(99) < 5) Item.NewItem(NPC.getRect(), ItemID.Heart);
+				if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
 			}
 		}
 		#endregion

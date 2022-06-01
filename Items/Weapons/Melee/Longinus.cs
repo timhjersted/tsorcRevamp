@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.height = 50;
             Item.width = 50;
 
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.noMelee = true;
             Item.noUseGraphic = true;
 

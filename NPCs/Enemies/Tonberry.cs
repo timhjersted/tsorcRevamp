@@ -99,9 +99,9 @@ namespace tsorcRevamp.NPCs.Enemies
 
 			if (tsorcRevampWorld.SuperHardMode)
 			{
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5 + Main.rand.Next(5));
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 5 + Main.rand.Next(5));
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.BlueTitanite>(), 5 + Main.rand.Next(5));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 5 + Main.rand.Next(5));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 5 + Main.rand.Next(5));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BlueTitanite>(), 5 + Main.rand.Next(5));
 			}
 		}
 		#endregion

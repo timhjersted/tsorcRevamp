@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.useAnimation = 26;
             Item.autoReuse = true;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<BlizzardBlasterShot>();
             Item.shootSpeed = 10f; //unused
             Item.value = PriceByRarity.Pink_5;

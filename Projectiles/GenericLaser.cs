@@ -230,12 +230,12 @@ namespace tsorcRevamp.Projectiles {
             //LaserTextureBody.Height * LaserSize
             if ((IsAtMaxCharge && TargetingMode == 0) || (TargetingMode == 2))
             {
-                DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
+                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTexture], GetOrigin(),
                     Projectile.velocity, LaserTextureBody.Height * LaserSize, -1.57f, LaserSize, LaserLength, LaserColor, (int)MOVE_DISTANCE);
             }
             else if(TelegraphTime + Charge >= MaxCharge || TargetingMode == 1)
             {
-                DrawLaser(spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
+                DrawLaser(Main.spriteBatch, TransparentTextureHandler.TransparentTextures[LaserTargetingTexture], GetOrigin(),
                     Projectile.velocity, LaserTextureBody.Height * LaserSize / 2f, -1.57f, LaserSize / 2, LaserLength, LaserColor, (int)MOVE_DISTANCE);
             }
             return false;

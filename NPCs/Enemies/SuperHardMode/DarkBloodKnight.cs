@@ -87,7 +87,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Man Hunter Gore 2"), 1.1f);
 				Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Man Hunter Gore 3"), 1.1f);
 			}
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
 		}
 	}
 }

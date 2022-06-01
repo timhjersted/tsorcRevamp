@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.rare = ItemRarityID.Lime;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.value = PriceByRarity.Lime_7;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
         }
 
         public override void MeleeEffects(Player player, Rectangle hitbox) {

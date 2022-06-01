@@ -418,9 +418,9 @@ namespace tsorcRevamp.NPCs.Bosses
 				}
 				else
 				{
-					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-					Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-					Item.NewItem(NPC.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
+					Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
 				}
 			}
 			else

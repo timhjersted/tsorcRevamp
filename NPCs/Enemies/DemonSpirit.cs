@@ -451,8 +451,8 @@ namespace tsorcRevamp.NPCs.Enemies
 					}
 				}
 
-				if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
-				if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
+				if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+				if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
 			}
 		}
 		#endregion

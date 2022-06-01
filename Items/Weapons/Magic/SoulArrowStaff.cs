@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shootSpeed = 7;
             Item.noMelee = true;
             Item.value = 5000;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.SoulArrow>();
             Item.rare = ItemRarityID.Blue;
         }

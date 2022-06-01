@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item1;
             Item.noMelee = true;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.value = PriceByRarity.LightRed_4;
             Item.noUseGraphic = true;
             Item.shoot = ProjectileID.PurificationPowder;

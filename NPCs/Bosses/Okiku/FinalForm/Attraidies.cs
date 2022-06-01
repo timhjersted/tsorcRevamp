@@ -722,13 +722,13 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm {
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.TheEnd>());
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
-                Item.NewItem(NPC.getRect(), ItemID.Picksaw);
-                if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.TheEnd>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfAttraidies>(), Main.rand.Next(15, 23));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 2000);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BloomShards>(), 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Picksaw);
+                if (!tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()) && player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EstusFlaskShard>());
             }
 
             if (!tsorcRevampWorld.SuperHardMode) {

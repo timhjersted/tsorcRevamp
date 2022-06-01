@@ -358,7 +358,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.rand.Next(2) == 0 && wooddropped < 5)
                 {
-                    Item.NewItem(NPC.Bottom, ItemID.RichMahogany);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.RichMahogany);
                     wooddropped++;
                 }
             }
@@ -375,7 +375,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.rand.Next(3) == 0 && resindropped < 1)
 				{
-					Item.NewItem(NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
 					resindropped++;
 				}
 			}
@@ -413,7 +413,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.rand.Next(20) == 0 && resindropped < 1)
 				{
-					Item.NewItem(NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
 					resindropped++;
 				}
 			}
@@ -443,10 +443,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), ItemID.RichMahogany, Main.rand.Next(3, 5));
-			Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type, Main.rand.Next(1, 3));
-			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
-			if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RichMahogany, Main.rand.Next(3, 5));
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("BloodredMossClump").Type, Main.rand.Next(1, 3));
+			if (Main.rand.Next(5) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CharcoalPineResin").Type);
+			if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
 
 		}
 	}

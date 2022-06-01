@@ -313,16 +313,16 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), 1);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), 1);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.GemBox>(), 1);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.LampTome>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.GemBox>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
 
                 if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<WyvernMage>())))
                 { //If the boss has not yet been killed
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000); //Then drop the souls
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000); //Then drop the souls
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.shootSpeed = 12;
             Item.mana = 14;
             Item.value = 200000;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
         }
     }
 }

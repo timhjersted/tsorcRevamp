@@ -7,7 +7,7 @@ namespace tsorcRevamp.Items.Ammo {
 
         public override void SetDefaults() {
             Item.consumable = true;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.width = 14;
             Item.height = 20;
             Item.maxStack = 9999;

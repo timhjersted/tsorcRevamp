@@ -192,7 +192,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat"), 0.9f);
             }
 
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FlameOfTheAbyss>());
         }
         #endregion
 

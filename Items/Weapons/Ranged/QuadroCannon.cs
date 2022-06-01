@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
             Item.shootSpeed = 10;
             Item.noMelee = true;
             Item.value = PriceByRarity.Red_10;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.autoReuse = true;
             Item.useAmmo = AmmoID.Bullet;
         }

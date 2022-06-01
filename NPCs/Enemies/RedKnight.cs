@@ -115,8 +115,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 //play creature sounds
                 if (Main.rand.Next(1500) == 1)
                 {
-                    
-                    Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)NPC.position.X, (int)NPC.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/ominous-creature2"), 0.5f, 0.0f);
+
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/ominous-creature2") with { Volume = 0.5f }, NPC.Center);
                     //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
                 }
 
@@ -201,23 +201,23 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     //if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
                     //{
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.1f), NPC.position); //Play swing-throw sound
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center); //Play swing-throw sound
 
-                        //go to poison attack
-                        NPC.localAI[1] = 200f;
+                    //go to poison attack
+                    NPC.localAI[1] = 200f;
 
-                        //or chance to reset
-                        if (Main.rand.Next(3) == 1)
-                        {
-                            
-                            NPC.localAI[1] = 1f;
+                    //or chance to reset
+                    if (Main.rand.Next(3) == 1)
+                    {
 
-                        }
-                        
+                        NPC.localAI[1] = 1f;
+
+                    }
+
 
                     //}
-                    
+
 
                 }
 
@@ -251,7 +251,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
                                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
-                                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 45, 0.6f, 0.7f); //inferno fork, almost same as fire (works)
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.6f, Pitch = 0.7f }, NPC.Center); //inferno fork, almost same as fire (works)
                                                                                                              //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 48, 0.6f, 0.7f); // mine snow, tick sound
                                                                                                              //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 60, 0.6f, 0.0f); //terra beam
                                                                                                              //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
@@ -289,7 +289,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 10 + Main.rand.Next(10), (float)player.position.Y - 400f, (float)(-10 + Main.rand.Next(10)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
-                            Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20, 0.5f, -.01f);
+
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
                             
                             NPC.netUpdate = true;
                         }
@@ -329,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (((speed.X < 0f) && (npc.velocity.X < 0f)) || ((speed.X > 0f) && (npc.velocity.X > 0f)))
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.Center.X, npc.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.RedKnightsSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 0x11);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 
                         npc.localAI[1] = 185f;
                     }
@@ -364,16 +365,16 @@ namespace tsorcRevamp.NPCs.Enemies
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 2").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Red Knight Gore 3").Type, 1f);
 
-            if (Main.hardMode && Main.rand.Next(99) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion, 1);
-            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, 1);
+            if (Main.hardMode && Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.ForgottenPearlSpear>(), 1);
+            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 1);
+            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
+            if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1);
             
 
             if (tsorcRevampWorld.SuperHardMode)
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
-                if (Main.rand.Next(99) < 5) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.RedTitanite>(), 1 + Main.rand.Next(1));
+                if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>(), 1);
             }
         }
         #endregion

@@ -245,9 +245,9 @@ namespace tsorcRevamp.NPCs.Enemies {
 
 
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ItemID.Heart);
-            Item.NewItem(NPC.getRect(), ItemID.Heart); //no it cant be a stack of 2. it has to be 2 stacks of 1
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart); //no it cant be a stack of 2. it has to be 2 stacks of 1
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
 
             UsefulFunctions.BroadcastText("Hahahahaha! I'm going to destroy you, Red...", 150, 150, 150);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Mindflayer Gore 1").Type, 1f);

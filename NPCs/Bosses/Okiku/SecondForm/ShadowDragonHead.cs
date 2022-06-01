@@ -73,7 +73,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm {
 			return false;
 		}
         public override void OnKill() {
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 500);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 500);
         }
     }
 }

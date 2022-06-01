@@ -294,7 +294,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.rand.Next(2) == 0 && wooddropped < 5)
 				{
-					Item.NewItem(NPC.Bottom, ItemID.Wood);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, ItemID.Wood);
 					wooddropped++;
 				}
 
@@ -313,7 +313,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.rand.Next(3) == 0 && resindropped < 1)
 				{
-					Item.NewItem(NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
 					resindropped++;
 				}
 			}
@@ -349,7 +349,7 @@ namespace tsorcRevamp.NPCs.Enemies
 				}
 				if (Main.rand.Next(20) == 0 && resindropped < 1)
 				{
-					Item.NewItem(NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+					Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
 					resindropped++;
 				}
 			}
@@ -376,9 +376,9 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
 		public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
-			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
-			if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood, Main.rand.Next(2, 4));
+			if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CharcoalPineResin>());
+			if (Main.rand.NextFloat() >= 0.2f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>()); //80%
 
 		}
 	}

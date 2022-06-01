@@ -143,17 +143,17 @@ namespace tsorcRevamp.NPCs.Enemies
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Black Knight Gore 2").Type, 1f);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Black Knight Gore 3").Type, 1f);
 
-			if (Main.rand.Next(99) < 25) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.RoyalThrowingSpear>(), 26 + Main.rand.Next(10));
-			if (Main.rand.Next(99) < 40) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), 26 + Main.rand.Next(10));
-			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.EphemeralDust>(), 3 + Main.rand.Next(6));
-			if (Main.rand.Next(99) < 4) Item.NewItem(NPC.getRect(), ItemID.IronskinPotion, 1);
-			if (Main.rand.Next(99) < 4) Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 1);
-			if (Main.rand.Next(99) < 8) Item.NewItem(NPC.getRect(), ItemID.HunterPotion, 1);
-			if (Main.rand.Next(99) < 6) Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, 1);
-			if (Main.rand.Next(99) < 30) Item.NewItem(NPC.getRect(), ItemID.ShinePotion, 1);
-			if (Main.rand.Next(99) < 5) Item.NewItem(NPC.getRect(), ItemID.BattlePotion, 1);
-			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.getRect(), ItemID.GoldenKey, 1);
+			if (Main.rand.Next(99) < 25) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.RoyalThrowingSpear>(), 26 + Main.rand.Next(10));
+			if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Ranged.EphemeralThrowingSpear>(), 26 + Main.rand.Next(10));
+			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EphemeralDust>(), 3 + Main.rand.Next(6));
+			if (Main.rand.Next(99) < 4) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
+			if (Main.rand.Next(99) < 4) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 1);
+			if (Main.rand.Next(99) < 8) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HunterPotion, 1);
+			if (Main.rand.Next(99) < 6) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1);
+			if (Main.rand.Next(99) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion, 1);
+			if (Main.rand.Next(99) < 5) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.BattlePotion, 1);
+			if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GoldenKey, 1);
 		}
 		#endregion
 	}

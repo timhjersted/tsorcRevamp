@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.damage = 36;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.width = 44;
             Item.height = 44;
             Item.useTime = 17;

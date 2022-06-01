@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.height = 10;
             Item.knockBack = 4;
             Item.rare = ItemRarityID.Orange; //yes, even though it's hardmode
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 5;
             Item.UseSound = SoundID.Item21;

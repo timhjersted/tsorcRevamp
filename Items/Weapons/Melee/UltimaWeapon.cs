@@ -19,7 +19,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.height = 64;
             Item.width = 64;
             Item.knockBack = 14f;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
             Item.useAnimation = 21;
             Item.useTime = 21;

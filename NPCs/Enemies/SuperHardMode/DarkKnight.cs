@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 						Dust.NewDust(NPC.position, NPC.height, NPC.width, 14, 0.2f, 0.2f, 100, default(Color), 1f);
 					}					
 				}
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 3 + Main.rand.Next(2));
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.WhiteTitanite>(), 3 + Main.rand.Next(2));
 			}
 		}
 		#endregion

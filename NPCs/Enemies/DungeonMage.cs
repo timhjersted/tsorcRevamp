@@ -211,18 +211,18 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override void OnKill() {
-            Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion);
 
             if (Main.rand.Next(2) == 0) {
-                Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion);
             }
 
             if (Main.rand.NextFloat() <= .07f) {
-                Item.NewItem(NPC.getRect(), ItemID.SpellTome);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpellTome);
             }
 
             if (Main.rand.NextFloat() <= .3f) {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>());
             }
         }
 

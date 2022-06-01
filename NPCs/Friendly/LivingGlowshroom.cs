@@ -275,8 +275,8 @@ namespace tsorcRevamp.NPCs.Friendly
 		}
 		public override void OnKill()
 		{
-			Item.NewItem(NPC.getRect(), ItemID.GlowingMushroom);
-			Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 3);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GlowingMushroom);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type, 3);
 		}
 	}
 }

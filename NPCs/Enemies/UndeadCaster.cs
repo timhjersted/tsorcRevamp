@@ -68,45 +68,45 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player player = Main.player[NPC.target];
 
-            Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
-            Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
-            Item.NewItem(NPC.getRect(), ItemID.Heart, 1);
-            Item.NewItem(NPC.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
-            if (Main.rand.Next(8) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(1, 3));
+            if (Main.rand.Next(8) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Main.rand.Next(8) == 0)
             {
-                Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.Lifegem>());
             }
             else
             {
-                Item.NewItem(NPC.getRect(), ItemID.HealingPotion, 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.HealingPotion, 2);
             }
 
 
             if (Main.rand.NextFloat() <= .20f)
             {
-                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("WoodenWand").Type, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WoodenWand").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("WandOfDarkness").Type, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WandOfDarkness").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .05f)
             {
-                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("WandOfFire").Type, 1, false, -1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("WandOfFire").Type, 1, false, -1);
             }
             if (Main.rand.NextFloat() <= .12f)
             {
-                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("AttraidiesRelic").Type);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("AttraidiesRelic").Type);
             }
             if (Main.rand.NextFloat() <= .05f) //lol dead chicken as rare as a fire wand
             {
-                Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DeadChicken").Type);
             }
             if (Main.rand.NextFloat() <= .1f)
             {
-                Item.NewItem(NPC.getRect(), ItemID.SpellTome);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpellTome);
             }
         }
 

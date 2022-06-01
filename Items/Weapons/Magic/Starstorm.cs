@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.rare = ItemRarityID.LightRed;
             Item.mana = 13;
             Item.value = PriceByRarity.LightRed_4;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
         }
 
 

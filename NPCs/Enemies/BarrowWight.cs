@@ -271,13 +271,13 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
 
         public override void OnKill() {
-            if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.getRect(), ItemID.ShinePotion); }
-            if (Main.rand.Next(10) == 0) { Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion); }
-            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.getRect(), ItemID.MagicPowerPotion); }
-            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion); }
-            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.getRect(), ItemID.SpelunkerPotion); }
-            if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>(), 1, false, -1); }
-            if (Main.rand.Next(50) == 0) { Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
+            if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ShinePotion); }
+            if (Main.rand.Next(10) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion); }
+            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MagicPowerPotion); }
+            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion); }
+            if (Main.rand.Next(25) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.SpelunkerPotion); }
+            if (Main.rand.Next(5) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>(), 1, false, -1); }
+            if (Main.rand.Next(50) == 0) { Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>()); }
         }
 
         /* what the hell IS this? i cant find anything about it

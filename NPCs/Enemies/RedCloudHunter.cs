@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 		public override void OnKill()
 		{
-			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
+			if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Ammo.ArrowOfBard>(), Main.rand.Next(1, 3));
 		}
 
 		float customAi1;

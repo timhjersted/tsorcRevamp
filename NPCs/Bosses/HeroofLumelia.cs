@@ -109,7 +109,7 @@ namespace tsorcRevamp.NPCs.Bosses
 			bool hates_light = false;  //  flees in daylight like: Zombie, Skeleton, Undead Miner, Doctor Bones, The Groom, Werewolf, Clown, Bald Zombie, Possessed Armor
 			bool can_pass_doors_bloodmoon_only = false;  //  can open or break doors, but only during bloodmoon: zombies & bald zombies. Will keep trying anyway.
 
-			int sound_type = 0; // Parameter for Terraria.Audio.SoundEngine.PlaySound().  14 for Zombie, Skeleton, Angry Bones, Heavy Skeleton, Skeleton Archer, Bald Zombie.  26 for Mummy, Light & Dark Mummy. 0 means no sounds
+			Terraria.Audio.SoundStyle? sound_type = null; //What sound to play. Use SoundID.SoundName to pick one, 'null' is no sound.
 			int sound_frequency = 1000;  //  chance to play sound every frame, 1000 for zombie/skel, 500 for mummies
 
 			float acceleration = .05f;  //  how fast it can speed up
@@ -186,7 +186,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				{
 					NPC.velocity *= 0f; // stop moving
 					NPC.ai[3] = 0f; // reset boredom to 0
-					Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+					Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
 					Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
 					float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
 					float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
@@ -231,8 +231,8 @@ namespace tsorcRevamp.NPCs.Bosses
 			#region play creature sounds, target/face player, respond to boredom
 			if ((!hates_light || !Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0) && NPC.ai[3] < (float)boredom_time)
 			{   // not fleeing light & not bored
-				if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-					Terraria.Audio.SoundEngine.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
+				if (sound_type.HasValue && Main.rand.Next(sound_frequency) <= 0)
+					Terraria.Audio.SoundEngine.PlaySound(sound_type.Value, NPC.Center); // random creature sounds
 				if (!canDrown)
 				{
 					NPC.TargetClosest(true); //  Target the closest player & face him (If passed as a parameter, a bool will determine whether it should face the target or not)
@@ -469,7 +469,7 @@ namespace tsorcRevamp.NPCs.Bosses
 						int Spawned3 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.Assassin>(), 0);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-						Terraria.Audio.SoundEngine.PlaySound(3, -1, -1, 6, 0.3f, -.01f); //beast
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f, Pitch = -0.01f }, NPC.Center);
 						wolfSpawned1 = true;
 
 					}
@@ -478,10 +478,11 @@ namespace tsorcRevamp.NPCs.Bosses
 					{
 						int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
 						int Spawned2 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), NPCID.Wolf, 0);
-						
+
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-						Terraria.Audio.SoundEngine.PlaySound(3, -1, -1, 6, 0.3f, -.02f); //beast
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f, Pitch = -0.02f }, NPC.Center);
+
 						wolfSpawned2 = true;
 
 					}
@@ -492,14 +493,15 @@ namespace tsorcRevamp.NPCs.Bosses
 						int Spawned2 = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.RedCloudHunter>(), 0);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
 						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.MagicMirror, NPC.velocity.X, NPC.velocity.Y);
-						Terraria.Audio.SoundEngine.PlaySound(3, -1, -1, 6, 0.3f, .01f); //beast
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f, Pitch = 0.01f }, NPC.Center);
+
 						wolfSpawned3 = true;
 
 					}
 				}
 
 
-				
+
 
 				#region Projectiles
 
@@ -507,7 +509,7 @@ namespace tsorcRevamp.NPCs.Bosses
 				NPC.TargetClosest(true);
 
 				//JUSTHIT CODE
-				
+
 				if (NPC.justHit && NPC.Distance(player.Center) < 100)
 				{
 					customAi1 = 1f;
@@ -515,14 +517,14 @@ namespace tsorcRevamp.NPCs.Bosses
 				if (NPC.justHit && NPC.Distance(player.Center) < 350 && Main.rand.Next(3) == 1)//
 				{
 					NPC.velocity.Y = Main.rand.NextFloat(-9f, -3f); //was 6 and 3
-                    float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
-                    NPC.velocity.X = v;
-					if(Main.rand.Next(2) == 1) 
+					float v = NPC.velocity.X + (float)NPC.direction * Main.rand.NextFloat(-6f, -4f);
+					NPC.velocity.X = v;
+					if (Main.rand.Next(2) == 1)
 					{ customAi1 = 70f; } //was 100 but knife goes away and doesn't shoot consistently
 					else
 					{ customAi1 = 240f; }
-					
-					
+
+
 					NPC.netUpdate = true;
 				}
 				if (NPC.justHit && NPC.Distance(player.Center) > 351 && Main.rand.Next(3) == 1)
@@ -535,11 +537,11 @@ namespace tsorcRevamp.NPCs.Bosses
 				}
 
 				//ARROWS FROM ARCHERS NEARBY ATTACK
-				if (NPC.Distance(player.Center) < 500 && Main.rand.Next(350) == 0) 
+				if (NPC.Distance(player.Center) < 500 && Main.rand.Next(350) == 0)
 				{
 					Player nT = Main.player[NPC.target];
 
-				
+
 					if (Main.rand.Next(4) == 0)
 					{
 						UsefulFunctions.BroadcastText("Archers nearby!", 175, 75, 255);
@@ -549,10 +551,11 @@ namespace tsorcRevamp.NPCs.Bosses
 					{
 						//Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
 						Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 800f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
-						
+
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
+
 						NPC.netUpdate = true;
-						
+
 					}
 				}
 
@@ -569,20 +572,21 @@ namespace tsorcRevamp.NPCs.Bosses
 					for (int pcy = 0; pcy < 12; pcy++)
 					{
 						Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(400), (float)nT.position.Y - 900f, (float)(-50 + Main.rand.Next(100)) / 10, 9.1f, ModContent.ProjectileType<Projectiles.Enemy.HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer); //was 8.9f near 10, tried Main.rand.Next(2, 5)
-						Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 5);
-						
+
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
+
 						NPC.netUpdate = true;
-						
+
 					}
 				}
 
 
-				
+
 
 				//JUMP BEFORE KNIFE ATTACK SOMETIMES
 				if (customAi1 == 130f && NPC.velocity.Y == 0f && NPC.life >= 1001 && Main.rand.Next(2) == 1)
-					//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
-					{
+				//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
+				{
 
 					NPC.velocity.Y = Main.rand.NextFloat(-10f, -5f);
 
@@ -591,10 +595,10 @@ namespace tsorcRevamp.NPCs.Bosses
 					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 						//customAi1 = 132f;
 					}
-					
+
 					NPC.netUpdate = true;
 				}
 
@@ -602,18 +606,18 @@ namespace tsorcRevamp.NPCs.Bosses
 				if (customAi1 >= 130f && customAi1 <= 148f && NPC.life <= 1000)
 				//if (customAi1 >= 130f && customAi1 <= 131f && npc.velocity.Y == 0f && Main.rand.Next(2) == 1)
 				{
-					if(NPC.velocity.Y == 0f)
-					{ 
-						NPC.velocity.Y = Main.rand.NextFloat(-11f, -8f); 
+					if (NPC.velocity.Y == 0f)
+					{
+						NPC.velocity.Y = Main.rand.NextFloat(-11f, -8f);
 					}
-					
+
 
 					Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 8); //0.4f, true, true																								
 					speed += Main.rand.NextVector2Circular(-4, -2);
 					if (Main.rand.Next(4) == 1 && ((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
 						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-						Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 						//customAi1 = 132f;
 					}
 
@@ -623,68 +627,68 @@ namespace tsorcRevamp.NPCs.Bosses
 				//THROW KNIFE
 				//&& Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1)
 				//if (Collision.CanHitLine(npc.position, npc.width, npc.height, Main.player[npc.target].position, Main.player[npc.target].width, Main.player[npc.target].height))			
-				if (customAi1 == 152 )	
+				if (customAi1 == 152)
 				{
-				Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true
-				//speed += Main.rand.NextVector2Circular(-3, -1);
-				speed += Main.player[NPC.target].velocity / 2;
+					Vector2 speed = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 12); //0.4f, true, true
+																														 //speed += Main.rand.NextVector2Circular(-3, -1);
+					speed += Main.player[NPC.target].velocity / 2;
 					if (((speed.X < 0f) && (NPC.velocity.X < 0f)) || ((speed.X > 0f) && (NPC.velocity.X > 0f)))
 					{
-							Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
-							Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+						Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 0f, Main.myPlayer);
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
 
-							//go to smoke bomb attack
-							customAi1 = 200f;
-							NPC.knockBackResist = 0.1f;
+						//go to smoke bomb attack
+						customAi1 = 200f;
+						NPC.knockBackResist = 0.1f;
 
-							if (Main.rand.Next(2) == 1)
-							{
+						if (Main.rand.Next(2) == 1)
+						{
 							//or chance to reset - decided not to use for now
 							//customAi1 = 1f;
-							}
+						}
 					}
 					NPC.netUpdate = true;
 
 				}
-				
+
 				//SMOKE BOMB DUST TELEGRAPH
 				if (customAi1 >= 220 && customAi1 >= 280) //&& npc.Distance(player.Center) > 10
 				{
-							Lighting.AddLight(NPC.Center, Color.Green.ToVector3() * 1f); 
-							if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 1)
-							{
-								Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
-							}
+					Lighting.AddLight(NPC.Center, Color.Green.ToVector3() * 1f);
+					if (Main.rand.Next(2) == 1 && NPC.Distance(player.Center) > 1)
+					{
+						Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
+					}
 
-							//JUMP BEFORE BOMB ATTACK SOMETIMES
-							if (customAi1 == 260f && NPC.velocity.Y == 0f && Main.rand.Next(2) == 1)
-							{
-								NPC.velocity.Y = Main.rand.NextFloat(-8f, -4f);
-								NPC.netUpdate = true;
-							}
+					//JUMP BEFORE BOMB ATTACK SOMETIMES
+					if (customAi1 == 260f && NPC.velocity.Y == 0f && Main.rand.Next(2) == 1)
+					{
+						NPC.velocity.Y = Main.rand.NextFloat(-8f, -4f);
+						NPC.netUpdate = true;
+					}
 
-							//SMOKE BOMB ATTACK
-							if (customAi1 >= 280) //&& npc.Distance(player.Center) > 10
+					//SMOKE BOMB ATTACK
+					if (customAi1 >= 280) //&& npc.Distance(player.Center) > 10
+					{
+						NPC.TargetClosest(true);
+
+						if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
+						{
+							Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10); //, 0.2f, false, false
+							speed2 += Main.rand.NextVector2Circular(-4, 0);
+							//speed2 += Main.player[npc.target].velocity / 2;
+							if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
 							{
-								NPC.TargetClosest(true);
-							
-								if (Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1))
-								{
-											Vector2 speed2 = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 10); //, 0.2f, false, false
-											speed2 += Main.rand.NextVector2Circular(-4, 0);
-											//speed2 += Main.player[npc.target].velocity / 2;
-											if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
-											{
-												Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
-												Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(.8f).WithPitchVariance(.3f), NPC.position); //Play swing-throw sound
-												customAi1 = 1f;
-											}
-								}
+								Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySmokebomb>(), smokebombDamage, 0f, Main.myPlayer);
+								Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f}, NPC.Center); //Play swing-throw sound
+								customAi1 = 1f;
 							}
+						}
+					}
 				}
-				
+
 				#endregion
-				
+
 			}
 			#endregion
 			//-------------------------------------------------------------------
@@ -934,7 +938,8 @@ namespace tsorcRevamp.NPCs.Bosses
 					NPC.life--;
 					if (NPC.life <= 0)
 					{
-						Terraria.Audio.SoundEngine.PlaySound(4, (int)NPC.position.X, (int)NPC.position.Y, 1);
+
+						Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath1, NPC.Center);
 						NPC.NPCLoot();
 						NPC.netUpdate = true;
 					}
@@ -1001,15 +1006,15 @@ namespace tsorcRevamp.NPCs.Bosses
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Hero of Lumelia Gore 2").Type, 1f);
 			Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Hero of Lumelia Gore 3").Type, 1f);
 
-			if (Main.rand.Next(99) < 90) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-			if (Main.rand.Next(99) < 6) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
-			Item.NewItem(NPC.getRect(), ItemID.GreaterHealingPotion, 3);
-			Item.NewItem(NPC.getRect(), ItemID.ArcheryPotion, 1);
-			Item.NewItem(NPC.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
+			if (Main.rand.Next(99) < 90) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+			if (Main.rand.Next(99) < 6) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.AncientWarhammer>(), 1, false, -1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ObsidianSkinPotion, 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 3);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RegenerationPotion, 1 + Main.rand.Next(3));
 
 		}
 		#endregion

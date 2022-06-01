@@ -50,8 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode {
 
         public override void OnKill()
         {
-            if (Main.rand.Next(3) == 0) Item.NewItem(NPC.getRect(), ItemID.RottenChunk, Main.rand.Next(1, 5));
-            Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("CursedSoul").Type, Main.rand.Next(8, 16));
+            if (Main.rand.Next(3) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.RottenChunk, Main.rand.Next(1, 5));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("CursedSoul").Type, Main.rand.Next(8, 16));
         }
 
         public override void HitEffect(int hitDirection, double damage) {

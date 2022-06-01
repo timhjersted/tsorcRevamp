@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Blue;
             Item.shootSpeed = 6f;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 9;
             Item.useAnimation = 27;

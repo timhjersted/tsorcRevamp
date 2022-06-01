@@ -150,20 +150,20 @@ namespace tsorcRevamp.NPCs.Enemies
 		}
         public override void OnKill()
 		{
-			if(Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
-			//if(Main.rand.Next(99) < 60)Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.Piercing>(), 1);
-			if (Main.rand.Next(99) < 40) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);
-			//if(Main.rand.Next(99) <= 60)Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>(), 1);
-			if (Main.rand.Next(99) < 20) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
-			if (Main.rand.Next(99) < 40) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
-			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
-			Item.NewItem(NPC.getRect(), ItemID.IronskinPotion, 1);
-			Item.NewItem(NPC.getRect(), ItemID.ManaRegenerationPotion, 1);
-			Item.NewItem(NPC.getRect(), ItemID.ArcheryPotion, 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfGreatCosmicPower>(), 1);
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
-			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.BarrierRing>(), 1);
-			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);						
+			if(Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.CrimsonPotion>(), 1);
+			//if(Main.rand.Next(99) < 60)Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.Piercing>(), 1);
+			if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.StrengthPotion>(), 1);
+			//if(Main.rand.Next(99) <= 60)Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.Potions.FiresoulPotion>(), 1);
+			if (Main.rand.Next(99) < 20) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.ShockwavePotion>(), 1);
+			if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
+			if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.IronskinPotion, 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ManaRegenerationPotion, 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.ArcheryPotion, 1);
+			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BandOfGreatCosmicPower>(), 1);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
+			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BarrierRing>(), 1);
+			if (Main.rand.Next(99) < 10) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.EyeOfTheGods>(), 1);						
 		}
 	}
 }

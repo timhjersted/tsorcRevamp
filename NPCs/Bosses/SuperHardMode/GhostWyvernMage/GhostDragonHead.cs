@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
                 }
                 else
                 {
-                    Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
                 }
             } else
             {

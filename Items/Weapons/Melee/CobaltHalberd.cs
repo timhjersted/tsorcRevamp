@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
             Item.height = 74;
             Item.knockBack = (float)6;
             Item.maxStack = 1;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.autoReuse = false;
             Item.scale = 1;
             Item.useAnimation = 28;

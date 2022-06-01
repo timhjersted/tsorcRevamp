@@ -68,7 +68,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (Main.rand.Next(20) == 0 && resindropped < 1)
                 {
-                    Item.NewItem(NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
                     resindropped++;
                 }
             }
@@ -96,7 +96,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 if (Main.rand.Next(30) == 0 && resindropped < 1)
                 {
-                    Item.NewItem(NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.Bottom, Mod.Find<ModItem>("CharcoalPineResin").Type);
                     resindropped++;
                 }
             }
@@ -122,15 +122,15 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         public override void OnKill()
         {
-            Item.NewItem(NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
-            Item.NewItem(NPC.getRect(), ItemID.Wood);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), Mod.Find<ModItem>("DarkSoul").Type);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood);
 
             if (Main.rand.Next(3) == 0) //sometimes drop 2 wood
             {
-                Item.NewItem(NPC.getRect(), ItemID.Wood);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Wood);
             }
 
-            if (Main.rand.Next(8) == 0) Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
+            if (Main.rand.Next(8) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.GreenBlossom>());
 
         }
     }

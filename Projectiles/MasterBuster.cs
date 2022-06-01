@@ -39,7 +39,7 @@ namespace tsorcRevamp.Projectiles {
             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MasterBuster];           
 
             if (IsAtMaxCharge) {
-                DrawLaser(spriteBatch, texture, Main.player[Projectile.owner].Center,
+                DrawLaser(Main.spriteBatch, texture, Main.player[Projectile.owner].Center,
                     Projectile.velocity, 10, Projectile.damage, -1.57f, 1f, 2000f, Color.White, (int)MOVE_DISTANCE);
             }
             return false;

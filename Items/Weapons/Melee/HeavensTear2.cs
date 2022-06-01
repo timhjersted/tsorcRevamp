@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Purple_11;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<Projectiles.HeavenBall>();
         }
 

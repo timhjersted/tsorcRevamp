@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Enemies {
         }
         public override void OnKill()
         {
-            Item.NewItem(NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 3);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HealingElixir>(), 3);
         }
 
         public override void HitEffect(int hitDirection, double damage) {

@@ -118,11 +118,11 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage {
 		public override void OnKill() {
 
 			//Kind of like EoW, it always drops this many extra souls whether it's been killed or not.
-			Item.NewItem(NPC.getRect(), ModContent.ItemType<DarkSoul>(),900);
+			Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(),900);
 			
 			if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<MechaDragonHead>())))
 			{ //If the boss has not yet been killed
-				Item.NewItem(NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5000); //Then drop the souls
+				Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5000); //Then drop the souls
 			}
 		}
     }
