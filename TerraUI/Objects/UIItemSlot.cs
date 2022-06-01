@@ -294,7 +294,7 @@ namespace TerraUI.Objects {
             if(Item.stack > 1) {
                 ChatManager.DrawColorCodedStringWithShadow(
                     spriteBatch,
-                    Main.fontItemStack,
+                    FontAssets.ItemStack.Value,
                     Item.stack.ToString(),
                     RelativePosition + new Vector2(9f, 22f) * Scale(false),
                     Color.White,

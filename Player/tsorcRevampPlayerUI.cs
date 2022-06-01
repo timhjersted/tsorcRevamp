@@ -56,7 +56,7 @@ namespace tsorcRevamp {
             int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
 
             SoulSlot.Position = new Vector2(slotPosX, slotPosY);
-            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, Main.fontMouseText, "Souls", new Vector2(slotPosX + 6f, slotPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0f);
+            DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, "Souls", new Vector2(slotPosX + 6f, slotPosY - 15), new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor), 0f, default, 0.75f, SpriteEffects.None, 0f);
 
             SoulSlot.Draw(spriteBatch);
 
