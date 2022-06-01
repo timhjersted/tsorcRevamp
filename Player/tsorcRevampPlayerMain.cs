@@ -518,16 +518,16 @@ namespace tsorcRevamp
             }
             if (crit) {
                 if (item.DamageType == DamageClass.Melee) {
-                    DoMultiCrits(ref damage, Player.meleeCrit);
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
                 else if (item.DamageType == DamageClass.Magic) {
-                    DoMultiCrits(ref damage, Player.magicCrit);
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
                 else if (item.DamageType == DamageClass.Ranged) {
-                    DoMultiCrits(ref damage, Player.rangedCrit);
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
                 else if (item.DamageType == DamageClass.Throwing) {
-                    DoMultiCrits(ref damage, Player.thrownCrit); //lol
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
         }
@@ -546,16 +546,16 @@ namespace tsorcRevamp
 
             if (crit) {
                 if (proj.melee) {
-                    DoMultiCrits(ref damage, Player.meleeCrit);
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Melee));
                 }
                 else if (proj.magic) {
-                    DoMultiCrits(ref damage, Player.magicCrit);
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Magic));
                 }
                 else if (proj.ranged) {
-                    DoMultiCrits(ref damage, Player.rangedCrit);
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Ranged));
                 }
                 else if (proj.thrown) {
-                    DoMultiCrits(ref damage, Player.thrownCrit); //lol
+                    DoMultiCrits(ref damage, Player.GetCritChance(DamageClass.Throwing)); //lol
                 }
             }
         }

@@ -35,9 +35,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
 
-            if (!Main.dayTime && player.magicDamage > 1)
+            if (!Main.dayTime && player.GetDamage(DamageClass.Magic) > 1)
             {
-                damage = (int)(damage * player.magicDamage);
+                damage = (int)(damage * player.GetDamage(DamageClass.Magic));
             }
 
             return true;
@@ -48,9 +48,9 @@ namespace tsorcRevamp.Items.Weapons.Melee {
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            if (!Main.dayTime && player.magicDamage > 1)
+            if (!Main.dayTime && player.GetDamage(DamageClass.Magic) > 1)
             {
-                damage = (int)(damage * player.magicDamage);
+                damage = (int)(damage * player.GetDamage(DamageClass.Magic));
             }
         }
 

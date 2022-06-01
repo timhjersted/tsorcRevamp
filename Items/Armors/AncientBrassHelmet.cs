@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Armors
         {
             player.statDefense += 6;
             player.moveSpeed += 0.1f;
-            player.rangedDamage += 0.05f;
+            player.GetDamage(DamageClass.Ranged) += 0.05f;
         }
 
         public override void AddRecipes()

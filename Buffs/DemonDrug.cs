@@ -11,7 +11,7 @@ namespace tsorcRevamp.Buffs {
         }
 
         public override void Update(Player player, ref int buffIndex) {
-            player.allDamage += 0.2f;
+            player.GetDamage(DamageClass.Generic) += 0.2f;
             player.statDefense -= 20;
         }
     }

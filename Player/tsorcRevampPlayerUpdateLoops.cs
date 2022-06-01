@@ -481,7 +481,7 @@ namespace tsorcRevamp {
 
             if (MiakodaCrescentBoost)
             {
-                Player.allDamageMult += 0.07f;
+                Player.GetDamage(DamageClass.Generic) *= 0.07f;
             }
 
             if (MiakodaNewBoost)
@@ -652,7 +652,7 @@ namespace tsorcRevamp {
                     }
                     FallDist = (int)((Player.position.Y - fallStartY) / 16);
                     if (FallDist > 5) {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Player.Center.X, (int)Player.Center.Y, 14);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Player.Center);
                         for (int i = -9; i < 10; i++) { //19 projectiles
                             Vector2 shotDirection = new Vector2(0f, -16f);
                             int shockwaveShot = Projectile.NewProjectile(Player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
@@ -836,7 +836,7 @@ namespace tsorcRevamp {
                 Player.jumpSpeedBoost += 10f;
             }
             if (DragoonHorn && (((Player.gravDir == 1f) && (Player.velocity.Y > 0)) || ((Player.gravDir == -1f) && (Player.velocity.Y < 0)))) {
-                Player.meleeDamage *= 2;
+                Player.GetDamage(DamageClass.Melee) *= 2;
             }
         }
 
@@ -914,7 +914,7 @@ namespace tsorcRevamp {
                     int dust = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 29, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust].noGravity = true;
 
-                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.TorchworkFountain_Blue, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
+                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, DustID.FireworkFountain_Blue, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
                     Main.dust[dust2].noGravity = true;
                 }
             }
@@ -1044,7 +1044,7 @@ namespace tsorcRevamp {
 
             if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                Player.allDamageMult *= 1.2f;
+                Player.GetDamage(DamageClass.Generic) *= 1.2f;
 
                 if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
                 {

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void UpdateEquip(Player player) {
-            player.meleeSpeed += 0.09f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -29,13 +29,13 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void UpdateArmorSet(Player player) {
-            player.meleeDamage += 0.09f;
-            player.rangedDamage += 0.09f;
+            player.GetDamage(DamageClass.Melee) += 0.09f;
+            player.GetDamage(DamageClass.Ranged) += 0.09f;
             player.statManaMax2 += 60;
-            player.rangedCrit += 8;
-            player.magicCrit += 8;
-            player.meleeCrit += 8;
-            player.thrownCrit += 8; //lol
+            player.GetCritChance(DamageClass.Ranged) += 8;
+            player.GetCritChance(DamageClass.Magic) += 8;
+            player.GetCritChance(DamageClass.Melee) += 8;
+            player.GetCritChance(DamageClass.Throwing) += 8; //lol
         }
 
         public override void AddRecipes() {

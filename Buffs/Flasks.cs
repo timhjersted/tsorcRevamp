@@ -15,7 +15,7 @@ namespace tsorcRevamp.Buffs {
                 || type == BuffID.WeaponImbueConfetti
                 || type == BuffID.WeaponImbuePoison
                 ) {
-                player.meleeDamage += 0.1f;
+                player.GetDamage(DamageClass.Melee) += 0.1f;
             }
         }
 

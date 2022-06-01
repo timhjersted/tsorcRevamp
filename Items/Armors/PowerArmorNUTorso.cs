@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.rangedDamage += 0.17f;
-            player.magicDamage += 0.17f;
+            player.GetDamage(DamageClass.Ranged) += 0.17f;
+            player.GetDamage(DamageClass.Magic) += 0.17f;
             player.manaCost -= 0.50f;
             player.statManaMax2 += 80;
         }

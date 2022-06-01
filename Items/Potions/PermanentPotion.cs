@@ -146,7 +146,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void PotionEffect(Player player) {
-            player.magicDamage += 0.2f;
+            player.GetDamage(DamageClass.Magic) += 0.2f;
             player.buffImmune[BuffID.MagicPower] = true;
         }
     }
@@ -313,9 +313,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.statDefense -= 4;
-            player.meleeDamage += 0.1f;
-            player.meleeCrit += 2;
-            player.meleeSpeed += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetCritChance(DamageClass.Melee) += 2;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.Tipsy] = true;
         }
     }
@@ -330,7 +330,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 1;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueVenom] = true;
         }
     }
@@ -344,7 +344,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 2;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueCursedFlames] = true;
         }
     }
@@ -359,7 +359,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 3;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueFire] = true;
         }
     }
@@ -374,7 +374,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 4;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueGold] = true;
         }
     }
@@ -389,7 +389,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 5;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueIchor] = true;
         }
     }
@@ -404,7 +404,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 6;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueNanites] = true;
         }
     }
@@ -419,7 +419,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 7;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbueConfetti] = true;
         }
     }
@@ -434,7 +434,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
 
         public override void PotionEffect(Player player) {
             player.meleeEnchant = 8;
-            player.meleeDamage += 0.1f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
             player.buffImmune[BuffID.WeaponImbuePoison] = true;
         }
     }
@@ -591,10 +591,10 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void PotionEffect(Player player) {
-            player.magicCrit += 10;
-            player.meleeCrit += 10;
-            player.rangedCrit += 10;
-            player.thrownCrit += 10;
+            player.GetCritChance(DamageClass.Magic) += 10;
+            player.GetCritChance(DamageClass.Melee) += 10;
+            player.GetCritChance(DamageClass.Ranged) += 10;
+            player.GetCritChance(DamageClass.Throwing) += 10;
             player.buffImmune[BuffID.Rage] = true;
         }
     }
@@ -655,7 +655,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void PotionEffect(Player player) {
-            player.allDamage += 0.1f;
+            player.GetDamage(DamageClass.Generic) += 0.1f;
             player.buffImmune[BuffID.Wrath] = true;
         }
     }
@@ -765,11 +765,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             modPlayer.PermanentBuffToggles[51] = true;
             modPlayer.PermanentBuffToggles[45] = true;
             player.statDefense += 17;
-            player.allDamage += 0.3f;
-            player.magicCrit += 6;
-            player.meleeCrit += 6;
-            player.rangedCrit += 6;
-            player.meleeSpeed += 0.2f;
+            player.GetDamage(DamageClass.Generic) += 0.3f;
+            player.GetCritChance(DamageClass.Magic) += 6;
+            player.GetCritChance(DamageClass.Melee) += 6;
+            player.GetCritChance(DamageClass.Ranged) += 6;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
             player.pickSpeed += 0.2f;
             player.thorns += 2f;
             player.enemySpawns = true;
@@ -788,9 +788,9 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         }
 
         public override void PotionEffect(Player player) {
-            player.magicCrit += 5;
-            player.meleeCrit += 5;
-            player.rangedCrit += 5;
+            player.GetCritChance(DamageClass.Magic) += 5;
+            player.GetCritChance(DamageClass.Melee) += 5;
+            player.GetCritChance(DamageClass.Ranged) += 5;
             player.buffImmune[ModContent.BuffType<Boost>()] = true;
         }
     }
@@ -829,7 +829,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             modPlayer.PermanentBuffToggles[46] = true;
             modPlayer.PermanentBuffToggles[51] = true;
             modPlayer.PermanentBuffToggles[45] = true;
-            player.allDamage += 0.2f;
+            player.GetDamage(DamageClass.Generic) += 0.2f;
             player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
             player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
             player.buffImmune[ModContent.BuffType<Strength>()] = true;
@@ -873,12 +873,12 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
             modPlayer.PermanentBuffToggles[49] = true;
             modPlayer.PermanentBuffToggles[45] = true;
             player.statDefense += 15;
-            player.allDamage += 0.15f;
-            player.meleeSpeed += 0.15f;
+            player.GetDamage(DamageClass.Generic) += 0.15f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
             player.pickSpeed += 0.15f;
-            player.magicCrit += 2;
-            player.meleeCrit += 2;
-            player.rangedCrit += 2;
+            player.GetCritChance(DamageClass.Magic) += 2;
+            player.GetCritChance(DamageClass.Melee) += 2;
+            player.GetCritChance(DamageClass.Ranged) += 2;
             player.buffImmune[ModContent.BuffType<ArmorDrug>()] = true;
             player.buffImmune[ModContent.BuffType<DemonDrug>()] = true;
             player.buffImmune[ModContent.BuffType<Strength>()] = true;
@@ -915,11 +915,11 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions {
         public override void PotionEffect(Player player) {
             player.wellFed = true;
             player.statDefense += 2;
-            player.meleeCrit += 2;
-            player.rangedCrit += 2;
-            player.magicCrit += 2;
-            player.meleeSpeed += 0.05f;
-            player.allDamage += 0.05f;
+            player.GetCritChance(DamageClass.Melee) += 2;
+            player.GetCritChance(DamageClass.Ranged) += 2;
+            player.GetCritChance(DamageClass.Magic) += 2;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.05f;
+            player.GetDamage(DamageClass.Generic) += 0.05f;
             player.minionKB += 0.5f;
             player.moveSpeed += 0.20f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;

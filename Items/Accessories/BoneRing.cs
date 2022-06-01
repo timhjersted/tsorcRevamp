@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.rangedDamage += 0.08f;
-            player.rangedCrit += 8;
+            player.GetDamage(DamageClass.Ranged) += 0.08f;
+            player.GetCritChance(DamageClass.Ranged) += 8;
         }
 
     }

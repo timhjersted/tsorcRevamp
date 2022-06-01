@@ -52,8 +52,8 @@ namespace tsorcRevamp.Items.Accessories
 
             base.UpdateEquip(player);
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
-            player.rangedDamage = 0.01f;
-            player.magicDamage = 0.01f;
+            player.GetDamage(DamageClass.Ranged) = 0.01f;
+            player.GetDamage(DamageClass.Magic) = 0.01f;
             player.minionDamage = 0.01f;
             if (player.statMana >= manaCost)
             {

@@ -90,8 +90,8 @@ namespace tsorcRevamp.Projectiles {
                 }
             }
             else if (Projectile.ai[0] == 1f) {
-                float elasticFactorA = 14f / player.meleeSpeed;
-                float elasticFactorB = 0.9f / player.meleeSpeed;
+                float elasticFactorA = 14f / player.GetAttackSpeed(DamageClass.Melee);
+                float elasticFactorB = 0.9f / player.GetAttackSpeed(DamageClass.Melee);
                 float maxStretchLength = 300f; //flails force retract, even through walls, when they reach this length
 
                 if (Projectile.ai[1] == 1f)

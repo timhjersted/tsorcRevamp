@@ -22,9 +22,9 @@ namespace tsorcRevamp.Items.Accessories {
 			player.noKnockback = true;
 			player.AddBuff(22, 500, false); //Darkness
 			player.AddBuff(13, 500, false); //Battle Potion
-			player.rangedCrit += 25;
-			player.meleeCrit += 25;
-			player.magicCrit += 25;
+			player.GetCritChance(DamageClass.Ranged) += 25;
+			player.GetCritChance(DamageClass.Melee) += 25;
+			player.GetCritChance(DamageClass.Magic) += 25;
         }
  
     }

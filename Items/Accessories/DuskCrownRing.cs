@@ -23,8 +23,8 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             player.statLifeMax2 /= 2;
 			player.manaCost -= 0.5f;
-			player.magicDamage *= 2;
-			player.magicCrit += 50;
+			player.GetDamage(DamageClass.Magic) *= 2;
+			player.GetCritChance(DamageClass.Magic) += 50;
 			player.GetModPlayer<tsorcRevampPlayer>().DuskCrownRing = true;
 			
         }

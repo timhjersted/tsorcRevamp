@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.magicDamage += 0.25f;
+            player.GetDamage(DamageClass.Magic) += 0.25f;
             player.statManaMax2 += 100;
         }
 

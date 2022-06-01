@@ -33,8 +33,8 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.meleeDamage -= 2f;
-            player.meleeCrit = -50;
+            player.GetDamage(DamageClass.Melee) -= 2f;
+            player.GetCritChance(DamageClass.Melee) = -50;
             if (player.statLife <= 80) {
                 player.statDefense += 85;
             }

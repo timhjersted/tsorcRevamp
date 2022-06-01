@@ -22,12 +22,12 @@ namespace tsorcRevamp.Buffs
         {
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                player.allDamageMult *= 1.4f;
+                player.GetDamage(DamageClass.Generic) *= 1.4f;
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.6f;
             }
             else
             {
-                player.allDamageMult *= 1.2f;
+                player.GetDamage(DamageClass.Generic) *= 1.2f;
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 1.3f;
             }
 

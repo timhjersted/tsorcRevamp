@@ -24,7 +24,7 @@ namespace tsorcRevamp.Buffs
             {
                 Projectile.NewProjectile(player.position.X + player.width / 2, player.position.Y + player.height / 2, 0f, 0f, ModContent.ProjectileType<Projectiles.Pets.MiakodaCrescent>(), 0, 0f, player.whoAmI, 0f, 0f);
             }
-            player.allDamageMult += 0.03f;
+            player.GetDamage(DamageClass.Generic) *= 0.03f;
         }
     }
 }

@@ -57,7 +57,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         
         public override void ModifyHitNPC(Player player, NPC npc, ref int damage, ref float knockBack, ref bool crit )
         {
-            //damage = (int) ((Main.rand.Next(26)) * (P.meleeDamage));
+            //damage = (int) ((Main.rand.Next(26)) * (P.GetDamage(DamageClass.Melee)));
             if (npc.FullName == "Tim") damage *= 2;
             else if (npc.FullName == "Dark Caster") damage *= 2;
             else if (npc.FullName == "Goblin Sorcerer") damage *= 2;

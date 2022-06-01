@@ -27,14 +27,14 @@ namespace tsorcRevamp.Items.Armors {
         public override void UpdateArmorSet(Player player) {
             if (player.statLife <= 160) {
                 player.archery = true;
-                player.rangedCrit += 19;
+                player.GetCritChance(DamageClass.Ranged) += 19;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 6, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Black, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
 
             else {
-                player.rangedCrit += 5;
+                player.GetCritChance(DamageClass.Ranged) += 5;
             }
         }
 

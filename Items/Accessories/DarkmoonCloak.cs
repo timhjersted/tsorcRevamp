@@ -46,15 +46,15 @@ namespace tsorcRevamp.Items.Accessories {
             {
                 player.manaRegenBuff = true;
                 player.starCloak = true;
-                player.magicCrit += 15;
-                player.magicDamage += .15f;
+                player.GetCritChance(DamageClass.Magic) += 15;
+                player.GetDamage(DamageClass.Magic) += .15f;
 
             }
             else
             {
                 player.starCloak = true;
-                player.magicCrit += 5;
-                player.magicDamage += .05f;
+                player.GetCritChance(DamageClass.Magic) += 5;
+                player.GetDamage(DamageClass.Magic) += .05f;
             }
         }
 

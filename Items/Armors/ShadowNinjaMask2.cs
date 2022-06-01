@@ -29,12 +29,12 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void UpdateArmorSet(Player player) {
-            player.allDamage += 0.3f;
-            player.meleeSpeed += 0.3f;
-            player.magicCrit += 30;
-            player.meleeCrit += 30;
-            player.rangedCrit += 30;
-            player.thrownCrit += 30; //lol
+            player.GetDamage(DamageClass.Generic) += 0.3f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
+            player.GetCritChance(DamageClass.Magic) += 30;
+            player.GetCritChance(DamageClass.Melee) += 30;
+            player.GetCritChance(DamageClass.Ranged) += 30;
+            player.GetCritChance(DamageClass.Throwing) += 30; //lol
             player.fireWalk = true;
             player.noFallDmg = true;
             player.noKnockback = true;

@@ -12,12 +12,12 @@ namespace tsorcRevamp.Buffs {
 
         public override void Update(Player player, ref int buffIndex) {
             player.statDefense += 15;
-            player.allDamage += 0.15f;
-            player.meleeSpeed += 0.15f;
+            player.GetDamage(DamageClass.Generic) += 0.15f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
             player.pickSpeed += 0.15f;
-            player.magicCrit += 2;
-            player.meleeCrit += 2;
-            player.rangedCrit += 2;
+            player.GetCritChance(DamageClass.Magic) += 2;
+            player.GetCritChance(DamageClass.Melee) += 2;
+            player.GetCritChance(DamageClass.Ranged) += 2;
         }
     }
 }

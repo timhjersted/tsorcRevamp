@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.statDefense -= 30; //because 10 defense is a joke
-            player.allDamage += 0.3f;
+            player.GetDamage(DamageClass.Generic) += 0.3f;
 
         }
 

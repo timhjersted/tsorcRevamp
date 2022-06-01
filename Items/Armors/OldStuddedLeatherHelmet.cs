@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.rangedDamage += 0.07f;
-            player.rangedCrit += 5;
+            player.GetDamage(DamageClass.Ranged) += 0.07f;
+            player.GetCritChance(DamageClass.Ranged) += 5;
             player.moveSpeed += 0.1f;
         }
 

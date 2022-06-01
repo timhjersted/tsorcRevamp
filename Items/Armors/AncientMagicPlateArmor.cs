@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeSpeed += 0.15f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.15f;
             player.manaCost -= 0.15f;
             player.ammoCost80 = true;
         }

@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         static float multiplier = 0.90909090909f;
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
             //Get the player's health percentage
-            add += ((float)player.statLife / (float)player.statLifeMax2) * multiplier * player.meleeDamage;
+            add += ((float)player.statLife / (float)player.statLifeMax2) * multiplier * player.GetDamage(DamageClass.Melee);
         }
     }
 }

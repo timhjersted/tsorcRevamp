@@ -28,13 +28,13 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeDamage += 0.17f;
+            player.GetDamage(DamageClass.Melee) += 0.17f;
         }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.meleeCrit += 17;
-            player.meleeSpeed += 0.14f;
+            player.GetCritChance(DamageClass.Melee) += 17;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.14f;
             player.fireWalk = true;
             if (Main.rand.Next(3) == 0)
             {

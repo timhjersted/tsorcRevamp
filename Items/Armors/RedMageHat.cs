@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateArmorSet(Player player)
         {
             player.statManaMax2 += 20;
-            player.magicDamage += 0.08f;
+            player.GetDamage(DamageClass.Magic) += 0.08f;
         }
 
         public override void AddRecipes()

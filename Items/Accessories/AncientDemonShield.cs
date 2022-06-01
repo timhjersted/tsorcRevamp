@@ -24,8 +24,8 @@ namespace tsorcRevamp.Items.Accessories {
 
         public override void UpdateEquip(Player player) {
             player.noKnockback = true;
-            player.rangedDamage -= 0.3f;
-            player.magicDamage -= 0.3f;
+            player.GetDamage(DamageClass.Ranged) -= 0.3f;
+            player.GetDamage(DamageClass.Magic) -= 0.3f;
             player.minionDamage -= 0.3f;
             player.thorns = 1f;
             player.fireWalk = true;

@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.meleeDamage += 0.25f;
+            player.GetDamage(DamageClass.Melee) += 0.25f;
 
         }
 

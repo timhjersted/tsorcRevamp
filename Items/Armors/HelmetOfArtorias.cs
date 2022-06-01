@@ -26,9 +26,9 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.longInvince = true;
-            player.meleeCrit += 30;
-            player.rangedCrit += 30;
-            player.magicCrit += 30;
+            player.GetCritChance(DamageClass.Melee) += 30;
+            player.GetCritChance(DamageClass.Ranged) += 30;
+            player.GetCritChance(DamageClass.Magic) += 30;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -43,8 +43,8 @@ namespace tsorcRevamp.Items.Armors
             player.breath = 9999999;
             player.waterWalk = true;
             player.noKnockback = true;
-            player.allDamage += 0.37f;
-            player.meleeSpeed += 0.37f;
+            player.GetDamage(DamageClass.Generic) += 0.37f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.37f;
             player.moveSpeed += 0.50f;
             player.manaCost -= 0.37f;
             player.lifeRegen += 8;

@@ -16,7 +16,7 @@ namespace tsorcRevamp.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.statDefense += 25;
-            player.allDamageMult -= 0.2f;
+            player.GetDamage(DamageClass.Generic) *= 0.8f;
             player.moveSpeed *= 0.85f;
             Lighting.AddLight(player.Center, .400f, .400f, .700f);
             Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), player.velocity.X, player.velocity.Y, Mod.Find<ModProjectile>("Wall").Type, 0, 0f, player.whoAmI, 0f, 0f);

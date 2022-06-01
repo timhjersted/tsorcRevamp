@@ -14,7 +14,6 @@ namespace tsorcRevamp.Items.Weapons.Ranged {
         public override void SetDefaults() {
             //item.CloneDefaults(ItemID.LastPrism);
             Item.mana = 0;
-            Item.DamageType = DamageClass.Magic;= false;
             Item.damage = 750;
             Item.noMelee = true;
             Item.DamageType = DamageClass.Ranged;

@@ -27,8 +27,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.meleeDamage += 0.25f;
-            player.meleeCrit += 17;
+            player.GetDamage(DamageClass.Melee) += 0.25f;
+            player.GetCritChance(DamageClass.Melee) += 17;
         }
 
         public override void AddRecipes()

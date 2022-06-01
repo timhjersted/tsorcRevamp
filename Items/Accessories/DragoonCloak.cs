@@ -39,16 +39,16 @@ namespace tsorcRevamp.Items.Accessories {
             player.statDefense += 5;
             player.lifeRegen += 4;
             player.starCloak = true;
-            player.magicCrit += 5;
-            player.magicDamage += .05f;
+            player.GetCritChance(DamageClass.Magic) += 5;
+            player.GetDamage(DamageClass.Magic) += .05f;
 
 
             if (player.statLife <= 120) {
                 player.lifeRegen += 12;
                 player.statDefense += 15;
                 player.manaRegenBuff = true;
-                player.magicCrit += 15;
-                player.magicDamage += .15f;
+                player.GetCritChance(DamageClass.Magic) += 15;
+                player.GetDamage(DamageClass.Magic) += .15f;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;

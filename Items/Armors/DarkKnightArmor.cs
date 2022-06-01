@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.meleeCrit += 30;
+            player.GetCritChance(DamageClass.Melee) += 30;
             Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().MeleeArmorVamp10 = true;
         }
 

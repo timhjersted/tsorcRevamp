@@ -39,8 +39,8 @@ namespace tsorcRevamp.Items.Armors
                 player.manaCost -= 0.17f;
                 player.manaRegenBuff = true;
                 player.starCloak = true;
-                player.magicCrit += 40;
-                player.magicDamage += 0.60f;
+                player.GetCritChance(DamageClass.Magic) += 40;
+                player.GetDamage(DamageClass.Magic) += 0.60f;
                 player.statManaMax2 += 60;
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 65, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 100, Color.Blue, 2.0f);
                 Main.dust[dust].noGravity = true;
@@ -48,8 +48,8 @@ namespace tsorcRevamp.Items.Armors
             else
             {
                 player.manaCost -= 0.17f;
-                player.magicCrit += 20;
-                player.magicDamage += .30f;
+                player.GetCritChance(DamageClass.Magic) += 20;
+                player.GetDamage(DamageClass.Magic) += .30f;
                 player.statManaMax2 += 60;
             }
         }

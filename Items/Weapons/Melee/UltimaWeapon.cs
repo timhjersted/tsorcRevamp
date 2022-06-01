@@ -79,7 +79,7 @@ namespace tsorcRevamp.Items.Weapons.Melee {
         public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat) {
 
             //I don't care if this many parentheses aren't necessary, integer division is hell
-            add += ((((float)player.statLife) / ((float)player.statLifeMax2)) * ((float)2)) * player.meleeDamage;
+            add += ((((float)player.statLife) / ((float)player.statLifeMax2)) * ((float)2)) * player.GetDamage(DamageClass.Melee);
         }
     }
 }

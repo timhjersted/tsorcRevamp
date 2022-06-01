@@ -28,9 +28,9 @@ namespace tsorcRevamp.Items.Armors {
         }
 
         public override void UpdateArmorSet(Player player) {
-            player.meleeDamage += 0.3f;
-            player.meleeSpeed += 0.3f;
-            player.meleeCrit += 30;
+            player.GetDamage(DamageClass.Melee) += 0.3f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
+            player.GetCritChance(DamageClass.Melee) += 30;
             player.fireWalk = true;
             player.noFallDmg = true;
             player.noKnockback = true;

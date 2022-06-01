@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors {
 
         public override void UpdateEquip(Player player) {
             player.moveSpeed += 0.12f;
-            player.rangedDamage += 0.15f;
+            player.GetDamage(DamageClass.Ranged) += 0.15f;
         }
     }
 }

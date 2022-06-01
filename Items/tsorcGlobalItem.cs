@@ -233,9 +233,9 @@ namespace tsorcRevamp.Items {
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage) {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             if (item.CountsAsClass(DamageClass.Melee)) {
-                /*Main.NewText("magicDamage: " + player.magicDamage);
-				Main.NewText("magicDamageMult: " + player.magicDamageMult);
-				Main.NewText((player.magicDamage - player.magicDamageMult) * .5f);*/
+                /*Main.NewText("magicDamage: " + player.GetDamage(DamageClass.Magic));
+				Main.NewText("magicDamageMult: " + player.GetDamage(DamageClass.Magic)Mult);
+				Main.NewText((player.GetDamage(DamageClass.Magic) - player.GetDamage(DamageClass.Magic)Mult) * .5f);*/
 
                 if (modPlayer.MagicWeapon) {
                     float bonusDamage = (player.GetDamage(DamageClass.Magic).Additive - player.GetDamage(DamageClass.Magic).Multiplicative) * .5f;

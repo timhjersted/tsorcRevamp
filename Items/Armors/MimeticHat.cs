@@ -27,15 +27,15 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.magicCrit += 9;
+            player.GetCritChance(DamageClass.Magic) += 9;
             player.statManaMax2 += 20;
         }
 
         public override void UpdateArmorSet(Player player)
         {
             player.manaCost -= 0.3f;
-            player.magicDamage += 0.15f;
-            player.magicCrit += 6;
+            player.GetDamage(DamageClass.Magic) += 0.15f;
+            player.GetCritChance(DamageClass.Magic) += 6;
         }
 
         public override void AddRecipes()

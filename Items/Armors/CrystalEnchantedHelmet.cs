@@ -31,8 +31,8 @@ namespace tsorcRevamp.Items.Armors
         {
             if (player.statLife <= 80)
             {
-                player.rangedDamage += 0.20f;
-                player.magicDamage -= 0.30f;
+                player.GetDamage(DamageClass.Ranged) += 0.20f;
+                player.GetDamage(DamageClass.Magic) -= 0.30f;
                 player.kbGlove = true;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Aqua, 1.0f);
@@ -40,8 +40,8 @@ namespace tsorcRevamp.Items.Armors
             }
             else
             {
-                player.rangedDamage -= 0.30f;
-                player.magicDamage -= 0.30f;
+                player.GetDamage(DamageClass.Ranged) -= 0.30f;
+                player.GetDamage(DamageClass.Magic) -= 0.30f;
                 player.kbGlove = true;
             }
         }
@@ -53,8 +53,8 @@ namespace tsorcRevamp.Items.Armors
         
         public override void UpdateArmorSet(Player player)
         {
-            player.meleeSpeed += 0.4f;
-            player.meleeDamage += 0.15f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.4f;
+            player.GetDamage(DamageClass.Melee) += 0.15f;
             player.enemySpawns = true;
         }
 

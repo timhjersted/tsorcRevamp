@@ -28,8 +28,8 @@ namespace tsorcRevamp.Items.Armors
             player.setBonus = "+20% magic and ranged damage, +10% movement speed, -30% mana cost," + "\nnightvision +3 HP regen, no knockback, fall damage or firewalk damage";
             player.fireWalk = true;
             player.noKnockback = true;
-            player.magicDamage += 0.20f;
-            player.rangedDamage += 0.20f;
+            player.GetDamage(DamageClass.Magic) += 0.20f;
+            player.GetDamage(DamageClass.Ranged) += 0.20f;
             player.moveSpeed += 0.10f;
             player.manaCost -= 0.30f;
             player.lifeRegen += 3;

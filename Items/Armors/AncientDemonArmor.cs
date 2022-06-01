@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         }
         public override void UpdateEquip(Player player)
         {
-            player.magicDamage += 0.10f;
+            player.GetDamage(DamageClass.Magic) += 0.10f;
         }
 
         public override void DrawArmorColor(Player drawPlayer, float shadow, ref Color color, ref int glowMask, ref Color glowMaskColor)

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.15f;
-            player.meleeSpeed += 0.2f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.2f;
             player.waterWalk = true;
             player.breath = 10800;
             player.noKnockback = true;

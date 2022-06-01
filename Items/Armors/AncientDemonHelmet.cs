@@ -34,9 +34,9 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.magicCrit += 15;
+            player.GetCritChance(DamageClass.Magic) += 15;
             player.manaCost -= 0.15f;
-            player.magicDamage += 0.15f;
+            player.GetDamage(DamageClass.Magic) += 0.15f;
             if (player.statLife <= 140) {
                 player.manaRegenBuff = true;
 

@@ -23,10 +23,10 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.rangedCrit += 5;
-            player.meleeCrit += 5;
-            player.magicCrit += 5;
-            player.thrownCrit += 5;
+            player.GetCritChance(DamageClass.Ranged) += 5;
+            player.GetCritChance(DamageClass.Melee) += 5;
+            player.GetCritChance(DamageClass.Magic) += 5;
+            player.GetCritChance(DamageClass.Throwing) += 5;
         }
 
         public override bool IsArmorSet(Item head, Item body, Item legs)
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.allDamage += 0.06f;
+            player.GetDamage(DamageClass.Generic) += 0.06f;
             player.statManaMax2 += 40;
         }
 

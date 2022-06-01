@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateArmorSet(Player player)
         {
-            player.magicDamage += 0.15f;
+            player.GetDamage(DamageClass.Magic) += 0.15f;
             player.statManaMax2 += 60;
             player.spaceGun = true;
 

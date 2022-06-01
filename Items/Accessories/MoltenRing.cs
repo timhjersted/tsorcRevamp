@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories {
  
         public override void UpdateEquip(Player player) {
 			player.fireWalk = true;
-			player.meleeDamage += 0.1f;
+			player.GetDamage(DamageClass.Melee) += 0.1f;
 			player.noKnockback = true;
 			player.manaCost += 0.05f;
         }

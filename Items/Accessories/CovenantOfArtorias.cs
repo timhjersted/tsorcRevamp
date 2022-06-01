@@ -33,11 +33,11 @@ namespace tsorcRevamp.Items.Accessories {
         }
 
         public override void UpdateEquip(Player player) {
-            player.allDamage += 0.07f;
+            player.GetDamage(DamageClass.Generic) += 0.07f;
             player.moveSpeed += 0.07f;
-            player.magicCrit += 7;
-            player.meleeCrit += 7;
-            player.rangedCrit += 7;
+            player.GetCritChance(DamageClass.Magic) += 7;
+            player.GetCritChance(DamageClass.Melee) += 7;
+            player.GetCritChance(DamageClass.Ranged) += 7;
             player.lavaImmune = true;
             player.noKnockback = true;
             player.fireWalk = true;

@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Accessories {
             player.buffImmune[ModContent.BuffType<Buffs.PowerfulCurseBuildup>()] = true;
             //player.statDefense += 10;
             player.buffImmune[BuffID.Frozen] = true;
-            //player.allDamage *= 2;
+            //player.GetDamage(DamageClass.Generic) *= 2;
         }
  
     }

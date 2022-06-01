@@ -25,15 +25,15 @@ namespace tsorcRevamp.Items.Armors {
 
         public override void UpdateEquip(Player player) {
             player.starCloak = true;
-            player.magicCrit += 3;
-            player.magicDamage += .05f;
+            player.GetCritChance(DamageClass.Magic) += 3;
+            player.GetDamage(DamageClass.Magic) += .05f;
 
             if (player.statLife <= 160) {
                 player.lifeRegen += 8;
                 player.statDefense += 12;
                 player.manaRegenBuff = true;
-                player.magicCrit += 3;
-                player.magicDamage += .05f;
+                player.GetCritChance(DamageClass.Magic) += 3;
+                player.GetDamage(DamageClass.Magic) += .05f;
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 21, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 245, Color.White, 2.0f);
                 Main.dust[dust].noGravity = true;
             }

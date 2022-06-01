@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories {
         */
 
         public override void UpdateEquip(Player player) {
-            player.allDamage += 0.05f;
+            player.GetDamage(DamageClass.Generic) += 0.05f;
             player.noKnockback = true;
             player.fireWalk = true;
             player.lavaImmune = true;

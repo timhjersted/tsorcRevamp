@@ -105,11 +105,11 @@ namespace tsorcRevamp.Items
                     }
                 }
 
-                int damage = (int)((8 * (player.magicDamage + player.allDamage - 1) * 3) * player.allDamageMult);
+                int damage = (int)((8 * (player.GetDamage(DamageClass.Magic) + player.GetDamage(DamageClass.Generic) - 1) * 3) * player.GetDamage(DamageClass.Generic));
 
                 if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                 { 
-                    damage = (int)(damage * 1.2f); //because player.allDamageMult isnt taking it into accound for some reason :/
+                    damage = (int)(damage * 1.2f); //because player.GetDamage(DamageClass.Generic)Mult isnt taking it into accound for some reason :/
                     player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 20;
                 }
 

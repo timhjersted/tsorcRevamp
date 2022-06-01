@@ -76,7 +76,7 @@ namespace tsorcRevamp.Items.Weapons.Magic {
 
             position.X += player.width * 0.5f;
             position.Y += player.height * 0.5f;
-            int damage = (int)(Item.damage * player.magicDamage);
+            int damage = (int)(Item.damage * player.GetDamage(DamageClass.Magic));
             float knockback = player.inventory[player.selectedItem].knockBack;
 
             Projectile.NewProjectile(position, speed, ModContent.ProjectileType<Projectiles.Sandstorm>(), damage, knockback, player.whoAmI);

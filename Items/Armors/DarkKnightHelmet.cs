@@ -30,8 +30,8 @@ namespace tsorcRevamp.Items.Armors
         {
             player.waterWalk = true;
             player.noKnockback = true;
-            player.meleeDamage += 0.3f;
-            player.meleeSpeed += 0.3f;
+            player.GetDamage(DamageClass.Melee) += 0.3f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.3f;
             player.moveSpeed += 0.3f;
 
             int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 27, (player.velocity.X) + (player.direction * 3), player.velocity.Y, 100, Color.BlueViolet, 1.0f);

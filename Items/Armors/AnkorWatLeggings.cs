@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Armors
         public override void UpdateEquip(Player player)
         {
             player.moveSpeed += 0.20f;
-            player.magicDamage += 0.30f;
+            player.GetDamage(DamageClass.Magic) += 0.30f;
         }
 
         public override void AddRecipes()

@@ -23,8 +23,8 @@ namespace tsorcRevamp.Items.Armors {
 
         public override void UpdateArmorSet(Player player) {
             player.statDefense += 8;
-            player.meleeDamage += 0.09f;
-            player.meleeSpeed += 0.09f;
+            player.GetDamage(DamageClass.Melee) += 0.09f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.09f;
             if (player.statLife < 80) player.lifeRegen += 6;
             else player.lifeRegen += 3;
         }

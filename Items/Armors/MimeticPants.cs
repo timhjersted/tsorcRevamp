@@ -22,7 +22,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.magicDamage += 0.05f;
+            player.GetDamage(DamageClass.Magic) += 0.05f;
         }
 
         public override void AddRecipes()

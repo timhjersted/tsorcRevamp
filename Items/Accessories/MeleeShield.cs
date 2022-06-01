@@ -66,9 +66,9 @@ namespace tsorcRevamp.Items.Accessories {
             base.UpdateEquip(player);
             player.moveSpeed += 0.05f;
             player.manaCost += 0.7f; 
-            player.meleeDamage += 0.04f;
-            player.magicDamage -= 0.85f;
-            player.rangedDamage -= 0.85f;
+            player.GetDamage(DamageClass.Melee) += 0.04f;
+            player.GetDamage(DamageClass.Magic) -= 0.85f;
+            player.GetDamage(DamageClass.Ranged) -= 0.85f;
             player.minionDamage -= 0.85f;
         }
 
@@ -111,9 +111,9 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             base.UpdateEquip(player);
             player.moveSpeed += 0.10f;
-            player.meleeDamage += 0.06f;
-            player.magicDamage -= 1.5f;
-            player.rangedDamage -= 1.5f;
+            player.GetDamage(DamageClass.Melee) += 0.06f;
+            player.GetDamage(DamageClass.Magic) -= 1.5f;
+            player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.minionDamage -= 1.5f;
             player.manaCost += 0.7f;
         }
@@ -157,9 +157,9 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             base.UpdateEquip(player);
             player.moveSpeed += 0.15f;
-            player.meleeDamage += 0.06f;
-            player.magicDamage -= 1.5f;
-            player.rangedDamage -= 1.5f;
+            player.GetDamage(DamageClass.Melee) += 0.06f;
+            player.GetDamage(DamageClass.Magic) -= 1.5f;
+            player.GetDamage(DamageClass.Ranged) -= 1.5f;
             player.minionDamage -= 1.5f;
             player.manaCost += 0.7f;
         }
@@ -196,9 +196,9 @@ namespace tsorcRevamp.Items.Accessories {
         public override void UpdateEquip(Player player) {
             base.UpdateEquip(player);
             player.moveSpeed += 0.20f;
-            player.meleeDamage += 0.1f;
-            player.magicDamage -= 3f;
-            player.rangedDamage -= 3f;
+            player.GetDamage(DamageClass.Melee) += 0.1f;
+            player.GetDamage(DamageClass.Magic) -= 3f;
+            player.GetDamage(DamageClass.Ranged) -= 3f;
             player.minionDamage -= 3f;
             player.manaCost += 0.7f;
         }

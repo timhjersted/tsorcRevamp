@@ -31,25 +31,25 @@ namespace tsorcRevamp.Items.Armors
         {
             if (player.statLife <= 80)
             {
-                player.rangedDamage -= 0.3f;
-                player.magicDamage += 0.2f;
-                player.meleeCrit += 5;
+                player.GetDamage(DamageClass.Ranged) -= 0.3f;
+                player.GetDamage(DamageClass.Magic) += 0.2f;
+                player.GetCritChance(DamageClass.Melee) += 5;
 
                 int dust = Dust.NewDust(new Vector2((float)player.position.X, (float)player.position.Y), player.width, player.height, 42, (player.velocity.X) + (player.direction * 1), player.velocity.Y, 105, Color.Aqua, 1.0f);
                 Main.dust[dust].noGravity = true;
             }
             else
             {
-                player.rangedDamage -= 0.3f;
-                player.magicDamage -= 0.3f;
-                player.meleeCrit += 5;
+                player.GetDamage(DamageClass.Ranged) -= 0.3f;
+                player.GetDamage(DamageClass.Magic) -= 0.3f;
+                player.GetCritChance(DamageClass.Melee) += 5;
             }
         }
 
         public override void UpdateArmorSet(Player player)
         {
-            player.meleeSpeed += 0.4f;
-            player.meleeDamage += 0.15f;
+            player.GetAttackSpeed(DamageClass.Melee) += 0.4f;
+            player.GetDamage(DamageClass.Melee) += 0.15f;
             player.enemySpawns = true;
         }
         

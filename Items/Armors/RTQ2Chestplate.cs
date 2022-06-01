@@ -25,8 +25,8 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.magicCrit += 15;
-            player.magicDamage += 0.10f;
+            player.GetCritChance(DamageClass.Magic) += 15;
+            player.GetDamage(DamageClass.Magic) += 0.10f;
         }
 
 
