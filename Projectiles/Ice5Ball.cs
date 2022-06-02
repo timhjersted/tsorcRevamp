@@ -126,7 +126,7 @@ namespace tsorcRevamp.Projectiles
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -2), Projectile.position.Y + (float)(Projectile.height * 2), 0, 5, ModContent.ProjectileType<Ice5Icicle>(), (int)(this.Projectile.damage), 3f, Projectile.owner);

@@ -372,8 +372,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Lighting.AddLight(NPC.Center, Color.GreenYellow.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.Next(3) == 1)
                     {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.EmeraldBolt, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.EmeraldBolt, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, NPC.velocity.X, NPC.velocity.Y);
                     }
 
                 }

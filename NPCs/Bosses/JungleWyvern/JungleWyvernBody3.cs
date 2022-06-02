@@ -62,7 +62,6 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             {
                 NPC.life = 0;
                 NPC.HitEffect(0, 10.0);
-                NPCLoot();
                 for (int num36 = 0; num36 < 50; num36++)
                 {
                     Color color = new Color();

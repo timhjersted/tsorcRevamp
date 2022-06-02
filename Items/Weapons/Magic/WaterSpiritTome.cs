@@ -33,13 +33,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shoot = ModContent.ProjectileType<Projectiles.IceSpirit4>();
         }
 
-        public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
+        public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            Vector2 projVel = speed;
-            projVel = projVel.RotatedBy(MathHelper.ToRadians(Main.rand.Next(-7, 7)));
-            speedX = projVel.X;
-            speedY = projVel.Y;
-            return true;
+            velocity = velocity.RotatedBy(MathHelper.ToRadians(Main.rand.Next(-7, 7)));
         }
 
         public override void AddRecipes()

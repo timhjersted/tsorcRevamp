@@ -371,7 +371,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //int dust = Dust.NewDust(new Vector2((float) npc.position.X, (float) npc.position.Y), npc.width, npc.height, 6, npc.velocity.X-6f, npc.velocity.Y, 150, Color.Red, 1f);
             //				Main.dust[dust].noGravity = true;
             Color color = new Color();
-            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Vile, NPC.velocity.X, NPC.velocity.Y, 200, color, 1f + comboDamage / 30);
+            int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.CorruptGibs, NPC.velocity.X, NPC.velocity.Y, 200, color, 1f + comboDamage / 30);
             Main.dust[dust].noGravity = true;
 
 
@@ -841,7 +841,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 for (int num36 = 0; num36 < 20; num36++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Vile, 0, 0, 100, color, 2f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.CorruptGibs, 0, 0, 100, color, 2f);
                 }
                 //npc.ai[1] = -200;
                 comboDamage = 0;

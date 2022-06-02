@@ -132,7 +132,7 @@ namespace tsorcRevamp.Projectiles
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
                 if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2))
                 {
                     if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 4), Projectile.position.Y + (float)(Projectile.height), 0, 0, ModContent.ProjectileType<GreatFireStrike>(), Projectile.damage, 3f, Projectile.owner);

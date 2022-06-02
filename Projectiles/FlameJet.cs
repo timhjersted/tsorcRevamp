@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
                 }
             }
 
-            int frameHeight = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Height / Main.projFrames[Projectile.type];
+            int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height / Main.projFrames[Projectile.type];
             int segmentCount = Projectile.height / frameHeight;
             for (int i = 0; i < segmentCount; i++)
             {

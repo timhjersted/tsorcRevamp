@@ -370,7 +370,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
                 for (int num36 = 0; num36 < 20; num36++)
                 {
-                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.Vile, 0, 0, 100, color, 2f);
+                    int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.CorruptGibs, 0, 0, 100, color, 2f);
                 }
                 //npc.ai[1] = -200;
                 comboDamage = 0;

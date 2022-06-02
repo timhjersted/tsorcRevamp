@@ -89,7 +89,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
                 NPC.life = 0;
-                NPCLoot();
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
             }

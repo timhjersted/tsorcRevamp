@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 for (int num40 = 0; num40 < 10; num40++)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
                     Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                     int arg_1394_1 = Projectile.width;
                     int arg_1394_2 = Projectile.height;

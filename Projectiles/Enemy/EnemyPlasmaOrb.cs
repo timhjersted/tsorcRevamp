@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Lighting.AddLight((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16, 15f, 0f, 0.1f);
                 int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, Color.Green, 1.0f);
                 Main.dust[dust].noGravity = true;
-                int pdust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.Vile, 0, 0, 100, Color.Green, 1.0f);
+                int pdust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width, Projectile.height, DustID.CorruptGibs, 0, 0, 100, Color.Green, 1.0f);
                 Main.dust[pdust].noGravity = true;
             }
 

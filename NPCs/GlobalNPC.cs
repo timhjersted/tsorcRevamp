@@ -390,14 +390,14 @@ namespace tsorcRevamp.NPCs
                         DarkSoulQuantity = 10;
                     }
 
-                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, DarkSoulQuantity);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), Mod.Find<ModItem>("DarkSoul").Type, DarkSoulQuantity);
                     DarkSoulQuantity = 0;
                 }
                 #endregion
 
                 if (DarkSoulQuantity > 0)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<DarkSoul>(), DarkSoulQuantity);
                 }
 
 
@@ -411,22 +411,22 @@ namespace tsorcRevamp.NPCs
 
                     if ((enemyValue >= 1) && (enemyValue <= 200) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 1 and 200 dropping FadingSoul aka 1/75
                     {
-                        Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<FadingSoul>(), 1); // Zombies and eyes are 6 and 7 enemyValue, so will only drop FadingSoul
+                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<FadingSoul>(), 1); // Zombies and eyes are 6 and 7 enemyValue, so will only drop FadingSoul
                     }
 
                     if ((enemyValue >= 15) && (enemyValue <= 2000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 10 and 2000 dropping LostUndeadSoul aka 1/75
                     {
-                        Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<LostUndeadSoul>(), 1); // Most pre-HM enemies fall into this category
+                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<LostUndeadSoul>(), 1); // Most pre-HM enemies fall into this category
                     }
 
                     if ((enemyValue >= 55) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance)) // 1% chance of all enemies between enemyValue 50 and 10000 dropping NamelessSoldierSoul aka 1/75
                     {
-                        Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1); // Most HM enemies fall into this category
+                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<NamelessSoldierSoul>(), 1); // Most HM enemies fall into this category
                     }
 
                     if ((enemyValue >= 150) && (enemyValue <= 10000) && (Main.rand.NextFloat() < chance) && Main.hardMode) // 1% chance of all enemies between enemyValue 150 and 10000 dropping ProudKnightSoul aka 1/75
                     {
-                        Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
+                        Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<ProudKnightSoul>(), 1);
                     }
                 }
                 //End consumable souls drops
@@ -446,7 +446,7 @@ namespace tsorcRevamp.NPCs
                         {
                             for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
                             {
-                                Item.NewItem(NPC.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                Item.NewItem(npc.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
                             }
                         }
                     }
@@ -463,7 +463,7 @@ namespace tsorcRevamp.NPCs
                                     {
                                         for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
                                         {
-                                            Item.NewItem(NPC.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                            Item.NewItem(npc.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
                                         }
                                     }
                                     else
@@ -481,7 +481,7 @@ namespace tsorcRevamp.NPCs
                                         {
                                             for (int j = 0; j < thisEvent.CustomDrops.Count; j++)
                                             {
-                                                Item.NewItem(NPC.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
+                                                Item.NewItem(npc.GetSource_Loot(), npc.Center, thisEvent.CustomDrops[j], thisEvent.DropAmounts[j]);
                                             }
                                         }
                                     }
@@ -558,12 +558,12 @@ namespace tsorcRevamp.NPCs
             {
                 if (Main.rand.Next(2) == 0)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
 
                 if (Main.rand.Next(12) == 0)
                 {
-                    Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
                 }
             }
 
@@ -1143,7 +1143,7 @@ namespace tsorcRevamp.NPCs
                             int npcType = (m == wormLength - 2 ? tailType : bodyTypes[m]);
 
                             //Spawn the npc
-                            int newnpcID = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), npcType, npc.whoAmI);
+                            int newnpcID = NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), npcType, npc.whoAmI);
 
                             //Set the new piece's Head ID to the head
                             Main.npc[newnpcID].ai[3] = (float)npc.whoAmI;
@@ -1181,16 +1181,16 @@ namespace tsorcRevamp.NPCs
                             }
                             npc.ai[2] = (float)(wormLength - 2);
                             int nextPiece = (bodyTypes.Length == 0 ? tailType : bodyTypes[0]);
-                            npc.ai[0] = (float)NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), nextPiece, npc.whoAmI);
+                            npc.ai[0] = (float)NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), nextPiece, npc.whoAmI);
                         }
                         else
                         if ((npc.type != headType && npc.type != tailType) && npc.ai[2] > 0f)
                         {
-                            npc.ai[0] = (float)NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), bodyTypes[wormLength - 3 - (int)npc.ai[2]], npc.whoAmI);
+                            npc.ai[0] = (float)NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), bodyTypes[wormLength - 3 - (int)npc.ai[2]], npc.whoAmI);
                         }
                         else
                         {
-                            npc.ai[0] = (float)NPC.NewNPC(NPC.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), tailType, npc.whoAmI);
+                            npc.ai[0] = (float)NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.Center.X), (int)(npc.Center.Y), tailType, npc.whoAmI);
                         }
                         if (!split)
                         {
