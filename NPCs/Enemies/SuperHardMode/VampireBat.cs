@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnKill()
         {
-            base.NPCLoot();
+            base.OnKill();
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

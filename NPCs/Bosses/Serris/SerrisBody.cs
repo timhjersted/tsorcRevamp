@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -92,7 +93,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             NPC.frameCounter += 1.0;
             if (SpeedBoost)

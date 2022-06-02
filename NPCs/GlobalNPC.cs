@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -257,7 +258,7 @@ namespace tsorcRevamp.NPCs
 
         //vanilla npc changes moved to separate file
 
-        public override void NPCLoot(NPC npc)
+        public override void OnKill(NPC npc)
         {
             if (npc.boss)
             {
@@ -347,10 +348,10 @@ namespace tsorcRevamp.NPCs
                         }
                         else if (Main.netMode == NetmodeID.Server)
                         {
-                            NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
+                            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The souls of " + npc.GivenOrTypeName + " have been released!"), new Color(175, 255, 75));
                             if (SHMBoss)
                             {
-                                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The portal to The Abyss widens, and its denizens grow stronger..."), Color.Orange);
+                                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The portal to The Abyss widens, and its denizens grow stronger..."), Color.Orange);
                             }
                             if (((npc.type == NPCID.EaterofWorldsHead) || (npc.type == NPCID.EaterofWorldsBody) || (npc.type == NPCID.EaterofWorldsTail)) && Main.invasionType == 0)
                             {

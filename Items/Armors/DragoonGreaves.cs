@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
             player.jumpBoost = true;
         }
 

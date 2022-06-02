@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -323,7 +324,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             if (!Main.dedServ)
             {
                 (Microsoft.Xna.Framework.Graphics.Texture2D)Terraria.GameContent.TextureAssets.Npc
-                num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             if (NPC.velocity.X < 0)
             {

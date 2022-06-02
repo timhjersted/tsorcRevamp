@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items.Accessories
         {
             player.jumpSpeedBoost += 1f;
             player.jumpBoost = true;
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
         }
 
     }

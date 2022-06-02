@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -377,7 +378,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (!Main.dedServ)
             {
                 int frameSize = 1;
-                frameSize = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+                frameSize = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
                 if (NPC.velocity.X < 0)
                 {
                     NPC.spriteDirection = -1;
@@ -393,7 +394,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     NPC.frame.Y = NPC.frame.Y + frameSize;
                     NPC.frameCounter = 0.0;
                 }
-                if (NPC.frame.Y >= Main.npcTexture[NPC.type].Height)
+                if (NPC.frame.Y >= TextureAssets.Npc[NPC.type].Value.Height)
                 {
                     NPC.frame.Y = 0;
                 }

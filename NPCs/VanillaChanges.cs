@@ -3385,7 +3385,7 @@ namespace tsorcRevamp.NPCs
             return base.CheckDead(npc);
         }
 
-        public override void NPCLoot(NPC npc)
+        public override void OnKill(NPC npc)
         {
             #region Loot Changes
 

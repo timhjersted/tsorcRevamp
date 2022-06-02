@@ -38,7 +38,7 @@ namespace tsorcRevamp
 		- Resouce replenishment item: Use GlobalNPC.NPCLoot to drop the item. ModItem.OnPickup and ModItem.ItemSpace will allow it to behave like Mana Star or Heart. Use code similar to Player.HealEffect to spawn (and sync) a colored number suitable to your resource.
 		*/
 
-        public override TagCompound Save()
+        public override TagCompound SaveData()
         {
             return new TagCompound
             {
@@ -48,7 +48,7 @@ namespace tsorcRevamp
             };
         }
 
-        public override void Load(TagCompound tag)
+        public override void LoadData(TagCompound tag)
         {
 
             staminaResourceMax = tag.GetFloat("staminaResourceMax");

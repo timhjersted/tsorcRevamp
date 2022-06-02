@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -966,16 +967,16 @@ namespace tsorcRevamp.NPCs.Enemies
                     Color color = NPC.GetAlpha(lightColor) * ((float)(NPC.oldPos.Length - k) / (float)NPC.oldPos.Length);
                     if (NPC.direction == 1)
                     {
-                        spriteBatch.Draw(Main.npcTexture[NPC.type], drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), color, NPC.rotation, new Vector2(NPC.position.X + 26, NPC.position.Y + 26), NPC.scale, effects, 0f); //Vector2 Origin made 0 sense in this case
+                        spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), color, NPC.rotation, new Vector2(NPC.position.X + 26, NPC.position.Y + 26), NPC.scale, effects, 0f); //Vector2 Origin made 0 sense in this case
                     }
                     else
                     {
-                        spriteBatch.Draw(Main.npcTexture[NPC.type], drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), color, NPC.rotation, new Vector2(NPC.position.X + 70, NPC.position.Y + 26), NPC.scale, effects, 0f); //Vector2 Origin made 0 sense in this case
+                        spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), color, NPC.rotation, new Vector2(NPC.position.X + 70, NPC.position.Y + 26), NPC.scale, effects, 0f); //Vector2 Origin made 0 sense in this case
                     }
                 }
             }
 
-            Texture2D texture = Main.npcTexture[NPC.type]; //Base texture, manually drawing so as to not have a ridiculously big canvas size in order to have a centered hitbox
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value; //Base texture, manually drawing so as to not have a ridiculously big canvas size in order to have a centered hitbox
             if (NPC.spriteDirection == 1)
             {
                 spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), lightColor, NPC.rotation, new Vector2(37, 46), NPC.scale, effects, 0f);

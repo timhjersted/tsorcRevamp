@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -73,35 +74,35 @@ namespace tsorcRevamp.Items.Accessories
             {
                 if (Main.moonPhase == 0)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Full"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Full"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 1)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Last Gibbous"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Last Gibbous"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 2)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Last Quarter"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Last Quarter"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 3)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Last Crescent"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now Last Crescent"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 4)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now New"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now New"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 5)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now First Crescent"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now First Crescent"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 6)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now First Quarter"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now First Quarter"), new Color(50, 255, 130));
                 }
                 if (Main.moonPhase == 7)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now First Gibbous"), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("Moon phase is now First Gibbous"), new Color(50, 255, 130));
                 }
                 NetMessage.SendData(MessageID.WorldData);
             }
@@ -111,7 +112,7 @@ namespace tsorcRevamp.Items.Accessories
                 Main.bloodMoon = true;
                 if (Main.netMode == NetmodeID.Server)
                 {
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The Blood moon has risen..."), new Color(50, 255, 130));
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The Blood moon has risen..."), new Color(50, 255, 130));
                     NetMessage.SendData(MessageID.WorldData);
                 }
                 else if (Main.netMode == NetmodeID.SinglePlayer)

@@ -96,8 +96,8 @@ namespace tsorcRevamp.Projectiles.Pets
 
 
             p.noThrow = 2;
-            p.showItemIcon = true;
-            p.showItemIcon2 = ItemType;
+            p.cursorItemIconEnabled = true;
+            p.cursorItemIconID = ItemType;
             if (PlayerInput.UsingGamepad)
             {
                 p.GamepadEnableGrappleCooldown();

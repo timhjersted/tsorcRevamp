@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Projectiles.Enemy.Okiku;
@@ -220,7 +221,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
 
             if (NPC.velocity.X > 1.5f) NPC.frame.Y = num;

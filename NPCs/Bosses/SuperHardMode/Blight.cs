@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -380,7 +381,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
 
-            Texture2D Noise_Texture = Main.npcTexture[this.NPC.type];
+            Texture2D Noise_Texture = TextureAssets.Npc[this.NPC.type].Value;
             Random rand1 = new Random((int)Main.GameUpdateCount);
             int height = this.NPC.frame.Height;
             int width = this.NPC.frame.Width;

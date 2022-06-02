@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -87,26 +88,26 @@ namespace TerraUI.Utilities
                 case ItemSlot.Context.EquipMinecart:
                 case ItemSlot.Context.EquipPet:
                 case ItemSlot.Context.EquipLight:
-                    return Main.inventoryBack3Texture;
+                    return TextureAssets.InventoryBack3.Value;
                 case ItemSlot.Context.EquipArmorVanity:
                 case ItemSlot.Context.EquipAccessoryVanity:
-                    return Main.inventoryBack8Texture;
+                    return TextureAssets.InventoryBack8.Value;
                 case ItemSlot.Context.EquipDye:
-                    return Main.inventoryBack12Texture;
+                    return TextureAssets.InventoryBack12.Value;
                 case ItemSlot.Context.ChestItem:
-                    return Main.inventoryBack5Texture;
+                    return TextureAssets.InventoryBack5.Value;
                 case ItemSlot.Context.BankItem:
-                    return Main.inventoryBack2Texture;
+                    return TextureAssets.InventoryBack2.Value;
                 case ItemSlot.Context.GuideItem:
                 case ItemSlot.Context.PrefixItem:
                 case ItemSlot.Context.CraftingMaterial:
-                    return Main.inventoryBack4Texture;
+                    return TextureAssets.InventoryBack4.Value;
                 case ItemSlot.Context.TrashItem:
-                    return Main.inventoryBack7Texture;
+                    return TextureAssets.InventoryBack7.Value;
                 case ItemSlot.Context.ShopItem:
-                    return Main.inventoryBack6Texture;
+                    return TextureAssets.InventoryBack6.Value;
                 default:
-                    return Main.inventoryBackTexture;
+                    return TextureAssets.InventoryBack.Value;
             }
         }
 

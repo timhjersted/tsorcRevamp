@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.jumpBoost = true;
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
             player.fireWalk = true;
             player.noKnockback = true;
             player.canRocket = true;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
@@ -399,7 +400,7 @@ namespace tsorcRevamp.Tiles
             }
             else
             {
-                texture = Main.tileTexture[Type];
+                texture = TextureAssets.Tile[Type].Value;
             }
             Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);
             if (Main.drawToScreen)
@@ -422,8 +423,8 @@ namespace tsorcRevamp.Tiles
         {
             Player player = Main.LocalPlayer;
             player.noThrow = 2;
-            player.showItemIcon = true;
-            player.showItemIcon2 = ModContent.ItemType<BonfirePlaceable>();
+            player.cursorItemIconEnabled = true;
+            player.cursorItemIconID = ModContent.ItemType<BonfirePlaceable>();
         }
 
         public override bool RightClick(int i, int j)

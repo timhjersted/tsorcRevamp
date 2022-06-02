@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -141,7 +142,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
 
             int spriteWidth = NPC.frame.Width; //use same number as ini frameCount
-            int spriteHeight = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+            int spriteHeight = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
 
             int spritePosDifX = (int)(NPC.frame.Width / 2);
             int spritePosDifY = NPC.frame.Height - 5; // was npc.frame.Height - 4; if not 5 then 8

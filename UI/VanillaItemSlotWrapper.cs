@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.UI;
 
@@ -27,8 +28,8 @@ namespace tsorcRevamp.UI
             Item = new Item();
             Item.SetDefaults(0);
 
-            Width.Set(Main.inventoryBack9Texture.Width * scale, 0f);
-            Height.Set(Main.inventoryBack9Texture.Height * scale, 0f);
+            Width.Set(TextureAssets.InventoryBack9.Value.Width * scale, 0f);
+            Height.Set(TextureAssets.InventoryBack9.Value.Height * scale, 0f);
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

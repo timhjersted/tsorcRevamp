@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.Armors
             player.pickSpeed += 0.2f;
             player.waterWalk = true;
             player.pStone = true;
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
             player.jumpBoost = true;
             player.moveSpeed += 0.3f;
             player.archery = true;

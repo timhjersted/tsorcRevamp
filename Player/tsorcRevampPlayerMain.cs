@@ -84,7 +84,7 @@ namespace tsorcRevamp
             **/
         }
 
-        public override TagCompound Save()
+        public override TagCompound SaveData()
         {
             TagCompound tsorcTagCompound = new TagCompound
             {
@@ -130,7 +130,7 @@ namespace tsorcRevamp
             return tsorcTagCompound;
         }
 
-        public override void Load(TagCompound tag)
+        public override void LoadData(TagCompound tag)
         {
             warpX = tag.GetInt("warpX");
             warpY = tag.GetInt("warpY");

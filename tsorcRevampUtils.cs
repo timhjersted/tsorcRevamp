@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -339,7 +340,7 @@ namespace tsorcRevamp
         {
             if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
             }
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
@@ -497,7 +498,7 @@ namespace tsorcRevamp
         public static void NewItemInstanced(Vector2 Position, Vector2 HitboxSize, int itemType, int itemStack = 1, List<int> includeThesePlayers = null)
         {
             int dummyItemIndex = Item.NewItem(Position, HitboxSize, itemType, itemStack, true, 0, false, false);
-            Main.itemLockoutTime[dummyItemIndex] = 54000;
+            Main.timeItemSlotCannotBeReusedFor[dummyItemIndex] = 54000;
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
                 for (int i = 0; i < Main.maxPlayers; i++)

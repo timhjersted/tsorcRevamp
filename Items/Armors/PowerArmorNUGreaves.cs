@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Armors
             player.waterWalk = true;
             player.breath = 10800;
             player.noKnockback = true;
-            player.doubleJumpCloud = true;
+            player.hasJumpOption_Cloud = true;
             player.jumpBoost = true;
         }
 

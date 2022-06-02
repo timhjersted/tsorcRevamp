@@ -622,11 +622,11 @@ namespace tsorcRevamp
 
             if (ShadowWeight)
             {
-                Player.doubleJumpBlizzard = false;
-                Player.doubleJumpFart = false;
-                Player.doubleJumpSail = false;
-                Player.doubleJumpSandstorm = false;
-                Player.doubleJumpUnicorn = false;
+                Player.hasJumpOption_Blizzard = false;
+                Player.hasJumpOption_Fart = false;
+                Player.hasJumpOption_Sail = false;
+                Player.hasJumpOption_Sandstorm = false;
+                Player.hasJumpOption_Unicorn = false;
                 Player.canRocket = false;
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;
@@ -650,12 +650,12 @@ namespace tsorcRevamp
 
             if (Crippled)
             {
-                Player.doubleJumpBlizzard = false;
-                Player.doubleJumpCloud = false;
-                Player.doubleJumpFart = false;
-                Player.doubleJumpSail = false;
-                Player.doubleJumpSandstorm = false;
-                Player.doubleJumpUnicorn = false;
+                Player.hasJumpOption_Blizzard = false;
+                Player.hasJumpOption_Cloud = false;
+                Player.hasJumpOption_Fart = false;
+                Player.hasJumpOption_Sail = false;
+                Player.hasJumpOption_Sandstorm = false;
+                Player.hasJumpOption_Unicorn = false;
                 Player.canRocket = false;
                 Player.rocketTime = 0;
                 Player.jumpBoost = false;

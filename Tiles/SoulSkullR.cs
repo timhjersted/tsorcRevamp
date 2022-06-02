@@ -143,8 +143,8 @@ namespace tsorcRevamp.Tiles
             {
                 Player player = Main.LocalPlayer;
                 player.noThrow = 2;
-                player.showItemIcon = true;
-                player.showItemIcon2 = ModContent.ItemType<SoulSkullItemR>();
+                player.cursorItemIconEnabled = true;
+                player.cursorItemIconID = ModContent.ItemType<SoulSkullItemR>();
             }
         }
         public override void MouseOverFar(int i, int j)
@@ -154,10 +154,10 @@ namespace tsorcRevamp.Tiles
             {
                 MouseOver(i, j);
                 Player player = Main.LocalPlayer;
-                if (player.showItemIconText == "")
+                if (player.cursorItemIconText == "")
                 {
-                    player.showItemIcon = true;
-                    player.showItemIcon2 = ModContent.ItemType<SoulSkullItemR>();
+                    player.cursorItemIconEnabled = true;
+                    player.cursorItemIconID = ModContent.ItemType<SoulSkullItemR>();
                 }
             }
         }

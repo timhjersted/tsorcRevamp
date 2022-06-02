@@ -340,7 +340,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             int num = 1;
             if (!Main.dedServ)
             {
-                num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             if (NPC.velocity.X < 0)
             {
@@ -408,7 +408,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
 
             int spriteWidth = NPC.frame.Width; //use same number as ini Main.npcFrameCount[npc.type]
-            int spriteHeight = Main.npcTexture[ModContent.NPCType<BarrowWightNemesis>()].Height / Main.npcFrameCount[NPC.type];
+            int spriteHeight = TextureAssets.Npc[ModContent.NPCType<BarrowWightNemesis>()].Value.Height / Main.npcFrameCount[NPC.type];
 
             int spritePosDifX = (int)(NPC.frame.Width / 2);
             int spritePosDifY = NPC.frame.Height - 3; // was -2

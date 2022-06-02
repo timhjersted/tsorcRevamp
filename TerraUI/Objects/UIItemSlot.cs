@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
@@ -307,7 +308,7 @@ namespace TerraUI.Objects
         /// <param name="spriteBatch">drawing SpriteBatch</param>
         public void OnDrawItem(SpriteBatch spriteBatch)
         {
-            Texture2D texture2D = Main.itemTexture[Item.type];
+            Texture2D texture2D = TextureAssets.Item[Item.type].Value;
             Rectangle rectangle;
 
             if (Main.itemAnimations[Item.type] != null)
