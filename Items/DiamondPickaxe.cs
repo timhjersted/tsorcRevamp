@@ -36,7 +36,7 @@ namespace tsorcRevamp.Items
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CopperPickaxe, 1);
             recipe.AddIngredient(ItemID.Diamond, 6);
             recipe.AddTile(TileID.DemonAltar);

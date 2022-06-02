@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldLongbow").Type);
             recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
 

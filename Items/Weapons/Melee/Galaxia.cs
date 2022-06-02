@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FallenStar, 50);
             recipe.AddIngredient(ItemID.SoulofSight, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);

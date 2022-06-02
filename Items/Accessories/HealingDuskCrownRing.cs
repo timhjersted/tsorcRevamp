@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DuskCrownRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Humanity").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 7);

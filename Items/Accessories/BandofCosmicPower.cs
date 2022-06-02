@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BandofRegeneration, 1);
             recipe.AddIngredient(ItemID.BandofStarpower, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
@@ -34,12 +34,11 @@ namespace tsorcRevamp.Items.Accessories
 
             recipe.Register();
 
-            Recipe recipe2 = new Recipe(Mod);
+            Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.ManaRegenerationBand, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe2.AddTile(TileID.DemonAltar);
-            recipe2.SetResult(this, 1);
-            recipe2.AddRecipe();
+            recipe.Register();
         }
 
         public override void UpdateEquip(Player player)

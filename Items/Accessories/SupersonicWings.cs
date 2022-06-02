@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CloudinaBalloon, 1);
             recipe.AddIngredient(ItemID.AngelWings, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicBoots").Type, 1);
@@ -37,14 +37,13 @@ namespace tsorcRevamp.Items.Accessories
 
             recipe.Register();
 
-            Recipe recipe2 = new Recipe(Mod);
+            Terraria.Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ModContent.ItemType<ImprovedCloudInABalloon>(), 1);
             recipe2.AddIngredient(ItemID.AngelWings, 1);
             recipe2.AddIngredient(ModContent.ItemType<SupersonicBoots>(), 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);
             recipe2.AddTile(TileID.DemonAltar);
-            recipe2.SetResult(this, 1);
-            recipe2.AddRecipe();
+            recipe2.Register();
         }
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
                             ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)

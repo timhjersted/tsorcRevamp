@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(null, "Blaster");
             recipe.AddIngredient(ItemID.HellstoneBar, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);

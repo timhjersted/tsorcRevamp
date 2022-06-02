@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SupersonicWings").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBar, 3);
             recipe.AddIngredient(ItemID.SoulofLight, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 20000);

@@ -30,13 +30,12 @@ namespace tsorcRevamp.Items.Ammo
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe(10);
 
             recipe.AddIngredient(ItemID.Wood, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2);
 
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 10);
             recipe.Register();
         }
 

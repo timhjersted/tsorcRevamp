@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Aglet, 1);
             recipe.AddIngredient(ItemID.AnkletoftheWind, 1);
             recipe.AddIngredient(ItemID.FeralClaws, 1);

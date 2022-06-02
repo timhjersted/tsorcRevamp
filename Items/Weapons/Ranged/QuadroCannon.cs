@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("PhazonRifle").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 25);

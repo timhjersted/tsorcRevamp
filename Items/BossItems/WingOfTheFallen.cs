@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = CreateRecipe();
+                Terraria.Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.SoulofFlight, 15);
                 recipe.AddIngredient(ItemID.Feather, 13);
                 recipe.AddIngredient(ItemID.ShadowScale, 1);

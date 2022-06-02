@@ -194,7 +194,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.TitanGlove);
             recipe.AddIngredient(ItemID.MythrilBar, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type);

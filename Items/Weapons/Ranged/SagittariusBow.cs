@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ArtemisBow").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);

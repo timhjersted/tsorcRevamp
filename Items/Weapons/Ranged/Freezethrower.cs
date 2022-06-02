@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Flamethrower, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 40000);

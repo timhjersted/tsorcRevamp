@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.JunglePants, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 3000);
             recipe.AddTile(TileID.DemonAltar);

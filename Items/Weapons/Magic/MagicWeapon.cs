@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes() //recipe/progression subject to change
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
             recipe.AddIngredient(ItemID.ManaCrystal, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);

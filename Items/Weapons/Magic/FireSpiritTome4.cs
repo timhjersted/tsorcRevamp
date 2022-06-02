@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome3").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 215000);

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         }
 
         /*public override void AddRecipes() {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteGlaive);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 32000);
             

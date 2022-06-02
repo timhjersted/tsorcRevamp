@@ -28,26 +28,24 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpectreBoots, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 7000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
 
-            Recipe recipe2 = new Recipe(Mod);
+            Terraria.Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.LightningBoots, 1);
             recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 7000);
             recipe2.AddTile(TileID.DemonAltar);
-            recipe2.SetResult(this, 1);
-            recipe2.AddRecipe();
+            recipe2.Register();
 
-            Recipe recipe3 = new Recipe(Mod);
+            Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.FrostsparkBoots, 1);
             recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 7000);
             recipe3.AddTile(TileID.DemonAltar);
-            recipe3.SetResult(this, 1);
-            recipe3.AddRecipe();
+            recipe3.Register();
         }
 
         public override void UpdateEquip(Player player)

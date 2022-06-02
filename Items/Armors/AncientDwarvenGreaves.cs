@@ -17,7 +17,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverGreaves);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe.AddTile(TileID.DemonAltar);

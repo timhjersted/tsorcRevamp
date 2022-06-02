@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = CreateRecipe();
+                Terraria.Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
                 recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 5);
                 recipe.AddIngredient(Mod.Find<ModItem>("CursedSoul").Type, 35);

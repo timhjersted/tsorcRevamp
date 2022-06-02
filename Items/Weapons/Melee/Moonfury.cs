@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BlueMoon, 1);
             recipe.AddIngredient(ItemID.SoulofLight, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);

@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("BandOfCosmicPower").Type, 1);
             recipe.AddIngredient(ItemID.ShadowScale, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);

@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BattlePotion, 5);
             recipe.AddIngredient(ItemID.Deathweed, 5);
             recipe.AddIngredient(ItemID.Gel, 5);

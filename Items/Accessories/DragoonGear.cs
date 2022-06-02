@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonBoots").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DragonHorn").Type, 1);

@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ForgottenThunderBowScroll").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("Bolt4Tome").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
 
         /*public override void AddRecipes() {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FallenStar, 120);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("WhiteTitanite").Type, 10);

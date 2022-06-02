@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SilverBar, 1);
             recipe.AddIngredient(ItemID.Chain, 2);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 100);

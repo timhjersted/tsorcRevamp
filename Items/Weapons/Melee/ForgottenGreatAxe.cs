@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("ForgottenAxe").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);
             recipe.AddTile(TileID.DemonAltar);

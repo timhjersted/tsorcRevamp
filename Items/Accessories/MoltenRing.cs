@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 6);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 5000);

@@ -57,7 +57,7 @@ namespace tsorcRevamp.Tiles
             }
             public override void AddRecipes()
             {
-                Recipe recipe = CreateRecipe();
+                Terraria.Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.StoneBlock, 50);
                 recipe.AddIngredient(ItemID.Torch, 5);
                 recipe.AddTile(TileID.WorkBenches);

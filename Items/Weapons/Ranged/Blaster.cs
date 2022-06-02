@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
 
 
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
             recipe.AddIngredient(ItemID.IronBar, 5);
             recipe.AddIngredient(ItemID.Diamond, 2);
@@ -46,14 +46,14 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
             recipe.Register();
 
-            recipe = new Recipe(Mod);
+            Terraria.Recipe recipe2 = CreateRecipe();
             //recipe.AddIngredient(null, "oddscrapmetal", 10);
-            recipe.AddIngredient(ItemID.LeadBar, 5);
-            recipe.AddIngredient(ItemID.Diamond, 2);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
-            recipe.AddTile(TileID.DemonAltar);
+            recipe2.AddIngredient(ItemID.LeadBar, 5);
+            recipe2.AddIngredient(ItemID.Diamond, 2);
+            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1200);
+            recipe2.AddTile(TileID.DemonAltar);
 
-            recipe.Register();
+            recipe2.Register();
         }
 
         public override Vector2? HoldoutOffset()

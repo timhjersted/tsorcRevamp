@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FreezeBolt").Type, 1);
             recipe.AddIngredient(ItemID.FallenStar, 30);
             recipe.AddIngredient(ItemID.SoulofMight, 1);

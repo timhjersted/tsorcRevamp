@@ -88,7 +88,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.MythrilBar, 15);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 15000);
@@ -141,7 +141,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("GazingShield").Type, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 30000);
@@ -194,7 +194,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("BeholderShield").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfAttraidies").Type, 1);
@@ -238,7 +238,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("BeholderShield2").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 2);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 120000);

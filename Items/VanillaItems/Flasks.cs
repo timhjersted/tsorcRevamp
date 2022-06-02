@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Deathweed, 1);
             recipe.AddIngredient(ItemID.Fireblossom, 4);

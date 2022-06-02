@@ -25,7 +25,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("SilverRing").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("BloodredMossClump").Type, 20);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 2000);

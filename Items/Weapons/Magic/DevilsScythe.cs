@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DemonScythe, 1);
             recipe.AddIngredient(ItemID.HellstoneBar, 30);
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 8000);

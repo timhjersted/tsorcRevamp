@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBar, 5);
             recipe.AddIngredient(ItemID.SoulofLight, 25);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 70000);

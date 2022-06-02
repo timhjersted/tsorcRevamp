@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             //recipe.AddIngredient(ItemID.SoulofLight, 3);
             recipe.AddIngredient(Mod.Find<ModItem>("Murassame").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);

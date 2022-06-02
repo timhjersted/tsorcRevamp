@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes() //recipe/progression subject to change
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("MagicWeapon").Type);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddIngredient(ItemID.SoulofNight, 3);

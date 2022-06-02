@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HallowedHeadgear, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);
             recipe.AddTile(TileID.DemonAltar);

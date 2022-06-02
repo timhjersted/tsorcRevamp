@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 350);
             recipe.AddTile(TileID.DemonAltar);
 

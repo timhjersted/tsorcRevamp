@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.GoldBow, 1);
             recipe.AddIngredient(ItemID.AdamantiteBar, 12);

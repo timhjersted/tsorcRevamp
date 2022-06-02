@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Starfury, 1);
             recipe.AddIngredient(ItemID.FallenStar, 100);
             recipe.AddIngredient(ItemID.SoulofLight, 20);

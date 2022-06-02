@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Stinger, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("PoisonFieldRune").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 10000);

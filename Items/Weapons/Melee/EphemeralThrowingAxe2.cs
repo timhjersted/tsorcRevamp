@@ -34,7 +34,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralThrowingAxe").Type);
             recipe.AddIngredient(ItemID.SoulofNight, 8);
             recipe.AddIngredient(ItemID.AdamantiteBar, 6);

@@ -56,7 +56,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Ranged.FocusedEnergyBeam>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);

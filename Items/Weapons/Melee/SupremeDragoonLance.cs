@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("DragoonLance").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("FlameOfTheAbyss").Type, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("SoulOfArtorias").Type, 1);

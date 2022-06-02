@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.FieryGreatsword, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 1700);
             recipe.AddTile(TileID.DemonAltar);

@@ -134,7 +134,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Melee.YellowTail>());
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ModContent.ItemType<Items.DarkSoul>(), 6000);

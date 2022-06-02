@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.VenusMagnum);
             recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>());
             recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 90000);

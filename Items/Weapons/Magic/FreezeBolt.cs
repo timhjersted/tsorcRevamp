@@ -31,7 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.WaterBolt, 1);
             recipe.AddIngredient(ItemID.FallenStar, 50);
             recipe.AddIngredient(ItemID.Bone, 40);

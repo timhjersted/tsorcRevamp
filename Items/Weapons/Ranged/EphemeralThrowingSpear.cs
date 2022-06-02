@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("RoyalThrowingSpear").Type, 30);
             recipe.AddIngredient(Mod.Find<ModItem>("EphemeralDust").Type, 5);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90);

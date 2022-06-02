@@ -24,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.DemoniteBar, 10);
             recipe.AddIngredient(ItemID.ShadowScale, 6);
             recipe.AddTile(TileID.Anvils);

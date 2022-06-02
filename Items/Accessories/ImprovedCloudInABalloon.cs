@@ -23,7 +23,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CloudinaBottle, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("ImprovedShinyRedBalloon").Type, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);

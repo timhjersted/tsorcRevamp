@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Potions
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ThornsPotion, 1);
             recipe.AddIngredient(ItemID.SoulofNight, 1);
             recipe.AddTile(TileID.Bottles);

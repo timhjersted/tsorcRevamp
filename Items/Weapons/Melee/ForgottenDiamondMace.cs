@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.AdamantiteBar, 10);
             recipe.AddIngredient(ItemID.Diamond, 1);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
