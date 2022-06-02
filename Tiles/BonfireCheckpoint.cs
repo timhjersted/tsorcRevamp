@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
@@ -19,7 +20,7 @@ namespace tsorcRevamp.Tiles
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x4);
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16, 18 };
-            animationFrameHeight = 74;
+            AnimationFrameHeight = 74;
             TileObjectData.addTile(Type);
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Bonfire Checkpoint");
@@ -69,7 +70,7 @@ namespace tsorcRevamp.Tiles
 
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 32, 48, ModContent.ItemType<BonfirePlaceable>());
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 48, ModContent.ItemType<BonfirePlaceable>());
         }
 
         public override void NearbyEffects(int i, int j, bool closer)
@@ -405,11 +406,11 @@ namespace tsorcRevamp.Tiles
             {
                 zero = Vector2.Zero;
             }
-            int height = tile.TileFrameY % animationFrameHeight == 54 ? 18 : 16;
+            int height = tile.TileFrameY % AnimationFrameHeight == 54 ? 18 : 16;
             int animate = 0;
             if (tile.TileFrameY >= 74)
             {
-                animate = Main.tileFrame[Type] * animationFrameHeight;
+                animate = Main.tileFrame[Type] * AnimationFrameHeight;
             }
             Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY + animate, 16, height), Lighting.GetColor(i, j), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Mod.GetTexture("Tiles/BonfireCheckpoint_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY + animate, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);

@@ -10,7 +10,7 @@ namespace tsorcRevamp.Projectiles
     {
         public override void SetDefaults()
         {
-            drawHeldProjInFrontOfHeldItemAndArms = true; // Makes projectile appear in front of arms, not just in between body and arms
+            DrawHeldProjInFrontOfHeldItemAndArms = true; // Makes projectile appear in front of arms, not just in between body and arms
             Projectile.height = 4;
             Projectile.width = 4;
             Projectile.scale = 0.4f;

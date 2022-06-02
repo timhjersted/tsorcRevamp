@@ -43,7 +43,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 {
                     if (thisProjectile == null || thisProjectile.active == false || thisProjectile.type != ModContent.ProjectileType<Projectiles.ElfinTargeting>())
                     {
-                        thisProjectile = Projectile.NewProjectileDirect(Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<Projectiles.ElfinTargeting>(), 0, 0, Main.myPlayer, closest.Value);
+                        thisProjectile = Projectile.NewProjectileDirect(player.GetSource_ItemUse(Item), Main.npc[closest.Value].position, Vector2.Zero, ModContent.ProjectileType<Projectiles.ElfinTargeting>(), 0, 0, Main.myPlayer, closest.Value);
                     }
                     else
                     {

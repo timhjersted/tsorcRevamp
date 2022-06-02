@@ -137,11 +137,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             // Large Smoke Gore spawn
             for (int g = 0; g < 2; g++)
             {
-                int goreIndex = Gore.NewGore(new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
+                int goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
                 Main.gore[goreIndex].scale = 1f;
                 Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1f;
                 Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;
-                goreIndex = Gore.NewGore(new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
+                goreIndex = Gore.NewGore(Projectile.GetSource_Death(), new Vector2(Projectile.position.X + (float)(Projectile.width / 2) - 24f, Projectile.position.Y + (float)(Projectile.height / 2) - 24f), default(Vector2), Main.rand.Next(61, 64), .8f);
                 Main.gore[goreIndex].scale = 1f;
                 Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1f;
                 Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1f;

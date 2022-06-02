@@ -40,7 +40,7 @@ namespace tsorcRevamp.Tiles
             {
                 if (thisCache.cacheLocationRect.Contains((int)position.X, (int)position.Y))
                 {
-                    Item.NewItem(new Vector2(position.X * 16, position.Y * 16), 16, 16, thisCache.item, thisCache.itemQuantity, false, thisCache.itemPrefix);
+                    Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("Soul Skelly"), new Vector2(position.X * 16, position.Y * 16), 16, 16, thisCache.item, thisCache.itemQuantity, false, thisCache.itemPrefix);
                 }
             }
         }

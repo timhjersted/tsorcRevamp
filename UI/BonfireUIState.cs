@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -123,7 +124,7 @@ namespace tsorcRevamp.UI
             if (!anyBanks)
             { //only spawn a safe if there is no existing safe
                 //Main.playerInventory = true; //force open inventory
-                Projectile.NewProjectile(new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
+                Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X - 48, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.PiggyBankProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }
@@ -150,7 +151,7 @@ namespace tsorcRevamp.UI
             if (!anySafes)
             {
                 //Main.playerInventory = true;
-                Projectile.NewProjectile(new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
+                Projectile.NewProjectile(new EntitySource_Misc("Bonfire"), new Vector2(player.position.X + 64, player.position.Y), Vector2.Zero, ModContent.ProjectileType<Projectiles.Pets.SafeProjectile>(), 0, 0, player.whoAmI);
                 Recipe.FindRecipes();
             }
         }

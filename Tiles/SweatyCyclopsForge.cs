@@ -14,7 +14,7 @@ namespace tsorcRevamp.Tiles
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16 };
-            animationFrameHeight = 56;
+            AnimationFrameHeight = 56;
             TileObjectData.addTile(Type);
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Sweaty Cyclops Forge");
@@ -38,7 +38,7 @@ namespace tsorcRevamp.Tiles
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 16, 32, ModContent.ItemType<SweatyCyclopsForgeItem>());
+            Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ModContent.ItemType<SweatyCyclopsForgeItem>());
         }
 
         public class SweatyCyclopsForgeItem : ModItem

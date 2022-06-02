@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Tiles
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 18 };
-            animationFrameHeight = 56;
+            AnimationFrameHeight = 56;
             TileObjectData.addTile(Type);
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Bonfire");
@@ -43,7 +44,7 @@ namespace tsorcRevamp.Tiles
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 16, 32, ModContent.ItemType<BonfireItem>());
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ModContent.ItemType<BonfireItem>());
         }
 
         public override void AnimateTile(ref int frame, ref int frameCounter)
@@ -81,7 +82,7 @@ namespace tsorcRevamp.Tiles
                 zero = Vector2.Zero;
             }
             int width = tile.TileFrameX % animationFrameWidth == 54 ? 18 : 16;
-            int height = tile.TileFrameY % animationFrameHeight == 36 ? 18 : 16; //This seems to say that of the 3 Y tiles, the bottom one is 18px tall, the other two 16px. 
+            int height = tile.TileFrameY % AnimationFrameHeight == 36 ? 18 : 16; //This seems to say that of the 3 Y tiles, the bottom one is 18px tall, the other two 16px. 
             int animate = 0;
             if (tile.TileFrameX >= 0) //change to 54 once right-click to light is implemented
             {

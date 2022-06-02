@@ -2029,7 +2029,7 @@ namespace tsorcRevamp.NPCs
                             if ((num506 < point3.Y - num501 || num506 > point3.Y + num501 || num505 < point3.X - num501 || num505 > point3.X + num501) && (num506 < point2.Y - num500 || num506 > point2.Y + num500 || num505 < point2.X - num500 || num505 > point2.X + num500) && !Main.tile[num505, num506].HasUnactuatedTile)
                             {
                                 bool flag102 = true;
-                                if (flag102 && Main.tile[num505, num506].LiquidType)
+                                if (flag102 && Main.tile[num505, num506].LiquidType == LiquidID.Lava)
                                 {
                                     flag102 = false;
                                 }

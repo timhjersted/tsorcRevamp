@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             Projectile.MaxUpdates = 2;
             Projectile.light = 5;
-            drawHeldProjInFrontOfHeldItemAndArms = true;
+            DrawHeldProjInFrontOfHeldItemAndArms = true;
         }
 
         Vector2[] lastpos = new Vector2[20];
