@@ -10,8 +10,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.width = 30;
             Projectile.height = 30;
             Main.projFrames[Projectile.type] = 4;
-            drawOriginOffsetX = 20;
-            drawOriginOffsetY = 20;
+            DrawOriginOffsetX = 20;
+            DrawOriginOffsetY = 20;
             Projectile.hostile = true;
             Projectile.penetrate = 50;
             Projectile.DamageType = DamageClass.Magic;

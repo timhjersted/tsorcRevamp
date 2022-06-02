@@ -9,8 +9,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void SetDefaults()
         {
             Main.projFrames[Projectile.type] = 5;
-            drawOriginOffsetX = 15;
-            drawOriginOffsetY = 10;
+            DrawOriginOffsetX = 15;
+            DrawOriginOffsetY = 10;
             Projectile.width = 86;
             Projectile.height = 66;
             Projectile.aiStyle = 4;

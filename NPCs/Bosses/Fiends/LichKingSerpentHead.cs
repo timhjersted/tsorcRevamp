@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.behindTiles = true;
             NPC.value = 40000;
             despawnHandler = new NPCDespawnHandler(DustID.GreenFairy);
-            drawOffsetY = 15;
+            DrawOffsetY = 15;
 
 
             bodyTypes = new int[43];

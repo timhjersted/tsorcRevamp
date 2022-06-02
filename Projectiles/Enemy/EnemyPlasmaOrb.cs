@@ -21,7 +21,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Main.projFrames[Projectile.type] = 4;
             Projectile.light = 1;
             Projectile.timeLeft = 150;
-            //drawOffsetX = 50;
+            //DrawOffsetX = 50;
         }
 
         public override void SetStaticDefaults()
@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.type = 44; //killpretendtype
             for (int num36 = 0; num36 < 10; num36++)
             {
-                int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.Torchwork_Blue, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, new Color(), 9f);
+                int dust = Dust.NewDust(Projectile.position, (int)(Projectile.width), (int)(Projectile.height), DustID.Firework_Blue, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, new Color(), 9f);
                 Main.dust[dust].noGravity = true;
             }
             return true;
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Color drawColor = Projectile.GetAlpha(lightColor);
             Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             return false;
         }

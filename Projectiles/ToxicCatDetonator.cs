@@ -25,8 +25,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 145;
 
             //These 2 help the projectile hitbox be centered on the projectile sprite.
-            drawOffsetX = -9;
-            drawOriginOffsetY = -9;
+            DrawOffsetX = -9;
+            DrawOriginOffsetY = -9;
         }
 
         public int toxiccatdetotimer;

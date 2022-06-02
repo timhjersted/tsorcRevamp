@@ -89,7 +89,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.melee);
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
         public Player player
@@ -159,8 +159,8 @@ namespace tsorcRevamp.NPCs.Enemies
                         Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f);
                         if (Main.rand.Next(3) == 1)
                         {
-                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkFlame, NPC.velocity.X, NPC.velocity.Y);
-                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkFlame, NPC.velocity.X, NPC.velocity.Y);
+                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
+                            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
                         }
                         NPC.velocity.Y = -7f;
 

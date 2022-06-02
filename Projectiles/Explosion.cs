@@ -22,8 +22,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.light = 1;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-            drawOffsetX = -10;
-            drawOriginOffsetY = -10;
+            DrawOffsetX = -10;
+            DrawOriginOffsetY = -10;
         }
 
         public override void AI()

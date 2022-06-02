@@ -1923,21 +1923,21 @@ namespace tsorcRevamp.NPCs
         ///</summary> 
         ///<param name="despawnFlavorText">The custom text this boss displays when it despawns</param>
         ///<param name="textColor">The color of the despawn text</param>
-        ///<param name="dustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
-        public NPCDespawnHandler(string despawnFlavorText, Color textColor, int dustType)
+        ///<param name="DustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
+        public NPCDespawnHandler(string despawnFlavorText, Color textColor, int DustType)
         {
             despawnText = despawnFlavorText;
             despawnTextColor = textColor;
-            despawnDustType = dustType;
+            despawnDustType = DustType;
         }
 
         ///<summary> 
         ///Handles all targeting and despawning.
         ///</summary> 
-        ///<param name="dustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
-        public NPCDespawnHandler(int dustType)
+        ///<param name="DustType">The ID of the dust this NPC should create an explosion of upon despawning</param>
+        public NPCDespawnHandler(int DustType)
         {
-            despawnDustType = dustType;
+            despawnDustType = DustType;
         }
 
         readonly string despawnText;

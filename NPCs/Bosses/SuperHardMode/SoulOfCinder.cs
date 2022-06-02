@@ -854,7 +854,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return statePicker;
             }
         }
-        private void ToArenaCenterWithDust(ref float timer, int dustType, DustShapes shape)
+        private void ToArenaCenterWithDust(ref float timer, int DustType, DustShapes shape)
         {
             timer++;
             if (timer >= 0 && timer < 15)
@@ -875,7 +875,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 velocity = MakeDustShape(shape, i);
-                    Dust.NewDustPerfect(NPC.Center, dustType, velocity).noGravity = true;
+                    Dust.NewDustPerfect(NPC.Center, DustType, velocity).noGravity = true;
 
                 }
             }

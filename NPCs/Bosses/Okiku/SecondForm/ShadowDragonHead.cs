@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.knockBackResist = 0f;
             despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
 
-            drawOffsetY = 45;
+            DrawOffsetY = 45;
 
             bodyTypes = new int[] {
             ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),

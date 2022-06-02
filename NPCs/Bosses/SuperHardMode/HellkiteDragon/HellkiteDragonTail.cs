@@ -13,7 +13,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.npcSlots = 2;
             NPC.width = 44;
             NPC.height = 22;
-            drawOffsetY = 60;
+            DrawOffsetY = 60;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;

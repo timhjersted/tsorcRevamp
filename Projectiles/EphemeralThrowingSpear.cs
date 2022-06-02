@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.scale = 0.9f;
             Projectile.tileCollide = false;
             Projectile.width = 14;
-            drawOffsetX = -10;
+            DrawOffsetX = -10;
         }
         public override void AI()
         {

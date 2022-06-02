@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Pets
             Projectile.tileCollide = false;
             AIType = ProjectileID.BabyHornet;
             Projectile.scale = 0.85f;
-            drawOffsetX = -8;
+            DrawOffsetX = -8;
         }
 
         public override bool PreAI()

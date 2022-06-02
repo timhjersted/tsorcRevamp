@@ -61,7 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             float spreadMult = 0.05f;
             type = ModContent.ProjectileType<Projectiles.PhazonRound>();
 
-            Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 15f;
+            Vector2 muzzleOffset = Vector2.Normalize(speed) * 15f;
             if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
             {
                 position -= muzzleOffset;

@@ -26,8 +26,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.scale = 2f;
             Projectile.tileCollide = true;
-            drawOriginOffsetY = 95;
-            drawOriginOffsetX = -95;
+            DrawOriginOffsetY = 95;
+            DrawOriginOffsetX = -95;
         }
         float size = 0;
         int dustCount = 0;

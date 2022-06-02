@@ -69,10 +69,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
             //damage = (int)(damage * .85f);
             float numberProjectiles = 3; //Main.rand.Next(3); // 3, 4, or 5 shots
             float rotation = MathHelper.ToRadians(15); // Spread degrees.
-            position += Vector2.Normalize(new Vector2(speedX, speedY)) * 30f; // Distance spawned from player
+            position += Vector2.Normalize(speed) * 30f; // Distance spawned from player
             for (int i = 0; i < numberProjectiles; i++)
             {
-                Vector2 perturbedSpeed = new Vector2(speedX, speedY).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
+                Vector2 perturbedSpeed = speed.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * 1f; // The speed at which projectiles move.
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item), position.X, position.Y, perturbedSpeed.X, perturbedSpeed.Y, type, damage, knockBack, player.whoAmI);
             }
             return false;

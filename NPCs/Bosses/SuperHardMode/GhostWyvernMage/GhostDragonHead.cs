@@ -16,7 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.npcSlots = 1;
             NPC.width = 45;
             NPC.height = 45;
-            drawOffsetY = drawOffset;
+            DrawOffsetY = drawOffset;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22750;

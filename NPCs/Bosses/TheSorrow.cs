@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.DeathSound = SoundID.NPCDeath1;
             bossBag = ModContent.ItemType<Items.BossBags.TheSorrowBag>();
 
-            drawOffsetY = +70;
+            DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
 

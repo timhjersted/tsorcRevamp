@@ -23,8 +23,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 145;
             Projectile.penetrate = 3;
 
-            drawOffsetX = -2;
-            drawOriginOffsetY = -2;
+            DrawOffsetX = -2;
+            DrawOriginOffsetY = -2;
         }
 
         public override bool PreDraw(ref Color lightColor)

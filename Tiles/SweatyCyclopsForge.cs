@@ -19,7 +19,7 @@ namespace tsorcRevamp.Tiles
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Sweaty Cyclops Forge");
             AddMapEntry(new Color(215, 60, 0), name);
-            dustType = 30;
+            DustType = 30;
             disableSmartCursor = true;
             Main.tileLighted[Type] = true;
             Main.tileFrameImportant[Type] = true;

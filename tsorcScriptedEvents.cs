@@ -226,7 +226,7 @@ namespace tsorcRevamp
             ScriptedEvent JungleWyvernEvent = new ScriptedEvent(new Vector2(4331, 1713), 16, ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), DustID.CursedTorch, true, true, "You have disturbed the Ancient Wyvern of the Forgotten City!", Color.Green, false);
 
             //SEATH THE SCALELESS
-            ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.TorchworkFountain_Blue, true, true, "Seath the Scaleless rises!", Color.Blue, false);
+            ScriptedEvent SeathEvent = new ScriptedEvent(new Vector2(7737, 1546), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), DustID.FireworkFountain_Blue, true, true, "Seath the Scaleless rises!", Color.Blue, false);
 
             //WYVERN MAGE 
             ScriptedEvent WyvernMageEvent = new ScriptedEvent(new Vector2(7192, 364), 40, ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), DustID.MagicMirror, true, true, "You impress me Red! But this is where your journey ends...", Color.Blue, false, null, StormCustomAction);
@@ -238,7 +238,7 @@ namespace tsorcRevamp
 
             //SERRIS
             //Like Slogra and Gaibon, this one works a little different due to spawning two bosses.
-            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.TorchworkFountain_Blue, false, true, "The Twin Serris Worms have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction);
+            ScriptedEvent SerrisEvent = new ScriptedEvent(new Vector2(1136, 956), 30, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>(), DustID.FireworkFountain_Blue, false, true, "The Twin Serris Worms have been enraged!", Color.Blue, false, SerrisCustomCondition, SerrisCustomAction);
 
             //MARILITH 
             ScriptedEvent MarilithEvent = new ScriptedEvent(new Vector2(3235, 1764), 30, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>(), DustID.RedTorch, true, true, "The Fire Fiend has emerged from the heart of the Abyss!", Color.Red, false, SuperHardModeCustomCondition);
@@ -614,7 +614,7 @@ namespace tsorcRevamp
                 UsefulFunctions.BroadcastText("Artorias rains fire from the Abyss...", Color.Gold);
                 for (int i = 0; i < 10; i++)
                 {
-                    Projectile.NewProjectile((float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), thisEvent.spawnedNPC.damage / 4, 2f, Main.myPlayer);
+                    Projectile.NewProjectile(new EntitySource_Misc("Scripted Event"), (float)player.position.X - 100 + Main.rand.Next(200), (float)player.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), thisEvent.spawnedNPC.damage / 4, 2f, Main.myPlayer);
                 }
             }
 
@@ -833,7 +833,7 @@ namespace tsorcRevamp
 
         public static bool MechanicAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(277 * 16, 1366 * 16, NPCID.Mechanic);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 277 * 16, 1366 * 16, NPCID.Mechanic);
             NPC.savedMech = true;
             thisEvent.endEvent = true;
             return true;
@@ -841,7 +841,7 @@ namespace tsorcRevamp
 
         public static bool WizardAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(7322 * 16, 603 * 16, NPCID.Wizard);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 7322 * 16, 603 * 16, NPCID.Wizard);
             NPC.savedWizard = true;
             thisEvent.endEvent = true;
             return true;
@@ -1268,7 +1268,7 @@ namespace tsorcRevamp
         public int? newDamage;
         public int? newSouls;
 
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int dustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, int? npcType = null, int DustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null)
         {
             rangeDetectionMode = true;
             //Player position is stored as 16 times block distances
@@ -1287,7 +1287,7 @@ namespace tsorcRevamp
 
             eventText = flavorText;
             eventTextColor = flavorTextColor;
-            dustID = dustType;
+            dustID = DustType;
             save = saveEvent;
             visible = visibleRange;
             square = squareRange;
@@ -1304,7 +1304,7 @@ namespace tsorcRevamp
             }
         }
 
-        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs, List<Vector2> coords, int dustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null)
+        public ScriptedEvent(Vector2 rangeCenterpoint, float rangeRadius, List<int> npcs, List<Vector2> coords, int DustType = 31, bool saveEvent = false, bool visibleRange = false, string flavorText = "default", Color flavorTextColor = new Color(), bool squareRange = false, Func<bool> customCondition = null, Func<Player, ScriptedEvent, bool> customAction = null)
         {
             rangeDetectionMode = true;
             //Player position is stored as 16 times block distances
@@ -1318,7 +1318,7 @@ namespace tsorcRevamp
 
             eventText = flavorText;
             eventTextColor = flavorTextColor;
-            dustID = dustType;
+            dustID = DustType;
             save = saveEvent;
             visible = visibleRange;
             square = squareRange;
@@ -1445,7 +1445,7 @@ namespace tsorcRevamp
             {
                 for (int i = 0; i < NPCIDs.Count; i++)
                 {
-                    spawnedNPCs.Add(Main.npc[NPC.NewNPC((int)NPCCoordinates[i].X * 16, (int)NPCCoordinates[i].Y * 16, NPCIDs[i])]);
+                    spawnedNPCs.Add(Main.npc[NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)NPCCoordinates[i].X * 16, (int)NPCCoordinates[i].Y * 16, NPCIDs[i])]);
                     deadNPCs.Add(false);
                     if (newMaxLife != null)
                     {
@@ -1480,7 +1480,7 @@ namespace tsorcRevamp
             }
             else
             {
-                spawnedNPC = Main.npc[NPC.NewNPC((int)centerpoint.X, (int)centerpoint.Y, npcToSpawn)];
+                spawnedNPC = Main.npc[NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)centerpoint.X, (int)centerpoint.Y, npcToSpawn)];
                 if (newMaxLife != null)
                 {
                     spawnedNPC.lifeMax = newMaxLife.Value;
@@ -1582,11 +1582,11 @@ namespace tsorcRevamp
         //Is it checking if they're in a square range around a point, or a circular one?
         public bool square;
 
-        public NetworkEvent(Vector2 position, float range, int dustType, bool squareRange)
+        public NetworkEvent(Vector2 position, float range, int DustType, bool squareRange)
         {
             centerpoint = position;
             radius = range;
-            dustID = dustType;
+            dustID = DustType;
             square = squareRange;
         }
     }

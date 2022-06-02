@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Main.npcFrameCount[NPC.type] = 8;
             NPC.width = 110;
             NPC.height = 170;
-            drawOffsetY = 50;
+            DrawOffsetY = 50;
             NPC.damage = trueContactDamage;
             NPC.defense = 35;
             NPC.aiStyle = -1;

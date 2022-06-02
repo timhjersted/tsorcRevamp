@@ -18,8 +18,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = false;
             Projectile.timeLeft = 2;
             Projectile.penetrate = -1; //this can be removed to only damage the host
-            drawOffsetX = -2;
-            drawOriginOffsetY = -2;
+            DrawOffsetX = -2;
+            DrawOriginOffsetY = -2;
             Projectile.usesLocalNPCImmunity = true; //any amount of explosions can damage a target simultaneously
             Projectile.localNPCHitCooldown = -1; //but a single explosion can never damage the same enemy more than once
             Projectile.alpha = 255;

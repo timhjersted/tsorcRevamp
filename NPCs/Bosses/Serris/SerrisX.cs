@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         public override void SetDefaults()
         {
             Main.npcFrameCount[NPC.type] = 16;
-            drawOffsetY = 10;
+            DrawOffsetY = 10;
             NPC.npcSlots = 5;
             NPC.width = 70;
             NPC.height = 70;

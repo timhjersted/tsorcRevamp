@@ -14,7 +14,7 @@ namespace tsorcRevamp.Tiles
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Flame Jet");
             AddMapEntry(Color.Orange, name);
-            dustType = DustID.OrangeTorch;
+            DustType = DustID.OrangeTorch;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
             Main.tileNoAttach[Type] = true;

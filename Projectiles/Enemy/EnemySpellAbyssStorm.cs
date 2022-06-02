@@ -16,8 +16,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.width = 194;
             Projectile.height = 194;
-            drawOriginOffsetX = -96;
-            drawOriginOffsetY = 94;
+            DrawOriginOffsetX = -96;
+            DrawOriginOffsetY = 94;
             Main.projFrames[Projectile.type] = 7;
             Projectile.hostile = true;
             Projectile.penetrate = 50;

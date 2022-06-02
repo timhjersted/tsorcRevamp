@@ -25,8 +25,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.alpha = 90;
             Projectile.light = 0.3f;
             Projectile.penetrate = -1;
-            drawOffsetX = -4;
-            drawOriginOffsetY = -10;
+            DrawOffsetX = -4;
+            DrawOriginOffsetY = -10;
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {

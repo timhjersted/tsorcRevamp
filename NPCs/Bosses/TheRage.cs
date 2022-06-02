@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses
             bossBag = ModContent.ItemType<Items.BossBags.TheRageBag>();
             NPC.timeLeft = 22500;
 
-            drawOffsetY = +70;
+            DrawOffsetY = +70;
             NPC.width = 140;
             NPC.height = 60;
 

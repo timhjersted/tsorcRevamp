@@ -105,8 +105,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             for (int i = 0; i < 5; i++)
             {
-                int dustType = 7;
-                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
+                int DustType = 7;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustType);
                 Dust dust = Main.dust[dustIndex];
                 dust.scale *= 1f + Main.rand.Next(-30, 31) * 0.01f;
                 dust.velocity.Y = Main.rand.Next(-3, 0);

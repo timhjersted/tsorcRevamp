@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                 target = thisProjectile.whoAmI;
             }
 
-            Vector2 projVel = new Vector2(speedX, speedY) + Main.rand.NextVector2CircularEdge(randomness, randomness);
+            Vector2 projVel = speed + Main.rand.NextVector2CircularEdge(randomness, randomness);
             Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Center, projVel, ModContent.ProjectileType<Projectiles.ElfinArrow>(), Item.damage, Item.knockBack, Main.myPlayer, target);
             return false;
         }

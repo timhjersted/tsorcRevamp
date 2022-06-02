@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.knockBackResist = 0f;
             NPC.dontCountMe = true;
-            drawOffsetY = 50;
+            DrawOffsetY = 50;
             bodyTypes = new int[] {
             ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
             ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),

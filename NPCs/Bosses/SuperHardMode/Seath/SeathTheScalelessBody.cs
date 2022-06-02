@@ -12,7 +12,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         {
             NPC.width = 44; //was 32
             NPC.height = 44; //tried 64 44 works
-            drawOffsetY = 49;
+            DrawOffsetY = 49;
             NPC.aiStyle = 6;
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;

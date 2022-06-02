@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.melee);
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
 
@@ -184,8 +184,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 0.5f); //Pick a color, any color. The 0.5f tones down its intensity by 50%
                     if (Main.rand.Next(3) == 1)
                     {
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkFlame, NPC.velocity.X, NPC.velocity.Y);
-                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkFlame, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
+                        Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkTorch, NPC.velocity.X, NPC.velocity.Y);
                     }
                     NPC.velocity.Y = -7f;
 
@@ -224,7 +224,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 10 + Main.rand.Next(10), (float)player.position.Y - 300f, (float)(-10 + Main.rand.Next(10)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 2f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20, 0.5f, -.01f); //fire
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }); //fire
+
                         //int FireAttack = Projectile... 
                         //Main.projectile[FireAttack].timeLeft = 15296;
                         NPC.netUpdate = true;
@@ -246,7 +247,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                         int FireAttack = Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 360f, (float)(-50 + Main.rand.Next(100)) / 10, 6.1f, ModContent.ProjectileType<Projectiles.Enemy.DragonsBreath>(), poisonStrikeDamage, 200f, Main.myPlayer); //Hellwing 12 was 2, was 8.9f near 10, not sure what / 10, does   
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20, 0.5f, .01f); //fire
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }); //fire
                         //Main.projectile[FireAttack].timeLeft = 15296;
                         NPC.netUpdate = true;
                     }
@@ -271,7 +272,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                         int BlackFire = Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 50 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 2.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyBlackFire>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20, 0.5f, -.03f); //fire
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.03f });//fire
                         Main.projectile[BlackFire].timeLeft = 1296;
                         NPC.netUpdate = true;
                     }
@@ -283,7 +284,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL, ALSO EnemySpellAbyssStormBall
                         int StormStrike = Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 50 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 4.1f, ModContent.ProjectileType<Projectiles.Enemy.FireBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 34, 0.4f, .01f); //flamethrower
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.4f, Pitch = 0.01f }); //flamethrower
                         //Main.projectile[StormStrike].timeLeft = 1296;
                         NPC.netUpdate = true;
                     }
@@ -328,7 +329,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         //Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 8.9f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //ORIGINAL
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 100 + Main.rand.Next(200), (float)nT.position.Y - 500f, (float)(-50 + Main.rand.Next(100)) / 10, 7.1f, ModContent.ProjectileType<Projectiles.Enemy.EnemyCursedBreath>(), poisonStrikeDamage, 2f, Main.myPlayer); //was 8.9f near 10, not sure what / 10, does
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 34, 0.2f, .01f); //flamethrower
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.2f, Pitch = 0.01f }); //flamethrower
                         NPC.netUpdate = true;
                     }
                 }
@@ -411,7 +412,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (((speed2.X < 0f) && (NPC.velocity.X < 0f)) || ((speed2.X > 0f) && (NPC.velocity.X > 0f)))
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed2.X, speed2.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), redMagicDamage, 0f, Main.myPlayer);
-                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 125, 0.3f, 0f); //phantasmal bolt fire 2
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item125 with { Volume = 0.3f, Pitch = 0.0f }); //phantasmal bolt fire 2
                         }
                         if (poisonTimer >= 255)
                         { poisonTimer = 1f; }

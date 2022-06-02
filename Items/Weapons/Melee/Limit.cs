@@ -41,7 +41,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 playerToMouse *= 60f / playerToMouse.Length();
                 mousePos = player.Center + playerToMouse;
             }
-            Projectile.NewProjectile(player.GetSource_ItemUse(Item), mousePos, new Vector2(speedX, speedY), ModContent.ProjectileType<Projectiles.Limit>(), Item.damage, Item.knockBack, Item.owner);
+            Projectile.NewProjectile(player.GetSource_ItemUse(Item), mousePos, speed, ModContent.ProjectileType<Projectiles.Limit>(), Item.damage, Item.knockBack, Item.owner);
             return false;
         }
     }

@@ -29,8 +29,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.scale = 0.8f;
 
             //These 2 help the projectile hitbox be centered on the projectile sprite.
-            drawOffsetX = 0;
-            drawOriginOffsetY = 0;
+            DrawOffsetX = 0;
+            DrawOriginOffsetY = 0;
         }
 
         public override bool PreDraw(ref Color lightColor)

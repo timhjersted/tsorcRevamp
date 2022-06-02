@@ -24,9 +24,9 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.scale = 1f;
             Projectile.tileCollide = true;
-            drawOriginOffsetY = -6;
-            drawOriginOffsetX = -6;
-            drawOffsetX = -6;
+            DrawOriginOffsetY = -6;
+            DrawOriginOffsetX = -6;
+            DrawOffsetX = -6;
         }
 
         #region AI

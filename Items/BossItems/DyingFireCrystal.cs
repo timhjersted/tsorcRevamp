@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             int offset = 50 * 16;
             int effectOffset = 65;
             Vector2 spawnPoint = new Vector2(player.position.X, player.position.Y);
-            int dustType = 174;
+            int DustType = 174;
             Vector2 vfx = new Vector2(spawnPoint.X, spawnPoint.Y);
             if (player.direction == 1)
             {
@@ -48,9 +48,9 @@ namespace tsorcRevamp.Items.BossItems
             for (int i = 0; i < 50; i++)
             {
                 Color color = Color.OrangeRed;
-                int dust = Dust.NewDust(vfx, 160, 0, dustType, Main.rand.Next(-2, 2), Main.rand.Next(0, 3) * -2, 100, Color.Orange, 10f);
+                int dust = Dust.NewDust(vfx, 160, 0, DustType, Main.rand.Next(-2, 2), Main.rand.Next(0, 3) * -2, 100, Color.Orange, 10f);
                 //Main.dust[dust].noGravity = false;
-                dust = Dust.NewDust(vfx, 130, 40, dustType, Main.rand.Next(-1, 1), Main.rand.Next(0, 20) * -2, 100, Color.OrangeRed, 9f);
+                dust = Dust.NewDust(vfx, 130, 40, DustType, Main.rand.Next(-1, 1), Main.rand.Next(0, 20) * -2, 100, Color.OrangeRed, 9f);
                 //Main.dust[dust].noGravity = false;
                 dust = Dust.NewDust(vfx, 130, 50, 182, Main.rand.Next(-1, 1), Main.rand.Next(0, 30) * -2, 100, Color.Red, 8f);
                 //Main.dust[dust].noGravity = false;

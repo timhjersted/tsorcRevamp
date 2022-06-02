@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.BossItems
             int offset = 50 * 16;
             int effectOffset = 65;
             Vector2 spawnPoint = new Vector2(player.position.X, player.position.Y);
-            int dustType = DustID.PurpleCrystalShard;
+            int DustType = DustID.PurpleCrystalShard;
             Vector2 vfx = new Vector2(spawnPoint.X, spawnPoint.Y);
             if (player.direction == 1)
             {
@@ -54,13 +54,13 @@ namespace tsorcRevamp.Items.BossItems
                 vfx = Attraidies.Center;
                 Vector2 vel = Main.rand.NextVector2Circular(10, 10);
                 int dust;
-                dust = Dust.NewDust(vfx, 30, 30, dustType, vel.X, vel.Y, 100, default, 5f);
+                dust = Dust.NewDust(vfx, 30, 30, DustType, vel.X, vel.Y, 100, default, 5f);
                 Main.dust[dust].noGravity = true;
-                Dust.NewDust(vfx, 30, 30, dustType, vel.X, vel.Y, 240, default, 5f);
+                Dust.NewDust(vfx, 30, 30, DustType, vel.X, vel.Y, 240, default, 5f);
                 Main.dust[dust].noGravity = true;
                 Dust.NewDust(vfx, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
 
-                Dust.NewDustPerfect(player.position, dustType, vel, 100, default, 5f).noGravity = true;
+                Dust.NewDustPerfect(player.position, DustType, vel, 100, default, 5f).noGravity = true;
             }
 
             //Flip it turnways if the player is facing the other way

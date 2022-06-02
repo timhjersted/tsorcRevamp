@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.light = 0.8f;
             Main.projFrames[Projectile.type] = 1;
 
-            drawOriginOffsetX = 12;
+            DrawOriginOffsetX = 12;
         }
 
         public override void SetStaticDefaults()

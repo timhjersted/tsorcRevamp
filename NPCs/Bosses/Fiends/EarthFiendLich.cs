@@ -322,6 +322,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             int num = 1;
             if (!Main.dedServ)
             {
+                (Microsoft.Xna.Framework.Graphics.Texture2D)Terraria.GameContent.TextureAssets.Npc
                 num = Main.npcTexture[NPC.type].Height / Main.npcFrameCount[NPC.type];
             }
             if (NPC.velocity.X < 0)

@@ -19,8 +19,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 600;
             Projectile.tileCollide = true;
 
-            drawOffsetX = -5;
-            drawOriginOffsetY = -8;
+            DrawOffsetX = -5;
+            DrawOriginOffsetY = -8;
         }
         public override void AI()
         {

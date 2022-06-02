@@ -35,7 +35,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {
-            Vector2 projVel = new Vector2(speedX, speedY);
+            Vector2 projVel = speed;
             projVel = projVel.RotatedBy(MathHelper.ToRadians(Main.rand.Next(-7, 7)));
             speedX = projVel.X;
             speedY = projVel.Y;

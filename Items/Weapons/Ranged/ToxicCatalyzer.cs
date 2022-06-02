@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             }
 
             {
-                Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speedX, speedY)) * 1f;
+                Vector2 muzzleOffset = Vector2.Normalize(speed) * 1f;
                 if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
                 {
                     position += muzzleOffset;

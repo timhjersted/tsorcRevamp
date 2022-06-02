@@ -26,8 +26,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
 
-            drawOffsetX = -2;
-            drawOriginOffsetY = -2;
+            DrawOffsetX = -2;
+            DrawOriginOffsetY = -2;
         }
 
 

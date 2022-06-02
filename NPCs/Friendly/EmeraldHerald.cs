@@ -198,12 +198,12 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     Main.npcChatText = "If you ever need more, you may roast some over the flames of a bonfire. Farewell.";
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
-                    Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulShekel>(), 100);
 
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
-                        Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);
+                        Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ItemID.WormholePotion, 5);
                     }
                     chatState = 0;
                     return;
@@ -212,9 +212,9 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     Main.npcChatText = "Bearer of the Curse, the Estus Flask will no doubt prove" + "\nto be invaluable on your journey. Farewell.";
                     player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift = true;
-                    Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
-                    Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.SoulShekel>(), 100);
-                    Main.LocalPlayer.QuickSpawnItem(ModContent.ItemType<Items.Potions.Lifegem>(), 10);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.MushroomSkewer>(), 10);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.SoulShekel>(), 100);
+                    Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ModContent.ItemType<Items.Potions.Lifegem>(), 10);
 
                     if (Main.netMode != NetmodeID.Server)
                     {
@@ -222,7 +222,7 @@ namespace tsorcRevamp.NPCs.Friendly
                     }
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
-                        Main.LocalPlayer.QuickSpawnItem(ItemID.WormholePotion, 5);
+                        Main.LocalPlayer.QuickSpawnItem(Main.LocalPlayer.GetSource_DropAsItem(), ItemID.WormholePotion, 5);
                     }
                     chatState = 0;
                     return;
@@ -295,7 +295,7 @@ namespace tsorcRevamp.NPCs.Friendly
         int eyeTimer;
         int idleTimer;
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Texture2D eyeTexture = Mod.GetTexture("NPCs/Friendly/EmeraldHerald_Eye");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

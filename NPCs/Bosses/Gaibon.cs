@@ -435,7 +435,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
                     float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - NPC.position.X) / distanceFactor) + speedRand.X;
                     float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - NPC.position.Y) / distanceFactor) + speedRand.Y;
-                    Vector2 dustSpeed = new Vector2(speedX, speedY);
+                    Vector2 dustSpeed = speed;
                     Dust dustObj = Dust.NewDustPerfect(dustPos, 173, dustSpeed, 200, default, 3);
                     dustObj.noGravity = true;
                 }

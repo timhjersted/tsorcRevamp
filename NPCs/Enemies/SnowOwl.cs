@@ -53,8 +53,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             for (int i = 0; i < 5; i++)
             {
-                int dustType = 5;
-                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, dustType);
+                int DustType = 5;
+                int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustType);
                 Dust dust = Main.dust[dustIndex];
                 dust.velocity.X = dust.velocity.X + Main.rand.Next(-50, 51) * 0.06f;
                 dust.velocity.Y = dust.velocity.Y + Main.rand.Next(-50, 51) * 0.06f;
@@ -68,9 +68,9 @@ namespace tsorcRevamp.NPCs.Enemies
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, 5, Main.rand.Next(-3, 3), Main.rand.Next(-3, 3), 70, default(Color), 1f);
                 }
 
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Snow Owl Gore 1"), 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Snow Owl Gore 2"), 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Snow Owl Gore 3"), 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Snow Owl Gore 1").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Snow Owl Gore 2").Type, 1.1f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Snow Owl Gore 3").Type, 1.1f);
 
             }
         }

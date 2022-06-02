@@ -21,8 +21,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.scale = .8f;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.
-            drawOffsetX = -5;
-            drawOriginOffsetY = -5;
+            DrawOffsetX = -5;
+            DrawOriginOffsetY = -5;
         }
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {

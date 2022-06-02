@@ -20,8 +20,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.tileCollide = true;
             Projectile.timeLeft = 38;
             //These 2 help the projectile hitbox be centered on the projectile sprite.
-            drawOffsetX = -2;
-            drawOriginOffsetY = -2;
+            DrawOffsetX = -2;
+            DrawOriginOffsetY = -2;
         }
 
         public override void AI()

@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             base.ChargeLaser();
 
             //Dust on player when  using
-            Dust.NewDustPerfect(Projectile.position, DustID.TorchworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
+            Dust.NewDustPerfect(Projectile.position, DustID.FireworkFountain_Blue, Main.rand.NextVector2Circular(3, 3)).noGravity = true;
 
             //Dust along lightning lines
             if (FiringTimeLeft == 28)
@@ -259,7 +259,8 @@ namespace tsorcRevamp.Projectiles.Enemy
                 if (!branch)
                 {
                     dustCount = 15;
-                    Terraria.Audio.SoundEngine.PlaySound(4, currentBranch[currentBranch.Count - 1], 43);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43 with { Volume = 0.4f, Pitch = 0.0f });
+                    //Terraria.Audio.SoundEngine.PlaySound(4, currentBranch[currentBranch.Count - 1], 43);
                 }
                 if (branchCollided)
                 {

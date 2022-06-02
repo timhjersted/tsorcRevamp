@@ -19,8 +19,8 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.width = 130;
             Projectile.height = 402;
-            drawOffsetX = -55;
-            drawOriginOffsetY = -30;
+            DrawOffsetX = -55;
+            DrawOriginOffsetY = -30;
         }
         public override void AI()
         {

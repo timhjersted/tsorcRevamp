@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             //projectile.aiPretendType = 94;
             Projectile.timeLeft = 100;
             Projectile.light = .8f;
-            drawOriginOffsetX = 13;
+            DrawOriginOffsetX = 13;
         }
 
         public override void SetStaticDefaults()

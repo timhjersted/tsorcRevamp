@@ -78,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public ArmorShaderData shader;
 
         //Should it play a sound? Set to 'null' to disable
-        public SoundStyle LaserSound = SoundID.Item12 with { Volume = 0.5f };
+        public SoundStyle? LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
         //Does it have a custom texture?
         public TransparentTextureHandler.TransparentTextureType LaserTexture = TransparentTextureHandler.TransparentTextureType.GenericLaser;
@@ -433,7 +433,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             WaterShaderData shaderData = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
 
             // A universal time-based sinusoid which updates extremely rapidly. GlobalTime is 0 to 3600, measured in seconds.
-            float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTime * 20f);
+            float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 20f);
             Vector2 ripplePos = Projectile.position + new Vector2(beamDims.X * 0.5f, 0f).RotatedBy(Projectile.rotation);
 
             // WaveData is encoded as a Color. Not really sure why.
@@ -451,7 +451,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 {
                     if (LaserSound != null)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(LaserSound);
+                        Terraria.Audio.SoundEngine.PlaySound(LaserSound.Value);
                     }
                     //Then, set it to fire for the FIRING_TIME frames
                     FiringTimeLeft = FiringDuration;

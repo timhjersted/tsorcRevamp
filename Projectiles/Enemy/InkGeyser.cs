@@ -59,12 +59,12 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Vector2 dir = Main.rand.NextVector2CircularEdge(65, 65);
                 Vector2 dustPos = Projectile.Center + dir;
                 Vector2 dustVel = new Vector2(10, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi / 2);
-                int dustType = DustID.Asphalt;
+                int DustType = DustID.Asphalt;
                 if (Main.GameUpdateCount % 5 == 0)
                 {
-                    dustType = DustID.CursedTorch;
+                    DustType = DustID.CursedTorch;
                 }
-                Dust.NewDustPerfect(dustPos, dustType, dustVel, 0, default, 1).noGravity = true;
+                Dust.NewDustPerfect(dustPos, DustType, dustVel, 0, default, 1).noGravity = true;
             }
         }
 
