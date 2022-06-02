@@ -75,11 +75,11 @@ namespace tsorcRevamp.Items.BossItems
                 }
                 else
                 {
-                    timeRate = 2 * (54000 - Main.time) / (Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                    timeRate = 2 * (54000 - Main.time) / (Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
             }
 
-            if (player.itemTime > (Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
+            if (player.itemTime > (Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
                 Main.time += timeRate;
             }
@@ -89,9 +89,9 @@ namespace tsorcRevamp.Items.BossItems
                 if (player.itemTime == 0)
                 {
                     Main.NewText("The mirror's shadow engulfs you...", Color.Blue);
-                    player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                    player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
-                else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
+                else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
 
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items.BossItems
                     }
 
                 }
-                else if (player.itemTime >= (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
+                else if (player.itemTime >= (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
                     for (int i = 0; i < 35; i++)
                     {

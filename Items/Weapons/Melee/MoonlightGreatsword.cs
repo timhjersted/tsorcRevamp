@@ -52,7 +52,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
-            if (!Main.dayTime && player.GetDamage(DamageClass.Magic) > 1)
+            if (!Main.dayTime && player.GetDamage(DamageClass.Magic). > 1)
             {
                 damage = (int)(damage * player.GetDamage(DamageClass.Magic));
             }

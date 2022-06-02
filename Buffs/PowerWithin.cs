@@ -12,7 +12,7 @@ namespace tsorcRevamp.Buffs
             Description.SetDefault("Excessive power is eating away at you!");
             Main.buffNoTimeDisplay[Type] = false;
             Main.debuff[Type] = true;
-            canBeCleared = false;
+            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
 
         }
         public override void Update(Player player, ref int buffIndex)

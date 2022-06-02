@@ -462,7 +462,7 @@ namespace tsorcRevamp
             { //Miakoda Full Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.DamageType == DamageClass.Summon))
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaFullHeal2 = true;
@@ -489,7 +489,7 @@ namespace tsorcRevamp
             { //Miakoda Crescent Moon
                 if (MiakodaEffectsTimer > 720)
                 {
-                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.summon))
+                    if (crit || (proj.minion && Main.player[proj.owner].HeldItem.DamageType == DamageClass.Summon))
                     {
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust1 = true;
                         Player.GetModPlayer<tsorcRevampPlayer>().MiakodaCrescentDust2 = true;

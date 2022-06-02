@@ -35,11 +35,10 @@ namespace tsorcRevamp.Items.Accessories
 
         public override void UpdateEquip(Player player)
         {
-            if (player.inventory[player.selectedItem].magic)
+            if (player.inventory[player.selectedItem].DamageType == DamageClass.Magic)
             {
                 player.manaCost = 1f / player.inventory[player.selectedItem].mana;
             }
-
         }
     }
 }

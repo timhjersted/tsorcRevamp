@@ -37,11 +37,11 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             if (Projectile.type == 27)
             {
-                int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, DustID.WaterCandle, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 3f);
+                int num40 = Dust.NewDust(new Vector2(Projectile.position.X + Projectile.velocity.X, Projectile.position.Y + Projectile.velocity.Y), Projectile.width, Projectile.height, DustID.WaterCandle, Projectile.velocity.X, Projectile.velocity.Y, 100, default, 3f);
                 Main.dust[num40].noGravity = true;
                 if (Main.rand.Next(10) == 0)
                 {
-                    num40 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.WaterCandle, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 1.4f);
+                    Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.WaterCandle, Projectile.velocity.X, Projectile.velocity.Y, 100, default(Color), 1.4f);
                 }
             }
             else
@@ -85,6 +85,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 return;
             }
         }
+        
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {

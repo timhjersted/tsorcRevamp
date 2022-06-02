@@ -134,7 +134,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Vector2 projectileVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, Main.player[NPC.target].Center, 4f, 1.06f, true, true);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projectileVelocity, ModContent.ProjectileType<Projectiles.Enemy.HypnoticDisrupter>(), hypnoticDisruptorDamage, 5f, Main.myPlayer);
                         //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                        Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.6f, -0.5f); //wobble
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, player.Center); //wobble
                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         shotTimer = 1f;
 
@@ -306,7 +306,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, speed.X, speed.Y, ModContent.ProjectileType<Projectiles.Enemy.EnemyBioSpitBall>(), bioSpitDamage, 0f, Main.myPlayer);
                     //Terraria.Audio.SoundEngine.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 9);
-                    Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20, 0.2f, -0.1f);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.2f, Pitch = -0.1f }, NPC.Center);
                     //customAi1 = 1f;
                 }
 
@@ -330,7 +330,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //MAKE SOUND WHEN JUMPING/HOVERING
             if (Main.rand.Next(12) == 0 && NPC.velocity.Y <= -1f)
             {
-                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 24, 0.2f, .1f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
             }
 
             //TELEGRAPH DUSTS

@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //play creature sounds
             if (Main.rand.Next(1000) == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(3, (int)NPC.position.X, (int)NPC.position.Y, 55, 0.3f, -0.7f); // cultist
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit55 with { Volume = 0.3f, Pitch = -0.7f }, NPC.Center); // cultist
             }
 
             Lighting.AddLight((int)NPC.position.X / 16, (int)NPC.position.Y / 16, 0.5f, 0.4f, 0.4f);

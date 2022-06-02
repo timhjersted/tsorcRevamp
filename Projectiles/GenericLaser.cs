@@ -72,10 +72,7 @@ namespace tsorcRevamp.Projectiles
         public Color? lightColor = null;
 
         //Should it play a vanilla sound?
-        public SoundStyle LaserSound = SoundID.Item60;
-
-        //Should it play a custom sound? This overrides whatver LASER_SOUND is set to
-        public string CustomSound = null;
+        public SoundStyle? LaserSound = SoundID.Item60;
 
         //What volume should it play the sound at?
         public float LaserVolume = 10f;
@@ -223,10 +220,10 @@ namespace tsorcRevamp.Projectiles
             //target.Hurt(Terraria.DataStructures.PlayerDeathReason.ByCustomReason(deathMessage), damage, 1);
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        // Add this projectile to the list of projectiles that will be drawn BEFORE tiles and NPC are drawn. This makes the projectile appear to be BEHIND the tiles and NPC.
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            // Add this projectile to the list of projectiles that will be drawn BEFORE tiles and NPC are drawn. This makes the projectile appear to be BEHIND the tiles and NPC.
-            drawCacheProjsBehindNPCs.Add(index);
+            behindNPCs.Add(index);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -443,16 +440,9 @@ namespace tsorcRevamp.Projectiles
                 //Only play the sound once, on the frame it hits max charge
                 if (Charge == MaxCharge || MaxCharge == 0)
                 {
-                    if (CustomSound == null)
+                    if (LaserSound != null)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(LaserSound.WithVolume(LaserVolume));
-                    }
-                    else
-                    {
-                        if (LaserSound != null)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, CustomSound).WithVolume(LaserVolume));
-                        }
+                        Terraria.Audio.SoundEngine.PlaySound(LaserSound.Value with { Volume = LaserVolume });
                     }
 
                     //Then, set it to fire for the FIRING_TIME frames

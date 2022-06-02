@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles
         {
             if (Projectile.localAI[0] == 0f)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.Center.X, (int)Projectile.Center.Y, SoundID.Item91.Style, .7f, -0.5f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item91 with { Volume = 0.7f, Pitch = -0.5f }, Projectile.Center);
                 Projectile.localAI[0] += 1f;
             }
 

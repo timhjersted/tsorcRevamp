@@ -28,10 +28,9 @@ namespace tsorcRevamp.Items.Weapons.Ranged
 
         public override void AddRecipes()
         {
-            Terraria.Terraria.Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe(30);
             recipe.AddRecipeGroup(RecipeGroupID.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);
-            recipe.SetResult(this, 30);
             recipe.Register();
         }
     }

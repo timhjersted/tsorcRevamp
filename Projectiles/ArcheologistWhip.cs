@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles
 
             if (Projectile.ai[0] == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WhipCrack").WithVolume(.6f).WithPitchVariance(.3f), Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/WhipCrack") with { Volume = 0.6f, PitchVariance = 0.3f }, Projectile.Center);
             }
             /*if (projectile.ai[0] <= 2f)
             {

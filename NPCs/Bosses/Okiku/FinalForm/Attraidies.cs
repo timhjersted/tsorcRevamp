@@ -301,7 +301,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     AttackModeCounter++;
                     if (AttackModeCounter == 4)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCKilled, (int)NPC.position.X, (int)NPC.position.Y, 43);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43, NPC.Center);
                         ChangeAttackModes();
                     }
                 }

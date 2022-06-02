@@ -3336,7 +3336,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (projectile.melee)
+            if (projectile.DamageType == DamageClass.Melee)
             {
                 damage *= 2;
                 crit = true;

@@ -105,7 +105,7 @@ namespace tsorcRevamp.Projectiles
             /*
             if (flameJetTexture == null || flameJetTexture.IsDisposed)
             {
-                flameJetTexture = mod.GetTexture("Projectiles/FlameJet");
+                flameJetTexture = (Texture2D)ModContent.Request<Texture2D>("Projectiles/FlameJet");
             }
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (projectile.spriteDirection == -1)

@@ -82,7 +82,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
-            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.melee);
+            tsorcRevampAIs.RedKnightOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
 

@@ -109,13 +109,13 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
-            else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
+            else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     //player.QuickSpawnItem(mod.ItemType("DarkSoul"), 2000); // Gives player souls.

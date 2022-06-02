@@ -63,7 +63,7 @@ namespace tsorcRevamp.Items
             }
             if (openSlot)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup, (int)player.position.X, (int)player.position.Y, 0, 0.8f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup with { Volume = 0.8f}, player.Center);
             }
             return true;
         }
@@ -75,14 +75,12 @@ namespace tsorcRevamp.Items
 
             recipe.Register();
 
-            Terraria.Recipe recipe2 = CreateRecipe();
+            Terraria.Recipe recipe2 = CreateRecipe(10);
             recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50);
-            recipe2.SetResult(this, 10);
             recipe2.Register();
 
-            Recipe recipe3 = CreateRecipe();
+            Recipe recipe3 = CreateRecipe(100);
             recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 500);
-            recipe3.SetResult(this, 100);
             recipe3.Register();
         }
 

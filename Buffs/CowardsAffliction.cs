@@ -11,8 +11,7 @@ namespace tsorcRevamp.Buffs
             Description.SetDefault("Do not flee from the Lord of Cinder.");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
-            canBeCleared = false;
-
+            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
 
         public override void Update(Player player, ref int buffIndex)

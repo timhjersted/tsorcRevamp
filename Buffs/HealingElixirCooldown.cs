@@ -12,7 +12,7 @@ namespace tsorcRevamp.Buffs
             Description.SetDefault("You cannot use Healing Elixirs!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
-            canBeCleared = false; //prevents nurse clearing
+            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true; //prevents nurse clearing
         }
     }
 }

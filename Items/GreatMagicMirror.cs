@@ -98,7 +98,7 @@ namespace tsorcRevamp.Items
 
             if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().warpX, player.GetModPlayer<tsorcRevampPlayer>().warpY))
             {
-                if (player.itemTime > (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
+                if (player.itemTime > (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
                     player.velocity = Vector2.Zero;
                     player.gravDir = 1;
@@ -115,9 +115,9 @@ namespace tsorcRevamp.Items
                 if (player.itemTime == 0)
                 {
                     Main.NewText("Picking up where you left off...", 255, 240, 20);
-                    player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                    player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 }
-                else if (player.itemTime == (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 4)
+                else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 4)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60);
 

@@ -48,7 +48,7 @@ namespace tsorcRevamp.Projectiles
             if (Projectile.soundDelay == 0)
             {
                 Projectile.soundDelay = 20 + Main.rand.Next(40);
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
             }
             if (Projectile.localAI[0] == 0f)
             {

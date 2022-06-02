@@ -118,7 +118,7 @@ namespace tsorcRevamp.Projectiles
         public override void Kill(int timeLeft)
         {
             // Play explosion sound
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74.WithPitchVariance(.5f), Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
             Projectile.damage = 40;
             Projectile.knockBack = 2f;
 

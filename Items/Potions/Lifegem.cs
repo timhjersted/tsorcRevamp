@@ -61,12 +61,12 @@ namespace tsorcRevamp.Items.Potions
         {
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
                 player.AddBuff(ModContent.BuffType<Buffs.Crippled>(), 90);
                 player.AddBuff(ModContent.BuffType<Buffs.GrappleMalfunction>(), 90);
             }
 
-            if (player.itemTime < (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
+            if (player.itemTime < (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
                 Item.useStyle = ItemUseStyleID.HoldUp;
 
@@ -85,15 +85,15 @@ namespace tsorcRevamp.Items.Potions
                 }
             }
 
-            if (player.itemTime >= (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item)) / 2)
+            if (player.itemTime >= (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
             {
                 Item.useStyle = ItemUseStyleID.Shoot;
             }
 
             if (player.itemTime == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center);
 
                 for (int i = 0; i < 30; i++)
                 {

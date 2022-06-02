@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.Accessories
 
         public override float UseTimeMultiplier(Item item, Player player)
         {
-            if ((player.inventory[player.selectedItem].magic) && (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox))
+            if ((player.inventory[player.selectedItem].DamageType == DamageClass.Magic) && (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox))
             {
                 return 2f;
             }

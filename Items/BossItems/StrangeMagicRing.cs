@@ -50,14 +50,14 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = new Recipe(Mod);
-                recipe.AddIngredient(Mod.GetItem("BrokenStrangeMagicRing"), 1);
-                recipe.AddIngredient(Mod.GetItem("WhiteTitanite"), 7);
-                recipe.AddIngredient(Mod.GetItem("CursedSoul"), 20);
-                recipe.AddIngredient(Mod.GetItem("DarkSoul"), 1000);
+                Recipe recipe = CreateRecipe();
+                recipe.AddIngredient(ModContent.ItemType<BrokenStrangeMagicRing>(), 1);
+                recipe.AddIngredient(ModContent.ItemType<WhiteTitanite>(), 7);
+                recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 20);
+                recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 1000);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this, 1);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
         }
     }

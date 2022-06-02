@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Summon
             Item.rare = ItemRarityID.Yellow;
             Item.UseSound = SoundID.Item44;
             Item.noMelee = true;
-            Item.summon = true;
+            Item.DamageType = DamageClass.Summon;
             Item.buffType = ModContent.BuffType<Buffs.Summon.NullSpriteBuff>();
             Item.shoot = ModContent.ProjectileType<Projectiles.Summon.NullSprite>();
         }

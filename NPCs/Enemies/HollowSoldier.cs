@@ -352,7 +352,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[3] == 26) //If timer is 46
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(1f).WithPitchVariance(.3f), NPC.position); //Play slash/swing sound
+                        
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -489,7 +490,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                     if (NPC.ai[1] == 442) //If timer is 50
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1.WithVolume(1f).WithPitchVariance(.3f), NPC.position); //Play slash/swing sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1 with { PitchVariance = .3f}, NPC.Center); //Play slash/swing sound
 
                         if (NPC.direction == 1)
                         {
@@ -564,9 +565,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D shieldTexture = Mod.GetTexture("NPCs/Enemies/HollowSoldier_Shield");
+            //("NPCs/Enemies/HollowSoldier_Shield");
+            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowSoldier_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 15, 0, shieldFrame);
             if (shielding && NPC.velocity.X == 0 && !jumpSlashing && !slashing)
@@ -594,7 +596,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (player.position.X > NPC.position.X)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play metal tink sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
                         damage -= 30;
                         if (NPC.ai[2] > 350)
                         {
@@ -606,7 +608,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (player.position.X < NPC.position.X)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play metal tink sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
                         damage -= 30;
                         if (NPC.ai[2] > 350)
                         {
@@ -622,7 +624,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                     damage = (int)(damage * 2f); //bonus damage
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play fleshy sound
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                 }
             }
             else //if enemy facing left
@@ -631,7 +633,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                     damage = (int)(damage * 2f); //bonus damage
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play fleshy sound
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                 }
             }
 
@@ -647,10 +649,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     if (NPC.direction == 1) //if npc facing right
                     {
-                        if (projectile.oldPosition.X > NPC.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
+                        if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
 
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
                             damage -= 30;
                             knockback = 0.1f;
                             if (NPC.ai[1] < 350)
@@ -663,9 +665,9 @@ namespace tsorcRevamp.NPCs.Enemies
                             }
                         }
 
-                        else if (hitDirection == -1 && (!projectile.melee || projectile.aiStyle == 19))
+                        else if (hitDirection == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
                             damage -= 30;
                             knockback = 0f;
 
@@ -683,9 +685,9 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     else //if npc facing left
                     {
-                        if (projectile.oldPosition.X < NPC.Center.X && projectile.melee && projectile.aiStyle != 19) //if proj moving toward npc front
+                        if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
                             damage -= 30;
                             knockback = 0.1f;
                             if (NPC.ai[1] < 350)
@@ -697,9 +699,9 @@ namespace tsorcRevamp.NPCs.Enemies
                                 NPC.ai[2] -= 25;
                             }
                         }
-                        else if (hitDirection == 1 && (!projectile.melee || projectile.aiStyle == 19))
+                        else if (hitDirection == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play metal tink sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center); //Play metal tink sound
                             damage -= 30;
 
                             knockback = 0f;
@@ -720,32 +722,32 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (NPC.direction == 1) //if enemy facing right
                 {
-                    if (projectile.oldPosition.X < NPC.Center.X && projectile.melee && projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                         damage = (int)(damage * 2f); //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play fleshy sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                     else if (hitDirection == 1)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                         damage = (int)(damage * 2f); //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play fleshy sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                 }
                 else //if enemy facing left
                 {
-                    if (projectile.oldPosition.X > NPC.Center.X && projectile.melee && projectile.aiStyle != 19) //if hit in the back
+                    if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if hit in the back
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                         damage = (int)(damage * 2f); //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play fleshy sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                     else if (hitDirection == -1)
                     {
                         CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weak spot!", false, false);
                         damage = (int)(damage * 2f); //bonus damage
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18.WithVolume(1f).WithPitchVariance(0.3f), NPC.position); //Play fleshy sound
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { PitchVariance = 0.3f }, NPC.Center); //Play fleshy sound
                     }
                 }
 

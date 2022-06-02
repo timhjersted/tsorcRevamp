@@ -841,7 +841,7 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch}, projectile.Center);
 
                         p.timeLeft = 2;
 
@@ -878,7 +878,7 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
 
                         //Main.NewText(pitch);
                         p.timeLeft = 2;
@@ -916,7 +916,8 @@ namespace tsorcRevamp.NPCs
                         }
                         float volume = (tags * 0.3f) + 0.7f;
                         float pitch = tags * 0.08f;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.Center.X, (int)projectile.Center.Y, SoundID.Item74.Style, volume, -pitch);
+
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = volume, Pitch = -pitch }, projectile.Center);
 
                         p.timeLeft = 2;
 
@@ -1537,7 +1538,7 @@ namespace tsorcRevamp.NPCs
                         if ((tpY < playerTileY - distFromPlayer || tpY > playerTileY + distFromPlayer || tpTileX < playerTileX - distFromPlayer || tpTileX > playerTileX + distFromPlayer) && (tpY < tileY - 1 || tpY > tileY + 1 || tpTileX < tileX - 1 || tpTileX > tileX + 1) && Main.tile[tpTileX, tpY].HasTile)
                         {
                             bool safe = true;
-                            if (Main.tile[tpTileX, tpY - 1].LiquidType && !npc.lavaImmune) safe = false;
+                            if (Main.tile[tpTileX, tpY - 1].LiquidType == LiquidID.Lava && !npc.lavaImmune) safe = false;
                             if (safe && (Main.tileSolid[(int)Main.tile[tpTileX, tpY].TileType] || aerial) && !Collision.SolidTiles(tpTileX - 1, tpTileX + 1, tpY - 4, tpY - 1))
                             {
                                 telePos.X = (float)(tpTileX * 16f - (float)(npc.width / 2) + 8f);
@@ -2523,7 +2524,7 @@ namespace tsorcRevamp.NPCs
                     {
                         //Skip to the next tile if any of the following is true:
                         //If the selected tile has lava above it, and the npc isn't immune
-                        if (Main.tile[(int)teleportTarget.X, y - 1].LiquidType && !npc.lavaImmune)
+                        if (Main.tile[(int)teleportTarget.X, y - 1].LiquidType == LiquidID.Lava && !npc.lavaImmune)
                         {
                             continue;
                         }

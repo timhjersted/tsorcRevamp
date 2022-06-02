@@ -43,13 +43,13 @@ namespace tsorcRevamp.Items.BossItems
         {
             if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                Recipe recipe = new Recipe(Mod);
+                Recipe recipe = CreateRecipe();
                 recipe.AddIngredient(ItemID.MythrilOre, 30);
                 recipe.AddIngredient(ItemID.SharkFin, 1);
                 recipe.AddIngredient(ItemID.ShadowScale, 1);
                 recipe.AddTile(TileID.DemonAltar);
-                recipe.SetResult(this, 1);
-                recipe.AddRecipe();
+                
+                recipe.Register();
             }
         }
     }

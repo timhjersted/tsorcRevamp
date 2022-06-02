@@ -49,12 +49,12 @@ namespace tsorcRevamp.Items.BossItems
 
         public override void AddRecipes()
         {
-            Recipe recipe = new Recipe(Mod);
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.JungleSpores, 99);
             recipe.AddIngredient(ItemID.Vine, 99);
             recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this, 1);
-            recipe.AddRecipe();
+            
+            recipe.Register();
         }
     }
 }

@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.BossItems
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SoulofNight, 7);
             recipe.AddIngredient(ItemID.Bone, 10);
-            recipe.AddIngredient(Mod.GetItem("DarkSoul"), 500);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoul>(), 500);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

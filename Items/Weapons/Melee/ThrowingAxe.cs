@@ -28,11 +28,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
 
         public override void AddRecipes()
         {
-            Terraria.Recipe recipe = CreateRecipe();
+            Terraria.Recipe recipe = CreateRecipe(40);
             recipe.AddIngredient(ItemID.Wood, 10);
             recipe.AddIngredient(ItemID.StoneBlock, 10);
             recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this, 40);
             recipe.Register();
         }
     }

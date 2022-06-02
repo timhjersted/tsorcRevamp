@@ -12,7 +12,7 @@ namespace tsorcRevamp.Buffs
             Description.SetDefault("You cannot use any magical weapon imbues!");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
-            canBeCleared = false;
+            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
     }
 }

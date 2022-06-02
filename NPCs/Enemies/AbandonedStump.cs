@@ -322,7 +322,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Player player = Main.LocalPlayer;
 
-            if (!projectile.melee)
+            if (projectile.DamageType != DamageClass.Melee)
             {
                 damage -= 5; //because lets face it, no one ever uprooted a tree with a bullet... A missle? Perhaps
             }
@@ -339,7 +339,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 projectile.type == Mod.Find<ModProjectile>("FireField").Type || projectile.type == Mod.Find<ModProjectile>("FireFieldBall").Type || projectile.type == Mod.Find<ModProjectile>("FireSpirit2").Type || projectile.type == Mod.Find<ModProjectile>("FlameStrike").Type || projectile.type == Mod.Find<ModProjectile>("GreatFireball").Type ||
                 projectile.type == Mod.Find<ModProjectile>("GreatFireballBall").Type || projectile.type == Mod.Find<ModProjectile>("GreatFireStrike").Type || projectile.type == Mod.Find<ModProjectile>("Meteor").Type || projectile.type == Mod.Find<ModProjectile>("MeteorShower").Type || projectile.type == Mod.Find<ModProjectile>("RedLaserBeam").Type ||
                 projectile.type == Mod.Find<ModProjectile>("BlackFire").Type || projectile.type == Mod.Find<ModProjectile>("BlackFirelet").Type || projectile.type == Mod.Find<ModProjectile>("CursedFlames").Type || projectile.type == Mod.Find<ModProjectile>("CursedFlamelash").Type || projectile.type == Mod.Find<ModProjectile>("DevilSickle").Type ||
-                (projectile.melee && player.meleeEnchant == 3))
+                (projectile.DamageType == DamageClass.Melee && player.meleeEnchant == 3))
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
                 damage *= 2;

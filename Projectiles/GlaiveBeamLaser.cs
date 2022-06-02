@@ -311,7 +311,7 @@ namespace tsorcRevamp.Projectiles
                     //Only play the sound once, on the frame it hits max charge
                     if (Charge == MAX_CHARGE)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GlaiveBeam").WithVolume(50f));
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/GlaiveBeam") with { Volume = 50f, PitchVariance = 0.1f }, Projectile.Center);
                         FiringTimeLeft = FIRING_TIME;
                     }
                 }

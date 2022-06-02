@@ -77,13 +77,14 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                PlayerLoader.UseTimeMultiplier(player, Item);
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
             else if (player.itemTime == 1)
             {
-                // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.25f).WithPitchVariance(.3f), player.position); // Plays sound.
+                // This code runs once halfway through the useTime of the item.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.25f, PitchVariance = 0.5f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
@@ -116,13 +117,13 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
             else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 200); // Gives player souls.
@@ -160,13 +161,13 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
             else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.5f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
@@ -219,17 +220,17 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
             else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.75f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.75f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 2000); // Gives player souls.
-                    Projectile.NewProjectile(player.GetSource_ItemUse(Item) player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 250, 15, 0);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.Top, player.velocity, Mod.Find<ModProjectile>("Soulsplosion").Type, 250, 15, 0);
                 }
 
                 for (int d = 0; d < 90; d++) // Upwards
@@ -304,13 +305,13 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
             else if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.9f).WithPitchVariance(.3f), player.position); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
@@ -400,13 +401,13 @@ namespace tsorcRevamp.Items
             // This sets up the itemTime correctly.
             if (player.itemTime == 0)
             {
-                player.itemTime = (int)(Item.useTime / PlayerHooks.TotalUseTimeMultiplier(player, Item));
+                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
             }
 
             else if (player.itemTime == 1)
             {
-                // This code runs once halfway through the useTime of the item. 
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(1f).WithPitchVariance(.3f), player.position); // Plays sound.
+                // This code runs once halfway through the useTime of the item.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), Mod.Find<ModItem>("DarkSoul").Type, 10000); // Gives player souls.

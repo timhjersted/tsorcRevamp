@@ -32,7 +32,7 @@ namespace tsorcRevamp.Projectiles
                         Main.dust[dust].noGravity = true;
                     }
                 }
-                if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.melee)
+                if (projectile.owner == Main.myPlayer && !projectile.hostile && projectile.DamageType == DamageClass.Melee)
                 {
                     if (modPlayer.MagicWeapon)
                     {
@@ -144,11 +144,11 @@ namespace tsorcRevamp.Projectiles
                 target.AddBuff(BuffID.Midas, 300);
             }
 
-            if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.melee)
+            if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.DamageType == DamageClass.Melee)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit44.WithVolume(0.3f), target.position);
             }
-            if (projectile.owner == Main.myPlayer && modPlayer.CrystalMagicWeapon && projectile.melee)
+            if (projectile.owner == Main.myPlayer && modPlayer.CrystalMagicWeapon && projectile.DamageType == DamageClass.Melee)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27.WithVolume(0.3f), target.position);
             }

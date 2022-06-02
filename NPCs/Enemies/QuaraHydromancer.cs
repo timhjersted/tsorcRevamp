@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Enemies
             //PLAY CREATURE SOUND
             if (Main.rand.Next(1000) == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(23, (int)NPC.position.X, (int)NPC.position.Y, 0, 0.3f, -0.3f); // water sound
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.3f, Pitch = -0.3f }, NPC.Center); // water sound
             }
 
 

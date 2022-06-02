@@ -97,7 +97,9 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void Kill(int timeLeft)
         {
             // Play explosion sound
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74.WithPitchVariance(.5f), Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
+
+
             // Fire Dust spawn
             for (int i = 0; i < 200; i++)
             {

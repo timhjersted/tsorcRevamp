@@ -106,7 +106,7 @@ namespace tsorcRevamp.Projectiles
             CastLights();
             if (Main.GameUpdateCount % 8 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MasterBuster"));
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/MasterBuster"), player.Center);
             }
 
         }

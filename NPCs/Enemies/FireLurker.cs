@@ -211,7 +211,7 @@ namespace tsorcRevamp.NPCs.Enemies
 		{
 			if (spearTexture == null || spearTexture.IsDisposed)
 			{
-				spearTexture = mod.GetTexture("Projectiles/Enemy/EnemyBioSpitBall");
+				spearTexture = (Texture2D)ModContent.Request<Texture2D>("Projectiles/Enemy/EnemyBioSpitBall");
 			}
 			if (customAi1 >= 120)
 			{

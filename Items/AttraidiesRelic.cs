@@ -24,7 +24,8 @@ namespace tsorcRevamp.Items
             Item.rare = ItemRarityID.Blue;
             Item.useTime = 45;
             Item.useAnimation = 45;
-            Item.UseSound = Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh");
+            new Terraria.Audio.SoundStyle(
+            Item.UseSound = new Terraria.Audio.SoundStyle("Sounds/Custom/EvilLaugh");
             Item.scale = 1f;
             Item.useStyle = ItemUseStyleID.HoldUp;
         }

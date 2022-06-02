@@ -11,7 +11,7 @@ namespace tsorcRevamp.Buffs
             Description.SetDefault("You are in combat.");
             Main.debuff[Type] = true;
             Main.buffNoTimeDisplay[Type] = false;
-            canBeCleared = false;
+            Terraria.ID.BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
         }
     }
 }

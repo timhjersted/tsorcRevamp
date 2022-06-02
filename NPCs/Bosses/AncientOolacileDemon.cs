@@ -106,7 +106,7 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
         {
 
-            //tsorcRevampAIs.RedKnightOnHit(npc, projectile.melee);
+            //tsorcRevampAIs.RedKnightOnHit(npc, projectile.DamageType == DamageClass.Melee);
             //TELEPORT RANGED
             if (Main.rand.Next(26) == 1)
             {
