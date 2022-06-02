@@ -22,11 +22,11 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.damage = 50;
             //It genuinely had none in the original.
             NPC.defense = 0;
-            music = 12;
+            Music = 12;
             NPC.defense = 10;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = Mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/NPCKilled/Gaibon_Roar");
+            NPC.DeathSound = new Terraria.Audio.SoundStyle("Sounds/NPCKilled/Gaibon_Roar");
             NPC.lifeMax = 5000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.9f;
@@ -147,7 +147,7 @@ namespace tsorcRevamp.NPCs.Bosses
                         Vector2 randomSpawn = Main.rand.NextVector2CircularEdge(200, 200);
                         int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + randomSpawn.X), (int)(NPC.position.Y + randomSpawn.Y), NPCID.BurningSphere, 0);
                         Main.npc[spawned].damage = burningSphereDamage;
-                        Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GaibonSpit2"), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2));
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
                         if (Main.netMode == NetmodeID.Server)
                         {
                             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);

@@ -31,7 +31,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             Projectile.type = 0;
-            Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig with { Volume = 1f }, Projectile.Center);
             for (int i = 0; i < 10; i++)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 7, 0, 0, 0, default, 1f);
@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)Projectile.position.X, (int)Projectile.position.Y, Mod.GetSoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/DarkSouls/im-sorry"), 0.3f, 0.0f);
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/im-sorry") with { Volume = 0.3f }, Projectile.Center);
         }
 
         #region Kill

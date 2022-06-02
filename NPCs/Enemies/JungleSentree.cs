@@ -22,7 +22,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0;
             NPC.defense = 12;
             NPC.lifeMax = 200;
-            NPC.HitSound = Mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Dig");
+            NPC.HitSound = new Terraria.Audio.SoundStyle("Sounds/NPCHit/Dig");
             NPC.DeathSound = SoundID.NPCDeath33;
             NPC.value = 1000;
             NPC.buffImmune[BuffID.Confused] = true;

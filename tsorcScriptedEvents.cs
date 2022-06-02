@@ -708,7 +708,7 @@ namespace tsorcRevamp
         //... is what it SHOULD do?
         public static bool TinkererAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 4456 * 16, 1744 * 16, NPCID.GoblinTinkerer);
             NPC.savedGoblin = true;
             thisEvent.endEvent = true;
             return true;
@@ -717,23 +717,23 @@ namespace tsorcRevamp
         //TWIN EOW ACTION
         public static bool TwinEoWAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC(3183 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
-            NPC.NewNPC(3330 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 3183 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), 3330 * 16, 1246 * 16, NPCID.EaterofWorldsHead);
             return true;
         }
 
         //Slogra And Gaibon Action
         public static bool SlograAndGaibonCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC((int)player.Center.X + 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Slogra>());
-            NPC.NewNPC((int)player.Center.X - 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X + 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Slogra>());
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X - 300, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Gaibon>());
             thisEvent.endEvent = true;
             return true;
         }
         public static bool SerrisCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            NPC.NewNPC((int)player.Center.X, (int)player.Center.Y + 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
-            NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X, (int)player.Center.Y + 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
+            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)player.Center.X, (int)player.Center.Y - 300, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
             thisEvent.endEvent = true;
             return true;
         }

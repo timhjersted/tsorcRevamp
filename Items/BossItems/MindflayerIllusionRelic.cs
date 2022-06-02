@@ -47,7 +47,7 @@ namespace tsorcRevamp.Items.BossItems
             }
 
 
-            NPC Attraidies = Main.npc[NPC.NewNPC((int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())];
+            NPC Attraidies = Main.npc[NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())];
 
             for (int i = 0; i < 50; i++)
             {

@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
 
             if (laser == null)
             {
-                laser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
+                laser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
                 laser.LaserOrigin = Projectile.position;
                 laser.LaserTarget = Main.player[(int)Projectile.ai[0]].position;
                 laser.TelegraphTime = 300;

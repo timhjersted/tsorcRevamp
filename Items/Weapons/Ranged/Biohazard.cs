@@ -71,11 +71,11 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f), player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarShot") with { Volume = 0.6f, PitchVariance = 0.3f }, player.Center);
             }
 
             {
-                Vector2 muzzleOffset = Vector2.Normalize(new Vector2(speed.X, speed.Y)) * 1f;
+                Vector2 muzzleOffset = Vector2.Normalize(speed) * 1f;
                 if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
                 {
                     position += muzzleOffset;

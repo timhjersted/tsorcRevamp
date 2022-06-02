@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
@@ -77,7 +78,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public ArmorShaderData shader;
 
         //Should it play a sound? Set to 'null' to disable
-        public Terraria.Audio.LegacySoundStyle LaserSound = SoundID.Item12.WithVolume(0.5f);
+        public SoundStyle LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
         //Does it have a custom texture?
         public TransparentTextureHandler.TransparentTextureType LaserTexture = TransparentTextureHandler.TransparentTextureType.GenericLaser;

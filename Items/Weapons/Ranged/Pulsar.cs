@@ -48,7 +48,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulsarShot").WithVolume(.6f).WithPitchVariance(.3f), player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarShot") with { Volume = 0.6f, PitchVariance = 0.3f }, player.Center);
             }
 
             if (player.wet)

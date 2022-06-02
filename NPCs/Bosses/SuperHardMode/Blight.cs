@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.damage = 105;
             NPC.defense = 90;
             NPC.HitSound = SoundID.NPCHit3;
-            NPC.DeathSound = new LegacySoundStyle(29, 53);
+            NPC.DeathSound = SoundID.Zombie53;
             // npc.DeathSound = SoundID.NPCDeath43;
             NPC.lifeMax = 500000;
             NPC.knockBackResist = 0f;

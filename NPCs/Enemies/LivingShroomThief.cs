@@ -208,7 +208,10 @@ namespace tsorcRevamp.NPCs.Enemies
                     if (NPC.alpha > 254)
                     {
                         NPC.life = 0;
-                        if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Escaped").WithVolume(0.7f), NPC.Center);
+                        if (!Main.dedServ)
+                        {
+                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/Escaped") with { Volume = 0.7f }, NPC.Center);
+                        }
                         NPC.netUpdate = true;
                     }
                 }

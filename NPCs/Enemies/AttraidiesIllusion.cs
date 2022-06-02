@@ -160,7 +160,10 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.ai[2]++;
                     }
                 }
-                if (!Main.dedServ && (Main.rand.Next(360) == 0)) Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EvilLaugh2").WithVolume(1.1f), NPC.Center);
+                if (!Main.dedServ && (Main.rand.Next(360) == 0))
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/EvilLaugh2") with { Volume = 1.1f });
+                }
             }
 
             if (NPC.ai[1] >= 35)

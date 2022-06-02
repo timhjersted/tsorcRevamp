@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
                 spawnedLasers = true;
                 for (int i = 0; i < LASER_COUNT; i++)
                 {
-                    GenericLaser SolarLaser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.position, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
+                    GenericLaser SolarLaser = (GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(0, 5), ModContent.ProjectileType<GenericLaser>(), Projectile.damage, .5f).ModProjectile;
                     SolarLaser.LaserOrigin = Projectile.Center;
 
                     bool repeat;

@@ -24,7 +24,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.scale = 1f;
             Projectile.tileCollide = true;
             Projectile.width = 6;
-            aiType = ProjectileID.WoodenArrowFriendly;
+            AIType = ProjectileID.WoodenArrowFriendly;
             Projectile.aiStyle = 1;
         }
 

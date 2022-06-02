@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Projectiles.Pets
         public abstract int ItemType { get; }
         public virtual void SetWhoAmI(tsorcRevampPlayer player, int value) => player.chestBank = value;
 
-        public abstract LegacySoundStyle UseSound { get; }
+        public abstract SoundStyle UseSound { get; }
 
         public override void AI()
         {
@@ -136,7 +137,7 @@ namespace tsorcRevamp.Projectiles.Pets
     {
         public override int ChestType => -3;
         public override int ItemType => ItemID.Safe;
-        public override LegacySoundStyle UseSound => SoundID.Item37;
+        public override SoundStyle UseSound => SoundID.Item37;
 
         public override void SetStaticDefaults()
         {
@@ -200,7 +201,7 @@ namespace tsorcRevamp.Projectiles.Pets
     {
         public override int ChestType => -2;
         public override int ItemType => ItemID.PiggyBank;
-        public override LegacySoundStyle UseSound => SoundID.Item59;
+        public override SoundStyle UseSound => SoundID.Item59;
 
         public override void SetWhoAmI(tsorcRevampPlayer player, int value)
         {

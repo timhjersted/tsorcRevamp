@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Accessories
             player.fireWalk = true;
             player.manaCost += 0.7f;
         }
-        public override bool CanEquipAccessory(Player player, int slot)
+        public override bool CanEquipAccessory(Player player, int slot, bool modded)
         {
             foreach (Item i in player.armor)
             {
@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items.Accessories
                 }
             }
 
-            return base.CanEquipAccessory(player, slot);
+            return base.CanEquipAccessory(player, slot, modded);
         }
     }
 

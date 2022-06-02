@@ -3266,7 +3266,7 @@ namespace tsorcRevamp.NPCs
         public static bool drawingDestroyer = false;
         public static int lastNPCDrawn = 0;
         public static float destroyerGlowPercent = 0f;
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             //The game draws ever NPC based on their whoAmI, but counting *down*. So if it just counted *up* we know it just started drawing this frame and that we should re-start the spritebatch
             if (npc.whoAmI > lastNPCDrawn)
@@ -3311,13 +3311,13 @@ namespace tsorcRevamp.NPCs
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
                     drawingDestroyer = false;
                 }
-                return base.PreDraw(npc, spriteBatch, drawColor);
+                return base.PreDraw(npc, spriteBatch, screenPos, drawColor);
             }
         }
 
-        public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            base.PostDraw(npc, spriteBatch, drawColor);
+            base.PostDraw(npc, spriteBatch, screenPos, drawColor);
         }
 
         public void DrawDestroyerGlow(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Color drawColor)

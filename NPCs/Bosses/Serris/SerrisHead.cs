@@ -166,7 +166,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 Main.npc[srs].damage = 110;
                 if (SoundDelay > 14)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.NPCKilled, "Sounds/Custom/SpeedBooster"), (int)NPC.position.X, (int)NPC.position.Y);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/SpeedBooster") with { Volume = 1f }, NPC.Center);
                     SoundDelay = 0;
                 }
             }

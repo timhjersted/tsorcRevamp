@@ -71,7 +71,7 @@ namespace tsorcRevamp.Items.BossItems
                 spawnPoint.X += 40;
             }
             spawnPoint.Y -= 5 * 16;
-            NPC.NewNPC((int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>());
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Fiends.FireFiendMarilith>());
 
             return true;
         }

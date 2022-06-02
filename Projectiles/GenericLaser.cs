@@ -3,10 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Enums;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
@@ -70,7 +72,7 @@ namespace tsorcRevamp.Projectiles
         public Color? lightColor = null;
 
         //Should it play a vanilla sound?
-        public Terraria.Audio.LegacySoundStyle LaserSound = new Terraria.Audio.LegacySoundStyle(2, 60);
+        public SoundStyle LaserSound = SoundID.Item60;
 
         //Should it play a custom sound? This overrides whatver LASER_SOUND is set to
         public string CustomSound = null;
