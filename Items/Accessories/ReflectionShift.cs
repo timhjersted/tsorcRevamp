@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items.Accessories
             Item.rare = ItemRarityID.Purple;
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             Lighting.AddLight(player.Center, Color.Blue.ToVector3());
             UsefulFunctions.DustRing(player.Center, 64, DustID.ShadowbeamStaff);

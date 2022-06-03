@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.timeLeft = 180;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
-            Projectile.thrown = true;
+            Projectile.DamageType = DamageClass.Throwing;
         }
 
         public override void AI()

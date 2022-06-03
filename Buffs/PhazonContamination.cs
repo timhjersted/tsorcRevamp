@@ -1,4 +1,5 @@
 ﻿using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs
@@ -12,7 +13,8 @@ namespace tsorcRevamp.Buffs
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;
-            longerExpertDebuff = true;
+
+            BuffID.Sets.LongerExpertDebuff[Type] = true;
         }
 
         public override void Update(Player player, ref int buffIndex)

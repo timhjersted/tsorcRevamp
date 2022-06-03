@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Accessories
             player.noKnockback = true;
             player.GetDamage(DamageClass.Ranged) -= 0.3f;
             player.GetDamage(DamageClass.Magic) -= 0.3f;
-            player.minionDamage -= 0.3f;
+            player.GetDamage(DamageClass.Summon) -= 0.3f;
             player.thorns = 1f;
             player.fireWalk = true;
             player.endurance += 0.08f;

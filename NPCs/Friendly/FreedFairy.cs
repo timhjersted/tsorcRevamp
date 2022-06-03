@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -17,10 +18,14 @@ namespace tsorcRevamp.NPCs.Friendly
             Main.npcFrameCount[NPC.type] = 6;
             //NPCID.Sets.HatOffsetY[npc.type] = 4;
         }
-        public override string TownNPCName()
+
+        public override List<string> SetNPCNameList()
         {
-            return "Freed Fairy";
+            List<string> list = new List<string>();
+            list.Add("Freed Fairy");
+            return list;
         }
+
         public override void SetDefaults()
         {
             NPC.townNPC = true;
@@ -87,7 +92,7 @@ namespace tsorcRevamp.NPCs.Friendly
             if (!droppedOxyale)
             {
                 //Drop one for each player
-                for (int i = 0; i < Main.ActivePlayersCount; i++)
+                for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.Oxyale>());
                 }

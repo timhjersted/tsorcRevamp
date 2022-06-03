@@ -36,16 +36,11 @@ namespace tsorcRevamp
         public float estusHealingTimerMax = 90; //Timer for how long drinking the estus will heal for
         public float estusHealingTimer; //How far through the healing timer we are
 
-        public override TagCompound SaveData() //Save max amount of charges, current amount of charges and also health gained for next time the player enters the world
+        public override void SaveData(TagCompound tag) //Save max amount of charges, current amount of charges and also health gained for next time the player enters the world
         {
-            return new TagCompound
-            {
-
-                {"estusChargesMax", estusChargesMax },
-                {"estusChargesCurrent", estusChargesCurrent },
-                {"estusHealthGain", estusHealthGain },
-
-            };
+            tag.Add("estusChargesMax", estusChargesMax);
+            tag.Add("estusChargesCurrent", estusChargesCurrent);
+            tag.Add("estusHealthGain", estusHealthGain);
         }
 
         public override void LoadData(TagCompound tag) //Load saved data

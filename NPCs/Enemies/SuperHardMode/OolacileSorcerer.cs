@@ -224,7 +224,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 bool dark_caster = false; // not a fighter type AI...
                                 if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
                                     safe_to_stand = false;
-                                else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
+                                else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
                                     safe_to_stand = false;
 
                                 if (safe_to_stand && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))

@@ -32,11 +32,9 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.AttackAverageChance[NPC.type] = 30;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
-
-        public override string TownNPCName()
+        public override List<string> SetNPCNameList()
         {
-            string name = Names[Main.rand.Next(Names.Count)]; //pick a random name from the list
-            return name;
+            return Names;
         }
 
         public override void SetDefaults()

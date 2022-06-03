@@ -70,7 +70,7 @@ namespace tsorcRevamp.Projectiles
             }
             return false;
         }
-        public override bool CanDamage()
+        public override bool? CanDamage()
         {
             return false;
         }

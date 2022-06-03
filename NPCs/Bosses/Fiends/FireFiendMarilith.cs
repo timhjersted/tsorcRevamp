@@ -312,7 +312,7 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             int num = 1;
             if (!Main.dedServ)
             {
-                num = TextureAssets.NPC[NPC.type].Height / Main.npcFrameCount[NPC.type];
+                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
             if (NPC.velocity.X < 0)
             {

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Armors
             Item.rare = ItemRarityID.Purple;
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             if (Main.rand.Next(10) == 0)
             {

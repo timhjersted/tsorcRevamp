@@ -16,7 +16,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 240;
             Projectile.penetrate = -1;
             Projectile.knockBack = 9;
-            Projectile.thrown = true;
+            Projectile.DamageType = DamageClass.Throwing;
             Projectile.scale = .8f;
 
             // These 2 help the projectile hitbox be centered on the projectile sprite.
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
                 Projectile.damage = 18;
                 Projectile.knockBack = 9f;
-                Projectile.thrown = true;
+                Projectile.DamageType = DamageClass.Throwing;
                 Projectile.netUpdate = true;
             }
         }
@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
                 Projectile.damage = 18; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
                 Projectile.knockBack = 9f;
-                Projectile.thrown = true;
+                Projectile.DamageType = DamageClass.Throwing;
             }
             else
             {

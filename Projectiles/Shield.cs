@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.velocity.X = player.velocity.X;
             Projectile.velocity.Y = player.velocity.Y;
         }
-        public override bool CanDamage()
+        public override bool? CanDamage()
         {
             return false;
         }

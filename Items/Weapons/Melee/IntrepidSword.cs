@@ -37,9 +37,10 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Main.dust[dust].noGravity = true;
         }
 
-        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
-            mult = (-0.01f * player.statDefense) + 1;
+            damage *= (-0.01f * player.statDefense) + 1;
         }
 
         public override void AddRecipes()

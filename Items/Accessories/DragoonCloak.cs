@@ -44,7 +44,7 @@ namespace tsorcRevamp.Items.Accessories
 
             player.statDefense += 5;
             player.lifeRegen += 4;
-            player.starCloak = true;
+            player.starCloakItem = new Item(ItemID.StarCloak);
             player.GetCritChance(DamageClass.Magic) += 5;
             player.GetDamage(DamageClass.Magic) += .05f;
 

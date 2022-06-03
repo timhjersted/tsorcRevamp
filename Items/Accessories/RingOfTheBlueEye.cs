@@ -39,7 +39,7 @@ namespace tsorcRevamp.Items.Accessories
             }
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             if (player.direction == -1)
             {

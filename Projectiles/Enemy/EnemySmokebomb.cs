@@ -17,7 +17,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Projectile.timeLeft = 840;
             Projectile.penetrate = -1;
             Projectile.knockBack = 22;
-            Projectile.thrown = true;
+            Projectile.DamageType = DamageClass.Throwing;
             Projectile.light = 1;
             Projectile.scale = 1f;
 
@@ -74,7 +74,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
                 Projectile.damage = 22; //DAMAGE OF EXPLOSION when fuse runs out, not when collidew/npc
                 Projectile.knockBack = 22f;
-                Projectile.thrown = true;
+                Projectile.DamageType = DamageClass.Throwing;
             }
             else
             {

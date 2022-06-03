@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
         public override void ModifyHitNPC(Player player, NPC target, ref int damage, ref float knockBack, ref bool crit)
         {
             //todo add mod NPCs to this list
-            if (NPCID.Sets.Skeletons.Contains(target.type)
+            if (NPCID.Sets.Skeletons[target.type]
                     || target.type == NPCID.Zombie
                     || target.type == NPCID.BaldZombie
                     || target.type == NPCID.AngryBones

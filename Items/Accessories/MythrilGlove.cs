@@ -125,7 +125,7 @@ namespace tsorcRevamp.Items.Accessories
                 }
             }
         }
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
 
             Vector2 value10 = Main.OffsetsPlayerOnhand[player.bodyFrame.Y / 56] * 2f;

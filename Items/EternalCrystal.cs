@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items
         {
             Lighting.AddLight(Item.Center, .5f, .35f, .35f);
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
-            Texture2D textureglow = Mod.GetTexture("Items/EternalCrystal_Glow");
+            Texture2D textureglow = (Texture2D)Mod.Assets.Request<Texture2D>("Items/EternalCrystal_Glow");
             var myrectangle = texture.Frame(1, 25, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0.1f);
             spriteBatch.Draw(textureglow, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(14, 25), Item.scale, SpriteEffects.None, 0f);

@@ -26,7 +26,8 @@ namespace tsorcRevamp.Items.Weapons.Melee
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("OldAxe").Type);
-            recipe.AddTile(Mod.GetTile("SweatyCyclopsForge"));
+            
+            recipe.AddTile(ModContent.GetContent<Tiles.SweatyCyclopsForge>());
 
             recipe.Register();
         }

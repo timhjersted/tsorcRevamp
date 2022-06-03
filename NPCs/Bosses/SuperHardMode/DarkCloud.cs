@@ -1856,7 +1856,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (phaseChangeCounter == 240)
             {
                 NPC.velocity = Vector2.Zero;
-                NPC.lifeMax = 500000 * Main.ActivePlayersCount;
+                NPC.lifeMax = 500000 * Main.CurrentFrameFlags.ActivePlayersCount;
                 NPC.life = NPC.lifeMax;
                 changingPhases = false;
                 NPC.dontTakeDamage = false;

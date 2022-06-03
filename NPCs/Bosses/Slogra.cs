@@ -770,7 +770,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             bool dark_caster = false; // not a fighter type AI...
                             if (dark_caster && Main.tile[tp_x_target, m - 1].WallType == 0) // Dark Caster & ?outdoors
                                 safe_to_stand = false;
-                            else if (Main.tile[tp_x_target, m - 1].LiquidType) // feet submerged in lava
+                            else if (Main.tile[tp_x_target, m - 1].LiquidType == LiquidID.Lava) // feet submerged in lava
                                 safe_to_stand = false;
 
                             if (safe_to_stand && Main.tileSolid[(int)Main.tile[tp_x_target, m].TileType] && !Collision.SolidTiles(tp_x_target - 1, tp_x_target + 1, m - 4, m - 1))
@@ -905,7 +905,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     Vector2 speedRand = Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * 10;
                     float speedX = (((Main.npc[slograID].position.X + (Main.npc[slograID].width * 0.5f)) - NPC.position.X) / distanceFactor) + speedRand.X;
                     float speedY = (((Main.npc[slograID].position.Y + (Main.npc[slograID].height * 0.5f)) - NPC.position.Y) / distanceFactor) + speedRand.Y;
-                    Vector2 dustSpeed = speed;
+                    Vector2 dustSpeed = new Vector2(speedX, speedY);
                     Dust dustObj = Dust.NewDustPerfect(dustPos, 262, dustSpeed, 200, default, 3);
                     dustObj.noGravity = true;
                 }

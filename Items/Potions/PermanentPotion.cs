@@ -1114,7 +1114,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             player.GetCritChance(DamageClass.Magic) += 2;
             player.GetAttackSpeed(DamageClass.Melee) += 0.05f;
             player.GetDamage(DamageClass.Generic) += 0.05f;
-            player.minionKB += 0.5f;
+            player.GetKnockback(DamageClass.Summon) += 0.5f;
             player.moveSpeed += 0.20f;
             player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.1f;
             player.buffImmune[BuffID.WellFed] = true;

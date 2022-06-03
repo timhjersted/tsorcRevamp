@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items.Armors
             {
                 player.manaCost -= 0.17f;
                 player.manaRegenBuff = true;
-                player.starCloak = true;
+                player.starCloakItem = new Item(ItemID.StarCloak); ;
                 player.GetCritChance(DamageClass.Magic) += 40;
                 player.GetDamage(DamageClass.Magic) += 0.60f;
                 player.statManaMax2 += 60;

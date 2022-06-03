@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 p.GamepadEnableGrappleCooldown();
             }
-            if (!Main.mouseRight || !Main.mouseRightRelease || Player.StopMoneyTroughFromWorking != 0)
+            if (!Main.mouseRight || !Main.mouseRightRelease)//|| Player.StopMoneyTroughFromWorking != 0) 1.4 Porting Note: StopMoneyTroughFromWorking seems to no longer exist
             {
                 return;
             }
@@ -124,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Pets
             p.chest = ChestType;
             p.chestX = projTilePosX;
             p.chestY = projTilePosY;
-            p.talkNPC = -1;
+            p.SetTalkNPC(-1);
             Main.npcShop = 0;
             Main.playerInventory = true;
             Terraria.Audio.SoundEngine.PlaySound(UseSound);

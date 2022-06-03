@@ -32,7 +32,7 @@ namespace tsorcRevamp.Items.Accessories
             player.endurance += 0.06f;
             player.GetDamage(DamageClass.Ranged) -= 0.2f;
             player.GetDamage(DamageClass.Magic) -= 0.2f;
-            player.minionDamage -= 0.2f;
+            player.GetDamage(DamageClass.Summon) -= 0.2f;
         }
 
         public override void AddRecipes()

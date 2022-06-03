@@ -90,7 +90,7 @@ namespace tsorcRevamp.Tiles
                 animate = Main.tileFrame[Type] * animationFrameWidth;
             }
             Main.spriteBatch.Draw(texture, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX + animate, tile.TileFrameY, width, height), Lighting.GetColor(i, j), 0f, default, 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(Mod.GetTexture("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX + animate, tile.TileFrameY, width, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw((Texture2D)Mod.Assets.Request<Texture2D>("Tiles/Bonfire_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX + animate, tile.TileFrameY, width, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             Dust.NewDust(zero, 4, 4, 6, 0, 0, 100, default, 1f);
             return false;
         }

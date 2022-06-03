@@ -45,14 +45,14 @@ namespace tsorcRevamp.Items.Accessories
             if (player.statLife <= 150)
             {
                 player.manaRegenBuff = true;
-                player.starCloak = true;
+                player.starCloakItem = new Item(ItemID.StarCloak);
                 player.GetCritChance(DamageClass.Magic) += 15;
                 player.GetDamage(DamageClass.Magic) += .15f;
 
             }
             else
             {
-                player.starCloak = true;
+                player.starCloakItem = new Item(ItemID.StarCloak);
                 player.GetCritChance(DamageClass.Magic) += 5;
                 player.GetDamage(DamageClass.Magic) += .05f;
             }
@@ -156,7 +156,7 @@ namespace tsorcRevamp.Items.Accessories
             }
         }
 
-        public override void UpdateVanity(Player player, EquipType type)
+        public override void UpdateVanity(Player player)
         {
             if (player.direction == 1)
             {

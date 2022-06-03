@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles
                 colorMult += 0.12f;
             }
 
-            Main.EntitySpriteDraw(texture, Projectile.Center, Color.White * (1 - colorMult));
+            Main.spriteBatch.Draw(texture, Projectile.Center, Color.White * (1 - colorMult));
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, 18, 14), Color.White * (1 - colorMult), Projectile.rotation, new Vector2(9, 7), Projectile.scale, SpriteEffects.None, 0);
 
             return false;

@@ -57,7 +57,7 @@ namespace tsorcRevamp
             tsorcRevampPlayer oldClone = clientPlayer as tsorcRevampPlayer;
             if (oldClone == null) { return; }
 
-            if (oldClone.SoulSlot.Item.IsNotTheSameAs(SoulSlot.Item))
+            if (oldClone.SoulSlot.Item.IsNotSameTypePrefixAndStack(SoulSlot.Item))
             {
                 SendSingleItemPacket(1, SoulSlot.Item, -1, Player.whoAmI);
             }
@@ -84,26 +84,22 @@ namespace tsorcRevamp
             **/
         }
 
-        public override TagCompound SaveData()
+        public override void SaveData(TagCompound tag)
         {
-            TagCompound tsorcTagCompound = new TagCompound
-            {
-                {"warpX", warpX},
-                {"warpY", warpY},
-                {"warpWorld", warpWorld},
-                {"warpSet", warpSet},
-                {"townWarpX", townWarpX},
-                {"townWarpY", townWarpY},
-                {"townWarpWorld", townWarpWorld},
-                {"townWarpSet", townWarpSet},
-                {"gotPickaxe", gotPickaxe},
-                {"FirstEncounter", FirstEncounter},
-                {"ReceivedGift", ReceivedGift},
-                {"BearerOfTheCurse", BearerOfTheCurse},
-                {"soulSlot", ItemIO.Save(SoulSlot.Item)},
-                {"MaxAcquiredHP", MaxAcquiredHP}
-
-            };
+            tag.Add("warpX", warpX);
+            tag.Add("warpY", warpY);
+            tag.Add("warpWorld", warpWorld);
+            tag.Add("warpSet", warpSet);
+            tag.Add("townWarpX", townWarpX);
+            tag.Add("townWarpY", townWarpY);
+            tag.Add("townWarpWorld", townWarpWorld);
+            tag.Add("townWarpSet", townWarpSet);
+            tag.Add("gotPickaxe", gotPickaxe);
+            tag.Add("FirstEncounter", FirstEncounter);
+            tag.Add("ReceivedGift", ReceivedGift);
+            tag.Add("BearerOfTheCurse", BearerOfTheCurse);
+            tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
+            tag.Add("MaxAcquiredHP", MaxAcquiredHP);
 
             List<Item> PotionBagList = new List<Item>();
             if (PotionBagItems == null)
@@ -125,9 +121,7 @@ namespace tsorcRevamp
                 PotionBagList.Add(thisItem);
             }
 
-            tsorcTagCompound.Add("PotionBag", PotionBagList);
-
-            return tsorcTagCompound;
+            tag.Add("PotionBag", PotionBagList);
         }
 
         public override void LoadData(TagCompound tag)
@@ -319,7 +313,7 @@ namespace tsorcRevamp
                         //So go through it again, finding the first empty slot instead
                         if (emptySlot != null)
                         {
-                            PotionBagItems[emptySlot.Value] = item.DeepClone();
+                            PotionBagItems[emptySlot.Value] = item.Clone();
                             item.TurnToAir();
                             if (Main.netMode == 1 && Player.chest >= -1 && context == ItemSlot.Context.ChestItem)
                             {
@@ -352,7 +346,7 @@ namespace tsorcRevamp
 
                         if (emptySlot != null)
                         {
-                            Player.inventory[emptySlot.Value] = item.DeepClone();
+                            Player.inventory[emptySlot.Value] = item.Clone();
                             item.TurnToAir();
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8);
@@ -366,15 +360,18 @@ namespace tsorcRevamp
             return false;
         }
 
-        public override void SetupStartInventory(IList<Item> items, bool mediumcoreDeath)
+        public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
         {
+            List<Item> startingItems = new List<Item>();
             Item item = new Item();
             item.SetDefaults(ModContent.ItemType<Darksign>());
-            items.Add(item);
+            startingItems.Add(item);
 
             Item PotionBagItem = new Item();
             PotionBagItem.SetDefaults(ModContent.ItemType<PotionBag>());
-            items.Add(PotionBagItem);
+            startingItems.Add(PotionBagItem);
+
+            return startingItems;
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
@@ -630,7 +627,7 @@ namespace tsorcRevamp
             }
             if (UndeadTalisman)
             {
-                if (NPCID.Sets.Skeletons.Contains(npc.type)
+                if (NPCID.Sets.Skeletons[npc.type]
                     || npc.type == NPCID.Zombie
                     || npc.type == NPCID.Skeleton
                     || npc.type == NPCID.BaldZombie

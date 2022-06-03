@@ -83,7 +83,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Melee) += 0.04f;
             player.GetDamage(DamageClass.Magic) -= 0.85f;
             player.GetDamage(DamageClass.Ranged) -= 0.85f;
-            player.minionDamage -= 0.85f;
+            player.GetDamage(DamageClass.Summon) -= 0.85f;
         }
 
         public override void AddRecipes()
@@ -135,7 +135,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Melee) += 0.06f;
             player.GetDamage(DamageClass.Magic) -= 1.5f;
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
-            player.minionDamage -= 1.5f;
+            player.GetDamage(DamageClass.Summon) -= 1.5f;
             player.manaCost += 0.7f;
         }
 
@@ -188,7 +188,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Melee) += 0.06f;
             player.GetDamage(DamageClass.Magic) -= 1.5f;
             player.GetDamage(DamageClass.Ranged) -= 1.5f;
-            player.minionDamage -= 1.5f;
+            player.GetDamage(DamageClass.Summon) -= 1.5f;
             player.manaCost += 0.7f;
         }
 
@@ -232,7 +232,7 @@ namespace tsorcRevamp.Items.Accessories
             player.GetDamage(DamageClass.Melee) += 0.1f;
             player.GetDamage(DamageClass.Magic) -= 3f;
             player.GetDamage(DamageClass.Ranged) -= 3f;
-            player.minionDamage -= 3f;
+            player.GetDamage(DamageClass.Summon) -= 3f;
             player.manaCost += 0.7f;
         }
 

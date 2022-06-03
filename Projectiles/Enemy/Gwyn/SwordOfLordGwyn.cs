@@ -65,7 +65,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
 
         public override bool PreDraw(ref Color lightColor)
         {
-            int frameWidth = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Width;
+            int frameWidth = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Width;
             int frameHeight = ((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type]).Height;
             Rectangle sourceRectangle = new Rectangle(0, 0, frameWidth, frameHeight);
             Vector2 origin = new Vector2(0, frameHeight);
