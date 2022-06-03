@@ -28,10 +28,8 @@ namespace tsorcRevamp.NPCs.Friendly
             "Asima", "Lea", "Padreia", "Loria", "Lungelen", "Lily", "Sandra", "Tibra", "Astera Tiger"
         };
 
-        public override string TownNPCName()
-        {
-            string name = Names[Main.rand.Next(Names.Count)]; //pick a random name from the list
-            return name;
+        public override List<string> SetNPCNameList() {
+            return Names;
         }
 
         public override void SetDefaults()

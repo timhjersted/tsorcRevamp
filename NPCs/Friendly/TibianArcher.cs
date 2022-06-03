@@ -28,6 +28,10 @@ namespace tsorcRevamp.NPCs.Friendly
             "Elane", "Legola", "Galuna", "Enalea"
         };
 
+        public override List<string> SetNPCNameList() {
+            return Names;
+        }
+
         public override string TownNPCName()
         {
             string name = Names[Main.rand.Next(Names.Count)]; //pick a random name from the list

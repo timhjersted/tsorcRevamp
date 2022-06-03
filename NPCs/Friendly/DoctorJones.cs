@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -24,15 +25,13 @@ namespace tsorcRevamp.NPCs.Friendly
             //NPCID.Sets.HatOffsetY[npc.type] = 4;
         }
 
-        /*public static List<string> Names = new List<string> {
-			"Harrison", "Han", "Indie", "Rick"
-		};*/
+        public override List<string> SetNPCNameList() {
+            return Names;
+        }
 
-        /*public override string TownNPCName()
-		{
-			string name = Names[Main.rand.Next(Names.Count)]; //pick a random name from the list
-			return name;
-		}*/
+        public static List<string> Names = new List<string> {
+			"Harrison", "Han", "Indie", "Rick"
+		};
 
         public override void SetDefaults()
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -26,9 +27,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.AttackAverageChance[NPC.type] = 10;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
-        public override string TownNPCName()
-        {
-            return "Solaire";
+        public override List<string> SetNPCNameList() {
+            return new List<string> { "Solaire" };
         }
 
         public override void SetDefaults()

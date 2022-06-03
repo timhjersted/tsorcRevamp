@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            return SpawnCondition.Cavern.Chance * 0.15f;
+            return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
         }
 
         public override void OnKill()

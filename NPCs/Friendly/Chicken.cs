@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Friendly
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            return SpawnCondition.TownGeneralCritter.Chance * 0.2f;
+            return Terraria.ModLoader.Utilities.SpawnCondition.TownGeneralCritter.Chance * 0.2f;
         }
 
         public override void OnKill()

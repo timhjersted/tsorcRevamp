@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Enemies
             float chance = 0;
             if (Main.hardMode)
             {
-                chance = SpawnCondition.Sky.Chance * 0.2f;
+                chance = Terraria.ModLoader.Utilities.SpawnCondition.Sky.Chance * 0.2f;
             }
             return chance;
         }

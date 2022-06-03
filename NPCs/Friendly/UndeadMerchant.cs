@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -21,11 +22,9 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCID.Sets.AttackAverageChance[NPC.type] = 10;
             NPCID.Sets.HatOffsetY[NPC.type] = 4;
         }
-        public override string TownNPCName()
-        {
-            return "Uldred";
+        public override List<string> SetNPCNameList() {
+            return new List<string> { "Uldred" };
         }
-
         public override void SetDefaults()
         {
             NPC.townNPC = true;
