@@ -88,7 +88,7 @@ namespace tsorcRevamp.Projectiles.Pets
 
             if (modPlayer.MiakodaEffectsTimer == 720 && MiakodaVol != 0) //sound effect the moment the timer reaches 420, to signal pet ability ready.
             {
-                string[] ReadySoundChoices = new string[] { "Sounds/Custom/MiakodaChaaa", "Sounds/Custom/MiakodaChao", "Sounds/Custom/MiakodaDootdoot", "Sounds/Custom/MiakodaHi", "Sounds/Custom/MiakodaOuuee" };
+                string[] ReadySoundChoices = new string[] { "tsorcRevamp/Sounds/Custom/MiakodaChaaa", "tsorcRevamp/Sounds/Custom/MiakodaChao", "tsorcRevamp/Sounds/Custom/MiakodaDootdoot", "tsorcRevamp/Sounds/Custom/MiakodaHi", "tsorcRevamp/Sounds/Custom/MiakodaOuuee" };
                 string ReadySound = Main.rand.Next(ReadySoundChoices);
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle(ReadySound) with { Volume = 0.4f * MiakodaVol, PitchVariance = 0.2f }, Projectile.Center);
             }
@@ -97,7 +97,7 @@ namespace tsorcRevamp.Projectiles.Pets
             {
                 if (MiakodaVol != 0)
                 {
-                    string[] AmgerySoundChoices = new string[] { "Sounds/Custom/MiakodaScream", "Sounds/Custom/MiakodaChaoExcl", "Sounds/Custom/MiakodaUwuu" };
+                    string[] AmgerySoundChoices = new string[] { "tsorcRevamp/Sounds/Custom/MiakodaScream", "tsorcRevamp/Sounds/Custom/MiakodaChaoExcl", "tsorcRevamp/Sounds/Custom/MiakodaUwuu" };
                     string AmgerySound = Main.rand.Next(AmgerySoundChoices);
                     Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle(AmgerySound) with { Volume = 0.6f * MiakodaVol, PitchVariance = 0.2f }, Projectile.Center);
                 }

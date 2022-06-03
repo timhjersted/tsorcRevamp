@@ -438,7 +438,7 @@ namespace tsorcRevamp.Tiles
             if (tile.TileFrameY / 74 == 0)
             {
                 //new bonfire lit sound
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/bonfire-lit") with { Volume = 0.2f }, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/bonfire-lit") with { Volume = 0.2f }, player.Center);
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, new Vector2(i * 16, j * 16));
                 UsefulFunctions.BroadcastText("Bonfire lit!", 250, 110, 90);
 

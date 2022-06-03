@@ -374,10 +374,12 @@ namespace tsorcRevamp
                 }
 
                 //if the abyss shader is active and the player is no longer wearing the CoA
+                //TODO: Fix this
+                /*
                 if (Filters.Scene["tsorcRevamp:TheAbyss"].Active && !hasCoA)
                 {
                     Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
-                }
+                }*/
             }
 
             #endregion

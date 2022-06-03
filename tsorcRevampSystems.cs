@@ -221,7 +221,7 @@ namespace tsorcRevamp
             TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
             for (int i = 0; i < TextureAssets.Moon.Length; i++)
             {
-                TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Moon_" + i);
+                TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i);
             }
         }
     }

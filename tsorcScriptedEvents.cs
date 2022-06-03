@@ -850,10 +850,13 @@ namespace tsorcRevamp
 
         public static void SaveScriptedEvents(TagCompound tag)
         {
-            //Converts the keys from enums into strings, because apparently it isn't a huge fan of enums
-            List<string> stringList = ScriptedEventValues.Keys.ToList().ConvertAll(enumMember => enumMember.ToString());
-            tag.Add("event_types", stringList);
-            tag.Add("event_values", ScriptedEventValues.Values.ToList());
+            if (ScriptedEventValues != null)
+            {
+                //Converts the keys from enums into strings, because apparently it isn't a huge fan of enums
+                List<string> stringList = ScriptedEventValues.Keys.ToList().ConvertAll(enumMember => enumMember.ToString());
+                tag.Add("event_types", stringList);
+                tag.Add("event_values", ScriptedEventValues.Values.ToList());
+            }
         }
 
         //Called upon mod load, but ONLY if the mod already has a .twld file.

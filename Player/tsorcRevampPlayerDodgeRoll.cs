@@ -288,9 +288,9 @@ namespace tsorcRevamp
                 //switch expressions are the only good thing to come out of the 1.4 change PepeLaugh
                 string soundFile = choice switch
                 {
-                    0 => "Sounds/DarkSouls/roll1",
-                    1 => "Sounds/DarkSouls/roll2",
-                    _ => "Sounds/DarkSouls/roll1",
+                    0 => "tsorcRevamp/Sounds/DarkSouls/roll1",
+                    1 => "tsorcRevamp/Sounds/DarkSouls/roll2",
+                    _ => "tsorcRevamp/Sounds/DarkSouls/roll1",
                 };
                 SoundStyle rollSound = new SoundStyle(soundFile)
                 {

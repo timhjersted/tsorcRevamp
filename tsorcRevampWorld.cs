@@ -46,7 +46,11 @@ namespace tsorcRevamp
             initialized = false;
 
             tsorcScriptedEvents.InitializeScriptedEvents();
-            Tiles.SoulSkellyGeocache.InitializeSkellys();
+
+            if (CustomMap)
+            {
+                Tiles.SoulSkellyGeocache.InitializeSkellys();
+            }
         }
 
         public override void SaveWorldData(TagCompound tag)
@@ -121,6 +125,10 @@ namespace tsorcRevamp
 
         private void SaveSlain(TagCompound tag)
         {
+            if(Slain == null)
+            {
+                Slain = new Dictionary<int, int>();
+            }
             tag.Add("type", Slain.Keys.ToList());
             tag.Add("value", Slain.Values.ToList());
         }
@@ -846,7 +854,7 @@ namespace tsorcRevamp
                         VanillaMoonTextures = new List<Asset<Texture2D>>();
                         for (int i = 0; i < TextureAssets.Moon.Length; i++)
                         {
-                            VanillaMoonTextures.Add(ModContent.Request<Texture2D>("Terraria/Moon_" + i));
+                            VanillaMoonTextures.Add(ModContent.Request<Texture2D>("Terraria/Images/Moon_" + i));
                         }
                     }
                     for (int i = 0; i < TextureAssets.Moon.Length; i++)

@@ -26,7 +26,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.lavaImmune = true;
-            NPC.DeathSound = new Terraria.Audio.SoundStyle("Sounds/NPCKilled/Gaibon_Roar");
+            NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
             NPC.lifeMax = 9000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.2f;

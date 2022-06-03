@@ -114,7 +114,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (Main.rand.Next(1500) == 1)
                 {
 
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/ominous-creature2") with { Volume = 0.5f }, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.5f }, NPC.Center);
                     //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
                 }
 

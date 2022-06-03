@@ -156,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses
             //play creature sounds
             if (Main.rand.Next(1700) == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/low-dragon-growl") with { Volume = 0.5f }, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl") with { Volume = 0.5f }, NPC.Center);
                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
             }
 
@@ -243,7 +243,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (breathTimer == 361)
             {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, NPC.Center);
             }
             if (breathTimer > 360)
             {

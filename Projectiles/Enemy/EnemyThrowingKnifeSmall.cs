@@ -41,7 +41,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/im-sorry") with { Volume = 0.3f }, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/im-sorry") with { Volume = 0.3f }, Projectile.Center);
         }
 
         #region Kill

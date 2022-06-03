@@ -61,7 +61,15 @@ namespace tsorcRevamp
 
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
             ModLoader.TryGetMod("tsorcRevamp", out Mod mod);
-            return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
+            if (drawInfo.drawPlayer.HeldItem.ModItem != null)
+            {
+                return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
         protected override void Draw(ref PlayerDrawSet drawInfo) {

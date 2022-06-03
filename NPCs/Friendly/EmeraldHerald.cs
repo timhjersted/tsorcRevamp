@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             if (!player.GetModPlayer<tsorcRevampPlayer>().FirstEncounter)
             {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
 
                 chat.Add("Are you the one I was sent to warn? My name is Jade, I am not of this world. I was sent here to warn you of the dangers posed by Attraidies, the Mindflayer King." +
                     "\nHe has grown mighty in power and seeks to destroy not only your world, but also mine and many others.");
@@ -61,14 +61,14 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 if (Main.LocalPlayer.HasItem(ModContent.ItemType<Items.EstusFlaskShard>()) && Main.LocalPlayer.GetModPlayer<tsorcRevampEstusPlayer>().estusChargesMax < 5)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
                     chat.Add("Is that a shard you've found? Here, let me see it." + "\nSo that I may help you. To see light, to see hope… However faint it might be…");
                 }
                 else
                 {
                     if (!player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
                         chat.Add("Listen to everything I have to say and I may give you a reward.", 4);
                     }
                     if (!tsorcRevampWorld.SuperHardMode)

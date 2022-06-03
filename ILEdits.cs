@@ -112,11 +112,11 @@ namespace tsorcRevamp
             {
                 if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMusic)
                 {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/OldTitle");
+                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "tsorcRevamp/Sounds/Music/OldTitle");
                 }
                 else
                 {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "Sounds/Music/Night");
+                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "tsorcRevamp/Sounds/Music/Night");
                 }
             }
             else

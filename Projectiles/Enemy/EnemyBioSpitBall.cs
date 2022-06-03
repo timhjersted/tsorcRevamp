@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override void AI()
         {
             //Custom sound, not vanilla sound:
-            //Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)position.X, (int)position.Y, mod.GetSoundSlot(SoundType.Custom, "Sounds/Custom/[INSERTSOUNDEFFECTHERE]"));
+            //Terraria.Audio.SoundEngine.PlaySound(SoundLoader.customSoundType, (int)position.X, (int)position.Y, mod.GetSoundSlot(SoundType.Custom, "tsorcRevamp/Sounds/Custom/[INSERTSOUNDEFFECTHERE]"));
 
             Projectile.rotation += 1f;
             if (Main.rand.Next(3) == 0)

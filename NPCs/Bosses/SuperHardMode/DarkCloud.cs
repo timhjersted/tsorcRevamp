@@ -598,7 +598,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 if (Main.GameUpdateCount % 8 == 0)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/MasterBuster"), NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), NPC.Center);
                 }
             }
 

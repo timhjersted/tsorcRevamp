@@ -38,8 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.alpha = 70; // was 100
             NPC.value = 500;
             Banner = NPC.type;
-
-            //BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
+            BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
 
             if (tsorcRevampWorld.SuperHardMode)
             {

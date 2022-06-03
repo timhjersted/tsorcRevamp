@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.defense = 10;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = new Terraria.Audio.SoundStyle("Sounds/NPCKilled/Gaibon_Roar");
+            NPC.DeathSound = new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/NPCKilled/Gaibon_Roar");
             NPC.lifeMax = 5000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
@@ -176,7 +176,7 @@ namespace tsorcRevamp.NPCs.Bosses
                             Vector2 projPos = NPC.Center + dir * dustRadius * 16;
                             int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)projPos.X, (int)projPos.Y, NPCID.BurningSphere, 0);
                             Main.npc[spawned].damage = burningSphereDamage;
-                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
+                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/GaibonSpit2") with { Volume = 1f }, NPC.Center);
                             if (Main.netMode == NetmodeID.Server)
                             {
                                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, spawned, 0f, 0f, 0f, 0);

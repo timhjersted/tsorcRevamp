@@ -109,13 +109,13 @@ namespace tsorcRevamp.NPCs.Friendly
                     if (NPC.direction == -1) //right-facing bump
                     {
                         NPC.velocity += new Vector2(-1f, 0);
-                        //if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak") with { Volume = 0.5f }, npc.Center);
+                        //if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "tsorcRevamp/Sounds/NPCHit/Squeak") with { Volume = 0.5f }, npc.Center);
                         NPC.netUpdate = true;
                     }
                     if (NPC.direction == 1) //left-facing bump
                     {
                         NPC.velocity += new Vector2(1f, 0);
-                        //if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/Squeak") with { Volume = 0.5f }, npc.Center);
+                        //if (!Main.dedServ) Terraria.Audio.SoundEngine.PlaySound(mod.GetLegacySoundSlot(SoundType.NPCHit, "tsorcRevamp/Sounds/NPCHit/Squeak") with { Volume = 0.5f }, npc.Center);
                         NPC.netUpdate = true;
                     }
                 }

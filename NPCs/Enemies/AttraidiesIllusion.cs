@@ -163,7 +163,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 if (!Main.dedServ && (Main.rand.Next(360) == 0))
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/EvilLaugh2") with { Volume = 1.1f });
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/EvilLaugh2") with { Volume = 1.1f });
                 }
             }
 
