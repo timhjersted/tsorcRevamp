@@ -422,33 +422,14 @@ namespace tsorcRevamp
 
 
                     Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
-                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fullBarDestination, Color.White);
-                    Main.spriteBatch.Draw(Crop(powerfulMeterFull, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height)), powerfulFullBarDestination, Color.White);
+                    Main.spriteBatch.Draw(UsefulFunctions.Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fullBarDestination, Color.White);
+                    Main.spriteBatch.Draw(UsefulFunctions.Crop(powerfulMeterFull, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height)), powerfulFullBarDestination, Color.White);
                 }
             }
             #endregion
         }
 
 
-        public static Texture2D Crop(Texture2D image, Rectangle source) {
-            Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
-
-            Color[] imageData = new Color[image.Width * image.Height];
-            Color[] cropData = new Color[source.Width * source.Height];
-
-            image.GetData<Color>(imageData);
-
-            int index = 0;
-
-            for (int y = source.Y; y < source.Height; y++) {
-                for (int x = source.X; x < source.Width; x++) {
-                    cropData[index] = imageData[y * image.Width + x];
-                    index++;
-                }
-            }
-            croppedImage.SetData<Color>(cropData);
-            return croppedImage;
-        }
 
     }
 }
