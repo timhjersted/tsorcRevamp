@@ -70,7 +70,7 @@ namespace tsorcRevamp.UI
 
 
                 int cropAmount = (int)(textureFull.Height * (1 - chargesPercentage));
-                Texture2D croppedTextureFull = MethodSwaps.Crop(textureFull, new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height));
+                Texture2D croppedTextureFull = UsefulFunctions.Crop(textureFull, new Rectangle(0, cropAmount, textureFull.Width, textureFull.Height));
                 Main.spriteBatch.Draw(textureEmpty, new Rectangle(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY, textureFull.Width, textureFull.Height), Color.White);
                 Main.spriteBatch.Draw(textureCharges, new Vector2(Main.screenWidth - ConfigInstance.EstusFlaskPosX + 4, Main.screenHeight - ConfigInstance.EstusFlaskPosY - 20), sourceRectangle, numbercolor, 0, new Vector2(0, 0), 1.3f, SpriteEffects.None, 1);
 
