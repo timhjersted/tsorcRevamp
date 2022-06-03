@@ -61,7 +61,7 @@ namespace tsorcRevamp
             float origScale = Main.inventoryScale;
             Main.inventoryScale = 0.85f;
 
-            int slotIndexX = 11;
+            int slotIndexX = 12;
             int slotIndexY = 0;
             int slotPosX = (int)(20f + (float)(slotIndexX * 56) * Main.inventoryScale);
             int slotPosY = (int)(20f + (float)(slotIndexY * 56) * Main.inventoryScale) + 18;
