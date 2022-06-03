@@ -104,14 +104,14 @@ namespace tsorcRevamp.NPCs.Enemies
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool SpecialNPCLoot()
+        public override bool PreKill()
         {
             //Putting this here so the gore is spawned before the head is moved
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
             Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Worm Gore 1").Type, 1f);
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<ZombieWormBody>(), ModContent.NPCType<ZombieWormTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
-            return false;
+            return true;
         }
     }
 }

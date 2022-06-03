@@ -333,7 +333,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool SpecialNPCLoot()
+        public override bool PreKill()
         {
             for (int i = 0; i < Main.maxNPCs; i++)
             {
@@ -344,8 +344,9 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             }
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<JungleWyvernBody>(), ModContent.NPCType<JungleWyvernBody2>(), ModContent.NPCType<JungleWyvernBody3>(), ModContent.NPCType<JungleWyvernTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
-            return false;
+            return true;
         }
+
         public override bool CheckActive()
         {
             return false;

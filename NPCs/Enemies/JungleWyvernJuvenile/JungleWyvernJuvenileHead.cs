@@ -352,11 +352,11 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool SpecialNPCLoot()
+        public override bool PreKill()
         {
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<JungleWyvernJuvenileBody>(), ModContent.NPCType<JungleWyvernJuvenileBody2>(), ModContent.NPCType<JungleWyvernJuvenileBody3>(), ModContent.NPCType<JungleWyvernJuvenileLegs>(), ModContent.NPCType<JungleWyvernJuvenileTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
-            return false;
+            return true;
         }
 
         public override void OnKill()

@@ -2145,14 +2145,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return true;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            base.ModifyNPCLoot(npcLoot);
-        }
-
+       
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
         }
+
         public override void OnKill()
         {
 

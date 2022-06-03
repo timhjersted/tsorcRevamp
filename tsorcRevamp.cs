@@ -597,6 +597,9 @@ namespace tsorcRevamp
             CustomDungeonWalls = null;
             DodgerollKey = null;
             //SwordflipKey = null;
+
+            /* IIRC this was to change the Destroyer's texture, which was never fully implemented?
+             * I think there's a new way to do it now though
             if (!Main.dedServ)
             {
                 Main.NPCLoaded[NPCID.TheDestroyer] = false;
@@ -604,7 +607,7 @@ namespace tsorcRevamp
                 Main.NPCLoaded[NPCID.TheDestroyerTail] = false;
                 Main.NPCLoaded[NPCID.Probe] = false;
                 Main.goreLoaded[156] = false;
-            }
+            }*/
         }
         public override void AddRecipes()
         {

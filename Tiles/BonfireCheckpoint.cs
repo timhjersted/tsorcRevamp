@@ -34,7 +34,7 @@ namespace tsorcRevamp.Tiles
             Main.tileNoAttach[Type] = true;
             Main.tileWaterDeath[Type] = false;
             Main.tileLavaDeath[Type] = false;
-            adjTiles = new int[] { TileID.Campfire };
+            AdjTiles = new int[] { TileID.Campfire };
         }
         public override bool CanExplode(int i, int j)
         {
