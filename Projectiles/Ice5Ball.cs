@@ -26,7 +26,7 @@ namespace tsorcRevamp.Projectiles
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
                 Projectile.soundDelay = 10;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
             }
             Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
             int arg_2675_1 = Projectile.width;

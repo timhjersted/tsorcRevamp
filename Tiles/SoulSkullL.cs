@@ -206,7 +206,7 @@ namespace tsorcRevamp.Tiles
             if (tile.TileFrameX >= 72)
             {
                 sansannoyed++;
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/Sans").WithVolume(1f).WithPitchVariance(-.01f)); //custom sounds have to go in Sounds/Item otherwise it makes a mess
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/Sans") with { Pitch = -0.01f }); //custom sounds have to go in Sounds/Item otherwise it makes a mess
                 if (sansannoyed < 12)
                 {
                     if (Main.rand.Next(3) == 0)
@@ -244,12 +244,12 @@ namespace tsorcRevamp.Tiles
             }
             if (tile.TileFrameX / 36 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, Pitch = 0.3f }); // Plays sound.
                 SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
 
                 if (Main.rand.Next(10) == 0) // 5%, maybe rarer depending on how many are on the map
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/Megalovania").WithVolume(1f).WithPitchVariance(-.01f));
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/Megalovania") with { Pitch = -0.01f });
                     int x = i - Main.tile[i, j].TileFrameX / 18 % 2; // 16 pixels in a block + 2 pixels for the buffer. 2 because its 2 blocks wide
                     int y = j - Main.tile[i, j].TileFrameY / 18 % 2; // 2 because it is 2 blocks tall
                     for (int l = x; l < x + 2; l++)             // this chunk of code basically makes it so that when you right click one tile, 

@@ -126,7 +126,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 120;
                             //Main.projectile[num54].aiStyle = 4;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                         }
                         NPC.netUpdate = true;
@@ -149,7 +149,7 @@ namespace tsorcRevamp.NPCs.Enemies
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 170;
                             //Main.projectile[num54].aiStyle = 19;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                             customAi1 = 1f;
                             int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, DustID.VilePowder, NPC.velocity.X, NPC.velocity.Y, 200, Color.Red, 1f);
                             Main.dust[dust].noGravity = true;

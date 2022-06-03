@@ -138,11 +138,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int hitCounter = 0;
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 3, 0.09f, 0.2f, true, 0, false, 26, 2000, 0.1f, 4, true);
+            tsorcRevampAIs.FighterAI(NPC, 3, 0.09f, 0.2f, true, 0, false, SoundID.Mummy, 2000, 0.1f, 4, true);
             tsorcRevampAIs.LeapAtPlayer(NPC, 5, 4, 2, 128);
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 11, clearLineofSight, true, 2, 17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 11, clearLineofSight, true, SoundID.Item17);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

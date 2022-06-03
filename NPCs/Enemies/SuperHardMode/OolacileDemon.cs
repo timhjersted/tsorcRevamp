@@ -238,7 +238,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     if (Main.rand.Next(1200) == 0)
                     {
                         breath = true;
-                        //Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                        //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     }
                     if (breath)
                     {
@@ -259,7 +259,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     {
                         breath = false;
                         breathCD = 60;
-                        Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     }
 
 
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, bioSpitDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 150;
                             Main.projectile[num54].aiStyle = 1;
-                            Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 20);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
 
                             //customAi1 = 1f;
                         }

@@ -124,7 +124,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()  //  warrior ai
         {
-            tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, true, 10, false, 26, 1000, 0.3f, 1.1f, true);
+            tsorcRevampAIs.FighterAI(NPC, 1, .03f, 0.2f, true, 10, false, SoundID.Mummy, 1000, 0.3f, 1.1f, true);
 
 
             #region melee movement

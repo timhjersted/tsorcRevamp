@@ -78,8 +78,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, 2, 20);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, 2, 100);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, SoundID.Item20);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, SoundID.Item100);
 
             if (poisonStrikeTimer >= 60)
             {

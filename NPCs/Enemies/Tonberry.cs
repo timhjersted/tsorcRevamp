@@ -74,7 +74,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.FighterAI(NPC, 1f, 0.07f, 0.5f, lavaJumping: true);
 
             bool clearShot = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height) && Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) <= 500;
-            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, clearShot, soundType: 2, soundStyle: 17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnifeSmall>(), throwingKnifeDamage, 8, clearShot, shootSound: SoundID.Item17);
 
             //play creature sounds
             if (Main.rand.Next(1000) == 1)

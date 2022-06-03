@@ -75,7 +75,7 @@ namespace tsorcRevamp
                 && estusChargesCurrent != estusChargesMax && Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.GetModPlayer<tsorcRevampPlayer>().ReceivedGift) //When the player visits a bonfire, restore charges
             {
                 estusChargesCurrent = estusChargesMax;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20.WithVolume(0.8f), Player.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f }, Player.position);
 
                 for (int i = 0; i <= 15; i++)
                 {
@@ -161,7 +161,7 @@ namespace tsorcRevamp
 
             if (estusDrinkTimer >= estusDrinkTimerMax) //Once finished drinking:
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20.WithVolume(0.5f), Player.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f }, Player.position);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Player.position);
 
                 for (int i = 0; i <= 15; i++)

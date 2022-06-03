@@ -59,8 +59,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.localAI[1]++;
             NPC.localAI[2]++;
             tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<GhostDragonHead>(), bodyTypes, ModContent.NPCType<GhostDragonTail>(), 23, -2f, 15f, 0.23f, true, false, true, false, false);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[2], 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, Main.rand.Next(200) == 1, false, 2, 17);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 660, ProjectileID.FrostWave, lightningDamage, 1, Main.rand.Next(200) == 1, false, 2, 20);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[2], 1500, ProjectileID.CultistBossLightningOrb, lightningDamage, 10, Main.rand.Next(200) == 1, false, SoundID.Item17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref NPC.localAI[1], 660, ProjectileID.FrostWave, lightningDamage, 1, Main.rand.Next(200) == 1, false, SoundID.Item20);
 
             //this makes the head always stay in the same position even when it flips upside down
             if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }

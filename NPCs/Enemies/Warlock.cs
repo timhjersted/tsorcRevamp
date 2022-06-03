@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             }
 
-            if (tsorcRevampAIs.SimpleProjectile(NPC, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, !clearShot, false, soundType: 2, soundStyle: 17))
+            if (tsorcRevampAIs.SimpleProjectile(NPC, ref attackTimer, 140, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 1, 0, !clearShot, false, shootSound: SoundID.Item17))
             {
                 NPC.life += 10;
                 NPC.HealEffect(10);

@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 Projectile.soundDelay = 10;
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
-                Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 9, 0.1f, 0.3f);
+                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item9 with { Volume = 0.1f, Pitch = 0.3f }, Projectile.Center);
             }
             int num47 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
             Dust expr_2684 = Main.dust[num47];

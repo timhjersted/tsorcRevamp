@@ -1,4 +1,5 @@
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -36,7 +37,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center.X, Projectile.Center.Y, 0, 0, ModContent.ProjectileType<EnemySpellAbyssStorm>(), Projectile.damage, 8f, Projectile.owner);
             Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);
             Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 15, 0, 0, 100, default, 2f);

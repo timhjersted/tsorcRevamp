@@ -139,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if ((NPC.ai[1] >= 290 && NPC.life > 300) || (NPC.ai[1] >= 170 && NPC.life <= 300))
             {
-                Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
@@ -249,7 +249,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonFieldBall>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, poisonFieldDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 350;
-                        Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                         NPC.ai[3] = 0; ;
                     }
                 }

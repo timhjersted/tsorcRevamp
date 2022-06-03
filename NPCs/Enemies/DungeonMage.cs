@@ -78,7 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     int proj = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, damage, 0f, Main.myPlayer);
                     Main.projectile[proj].timeLeft = 120;
 
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     NPC.ai[0] = 0;
                     NPC.ai[2]++;
                 }
@@ -92,7 +92,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if ((NPC.ai[1] >= 260 && NPC.life > 50) || (NPC.ai[1] >= 180 && NPC.life <= 50))
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);
@@ -207,7 +207,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         Main.projectile[num54].timeLeft = 110;
                         Main.projectile[num54].velocity.X = speedX;
                         Main.projectile[num54].velocity.Y = speedY;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                         NPC.ai[3] = 0;
                     }
                 }

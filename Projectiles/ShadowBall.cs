@@ -33,7 +33,7 @@ namespace tsorcRevamp.Projectiles
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 52, Main.rand.Next(-5, 5), Main.rand.Next(-5, 5), 100, default(Color), 2.5f);
                 Main.dust[dust].noGravity = true;
             }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3.WithVolume(.45f), Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.45f }, Projectile.position);
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {

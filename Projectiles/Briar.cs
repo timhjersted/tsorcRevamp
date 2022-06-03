@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9.WithVolume(.5f), Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath9 with { Volume = 0.5f }, Projectile.position);
             for (int d = 0; d < 15; d++)
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 5, Projectile.velocity.X * 1.2f, Projectile.velocity.Y * 1.2f, 30, default(Color), 1.4f);

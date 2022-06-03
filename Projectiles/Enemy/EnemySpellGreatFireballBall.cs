@@ -30,7 +30,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             {
                 //projectile.soundDelay = 10;
                 //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 9);
-                Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 34, 0.01f, 0f); // flamethrower
+                Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item34 with { Volume = 0.01f }, Projectile.Center); // flamethrower
 
                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 42, 0.6f, 0f); //flaming wood, high pitched air going out
                 //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 43, 0.6f, 0f); //staff magic cast, low sound
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override bool PreKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 100, 0.5f, 0f); // cursed flame wall, lasts a bit longer than flame
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item100 with { Volume = 0.5f }, Projectile.Center); // cursed flame wall, lasts a bit longer than flame
                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 125, 0.3f, .2f); //phantasmal bolt fire 2
                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(2, (int)projectile.position.X, (int)projectile.position.Y, 69, 0.6f, 0.0f); //earth staff rough fireish
             if (Projectile.owner == Main.myPlayer)

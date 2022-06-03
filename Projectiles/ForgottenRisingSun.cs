@@ -36,7 +36,7 @@ namespace tsorcRevamp.Projectiles
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             if (Projectile.velocity.X != oldVelocity.X)
             {
                 Projectile.velocity.X = 0f - oldVelocity.X;

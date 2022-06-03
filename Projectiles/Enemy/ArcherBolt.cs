@@ -38,7 +38,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);

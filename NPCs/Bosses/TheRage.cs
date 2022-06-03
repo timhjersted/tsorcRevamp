@@ -100,7 +100,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     {
                         float num48 = 5f;//25 was 40
                         int type = ModContent.ProjectileType<FireTrails>();
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                         float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 500, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
@@ -167,7 +167,7 @@ namespace tsorcRevamp.NPCs.Bosses
                     float num48 = 13f;//25 was 40
                     float invulnDamageMult = 1.2f;
                     int type = ModContent.ProjectileType<FireTrails>();
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)vector8.X, (int)vector8.Y, 17);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, vector8);
                     float rotation = (float)Math.Atan2(vector8.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X + 300, vector8.Y - 100, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y - 100, (float)((Math.Cos(rotation + 0.2) * num48) * -1), (float)((Math.Sin(rotation + 0.4) * num48) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);

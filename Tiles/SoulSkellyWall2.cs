@@ -121,7 +121,7 @@ namespace tsorcRevamp.Tiles
             Tile tile = Main.tile[i, j];
             if (tile.TileFrameX / 54 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, Pitch = 0.3f}); // Plays sound.
                 SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
 
                 int x = i - Main.tile[i, j].TileFrameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide

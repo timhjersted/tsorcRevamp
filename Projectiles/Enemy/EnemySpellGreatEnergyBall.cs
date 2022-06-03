@@ -20,7 +20,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         }
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 94, 0.09f, .0f); // electric thud quick
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item94 with { Volume = 0.09f }, Projectile.Center); // electric thud quick
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<EnemySpellGreatEnergyStrike>(), Projectile.damage, 3f, Projectile.owner);
             Vector2 projectilePos = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);

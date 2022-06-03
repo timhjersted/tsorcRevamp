@@ -44,7 +44,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             LaserTextureHead = new Rectangle(0, 0, 30, 24);
             LaserTextureBody = new Rectangle(0, 26, 30, 30);
             LaserTextureTail = new Rectangle(0, 58, 30, 24);
-            LaserSound = SoundID.Item12.WithVolume(0.5f);
+            LaserSound = SoundID.Item12 with { Volume = 0.5f };
 
             LaserDebuffs = new List<int>(ModContent.BuffType<Buffs.ThermalRise>()); //Lasers inflict thermal rise on hit, to give people a chance to recover from running out of flight time
             DebuffTimers = new List<int>(300);

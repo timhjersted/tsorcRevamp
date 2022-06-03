@@ -374,7 +374,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         int type = ModContent.ProjectileType<ShadowOrb>();
                         float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, (float)((Math.Cos(rotation) * num48) * -1), (float)((Math.Sin(rotation) * num48) * -1), type, ShadowOrbDamage, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 20);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                         ShadowShotCount++;
                         NPC.netUpdate = true; //new
                     }
@@ -395,7 +395,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), startPos.X, startPos.Y, speedX, speedY, type, CrystalShardsDamage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 80;
                         Main.projectile[num54].aiStyle = 0;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                         //So he can only cast it once per-teleport
                         CrystalShardsTimer = -2000;
                     }
@@ -426,7 +426,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                             int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, DeathBallDamage, 0f, Main.myPlayer);
                             Main.projectile[num54].timeLeft = 10;
                             Main.projectile[num54].aiStyle = 1;
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         }
                         NPC.netUpdate = true;
                     }
@@ -499,7 +499,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                         {
                             for (int i = 0; i < 3; i++)
                             {
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                                 Vector2 velocity = Main.rand.NextVector2Circular(10, 10);
                                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position, velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
                                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.position + new Vector2(10, 0), velocity, ModContent.ProjectileType<PhasedMatterBlast>(), AntiMatterBlastDamage, .5f, Main.myPlayer).timeLeft = (int)((300 * (4 - AttackModeCounter)) - TeleportTimer);
@@ -602,7 +602,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 
         void AttraidiesTeleport()
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
             for (int num36 = 0; num36 < 10; num36++)
             {
                 int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 54, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 4f);

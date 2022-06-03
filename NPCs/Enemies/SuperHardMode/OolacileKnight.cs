@@ -115,9 +115,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.03f, canTeleport: true, soundType: 26, soundFrequency: 2000, enragePercent: 0.5f, enrageTopSpeed: 4);
+            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.03f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 2000, enragePercent: 0.5f, enrageTopSpeed: 4);
             tsorcRevampAIs.LeapAtPlayer(NPC, 7, 4, 1.5f, 128);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height), true, 2, 17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), earthTridentDamage, 11, Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height), true, SoundID.Item17);
 
             breathTimer++;
             if (breathTimer > 500)

@@ -643,7 +643,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         if (projectile.oldPosition.X > NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
 
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position, 1); //Play dig sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
                             damage -= 15;
                             knockback = 0.2f;
 
@@ -660,7 +660,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                         else if (hitDirection == -1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position, 1); //Play dig sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
                             damage -= 15;
                             knockback = 0.1f;
 
@@ -680,7 +680,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     {
                         if (projectile.oldPosition.X < NPC.Center.X && projectile.DamageType == DamageClass.Melee && projectile.aiStyle != 19) //if proj moving toward npc front
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position, 1); //Play dig sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
                             damage -= 15;
                             knockback = 0.2f;
 
@@ -696,7 +696,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                         else if (hitDirection == 1 && (projectile.DamageType != DamageClass.Melee || projectile.aiStyle == 19))
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.position, 1); //Play dig sound
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, NPC.Center); //Play dig sound
                             damage -= 15;
 
                             knockback = 0.1f;

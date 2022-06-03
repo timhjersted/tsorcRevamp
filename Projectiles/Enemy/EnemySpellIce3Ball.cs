@@ -40,7 +40,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.2f, .3f); //ice materialize - good
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.2f, Pitch = 0.3f }, Projectile.Center); //ice materialize - good
                                                                                                                             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 10);
             int Icicle = ModContent.ProjectileType<EnemySpellIce3Icicle>();
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, Icicle, Projectile.damage, 3f, Projectile.owner);

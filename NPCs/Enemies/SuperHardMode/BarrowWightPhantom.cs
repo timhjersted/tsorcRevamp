@@ -93,7 +93,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (Main.rand.Next(2075) == 0)
                 {
                     breath = true;
-                    Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
                 if (breath)
                 {
@@ -108,7 +108,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     breath = false;
                     breathCD = 30;
-                    //Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
                 //end fire breath attack
 

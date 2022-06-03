@@ -281,7 +281,7 @@ namespace tsorcRevamp.NPCs.Bosses
                 {
                     NPC.velocity *= 0f; // stop moving
                     NPC.ai[3] = 0f; // reset boredom to 0
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                     Vector2 vector = new Vector2(NPC.position.X + (float)NPC.width * 0.5f, NPC.position.Y + (float)NPC.height * 0.5f); // current location
                     float num6 = NPC.oldPos[2].X + (float)NPC.width * 0.5f - vector.X; // direction to where it was 3 frames ago?
                     float num7 = NPC.oldPos[2].Y + (float)NPC.height * 0.5f - vector.Y; // direction to where it was 3 frames ago?
@@ -327,7 +327,7 @@ namespace tsorcRevamp.NPCs.Bosses
             if ((!hates_light || !Main.dayTime || (double)NPC.position.Y > Main.worldSurface * 16.0) && NPC.ai[3] < (float)boredom_time)
             {  // not fleeing light & not bored
                 if (sound_type > 0 && Main.rand.Next(sound_frequency) <= 0)
-                    Terraria.Audio.SoundEngine.PlaySound(sound_type, (int)NPC.position.X, (int)NPC.position.Y, 1); // random creature sounds
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Mummy, NPC.Center); // random creature sounds
             }
             else if (!is_archer || NPC.ai[2] <= 0f) //  fleeing light or bored (& not aiming)
             {
@@ -571,7 +571,7 @@ namespace tsorcRevamp.NPCs.Bosses
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, tridentDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 600;
                                 Main.projectile[num54].aiStyle = 1;
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                                 customAi1 = 1f;
                             }
                             NPC.netUpdate = true;

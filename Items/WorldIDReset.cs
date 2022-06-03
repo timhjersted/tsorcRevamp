@@ -40,7 +40,7 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player)
         {
-            Terraria.Audio.SoundEngine.PlaySound(4, -1, -1, 43);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath43);
             Main.worldID = VariousConstants.CUSTOM_MAP_WORLD_ID;
             return true;
         }

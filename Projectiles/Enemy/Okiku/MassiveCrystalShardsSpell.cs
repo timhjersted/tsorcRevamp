@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         {
 
             //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 30, 0.5f, .1f); //ice materialize - good
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item30 with { Volume = 0.5f, Pitch = 0.1f }, Projectile.Center); //ice materialize - good
             var Shards = ModContent.ProjectileType<MassiveCrystalShards>();
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width), Projectile.position.Y + (float)(Projectile.height), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 5), Projectile.position.Y + (float)(Projectile.height * 4), 0, 5, Shards, (int)(this.Projectile.damage), 3f, Projectile.owner);

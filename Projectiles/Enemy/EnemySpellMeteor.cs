@@ -35,7 +35,7 @@ namespace tsorcRevamp.Projectiles.Enemy
                 if (Projectile.ai[1] == 0f)
                 {
                     Projectile.ai[1] = 1f;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
                 }
                 Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
                 if (Projectile.velocity.Y > 16f)

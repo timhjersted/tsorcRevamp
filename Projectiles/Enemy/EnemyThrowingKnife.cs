@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -54,8 +55,8 @@ namespace tsorcRevamp.Projectiles.Enemy
         #region PreKill
         public override bool PreKill(int timeLeft)
         {
-            Projectile.type = 0;
-            Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1, 0.5f, 0f);
+            Projectile.type = 0; 
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Dig with { Volume = 0.5f }, Projectile.Center);
             for (int i = 0; i < 10; i++)
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 1, 0, 0, 0, default, 1f);
@@ -74,7 +75,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(0, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);

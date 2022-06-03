@@ -27,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
         public override bool PreKill(int timeLeft)
         {
             //projectile.type = 102; //makes cool explosion dust but also annoying exploding sound :/
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 34, 0.1f, -0.2f); //flamethrower
+            Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item34 with { Volume = 0.1f, Pitch = -0.2f }, Projectile.Center); //flamethrower
             return true;
         }
 

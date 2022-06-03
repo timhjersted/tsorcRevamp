@@ -114,7 +114,7 @@ namespace tsorcRevamp.Projectiles
                                 }
                             }
                         }
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5.WithVolume(0.8f), player.position);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5 with { Volume = 0.8f }, player.position);
                     }
                     charge = 0; //reset the charge
                     Projectile.Kill(); //and kill the bow so we dont keep shooting

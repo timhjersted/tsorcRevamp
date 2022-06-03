@@ -102,7 +102,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             tsorcRevampAIs.FighterAI(NPC, 0.6f, 0.07f, 0.1f, true, enragePercent: 0.5f, enrageTopSpeed: 5);
 
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, clearLineofSight, true, 2, 17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref tridentTimer, 136, ModContent.ProjectileType<Projectiles.Enemy.EarthTrident>(), tridentDamage, 14, clearLineofSight, true, SoundID.Item17);
             if (tridentTimer == 125f)
             {
                 if (Main.rand.Next(2) == 1)
@@ -117,7 +117,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //Fire rain and disruptor
                 if (projectileTimer > 225)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     if (Main.rand.NextBool())
                         for (int pcy = 0; pcy < 10; pcy++)
                         {

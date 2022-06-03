@@ -79,7 +79,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.FighterAI(NPC, 1.5f, .04f, 0.2f, true, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
 
             bool canFire = NPC.Distance(Main.player[NPC.target].Center) < 1600 && Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, canFire, true, 2, 17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref spearTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.BlackKnightSpear>(), 20, 8, canFire, true, SoundID.Item17);
 
             if (NPC.justHit)
             {

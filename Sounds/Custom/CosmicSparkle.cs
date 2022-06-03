@@ -2,6 +2,7 @@
 
 namespace tsorcRevamp.Sounds.Custom
 {
+    /* 1.4 Porting Note: ModSound no longer exists! I am unsure if this is necessary anymore
     class CosmicSparkle : ModSound
     {
 
@@ -35,5 +36,5 @@ namespace tsorcRevamp.Sounds.Custom
             soundInstance.Pan = pan;
             return soundInstance;
         }
-    }
+    }*/
 }

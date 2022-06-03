@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
@@ -1401,7 +1402,7 @@ namespace tsorcRevamp.NPCs
                         if (distSoundDelay < 10f) { distSoundDelay = 10f; }
                         if (distSoundDelay > 20f) { distSoundDelay = 20f; }
                         npc.soundDelay = (int)distSoundDelay;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 1);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
                     }
                     dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
                     float absPlayerCenterX = Math.Abs(playerCenterX);
@@ -2061,15 +2062,15 @@ namespace tsorcRevamp.NPCs
         ///<param name="canTeleport">Lets it teleport near the player when it gets bored instead of walking around randomly</param>
         ///<param name="doorBreakingDamage">Setting this above 0 lets the npc break doors, and sets much damage should it deal when it hits them. Doors have 10 "health"</param>
         ///<param name="hatesLight">Should it run away during daylight?</param>
-        ///<param name="soundType">What sound should it play?</param>
+        ///<param name="randomSound">What sound should it randomly play?</param>
         ///<param name="soundFrequency">How often does it play its sound?</param>
         ///<param name="enragePercent">Accelerates twice as fast when below this % health</param> 
         ///<param name="enrageTopSpeed">Its new top speed when enraged</param>
         ///<param name="lavaJumping">Lets it hop around in lava</param>
-        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
+        public static void FighterAI(NPC npc, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
             npc.aiStyle = -1;
-            BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, soundType, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
+            BasicAI(npc, topSpeed, acceleration, brakingPower, false, canTeleport, doorBreakingDamage, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
         }
 
         ///<summary> 
@@ -2086,16 +2087,21 @@ namespace tsorcRevamp.NPCs
         ///<param name="brakingPower">How quickly it can slow down</param>
         ///<param name="canTeleport">Lets it teleport near the player when it gets bored instead of walking around randomly</param>
         ///<param name="hatesLight">Should it run away during daylight? (UNIMPLEMENTED!)</param>
-        ///<param name="soundType">What sound should it play?</param>
+        ///<param name="shootSound">What sound should it play?</param>
         ///<param name="soundFrequency">How often does it play its sound?</param>
         ///<param name="enragePercent">Below this percent health, doubles speed and acceleration</param>
         ///<param name="lavaJumping">Lets it hop around in lava</param>
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Set 0 for projectiles with no gravity. If your projectile has custom gravity dropoff, stick that here.</param>
-        ///<param name="soundType">The type of sound to play when it shoots</param>
-        ///<param name="soundStyle">The style of sound to play when it shoots</param>
-        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, int passiveSound = 0, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, int soundType = 2, int soundStyle = 5)
+        ///<param name="shootSound">The type of sound to play when it shoots. Defaults to bow.</param>
+        public static void ArcherAI(NPC npc, int projectileType, int projectileDamage, float projectileVelocity, int projectileCooldown, float topSpeed = 1f, float acceleration = .07f, float brakingPower = .2f, bool canTeleport = false, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercent = 0, float enrageTopSpeed = 0, bool lavaJumping = false, float projectileGravity = 0.035f, SoundStyle? shootSound = null)
         {
-            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, passiveSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
+            BasicAI(npc, topSpeed, acceleration, brakingPower, true, canTeleport, 0, hatesLight, randomSound, soundFrequency, enragePercent, enrageTopSpeed, lavaJumping);
+
+            //Set default shoot sound
+            if(shootSound == null)
+            {
+                shootSound = SoundID.Item5;
+            }
 
             //Apply scaling to SHM enemies
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
@@ -2153,10 +2159,8 @@ namespace tsorcRevamp.NPCs
                         {
                             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer);
                         }
-                        if (soundType > 0)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
-                        }
+
+                        SoundEngine.PlaySound(shootSound.Value);
                     }
 
                     //Calculate a vector aiming at the player. This is purely for the npc's sprite visuals, so it can use the much simpler aiming code.
@@ -2190,7 +2194,7 @@ namespace tsorcRevamp.NPCs
         //Upgrade gap-jumping code to scale jump x and  y velocity with gap size, up to a limit
         //Upgrade wall-jumping code to scale jump height with how tall the wall in front of it is. Also let it recognize walls with gaps in them.
         //More complex "bored" check than simple velocity. Right now it can get bored if it takes too long doing things that require it to move slow.
-        private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, int soundType = 0, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
+        private static void BasicAI(NPC npc, float topSpeed, float acceleration, float brakingPower, bool isArcher, bool canTeleport = false, int doorBreakingDamage = 0, bool hatesLight = false, SoundStyle? randomSound = null, int soundFrequency = 1000, float enragePercentage = 0, float enrageTopSpeed = 0, bool lavaJumping = false)
         {
             //Apply scaling to SHM enemies
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
@@ -2208,9 +2212,9 @@ namespace tsorcRevamp.NPCs
 
 
             //If it has a sound to play, roll a chance for playing it
-            if (soundType > 0 && Main.rand.Next(soundFrequency) <= 0)
+            if (randomSound != null && Main.rand.Next(soundFrequency) <= 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, 1);
+                Terraria.Audio.SoundEngine.PlaySound(randomSound.Value);
             }
 
             //If we can enrage, do that
@@ -2438,7 +2442,7 @@ namespace tsorcRevamp.NPCs
         ///<param name="projectileGravity">How much is the projectile's y velocity reduced each tick? Leave blank for default gravity, set to 0 for projectiles with no gravity, set it custom if your projectile has custom gravity</param>
         ///<param name="ai0">Lets you pass a value to the projectile's ai0</param>
         ///<param name="ai1">Lets you pass a value to the projectile's ai1</param>
-        public static bool SimpleProjectile(NPC npc, ref float timer, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, int soundType = 0, int soundStyle = 0, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
+        public static bool SimpleProjectile(NPC npc, ref float timer, int timerCap, int projectileType, int projectileDamage, float projectileVelocity, bool actuallyFire = true, bool incrementTimer = true, SoundStyle? shootSound = null, float projectileGravity = 0.035f, float ai0 = 0, float ai1 = 0)
         {
             if (npc.ai[3] < 0)
             {
@@ -2458,9 +2462,9 @@ namespace tsorcRevamp.NPCs
                         Vector2 projectileVector = UsefulFunctions.BallisticTrajectory(npc.Center, Main.player[npc.target].Center, projectileVelocity, projectileGravity);
                         Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center.X, npc.Center.Y, projectileVector.X, projectileVector.Y, projectileType, projectileDamage, 0f, Main.myPlayer, ai0, ai1);
                     }
-                    if (soundType > 0)
+                    if (shootSound != null)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(soundType, (int)npc.position.X, (int)npc.position.Y, soundStyle);
+                        SoundEngine.PlaySound(shootSound.Value);
                     }
                     return true;
                 }
@@ -2571,7 +2575,7 @@ namespace tsorcRevamp.NPCs
         public static void Teleport(NPC npc, float range = 50, bool requireLineofSight = true)
         {
             Vector2 oldPosition = npc.Center;
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, npc.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < 100; i++)
@@ -2583,7 +2587,7 @@ namespace tsorcRevamp.NPCs
                     }
                 }
             }
-            Terraria.Audio.SoundEngine.PlaySound(2, (int)npc.position.X, (int)npc.position.Y, 8);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
             Vector2 newPosition = npc.Center;
 

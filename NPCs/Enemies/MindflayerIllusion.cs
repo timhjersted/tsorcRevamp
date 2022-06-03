@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, damage, 0f, Main.myPlayer);
                         Main.projectile[num54].timeLeft = 200;
                         Main.projectile[num54].aiStyle = 4;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 0x11);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                         NPC.ai[0] = 0;
                         NPC.ai[2]++;
                     }
@@ -107,7 +107,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         int type = ModContent.ProjectileType<Projectiles.Enemy.AntiGravityBlast>();//44;//0x37; //14;
                         int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector9.X, vector9.Y, speedX, speedY, type, damage, 0f, Main.myPlayer, Main.player[NPC.target].whoAmI);
                         Main.projectile[num54].timeLeft = 500;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 25);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
                         NPC.ai[3] = 0; ;
                     }
                 }
@@ -123,7 +123,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if ((NPC.ai[1] >= 200 && NPC.life > 100) || (NPC.ai[1] >= 120 && NPC.life <= 100))
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item, (int)NPC.position.X, (int)NPC.position.Y, 8);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                 for (int num36 = 0; num36 < 10; num36++)
                 {
                     int dust = Dust.NewDust(new Vector2((float)NPC.position.X, (float)NPC.position.Y), NPC.width, NPC.height, 55, NPC.velocity.X + Main.rand.Next(-10, 10), NPC.velocity.Y + Main.rand.Next(-10, 10), 200, Color.Red, 2f);

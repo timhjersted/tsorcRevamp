@@ -146,11 +146,11 @@ namespace tsorcRevamp.Projectiles
 
             if (projectile.owner == Main.myPlayer && (modPlayer.MagicWeapon || modPlayer.GreatMagicWeapon) && projectile.DamageType == DamageClass.Melee)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit44.WithVolume(0.3f), target.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit44 with { Volume = 0.3f }, target.position);
             }
             if (projectile.owner == Main.myPlayer && modPlayer.CrystalMagicWeapon && projectile.DamageType == DamageClass.Melee)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27.WithVolume(0.3f), target.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.3f }, target.position);
             }
         }
 

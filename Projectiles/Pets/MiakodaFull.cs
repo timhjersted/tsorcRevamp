@@ -81,7 +81,7 @@ namespace tsorcRevamp.Projectiles.Pets
                 string ReadySound = Main.rand.Next(ReadySoundChoices);
                 if (!Main.dedServ)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle(ReadySound).WithVolume(.4f * MiakodaVol).WithPitchVariance(.2f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle(ReadySound) with { Volume = 0.4f * MiakodaVol, PitchVariance = 0.2f }, Projectile.Center);
                 }
             }
 
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Projectiles.Pets
                     string AmgerySound = Main.rand.Next(AmgerySoundChoices);
                     if (!Main.dedServ)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle(AmgerySound).WithVolume(.6f * MiakodaVol).WithPitchVariance(.2f), Projectile.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle(AmgerySound) with { Volume = 0.6f * MiakodaVol, PitchVariance = 0.2f }, Projectile.Center);
                     }
                 }
 

@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 despawnHandler.TargetAndDespawn(NPC.whoAmI);
             }
-            tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, 0.2f, true, 10, false, 0, 1000, 0.5f, 4, true);
+            tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, 0.2f, true, 10, false, null, 1000, 0.5f, 4, true);
 
 
             if (Main.netMode != 1 && !Main.player[NPC.target].dead)

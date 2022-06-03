@@ -156,7 +156,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     //Projectile.NewProjectile(NPC.GetSource_FromThis(), npc.position.X + (float)npc.width / 2f, npc.position.Y + (float)npc.height / 2f, npc.velocity.X * 3f + (float)Main.rand.Next(-2, 3), npc.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.position.X + (float)NPC.width, NPC.position.Y + (float)NPC.height * 0.5f, NPC.velocity.X * 3f + (float)Main.rand.Next(-2, 3), NPC.velocity.Y * 3f + (float)Main.rand.Next(-2, 3), ModContent.ProjectileType<Projectiles.Enemy.FrozenDragonsBreath>(), breathDamage, 1.2f, Main.myPlayer);
                 }
-                Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 breathCD--;
 
             }
@@ -164,7 +164,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             {
                 breath = false;
                 breathCD = 110;
-                //Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
             if (Main.rand.Next(820) == 0)
             {
@@ -174,7 +174,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 800 + Main.rand.Next(1600), (float)nT.position.Y - 500f, (float)(-40 + Main.rand.Next(80)) / 10, 10.1f, ModContent.ProjectileType<Projectiles.Enemy.FrozenTear>(), frozenTearDamage, 2f, Main.myPlayer); //10.1f was 14.9f is speed
                     }
-                    Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                 }
             }
             if (Main.rand.Next(1560) == 0)
@@ -186,7 +186,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)nT.position.X - 500 + Main.rand.Next(1000), (float)nT.position.Y - 500f, (float)(-100 + Main.rand.Next(200)) / 10, 11.5f, ModContent.ProjectileType<Projectiles.Enemy.DragonMeteor>(), meteorDamage, 2f, Main.myPlayer); //9.5f was 14.9f
                     }
                 }
-                Terraria.Audio.SoundEngine.PlaySound(2, -1, -1, 20);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
             }
             if (Main.rand.Next(2) == 0)
             {

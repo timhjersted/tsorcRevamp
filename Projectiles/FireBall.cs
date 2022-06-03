@@ -45,7 +45,7 @@ namespace tsorcRevamp.Projectiles
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 174, Projectile.velocity.X, Projectile.velocity.Y, 0, default(Color), 1f);
                 Main.dust[dust].noGravity = true;
             }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3.WithVolume(.45f), Projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit3 with { Volume = 0.45f }, Projectile.position);
         }
     }
 }

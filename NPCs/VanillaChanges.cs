@@ -1149,7 +1149,7 @@ namespace tsorcRevamp.NPCs
                 if (npc.localAI[3] >= (float)(600 + Main.rand.Next(1000)))
                 {
                     npc.localAI[3] = -Main.rand.Next(200);
-                    Terraria.Audio.SoundEngine.PlaySound(4, (int)npc.position.X, (int)npc.position.Y, 10);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath10, npc.Center);
                 }
                 Main.wofNPCIndex = npc.whoAmI;
                 int num335 = (int)(npc.position.X / 16f);
@@ -1724,7 +1724,14 @@ namespace tsorcRevamp.NPCs
                                 dust78.fadeIn = 1f;
                                 dust78.scale = 1.5f + Main.rand.NextFloat() + (float)num479 * 0.13f;
                             }
-                            Terraria.Audio.SoundEngine.PlaySound(3, position6, Utils.SelectRandom<int>(Main.rand, 1, 18));
+
+                            Terraria.Audio.SoundStyle randomStyle = SoundID.NPCHit1;
+                            
+                            if (Main.rand.NextBool())
+                            {
+                                randomStyle = SoundID.NPCHit18;
+                            }
+                            Terraria.Audio.SoundEngine.PlaySound(randomStyle, position6);
                         }
                     }
                     if (Main.rand.Next(3) != 0 && npc.ai[1] < 150f)
@@ -1736,7 +1743,7 @@ namespace tsorcRevamp.NPCs
                     }
                     if (npc.ai[1] % 60f == 1f)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(4, npc.Center, 22);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath22, npc.Center);
                     }
                     if (npc.ai[1] >= 180f)
                     {
@@ -2337,7 +2344,7 @@ namespace tsorcRevamp.NPCs
                                     NetMessage.SendData(23, -1, -1, null, num711);
                                 }
                             }
-                            Terraria.Audio.SoundEngine.PlaySound(3, (int)position.X, (int)position.Y);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit1, position);
                             for (int m = 0; m < 10; m++)
                             {
                                 Dust.NewDust(position, 20, 20, 5, vector112.X * 0.4f, vector112.Y * 0.4f);
@@ -2490,7 +2497,7 @@ namespace tsorcRevamp.NPCs
                     }
                     else
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(3, (int)npc.position.X, (int)npc.position.Y);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit1, npc.position);
                         for (int num844 = 0; num844 < 2; num844++)
                         {
                             Gore.NewGore(npc.GetSource_Death(), npc.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), 8);
@@ -2501,7 +2508,7 @@ namespace tsorcRevamp.NPCs
                         {
                             Dust.NewDust(npc.position, npc.width, npc.height, 5, (float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f);
                         }
-                        Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                     }
                 }
                 Dust.NewDust(npc.position, npc.width, npc.height, 5, (float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f);
@@ -2623,7 +2630,7 @@ namespace tsorcRevamp.NPCs
             }
             else if (npc.ai[1] == 1f)
             {
-                Terraria.Audio.SoundEngine.PlaySound(36, (int)npc.position.X, (int)npc.position.Y, 0);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.ForceRoar, npc.Center);
                 npc.rotation = num1243;
                 float num922 = 6.8f;
                 if (Main.expertMode && npc.ai[3] == 1f)
@@ -2830,7 +2837,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (npc.ai[2] == 0f)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(36, (int)npc.position.X, (int)npc.position.Y, -1);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.ForceRoar, npc.Center);
                 }
                 float num1121 = num910;
                 npc.ai[2] += 1f;

@@ -159,11 +159,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 if ((NPC.type == 3 || NPC.type == 21 || NPC.type == 31 || NPC.type == 77 || NPC.type == 110 || NPC.type == 132) && Main.rand.Next(1000) == 0)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(14, (int)NPC.position.X, (int)NPC.position.Y, 1);
+                    //1.4 Porting Note: This was set to play SoundID 14. But that's unused and has no 1.4 equivalent? Commenting it out  
+                    //Terraria.Audio.SoundEngine.PlaySound(14, NPC.Center); 
                 }
                 if ((NPC.type == 78 || NPC.type == 79 || NPC.type == 80) && Main.rand.Next(500) == 0)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(26, (int)NPC.position.X, (int)NPC.position.Y, 1);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Mummy, NPC.Center);
                 }
             }
             else

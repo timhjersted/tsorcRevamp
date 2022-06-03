@@ -22,7 +22,7 @@ namespace tsorcRevamp.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, (int)Projectile.position.X, (int)Projectile.position.Y, 1);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             for (int i = 0; i < 10; i++)
             {
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 7, 0f, 0f, 0, default, 1f);

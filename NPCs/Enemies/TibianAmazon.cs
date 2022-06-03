@@ -91,7 +91,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.8f, 0.15f, enragePercent: 0.2f, enrageTopSpeed: 2.2f);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, soundType: 2, soundStyle: 17);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref knifeTimer, 90, ModContent.ProjectileType<Projectiles.Enemy.EnemyThrowingKnife>(), throwingKnifeDamage, 8, shootSound: SoundID.Item17);
 
             if (NPC.justHit)
             {

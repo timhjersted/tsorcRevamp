@@ -397,8 +397,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         NPC.life += NPC.lifeMax / 6;
                         if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellEffectHealing>(), 0, 0f, Main.myPlayer);
-                        Terraria.Audio.SoundEngine.PlaySound(2, (int)NPC.position.X, (int)NPC.position.Y, 4);
-                        NPC.netUpdate = true;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, NPC.Center); NPC.netUpdate = true;
                         chaosHealed += 1;
                     }
                 }

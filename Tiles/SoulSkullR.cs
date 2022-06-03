@@ -166,7 +166,7 @@ namespace tsorcRevamp.Tiles
             Tile tile = Main.tile[i, j];
             if (tile.TileFrameX / 36 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52.WithVolume(.35f).WithPitchVariance(.3f)); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, Pitch = 0.3f }); // Plays sound.
                 SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
 
 

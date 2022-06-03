@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Special
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/EvilLaugh").WithVolume(1.1f), NPC.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/EvilLaugh") with { Volume = 1.1f }, NPC.Center);
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles.Enemy
@@ -26,7 +27,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             if (Projectile.soundDelay == 0 && Math.Abs(Projectile.velocity.X) + Math.Abs(Projectile.velocity.Y) > 2f)
             {
                 Projectile.soundDelay = 10;
-                Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 9);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item9, Projectile.Center);
             }
             Vector2 arg_2675_0 = new Vector2(Projectile.position.X, Projectile.position.Y);
             int arg_2675_1 = Projectile.width;
@@ -63,7 +64,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             Projectile.timeLeft = 0;
             {
-                Terraria.Audio.SoundEngine.PlaySound(2, (int)Projectile.position.X, (int)Projectile.position.Y, 10);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
                 if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * +3f), Projectile.position.Y + (float)(Projectile.height * +5.5f), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellArmageddon>(), Projectile.damage, 8f, Projectile.owner);
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;

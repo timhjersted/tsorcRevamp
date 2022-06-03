@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, canTeleport: false, lavaJumping: true);
             bool lineOfSight = Collision.CanHitLine(NPC.Center, 0, 0, Main.player[NPC.target].Center, 0, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, 2, 87, 0); //2, 87 is bubble 2 sound
+            tsorcRevampAIs.SimpleProjectile(NPC, ref bubbleTimer, 80, ModContent.ProjectileType<Projectiles.Enemy.Bubble>(), bubbleDamage, 6, lineOfSight, true, SoundID.Item87, 0); //2, 87 is bubble 2 sound
 
             if (Main.GameUpdateCount % 600 == 0 && tsorcRevampWorld.SuperHardMode & Main.netMode != NetmodeID.MultiplayerClient)
             {
