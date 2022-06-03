@@ -32,12 +32,6 @@ namespace tsorcRevamp.NPCs.Friendly
             return Names;
         }
 
-        public override string TownNPCName()
-        {
-            string name = Names[Main.rand.Next(Names.Count)]; //pick a random name from the list
-            return name;
-        }
-
         public override void SetDefaults()
         {
             NPC.townNPC = true;
