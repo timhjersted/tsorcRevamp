@@ -29,19 +29,6 @@ namespace tsorcRevamp.Items
             Item.value = 1;
             Item.rare = ItemRarityID.Lime;
         }
-
-        public override bool GrabStyle(Player player)
-        { //make pulling souls through walls more consistent
-            Vector2 vectorItemToPlayer = player.Center - Item.Center;
-            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            Item.velocity = Item.velocity + movement;
-            return true;
-        }
-
-        public override void GrabRange(Player player, ref int grabRange)
-        {
-            grabRange *= (2 + Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulReaper);
-        }
     }
 
     public class DarkSoul : BaseRarityItem
@@ -70,8 +57,8 @@ namespace tsorcRevamp.Items
         public override bool GrabStyle(Player player)
         { //make pulling souls through walls more consistent
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
-            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
-            Item.velocity = Item.velocity + movement;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
+            Item.velocity = movement;
             return true;
         }
 
