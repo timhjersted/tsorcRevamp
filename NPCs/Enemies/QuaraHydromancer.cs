@@ -24,8 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 18;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0.25f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
 
             if (Main.hardMode) { NPC.lifeMax = 1000; NPC.defense = 22; NPC.damage = 125; NPC.value = 1500; bubbleDamage = 70; }
             if (tsorcRevampWorld.SuperHardMode) { NPC.lifeMax = 3000; NPC.defense = 50; NPC.damage = 160; NPC.value = 3600; bubbleDamage = 80; }

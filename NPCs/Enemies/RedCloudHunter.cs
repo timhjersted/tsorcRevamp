@@ -25,9 +25,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.height = 48;
             NPC.knockBackResist = 0.6f;
             NPC.rarity = 3;
-            banner = NPC.type;
+            Banner = NPC.type;
             NPC.buffImmune[BuffID.Confused] = true;
-            bannerItem = ModContent.ItemType<Banners.RedCloudHunterBanner>();
+            BannerItem = ModContent.ItemType<Banners.RedCloudHunterBanner>();
 
             AnimationType = NPCID.SkeletonArcher;
             Main.npcFrameCount[NPC.type] = 20;

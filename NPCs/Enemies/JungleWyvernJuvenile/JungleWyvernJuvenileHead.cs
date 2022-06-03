@@ -40,8 +40,8 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.JungleWyvernJuvenileBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.JungleWyvernJuvenileBanner>();
         }
 
 

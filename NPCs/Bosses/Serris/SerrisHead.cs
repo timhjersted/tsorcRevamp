@@ -30,7 +30,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.boss = true;
-            music = 12;
+            Music = 12;
             NPC.value = 300000;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;

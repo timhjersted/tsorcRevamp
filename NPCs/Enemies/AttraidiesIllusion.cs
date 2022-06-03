@@ -37,8 +37,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             //npc.buffImmune[BuffID.Paralyzed] = true; ???
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.AttraidiesIllusionBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.AttraidiesIllusionBanner>();
 
 
         }

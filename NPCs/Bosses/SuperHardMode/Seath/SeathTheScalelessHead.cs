@@ -23,7 +23,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 125000;
-            music = 12;
+            Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;

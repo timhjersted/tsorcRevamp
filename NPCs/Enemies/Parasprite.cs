@@ -22,8 +22,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0;
             NPC.value = 50;
             Main.npcFrameCount[NPC.type] = 7;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ParaspriteBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ParaspriteBanner>();
         }
         int spriteColor;
         int timer;

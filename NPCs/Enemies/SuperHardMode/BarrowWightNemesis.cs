@@ -31,8 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 6230;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.BarrowWightNemesisBanner>();
         }
 
         int breathDamage = 35;

@@ -20,7 +20,7 @@ namespace tsorcRevamp.Tiles
             name.SetDefault("Soul Skull");
             AddMapEntry(new Color(120, 250, 0), name);
             DustType = 30;
-            disableSmartCursor = true;
+            TileID.Sets.DisableSmartCursor[Type] = true; 
             Main.tileLighted[Type] = true;
             Main.tileFrameImportant[Type] = true;
             Main.tileSpelunker[Type] = true;

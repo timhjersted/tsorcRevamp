@@ -22,8 +22,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
             NPC.value = 7500;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.NecromancerElementalBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.NecromancerElementalBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0;
             NPC.alpha = 100;
             NPC.value = 1600;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.WaterSpiritBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.WaterSpiritBanner>();
 
 
             NPC.buffImmune[BuffID.Poisoned] = true;

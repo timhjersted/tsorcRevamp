@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             AnimationType = 28;
             NPC.height = 40;
             NPC.width = 20;
-            music = 12;
+            Music = 12;
             NPC.damage = 125;
             NPC.defense = 70;
             NPC.lavaImmune = true;
@@ -30,8 +30,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 28750;
             NPC.knockBackResist = 0f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
             NPC.lavaImmune = true;
         }
 

@@ -1402,7 +1402,7 @@ namespace tsorcRevamp.NPCs
                         if (distSoundDelay < 10f) { distSoundDelay = 10f; }
                         if (distSoundDelay > 20f) { distSoundDelay = 20f; }
                         npc.soundDelay = (int)distSoundDelay;
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                     }
                     dist = (float)Math.Sqrt((double)(playerCenterX * playerCenterX + playerCenterY * playerCenterY));
                     float absPlayerCenterX = Math.Abs(playerCenterX);

@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.aiStyle = 3;
             NPC.timeLeft = 22750;
             NPC.damage = 45;
-            //npc.music = 12;
+            //npc.Music = 12;
             NPC.defense = 10;
             NPC.boss = true;
             NPC.HitSound = SoundID.NPCHit1;

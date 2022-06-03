@@ -50,8 +50,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath2;
             NPC.lavaImmune = true;
 
-            /*banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
+            /*Banner = npc.type;
+            BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
         }
 
         public override void HitEffect(int hitDirection, double damage)
@@ -995,7 +995,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw allows you to draw things behind/under the NPC, in this case we're using it for trails
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) //PreDraw allows you to draw things behind/under the NPC, in this case we're using it for trails
         {
             //I don't define a texture, because we'll be using the base texture (see line 909, int the first argument of the draw function we use Main.npcTexture[npc.type])
             Vector2 drawOrigin = new Vector2(NPC.position.X, NPC.position.Y);
@@ -1012,7 +1012,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return true; //returning true in PreDraw means "Yes, draw the base texture of the npc"
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw allows you to draw things in front of the NPC, in this case I'm drawing an animated shield texture while the NPC is shielding
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) //PreDraw allows you to draw things in front of the NPC, in this case I'm drawing an animated shield texture while the NPC is shielding
         {
             Texture2D CrimsonEquipment = Mod.GetTexture("NPCs/Enemies/LothricKnight_CrimsonEquipment");
             Texture2D shieldTexture = Mod.GetTexture("NPCs/Enemies/LothricKnight_Shield"); //In this case we do define another texture, in this case our shield

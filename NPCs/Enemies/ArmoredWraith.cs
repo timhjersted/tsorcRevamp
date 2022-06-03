@@ -30,8 +30,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ArmoredWraithBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ArmoredWraithBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

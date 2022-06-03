@@ -357,11 +357,11 @@ namespace TerraUI.Objects
         /// <param name="spriteBatch"></param>
         public void DrawTick(SpriteBatch spriteBatch)
         {
-            Texture2D tickTexture = Main.inventoryTickOnTexture;
+            Texture2D tickTexture = (Texture2D)TextureAssets.InventoryTickOn;
 
             if (!ItemVisible)
             {
-                tickTexture = Main.inventoryTickOffTexture;
+                tickTexture = (Texture2D)TextureAssets.InventoryTickOff;
             }
 
             tickRect = new Rectangle(Rectangle.Right - 18, Rectangle.Top - 2, tickTexture.Width, tickTexture.Height);

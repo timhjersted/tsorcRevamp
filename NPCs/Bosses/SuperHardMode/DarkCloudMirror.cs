@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.aiStyle = 0;
             NPC.height = 40;
             NPC.width = 20;
-            music = 12;
+            Music = 12;
             NPC.damage = 105;
             NPC.defense = 160;
             NPC.lifeMax = 30000;

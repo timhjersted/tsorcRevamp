@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.1f;
             AnimationType = 28;
             Main.npcFrameCount[NPC.type] = 16;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
         }
 
 

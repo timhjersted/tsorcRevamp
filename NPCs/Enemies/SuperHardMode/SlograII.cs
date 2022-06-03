@@ -28,8 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lifeMax = 6200;
             NPC.knockBackResist = 0f;
             NPC.value = 6000;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.SlograIIBanner>();
         }
 
         int tridentDamage = 50;

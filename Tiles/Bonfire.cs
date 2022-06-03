@@ -24,7 +24,8 @@ namespace tsorcRevamp.Tiles
             name.SetDefault("Bonfire");
             AddMapEntry(new Color(215, 60, 0), name);
             DustType = 30;
-            disableSmartCursor = true;
+            
+            TileID.Sets.DisableSmartCursor[Type] = true; 
             Main.tileLighted[Type] = true;
             Main.tileFrameImportant[Type] = true;
             Main.tileBlockLight[Type] = false;
@@ -73,7 +74,7 @@ namespace tsorcRevamp.Tiles
             }
             else
             {
-                texture = TextureAssets.Tile[Type];
+                texture = (Texture2D)TextureAssets.Tile[Type];
             }
 
             Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);

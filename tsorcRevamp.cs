@@ -592,6 +592,7 @@ namespace tsorcRevamp
                     }
                 }
             }*/
+
             UnloadILs();
             CustomDungeonWalls = null;
             DodgerollKey = null;

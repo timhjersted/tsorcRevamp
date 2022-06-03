@@ -28,8 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.lifeMax = 3000;
             NPC.scale = 1;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
         }
 
         int cursedFlameDamage = 50;

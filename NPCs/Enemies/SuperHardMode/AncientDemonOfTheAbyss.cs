@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 28750;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.AncientDemonOfTheAbyssBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.AncientDemonOfTheAbyssBanner>();
 
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;

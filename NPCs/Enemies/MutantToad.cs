@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.2f;
             NPC.value = 200;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.MutantToadBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.MutantToadBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

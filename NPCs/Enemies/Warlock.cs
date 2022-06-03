@@ -24,8 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 6700;
             NPC.rarity = 3;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.WarlockBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.WarlockBanner>();
             if (!Main.hardMode)
             {
                 NPC.lifeMax = 2000;

@@ -37,9 +37,9 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0f;
             NPC.alpha = 70; // was 100
             NPC.value = 500;
-            banner = NPC.type;
+            Banner = NPC.type;
 
-            //bannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
+            //BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
 
             if (tsorcRevampWorld.SuperHardMode)
             {

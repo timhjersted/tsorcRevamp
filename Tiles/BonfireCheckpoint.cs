@@ -27,7 +27,7 @@ namespace tsorcRevamp.Tiles
             name.SetDefault("Bonfire Checkpoint");
             AddMapEntry(new Color(215, 60, 0), name);
             DustType = 30;
-            disableSmartCursor = true;
+            TileID.Sets.DisableSmartCursor[Type] = true; 
             Main.tileLighted[Type] = true;
             Main.tileFrameImportant[Type] = true;
             Main.tileBlockLight[Type] = false;

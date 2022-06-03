@@ -31,8 +31,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 0;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.BarrowWightPhantomBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.BarrowWightPhantomBanner>();
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
         }

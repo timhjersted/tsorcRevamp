@@ -22,8 +22,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 30;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ChickenBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ChickenBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

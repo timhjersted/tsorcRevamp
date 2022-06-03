@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.OolacileSorcererBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.OolacileSorcererBanner>();
 
             NPC.value = 10500;
             NPC.width = 28;

@@ -20,8 +20,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
             NPC.height = 40;
             NPC.knockBackResist = 0.1f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenWarriorBanner>();
 
             AnimationType = NPCID.GoblinWarrior;
             Main.npcFrameCount[NPC.type] = 16;

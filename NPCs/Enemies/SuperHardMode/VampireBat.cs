@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.scale = 1;
             NPC.knockBackResist = 0.5f;
             NPC.value = 1200;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

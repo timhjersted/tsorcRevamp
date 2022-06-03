@@ -619,7 +619,7 @@ namespace tsorcRevamp.NPCs.Special
                 }
             }
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //PreDraw for trails
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) //PreDraw for trails
         {
 
             Vector2 drawOrigin = new Vector2(NPC.position.X, NPC.position.Y);

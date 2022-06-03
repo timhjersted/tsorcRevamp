@@ -27,7 +27,7 @@ namespace tsorcRevamp.Tiles
             name.SetDefault("Soul Skelly");
             AddMapEntry(new Color(120, 250, 0), name);
             DustType = 30;
-            disableSmartCursor = true;
+            TileID.Sets.DisableSmartCursor[Type] = true; 
             Main.tileLighted[Type] = true;
             Main.tileFrameImportant[Type] = true;
             Main.tileSpelunker[Type] = true;
@@ -129,7 +129,7 @@ namespace tsorcRevamp.Tiles
             Tile tile = Main.tile[i, j];
             if (tile.TileFrameX / 54 == 0)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f }.WithPitchVariance(.3f)); // Plays sound.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, PitchVariance = .3f } ); // Plays sound.
                 SoulSkellyGeocache.GiveSoulSkellyLoot(new Vector2(i, j));
 
                 int x = i - Main.tile[i, j].TileFrameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide

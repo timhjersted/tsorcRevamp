@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.value = 50000;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.MarilithSpiritTwinBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.MarilithSpiritTwinBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;

@@ -1205,6 +1205,7 @@ namespace tsorcRevamp
         {
             return new Rectangle(0, (int)frame * 56, 40, 56);
         }
+
         public override void UpdateBiomes()
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)

@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Friendly
             NPC.value = 0;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.noGravity = false;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.LivingShroomBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.LivingShroomBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

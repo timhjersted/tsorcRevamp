@@ -25,8 +25,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 380;
             NPC.defense = 40;
             NPC.buffImmune[BuffID.Confused] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.CorruptedJellyfishBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.CorruptedJellyfishBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

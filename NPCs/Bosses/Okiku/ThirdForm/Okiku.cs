@@ -37,7 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = Item.buyPrice(0, 26);
             NPC.knockBackResist = 0f;
-            music = 39;
+            Music = 39;
             NPC.buffImmune[20] = true;
             NPC.buffImmune[44] = true;
             NPC.buffImmune[31] = true;

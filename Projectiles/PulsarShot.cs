@@ -76,7 +76,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBump") with { Volume = 0.6f }.WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBump") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                 }
             }
             else //(projectile.owner == Main.myPlayer && projectile.timeLeft <= 51)
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBoom") with { Volume = 0.6f }.WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                 }
                 for (int i = 0; i < 110; i++)
                 {
@@ -237,7 +237,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarGrow") with { Volume = 0.6f }.WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarGrow") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                 }
             }
 
@@ -247,7 +247,7 @@ namespace tsorcRevamp.Projectiles
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBoom") with { Volume = 0.6f }.WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                 }
                 for (int i = 0; i < 110; i++)
                 {
@@ -302,7 +302,7 @@ namespace tsorcRevamp.Projectiles
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBoom") with { Volume = 0.6f }.WithPitchVariance(.3f), Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Item/PulsarBoom") with { Volume = 0.6f, PitchVariance = .3f }, Projectile.Center);
                 }
 
                 for (int i = 0; i < 110; i++)

@@ -84,7 +84,7 @@ namespace tsorcRevamp.UI
                 player.FindSpawn();
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("Spawn point set!", 255, 240, 20, false);
+                    Main.NewText("Spawn point set!", 255, 240, 20,);
                 }
             }
             else
@@ -92,7 +92,7 @@ namespace tsorcRevamp.UI
                 player.RemoveSpawn();
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.NewText("Spawn point removed!", 150, 140, 0, false);
+                    Main.NewText("Spawn point removed!", 150, 140, 0);
                 }
             }
         }

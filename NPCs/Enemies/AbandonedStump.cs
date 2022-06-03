@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath33;
             NPC.value = 500;
             NPC.buffImmune[BuffID.Confused] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

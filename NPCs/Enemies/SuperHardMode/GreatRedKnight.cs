@@ -28,8 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 81870;
             NPC.knockBackResist = 0.36f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.GreatRedKnightOfTheAbyssBanner>();
         }
 
         public int poisonStrikeDamage = 40;

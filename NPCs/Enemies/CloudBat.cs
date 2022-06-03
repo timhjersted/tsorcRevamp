@@ -25,8 +25,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 350;
             NPC.defense = 5;
             NPC.buffImmune[BuffID.Confused] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

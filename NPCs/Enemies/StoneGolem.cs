@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 250;
             NPC.knockBackResist = 0.35f;
             AnimationType = NPCID.GraniteGolem;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.StoneGolemBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

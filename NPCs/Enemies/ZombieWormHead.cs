@@ -33,8 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.value = 4000;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ParasyticWormBanner>();
 
             bodyTypes = new int[13];
             int bodyID = ModContent.NPCType<ZombieWormBody>();

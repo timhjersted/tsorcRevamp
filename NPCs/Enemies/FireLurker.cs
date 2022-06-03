@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 430;
             NPC.lavaImmune = true;
-            //banner = npc.type;
+            //Banner = npc.type;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[24] = true;
 

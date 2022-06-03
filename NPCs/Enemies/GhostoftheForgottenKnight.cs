@@ -32,8 +32,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             NPC.value = 450;
             NPC.knockBackResist = 0.1f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
 
             if (Main.hardMode)
             {

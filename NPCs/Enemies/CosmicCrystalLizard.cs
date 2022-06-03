@@ -43,8 +43,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[ModContent.BuffType<Buffs.BiohazardDrain>()] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.ElectrocutedBuff>()] = true;
             NPC.buffImmune[ModContent.BuffType<Buffs.PolarisElectrocutedBuff>()] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.CosmicCrystalLizardBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.CosmicCrystalLizardBanner>();
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -66,7 +66,7 @@ namespace tsorcRevamp.NPCs.Enemies
             return chance;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D textureglow = Mod.GetTexture("NPCs/Enemies/CosmicCrystalLizard_Glow");

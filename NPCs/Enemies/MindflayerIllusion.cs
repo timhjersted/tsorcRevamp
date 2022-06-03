@@ -33,8 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.MindflayerIllusionBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.MindflayerIllusionBanner>();
         }
 
 

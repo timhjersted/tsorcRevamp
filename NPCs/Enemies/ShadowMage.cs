@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 3000;
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ShadowMageBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ShadowMageBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
@@ -285,7 +285,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         #endregion
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Texture2D glowTexture = Mod.GetTexture("NPCs/Enemies/ShadowMage_Glowmask");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

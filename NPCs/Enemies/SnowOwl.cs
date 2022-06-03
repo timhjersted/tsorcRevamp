@@ -30,8 +30,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.width = 24;
             NPC.height = 34;
 
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.SnowOwlBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.SnowOwlBanner>();
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {

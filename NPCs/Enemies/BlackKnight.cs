@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.lavaImmune = true;
             NPC.value = 5000;
             NPC.knockBackResist = 0.15f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.BlackKnightBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

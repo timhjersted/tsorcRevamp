@@ -34,8 +34,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0;
             NPC.alpha = 100;
             NPC.value = 2200;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.DemonSpiritBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;

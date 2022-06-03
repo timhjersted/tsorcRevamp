@@ -28,8 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 27050; //was 1600 souls
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.HydrisNecromancerBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.HydrisNecromancerBanner>();
 
         }
 

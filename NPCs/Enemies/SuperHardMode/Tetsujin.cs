@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.noTileCollide = false;
             NPC.value = 18750;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.TetsujinBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.TetsujinBanner>();
         }
 
         int laserDamage = 20; //17

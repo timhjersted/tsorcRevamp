@@ -28,8 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = .5f;
             NPC.value = 250;
             NPC.defense = 4;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.TibianValkyrieBanner>();
         }
 
         public override void OnKill()

@@ -21,8 +21,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.2f;
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
 
             AnimationType = NPCID.Skeleton;
             Main.npcFrameCount[NPC.type] = 15;

@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.noGravity = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.GuardianCorruptorBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.GuardianCorruptorBanner>();
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)

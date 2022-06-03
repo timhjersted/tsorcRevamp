@@ -29,8 +29,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 6000;
             NPC.width = 28;
             NPC.knockBackResist = 0.3f;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.AttraidiesManifestationBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.AttraidiesManifestationBanner>();
 
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;

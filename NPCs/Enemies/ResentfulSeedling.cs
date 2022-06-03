@@ -27,8 +27,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 6;
             AnimationType = NPCID.CorruptBunny;
             NPC.value = 0;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ResentfulSeedlingBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ResentfulSeedlingBanner>();
         }
 
         public int resindropped = 0;

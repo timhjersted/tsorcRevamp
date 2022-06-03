@@ -23,8 +23,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 25000;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.TonberryBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.TonberryBanner>();
 
             if (tsorcRevampWorld.SuperHardMode)
             {

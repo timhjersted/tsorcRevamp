@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lifeMax = 8700;
             NPC.knockBackResist = 0;
             NPC.value = 5430;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.DarkBloodKnightBanner>();
         }
 
         int blackFireDamage = 35;

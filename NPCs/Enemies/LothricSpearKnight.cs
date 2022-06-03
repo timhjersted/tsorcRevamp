@@ -37,8 +37,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noTileCollide = false;
             NPC.lavaImmune = true;
 
-            /*banner = npc.type;
-            bannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
+            /*Banner = npc.type;
+            BannerItem = ModContent.ItemType<Banners.DunlendingBanner>();*/
         }
 
 
@@ -955,7 +955,7 @@ namespace tsorcRevamp.NPCs.Enemies
         int shieldAnimTimer;
         bool countingUP = false;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Vector2 drawOrigin = new Vector2(NPC.position.X, NPC.position.Y); //Shadow trails
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; //Flip texture depending on spriteDirection
@@ -985,11 +985,11 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), lightColor, NPC.rotation, new Vector2(80, 46), NPC.scale, effects, 0f);
             }
-
             return false; //Don't draw base sprite
         }
+        
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Texture2D shieldTexture = Mod.GetTexture("NPCs/Enemies/LothricSpearKnight_Greatshield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

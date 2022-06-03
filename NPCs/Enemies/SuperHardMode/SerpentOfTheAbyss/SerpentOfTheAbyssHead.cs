@@ -37,8 +37,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.value = 25500;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.SerpentOfTheAbyssBanner>();
 
             bodyTypes = new int[33];
             int bodyID = ModContent.NPCType<SerpentOfTheAbyssBody>();

@@ -33,8 +33,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = .6f;
             NPC.value = 250;
             NPC.defense = 2;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.TibianAmazonBanner>();
 
             if (Main.hardMode)
             {

@@ -26,8 +26,8 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.knockBackResist = 0.1f;
             NPC.value = 650;
             NPC.defense = 10;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.UndeadCasterBanner>();
             NPC.height = 44;
             NPC.width = 28;
             NPC.HitSound = SoundID.NPCHit2;
@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Texture2D glowTexture = Mod.GetTexture("NPCs/Enemies/UndeadCaster_Glow");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

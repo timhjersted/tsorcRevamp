@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -3332,7 +3333,8 @@ namespace tsorcRevamp.NPCs
             SpriteEffects effects = npc.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle sourceRectangle = new Rectangle(0, 0, texture.Width, texture.Height);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            spriteBatch.Draw(Main.destTexture[1], npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale, effects, 0f);
+            
+            spriteBatch.Draw((Texture2D)TextureAssets.Dest[1], npc.Center - Main.screenPosition, sourceRectangle, Color.White * 0.45f, npc.rotation, origin, npc.scale, effects, 0f);
             spriteBatch.Draw(texture, npc.Center - Main.screenPosition, sourceRectangle, Color.Orange * 0.2f, npc.rotation, origin, npc.scale, effects, 0f);
         }
 

@@ -28,8 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 1250;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.Frozen] = true;
-            banner = NPC.type;
-            bannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.ManOfWarBanner>();
             if (Main.hardMode) { NPC.lifeMax = 500; NPC.defense = 30; NPC.value = 550; }
         }
 
