@@ -306,7 +306,7 @@ namespace tsorcRevamp
 
         protected override void Draw(ref PlayerDrawSet drawInfo) {
             tsorcRevampPlayer modPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampPlayer>();
-
+            Player drawPlayer = drawInfo.drawPlayer;
             #region mana shield
             if (modPlayer.manaShield > 0 && !modPlayer.Player.dead) {
                 if (modPlayer.Player.statMana > Items.Accessories.ManaShield.manaCost) {
@@ -362,6 +362,93 @@ namespace tsorcRevamp
                 modPlayer.shieldUp = false;
             }
             #endregion
+
+            #region stamina bar
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu) {
+                float staminaCurrent = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                float staminaMax = drawPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+                float staminaPercentage = (float)staminaCurrent / staminaMax;
+                if (staminaPercentage < 1f && !drawPlayer.dead) {
+                    float abovePlayer = 45f; //how far above the player should the bar be?
+                    Texture2D barFill = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_full");
+                    Texture2D barEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/StaminaBar_empty");
+
+                    //this is the position on the screen. it should remain relatively constant unless the window is resized
+                    Point barOrigin = (drawPlayer.Center - new Vector2(barEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint();
+                    //Main.NewText("" + barOrigin.X + ", " + barOrigin.Y);
+
+                    Rectangle emptyDestination = new Rectangle(barOrigin.X, barOrigin.Y, barEmpty.Width, barEmpty.Height);
+
+                    //empty bar has detailing, so offset the filled bar's destination
+                    int padding = 5;
+                    //scale the width by the stam percentage
+                    Rectangle fillDestination = new Rectangle(barOrigin.X + padding, barOrigin.Y, (int)(staminaPercentage * barFill.Width), barFill.Height);
+
+                    Main.spriteBatch.Draw(barEmpty, emptyDestination, Color.White);
+                    Main.spriteBatch.Draw(barFill, fillDestination, Color.White);
+                }
+            }
+            #endregion
+
+            #region curse meter
+            if (drawPlayer.whoAmI == Main.myPlayer && !Main.gameMenu) {
+                float curseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().CurseLevel;
+                float powerfulCurseCurrent = drawPlayer.GetModPlayer<tsorcRevampPlayer>().PowerfulCurseLevel;
+
+                float curseMax = 100;
+                float cursePercentage = (float)curseCurrent / curseMax;
+                cursePercentage = Utils.Clamp(cursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                //Main.NewText(cursePercentage);
+
+                float powerfulCurseMax = 500;
+                float powerfulCursePercentage = (float)powerfulCurseCurrent / powerfulCurseMax;
+                powerfulCursePercentage = Utils.Clamp(powerfulCursePercentage, 0f, 1f); // Clamping it to 0-1f so it doesn't go over that.
+
+                if ((cursePercentage > 0.01f || powerfulCursePercentage > 0.01f) && !drawPlayer.dead) //0f wasn't working because aparently the minimum % it sits at is 0.01f, so dumb
+                {
+                    float abovePlayer = 82f; //how far above the player should the bar be?
+                    Texture2D meterFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_full");
+                    Texture2D powerfulMeterFull = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_powerfulFull");
+                    Texture2D meterEmpty = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Textures/CurseMeter_empty");
+
+
+                    //this is the position on the screen. it should remain relatively constant unless the window is resized
+                    Point barOrigin = (drawPlayer.Center - new Vector2(meterEmpty.Width / 2, abovePlayer) - Main.screenPosition).ToPoint(); //As they are all the same size, they can use the same origin
+
+                    Rectangle barDestination = new Rectangle(barOrigin.X, barOrigin.Y, meterEmpty.Width, meterEmpty.Height);
+                    Rectangle fullBarDestination = new Rectangle(barOrigin.X, barOrigin.Y + (int)(meterFull.Height * (1 - cursePercentage)), meterEmpty.Width, (int)(meterFull.Height));
+                    Rectangle powerfulFullBarDestination = new Rectangle(barOrigin.X, barOrigin.Y + (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), meterEmpty.Width, (int)(powerfulMeterFull.Height));
+
+
+                    Main.spriteBatch.Draw(meterEmpty, barDestination, Color.White);
+                    Main.spriteBatch.Draw(Crop(meterFull, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height)), fullBarDestination, Color.White);
+                    Main.spriteBatch.Draw(Crop(powerfulMeterFull, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height)), powerfulFullBarDestination, Color.White);
+                }
+            }
+            #endregion
         }
+
+
+        public static Texture2D Crop(Texture2D image, Rectangle source) {
+            Texture2D croppedImage = new Texture2D(image.GraphicsDevice, source.Width, source.Height);
+
+            Color[] imageData = new Color[image.Width * image.Height];
+            Color[] cropData = new Color[source.Width * source.Height];
+
+            image.GetData<Color>(imageData);
+
+            int index = 0;
+
+            for (int y = source.Y; y < source.Height; y++) {
+                for (int x = source.X; x < source.Width; x++) {
+                    cropData[index] = imageData[y * image.Width + x];
+                    index++;
+                }
+            }
+            croppedImage.SetData<Color>(cropData);
+            return croppedImage;
+        }
+
     }
 }
