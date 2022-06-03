@@ -216,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
                 UsefulFunctions.BroadcastText("Serris has transformed!", Color.Cyan);
                 NPC.NewNPC(NPC.GetSource_FromAI(), (int)(NPC.position.X + (float)(NPC.width / 2)), (int)(NPC.position.Y + (float)NPC.height), ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), 0);
             }
-            Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris Gore 1").Type, 1f);
+            Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris Gore 1").Type, 1f);
         }
         public override void FindFrame(int currentFrame)
         {

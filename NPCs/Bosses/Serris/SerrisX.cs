@@ -265,9 +265,9 @@ namespace tsorcRevamp.NPCs.Bosses.Serris
         public override void HitEffect(int hitDirection, double damage) {
             if (NPC.life <= 0) {
                 Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris-X Gore 1").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris-X Gore 2").Type, 1f);
-                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Serris-X Gore 3").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris-X Gore 1").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris-X Gore 2").Type, 1f);
+                Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Serris-X Gore 3").Type, 1f);
                 for (int num36 = 0; num36 < 70; num36++) {
                     int dust = Dust.NewDust(NPC.position, (int)(NPC.width), (int)(NPC.height), DustID.Firework_Blue, Main.rand.Next(-15, 15), Main.rand.Next(-15, 15), 100, new Color(), 9f);
                     Main.dust[dust].noGravity = true;

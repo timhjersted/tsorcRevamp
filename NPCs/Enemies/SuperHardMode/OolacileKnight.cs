@@ -270,7 +270,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //draw 3 levels of trail
                 int alphaVal = 255 - (15 * i);
                 Color modifiedColour = new Color((int)(alphaVal), (int)(alphaVal), (int)(alphaVal), alphaVal);
-                spriteBatch.Draw((Texture2D)TextureAssets.Gore[Mod.Find<ModGore>("Gores/Oolacile Knight Glow").Type],
+                spriteBatch.Draw((Texture2D)TextureAssets.Gore[Mod.Find<ModGore>("Oolacile Knight Glow").Type],
                     new Rectangle((int)(offsetX - NPC.velocity.X * (i * 0.5f)), (int)(offsetY - NPC.velocity.Y * (i * 0.5f)), spriteWidth, spriteHeight),
                     new Rectangle(0, NPC.frame.Height * frame, spriteWidth, spriteHeight),
                     modifiedColour,
@@ -285,15 +285,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region gore
         public override void OnKill()
         {
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Oolacile Knight Gore 1").Type, 0.9f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Oolacile Knight Gore 2").Type, 0.9f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Oolacile Knight Gore 3").Type, 0.9f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Oolacile Knight Gore 4").Type, 0.9f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Oolacile Knight Gore 2").Type, 0.9f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Oolacile Knight Gore 3").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 1").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 2").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 3").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 4").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 2").Type, 0.9f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 3").Type, 0.9f);
             for (int i = 0; i < 8; i++)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
             }
 
             if (Main.rand.Next(99) < 30) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>());

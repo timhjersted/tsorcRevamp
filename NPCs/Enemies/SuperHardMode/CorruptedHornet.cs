@@ -97,8 +97,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
         public override void OnKill()
         {
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Corrupt Hornet Gore 1").Type, 1.1f);
-            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Corrupt Hornet Gore 2").Type, 1.1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Corrupt Hornet Gore 1").Type, 1.1f);
+            Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Corrupt Hornet Gore 2").Type, 1.1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);
             Dust.NewDust(NPC.position, NPC.height, NPC.width, 4, 0.2f, 0.2f, 100, default(Color), 1f);

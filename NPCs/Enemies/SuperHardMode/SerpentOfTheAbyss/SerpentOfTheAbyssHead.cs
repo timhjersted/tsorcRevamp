@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         {
             if (NPC.life <= 0)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Lich King Serpent Head Gore").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Lich King Serpent Head Gore").Type);
             }
         }
 
