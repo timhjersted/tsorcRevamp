@@ -33,7 +33,6 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.WyvernMageBag>();
             despawnHandler = new NPCDespawnHandler("The Wyvern Mage stands victorious...", Color.DarkCyan, DustID.Demonite);
             nextWarpPoint = Main.rand.NextVector2CircularEdge(320, 320);
         }
@@ -297,6 +296,12 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
+        }
+
+        //1.4 Porting TODO later: Make it so this only drops from either the mage or the wyvern itself, whichever dies last
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WyvernMageBag>()));
         }
         public override void OnKill()
         {
