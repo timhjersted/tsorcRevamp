@@ -19,13 +19,8 @@ namespace tsorcRevamp.Items.Armors
             Item.defense = 7;
             Item.value = 27000;
             Item.rare = ItemRarityID.Blue;
+            ArmorIDs.Body.Sets.HidesHands[Type] = true; //TODO maybe? 
         }
-
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
-        }
-
         public override void UpdateEquip(Player player)
         {
             player.manaCost -= 0.15f;

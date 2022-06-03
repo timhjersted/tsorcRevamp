@@ -13,10 +13,6 @@ namespace tsorcRevamp.Items.Accessories
             Tooltip.SetDefault("+8% Ranged damage" +
                                 "\n+8% Ranged critical strike chance");
         }
-        public override void DrawHands(ref bool drawHands, ref bool drawArms)
-        {
-            drawHands = true;
-        }
         public override void SetDefaults()
         {
             Item.width = 24;
@@ -25,6 +21,7 @@ namespace tsorcRevamp.Items.Accessories
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
+            ArmorIDs.Body.Sets.HidesHands[Type] = true; //TODO maybe? something about "booleans in PlayerDrawSet" ?
         }
 
         public override void AddRecipes()
