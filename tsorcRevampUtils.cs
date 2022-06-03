@@ -272,7 +272,7 @@ namespace tsorcRevamp
             Vector2 origin = sourceRectangle.Size() / 2f;
             Main.EntitySpriteDraw(texture,
                 projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY),
-                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0f);
+                sourceRectangle, Color.White, projectile.rotation, origin, projectile.scale, spriteEffects, 0);
         }
 
         ///<summary> 
@@ -400,7 +400,7 @@ namespace tsorcRevamp
         ///<param name="tilePos">The coordinates of the tile</param>
         public static bool IsTileReallySolid(Vector2 tilePos)
         {
-            if (Main.tile.GetUpperBound(0) > tilePos.X && Main.tile.GetUpperBound(1) > tilePos.Y)
+            if (Main.tile.Width > tilePos.X && Main.tile.Height > tilePos.Y)
             {
                 Tile thisTile = Main.tile[(int)tilePos.X, (int)tilePos.Y];
 
@@ -423,12 +423,11 @@ namespace tsorcRevamp
         ///<param name="Y">The Y coordinate of the tile</param>
         public static bool IsTileReallySolid(int X, int Y)
         {
-            if (Main.tile.GetUpperBound(0) > X && Main.tile.GetUpperBound(1) > Y)
+            if (Main.tile.Width > X && Main.tile.Height > Y)
             {
                 Tile thisTile = Main.tile[X, Y];
 
-                //null = tile is not instantiated at all (yes, that is possible) | active = tile is not air | inActive = actuated | Main.tileSolid = is it solid
-                if (thisTile != null && thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
+                if (thisTile.HasTile && !thisTile.IsActuated && Main.tileSolid[thisTile.TileType])
                 {
                     return true;
                 }
@@ -497,7 +496,7 @@ namespace tsorcRevamp
         ///<param name="includeThesePlayers">If it should only drop for specific players, pass a list of them here</param>
         public static void NewItemInstanced(Vector2 Position, Vector2 HitboxSize, int itemType, int itemStack = 1, List<int> includeThesePlayers = null)
         {
-            int dummyItemIndex = Item.NewItem(Position, HitboxSize, itemType, itemStack, true, 0, false, false);
+            int dummyItemIndex = Item.NewItem(new Terraria.DataStructures.EntitySource_Misc("¯\\_(ツ)_/¯"), Position, HitboxSize, itemType, itemStack, true, 0, false, false);
             Main.timeItemSlotCannotBeReusedFor[dummyItemIndex] = 54000;
             if (Main.netMode != NetmodeID.SinglePlayer)
             {
@@ -639,7 +638,7 @@ namespace tsorcRevamp
             //private, will be public in 1.4, together with StartRain (which has random duration)
             if (Main.cloudBGActive >= 1f || Main.numClouds > 150)
             {
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     Main.maxRaining = Main.rand.Next(20, 90) * 0.01f;
                 }
@@ -650,7 +649,7 @@ namespace tsorcRevamp
             }
             else if (Main.numClouds > 100)
             {
-                if (Main.rand.Next(3) == 0)
+                if (Main.rand.NextBool(3))
                 {
                     Main.maxRaining = Main.rand.Next(10, 70) * 0.01f;
                 }
@@ -659,7 +658,7 @@ namespace tsorcRevamp
                     Main.maxRaining = Main.rand.Next(20, 60) * 0.01f;
                 }
             }
-            else if (Main.rand.Next(3) == 0)
+            else if (Main.rand.NextBool(3))
             {
                 Main.maxRaining = Main.rand.Next(5, 40) * 0.01f;
             }
