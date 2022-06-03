@@ -74,7 +74,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentObsidianSkinPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_288";
+        public override string Texture => "Terraria/Images/Item_288";
         public override int PermanentID => 0;
 
         public override void SetStaticDefaults()
@@ -93,7 +93,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentRegenerationPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_289";
+        public override string Texture => "Terraria/Images/Item_289";
         public override int PermanentID => 1;
         public override void SetStaticDefaults()
         {
@@ -109,7 +109,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSwiftnessPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_290";
+        public override string Texture => "Terraria/Images/Item_290";
         public override int PermanentID => 2;
         public override void SetStaticDefaults()
         {
@@ -123,7 +123,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentGillsPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_291";
+        public override string Texture => "Terraria/Images/Item_291";
         public override int PermanentID => 3;
         public override void SetStaticDefaults()
         {
@@ -138,7 +138,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentIronskinPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_292";
+        public override string Texture => "Terraria/Images/Item_292";
         public override int PermanentID => 4;
         public override void SetStaticDefaults()
         {
@@ -153,7 +153,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentManaRegenerationPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_293";
+        public override string Texture => "Terraria/Images/Item_293";
         public override int PermanentID => 5;
         public override void SetStaticDefaults()
         {
@@ -171,7 +171,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentMagicPowerPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_294";
+        public override string Texture => "Terraria/Images/Item_294";
         public override int PermanentID => 6;
         public override void SetStaticDefaults()
         {
@@ -186,7 +186,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentFeatherfallPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_295";
+        public override string Texture => "Terraria/Images/Item_295";
         public override int PermanentID => 7;
         public override void SetStaticDefaults()
         {
@@ -201,7 +201,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentSpelunkerPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_296";
+        public override string Texture => "Terraria/Images/Item_296";
         public override int PermanentID => 8;
         public override void SetStaticDefaults()
         {
@@ -216,7 +216,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentInvisibilityPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_297";
+        public override string Texture => "Terraria/Images/Item_297";
         public override int PermanentID => 9;
         public override void SetStaticDefaults()
         {
@@ -231,7 +231,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentShinePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_298";
+        public override string Texture => "Terraria/Images/Item_298";
         public override int PermanentID => 10;
         public override void SetStaticDefaults()
         {
@@ -272,7 +272,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentNightOwlPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_299";
+        public override string Texture => "Terraria/Images/Item_299";
         public override int PermanentID => 11;
         public override void SetStaticDefaults()
         {
@@ -287,7 +287,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentBattlePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_300";
+        public override string Texture => "Terraria/Images/Item_300";
         public override int PermanentID => 12;
         public override void SetStaticDefaults()
         {
@@ -302,7 +302,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentThornsPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_301";
+        public override string Texture => "Terraria/Images/Item_301";
         public override int PermanentID => 13;
         public override void SetStaticDefaults()
         {
@@ -318,7 +318,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentWaterWalkingPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_302";
+        public override string Texture => "Terraria/Images/Item_302";
         public override int PermanentID => 14;
         public override void SetStaticDefaults()
         {
@@ -334,7 +334,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentArcheryPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_303";
+        public override string Texture => "Terraria/Images/Item_303";
         public override int PermanentID => 15;
         public override void SetStaticDefaults()
         {
@@ -349,7 +349,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentHunterPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_304";
+        public override string Texture => "Terraria/Images/Item_304";
         public override int PermanentID => 16;
         public override void SetStaticDefaults()
         {
@@ -364,7 +364,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentGravitationPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_305";
+        public override string Texture => "Terraria/Images/Item_305";
         public override int PermanentID => 17;
         public override void SetStaticDefaults()
         {
@@ -379,7 +379,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentAle : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_353";
+        public override string Texture => "Terraria/Images/Item_353";
         public override int PermanentID => 18;
         public override void SetStaticDefaults()
         {
@@ -398,7 +398,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfVenom : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1340";
+        public override string Texture => "Terraria/Images/Item_1340";
         public override int PermanentID => 19;
         public override void SetStaticDefaults()
         {
@@ -415,7 +415,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentFlaskOfCursedFlames : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1353";
+        public override string Texture => "Terraria/Images/Item_1353";
         public override int PermanentID => 20;
         public override void SetStaticDefaults()
         {
@@ -433,7 +433,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfFire : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1354";
+        public override string Texture => "Terraria/Images/Item_1354";
         public override int PermanentID => 21;
         public override void SetStaticDefaults()
         {
@@ -451,7 +451,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfGold : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1355";
+        public override string Texture => "Terraria/Images/Item_1355";
         public override int PermanentID => 22;
         public override void SetStaticDefaults()
         {
@@ -469,7 +469,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfIchor : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1356";
+        public override string Texture => "Terraria/Images/Item_1356";
         public override int PermanentID => 23;
         public override void SetStaticDefaults()
         {
@@ -487,7 +487,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfNanites : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1357";
+        public override string Texture => "Terraria/Images/Item_1357";
         public override int PermanentID => 24;
         public override void SetStaticDefaults()
         {
@@ -505,7 +505,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfParty : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1358";
+        public override string Texture => "Terraria/Images/Item_1358";
         public override int PermanentID => 25;
         public override void SetStaticDefaults()
         {
@@ -523,7 +523,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlaskOfPoison : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_1359";
+        public override string Texture => "Terraria/Images/Item_1359";
         public override int PermanentID => 26;
         public override void SetStaticDefaults()
         {
@@ -541,7 +541,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentMiningPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2322";
+        public override string Texture => "Terraria/Images/Item_2322";
         public override int PermanentID => 27;
         public override void SetStaticDefaults()
         {
@@ -557,7 +557,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentHeartreachPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2323";
+        public override string Texture => "Terraria/Images/Item_2323";
         public override int PermanentID => 28;
         public override void SetStaticDefaults()
         {
@@ -573,7 +573,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentCalmingPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2324";
+        public override string Texture => "Terraria/Images/Item_2324";
         public override int PermanentID => 29;
         public override void SetStaticDefaults()
         {
@@ -588,7 +588,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentBuilderPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2325";
+        public override string Texture => "Terraria/Images/Item_2325";
         public override int PermanentID => 30;
         public override void SetStaticDefaults()
         {
@@ -605,7 +605,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentTitanPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2326";
+        public override string Texture => "Terraria/Images/Item_2326";
         public override int PermanentID => 31;
         public override void SetStaticDefaults()
         {
@@ -621,7 +621,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFlipperPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2327";
+        public override string Texture => "Terraria/Images/Item_2327";
         public override int PermanentID => 32;
         public override void SetStaticDefaults()
         {
@@ -638,7 +638,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSummoningPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2328";
+        public override string Texture => "Terraria/Images/Item_2328";
         public override int PermanentID => 33;
         public override void SetStaticDefaults()
         {
@@ -653,7 +653,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
     }
     public class PermanentDangersensePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2329";
+        public override string Texture => "Terraria/Images/Item_2329";
         public override int PermanentID => 34;
         public override void SetStaticDefaults()
         {
@@ -669,7 +669,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentAmmoReservationPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2344";
+        public override string Texture => "Terraria/Images/Item_2344";
         public override int PermanentID => 35;
         public override void SetStaticDefaults()
         {
@@ -685,7 +685,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentLifeforcePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2345";
+        public override string Texture => "Terraria/Images/Item_2345";
         public override int PermanentID => 36;
         public override void SetStaticDefaults()
         {
@@ -702,7 +702,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentEndurancePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2346";
+        public override string Texture => "Terraria/Images/Item_2346";
         public override int PermanentID => 37;
         public override void SetStaticDefaults()
         {
@@ -718,7 +718,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentRagePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2347";
+        public override string Texture => "Terraria/Images/Item_2347";
         public override int PermanentID => 38;
         public override void SetStaticDefaults()
         {
@@ -737,7 +737,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentInfernoPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2348";
+        public override string Texture => "Terraria/Images/Item_2348";
         public override int PermanentID => 39;
         public override void SetStaticDefaults()
         {
@@ -799,7 +799,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentWrathPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2349";
+        public override string Texture => "Terraria/Images/Item_2349";
         public override int PermanentID => 40;
         public override void SetStaticDefaults()
         {
@@ -815,7 +815,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentFishingPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2354";
+        public override string Texture => "Terraria/Images/Item_2354";
         public override int PermanentID => 41;
         public override void SetStaticDefaults()
         {
@@ -831,7 +831,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSonarPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2355";
+        public override string Texture => "Terraria/Images/Item_2355";
         public override int PermanentID => 41;
         public override void SetStaticDefaults()
         {
@@ -847,7 +847,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentCratePotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2356";
+        public override string Texture => "Terraria/Images/Item_2356";
         public override int PermanentID => 43;
         public override void SetStaticDefaults()
         {
@@ -863,7 +863,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentWarmthPotion : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_2359";
+        public override string Texture => "Terraria/Images/Item_2359";
         public override int PermanentID => 44;
         public override void SetStaticDefaults()
         {
@@ -1098,7 +1098,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
 
     public class PermanentSoup : PermanentPotion
     {
-        public override string Texture => "Terraria/Item_357";
+        public override string Texture => "Terraria/Images/Item_357";
         public override int PermanentID => 53;
         public override void SetStaticDefaults()
         {

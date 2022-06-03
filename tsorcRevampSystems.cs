@@ -216,9 +216,9 @@ namespace tsorcRevamp
 
         public override void PreSaveAndQuit()
         {
-            TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Sun");
-            TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Sun2");
-            TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Sun3");
+            TextureAssets.Sun = ModContent.Request<Texture2D>("Terraria/Images/Sun");
+            TextureAssets.Sun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
+            TextureAssets.Sun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
             for (int i = 0; i < TextureAssets.Moon.Length; i++)
             {
                 TextureAssets.Moon[i] = ModContent.Request<Texture2D>("Terraria/Moon_" + i);

@@ -210,7 +210,7 @@ namespace tsorcRevamp.NPCs.Enemies
                         NPC.life = 0;
                         if (!Main.dedServ)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("Sounds/Custom/Escaped") with { Volume = 0.7f }, NPC.Center);
+                            Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/Escaped") with { Volume = 0.7f }, NPC.Center);
                         }
                         NPC.netUpdate = true;
                     }

@@ -21,7 +21,7 @@ namespace tsorcRevamp.Items.Accessories
             Item.accessory = true;
             Item.value = PriceByRarity.Green_2;
             Item.rare = ItemRarityID.Green;
-            ArmorIDs.Body.Sets.HidesHands[Type] = true; //TODO maybe? something about "booleans in PlayerDrawSet" ?
+            ArmorIDs.Body.Sets.HidesHands[Item.handOnSlot] = true; //TODO maybe? something about "booleans in PlayerDrawSet" ?
         }
 
         public override void AddRecipes()

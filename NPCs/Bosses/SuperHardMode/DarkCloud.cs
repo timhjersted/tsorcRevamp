@@ -19,6 +19,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPCID.Sets.TrailCacheLength[NPC.type] = (int)TRAIL_LENGTH;    //The length of old position to be recorded
             NPCID.Sets.TrailingMode[NPC.type] = 1;
         }
+
+
         public override void SetDefaults()
         {
             NPC.npcSlots = 10;
@@ -37,7 +39,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.knockBackResist = 0f;
             NPC.boss = true;
             despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
-            NPC.NPCLoot();
         }
 
         #region Damage variables
@@ -125,7 +126,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
         public Player Target
         {
-            get => Main.player[NPC.target];
+            get
+            {
+                if(NPC.target >= 0 && NPC.target < Main.maxPlayers)
+                {
+                    return Main.player[NPC.target];
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         NPCDespawnHandler despawnHandler;
@@ -2132,13 +2143,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     }
                 }
 
-                for (int i = 0; i < 500; i++)
-                {
-                    Vector2 dustPos = Target.Center;
-                    dustPos.X -= 1500;
-                    dustPos.Y -= 500;
-                    Dust.NewDust(dustPos, 3000, 1500, DustID.ShadowbeamStaff, Main.rand.Next(-500, 500), Main.rand.Next(-500, 500), Scale: 9);
-                }
+                //if (Target != null)
+                //{
+                    for (int i = 0; i < 500; i++)
+                    {
+                        Vector2 dustPos = Target.Center;
+                        dustPos.X -= 1500;
+                        dustPos.Y -= 500;
+                        Dust.NewDust(dustPos, 3000, 1500, DustID.ShadowbeamStaff, Main.rand.Next(-500, 500), Main.rand.Next(-500, 500), Scale: 9);
+                    }
+                //}
 
                 DarkCloudParticleEffect(-12, 120, 64);
             }

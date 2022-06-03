@@ -682,9 +682,9 @@ namespace tsorcRevamp
         Asset<Texture2D> SHMSun2 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun2");
         Asset<Texture2D> SHMSun3 = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMSun1");
         Asset<Texture2D> SHMMoon = ModContent.Request<Texture2D>("tsorcRevamp/Textures/SHMMoon");
-        Asset<Texture2D> VanillaSun1 = ModContent.Request<Texture2D>("Terraria/Sun");
-        Asset<Texture2D> VanillaSun2 = ModContent.Request<Texture2D>("Terraria/Sun2");
-        Asset<Texture2D> VanillaSun3 = ModContent.Request<Texture2D>("Terraria/Sun3");
+        Asset<Texture2D> VanillaSun1 = ModContent.Request<Texture2D>("Terraria/Images/Sun");
+        Asset<Texture2D> VanillaSun2 = ModContent.Request<Texture2D>("Terraria/Images/Sun2");
+        Asset<Texture2D> VanillaSun3 = ModContent.Request<Texture2D>("Terraria/Images/Sun3");
         List<Asset<Texture2D>> VanillaMoonTextures;
 
         //MAKE CATACOMBS DUNGEON BIOME - This code was blocking spawns in the catacombs, but catacombs now works as dungeon without it likely

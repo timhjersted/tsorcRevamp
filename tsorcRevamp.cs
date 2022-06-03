@@ -109,15 +109,22 @@ namespace tsorcRevamp
             if (!Main.dedServ)
             {
                 tsorcRevamp Instance = this;
-                TheAbyssEffect = ModContent.Request<Effect>("Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
-
+                try
+                {
+                    TheAbyssEffect = ModContent.Request<Effect>("Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                    Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
+                }
+                catch (Exception e)
+                {
+                    //Hmm, seems like it can't find it for some reason
+                }
                 //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
                 //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
 
                 EmeraldHeraldUserInterface = new UserInterface();
             }
 
+            /*
             if (!Main.dedServ)
             {
                 Main.instance.LoadNPC(NPCID.TheDestroyer);
@@ -130,7 +137,7 @@ namespace tsorcRevamp
                 TextureAssets.Gore[156] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/Gore_156");
                 Main.instance.LoadNPC(NPCID.Probe);
                 TextureAssets.Npc[NPCID.Probe] = ModContent.Request<Texture2D>("NPCs/Bosses/TheDestroyer/NPC_139");
-            }
+            }*/
 
             UpdateCheck();
         }
@@ -781,10 +788,9 @@ namespace tsorcRevamp
         public override void PostSetupContent()
         {
             #region Boss Checklist Compatibility
+            Mod bossChecklist;
+            if (ModLoader.TryGetMod("BossChecklist", out bossChecklist)){  //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
 
-            Mod bossChecklist = ModLoader.GetMod("BossChecklist"); //See https://github.com/JavidPack/BossChecklist/wiki/Support-using-Mod-Call for instructions
-            if (bossChecklist != null)
-            {
 
                 // AddBoss, bossname, order or value in terms of vanilla bosses, inline method for retrieving downed value.
                 /*
@@ -1082,12 +1088,7 @@ namespace tsorcRevamp
 
 
 
-
-
-
-
             }
-
             #endregion
         }
 
