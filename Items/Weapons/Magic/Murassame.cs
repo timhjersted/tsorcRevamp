@@ -43,11 +43,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.Register();
         }
 
-        public override void ModifyWeaponDamage(Player player, ref float add, ref float mult, ref float flat)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             if (player.statManaMax2 >= 200)
             {
-                flat += (player.statManaMax2 - 200) / 10;
+                damage.Flat += (player.statManaMax2 - 200) / 10;
             }
         }
     }

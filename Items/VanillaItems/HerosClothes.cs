@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Armors
         {
             if (item.type == ItemID.HerosShirt)
             {
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria"); //find the last tooltip line
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria"); //find the last tooltip line
                 if (ttindex != -1)
                 {// if we find one
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", "Set bonus boosts all critical strike chance by 5%"));

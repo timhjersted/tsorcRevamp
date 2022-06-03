@@ -30,7 +30,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            int ttindex = tooltips.FindLastIndex(t => t.mod != null);
+            int ttindex = tooltips.FindLastIndex(t => t.Mod != null);
             if (ttindex != -1)
             {
                 tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "", "Does not consume a buff slot."));
@@ -261,7 +261,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
                 //only insert the tooltip if the last valid line is not the name, the "Equipped in social slot" line, or the "No stats will be gained" line (aka do not insert if in a vanity slot)
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1)
                 {// if we find one
                     //insert the extra tooltip line

@@ -307,7 +307,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             }
             else
             {
-                base.PreDraw(lightColor);
+                base.PreDraw(ref lightColor);
             }
 
             return false;

@@ -12,7 +12,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.SuspiciousLookingEye)
             {
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria");
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "EoC1", "Item is not consumed so that you can retry the fight on defeat"));

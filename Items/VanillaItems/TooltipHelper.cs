@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID)
             {
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1)
                 {// if we find one
                     //insert the extra tooltip line
@@ -28,7 +28,7 @@ namespace tsorcRevamp.Items.VanillaItems
 
         public static void SimpleGlobalModTooltip(Mod mod, List<TooltipLine> tooltips, string TipToAdd1, string TipToAdd2 = null) //Same but not linked to a specific item.
         {
-            int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria"); //find the last tooltip line
+            int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria"); //find the last tooltip line
             if (ttindex != -1)
             {// if we find one
              //insert the extra tooltip line

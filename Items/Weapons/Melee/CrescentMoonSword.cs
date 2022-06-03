@@ -34,7 +34,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<Projectiles.CMSCrescent>();
             Item.shootSpeed = 4.5f;
         }
-        public override bool OnlyShootOnSwing => true;
 
         public override bool Shoot(Player player, Terraria.DataStructures.EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 speed, int type, int damage, float knockBack)
         {

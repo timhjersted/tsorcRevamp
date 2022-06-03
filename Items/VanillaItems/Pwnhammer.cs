@@ -20,7 +20,7 @@ namespace tsorcRevamp.Items.VanillaItems
         {
             if (item.type == ItemID.Pwnhammer)
             {
-                int ttindex = tooltips.FindLastIndex(t => t.mod == "Terraria");
+                int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
                 if (ttindex != -1)
                 {
                     tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "EoC1", "The Pwnhammer has a secret form, possessing the mining power of the Molten Pickaxe."));
