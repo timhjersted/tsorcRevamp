@@ -513,6 +513,25 @@ namespace tsorcRevamp
                 chestBank = -1;
                 chestBankOpen = false;
             }
+
+
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3) {
+
+                if (Main.SceneMetrics.DungeonTileCount >= 200 && Player.Center.Y > Main.worldSurface * 16.0 * 1.5f || Main.SceneMetrics.DungeonTileCount >= 50 && tsorcRevampWorld.SuperHardMode) {
+                    int playerTileX = (int)Player.Center.X / 16;
+                    int playerTileY = (int)Player.Center.Y / 16;
+                    for (int i = -10; i < 11; i++) {
+                        for (int j = 0; j < 2; j++) {
+                            int cross = (2 * j) - 1;
+                            //check in an x shape instead of checking the entire region, since checking 100 tiles every frame is a little silly
+                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType]) {
+                                Player.ZoneDungeon = true;
+
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public override void PostUpdateBuffs()
@@ -1204,32 +1223,6 @@ namespace tsorcRevamp
         public static Rectangle ToRectangle(PlayerFrames frame)
         {
             return new Rectangle(0, (int)frame * 56, 40, 56);
-        }
-
-        public override void UpdateBiomes()
-        {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
-            {
-                
-                if (Main.SceneMetrics.DungeonTileCount >= 200 && Player.Center.Y > Main.worldSurface * 16.0 * 1.5f || Main.SceneMetrics.DungeonTileCount >= 50 && tsorcRevampWorld.SuperHardMode)
-                {
-                    int playerTileX = (int)Player.Center.X / 16;
-                    int playerTileY = (int)Player.Center.Y / 16;
-                    for (int i = -10; i < 11; i++)
-                    {
-                        for (int j = 0; j < 2; j++)
-                        {
-                            int cross = (2 * j) - 1;
-                            //check in an x shape instead of checking the entire region, since checking 100 tiles every frame is a little silly
-                            if (Main.wallDungeon[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType] || tsorcRevamp.CustomDungeonWalls[Main.tile[playerTileX + i, playerTileY + (i * cross)].WallType])
-                            {
-                                Player.ZoneDungeon = true;
-
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
