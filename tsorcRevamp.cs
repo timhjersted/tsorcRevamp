@@ -101,8 +101,10 @@ namespace tsorcRevamp
             ApplyMethodSwaps();
             ApplyILs();
             PopulateArrays();
-            if (!Main.dedServ) TransparentTextureHandler.TransparentTextureFix();
-
+            if (!Main.dedServ)
+            {
+                Main.QueueMainThreadAction(TransparentTextureHandler.TransparentTextureFix);
+            }
 
             if (!Main.dedServ)
             {
@@ -507,8 +509,9 @@ namespace tsorcRevamp
             //--------
             #region CrossModTiles list
             CrossModTiles = new List<int>();
-            Mod MagicStorage = ModLoader.GetMod("MagicStorage");
-            if (MagicStorage != null)
+
+            Mod MagicStorage;
+            if (ModLoader.TryGetMod("MagicStorage", out MagicStorage))
             {
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("CraftingAccess").Type);
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("RemoteAccess").Type);
@@ -517,11 +520,10 @@ namespace tsorcRevamp
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageHeart").Type);
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageUnit").Type);
                 CrossModTiles.Add(MagicStorage.Find<ModTile>("StorageConnector").Type);
-
             }
 
-            Mod MagicStorageExtra = ModLoader.GetMod("MagicStorageExtra");
-            if (MagicStorageExtra != null)
+            Mod MagicStorageExtra;
+            if (ModLoader.TryGetMod("MagicStorageExtra", out MagicStorageExtra))
             {
                 CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("CraftingAccess").Type);
                 CrossModTiles.Add(MagicStorageExtra.Find<ModTile>("CreativeStorageUnit").Type);

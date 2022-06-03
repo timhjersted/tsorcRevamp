@@ -13,6 +13,7 @@ namespace tsorcRevamp
     {
         internal static void ApplyILs()
         {
+            /*
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
             //IL.Terraria.Main.UpdateAudio += Music_Patch; //not sure what its supposed to do xd
@@ -41,7 +42,7 @@ namespace tsorcRevamp
             }
 
             //IL.Terraria.Main.DrawPlayer_DrawAllLayers += Rotate_Patch;
-
+            */
         }
 
 
