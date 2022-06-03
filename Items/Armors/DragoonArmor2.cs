@@ -29,7 +29,7 @@ namespace tsorcRevamp.Items.Armors
 
         public override void UpdateEquip(Player player)
         {
-            player.starCloak = true;
+            player.starCloakItem = new Item(ItemID.StarCloak);
             player.GetCritChance(DamageClass.Magic) += 3;
             player.GetDamage(DamageClass.Magic) += .05f;
 

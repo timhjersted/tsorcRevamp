@@ -394,6 +394,7 @@ namespace tsorcRevamp.Tiles
             }
 
             Texture2D texture;
+            /** 1.4 Porting Notes: No idea what this was doing, half the fields in it were deprecated
             if (Main.canDrawColorTile(i, j))
             {
                 texture = Main.tileAltTexture[Type, (int)tile.TileColor];
@@ -401,7 +402,10 @@ namespace tsorcRevamp.Tiles
             else
             {
                 texture = TextureAssets.Tile[Type].Value;
-            }
+            }**/
+
+            texture = TextureAssets.Tile[Type].Value;
+
             Vector2 zero = new Vector2(Main.offScreenRange, Main.offScreenRange);
             if (Main.drawToScreen)
             {

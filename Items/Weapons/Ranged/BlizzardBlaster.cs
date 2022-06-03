@@ -172,7 +172,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
             Projectile.width = 1;
             Projectile.height = 1;
             Projectile.friendly = true;
-            Projectile.ranged = true;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.timeLeft = 3;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = false;

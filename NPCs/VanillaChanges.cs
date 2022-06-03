@@ -2532,17 +2532,17 @@ namespace tsorcRevamp.NPCs
             {
                 if (flag24)
                 { //third phase (start of faster dashing)
-                    npc.damage = (int)(22.5f * Main.expertDamage); //45 (38 - 52)
+                    npc.damage = (int)(22.5f * 2); //45 (38 - 52)
                     npc.defense = -15;
                 }
                 if (finalDesperation)
                 { //final phase (nonstop dashing)
-                    npc.damage = (int)(25f * Main.expertDamage); //50 (43 - 58)
+                    npc.damage = (int)(25f * 2); //50 (43 - 58)
                     npc.defense = -30;
                 }
                 else
                 { //second phase (mouth open)
-                    npc.damage = (int)(22.5f * Main.expertDamage); //45 (38 - 52)
+                    npc.damage = (int)(22.5f * 2); //45 (38 - 52)
                 }
             }
             if (npc.ai[1] == 0f && flag24)

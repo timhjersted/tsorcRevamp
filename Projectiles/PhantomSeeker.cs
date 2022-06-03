@@ -50,7 +50,7 @@ namespace tsorcRevamp.Projectiles
             if (lastposindex > 19) lastposindex = 0;
 
         }
-        public override void PostDraw(SpriteBatch sp, Color lightColor)
+        public override void PostDraw(Color lightColor)
         {
             Texture2D MyTexture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ModContent.ProjectileType<Projectiles.Comet>()];
             Rectangle fromrect = new Rectangle(0, 0, this.Projectile.width, this.Projectile.height);
@@ -66,7 +66,7 @@ namespace tsorcRevamp.Projectiles
                 PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
 
-                sp.Draw(
+                Main.spriteBatch.Draw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,
@@ -89,7 +89,7 @@ namespace tsorcRevamp.Projectiles
                 float scalemod = Main.rand.Next(50, 150) / 100f;
                 PC = lastpos[modlastposindex] + new Vector2(this.Projectile.width / 2, this.Projectile.height / 2);
 
-                sp.Draw(
+                Main.spriteBatch.Draw(
                             MyTexture,
                             PC - Main.screenPosition,
                             fromrect,

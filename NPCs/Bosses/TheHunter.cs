@@ -272,11 +272,7 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 131, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
             }
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
+            if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfEarth>(), 2);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.WaterWalkingBoots, 1, false, -1);

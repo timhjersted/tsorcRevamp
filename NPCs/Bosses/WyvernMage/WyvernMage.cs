@@ -307,11 +307,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Undead Caster Gore 3").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Undead Caster Gore 3").Type, 1f);
 
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
+            if (!Main.expertMode)
             {
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 2);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.LionheartGunblade>(), 1);

@@ -30,7 +30,7 @@ namespace tsorcRevamp
 
                 if (slot.Item.stack == 0)
                 {
-                    Texture2D tex = ModContent.GetInstance<tsorcRevamp>().GetTexture("UI/SoulSlotBackground");
+                    Texture2D tex = (Texture2D)ModContent.Request<Texture2D>("UI/SoulSlotBackground");
                     Vector2 origin = tex.Size() / 2f * Main.inventoryScale;
                     Vector2 position = slot.Rectangle.TopLeft();
 

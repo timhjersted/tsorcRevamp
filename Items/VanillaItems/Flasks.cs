@@ -29,6 +29,7 @@ namespace tsorcRevamp.Items.VanillaItems
         }
         public override void AddRecipes()
         {
+            /* 1.4 Porting TODO: Fix this alternate fire flask recipe
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient(ItemID.Deathweed, 1);
@@ -36,6 +37,7 @@ namespace tsorcRevamp.Items.VanillaItems
             recipe.AddTile(TileID.Bottles);
             recipe.SetResult(ItemID.FlaskofFire, 1);
             recipe.Register();
+            */
         }
     }
 }
