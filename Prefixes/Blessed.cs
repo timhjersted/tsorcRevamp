@@ -33,7 +33,7 @@ namespace tsorcRevamp.Prefixes
 
         public override void Load()
         {
-            Mod.AddContent(new Blessed(1));
+            //Mod.AddContent(new Blessed(1));
         }
 
         public override void Apply(Item item)

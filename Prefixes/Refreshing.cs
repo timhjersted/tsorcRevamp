@@ -32,8 +32,8 @@ namespace tsorcRevamp.Prefixes
 
         public override void Load()
         {
-            Mod.AddContent(new Refreshing(1));
-            Mod.AddContent(new Refreshing(2));
+            //Mod.AddContent(new Refreshing(1));
+            //Mod.AddContent(new Refreshing(2));
         }
 
         /*public override void Apply(Item item)
