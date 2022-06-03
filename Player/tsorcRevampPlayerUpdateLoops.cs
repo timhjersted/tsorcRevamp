@@ -1210,7 +1210,8 @@ namespace tsorcRevamp
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && NPC.downedBoss3)
             {
-                if (Main.dungeonTiles >= 200 && Player.Center.Y > Main.worldSurface * 16.0 * 1.5f || Main.dungeonTiles >= 50 && tsorcRevampWorld.SuperHardMode)
+                
+                if (Main.SceneMetrics.DungeonTileCount >= 200 && Player.Center.Y > Main.worldSurface * 16.0 * 1.5f || Main.SceneMetrics.DungeonTileCount >= 50 && tsorcRevampWorld.SuperHardMode)
                 {
                     int playerTileX = (int)Player.Center.X / 16;
                     int playerTileY = (int)Player.Center.Y / 16;
