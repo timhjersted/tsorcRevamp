@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items
         {
             if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Blessed").Type))
             {
-                int blessedBonus = blessed - Main.cpItem.GetGlobalItem<tsorcInstancedGlobalItem>().blessed;
+                int blessedBonus = blessed - ModContent.GetInstance<tsorcInstancedGlobalItem>().blessed;
                 if (blessedBonus > 0)
                 {
                     TooltipLine line = new TooltipLine(Mod, "Blessed", "+1 life regen while held")

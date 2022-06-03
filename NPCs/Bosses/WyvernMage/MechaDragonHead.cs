@@ -111,12 +111,14 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool SpecialNPCLoot()
+        public override bool PreKill()
         {
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<MechaDragonBody>(), ModContent.NPCType<MechaDragonBody2>(), ModContent.NPCType<MechaDragonBody3>(), ModContent.NPCType<MechaDragonLegs>(), ModContent.NPCType<MechaDragonTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
-            return false;
+
+            return true;        
         }
+
         public override bool CheckActive()
         {
             return false;
