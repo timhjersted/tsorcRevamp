@@ -43,7 +43,7 @@ namespace tsorcRevamp.Projectiles
             if (playSound && p.soundDelay == 0)
             {
                 p.soundDelay = 8;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item7, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item7, p.Center);
             }
             if (ai[0] == 0f)
             {
@@ -122,7 +122,7 @@ namespace tsorcRevamp.Projectiles
                 Projectile.height = 16;
                 Projectile.penetrate = -1;
                 Projectile.tileCollide = true;
-                Projectile.melee = false;
+                Projectile.DamageType = DamageClass.Ranged;
 
                 Projectile.ai[1] += 1f; // Use a timer to wait 12 ticks before applying gravity.
                 if (Projectile.ai[1] >= 15f)
@@ -204,7 +204,7 @@ namespace tsorcRevamp.Projectiles
 
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-                    Item.NewItem(Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
+                    Item.NewItem(Projectile.GetSource_FromThis(), Projectile.position, ModContent.ItemType<Items.Weapons.Melee.ShatteredMoonlight>(), 1, false, -1);
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 arg_92_0 = new Vector2(Projectile.position.X, Projectile.position.Y);

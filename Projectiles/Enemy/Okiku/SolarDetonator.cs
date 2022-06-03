@@ -124,7 +124,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile fireball = Projectile.NewProjectileDirect(Projectile.Center, Main.rand.NextVector2Square(-18, 18), 686, Projectile.damage, .5f, Main.myPlayer);
+                    Projectile fireball = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Square(-18, 18), 686, Projectile.damage, .5f, Main.myPlayer);
                     fireball.Name = "Solar Detonation";
                     fireball.tileCollide = false;
                 }

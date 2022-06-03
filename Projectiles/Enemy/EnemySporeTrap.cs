@@ -80,7 +80,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             if (texture != null)
             {
-                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
             }
 
             return false;
@@ -90,7 +90,7 @@ namespace tsorcRevamp.Projectiles.Enemy
 		{
 			Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[projectile.type];
 			//Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[ProjectileID.SporeTrap];
-			Main.EntitySpriteDraw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+			Main.EntitySpriteDraw(texture, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
 			return false;
 		}
 		*/

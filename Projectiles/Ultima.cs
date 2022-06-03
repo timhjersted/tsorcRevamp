@@ -82,7 +82,7 @@ namespace tsorcRevamp.Projectiles
                 }
                 if (Main.rand.Next(20) == 0)
                 {
-                    Gore.NewGore(Projectile.position, new Vector2(Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f), Main.rand.Next(16, 18), 1f);
+                    Gore.NewGore(Projectile.GetSource_FromThis(), Projectile.position, new Vector2(Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f), Main.rand.Next(16, 18), 1f);
                     return;
                 }
             }

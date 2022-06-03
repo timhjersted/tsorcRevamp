@@ -61,7 +61,7 @@ namespace tsorcRevamp.Tiles
                             break;
                         }
                     }
-                    Projectile.NewProjectile(new Vector2((i * 16) + 8, (j * 16) + 8 - ((projSize * 16) / 2)), Vector2.Zero, ModContent.ProjectileType<Projectiles.FlameJet>(), flameJetDamage, 0, Main.myPlayer, 0, projSize);
+                    Projectile.NewProjectile(new EntitySource_Misc("Flame Jet"), new Vector2((i * 16) + 8, (j * 16) + 8 - ((projSize * 16) / 2)), Vector2.Zero, ModContent.ProjectileType<Projectiles.FlameJet>(), flameJetDamage, 0, Main.myPlayer, 0, projSize);
                     countdown = 3;
                 }
                 else

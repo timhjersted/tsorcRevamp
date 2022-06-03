@@ -69,7 +69,7 @@ namespace tsorcRevamp.Projectiles
 
             for (int i = 0; i < 2; i++)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, Projectile.damage / 4, 0.5f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(10, 10), ProjectileID.CrystalShard, Projectile.damage / 4, 0.5f, Projectile.owner);
             }
 
             Projectile.penetrate = 20;

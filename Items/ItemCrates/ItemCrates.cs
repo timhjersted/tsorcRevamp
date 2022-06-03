@@ -33,7 +33,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ItemID.WoodenArrow, 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.WoodenArrow, 100);
         }
     }
 
@@ -46,7 +46,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ModContent.ItemType<Items.Ammo.Bolt>(), 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.Ammo.Bolt>(), 100);
         }
     }
 
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Melee.ThrowingAxe>(), 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.Weapons.Melee.ThrowingAxe>(), 100);
         }
     }
 
@@ -72,7 +72,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.Weapons.Ranged.ThrowingSpear>(), 100);
         }
     }
 
@@ -85,7 +85,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ItemID.Gel, 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.Gel, 100);
         }
     }
 
@@ -98,7 +98,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ItemID.ThrowingKnife, 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.ThrowingKnife, 100);
         }
     }
 
@@ -111,7 +111,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ModContent.ItemType<Items.Weapons.Ranged.RoyalThrowingSpear>(), 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.Weapons.Ranged.RoyalThrowingSpear>(), 100);
         }
     }
 
@@ -124,7 +124,7 @@ namespace tsorcRevamp.Items.ItemCrates
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(ItemID.FrostburnArrow, 100);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ItemID.FrostburnArrow, 100);
         }
     }
 

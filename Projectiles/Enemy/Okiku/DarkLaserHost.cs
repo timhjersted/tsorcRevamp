@@ -51,7 +51,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             {
                 if (DarkLasers[i] == null)
                 {
-                    DarkLasers[i] = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), Projectile.damage, .5f, Main.myPlayer).ModProjectile;
+                    DarkLasers[i] = (Projectiles.GenericLaser)Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(0, 5), ModContent.ProjectileType<Projectiles.GenericLaser>(), Projectile.damage, .5f, Main.myPlayer).ModProjectile;
                     DarkLasers[i].LaserOrigin = Projectile.Center;
                     DarkLasers[i].LaserTarget = Projectile.Center + new Vector2(1, 0).RotatedBy(RotationProgress + (i * 2 * Math.PI / 5));
                     DarkLasers[i].TelegraphTime = 300;
