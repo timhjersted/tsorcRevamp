@@ -153,7 +153,7 @@ namespace tsorcRevamp.Items
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
             var myrectangle = texture.Frame(1, 6, 0, itemframe);
-            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(18, 24), Item.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(18, 24), Item.scale, SpriteEffects.None, 0);
 
             itemframeCounter++;
 

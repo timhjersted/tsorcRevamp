@@ -48,10 +48,10 @@ namespace tsorcRevamp.Items
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 3;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.DeepPink * 0.3f, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.DeepPink * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
 
                 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 3;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.DeepPink * 0.3f, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.DeepPink * 0.3f, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }
@@ -82,10 +82,10 @@ namespace tsorcRevamp.Items
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 3;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Black * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Black * 0.5f, 0, origin, scale, SpriteEffects.None, 0);
 
                 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 3;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Black * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Black * 0.5f, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }
@@ -115,10 +115,10 @@ namespace tsorcRevamp.Items
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 3;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Purple * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Purple * 0.5f, 0, origin, scale, SpriteEffects.None, 0);
 
                 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 3;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Purple * 0.5f, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.Purple * 0.5f, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }

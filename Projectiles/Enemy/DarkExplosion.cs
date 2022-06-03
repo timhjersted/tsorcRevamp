@@ -102,7 +102,7 @@ namespace tsorcRevamp.Projectiles.Enemy
             Color drawColor = Projectile.GetAlpha(lightColor);
             Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             return false;
         }

@@ -70,7 +70,7 @@ namespace tsorcRevamp.Projectiles
                             new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
                             1f * (0.1f * i) * this.Projectile.scale * scalemod,
                             SpriteEffects.None,
-                            0f);
+                            0);
                 modlastposindex++;
                 if (modlastposindex > 19) modlastposindex = 0;
 
@@ -94,7 +94,7 @@ namespace tsorcRevamp.Projectiles
                             new Vector2(this.Projectile.width / 2, this.Projectile.height / 2),
                             1f * (0.09f * i) * this.Projectile.scale * scalemod,
                             SpriteEffects.None,
-                            0f);
+                            0);
                 modlastposindex++;
                 if (modlastposindex > 19) modlastposindex = 0;
 

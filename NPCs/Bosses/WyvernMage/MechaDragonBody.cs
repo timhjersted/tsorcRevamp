@@ -71,7 +71,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             if (!Main.npc[(int)NPC.ai[1]].active)
             {
                 NPC.life = 0;
-                NPCLoot();
+                OnKill();
 
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;

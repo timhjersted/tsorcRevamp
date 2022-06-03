@@ -108,11 +108,11 @@ namespace tsorcRevamp.Projectiles
             {
                 Main.spriteBatch.Draw(texture,
                   Projectile.oldPos[9 - i] - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                  sourceRectangle, Color.White * (0.15f * i), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+                  sourceRectangle, Color.White * (0.15f * i), Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             }
             Main.spriteBatch.Draw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);

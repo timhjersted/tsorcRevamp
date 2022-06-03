@@ -68,7 +68,7 @@ namespace tsorcRevamp.Items
         {
 
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
-            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(0, 4), Item.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(0, 4), Item.scale, SpriteEffects.None, 0);
 
             return false;
         }

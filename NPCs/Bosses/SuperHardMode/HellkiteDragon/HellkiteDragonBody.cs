@@ -70,7 +70,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
                 }
                 NPC.life = 0;
                 NPC.HitEffect(0, 10.0);
-                NPCLoot();
+                OnKill();
                 NPC.active = false;
             }
         }

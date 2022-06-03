@@ -50,7 +50,7 @@ namespace tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile
             {
                 NPC.life = 0;
                 NPC.HitEffect(0, 10.0);
-                NPCLoot();
+                OnKill();
                 for (int num36 = 0; num36 < 10; num36++)
                 {
                     Color color = new Color();

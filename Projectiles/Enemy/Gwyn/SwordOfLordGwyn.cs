@@ -72,7 +72,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Gwyn
             Color drawColor = Projectile.GetAlpha(lightColor);
             Main.EntitySpriteDraw((Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type],
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                sourceRectangle, drawColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 
             return false;
         }

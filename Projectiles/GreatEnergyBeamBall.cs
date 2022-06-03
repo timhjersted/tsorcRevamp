@@ -31,11 +31,11 @@ namespace tsorcRevamp.Projectiles
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item10, Projectile.Center);
                 if (Projectile.position.X + (float)(Projectile.width / 2) > Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2))
                 {
-                    if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 14f), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<GreatEnergyBeam>(), (int)(55 * (Main.player[Projectile.owner].GetDamage(DamageClass.Magic))), 8f, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * 14f), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<GreatEnergyBeam>(), (int)(Main.player[Projectile.owner].GetDamage(DamageClass.Magic).ApplyTo(55)), 8f, Projectile.owner);
                 }
                 else
                 {
-                    if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -13), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<GreatEnergyBeam>(), (int)(55 * (Main.player[Projectile.owner].GetDamage(DamageClass.Magic))), 8f, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width * -13), Projectile.position.Y + (float)(Projectile.height - 0.5f), 0, 0, ModContent.ProjectileType<GreatEnergyBeam>(), (int)(Main.player[Projectile.owner].GetDamage(DamageClass.Magic).ApplyTo(55)), 8f, Projectile.owner);
                 }
                 Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
                 int arg_1394_1 = Projectile.width;

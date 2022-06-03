@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Potions.PermanentPotions
                 for (int i = 0; i < 4; i++)
                 {
                     Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
-                    spriteBatch.Draw(texture, position + offsetPositon, null, Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(texture, position + offsetPositon, null, Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0);
                 }
             }
             return true;

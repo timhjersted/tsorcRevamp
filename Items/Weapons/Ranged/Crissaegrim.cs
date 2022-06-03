@@ -80,7 +80,7 @@ namespace tsorcRevamp.Items.Weapons.Ranged
                                (float)shiftedSpeed.X,
                                (float)shiftedSpeed.Y,
                                ModContent.ProjectileType<Projectiles.Crissaegrim>(),
-                               (int)(Item.damage * player.GetDamage(DamageClass.Magic)),
+                               (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage)),
                                Item.knockBack,
                                Main.myPlayer
                                );

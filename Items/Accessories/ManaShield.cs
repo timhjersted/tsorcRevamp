@@ -52,9 +52,9 @@ namespace tsorcRevamp.Items.Accessories
 
             base.UpdateEquip(player);
             player.GetModPlayer<tsorcRevampPlayer>().manaShield = 1;
-            player.GetDamage(DamageClass.Ranged) = 0.01f;
-            player.GetDamage(DamageClass.Magic) = 0.01f;
-            player.GetDamage(DamageClass.Summon) = 0.01f;
+            player.GetDamage(DamageClass.Ranged) *= 0.01f;
+            player.GetDamage(DamageClass.Magic) *= 0.01f;
+            player.GetDamage(DamageClass.Summon) *= 0.01f;
             if (player.statMana >= manaCost)
             {
                 player.endurance += damageResistance;

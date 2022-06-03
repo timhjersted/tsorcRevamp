@@ -23,10 +23,10 @@ namespace tsorcRevamp.Items
             {
                 rotation += 0.01f;
                 Vector2 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) + rotation) * 2f;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0);
 
                 offsetPositon = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * i) - rotation) * 2f;
-                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.OrangeRed, 0, origin, scale, SpriteEffects.None, 0);
             }
             return true;
         }

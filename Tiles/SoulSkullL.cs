@@ -161,7 +161,7 @@ namespace tsorcRevamp.Tiles
                     zero = Vector2.Zero;
                 }
                 int height = tile.TileFrameY == 36 ? 18 : 16;
-                Main.spriteBatch.Draw((Texture2D)Mod.Assets.Request<Texture2D>("Tiles/SoulSkullL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw((Texture2D)Mod.Assets.Request<Texture2D>("Tiles/SoulSkullL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             }
             if (tile.TileFrameX >= 72)
             {
@@ -171,7 +171,7 @@ namespace tsorcRevamp.Tiles
                     zero = Vector2.Zero;
                 }
                 int height = tile.TileFrameY == 36 ? 18 : 16;
-                Main.spriteBatch.Draw((Texture2D)Mod.Assets.Request<Texture2D>("Tiles/SansL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX - 72, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw((Texture2D)Mod.Assets.Request<Texture2D>("Tiles/SansL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX - 72, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             }
         }
         public override void MouseOver(int i, int j)

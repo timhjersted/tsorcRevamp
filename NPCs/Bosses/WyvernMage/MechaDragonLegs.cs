@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Main.dust[pdust].noGravity = true;
                 }
 
-                NPCLoot();
+                OnKill();
                 NPC.HitEffect(0, 10.0);
                 NPC.active = false;
             }

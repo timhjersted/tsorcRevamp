@@ -186,8 +186,8 @@ namespace tsorcRevamp.Projectiles
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
             Color alphalowered = Color.White * .4f;
             Texture2D textureGlow = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.ShatteredMoonlightGlowmask];
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0f);
-            Main.EntitySpriteDraw(textureGlow, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), alphalowered, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0f);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(textureGlow, Projectile.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), alphalowered, Projectile.rotation, new Vector2(12, 12), Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
 

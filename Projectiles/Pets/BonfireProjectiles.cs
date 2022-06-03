@@ -125,7 +125,7 @@ namespace tsorcRevamp.Projectiles.Pets
             p.chestX = projTilePosX;
             p.chestY = projTilePosY;
             p.SetTalkNPC(-1);
-            Main.npcShop = 0;
+            Main.SetNPCShopIndex(0);
             Main.playerInventory = true;
             Terraria.Audio.SoundEngine.PlaySound(UseSound);
             Recipe.FindRecipes();

@@ -62,7 +62,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
             Vector2 origin = sourceRectangle.Size() / 2f;
             Main.EntitySpriteDraw(texture,
                 Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
-                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+                sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             return false;
         }

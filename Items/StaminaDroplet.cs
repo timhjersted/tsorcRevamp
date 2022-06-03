@@ -55,7 +55,7 @@ namespace tsorcRevamp.Items
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Microsoft.Xna.Framework.Color lightColor, Microsoft.Xna.Framework.Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
-            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), Item.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, Item.position - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), Color.White, 0f, new Vector2(2, 0), Item.scale, SpriteEffects.None, 0);
 
             return false;
         }

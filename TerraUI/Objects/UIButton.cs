@@ -100,7 +100,7 @@ namespace TerraUI.Objects
                 textPos.X += (Rectangle.Width / 2);
                 textPos.Y += (Rectangle.Height / 2) + (measure.Y / 8);
 
-                spriteBatch.DrawString(Font, Text, textPos, TextColor, 0f, origin, 1f, SpriteEffects.None, 0f);
+                spriteBatch.DrawString(Font, Text, textPos, TextColor, 0f, origin, 1f, SpriteEffects.None, 0);
             }
 
             base.Draw(spriteBatch);

@@ -205,7 +205,7 @@ namespace tsorcRevamp.Projectiles
 
                 // Finally, we draw the texture at the coordinates using the lighting information of the tile coordinates of the chain section
                 Color color = Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f));
-                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, color, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, color, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
 
             return true;

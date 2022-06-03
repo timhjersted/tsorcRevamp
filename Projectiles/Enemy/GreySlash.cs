@@ -131,12 +131,12 @@ namespace tsorcRevamp.Projectiles.Enemy
             int startY = frameHeight * Projectile.frame;
             Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
 
             if (Projectile.ai[0] >= 10)
             {
                 alphalowered = Color.White * 0.9f;
-                Main.EntitySpriteDraw(textureGlow, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, alphalowered, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0f);
+                Main.EntitySpriteDraw(textureGlow, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), sourceRectangle, alphalowered, Projectile.rotation, origin, Projectile.scale, spriteEffects, 0);
             }
 
             return false;

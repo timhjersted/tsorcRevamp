@@ -289,13 +289,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Draw shadow trails
             for (float i = NPCID.Sets.TrailCacheLength[NPC.type] - 1; i >= 0; i--)
             {
-                Main.spriteBatch.Draw(texture, NPC.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, drawColor * ((6 - i) / 6), trailRotations[(int)i], origin, NPC.scale, spriteEffects, 0f);
-                Main.spriteBatch.Draw(glowTexture, NPC.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, Color.White * ((6 - i) / 6), trailRotations[(int)i], origin, NPC.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(texture, NPC.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, drawColor * ((6 - i) / 6), trailRotations[(int)i], origin, NPC.scale, spriteEffects, 0);
+                Main.spriteBatch.Draw(glowTexture, NPC.oldPos[(int)i] - Main.screenPosition - offset, sourceRectangle, Color.White * ((6 - i) / 6), trailRotations[(int)i], origin, NPC.scale, spriteEffects, 0);
             }
 
             //Draw actual npc
-            Main.spriteBatch.Draw(texture, NPC.position - Main.screenPosition - offset, sourceRectangle, drawColor, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
-            Main.spriteBatch.Draw(glowTexture, NPC.position - Main.screenPosition - offset, sourceRectangle, Color.White, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, NPC.position - Main.screenPosition - offset, sourceRectangle, drawColor, NPC.rotation, origin, NPC.scale, spriteEffects, 0);
+            Main.spriteBatch.Draw(glowTexture, NPC.position - Main.screenPosition - offset, sourceRectangle, Color.White, NPC.rotation, origin, NPC.scale, spriteEffects, 0);
 
             return false;
         }

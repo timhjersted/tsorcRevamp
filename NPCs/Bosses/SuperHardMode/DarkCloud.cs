@@ -1960,7 +1960,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             for (float i = TRAIL_LENGTH - 1; i >= 0; i--)
             {
-                Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0);
             }
 
             return true;
@@ -2013,7 +2013,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //targetPoint = initialTargetRotation;
             Rectangle sourceRectangle = new Rectangle(0, 0, darkSparkTexture.Width, darkSparkTexture.Height);
             Vector2 origin = new Vector2(0, sourceRectangle.Height / 2);
-            Main.spriteBatch.Draw(darkSparkTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(darkSparkTexture, NPC.Center - Main.screenPosition, sourceRectangle, drawColor, targetPoint, origin, NPC.scale, SpriteEffects.None, 0);
         }
 
         static Texture2D antimatTexture = (Texture2D)ModContent.Request<Texture2D>(ModContent.GetModItem(ModContent.ItemType<Items.Weapons.Ranged.AntimatRifle>()).Texture);

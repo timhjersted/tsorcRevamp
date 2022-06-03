@@ -272,7 +272,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 for (float i = TRAIL_LENGTH - 1; i >= 0; i--)
                 {
-                    Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(darkCloudTexture, NPC.oldPos[(int)i] - Main.screenPosition + new Vector2(12, 16), sourceRectangle, drawColor * ((TRAIL_LENGTH - i) / TRAIL_LENGTH), NPC.rotation, origin, NPC.scale, spriteEffects, 0);
                 }
 
                 return true;

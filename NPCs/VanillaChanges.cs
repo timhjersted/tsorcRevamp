@@ -3381,8 +3381,6 @@ namespace tsorcRevamp.NPCs
                         if (!WorldGen.SolidTile(npcTileX, npcTileY))
                         {
                             Main.tile[npcTileX, npcTileY].LiquidAmount = 0;
-                            Main.tile[npcTileX, npcTileY].LiquidType = false;
-                            Main.tile[npcTileX, npcTileY].LiquidType = false;
                             WorldGen.SquareTileFrame(npcTileX, npcTileY);
                         }
                     }
