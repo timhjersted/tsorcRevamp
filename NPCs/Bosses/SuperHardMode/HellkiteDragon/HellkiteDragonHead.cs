@@ -39,7 +39,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.HellkiteBag>();
 
             Color textColor = new Color(175, 75, 255);
             despawnHandler = new NPCDespawnHandler("The Hellkite Dragon claims its prey...", textColor, 174);
@@ -156,23 +155,21 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon
             potionType = ItemID.SuperHealingPotion;
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.HellkiteBag>()));
+        }
+
         public override void OnKill()
         {
             Gore.NewGore(NPC.GetSource_Death(), NPC.Center, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Hellkite Dragon Head Gore").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.Center, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
 
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 22 + Main.rand.Next(6));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 4000);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.HellkiteStone>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonStone>());
+            
         }
     }
 }

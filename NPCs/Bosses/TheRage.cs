@@ -32,7 +32,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noTileCollide = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            bossBag = ModContent.ItemType<Items.BossBags.TheRageBag>();
             NPC.timeLeft = 22500;
 
             DrawOffsetY = +70;
@@ -266,6 +265,10 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheRageBag>()));
+        }
+
         public override void OnKill()
         {
             for (int num36 = 0; num36 < 100; num36++)
@@ -277,15 +280,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 130, Main.rand.Next(-50, 50), Main.rand.Next(-40, 40), 100, Color.Orange, 3f);
             }
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfFire>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.CobaltDrill, 1, false, -1);
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfFire>(), 2);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.CobaltDrill, 1, false, -1);
         }
     }
 }

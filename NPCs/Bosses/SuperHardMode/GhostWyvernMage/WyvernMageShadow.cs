@@ -34,7 +34,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.MageShadowBag>();
             despawnHandler = new NPCDespawnHandler("The Wyvern Mage's imprisoned shadow breaks free...", Color.DarkCyan, DustID.Demonite);
         }
 
@@ -292,6 +291,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             potionType = ItemID.SuperHealingPotion;
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MageShadowBag>()));
+        }
+
         #region Gore
         public override void OnKill()
         {
@@ -305,16 +308,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //Only drop the loot if the dragon is already dead. If it's not, then the dragon will drop it instead.
             if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>()))
             {
-                if (Main.expertMode)
-                {
-                    NPC.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.RingOfPower>());
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.RingOfPower>());
+                
             }
             else
             {

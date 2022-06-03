@@ -33,7 +33,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = false;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.SeathBag>();
             despawnHandler = new NPCDespawnHandler("Seath consumes your soul...", Color.Cyan, DustID.BlueFairy);
         }
 
@@ -228,6 +227,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             SetImmune(projectile, NPC);
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SeathBag>()));
+        }
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -237,19 +239,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
                 Gore.NewGore(NPC.GetSource_Death(), vector8, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Seath the Scaleless Head Gore").Type, 1f);
                 //Main.gore[a].timeLeft = 1800; int a = Gore.New..etc
 
-                if (Main.expertMode)
-                {
-                    NPC.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonWings>());
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DragonEssence>(), 35 + Main.rand.Next(5));
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 7000);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BequeathedSoul>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BlueTearstoneRing>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.PurgingStone>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragonWings>());
                 //npc.netUpdate = true;
             }
         }

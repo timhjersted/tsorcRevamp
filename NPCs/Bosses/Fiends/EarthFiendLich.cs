@@ -36,7 +36,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.LichBag>();
             despawnHandler = new NPCDespawnHandler("Earth Fiend Lich returns to the ground...", Color.DarkGreen, DustID.GreenFairy);
 
         }
@@ -362,6 +361,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             potionType = ItemID.SuperHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.LichBag>()));
+        }
         public override void OnKill()
         {
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Earth Fiend Lich Gore 1").Type, 1f);
@@ -369,22 +372,16 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Earth Fiend Lich Gore 2").Type, 1f);
 
             Mod.GetContent<ModGore>();
-            if (Main.expertMode)
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
+            if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
             {
-                NPC.DropBossBags();
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
             }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.FairyInABottle>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Bolt3Tome>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.DragoonBoots>(), 1);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
-                }
-            }
+            
         }
     }
 }

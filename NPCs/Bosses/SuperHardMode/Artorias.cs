@@ -29,7 +29,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 700000;
             NPC.boss = true;
             NPC.lavaImmune = true;
-            bossBag = ModContent.ItemType<Items.BossBags.ArtoriasBag>();
             despawnHandler = new NPCDespawnHandler("Artorias, the Abysswalker stands victorious...", Color.Gold, DustID.GoldFlame);
         }
 
@@ -738,6 +737,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             potionType = ItemID.SuperHealingPotion;
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.ArtoriasBag>()));
+        }
+
         #region Gore
         public override void OnKill()
         {
@@ -747,19 +750,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Easterling Gore 2").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Easterling Gore 3").Type, 1f);
 
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.WolfRing>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.WolfRing>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
+            
         }
         #endregion
 

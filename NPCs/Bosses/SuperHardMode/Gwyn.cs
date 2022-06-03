@@ -27,7 +27,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 800000;
-            bossBag = ModContent.ItemType<Items.BossBags.GwynBag>();
             despawnHandler = new NPCDespawnHandler("You have fallen before the Lord of Cinder...", Color.OrangeRed, 6);
         }
 
@@ -862,6 +861,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             return false;
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.GwynBag>()));
+        }
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
@@ -876,17 +878,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Hero of Lumelia Gore 2").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Hero of Lumelia Gore 3").Type, 1f);
 
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DraxEX>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Epilogue>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EssenceOfTerraria>());
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DraxEX>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Epilogue>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.EssenceOfTerraria>());
 
             tsorcRevampWorld.InitiateTheEnd();
         }

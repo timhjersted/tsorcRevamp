@@ -33,7 +33,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.DeathBag>();
             despawnHandler = new NPCDespawnHandler("Death claims you at last...", Color.DarkMagenta, DustID.Demonite);
         }
 
@@ -212,23 +211,20 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DeathBag>()));
+        }
         public override void OnKill()
         {
-            if (Main.expertMode)
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
+            if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
             {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.WallTome>(), 4);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.BarrierTome>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.MidnightRainbowDye, 5);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000);
             }
         }
     }

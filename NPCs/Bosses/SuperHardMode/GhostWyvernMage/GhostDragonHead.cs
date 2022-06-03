@@ -35,7 +35,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.GhostWyvernBag>();
             despawnHandler = new NPCDespawnHandler(DustID.OrangeTorch);
         }
         int lightningDamage = 40;
@@ -77,6 +76,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         {
             potionType = ItemID.SuperHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.GhostWyvernBag>()));
+        }
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
@@ -86,14 +89,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             //Only drop the loot if the mage is already dead. If it's not, then he will drop it instead.
             if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()))
             {
-                if (Main.expertMode)
-                {
-                    NPC.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GhostWyvernSoul>(), 8);
             }
             else
             {

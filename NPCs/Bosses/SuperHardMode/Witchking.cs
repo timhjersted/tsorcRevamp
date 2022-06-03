@@ -38,7 +38,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.buffImmune[BuffID.CursedInferno] = true;
             AnimationType = NPCID.PossessedArmor;
             Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.PossessedArmor];
-            bossBag = ModContent.ItemType<Items.BossBags.WitchkingBag>();
             despawnHandler = new NPCDespawnHandler("The Witchking claims another victim...", Color.Purple, DustID.PurpleTorch);
         }
 
@@ -520,26 +519,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             potionType = ItemID.SuperHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WitchkingBag>()));
+        }
         public override void OnKill()
         {
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BrokenStrangeMagicRing>());
-                if (Main.rand.NextFloat() <= .12f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
-                if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingHelmet>());
-                if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingTop>());
-                if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingBottoms>());
-                if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<RingOfPower>(), 1, false, -1);
-                if (Main.rand.NextFloat() <= .08f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
-                if (Main.rand.NextFloat() <= .15f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GuardianSoul>());
-                if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<BrokenStrangeMagicRing>());
+            if (Main.rand.NextFloat() <= .12f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Melee.WitchkingsSword>(), 1, false, -1);
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingHelmet>());
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingTop>());
+            if (Main.rand.Next(10) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<WitchkingBottoms>());
+            if (Main.rand.Next(20) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<RingOfPower>(), 1, false, -1);
+            if (Main.rand.NextFloat() <= .08f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GoldenHairpin>(), 1, false, -1);
+            if (Main.rand.NextFloat() <= .15f) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<GuardianSoul>());
+            if (Main.rand.Next(2) == 0) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<CovenantOfArtorias>(), 1, false, -1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 2500);
         }
     }
 }

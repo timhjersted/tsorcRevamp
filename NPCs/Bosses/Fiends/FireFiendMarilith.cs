@@ -34,7 +34,6 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             NPC.value = 600000;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.MarilithBag>();
             despawnHandler = new NPCDespawnHandler("Fire Fiend Marilith decends to the underworld...", Color.OrangeRed, DustID.FireworkFountain_Red);
         }
 
@@ -351,6 +350,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
         {
             potionType = ItemID.SuperHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.MarilithBag>()));
+        }
         public override void OnKill()
         {
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Fire Fiend Marilith Gore 1").Type, 1f);
@@ -363,19 +366,12 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Fire Fiend Marilith Gore 8").Type, 1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Gores/Fire Fiend Marilith Gore 9").Type, 1f);
 
-            if (Main.expertMode)
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
+            if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
             {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
-                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
             }
         }
     }

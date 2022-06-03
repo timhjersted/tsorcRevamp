@@ -32,7 +32,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noTileCollide = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            bossBag = ModContent.ItemType<Items.BossBags.TheHunterBag>();
 
             DrawOffsetY = +70;
             NPC.width = 140;
@@ -256,6 +255,10 @@ namespace tsorcRevamp.NPCs.Bosses
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheHunterBag>()));
         }
 
         public override void OnKill()

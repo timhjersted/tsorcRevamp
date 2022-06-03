@@ -84,11 +84,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
             return closestSegment; //the whoAmI of the closest segment
         }
 
-        public override bool SpecialNPCLoot()
-        {
+        public override bool PreKill() {
             int closestSegmentID = ClosestSegment(NPC, ModContent.NPCType<LichKingSerpentBody>(), ModContent.NPCType<LichKingSerpentTail>());
             NPC.position = Main.npc[closestSegmentID].position; //teleport the head to the location of the closest segment before running npcloot
-            return false;
+            return base.PreKill();
         }
         public override bool CheckActive()
         {

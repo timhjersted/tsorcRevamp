@@ -38,7 +38,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.alpha = 255;
             NPC.boss = true;
             NPC.buffImmune[BuffID.Confused] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.BlightBag>();
             despawnHandler = new NPCDespawnHandler("Inevitable", new Color(255, 50, 50), DustID.Firework_Blue);
         }
 
@@ -446,17 +445,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             potionType = ItemID.SuperHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.BlightBag>()));
+        }
+
         public override void OnKill()
         {
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 5));
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.DivineSpark>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfBlight>(), Main.rand.Next(3, 5));
         }
     }
 }

@@ -33,7 +33,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.OolacileSorcererBag>();
             despawnHandler = new NPCDespawnHandler("The Abysmal Oolacile Sorcerer has shattered your mind...", Color.DarkRed, DustID.Firework_Red);
         }
 
@@ -289,6 +288,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             potionType = ItemID.SuperHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileSorcererBag>()));
+        }
+
         public override void FindFrame(int currentFrame)
         {
             if ((NPC.velocity.X > -9 && NPC.velocity.X < 9) && (NPC.velocity.Y > -9 && NPC.velocity.Y < 9))

@@ -32,7 +32,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 35000;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
             despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);
 
         }
@@ -867,6 +866,12 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>())) {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SlograBag>()));
+            }
+        }
         public override void OnKill()
         {
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Slogra Gore 1").Type, 0.9f);
@@ -882,16 +887,9 @@ namespace tsorcRevamp.NPCs.Bosses
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Gores/Blood Splat").Type, 0.9f);
             if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>()))
             {
-                if (Main.expertMode)
-                {
-                    NPC.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 700);
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 700);
             }
             else
             {

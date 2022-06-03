@@ -32,7 +32,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.noTileCollide = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            bossBag = ModContent.ItemType<Items.BossBags.TheSorrowBag>();
 
             DrawOffsetY = +70;
             NPC.width = 140;
@@ -290,6 +289,10 @@ namespace tsorcRevamp.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.TheSorrowBag>()));
+        }
         public override void OnKill()
         {
             for (int num36 = 0; num36 < 100; num36++)
@@ -301,15 +304,8 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 132, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
             }
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1);
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1);
         }
     }
 }

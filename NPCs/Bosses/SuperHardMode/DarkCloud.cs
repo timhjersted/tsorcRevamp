@@ -36,7 +36,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.value = 1500000;
             NPC.knockBackResist = 0f;
             NPC.boss = true;
-            BossBag = ModContent.ItemType<Items.BossBags.DarkCloudBag>();
             despawnHandler = new NPCDespawnHandler("You are subsumed by your shadow...", Color.Blue, DustID.ShadowbeamStaff);
             NPC.NPCLoot();
         }
@@ -2150,6 +2149,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             base.ModifyNPCLoot(npcLoot);
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.DarkCloudBag>()));
+        }
         public override void OnKill()
         {
 
@@ -2173,17 +2176,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
             Main.GlobalTimerPaused = true;
 
-
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
-            }
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
+            
             if (Main.tile[5810, 1670] != null)
             {
                 if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)

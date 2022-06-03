@@ -33,7 +33,6 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.value = 35000;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
-            bossBag = ModContent.ItemType<Items.BossBags.SlograBag>();
             despawnHandler = new NPCDespawnHandler(DustID.Torch);
         }
 
@@ -397,6 +396,12 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>())) {
+                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SlograBag>()));
+            }
+        }
+
         #region gore
         public override void OnKill()
         {
@@ -412,16 +417,9 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>()))
             {
-                if (Main.expertMode)
-                {
-                    NPC.DropBossBags();
-                }
-                else
-                {
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
-                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.PoisonbiteRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.BloodbiteRing>(), 1);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), (200 + Main.rand.Next(300)));
             }
             else
             {

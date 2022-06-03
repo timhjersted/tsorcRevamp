@@ -44,7 +44,6 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
-            bossBag = ModContent.ItemType<Items.BossBags.JungleWyvernBag>();
             despawnHandler = new NPCDespawnHandler("The Jungle Wyvern departs to seek its next prey...", Color.GreenYellow, DustID.GreenFairy);
 
         }
@@ -355,6 +354,10 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         {
             potionType = ItemID.GreaterHealingPotion;
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot) {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.JungleWyvernBag>()));
+        }
         public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
         {
             damage *= 2;
@@ -363,30 +366,22 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
         public override void OnKill()
         {
 
-            if (Main.expertMode)
-            {
-                NPC.DropBossBags();
-            }
-            else
-            {
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ChloranthyRing>(), 1, false, -1);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Sapphire, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Ruby, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Topaz, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Emerald, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.NecroHelmet);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.NecroBreastplate);
+            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.NecroGreaves);
+            if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
+            { //If the boss has not yet been killed
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.StaminaVessel>());
 
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ChloranthyRing>(), 1, false, -1);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Sapphire, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Ruby, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Topaz, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Diamond, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Emerald, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Amethyst, Main.rand.Next(2, 10));
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.NecroHelmet);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.NecroBreastplate);
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.NecroGreaves);
-                if (!(tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<JungleWyvernHead>())))
-                { //If the boss has not yet been killed
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 9000); //Then drop the souls
-                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.StaminaVessel>());
-
-                }
             }
         }
     }
