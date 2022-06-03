@@ -32,6 +32,7 @@ namespace tsorcRevamp.Tiles
             Main.tileNoAttach[Type] = true;
             Main.tileWaterDeath[Type] = false;
             Main.tileLavaDeath[Type] = false;
+            
 
         }
 

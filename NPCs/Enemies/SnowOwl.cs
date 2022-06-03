@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             float chance = 0;
-            if (Main.snowTiles > 5)
+            if (Main.SceneMetrics.SnowTileCount > 5)
             {
                 chance = 0.2f;
             }
