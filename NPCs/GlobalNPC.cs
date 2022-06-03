@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -313,11 +314,6 @@ namespace tsorcRevamp.NPCs
                 #region Bosses drop souls once
                 if (npc.boss)
                 {
-                    if (npc.type == NPCID.MoonLordCore)
-                    { //moon lord does not drop coins in 1.3, so his value is 0, but in 1.4 he has a value of 1 plat
-                        DarkSoulQuantity = 100000; //1 plat / 10
-                    }
-
                     if (tsorcRevampWorld.Slain.ContainsKey(npc.type))
                     {
                         DarkSoulQuantity = 0;
@@ -530,6 +526,11 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
+
+        }
+        //TODO
+        /*
         public override bool PreNPCLoot(NPC npc)
         {
             Player player = Main.LocalPlayer;
@@ -571,7 +572,7 @@ namespace tsorcRevamp.NPCs
 
             return base.PreNPCLoot(npc);
         }
-
+        */
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
             if (DarkInferno)
@@ -1240,7 +1241,7 @@ namespace tsorcRevamp.NPCs
                         int npcID = npc.whoAmI;
                         float lifePercent = (float)npc.life / (float)npc.lifeMax;
                         float lastPiece = npc.ai[0];
-                        npc.SetDefaults(npc.type, -1f);
+                        npc.SetDefaults(npc.type);
                         npc.life = (int)((float)npc.lifeMax * lifePercent);
                         npc.ai[0] = lastPiece;
                         npc.netUpdate = true;
@@ -1254,7 +1255,7 @@ namespace tsorcRevamp.NPCs
                         int npcID = npc.whoAmI;
                         float lifePercent = (float)npc.life / (float)npc.lifeMax;
                         float lastPiece = npc.ai[1];
-                        npc.SetDefaults(npc.type, -1f);
+                        npc.SetDefaults(npc.type);
                         npc.life = (int)((float)npc.lifeMax * lifePercent);
                         npc.ai[1] = lastPiece;
                         npc.netUpdate = true;
@@ -1801,7 +1802,7 @@ namespace tsorcRevamp.NPCs
                     Main.tile[x2 + npc.direction, y2 - 1].ClearTile();
                 if (Main.tile[x2 + npc.direction, y2 + 1] == null)
                     Main.tile[x2 + npc.direction, y2 + 1].ClearTile();
-                Main.tile[x2, y2 + 1].IsHalfBlock;
+                //Main.tile[x2, y2 + 1].IsHalfBlock;
                 if (Main.tile[x2, y2 - 1].HasUnactuatedTile && (Main.tile[x2, y2 - 1].TileType == 10 || Main.tile[x2, y2 - 1].TileType == 388) && knockPower != 0)
                 {
                     npc.localAI[2] += 1f; // inc knock countdown
