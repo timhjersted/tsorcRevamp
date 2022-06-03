@@ -45,7 +45,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = Mod.GetTexture("Items/Weapons/Magic/GreatSoulArrow_Scroll");
+            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/Weapons/Magic/GreatSoulArrow_Scroll");
             spriteBatch.Draw(texture, position, new Rectangle(0, 0, texture.Width, texture.Height), drawColor, 0f, origin, scale, SpriteEffects.None, 0.1f);
 
             return false;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = Mod.GetTexture("Items/Weapons/Magic/GreatSoulArrow_Scroll");
+            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("Items/Weapons/Magic/GreatSoulArrow_Scroll");
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, new Rectangle(0, 0, texture.Width, texture.Height), lightColor, 0f, new Vector2(19, 20), Item.scale, SpriteEffects.None, 0.1f);
 
             return false;

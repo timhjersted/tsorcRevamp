@@ -297,7 +297,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D eyeTexture = Mod.GetTexture("NPCs/Friendly/EmeraldHerald_Eye");
+            Texture2D eyeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Friendly/EmeraldHerald_Eye");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = eyeTexture.Frame(1, 4, 0, eyeFrame);
             if (NPC.spriteDirection == -1)

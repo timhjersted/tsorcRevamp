@@ -1084,8 +1084,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D texture = Mod.GetTexture("NPCs/Enemies/RingedKnight_Glow");
-            Texture2D firesword = Mod.GetTexture("NPCs/Enemies/RingedKnight_FireSword");
+            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/RingedKnight_Glow");
+            Texture2D firesword = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/RingedKnight_FireSword");
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 

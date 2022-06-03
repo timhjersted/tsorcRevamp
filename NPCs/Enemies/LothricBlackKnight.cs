@@ -1014,8 +1014,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor) //PreDraw allows you to draw things in front of the NPC, in this case I'm drawing an animated shield texture while the NPC is shielding
         {
-            Texture2D CrimsonEquipment = Mod.GetTexture("NPCs/Enemies/LothricKnight_CrimsonEquipment");
-            Texture2D shieldTexture = Mod.GetTexture("NPCs/Enemies/LothricKnight_Shield"); //In this case we do define another texture, in this case our shield
+            Texture2D CrimsonEquipment = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/LothricKnight_CrimsonEquipment");
+            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/LothricKnight_Shield"); //In this case we do define another texture, in this case our shield
             Rectangle myrectangle = shieldTexture.Frame(1, 15, 0, shieldFrame);
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if (NPC.life < NPC.lifeMax / 2)

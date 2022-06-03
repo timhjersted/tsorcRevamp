@@ -45,7 +45,7 @@ namespace TerraUI.Utilities
 
             tex += "Textures/" + texture;
 
-            return Mod.GetTexture(tex);
+            return (Texture2D)Mod.Assets.Request<Texture2D>(tex);
         }
 
         /// <summary>

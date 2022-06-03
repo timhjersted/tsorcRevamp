@@ -86,7 +86,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spearTimer >= 150)
             {
-                Texture2D spearTexture = Mod.GetTexture("NPCs/Enemies/TibianValkyrie_Spear");
+                Texture2D spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianValkyrie_Spear");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {

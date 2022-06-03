@@ -287,7 +287,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D glowTexture = Mod.GetTexture("NPCs/Enemies/ShadowMage_Glowmask");
+            Texture2D glowTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/ShadowMage_Glowmask");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             if (NPC.spriteDirection == 1)

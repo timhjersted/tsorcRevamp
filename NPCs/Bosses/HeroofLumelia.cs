@@ -959,12 +959,12 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (spearTexture == null) //|| spearTexture.IsDisposed
             {
-                spearTexture = Mod.GetTexture("Projectiles/Enemy/EnemyThrowingKnifeSmall");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemyThrowingKnifeSmall");
             }
 
             if (bombTexture == null)
             {
-                bombTexture = Mod.GetTexture("Projectiles/Enemy/EnemySmokebomb");
+                bombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EnemySmokebomb");
             }
 
             //knife

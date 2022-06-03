@@ -73,7 +73,7 @@ namespace tsorcRevamp.Items
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
-            Texture2D textureGlow = Mod.GetTexture("Items/PotionBag_Glow");
+            Texture2D textureGlow = (Texture2D)Mod.Assets.Request<Texture2D>("Items/PotionBag_Glow");
             var myrectangle = texture.Frame(1, 9, 0, itemframe);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, lightColor, 0f, new Vector2(12, 16), Item.scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(texture, Item.Center - Main.screenPosition, myrectangle, Color.White, 0f, new Vector2(12, 16), Item.scale, SpriteEffects.None, 0f);

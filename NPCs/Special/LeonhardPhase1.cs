@@ -640,7 +640,7 @@ namespace tsorcRevamp.NPCs.Special
         {
             if (NPC.ai[3] > 1000 && NPC.life < NPC.lifeMax * .8f)
             {
-                Texture2D firebombTexture = Mod.GetTexture("NPCs/Special/Leonhard_Firebomb");
+                Texture2D firebombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Special/Leonhard_Firebomb");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {

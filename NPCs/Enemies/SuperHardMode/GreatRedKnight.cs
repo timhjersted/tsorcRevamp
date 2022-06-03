@@ -502,7 +502,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (spearTexture == null)
             {
-                spearTexture = Mod.GetTexture("Projectiles/Enemy/RedKnightsSpear");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/RedKnightsSpear");
             }
             if (poisonTimer >= 120 && poisonTimer <= 180f)
             {

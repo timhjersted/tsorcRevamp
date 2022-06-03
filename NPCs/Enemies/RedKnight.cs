@@ -397,7 +397,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spearTexture == null)
             {
-                spearTexture = Mod.GetTexture("Projectiles/Enemy/RedKnightsSpear");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/RedKnightsSpear");
             }
             if (NPC.localAI[1] >= 120 && NPC.localAI[1] <= 180f)
             {

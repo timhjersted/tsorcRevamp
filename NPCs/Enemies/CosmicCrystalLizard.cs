@@ -69,7 +69,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Texture2D textureglow = Mod.GetTexture("NPCs/Enemies/CosmicCrystalLizard_Glow");
+            Texture2D textureglow = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/CosmicCrystalLizard_Glow");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if (NPC.spriteDirection == -1)
             {

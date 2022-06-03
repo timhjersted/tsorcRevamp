@@ -197,7 +197,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (spearTexture == null)
             {
-                spearTexture = Mod.GetTexture("Projectiles/Enemy/EarthTrident");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EarthTrident");
                 //spearTexture = (Texture2D)ModContent.Request<Texture2D>("Terraria/Projectile_508");
             }
 

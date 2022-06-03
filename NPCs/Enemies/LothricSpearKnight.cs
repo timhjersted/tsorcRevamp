@@ -991,7 +991,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D shieldTexture = Mod.GetTexture("NPCs/Enemies/LothricSpearKnight_Greatshield");
+            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/LothricSpearKnight_Greatshield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 19, 0, shieldFrame);
             if ((AI_State == State_Shielding || AI_State == State_Thrusting) && NPC.velocity.X == 0)

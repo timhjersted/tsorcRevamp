@@ -96,7 +96,7 @@ namespace tsorcRevamp.Tiles
                     zero = Vector2.Zero;
                 }
                 int height = tile.TileFrameY == 18 ? 18 : 16;
-                Main.spriteBatch.Draw(Mod.GetTexture("Tiles/SoulSkellyL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw((Texture2D)Mod.Assets.Request<Texture2D>("Tiles/SoulSkellyL_Glow"), new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y) + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, height), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             }
         }
         public override void MouseOver(int i, int j)

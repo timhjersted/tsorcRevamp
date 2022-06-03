@@ -110,7 +110,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (spearTexture == null)
             {
-                spearTexture = Mod.GetTexture("Projectiles/Enemy/BlackKnightGhostSpear");
+                spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/BlackKnightGhostSpear");
             }
             if (spearTimer >= 150)
             {

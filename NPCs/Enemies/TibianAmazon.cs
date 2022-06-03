@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (knifeTimer >= 60)
             {
-                Texture2D knifeTexture = Mod.GetTexture("NPCs/Enemies/TibianAmazon_Knife");
+                Texture2D knifeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/TibianAmazon_Knife");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {

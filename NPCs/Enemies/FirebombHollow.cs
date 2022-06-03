@@ -532,7 +532,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (AI_Universal_Timer > 60)
             {
-                Texture2D firebombTexture = Mod.GetTexture("NPCs/Enemies/FirebombHollow_Firebomb");
+                Texture2D firebombTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/FirebombHollow_Firebomb");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {

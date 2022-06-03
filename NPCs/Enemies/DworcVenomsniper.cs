@@ -103,7 +103,7 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (NPC.ai[1] >= 140)
             {
-                Texture2D blowpipeTexture = Mod.GetTexture("NPCs/Enemies/DworcVenomsniper_Telegraph");
+                Texture2D blowpipeTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/DworcVenomsniper_Telegraph");
                 SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                 if (NPC.spriteDirection == -1)
                 {
