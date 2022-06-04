@@ -284,7 +284,10 @@ namespace tsorcRevamp
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, this handles all of it.
         private static void UsePotion(Item item, Player player)
         {
-            SoundEngine.PlaySound((SoundStyle)item.UseSound, player.position);
+            if(item.UseSound != null)
+            {
+                SoundEngine.PlaySound((SoundStyle)item.UseSound, player.position);
+            }
             if (item.potion)
             {
                 if (item.type == 227)
@@ -411,7 +414,7 @@ namespace tsorcRevamp
                 }
                 Main.instantBGTransitionCounter = 10;
                 self.FindSpawn();
-                if (SpawnCheck(self))
+                if (!SpawnCheck(self))
                 {
                     self.SpawnX = -1;
                     self.SpawnY = -1;
