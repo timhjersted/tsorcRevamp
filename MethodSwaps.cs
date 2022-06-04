@@ -334,7 +334,6 @@ namespace tsorcRevamp
                 player.AddBuff(item.buffType, buffTime);
             }
 
-            SoundEngine.PlaySound((SoundStyle)item.UseSound, player.position);
 
             if (ItemLoader.ConsumeItem(item, player))
                 item.stack--;
