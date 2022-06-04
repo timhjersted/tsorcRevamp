@@ -11,7 +11,7 @@ namespace tsorcRevamp.Projectiles.Enemy.Okiku
         {
             //DisplayName.SetDefault("Wave Attack");
         }
-        public override string Texture => "Terraria/Projectile_" + ProjectileID.DD2BetsyFireball;
+        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DD2BetsyFireball;
         public override void SetDefaults()
         {
             Projectile.aiStyle = 686;
