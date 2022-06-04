@@ -234,6 +234,8 @@ namespace tsorcRevamp
 
         public override void PreUpdate()
         {
+            Point point = Player.Center.ToTileCoordinates();
+            Player.ZoneBeach = Player.ZoneOverworldHeight && (point.X < 1000 || point.X > Main.maxTilesX - 8398); //default 380 and 380
 
             Player.fullRotationOrigin = new Vector2(11, 22);
             SetDirection(true);
