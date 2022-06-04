@@ -16,8 +16,6 @@ namespace tsorcRevamp
             /*
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
-            //IL.Terraria.Main.UpdateAudio += Music_Patch; //not sure what its supposed to do xd
-            IL.Terraria.Main.UpdateAudio += Music_Autodisable_Patch;
             IL.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
 
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
@@ -94,52 +92,6 @@ namespace tsorcRevamp
             });
         }
 
-/*        internal static void Music_Patch(ILContext il)
-        {
-            ILCursor c = new ILCursor(il);
-            if (!c.TryGotoNext(instr => instr.MatchLdcI4(6) && instr.Next.MatchStfld(typeof(Main).GetField("newMusic"))))
-            {
-                throw new Exception("Could not find instruction to patch (Music_Patch)");
-            }
-            c.Index++;
-            c.EmitDelegate<Func<int, int>>(MusicDelegate);
-        }
-
-        internal static int MusicDelegate(int defaultMusic)
-        {
-            Mod musicMod = ModLoader.GetMod("tsorcMusic");
-            if (musicMod != null)
-            {
-                if (ModContent.GetInstance<tsorcRevampConfig>().LegacyMusic)
-                {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "tsorcRevamp/Sounds/Music/OldTitle");
-                }
-                else
-                {
-                    return musicMod.GetSoundSlot((Terraria.ModLoader.SoundType)51, "tsorcRevamp/Sounds/Music/Night");
-                }
-            }
-            else
-            {
-                return defaultMusic;
-            }
-        }
-*/
-        internal static void Music_Autodisable_Patch(ILContext il)
-        {
-            ILCursor c = new ILCursor(il);
-            if (!c.TryGotoNext(instr => instr.MatchLdsfld<Main>("musicError") && instr.Next.MatchLdcI4(100)))
-            {
-                throw new Exception("Could not find instruction to patch (Music_Patch)");
-            }
-            c.Index++;
-            c.EmitDelegate<Func<int, int>>(MusicDisableDelegate);
-        }
-
-        internal static int MusicDisableDelegate(int oldValue)
-        {
-            return 0;
-        }
 
         internal static void Gravity_Screenflip_Patch(ILContext il)
         {
