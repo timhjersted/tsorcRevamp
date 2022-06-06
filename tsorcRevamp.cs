@@ -109,15 +109,11 @@ namespace tsorcRevamp
             if (!Main.dedServ)
             {
                 tsorcRevamp Instance = this;
-                try
-                {
-                    TheAbyssEffect = ModContent.Request<Effect>("Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+                    TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
                     Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
-                }
-                catch (Exception e)
-                {
-                    //Hmm, seems like it can't find it for some reason
-                }
+                    
+
                 //AttraidiesEffect = Instance.GetEffect("Effects/ScreenFilters/AttraidiesShader");
                 //Filters.Scene["tsorcRevamp:AttraidiesShader"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(AttraidiesEffect), "AttraidiesShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
 

@@ -375,13 +375,11 @@ namespace tsorcRevamp
                     Filters.Scene.Activate("tsorcRevamp:TheAbyss");
                 }
 
-                //if the abyss shader is active and the player is no longer wearing the CoA
-                //TODO: Fix this
-                /*
+                //if the abyss shader is active and the player is no longer wearing the CoA                
                 if (Filters.Scene["tsorcRevamp:TheAbyss"].Active && !hasCoA)
                 {
                     Filters.Scene["tsorcRevamp:TheAbyss"].Deactivate();
-                }*/
+                }
             }
 
             #endregion
@@ -743,7 +741,7 @@ namespace tsorcRevamp
                         for (int i = -9; i < 10; i++)
                         { //19 projectiles
                             Vector2 shotDirection = new Vector2(0f, -16f);
-                            int shockwaveShot = Projectile.NewProjectile(Player.GetSource_Buff(ModContent.BuffType<Shockwave>()), Player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
+                            int shockwaveShot = Projectile.NewProjectile(Player.GetSource_FromThis(), Player.Center, new Vector2(0f, -7f), ModContent.ProjectileType<Projectiles.Shockwave>(), (int)(FallDist * (Main.hardMode ? 2.6f : 2.4)), 12, Player.whoAmI);
                             Main.projectile[shockwaveShot].velocity = shotDirection.RotatedBy(MathHelper.ToRadians(0 - (10f * i))); // (180 / (projectilecount - 1))
                         }
                     }
