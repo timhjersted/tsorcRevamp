@@ -46,11 +46,6 @@ namespace tsorcRevamp
             initialized = false;
 
             tsorcScriptedEvents.InitializeScriptedEvents();
-
-            if (CustomMap)
-            {
-                Tiles.SoulSkellyGeocache.InitializeSkellys();
-            }
         }
 
         public override void SaveWorldData(TagCompound tag)
@@ -737,6 +732,7 @@ namespace tsorcRevamp
                     {
                         if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                         {
+                            Tiles.SoulSkellyGeocache.InitializeSkellys();
                             CampfireToBonfire();
                         }
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
