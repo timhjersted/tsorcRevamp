@@ -26,7 +26,7 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 61; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 60; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
             Item.useTime = 60;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
@@ -73,15 +73,7 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                PlayerLoader.UseTimeMultiplier(player, Item);
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item.
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.25f, PitchVariance = 0.5f }, player.Center); // Plays sound.
@@ -114,13 +106,7 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 80, default, .8f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.35f, PitchVariance = 0.3f }, player.Center); // Plays sound.
@@ -158,13 +144,7 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.5f, PitchVariance = 0.3f }, player.Center); // Plays sound.
@@ -217,13 +197,7 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.75f, PitchVariance = 0.3f }, player.Center); // Plays sound.
@@ -274,7 +248,7 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 121; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 120;
             Item.useTime = 120;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
@@ -286,6 +260,7 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player) // Won't consume item without this
         {
+            
             return true;
         }
 
@@ -302,15 +277,9 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 100, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
+            if (player.itemTime == 1)
             {
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
-
-            else if (player.itemTime == 1)
-            {
-                // This code runs once halfway through the useTime of the item. 
+                // This code runs at the end of the usetime of the item
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.9f, PitchVariance = 0.3f }, player.Center); // Plays sound.
 
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
@@ -370,7 +339,7 @@ namespace tsorcRevamp.Items
             Item.useTurn = true;
             Item.value = 1;
             Item.consumable = true;
-            Item.useAnimation = 241; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 240; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
             Item.useTime = 240;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Green; // Mainly for colour consistency.
@@ -398,13 +367,7 @@ namespace tsorcRevamp.Items
                 Dust.NewDust(player.BottomLeft, player.width, player.height - 40, 89, 0f, -5f, 50, default, .75f);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
-
-            else if (player.itemTime == 1)
+            if (player.itemTime == 1)
             {
                 // This code runs once halfway through the useTime of the item.
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
