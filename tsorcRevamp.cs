@@ -1255,6 +1255,23 @@ namespace tsorcRevamp
             FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
             DirectoryInfo worlds = new DirectoryInfo(worldsFolder);
             bool worldExists = false;
+            log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+
+            if (!Directory.Exists(worldsFolder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(worldsFolder);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    thisLogger.Error("World directory creation failed ({0}). Try again with administrator privileges?", e);
+                }
+                catch (Exception e)
+                {
+                    thisLogger.Error("World directory creation failed ({0}).", e);
+                }
+            }
 
             foreach (FileInfo file in worlds.GetFiles("*.wld"))
             {
@@ -1267,7 +1284,6 @@ namespace tsorcRevamp
 
             if (!worldExists && File.Exists(dataDir + baseMapFileName))
             {
-                log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
                 thisLogger.Info("Attempting to copy world.");
                 try
                 {
@@ -1275,11 +1291,11 @@ namespace tsorcRevamp
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    thisLogger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
+                    thisLogger.Error("World copy failed ({0}). Try again with administrator privileges?", e);
                 }
                 catch (Exception e)
                 {
-                    thisLogger.Warn("World copy failed ({0}).", e);
+                    thisLogger.Error("World copy failed ({0}).", e);
                 }
             }
         }
@@ -1350,11 +1366,11 @@ namespace tsorcRevamp
             }
             catch (UnauthorizedAccessException e)
             {
-                Logger.Warn("Directory creation failed ({0}). Try again with administrator privileges?", e);
+                Logger.Error("Data directory creation failed ({0}). Try again with administrator privileges?", e);
             }
             catch (Exception e)
             {
-                Logger.Warn("Automatic world download failed ({0}).", e);
+                Logger.Error("Data directory creation failed ({0}).", e);
             }
         }
 
