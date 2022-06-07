@@ -152,44 +152,6 @@ namespace tsorcRevamp.Items
             }
         }
 
-        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
-        {
-            /* TODO revert when reimplemented
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type))
-            {
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.02f;
-            }
-
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type))
-            {
-                player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += 0.04f;
-            }
-            */
-        }
-
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
-        {
-            /* TODO revert when reimplemented
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Refreshing").Type))
-            {
-                TooltipLine line = new TooltipLine(Mod, "Refreshing", "+2% stamina recovery speed")
-                {
-                    IsModifier = true
-                };
-                tooltips.Add(line);
-            }
-
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Revitalizing").Type))
-            {
-                TooltipLine line = new TooltipLine(Mod, "Revitalizing", "+4% stamina recovery speed")
-                {
-                    IsModifier = true
-                };
-                tooltips.Add(line);
-            }
-            */
-        }
-
         public override void MeleeEffects(Item item, Player player, Rectangle hitbox)
         {
             tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();

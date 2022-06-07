@@ -3,16 +3,19 @@ using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using tsorcRevamp.Prefixes;
 
 namespace tsorcRevamp.Items
 {
     public class tsorcInstancedGlobalItem : GlobalItem
     {
         public byte blessed;
+        public float refreshing;
 
         public tsorcInstancedGlobalItem()
         {
             blessed = 0;
+            refreshing = 0;
         }
 
         public override bool InstancePerEntity => true;
@@ -36,15 +39,16 @@ namespace tsorcRevamp.Items
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (!item.social && item.prefix > 0 && (item.prefix == Mod.Find<ModPrefix>("Blessed").Type))
-            {
-                int blessedBonus = blessed - ModContent.GetInstance<tsorcInstancedGlobalItem>().blessed;
-                if (blessedBonus > 0)
-                {
-                    TooltipLine line = new TooltipLine(Mod, "Blessed", "+1 life regen while held")
-                    {
-                        IsModifier = true
-                    };
+            if (!item.social && item.prefix > 0) {
+                string tooltipText = null;
+
+                if (item.prefix == ModContent.PrefixType<Blessed>()) { tooltipText = "+1 life regen while held"; }
+                if (item.prefix == ModContent.PrefixType<Refreshing>()) { tooltipText = "+3% stamina recovery speed"; }
+                if (item.prefix == ModContent.PrefixType<Revitalizing>()) { tooltipText = "+6% stamina recovery speed"; }
+                if (item.prefix == ModContent.PrefixType<Invigorating>()) { tooltipText = "+9% stamina recovery speed"; }
+                
+                if (tooltipText != null) {
+                    TooltipLine line = new TooltipLine(Mod, "tsorcRevamp:Prefix", tooltipText) { IsModifier = true };
                     tooltips.Add(line);
                 }
             }
@@ -58,6 +62,10 @@ namespace tsorcRevamp.Items
         public override void NetReceive(Item item, BinaryReader reader)
         {
             blessed = reader.ReadByte();
+        }
+
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual) {
+            player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult += refreshing;
         }
     }
 }
