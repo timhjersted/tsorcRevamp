@@ -160,12 +160,12 @@ namespace tsorcRevamp.Projectiles
             return false;
         }
 
-        static Texture2D chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath);
+        static Texture2D chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad);
         public override bool PreDraw(ref Color lightColor)
         {
             if (chainTexture == null || chainTexture.IsDisposed)
             {
-                chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath);
+                chainTexture = (Texture2D)ModContent.Request<Texture2D>(ChainTexturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad);
             }
             var player = Main.player[Projectile.owner];
 
