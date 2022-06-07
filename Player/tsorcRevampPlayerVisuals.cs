@@ -81,7 +81,7 @@ namespace tsorcRevamp
             if (thisItem.type == ModContent.ItemType<Items.Weapons.Ranged.GlaiveBeam>()) {
                 //And the projectile that creates the laser exists
                 if (modPlayer.Player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.GlaiveBeamLaser>()] > 0) {
-                    //Projectiles.GlaiveBeamLaser heldBeam;
+                    Projectiles.GlaiveBeamLaser heldBeam;
 
                     //Then find the laser in the projectile array
                     for (int i = 0; i < Main.projectile.Length; i++) {
@@ -91,11 +91,11 @@ namespace tsorcRevamp
                             Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.GlaiveBeamHeldGlowmask];
 
                             //Get the animation frame
-                            //heldBeam = (Projectiles.GlaiveBeamLaser)Main.projectile[i].ModProjectile;
+                            heldBeam = (Projectiles.GlaiveBeamLaser)Main.projectile[i].ModProjectile;
                             int textureFrames = 10;
-                            //int frameHeight = (int)texture.Height / textureFrames;
-                            //int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / GlaiveBeamHoldout.MaxCharge));
-                            //Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+                            int frameHeight = (int)texture.Height / textureFrames;
+                            int startY = frameHeight * (int)Math.Floor(9 * (heldBeam.Charge / GlaiveBeamHoldout.MaxCharge));
+                            Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
 
                             //Get the offsets and shift the draw position based on them
                             float textureMidpoint = texture.Height / (2 * textureFrames);
@@ -111,7 +111,17 @@ namespace tsorcRevamp
 
                             //Shift everything if the player is facing the other way
                             if (drawInfo.drawPlayer.direction == -1) {
-                                origin.X = texture.Width + originOffset.X;
+                            }
+
+                            float rotation = drawInfo.drawPlayer.itemRotation;
+
+                            if (drawInfo.drawPlayer.direction == -1)
+                            {                             
+                                rotation += MathHelper.Pi;
+
+                                //Don't ask me why this is necessary, or why these exact values work. I don't know. I don't think i'll ever know.
+                                origin.X -= 1f;
+                                origin.Y -= 8f;
                             }
 
                             ///Draw, partner.
@@ -121,9 +131,9 @@ namespace tsorcRevamp
                             drawInfo.DrawDataCache.Add(new DrawData(
                                 texture, // The texture to render.
                                 drawPos, // Position to render at.
-                                null, // Source rectangle.
+                                sourceRectangle, // Source rectangle.
                                 Color.White, // Color.
-                                0f, // Rotation.
+                                rotation, // Rotation.
                                 origin, // Origin. Uses the texture's center.
                                 drawInfo.drawPlayer.HeldItem.scale, // Scale.
                                 SpriteEffects.None, // SpriteEffects.
@@ -190,8 +200,8 @@ namespace tsorcRevamp
                         Vector2 drawPos = drawInfo.ItemLocation - Main.screenPosition;
                         Vector2 holdOffset = new Vector2(texture.Width / 2, textureMidpoint);
                         Vector2 originOffset = new Vector2(0, textureMidpoint);
-                        //TODO this is probably needed...
-                        //ItemLoader.HoldoutOffset(drawPlayer.gravDir, drawPlayer.HeldItem.type, ref originOffset);
+
+                        ItemLoader.HoldoutOffset(modPlayer.Player.gravDir, modPlayer.Player.HeldItem.type, ref originOffset);
 
                         holdOffset.Y = originOffset.Y;
                         drawPos += holdOffset;
@@ -199,6 +209,13 @@ namespace tsorcRevamp
 
                         //Set the origin based on the offset point
                         Vector2 origin = new Vector2(-originOffset.X, textureMidpoint);
+
+                        float rotation = drawInfo.drawPlayer.itemRotation;
+
+                        if (drawInfo.drawPlayer.direction == -1)
+                        {
+                            rotation += MathHelper.Pi;
+                        }
 
                         //Sword+stab support
                         if (modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Swing || modPlayer.Player.HeldItem.useStyle == ItemUseStyleID.Thrust) {
@@ -209,16 +226,19 @@ namespace tsorcRevamp
                             if (drawInfo.drawPlayer.gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix) {
                                 origin.Y = 0;
                             }
+
+                            //No clue why this it only needs to be rotated a quarter of a turn when facing left. It does, though.
+                            if(drawInfo.drawPlayer.direction == -1)
+                            {
+                                rotation += MathHelper.PiOver2;
+                            }
                         }
 
 
-                        // Shift everything if the player is facing the other way
-                        if (drawInfo.drawPlayer.direction == -1) {
-                            origin.X = texture.Width + originOffset.X;
-                        }
 
                         Dust d = Dust.NewDustPerfect(drawPos * 16, DustID.MagicMirror);
                         Dust.NewDustPerfect((drawPos + origin) * 16, DustID.MagicMirror);
+
 
                         //DrawData data = new DrawData(texture, drawPos, sourceRectangle, Color.White, drawPlayer.itemRotation, origin, modPlayer.Player.HeldItem.scale, drawInfo.spriteEffects, 3);
                         //Main.playerDrawData.Add(data);
@@ -228,7 +248,7 @@ namespace tsorcRevamp
                             drawPos, // Position to render at.
                             null, // Source rectangle.
                             Color.White, // Color.
-                            drawInfo.drawPlayer.itemRotation, // Rotation.
+                            rotation, // Rotation.
                             origin, // Origin. Uses the texture's center.
                             drawInfo.drawPlayer.HeldItem.scale, // Scale.
                             SpriteEffects.None, // SpriteEffects.
