@@ -301,8 +301,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             //fire melee
-            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == Mod.Find<ModItem>("AncientFireSword").Type || item.type == Mod.Find<ModItem>("AncientFireAxe").Type || item.type == Mod.Find<ModItem>("FieryFalchion").Type || item.type == Mod.Find<ModItem>("FieryGreatWarhammer").Type || item.type == Mod.Find<ModItem>("FieryMace").Type || item.type == Mod.Find<ModItem>("FieryNinjato").Type || item.type == Mod.Find<ModItem>("FieryNodachi").Type
-                 || item.type == Mod.Find<ModItem>("FieryPoleWarAxe").Type || item.type == Mod.Find<ModItem>("FierySickle").Type || item.type == Mod.Find<ModItem>("FieryWarAxe").Type || item.type == Mod.Find<ModItem>("FieryZweihander").Type || item.type == Mod.Find<ModItem>("ForgottenRisingSun").Type || item.type == Mod.Find<ModItem>("MagmaTooth").Type
+            if (player.HasBuff(BuffID.WeaponImbueFire) || item.type == Mod.Find<ModItem>("AncientFireSword").Type || item.type == Mod.Find<ModItem>("AncientFireAxe").Type 
+                 || item.type == Mod.Find<ModItem>("ForgottenRisingSun").Type || item.type == Mod.Find<ModItem>("MagmaTooth").Type
                  || item.type == ItemID.FieryGreatsword || item.type == ItemID.MoltenHamaxe || item.type == ItemID.MoltenPickaxe || item.type == Mod.Find<ModItem>("SunBlade").Type)
             {
                 CombatText.NewText(new Rectangle((int)NPC.Center.X, (int)NPC.Bottom.Y, 10, 10), Color.Crimson, "Weakness!", false, false);
