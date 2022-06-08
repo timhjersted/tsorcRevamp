@@ -57,6 +57,15 @@ namespace tsorcRevamp
             On.Terraria.Main.DrawNPCs += DrawNPCsPatch;
 
             On.Terraria.GameContent.ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
+
+            On.Terraria.GameContent.UI.States.UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
+        }
+
+        private static void UIWorldSelect_NewWorldClick(On.Terraria.GameContent.UI.States.UIWorldSelect.orig_NewWorldClick orig, Terraria.GameContent.UI.States.UIWorldSelect self, UIMouseEvent evt, UIElement listeningElement)
+        {
+            SoundEngine.PlaySound(SoundID.MenuOpen);
+
+            Main.MenuUI.SetState(new CustomMapUIState());
         }
 
         static Type ShopHelper = null;
@@ -903,107 +912,6 @@ namespace tsorcRevamp
             if (Main.mouseLeftRelease)
             {
                 thisMod.UICooldown = false;
-            }
-
-
-            if (Main.menuMode == 16)
-            {
-
-                string downloadText = "Copy new Story of Red Cloud Adventure Map to Worlds Folder";
-
-                if (thisMod.worldButtonClicked)
-                {
-                    downloadText = "Map copied! Hit back and select it to begin!";
-                }
-
-                Color downloadTextColor = Main.DiscoColor;
-                string dataDir = Main.SavePath + "\\Mod Configs\\tsorcRevampData";
-
-                string baseMapFileName = "\\tsorcBaseMap.wld";
-                string userMapFileName = "\\TheStoryofRedCloud.wld";
-                string worldsFolder = Main.SavePath + "\\Worlds";
-
-                Vector2 downloadTextOrigin = FontAssets.MouseText.Value.MeasureString(downloadText);
-                float textScale = 2;
-                Vector2 downloadTextPosition = new Vector2((Main.screenWidth / 2) - (downloadTextOrigin.X * 0.5f * textScale), 120 + (80 * 6));
-
-
-                if (Main.mouseX > downloadTextPosition.X && Main.mouseX < downloadTextPosition.X + (downloadTextOrigin.X * textScale))
-                {
-                    if (Main.mouseY > downloadTextPosition.Y && Main.mouseY < downloadTextPosition.Y + (downloadTextOrigin.Y * textScale))
-                    {
-
-                        downloadTextColor = Color.Yellow;
-
-                        if (Main.mouseLeft && !thisMod.UICooldown)
-                        {
-                            thisMod.worldButtonClicked = true;
-                            thisMod.UICooldown = true;
-                            if (File.Exists(dataDir + baseMapFileName))
-                            {
-                                if (!File.Exists(worldsFolder + userMapFileName))
-                                {
-
-                                    FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
-                                    mod.Logger.Info("Attempting to copy world.");
-                                    try
-                                    {
-                                        fileToCopy.CopyTo(worldsFolder + userMapFileName, false);
-                                    }
-                                    catch (System.Security.SecurityException e)
-                                    {
-                                        mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        mod.Logger.Warn("World copy failed ({0}).", e);
-                                    }
-                                }
-                                else
-                                {
-                                    mod.Logger.Info("World already exists. Making renamed copy.");
-                                    FileInfo fileToCopy = new FileInfo(dataDir + baseMapFileName);
-                                    try
-                                    {
-                                        string newFileName;
-                                        bool validName = false;
-                                        int worldCount = 1;
-                                        do
-                                        {
-                                            newFileName = "\\TheStoryOfRedCloud_" + worldCount.ToString() + ".wld";
-                                            if (File.Exists(worldsFolder + newFileName))
-                                            {
-                                                worldCount++;
-                                                if (worldCount > 255)
-                                                {
-                                                    mod.Logger.Warn("World copy failed, too many copies.");
-                                                }
-                                            }
-                                            else
-                                            {
-                                                validName = true;
-                                            }
-                                        } while (!validName);
-
-                                        fileToCopy.CopyTo(worldsFolder + newFileName, false);
-                                    }
-                                    catch (System.Security.SecurityException e)
-                                    {
-                                        mod.Logger.Warn("World copy failed ({0}). Try again with administrator privileges?", e);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        mod.Logger.Warn("World copy failed ({0}).", e);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                Main.spriteBatch.Begin();
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, downloadText, new Vector2(downloadTextPosition.X + 2, downloadTextPosition.Y + 2), Color.Black, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
-                DynamicSpriteFontExtensionMethods.DrawString(Main.spriteBatch, FontAssets.MouseText.Value, downloadText, downloadTextPosition, downloadTextColor, 0, Vector2.Zero, textScale, SpriteEffects.None, 0);
-                Main.spriteBatch.End();
             }
 
             else if (Main.menuMode == 0)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
@@ -50,6 +51,8 @@ namespace tsorcRevamp
         internal UserInterface _estusFlaskUIState; //"but reader! i dont care!" says zeo
         internal PotionBagUIState PotionUIState;
         internal UserInterface PotionBagUserInterface;
+        internal CustomMapUIState DownloadUIState;
+        internal UserInterface DownloadUI;
 
         public static FieldInfo AudioLockInfo;
         public static FieldInfo ActiveSoundInstancesInfo;
@@ -97,6 +100,12 @@ namespace tsorcRevamp
             PotionUIState = new PotionBagUIState();
             PotionBagUserInterface = new UserInterface();
             if (!Main.dedServ) PotionBagUserInterface.SetState(PotionUIState);
+
+            
+            DownloadUIState = new CustomMapUIState();
+            DownloadUI = new UserInterface();
+            if (!Main.dedServ) DownloadUI.SetState(DownloadUIState);
+            
 
             ApplyMethodSwaps();
             ApplyILs();
@@ -1341,7 +1350,7 @@ namespace tsorcRevamp
             try
             {
                 using (WebClient client = new WebClient())
-                {
+                { 
                     client.DownloadFile(new Uri(VariousConstants.CHANGELOG_URL), changelogPath);
                 }
             }
