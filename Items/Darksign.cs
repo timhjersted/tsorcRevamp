@@ -17,6 +17,7 @@ namespace tsorcRevamp.Items
                                "\nYou deal +20% damage, receive +20% more souls and your stamina recovers much faster" +
                                "\nHowever, using weapons drains stamina, life regen is halved while stamina isn't at max," +
                                "\nand each time you die you lose 20 of your max HP (doesn't drop lower than 200)" +
+                               "\nYou can still teleport to bonfires, but must stand near one yourself to do so" +
                                "\nShine potions have no effect, you'll have to make use of other sources of light" +
                                "\nGreater Magic Mirror use is inhibited; the Village Mirror will only" +
                                "\ntake you to the village. Additionally, instant-heal items won't heal you" +
@@ -39,7 +40,7 @@ namespace tsorcRevamp.Items
             Item.maxStack = 1;
             Item.value = 1;
             Item.consumable = false;
-            Item.useAnimation = 61; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
+            Item.useAnimation = 60; // Needs to be 1 tick more than use time for it to work properly. Not sure why.
             Item.useTime = 60;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.noUseGraphic = true;
@@ -68,25 +69,7 @@ namespace tsorcRevamp.Items
 
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            //Main.NewText("What has been done cannot be undone", 200, 60, 40);
-            if (player.whoAmI == Main.LocalPlayer.whoAmI)
-            {
-                if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
-                    Main.NewText("You have become the Bearer of the Curse", 200, 60, 40);
-
-                }
-                else
-                {
-                    player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = false;
-                    Main.NewText("The curse has been lifted", 200, 60, 40);
-
-                }
-            }
-            //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
-            //Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);
-            //Main.NewText("Stamina: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
+            
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)
@@ -106,15 +89,11 @@ namespace tsorcRevamp.Items
                 dust.velocity.X = Main.rand.NextFloat(-1, 1);
             }
 
-            // This sets up the itemTime correctly.
-            if (player.itemTime == 0)
-            {
-                player.itemTime = (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item));
-            }
 
-            else if (player.itemTime == (int)(Item.useTime / PlayerLoader.UseTimeMultiplier(player, Item)) / 2)
+
+
+            if (player.itemTime == 1)
             {
-                // This code runs once halfway through the useTime of the item. 
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 1f, PitchVariance = 0.3f }, player.Center); // Plays sound.
                 if (Main.player[Main.myPlayer].whoAmI == player.whoAmI)
                 {
@@ -142,6 +121,26 @@ namespace tsorcRevamp.Items
                     dust.velocity.Y = Main.rand.NextFloat(-4, -0f);
                     dust.velocity.X = Main.rand.NextFloat(5, 1.5f);
                 }
+
+                //Main.NewText("What has been done cannot be undone", 200, 60, 40);
+                if (player.whoAmI == Main.LocalPlayer.whoAmI)
+                {
+                    if (!player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                    {
+                        player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = true;
+                        Main.NewText("You have become the Bearer of the Curse", 200, 60, 40);
+
+                    }
+                    else
+                    {
+                        player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse = false;
+                        Main.NewText("The curse has been lifted", 200, 60, 40);
+
+                    }
+                }
+                //Main.NewText("Stamina regen rate: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate);
+                //Main.NewText("Stamina regen gain mult: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult);
+                //Main.NewText("Stamina: " + player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent);
             }
         }
 

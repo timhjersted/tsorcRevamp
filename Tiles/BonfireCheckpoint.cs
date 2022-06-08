@@ -445,6 +445,7 @@ namespace tsorcRevamp.Tiles
                 if (tsorcRevampWorld.LitBonfireList == null)
                 {
                     tsorcRevampWorld.LitBonfireList = new List<Vector2>();
+                    UsefulFunctions.BroadcastText("Open your minimap to instantly teleport to any other lit bonfires in the world", Color.Orange);
                 }
 
                 tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));

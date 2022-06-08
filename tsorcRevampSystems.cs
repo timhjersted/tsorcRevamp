@@ -17,7 +17,10 @@ namespace tsorcRevamp
         public static RecipeGroup UpgradedMirrors;
         public override void PostDrawFullscreenMap(ref string mouseText)
         {
-            DrawMinimapBonfires();
+            if (!Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse || Main.LocalPlayer.HasBuff(ModContent.BuffType<Buffs.Bonfire>()))
+            {
+                DrawMinimapBonfires();
+            }
         }
 
         public void DrawMinimapBonfires()
