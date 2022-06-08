@@ -123,6 +123,10 @@ namespace tsorcRevamp.UI
             {
                 valid = true;
             }
+            if (item.type == Terraria.ID.ItemID.Honeyfin)
+            {
+                valid = true;
+            }
 
             //Excluding these specifically because for now they need to be used by hand. Auto-moving them to the bag would be obnoxious.
             if (item.type == ModContent.ItemType<Items.Potions.Lifegem>())

@@ -127,6 +127,11 @@ namespace tsorcRevamp.Items
             return true;
         }
 
+        /*
+        public override void UpdateVanity(Item item, Player player)
+        {
+            base.UpdateVanity(item, player);
+        }*/
 
         public override bool GrabStyle(Item item, Player player)
         {

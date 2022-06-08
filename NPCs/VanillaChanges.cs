@@ -3396,6 +3396,11 @@ namespace tsorcRevamp.NPCs
         {
             #region Loot Changes
 
+            if(npc.target > Main.maxPlayers || Main.player[npc.target] == null || Main.player[npc.target].active == false)
+            {
+                npc.target = 0;
+            }
+
             Player player = Main.player[npc.target];
 
             if (npc.type == NPCID.BigStinger)

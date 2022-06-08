@@ -13,11 +13,12 @@ namespace tsorcRevamp
     {
         internal static void ApplyILs()
         {
-            /*
+            
             IL.Terraria.Player.Update += Player_Update;
             IL.Terraria.Player.Update += Chest_Patch;
             IL.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
 
+            /*
             if (ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
             {
                 IL.Terraria.Main.DoDraw += Gravity_Screenflip_Patch;
@@ -37,10 +38,10 @@ namespace tsorcRevamp
 
                 //Screw it, i'll make my own hook
                 HookEndpointManager.Modify(typeof(Main).GetProperty("MouseWorld").GetGetMethod(), new ILContext.Manipulator(Gravity_Generic_Patch));
-            }
+            }*/
 
             //IL.Terraria.Main.DrawPlayer_DrawAllLayers += Rotate_Patch;
-            */
+            
         }
 
 

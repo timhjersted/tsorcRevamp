@@ -198,7 +198,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (spearTexture == null)
             {
                 spearTexture = (Texture2D)Mod.Assets.Request<Texture2D>("Projectiles/Enemy/EarthTrident");
-                //spearTexture = (Texture2D)ModContent.Request<Texture2D>("Terraria/Projectile_508");
+                //spearTexture = (Texture2D)ModContent.Request<Texture2D>("Terraria/Images/Projectile_508");
             }
 
             //TELEGRAPH DUSTS
