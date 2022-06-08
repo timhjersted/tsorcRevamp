@@ -103,6 +103,26 @@ namespace tsorcRevamp.UI
             {
                 valid = true;
             }
+            if (item.type == ModContent.ItemType<Items.Potions.MushroomSkewer>())
+            {
+                valid = true;
+            }
+            if (item.type == ModContent.ItemType<Items.Potions.ChickenGlowingMushroomSkewer>())
+            {
+                valid = true;
+            }
+            if (item.type == ModContent.ItemType<Items.Potions.ChickenMushroomSkewer>())
+            {
+                valid = true;
+            }
+            if (item.type == ModContent.ItemType<Items.Potions.GlowingMushroomSkewer>())
+            {
+                valid = true;
+            }
+            if (item.type == ModContent.ItemType<Items.Potions.CookedChicken>())
+            {
+                valid = true;
+            }
 
             //Excluding these specifically because for now they need to be used by hand. Auto-moving them to the bag would be obnoxious.
             if (item.type == ModContent.ItemType<Items.Potions.Lifegem>())
