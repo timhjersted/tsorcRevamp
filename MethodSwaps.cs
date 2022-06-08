@@ -59,6 +59,87 @@ namespace tsorcRevamp
             On.Terraria.GameContent.ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
 
             On.Terraria.GameContent.UI.States.UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
+
+            On.Terraria.Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
+        }
+
+        private static void Player_HandleBeingInChestRange(On.Terraria.Player.orig_HandleBeingInChestRange orig, Player self) {
+            if (self.chest != -1) {
+                if (self.chest != -2) {
+                    self.piggyBankProjTracker.Clear();
+                }
+                if (self.chest != -5) {
+                    self.voidLensChest.Clear();
+                }
+                bool flag = false;
+                int projectileLocalIndex = self.piggyBankProjTracker.ProjectileLocalIndex;
+                if (projectileLocalIndex >= 0) {
+                    flag = true;
+                    if (!Main.projectile[projectileLocalIndex].active || (Main.projectile[projectileLocalIndex].type != 525 && Main.projectile[projectileLocalIndex].type != 960)) {
+                        Main.PlayInteractiveProjectileOpenCloseSound(Main.projectile[projectileLocalIndex].type, false);
+                        self.chest = -1;
+                        Recipe.FindRecipes(false);
+                    }
+                    else {
+                        int num = (int)(((double)self.position.X + (double)self.width * 0.5) / 16.0);
+                        int num2 = (int)(((double)self.position.Y + (double)self.height * 0.5) / 16.0);
+                        Vector2 vector = Main.projectile[projectileLocalIndex].Hitbox.ClosestPointInRect(self.Center);
+                        self.chestX = (int)vector.X / 16;
+                        self.chestY = (int)vector.Y / 16;
+                        if (num < self.chestX - Player.tileRangeX || num > self.chestX + Player.tileRangeX + 1 || num2 < self.chestY - Player.tileRangeY || num2 > self.chestY + Player.tileRangeY + 1) {
+                            if (self.chest != -1) {
+                                Main.PlayInteractiveProjectileOpenCloseSound(Main.projectile[projectileLocalIndex].type, false);
+                            }
+                            self.chest = -1;
+                            Recipe.FindRecipes(false);
+                        }
+                    }
+                }
+                int projectileLocalIndex2 = self.voidLensChest.ProjectileLocalIndex;
+                if (projectileLocalIndex2 >= 0) {
+                    flag = true;
+                    if (!Main.projectile[projectileLocalIndex2].active || Main.projectile[projectileLocalIndex2].type != 734) {
+                        SoundEngine.PlaySound(SoundID.Item130, null);
+                        self.chest = -1;
+                        Recipe.FindRecipes(false);
+                    }
+                    else {
+                        int num3 = (int)(((double)self.position.X + (double)self.width * 0.5) / 16.0);
+                        int num4 = (int)(((double)self.position.Y + (double)self.height * 0.5) / 16.0);
+                        Vector2 vector2 = Main.projectile[projectileLocalIndex2].Hitbox.ClosestPointInRect(self.Center);
+                        self.chestX = (int)vector2.X / 16;
+                        self.chestY = (int)vector2.Y / 16;
+                        if (num3 < self.chestX - Player.tileRangeX || num3 > self.chestX + Player.tileRangeX + 1 || num4 < self.chestY - Player.tileRangeY || num4 > self.chestY + Player.tileRangeY + 1) {
+                            if (self.chest != -1) {
+                                SoundEngine.PlaySound(SoundID.Item130, null);
+                            }
+                            self.chest = -1;
+                            Recipe.FindRecipes(false);
+                        }
+                    }
+                }
+                if (flag) {
+                    return;
+                }
+                if (!self.IsInInteractionRangeToMultiTileHitbox(self.chestX, self.chestY)) {
+                    if (self.chest != -1) {
+                        //SoundEngine.PlaySound(11, -1, -1, 1, 1f, 0f);
+                    }
+                    self.chest = -1;
+                    Recipe.FindRecipes(false);
+                    return;
+                }
+                if (!Main.tile[self.chestX, self.chestY].HasTile) {
+                    //SoundEngine.PlaySound(11, -1, -1, 1, 1f, 0f);
+                    self.chest = -1;
+                    Recipe.FindRecipes(false);
+                    return;
+                }
+            }
+            else {
+                self.piggyBankProjTracker.Clear();
+                self.voidLensChest.Clear();
+            }
         }
 
         private static void UIWorldSelect_NewWorldClick(On.Terraria.GameContent.UI.States.UIWorldSelect.orig_NewWorldClick orig, Terraria.GameContent.UI.States.UIWorldSelect self, UIMouseEvent evt, UIElement listeningElement)
