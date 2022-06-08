@@ -7,6 +7,8 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -1121,7 +1123,12 @@ namespace tsorcRevamp
 
             //Download the changelog. *Not* async, because the next function requires it (and it's extremely small).
             //Could rewrite this to work async later if impact on load time isn't neglicable. Something something premature optimization.
+
+            //changed it to async
             ChangelogDownload();
+            //if we can't use synchronous, just async and manually sleep
+            //i dont care. get over it.
+            Thread.Sleep(500);
 
             //If it exists, read from it. If not, put a warning in the log that it failed to download.
             if (File.Exists(changelogPath))
@@ -1347,21 +1354,22 @@ namespace tsorcRevamp
             {
                 File.Delete(changelogPath);
             }
-            try
-            {
-                using (WebClient client = new WebClient())
-                { 
-                    client.DownloadFile(new Uri(VariousConstants.CHANGELOG_URL), changelogPath);
-                }
-            }
-            catch (WebException e)
-            {
-                Logger.Warn("Automatic changelog download failed ({0}). Connection to the internet failed or the file's location has changed.", e);
-            }
+            //discard
+            //i do not care about "best practice", i want it to work
+            _ = GetChangelogAsync(changelogPath);
+        }
 
-            catch (Exception e)
-            {
-                Logger.Warn("Automatic changelog download failed ({0}).", e);
+        public static async Task GetChangelogAsync(string dir) {
+            try {
+                using HttpClient client = new();
+                using var netstream = await client.GetStreamAsync(new Uri(VariousConstants.CHANGELOG_URL));
+                using var fs = new FileStream(dir, FileMode.CreateNew);
+                await netstream.CopyToAsync(fs);
+            }
+            catch (Exception e) {
+                //at least it isnt log and throw
+                log4net.ILog thisLogger = ModLoader.GetMod("tsorcRevamp").Logger;
+                thisLogger.InfoFormat("GetChangelogAsync threw error {0}", e);
             }
         }
 
