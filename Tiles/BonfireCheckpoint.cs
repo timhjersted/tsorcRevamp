@@ -446,10 +446,7 @@ namespace tsorcRevamp.Tiles
                 {
                     tsorcRevampWorld.LitBonfireList = new List<Vector2>();
                 }
-                if (tsorcRevampWorld.LitBonfireList.Count == 1)
-                {
-                    UsefulFunctions.BroadcastText("Open your minimap near a bonfire to instantly teleport to any other lit ones in the world!", Color.Red);
-                }
+
                 tsorcRevampWorld.LitBonfireList.Add(new Vector2(i, j));
 
                 int x = i - Main.tile[i, j].TileFrameX / 18 % 3; // 16 pixels in a block + 2 pixels for the buffer. 3 because its 3 blocks wide
