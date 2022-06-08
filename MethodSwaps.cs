@@ -914,7 +914,7 @@ namespace tsorcRevamp
                 thisMod.UICooldown = false;
             }
 
-            else if (Main.menuMode == 0)
+            if (Main.menuMode == 0)
             {
                 string musicModDir = Main.SavePath + "\\Mods\\tsorcMusic.tmod";
                 //This goes here so that it runs *after* the first reload has finished and the game has transitioned back to the main menu.
@@ -949,12 +949,16 @@ namespace tsorcRevamp
 
                     float musicTextScale = 2;
                     Vector2 musicTextOrigin = FontAssets.MouseText.Value.MeasureString(musicText);
-                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2) - musicTextOrigin.X * 0.5f * musicTextScale, 70 + (80 * 6));
+                    Vector2 musicTextPosition = new Vector2((Main.screenWidth / 2f), 590f);
+                    Vector2 unscaledMusicTextPosition = musicTextPosition;
+                    musicTextPosition *= Main.UIScale;
+
+                    musicTextPosition.X -= musicTextOrigin.X;
                     Color musicTextColor = Main.DiscoColor;
 
-                    if ((Main.mouseX > musicTextPosition.X && Main.mouseX < musicTextPosition.X + (musicTextOrigin.X * musicTextScale)) && !tsorcRevamp.DownloadingMusic)
+                    if ((Main.mouseX > unscaledMusicTextPosition.X - musicTextOrigin.X && Main.mouseX < unscaledMusicTextPosition.X + (musicTextOrigin.X * musicTextScale * 0.5f)) && !tsorcRevamp.DownloadingMusic)
                     {
-                        if (Main.mouseY > musicTextPosition.Y && Main.mouseY < musicTextPosition.Y + (musicTextOrigin.Y * musicTextScale))
+                        if (Main.mouseY > unscaledMusicTextPosition.Y && Main.mouseY < unscaledMusicTextPosition.Y + (musicTextOrigin.Y * musicTextScale))
                         {
                             musicTextColor = Color.Yellow;
 

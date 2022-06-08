@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,6 +29,15 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.buffImmune[BuffID.Confused] = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.AbandonedStumpBanner>();
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+				// Sets the spawning conditions of this NPC that is listed in the bestiary.
+				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+				new FlavorTextBestiaryInfoElement("Stumped on what to write for this tbh")
+            });
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
