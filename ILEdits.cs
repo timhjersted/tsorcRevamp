@@ -15,7 +15,7 @@ namespace tsorcRevamp
         {
             
             IL.Terraria.Player.Update += Player_Update;
-            IL.Terraria.Player.Update += Chest_Patch;
+            //IL.Terraria.Player.Update += Chest_Patch;
             IL.Terraria.Recipe.FindRecipes += SoulSlotRecipesPatch;
 
             /*
