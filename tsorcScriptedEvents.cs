@@ -638,7 +638,7 @@ namespace tsorcRevamp
 
         public static bool StormCustomAction(Player player, ScriptedEvent thisEvent)
         {
-            typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+            //typeof(Main).GetMethod("StartRain", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
             return true;
         }
 

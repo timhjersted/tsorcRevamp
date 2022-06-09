@@ -75,6 +75,8 @@ namespace tsorcRevamp
 
         internal static bool[] CustomDungeonWalls;
 
+        public static bool ActuationBypassActive = false;
+
         public override void Load()
         {
             toggleDragoonBoots = KeybindLoader.RegisterKeybind(this, "Dragoon Boots", Microsoft.Xna.Framework.Input.Keys.Z);
@@ -1527,7 +1529,11 @@ namespace tsorcRevamp
 
         public override bool CanKillTile(int x, int y, int type, ref bool blockDamaged)
         {
-
+            if (tsorcRevamp.ActuationBypassActive)
+            {
+                return true;
+            }
+            
             if (Main.tile[x, y - 1].TileType == ModContent.TileType<Tiles.BonfireCheckpoint>())
             {
                 return false;
@@ -1636,6 +1642,7 @@ namespace tsorcRevamp
 
 
             else return base.CanExplode(x, y, type);
+            
 
         }
 

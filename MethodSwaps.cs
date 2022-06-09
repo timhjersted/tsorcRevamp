@@ -61,6 +61,15 @@ namespace tsorcRevamp
             On.Terraria.GameContent.UI.States.UIWorldSelect.NewWorldClick += UIWorldSelect_NewWorldClick;
 
             On.Terraria.Player.HandleBeingInChestRange += Player_HandleBeingInChestRange;
+
+            On.Terraria.Wiring.DeActive += Wiring_DeActive;
+        }
+
+        private static void Wiring_DeActive(On.Terraria.Wiring.orig_DeActive orig, int i, int j)
+        {
+            tsorcRevamp.ActuationBypassActive = true;
+            orig(i, j);
+            tsorcRevamp.ActuationBypassActive = false;
         }
 
         private static void Player_HandleBeingInChestRange(On.Terraria.Player.orig_HandleBeingInChestRange orig, Player self) {

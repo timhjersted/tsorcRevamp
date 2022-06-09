@@ -57,6 +57,10 @@ namespace tsorcRevamp.Items
         public override void SetDefaults(Item item)
         {
             base.SetDefaults(item);
+            if (item.accessory)
+            {
+                item.vanity = true;
+            }
             if (potionList == null)
             {
                 populatePotions();

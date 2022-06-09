@@ -649,6 +649,7 @@ namespace tsorcRevamp.NPCs
                         npc.damage = 100;
                         npc.buffImmune[BuffID.OnFire] = true;
                         npc.buffImmune[BuffID.CursedInferno] = true;
+                        PrimeLaserCooldown = 99999999;
                         break;
                     }
 
@@ -2960,6 +2961,7 @@ namespace tsorcRevamp.NPCs
         public static List<Projectile> verticalLasers;
         public static List<Vector2> intersections; //This stores a list of all the intersections between the previous sets of lasers, which is used to determine where to draw the dust telegrpahing when they will activate
 
+        static int PrimeLaserCooldown = 9999999;
         public override void PostAI(NPC npc)
         {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye)
@@ -2981,26 +2983,52 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.SkeletronPrime)
             {
-                int cooldown = 500;
-                if (!NPC.AnyNPCs(NPCID.PrimeLaser))
+                PrimeLaserCooldown--;
+                if(npc.ai[1] == 1)
                 {
-                    cooldown -= 180; //320
-                }
-                if (!NPC.AnyNPCs(NPCID.PrimeCannon))
-                {
-                    cooldown -= 80; //240
-                }
-                if (!NPC.AnyNPCs(NPCID.PrimeVice))
-                {
-                    cooldown -= 60; //180
-                }
-                if (!NPC.AnyNPCs(NPCID.PrimeSaw))
-                {
-                    cooldown -= 60; //120
-                }
+                    float partCount = 0;
+                    if (NPC.AnyNPCs(NPCID.PrimeLaser))
+                    {
+                        partCount++;
+                    }
+                    if (NPC.AnyNPCs(NPCID.PrimeCannon))
+                    {
+                        partCount++;
+                    }
+                    if (NPC.AnyNPCs(NPCID.PrimeVice))
+                    {
+                        partCount++;
+                    }
+                    if (NPC.AnyNPCs(NPCID.PrimeSaw))
+                    {
+                        partCount++;
+                    }
 
-                if (Main.GameUpdateCount % cooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                    //Bosses speed is cut to 40% of base, but ramps up to almost full speed as its pieces die
+                    float speedMultiplier = 0.8f - (0.4f * partCount / 4);
+                    npc.velocity *= speedMultiplier;
+                }               
+
+                //Laser attack speed ramps up as pieces die
+                //TODO: Add orbiting probes that spawn around head when pieces die, which actually shoot the laser. Looks awkward just coming out of its head randomly.
+                if (PrimeLaserCooldown == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    if (!NPC.AnyNPCs(NPCID.PrimeLaser))
+                    {
+                        PrimeLaserCooldown = 450; //450
+                    }
+                    if (!NPC.AnyNPCs(NPCID.PrimeCannon))
+                    {
+                        PrimeLaserCooldown -= 100; //350
+                    }
+                    if (!NPC.AnyNPCs(NPCID.PrimeVice))
+                    {
+                        PrimeLaserCooldown -= 100; //250
+                    }
+                    if (!NPC.AnyNPCs(NPCID.PrimeSaw))
+                    {
+                        PrimeLaserCooldown -= 100; //150
+                    }
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, npc.target, npc.whoAmI);
                 }
@@ -3395,6 +3423,12 @@ namespace tsorcRevamp.NPCs
         public override void OnKill(NPC npc)
         {
             #region Loot Changes
+
+            if(npc.type == NPCID.PrimeLaser)
+            {
+                UsefulFunctions.BroadcastText("WARNING: Laser power redirected......", Color.Red);
+                PrimeLaserCooldown = 500;
+            }
 
             if(npc.target > Main.maxPlayers || Main.player[npc.target] == null || Main.player[npc.target].active == false)
             {
