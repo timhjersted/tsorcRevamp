@@ -51,7 +51,7 @@ namespace tsorcRevamp.Items.Accessories
             ascentWhenFalling = 0.85f;
             ascentWhenRising = 0.15f;
             maxCanAscendMultiplier = 1f;
-            maxAscentMultiplier = 1.25f;
+            maxAscentMultiplier = 2f;
             constantAscend = 0.135f;
 
         }

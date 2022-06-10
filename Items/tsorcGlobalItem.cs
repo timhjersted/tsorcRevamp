@@ -59,7 +59,7 @@ namespace tsorcRevamp.Items
             base.SetDefaults(item);
             if (item.accessory)
             {
-                item.vanity = true;
+                item.canBePlacedInVanityRegardlessOfConditions = true;
             }
             if (potionList == null)
             {

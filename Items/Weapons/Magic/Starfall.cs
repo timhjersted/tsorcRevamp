@@ -42,7 +42,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddIngredient(ItemID.FallenStar, 100);
             recipe.AddIngredient(Mod.Find<ModItem>("BlueTitanite").Type, 10);
             recipe.AddIngredient(Mod.Find<ModItem>("GuardianSoul").Type, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 190000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 90000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
