@@ -33,7 +33,7 @@ namespace tsorcRevamp.UI
             area.Width.Set(160, 0f); // We will be placing the following 2 UIElements within this 182x60 area.
             area.Height.Set(40, 0f);
 
-            counterFrame = new UIImage((Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/DarkSoulCounterFrame"));
+            counterFrame = new UIImage((Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/UI/DarkSoulCounterFrame", ReLogic.Content.AssetRequestMode.ImmediateLoad));
             counterFrame.Left.Set(0, 0f);
             counterFrame.Top.Set(0, 0f);
             counterFrame.Width.Set(0, 0f);
