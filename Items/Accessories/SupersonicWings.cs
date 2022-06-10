@@ -59,6 +59,7 @@ namespace tsorcRevamp.Items.Accessories
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
             speed = 6f;
+            acceleration = 0.15f;
         }
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
