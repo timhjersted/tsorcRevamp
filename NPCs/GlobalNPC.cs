@@ -121,12 +121,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.05f);
 
             }
-            //shadow temple
-            if (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonUnsafe && Main.hardMode)
-            {
-                pool.Add(NPCID.Necromancer, 0.05f);
-                pool.Add(NPCID.NecromancerArmored, 0.1f);
-            }
+
             //machine temple (in water)
             if (spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
@@ -135,7 +130,7 @@ namespace tsorcRevamp.NPCs
             //machine temple (not in water)
             if (!spawnInfo.Water && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.GreenDungeonSlabUnsafe && Main.hardMode)
             {
-                pool.Add(NPCID.NecromancerArmored, 0.1f);
+                pool.Add(NPCID.DiabolistWhite, 0.02f);
             }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
@@ -196,8 +191,14 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.StardustSoldier, 1f);
             }
 
+            Player thisPlayer = spawnInfo.Player;
+            bool invasion = Main.invasionType != 0;
+            if(thisPlayer.Center.X > 82016 || thisPlayer.Center.X < 74560 || thisPlayer.Center.Y > 16000)
+            {
+                invasion = false;
+            }
 
-            if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || Main.invasionType != 0)
+            if (spawnInfo.Player.ZoneTowerSolar || spawnInfo.Player.ZoneTowerNebula || spawnInfo.Player.ZoneTowerStardust || spawnInfo.Player.ZoneTowerVortex || spawnInfo.Player.ZoneOldOneArmy || invasion)
             {
                 List<int> blockedNPCs = new List<int>();
 

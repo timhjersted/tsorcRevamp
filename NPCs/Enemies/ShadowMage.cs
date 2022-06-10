@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool underworld = spawnInfo.Player.ZoneUnderworldHeight;
             if (Main.hardMode && spawnInfo.Player.ZoneDungeon || Main.hardMode && underworld)
             {
-                if (Main.rand.Next(15) == 0)
+                if (Main.rand.Next(50) == 0)
                 {
                     return 1;
                 }

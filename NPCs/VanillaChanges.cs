@@ -19,6 +19,9 @@ namespace tsorcRevamp.NPCs
         public override void SetDefaults(NPC npc)
         {
 
+            
+                
+
             //Only mess with it if it's one of our bosses
             if (npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp"))
             {
@@ -1012,8 +1015,27 @@ namespace tsorcRevamp.NPCs
         //BLOCKED NPCS
         public override void AI(NPC npc)
         {
+            
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
+
+                //Block vanilla enemies in certain regions/conditions
+                if (Main.hardMode)
+                {                    
+                    if (npc.type == NPCID.AngryBones //All these pre-hardmode dungeon spawns take up a million spawn slots and die in one hit
+                        || npc.type == NPCID.DarkCaster 
+                        || npc.type == NPCID.AngryBonesBig
+                        || npc.type == NPCID.AngryBonesBigHelmet 
+                        || npc.type == NPCID.AngryBonesBigMuscle
+                        || npc.type == NPCID.BlazingWheel 
+                        || npc.type == NPCID.DesertDjinn //Literally make the lava/spike section near the entrance to the Hunter's dungeon in the underground desert impossible
+                        )
+                    {
+                        npc.active = false;
+                    }
+                }
+                
                 if (npc.type == NPCID.BigRainZombie
                         || npc.type == NPCID.SmallRainZombie
                         || npc.type == NPCID.ZombieRaincoat

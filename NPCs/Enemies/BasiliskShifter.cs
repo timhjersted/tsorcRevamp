@@ -453,13 +453,12 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             if (Main.rand.Next(2) == 0)
             {
-                player.AddBuff(37, 10800, false); //horrified
-                player.AddBuff(20, 600, false); //poisoned
+                player.AddBuff(BuffID.Poisoned, 600, false); //poisoned
 
             }
             if (Main.rand.Next(8) == 0)
             {
-                player.AddBuff(36, 600, false); //broken armor
+                player.AddBuff(BuffID.BrokenArmor, 600, false); //broken armor
                 player.AddBuff(ModContent.BuffType<Buffs.BrokenSpirit>(), 1800, false);
                 player.AddBuff(ModContent.BuffType<Buffs.CurseBuildup>(), 18000, false); //-20 life if counter hits 100
             }

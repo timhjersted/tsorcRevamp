@@ -58,7 +58,8 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(80, 1200, false); //darkness
+            
+            target.AddBuff(BuffID.Blackout, 360, false); //darkness
 
             if (tsorcRevampWorld.Slain.ContainsKey(NPCID.EaterofWorldsHead))
             {

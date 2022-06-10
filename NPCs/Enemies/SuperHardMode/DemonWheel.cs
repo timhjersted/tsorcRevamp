@@ -42,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) return 1;
 
-            if (player.ZoneDungeon && Main.hardMode) return 0.5f;
+            if (player.ZoneDungeon && Main.hardMode) return 0.2f;
 
             if ((player.ZoneCorrupt || player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode) return 1;
 
@@ -52,8 +52,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             return 0;
         }
 
+        int lifespan = 1800;
         public override void AI()
         {
+            lifespan--;
+            if(lifespan == 0)
+            {
+                NPC.active = false;
+
+                for(int i = 0; i < 60; i++)
+                {
+                    Dust.NewDustPerfect(NPC.Center, DustID.ShadowbeamStaff, Main.rand.NextVector2CircularEdge(15, 15), default, default, 1.5f);
+                }
+            }
+
+
+            
 
             float red = 1.0f;
             float green = 0.0f;
