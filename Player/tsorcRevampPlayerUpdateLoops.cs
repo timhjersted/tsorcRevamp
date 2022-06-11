@@ -73,8 +73,6 @@ namespace tsorcRevamp
         public int ConsSoulChanceMult;
         public bool SoulSickle = false;
 
-        public int souldroplooptimer = 0;
-        public int souldroptimer = 0;
         public bool SOADrain = false;
 
         public int supersonicLevel = 0;
@@ -192,8 +190,6 @@ namespace tsorcRevamp
             SoulSiphon = false;
             CrimsonDrain = false;
             Shockwave = false;
-            souldroplooptimer = 0;
-            souldroptimer = 0;
             SOADrain = false;
             MiakodaFull = false;
             MiakodaFullHeal1 = false;
@@ -1026,7 +1022,7 @@ namespace tsorcRevamp
                 {
                     Player.lifeRegen = 0;
                 }
-                Player.lifeRegenTime = 0;
+                Player.lifeRegenTime = 0; 
                 Player.lifeRegen = -7;
                 for (int j = 0; j < 4; j++)
                 {
@@ -1071,64 +1067,23 @@ namespace tsorcRevamp
             {
                 if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath && Main.netMode == NetmodeID.SinglePlayer)
                 {
-                    souldroptimer++;
-                    if (souldroptimer == 5 && souldroplooptimer < 13)
+                    foreach (Item item in Player.inventory)
                     {
-                        foreach (Item item in Player.inventory)
+                        //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
+                        if (item.type == ModContent.ItemType<DarkSoul>())
                         {
-                            //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
-                            if (item.type == ModContent.ItemType<DarkSoul>())
-                            {
-                                if (Main.netMode == NetmodeID.SinglePlayer)
-                                {
-                                    Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, item.type, item.stack);
-                                    item.stack = 0;
-                                }
-                                else
-                                {
-                                    ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                                    soulPacket.Write(tsorcPacketID.DropSouls);
-                                    soulPacket.WriteVector2(Player.Center);
-                                    soulPacket.Write(item.stack);
-                                    soulPacket.Send();
-                                    item.stack = 0;
-                                }
-                                souldroplooptimer++;
-                                souldroptimer = 0;
-                            }
-                        }
-
-                        if (SoulSlot.Item.stack > 0)
-                        {
-                            if (souldroplooptimer == 12)
-                            {
-                                if (Main.netMode == NetmodeID.SinglePlayer)
-                                {
-                                    Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
-                                    SoulSlot.Item.TurnToAir();
-                                }
-                                else
-                                {
-                                    ModPacket soulPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                                    soulPacket.Write(tsorcPacketID.DropSouls);
-                                    soulPacket.WriteVector2(Player.Center);
-                                    soulPacket.Write(SoulSlot.Item.stack);
-                                    soulPacket.Send();
-                                    SoulSlot.Item.TurnToAir();
-                                }
-                            }
-                            else if (Main.netMode == NetmodeID.SinglePlayer)
-                            {
-                                Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, SoulSlot.Item.type, 0);
-                            }
-
-                            souldroplooptimer++;
-                            souldroptimer = 0;
+                            Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, item.type, item.stack);
+                            item.stack = 0;
                         }
                     }
+
+                    if (SoulSlot.Item.stack > 0)
+                    {
+                        Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
+                        SoulSlot.Item.TurnToAir();
+                    }
+                    
                 }
-
-
                 DarkInferno = false;
                 PhazonCorruption = false;
                 Falling = false;
