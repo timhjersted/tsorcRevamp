@@ -1111,7 +1111,40 @@ namespace tsorcRevamp.NPCs
 
         public override bool PreAI(NPC npc)
         {
+            if (npc.HasBuff(BuffID.Frozen))
+            {
+                if (!npc.boss)
+                {
+                    npc.velocity = Vector2.Zero;
+                    //Dust.NewDust(npc.position, npc.width, npc.height, DustID.IceGolem, Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 1), Scale: 2);
+                    Vector2 dustPos = npc.position;
+                    dustPos.X += Main.rand.NextFloat(0, npc.width);
+                    dustPos.Y += Main.rand.NextFloat(0, npc.height);
+                    Vector2 dustVel = Main.rand.NextVector2Square(-0.4f, 0.4f);
+                    Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, Scale: 2);
 
+                    return false; //Frozen skips their AI entirely. One of many reasons it doesn't work on bosses.
+                }
+            }
+
+            //If they have the slowed debuff, cap their velocity
+            if (npc.HasBuff(BuffID.Slow))
+            {
+                if (!npc.boss)
+                {
+                    //Dust.NewDust(npc.position, npc.width, npc.height, DustID.IceGolem, Main.rand.NextFloat(-1, 1), Main.rand.NextFloat(-1, 1), Scale: 2);
+                    if (Main.rand.NextBool(5))
+                    {
+                        Vector2 dustPos = npc.position;
+                        dustPos.X += Main.rand.NextFloat(0, npc.width);
+                        dustPos.Y += Main.rand.NextFloat(0, npc.height);
+                        Vector2 dustVel = Main.rand.NextVector2Square(-0.4f, 0.4f);
+                        Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, Scale: 1);
+                    }
+
+                    npc.velocity *= 0.92f;
+                }
+            }
             if (npc.type == NPCID.EyeofCthulhu)
             {
                 AI_EoC(npc);

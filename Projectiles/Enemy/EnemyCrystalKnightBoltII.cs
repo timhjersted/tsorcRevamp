@@ -33,7 +33,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 600, false);
             //Main.player[Main.myPlayer].AddBuff(4, 1200, false); //gills. Which used to make you suffocate out of water. Guess this evil was too deep for modern Terraria...
 
             if (Main.expertMode)

@@ -10,6 +10,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Ice 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans, with a high rate of casting." +
+                                "\nSlows and occasionally freezes enemies" +
                                 "\nCan be upgraded with 25,000 Dark Souls and 15 Souls of Light.");
         }
 
@@ -23,7 +24,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.rare = ItemRarityID.Orange;
             Item.channel = true;
             Item.autoReuse = true;
-            Item.shootSpeed = 10;
+            Item.shootSpeed = 13;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 14;

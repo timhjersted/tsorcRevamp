@@ -7,8 +7,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Spirit Tome IV");
-            Tooltip.SetDefault("Summons fire spirits with incredible speed and damage.");
+            DisplayName.SetDefault("[WIP!!!] Tome of the Dying Star");
+            Tooltip.SetDefault("Leave nothing but ash in your wake.");
         }
 
         public override void SetDefaults()
@@ -16,20 +16,20 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 5;
-            Item.useTime = 5;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
             Item.maxStack = 1;
             Item.damage = 133;
             Item.knockBack = 8;
             Item.autoReuse = true;
             Item.scale = 1.3f;
             Item.UseSound = SoundID.Item9;
-            Item.rare = ItemRarityID.Red;
-            Item.shootSpeed = 14;
-            Item.mana = 5;
-            Item.value = PriceByRarity.Red_10;
+            Item.rare = ItemRarityID.Purple;
+            Item.shootSpeed = 54;
+            Item.mana = 1;
+            Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Fireball4>();
         }
 
         public override void AddRecipes()
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome3").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 215000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 115000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

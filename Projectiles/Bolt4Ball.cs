@@ -20,6 +20,8 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0.8f;
         }
+
+        
         public override void AI()
         {
 

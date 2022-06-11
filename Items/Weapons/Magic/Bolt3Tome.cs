@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Bolt 3 Tome");
             Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
+                                "\nElectrifies and paralyzes enemies" +
                                 "Only mages will be able to realize this tome's full potential. \n" +
                                 "Can be upgraded with 85,000 Dark Souls");
 
@@ -25,7 +26,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.knockBack = 0;
             Item.autoReuse = true;
             Item.rare = ItemRarityID.LightRed;
-            Item.shootSpeed = 6f;
+            Item.shootSpeed = 15f;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 50;

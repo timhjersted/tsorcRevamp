@@ -39,7 +39,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<Buffs.DarkInferno>(), 600, false);
             if (Main.expertMode)
             {
                 Main.player[Main.myPlayer].AddBuff(BuffID.Frozen, 15, false); //slowed

@@ -13,7 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             DisplayName.SetDefault("Bolt 2 Tome");
             Tooltip.SetDefault("A lost tome for artisans." +
                                 "\nDrops a lightning strike upon collision" +
-                                "\nHas a chance to electrify enemies" +
+                                "\nElectrifies enemies" +
                                 "\nCan be upgraded with 25,000 Dark Souls and 15 Soul of Light.");
 
         }
@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.autoReuse = true;
             Item.maxStack = 1;
             Item.rare = ItemRarityID.Orange;
-            Item.shootSpeed = 7f;
+            Item.shootSpeed = 9f;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 20;

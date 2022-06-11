@@ -13,6 +13,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
                 "\nMultiple shots can be controlled and stacked" +
                 "\nallowing for high burst damage" +
                 "\nDrops a small icicle upon collision" +
+                "\nSlows enemies" +
                 "\nCan be upgraded");
         }
 

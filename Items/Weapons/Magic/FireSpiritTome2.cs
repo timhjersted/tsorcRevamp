@@ -8,8 +8,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Spirit Tome II");
-            Tooltip.SetDefault("Summons fire spirits with incredible speed and damage.");
+            DisplayName.SetDefault("Detonation Tome");
+            Tooltip.SetDefault("Summons a hail of explosive fireballs.");
         }
 
         public override void SetDefaults()
@@ -17,8 +17,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 5;
-            Item.useTime = 5;
+            Item.useAnimation = 7;
+            Item.useTime = 7;
             Item.maxStack = 1;
             Item.damage = 30;
             Item.knockBack = 8;
@@ -30,15 +30,16 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.mana = 5;
             Item.value = PriceByRarity.Lime_7;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Fireball2>();
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome").Type, 1);
-            recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 45000);
+            recipe.AddIngredient(ModContent.ItemType<ExplosionRune>(), 1);
+            recipe.AddIngredient(ItemID.LunarTabletFragment, 1);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

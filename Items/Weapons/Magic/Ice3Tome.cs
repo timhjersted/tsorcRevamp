@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Ice 3 Tome");
             Tooltip.SetDefault("A lost tome fabled to deal great damage.\n" +
+                                "\nSlows and occasionally freezes enemies" +
                                 "Only mages will be able to realize this tome's full potential. \n" +
                                 "Can be upgraded with 80,000 Dark Souls");
 
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.rare = ItemRarityID.LightRed;
             Item.scale = 1;
             Item.channel = true;
-            Item.shootSpeed = 10;
+            Item.shootSpeed = 16;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.mana = 30;

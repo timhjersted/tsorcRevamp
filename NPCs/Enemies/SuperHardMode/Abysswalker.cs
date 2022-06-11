@@ -17,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.damage = 105;
             NPC.defense = 72;
             NPC.height = 40;
-            NPC.lifeMax = 7000;
+            NPC.lifeMax = 5000;
             NPC.scale = 1;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
@@ -72,6 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         float poisonStrikeTimer = 0;
         float poisonStormTimer = 0;
+        int poisonStormTimerCap = 400;
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 2f, 0.05f, 0.2f, true, enragePercent: 0.3f, enrageTopSpeed: 3);
@@ -79,21 +80,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssPoisonStrikeBall>(), poisonBallDamage, 9, clearLineofSight, true, SoundID.Item20);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, SoundID.Item100);
+
+            if (tsorcRevampWorld.Slain.ContainsKey(ModContent.NPCType<Bosses.Fiends.EarthFiendLich>()))
+            {
+                poisonStormTimerCap = 250;
+            }
+
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, poisonStormTimerCap, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellAbyssStormBall>(), stormBallDamage, 0, clearLineofSight, true, SoundID.Item100);
 
             if (poisonStrikeTimer >= 60)
             {
                 Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Ichor, 0, 0).noGravity = true;
             }
-            if (poisonStormTimer >= 90)
+            if (poisonStormTimer >= poisonStormTimerCap - 90)
             {
-                UsefulFunctions.DustRing(NPC.Center, 181 - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);
+                UsefulFunctions.DustRing(NPC.Center, (poisonStormTimerCap + 5) - poisonStormTimer, DustID.BlueCrystalShard, 12, 4);
                 Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
                 if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
                 {
                     NPC.velocity = Vector2.Zero;
                 }
             }
+            
 
             //Transparency. Higher alpha = more invisible
             if (NPC.justHit)

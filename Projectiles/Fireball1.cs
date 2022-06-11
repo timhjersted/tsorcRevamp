@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Projectiles
 {
-    class FireSpirit2 : ModProjectile
+    class Fireball1 : ModProjectile
     {
 
         public override void SetDefaults()
@@ -21,30 +21,25 @@ namespace tsorcRevamp.Projectiles
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 0.7f;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (Main.rand.Next(8) == 0)
-            {
-                target.AddBuff(BuffID.OnFire, 300);
-            }
+            target.AddBuff(BuffID.OnFire, 300);
         }
 
         public override void AI()
         {
             Projectile.rotation += 0.25f;
-            Vector2 arg_23A6_0 = new Vector2(Projectile.position.X, Projectile.position.Y - Projectile.height / 2);
-            int arg_23A6_1 = Projectile.width;
-            int arg_23A6_2 = Projectile.height;
-            int arg_23A6_3 = 6;
-            float arg_23A6_4 = Projectile.velocity.X * 0.2f;
-            float arg_23A6_5 = Projectile.velocity.Y * 0.2f;
-            int arg_23A6_6 = 100;
-            if (Projectile.timeLeft % 3 == 0)
+            for (int i = 0; i < 2; i++)
             {
-                int num44 = Dust.NewDust(arg_23A6_0, arg_23A6_1, arg_23A6_2, arg_23A6_3, arg_23A6_4, arg_23A6_5, arg_23A6_6, default, 3.5f);
-                Main.dust[num44].noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center, DustID.InfernoFork, Main.rand.NextVector2Circular(2, 2), Scale: 0.7f).noGravity = true;
+            }
+
+            if (Projectile.wet)
+            {
+                Projectile.Kill();
             }
 
             if (Projectile.wet)

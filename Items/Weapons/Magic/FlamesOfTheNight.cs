@@ -34,9 +34,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ItemID.CursedFlame, 1);
-            recipe.AddIngredient(ItemID.SoulofSight, 1);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 60000);
+            recipe.AddIngredient(ItemID.CursedFlame, 10);
+            recipe.AddIngredient(ItemID.SoulofMight, 10);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 50000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

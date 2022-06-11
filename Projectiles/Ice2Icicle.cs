@@ -17,6 +17,14 @@ namespace tsorcRevamp.Projectiles
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 90;
         }
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(Terraria.ID.BuffID.Slow, 120);
+            if (Main.rand.NextBool(30))
+            {
+                target.AddBuff(Terraria.ID.BuffID.Frozen, 120);
+            }
+        }
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.ToRadians(90);

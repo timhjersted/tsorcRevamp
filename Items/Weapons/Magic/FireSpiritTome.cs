@@ -7,6 +7,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
+            DisplayName.SetDefault("Fire Spirit Tome");
             Tooltip.SetDefault("Summons fire spirits at incredible speed.");
         }
 
@@ -28,7 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.mana = 5;
             Item.value = PriceByRarity.LightRed_4;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Fireball1>();
         }
 
         public override void AddRecipes()

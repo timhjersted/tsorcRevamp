@@ -76,7 +76,6 @@ namespace tsorcRevamp.Projectiles.Enemy
 
             base.OnHitPlayer(target, damage, crit);
             target.AddBuff(BuffID.Weak, 1200 / buffLengthMod, false);
-            target.AddBuff(BuffID.Slow, 600 / buffLengthMod, false);
 
         }
 

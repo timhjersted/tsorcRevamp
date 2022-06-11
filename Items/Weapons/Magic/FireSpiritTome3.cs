@@ -7,8 +7,9 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Spirit Tome III");
-            Tooltip.SetDefault("Summons fire spirits with incredible speed and damage.");
+            DisplayName.SetDefault("Incineration Tome");
+            Tooltip.SetDefault("Summons a barrage of flames that combust into lingering explosions" +
+                "\nShatters enemy defense");
         }
 
         public override void SetDefaults()
@@ -16,27 +17,28 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 5;
-            Item.useTime = 5;
-            Item.damage = 71;
+            Item.useAnimation = 10;
+            Item.useTime = 10;
+            Item.damage = 50;
             Item.knockBack = 11;
             Item.autoReuse = true;
             Item.scale = 1.3f;
             Item.UseSound = SoundID.Item9;
-            Item.rare = ItemRarityID.Cyan;
-            Item.shootSpeed = 13;
+            Item.rare = ItemRarityID.Red;
+            Item.shootSpeed = 20;
             Item.mana = 5;
-            Item.value = PriceByRarity.Cyan_9;
+            Item.value = PriceByRarity.Red_10;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.FireSpirit2>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.Fireball3>();
         }
 
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
+            recipe.AddIngredient(ItemID.InfernoFork, 1);
             recipe.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
-            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 95000);
+            recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 45000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

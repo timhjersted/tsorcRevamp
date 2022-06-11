@@ -22,6 +22,13 @@ namespace tsorcRevamp.Projectiles
             Projectile.DamageType = DamageClass.Magic;
             Projectile.light = 0.8f;
         }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(Terraria.ID.BuffID.Slow, 180);
+            target.AddBuff(Terraria.ID.BuffID.Electrified, 360);
+        }
+
         public override void AI()
         {
             if (Projectile.ai[0] == 0)

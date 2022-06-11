@@ -11,6 +11,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         {
             DisplayName.SetDefault("Bolt 4 Tome");
             Tooltip.SetDefault("A lost legendary tome. You command the forces of the sky.\n" +
+                                "\nElectrifies and paralyzes enemies" +
                                 "Only the most powerful mages will be able to cast this spell.");
 
         }
@@ -23,14 +24,14 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.knockBack = 0;
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Lime;
-            Item.shootSpeed = (float)6;
+            Item.shootSpeed = 24f;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 350;
-            Item.useAnimation = 30;
+            Item.mana = 70;
+            Item.useAnimation = 60;
             Item.UseSound = SoundID.Item21;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 30;
+            Item.useTime = 60;
             Item.value = PriceByRarity.Lime_7;
             Item.shoot = ModContent.ProjectileType<Projectiles.Bolt4Ball>();
         }
