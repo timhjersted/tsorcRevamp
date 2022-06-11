@@ -487,6 +487,7 @@ namespace tsorcRevamp
                 136, //switch
                 137, //dart trap
                 TileID.Rope,
+                TileID.Chain,
                 TileID.VineRope,
                 TileID.SilkRope,
                 TileID.WebRope,
