@@ -486,6 +486,10 @@ namespace tsorcRevamp
                 135, //pressure plates
                 136, //switch
                 137, //dart trap
+                TileID.Rope,
+                TileID.VineRope,
+                TileID.SilkRope,
+                TileID.WebRope,
                 TileID.LunarMonolith //410
             };
             #endregion
