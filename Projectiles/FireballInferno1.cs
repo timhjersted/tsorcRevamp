@@ -15,8 +15,6 @@ namespace tsorcRevamp.Projectiles
             Projectile.scale = 1.1f;
             Projectile.timeLeft = 120;
             Projectile.hostile = false;
-            Projectile.tileCollide = true;
-            Projectile.ignoreWater = false;
             Projectile.friendly = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;

@@ -13,16 +13,14 @@ namespace tsorcRevamp.Projectiles
             Projectile.width = 230;
             Projectile.height = 230;
             Projectile.scale = 1.1f;
-            Projectile.timeLeft = 9999;
+            Projectile.timeLeft = 300;
             Projectile.hostile = false;
-            Projectile.tileCollide = true;
-            Projectile.ignoreWater = false;
-            Projectile.friendly = true;
+            Projectile.friendly = false;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = 5;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
-            Projectile.penetrate = 9999;
+            Projectile.penetrate = 999;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
@@ -30,15 +28,22 @@ namespace tsorcRevamp.Projectiles
             target.AddBuff(BuffID.OnFire, 300);
         }
 
-        float size = 10;
-        float velocity = 22;
+        float size = 130;
+        float velocity = 14;
         int dustCount = 0;
-        bool randomDelaySet = false;
+        int originalDamage = 0;
         public override void AI()
         {
-            Main.NewText("Size:" + size);
-            Main.NewText("Velocity:" + velocity);
-            Main.NewText("dustCount:" + dustCount);
+            if(Projectile.timeLeft > 295)
+            {
+                return;
+            }
+            if(originalDamage == 0)
+            {
+                originalDamage = Projectile.damage;
+                Projectile.damage /= 50;
+                Projectile.friendly = true;
+            }
             if (size > 1)
             {
                 size += velocity;
@@ -49,9 +54,9 @@ namespace tsorcRevamp.Projectiles
             {
                 //Fade out after reaching max radius, and then despawn
                 dustCount /= 2;
-                if (dustCount <= 0)
+                if (dustCount <= 5)
                 {
-                    //Projectile.NewProjectile(Projectile.GetSource_FromThis, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Nova>(), Projectile.damage, 0);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireballNova>(), originalDamage, 0, default);
                     Projectile.Kill();
                     return;
                 }
@@ -59,33 +64,46 @@ namespace tsorcRevamp.Projectiles
 
             for (int j = 0; j < dustCount * 2; j++)
             {
-               
-                if(velocity > 0)
+                if (velocity > 0)
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
                     Vector2 dustPos = Projectile.Center + dir + Main.rand.NextVector2Circular(8, 8);
-                    dir.Normalize();
-                    Vector2 dustVel = dir;
-                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1f).noGravity = true;
+                    
+                    if (!Collision.IsWorldPointSolid(dustPos))
+                    {
+                        dir.Normalize();
+                        Vector2 dustVel = dir;
+                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1f).noGravity = true;
+                    }
                 }
                 else
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(size, size);
                     Vector2 dustPos = Projectile.Center + dir;
-                    dir.Normalize();
-                    Vector2 dustVel = -dir;
-                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1f).noGravity = true;
+                    
+                    if (!Collision.IsWorldPointSolid(dustPos))
+                    {
+                        dir.Normalize();
+                        Vector2 dustVel = -dir;
+                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1f).noGravity = true;
+                    }
                 }
             }
+
         }
-        public override void Kill(int timeLeft)
-        {
-           
-        }
+
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
+            damage += target.defense / 2;
+            if (!target.boss && !target.dontTakeDamage && !target.immortal)
+            {
+                Vector2 diff = target.Center - Projectile.Center;
+                diff.Normalize();
+
+                 target.velocity = -diff * 5;
+            }
         }
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             if (Vector2.DistanceSquared(projHitbox.Center.ToVector2(), targetHitbox.Center.ToVector2()) < size * size)
@@ -101,5 +119,6 @@ namespace tsorcRevamp.Projectiles
         {
             return false;
         }
+
     }
 }

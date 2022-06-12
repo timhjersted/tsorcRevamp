@@ -1,4 +1,8 @@
-﻿using Terraria.ID;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
@@ -8,7 +12,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Incineration Tome");
-            Tooltip.SetDefault("Summons a barrage of flames that combust into lingering explosions" +
+            Tooltip.SetDefault("Summons a barrage of solar flares that combust into lingering explosions" +
                 "\nShatters enemy defense");
         }
 
@@ -32,6 +36,12 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.shoot = ModContent.ProjectileType<Projectiles.Fireball3>();
         }
 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            SoundEngine.PlaySound(SoundID.Item20);
+            return base.Shoot(player, source, position, velocity, type, damage, knockback);
+        }
+
         public override void AddRecipes()
         {
             Terraria.Recipe recipe = CreateRecipe();
@@ -42,6 +52,25 @@ namespace tsorcRevamp.Items.Weapons.Magic
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
+
+            Terraria.Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
+            recipe2.AddIngredient(ItemID.FragmentSolar, 10);
+            recipe2.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+            recipe2.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 45000);
+            recipe2.AddTile(TileID.DemonAltar);
+
+            recipe2.Register(); 
+            
+            Terraria.Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(Mod.Find<ModItem>("FireSpiritTome2").Type, 1);
+            recipe.AddIngredient(ItemID.InfernoFork, 1);
+            recipe3.AddIngredient(ItemID.FragmentSolar, 10);
+            recipe3.AddIngredient(Mod.Find<ModItem>("RedTitanite").Type, 5);
+            recipe3.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 35000);
+            recipe3.AddTile(TileID.DemonAltar);
+
+            recipe3.Register();
         }
     }
 }

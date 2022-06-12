@@ -1,4 +1,7 @@
-﻿using Terraria.ID;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Items.Weapons.Magic
@@ -7,8 +10,11 @@ namespace tsorcRevamp.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("[WIP!!!] Tome of the Dying Star");
-            Tooltip.SetDefault("Leave nothing but ash in your wake.");
+            DisplayName.SetDefault("Tome of the Dying Star");
+            Tooltip.SetDefault("Leave nothing but ash in your wake." +
+                "\nLeft click to charge a detonating core" +
+                "\nRight click to fire a rapid barrage of solar flares");
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
         }
 
         public override void SetDefaults()
@@ -16,20 +22,38 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.width = 28;
             Item.height = 30;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useAnimation = 15;
-            Item.useTime = 15;
+            Item.useAnimation = 1;
+            Item.useTime = 1;
             Item.maxStack = 1;
-            Item.damage = 133;
-            Item.knockBack = 8;
+            Item.damage = 1000;
+            Item.knockBack = 90;
             Item.autoReuse = true;
             Item.scale = 1.3f;
-            Item.UseSound = SoundID.Item9;
             Item.rare = ItemRarityID.Purple;
-            Item.shootSpeed = 54;
-            Item.mana = 1;
+            Item.shootSpeed = 44;
+            Item.mana = 0;
             Item.value = PriceByRarity.Purple_11;
             Item.DamageType = DamageClass.Magic;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Fireball4>();
+            Item.shoot = ModContent.ProjectileType<Projectiles.DyingStarHoldout>();
+            Item.channel = true;
+            
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (player.altFunctionUse == 2 && player.statMana <= (int)(5 * player.manaCost))
+            {
+                return false;
+            }
+            if (player.altFunctionUse != 2 && player.statMana <= (int)(50 * player.manaCost))
+            {
+                return false;
+            }
+            return player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.DyingStarHoldout>()] <= 0;
+        }
+
+        public override bool AltFunctionUse(Player player)
+        {            
+            return true;
         }
 
         public override void AddRecipes()
@@ -37,6 +61,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Terraria.Recipe recipe = CreateRecipe();
             recipe.AddIngredient(Mod.Find<ModItem>("FireSpiritTome3").Type, 1);
             recipe.AddIngredient(ModContent.ItemType<Items.BequeathedSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<Items.SoulOfChaos>(), 1);
             recipe.AddIngredient(Mod.Find<ModItem>("DarkSoul").Type, 115000);
             recipe.AddTile(TileID.DemonAltar);
 

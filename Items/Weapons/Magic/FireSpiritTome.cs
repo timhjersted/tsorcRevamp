@@ -8,7 +8,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire Spirit Tome");
-            Tooltip.SetDefault("Summons fire spirits at incredible speed.");
+            Tooltip.SetDefault("Summons fire spirits at incredible speed");
         }
 
         public override void SetDefaults()

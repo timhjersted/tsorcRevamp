@@ -180,6 +180,63 @@ namespace tsorcRevamp
     public static class UsefulFunctions
     {
         ///<summary> 
+        ///Gets the coordinates of the first solid thing a line fired in a certain direction will hit
+        ///Counts both tiles and NPCs as solid
+        ///Returns null if no collision
+        ///This could be a lot faster and more accurate if necessary by simply bifurcating the distance repeatedly until the exact collision point is found
+        ///That probably isn't necessary unless there's something that needs to run this every tick
+        ///</summary>         
+        ///<param name="start">The start of the vector</param>
+        ///<param name="direction">The direction it's aiming in</param>
+        ///<param name="maxDistance">How far to search for</param>
+        public static Vector2 GetFirstCollision(Vector2 start, Vector2 direction, float maxDistance = 5000f)
+        {
+            direction.Normalize();
+            Vector2 unitVector = direction;
+            direction *= 10;
+
+            Vector2 currentPosition = direction * maxDistance / 10;
+            for (float distance = 0; distance <= maxDistance / 10f; distance += 1f)
+            {
+                currentPosition = start + (direction * distance);
+
+                if (!Collision.CanHit(start, 1, 1, currentPosition, 1, 1) && !Collision.CanHitLine(start, 1, 1, currentPosition, 1, 1))
+                {
+                    distance -= 5f;
+                    break;
+                }
+            }
+
+            float closestCollision = maxDistance;
+            for(int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i] == null || Main.npc[i].active == false)
+                {
+                    continue;
+                }
+                else
+                {
+                    NPC npc = Main.npc[i];
+                    float collision = maxDistance;
+                    if(Collision.CheckAABBvLineCollision(npc.position, npc.Size, start, currentPosition, 1, ref collision)){
+                        if(collision < closestCollision)
+                        {
+                            closestCollision = collision;
+                        }
+                    }
+                }
+            }
+
+            if(closestCollision < (start - currentPosition).Length())
+            {
+                currentPosition = start + (unitVector * closestCollision);
+            }
+
+            return currentPosition;
+        }
+
+
+        ///<summary> 
         ///Returns a vector pointing from a source, to a target, with a speed.
         ///Simplifies basic projectile, enemy dash, etc aiming calculations to a single call.
         ///If "ballistic" is true it adjusts for gravity. Default is 0.1f, may be stronger or weaker for some projectiles though.

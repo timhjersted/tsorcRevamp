@@ -9,7 +9,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Detonation Tome");
-            Tooltip.SetDefault("Summons a hail of explosive fireballs.");
+            Tooltip.SetDefault("Summons a hail of explosive fireballs");
         }
 
         public override void SetDefaults()

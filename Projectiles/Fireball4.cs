@@ -46,7 +46,7 @@ namespace tsorcRevamp.Projectiles
             Projectile.position.Y -= Projectile.height / 2;
 
             // do explosion
-            Projectile.Damage();
+           // Projectile.Damage();
 
             // create glowing red embers that fill the explosion's radius
             for (int i = 0; i < 70; i++)
@@ -58,7 +58,7 @@ namespace tsorcRevamp.Projectiles
                 Dust.NewDustPerfect(dustPos(), DustID.InfernoFork, dustVel(), 160, default, 1.5f).noGravity = true;
             }
 
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Main.rand.NextVector2CircularEdge(24, 24), Vector2.Zero, ModContent.ProjectileType<FireballInferno2>(), Projectile.damage / 2, 0, default, 3);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireballInferno2>(), Projectile.damage, 0, default, 3);
         }
 
 
