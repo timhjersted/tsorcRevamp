@@ -110,7 +110,7 @@ namespace tsorcRevamp.Projectiles
 
                     player.manaRegenDelay = 60;
                     player.statMana -= (int)(50 * player.manaCost);
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision, Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno2>(), Projectile.damage, 0, default);
 
                     //Drain BotC players stamina
