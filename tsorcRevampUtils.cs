@@ -218,7 +218,13 @@ namespace tsorcRevamp
                 {
                     NPC npc = Main.npc[i];
                     float collision = maxDistance;
-                    if(Collision.CheckAABBvLineCollision(npc.position, npc.Size, start, currentPosition, 1, ref collision)){
+
+                    //Expand the enemy hitbox slightly to increase consistency
+                    Vector2 adjustedPosition = npc.position;
+                    Vector2 adjustedSize = npc.Size;
+                    adjustedSize *= 1.5f;
+                    adjustedPosition -= (adjustedSize - npc.Size) / 2;
+                    if(Collision.CheckAABBvLineCollision(adjustedPosition, adjustedSize, start, currentPosition, 32, ref collision)){
                         if(collision < closestCollision)
                         {
                             closestCollision = collision;

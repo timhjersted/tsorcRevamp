@@ -13,7 +13,7 @@ namespace tsorcRevamp.Projectiles
 
 
         // This value controls how many frames it takes for the Prism to reach "max charge". 60 frames = 1 second.
-        public static float MaxCharge = 30f;
+        public static float MaxCharge = 60f;
 
 
         public override void SetStaticDefaults()
@@ -30,6 +30,8 @@ namespace tsorcRevamp.Projectiles
             // Use CloneDefaults to clone all basic projectile statistics from the vanilla Last Prism.
             Projectile.CloneDefaults(ProjectileID.LastPrism);
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.friendly = false;
+            Projectile.hostile = false;
         }
 
         int charge = 0;
@@ -40,38 +42,37 @@ namespace tsorcRevamp.Projectiles
             altFunctionTimer++;
             Player player = Main.player[Projectile.owner];
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
-
+            float trueChargeTime = (MaxCharge * (player.HeldItem.useTime / 5f));
             charge++;
             //If the charge is negative, that means we're in the "firing" state
             if (player.altFunctionUse != 2)
             {
-                if (charge < MaxCharge)
+                if (charge < trueChargeTime)
                 {
-                    if (charge > 0)
+                    
+                    float radius = (trueChargeTime - charge) / 2f;
+                    radius = ((radius * radius) / 4) + 64;
+
+                    for (int j = 0; j < 20; j++)
                     {
-                        float radius = MaxCharge - charge;
-                        radius = ((radius * radius) / 4) + 64;
-
-                        for (int j = 0; j < 20; j++)
-                        {
-                            Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
-                            Vector2 dustPos = player.Center + dir;
-                            Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                            Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.5f).noGravity = true;
-                        }
-                        for (int j = 0; j < 12; j++)
-                        {
-                            Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
-                            Vector2 dustPos = player.Center + dir;
-                            Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                            Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, 200, default, 1f).noGravity = true;
-                        }
-
+                        Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
+                        Vector2 dustPos = player.Center + dir;
+                        Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.5f).noGravity = true;
                     }
+                    for (int j = 0; j < 12; j++)
+                    {
+                        Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
+                        Vector2 dustPos = player.Center + dir;
+                        Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+                        Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, 200, default, 1f).noGravity = true;
+                    }
+
+                    
                 }
                 else
                 {
-                    charge = -30;
+                    charge = 0;
                     Vector2 collision = UsefulFunctions.GetFirstCollision(player.Center, Projectile.velocity);
 
                     Vector2 diff = collision - player.Center;
@@ -79,7 +80,7 @@ namespace tsorcRevamp.Projectiles
                     diff.Normalize();
                     Vector2 offset = Vector2.Zero;
 
-                    for (int i = 0; i < length; i++)
+                    for (int i = 0; i < length - 64; i++)
                     {
                         offset += diff;
                         if (Main.rand.Next(2) == 0)
@@ -89,11 +90,11 @@ namespace tsorcRevamp.Projectiles
                             //dustPoint.Y += Main.rand.NextFloat(-16, 16);
                             if (Main.rand.NextBool())
                             {
-                                Dust.NewDustPerfect(player.Center + dustPoint, DustID.InfernoFork, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)), 200, default, 1.8f).noGravity = true;
+                                Dust.NewDustPerfect(player.Center + dustPoint, DustID.InfernoFork, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)) + (diff * 5), 200, default, 1.8f).noGravity = true;
                             }
                             else
                             {
-                                Dust.NewDustPerfect(player.Center + dustPoint, DustID.MagicMirror, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)), 200, default, 1f).noGravity = true;
+                                Dust.NewDustPerfect(player.Center + dustPoint, DustID.MagicMirror, (diff * 2).RotatedBy(Main.rand.NextFloat(MathHelper.Pi / -3, MathHelper.Pi / 3)) + (diff * 5), 200, default, 1f).noGravity = true;
                             }
                         }
                     }                    
@@ -108,7 +109,6 @@ namespace tsorcRevamp.Projectiles
                         Dust.NewDustPerfect(player.Center + dustOffset, DustID.InfernoFork, diff, 200, default, 1.8f).noGravity = true;
                     }
 
-                    player.manaRegenDelay = 60;
                     player.statMana -= (int)(50 * player.manaCost);
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision, Vector2.Zero, ModContent.ProjectileType<Projectiles.FireballInferno2>(), Projectile.damage, 0, default);
@@ -143,8 +143,7 @@ namespace tsorcRevamp.Projectiles
                 Vector2 velocity = Projectile.velocity;
                 velocity.Normalize();
                 velocity *= 30;
-                player.statMana -= (int)(5 * player.manaCost);
-                player.manaRegenDelay = 60;
+                player.statMana -= (int)(10 * player.manaCost);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, default);
             }
             
