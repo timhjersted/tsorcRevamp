@@ -828,6 +828,8 @@ namespace tsorcRevamp
         {
             tsorcScriptedEvents.RefreshEvents();
             player.statLife = player.statLifeMax2;
+
+
         }
 
         public static bool CheckBossZen()

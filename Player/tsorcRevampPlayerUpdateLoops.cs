@@ -1065,31 +1065,40 @@ namespace tsorcRevamp
         {
             if (Player.whoAmI == Main.myPlayer)
             {
-                if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath && Main.netMode == NetmodeID.SinglePlayer)
+                if (ModContent.GetInstance<tsorcRevampConfig>().SoulsDropOnDeath)
                 {
+                    int soulCount  = 0;
                     foreach (Item item in Player.inventory)
                     {
                         //leaving this in case someone decides to move souls to their normal inventory to stop them from being dropped on death :)
                         if (item.type == ModContent.ItemType<DarkSoul>())
                         {
-                            Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, item.type, item.stack);
+                            soulCount += item.stack;
                             item.stack = 0;
                         }
                     }
 
                     if (SoulSlot.Item.stack > 0)
                     {
-                        Item.NewItem(Player.GetSource_DropAsItem(), Player.Center, SoulSlot.Item.type, SoulSlot.Item.stack);
+                        soulCount += SoulSlot.Item.stack;
                         SoulSlot.Item.TurnToAir();
                     }
                     
+                    if(soulCount > 0)
+                    {
+                        Projectile.NewProjectileDirect(Player.GetSource_Death(), Player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.SoulDrop>(), 0, 0, Player.whoAmI, soulCount, Player.whoAmI);
+                    }                    
                 }
+
+
                 DarkInferno = false;
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;
             }
         }
+
+        
 
         public override void PostUpdate()
         {
