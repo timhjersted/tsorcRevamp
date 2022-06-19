@@ -66,7 +66,6 @@ namespace tsorcRevamp.Projectiles.Enemy
         {
             Projectile.friendly = true;
             Projectile.hostile = false;
-            Projectile.damage = 300;
             displayDuration--;
             if (Charge < MaxCharge - 1)
             {

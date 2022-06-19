@@ -418,15 +418,15 @@ namespace tsorcRevamp.Items
             potionList = new List<int>()
             {
                 ItemID.LesserHealingPotion,
-				//ItemID.LesserManaPotion,
+				ItemID.LesserManaPotion,
 				ItemID.LesserRestorationPotion,
                 ItemID.HealingPotion,
-				//ItemID.ManaPotion,
-				//ItemID.RestorationPotion,
+			    ItemID.ManaPotion,
+				ItemID.RestorationPotion,
 				ItemID.GreaterHealingPotion,
-				//ItemID.GreaterManaPotion,
+				ItemID.GreaterManaPotion,
 				ItemID.SuperHealingPotion,
-				//ItemID.SuperManaPotion,
+				ItemID.SuperManaPotion,
 
 				ItemID.BowlofSoup,
                 ItemID.SwiftnessPotion,
