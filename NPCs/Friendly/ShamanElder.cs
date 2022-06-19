@@ -94,7 +94,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 {
                     button2 = "Ask about The Abyss";
                 }
-                if (chatState == 1 || chatState == 2 || chatState == 3)
+                else
                 {
                     button2 = "Continue...";
                 }
@@ -117,38 +117,66 @@ namespace tsorcRevamp.NPCs.Friendly
                     if (chatState == 0)
                     {
                         Main.npcChatText = "Red, it is as I feared. By killing Attraidies, a portal from the Abyss was opened, unleashing even more oppressive forces upon the world." +
+                                        "\nThe ancenstors tell me that the portal can be closed, but you must first defeat the 3 Elemental Fiends: one of Water, one of Earth, and one of Fire." +
+                                        "\nYou must also defeat 5 more guardians of the Abyss:" +
+                                        "\nArtorias, Chaos, The Blight, The Wyvern Mage Shadow, and Seath the Scaleless.";
+                        /*
+                         Main.npcChatText = "Red, it is as I feared. By killing Attraidies, a portal from the Abyss was opened, unleashing even more oppressive forces upon the world." +
                                         "\nThe ancenstors tell me that the portal can be closed, but you must first defeat the 3 Elemental Fiends: one of Water, one of Earth and one of Fire." +
                                         "\nYou must also defeat 5 more guardians of the Abyss:" +
                                         "\n[c/ffbf00:Artorias], [c/fcff00:Chaos], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless]." +
                                         "\nMy heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength" +
                                         "\nto face the final guardian. To the ancenstors, he was known as [c/ff6618:Gwyn, Lord of Cinder]. ";
-
+                         * */
                         chatState = 1;
                         return;
                     }
                     if (chatState == 1)
                     {
-                        Main.npcChatText = "Gwyn's old tome is buried somewhere beneath the Western sea, but he will surely kill you" +
-                                        "\nif you have not yet gathered the strength obtained from the other guardians of the Abyss." +
-                                        "\nHave you seen the Lihzahrd Gates scattered across this world? They will lead you towards your goal." +
-                                        "\nI would start with the one deep inside the Great Chasm, which leads to the Old One's Tree." +
-                                        "\nThere is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.";
+                        Main.npcChatText = "My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength " +
+                                        "to face the final guardian. To the ancenstors, he was known as Gwyn, Lord of Cinder." +
+                                        "\nGwyn's old tome is buried somewhere beneath the Western sea, but he will surely kill you " +
+                                        "if you have not yet gathered the strength obtained from the other guardians of the Abyss.";
+
+
                         chatState = 2;
                         return;
                     }
                     if (chatState == 2)
                     {
+                        Main.npcChatText = "Have you seen the Lihzahrd Gates scattered across this world? They will lead you towards your goal." +
+                                        "\nI would start with the one deep inside the Great Chasm, which leads to the Old One's Tree." +
+                                        "\nThere is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.";
+                        /*
+                        Main.npcChatText = "Gwyn's old tome is buried somewhere beneath the Western sea, but he will surely kill you" +
+                                        "\nif you have not yet gathered the strength obtained from the other guardians of the Abyss." +
+                                        "\nHave you seen the Lihzahrd Gates scattered across this world? They will lead you towards your goal." +
+                                        "\nI would start with the one deep inside the Great Chasm, which leads to the Old One's Tree." +
+                                        "\nThere is another, to the East of Elengad's Desert Ruins. The rest, I'm sure you will find. The ancestors will help guide you.";
+                        */
+
+                        chatState = 3;
+                        return;
+                    }
+                    if (chatState == 3)
+                    {
+                        Main.npcChatText = "There is one thing you should know about Artorias, and another dark being that now stalks these lands," +
+                                    "\nknown as the Witchking." +
+                                    "\nBoth The Witchking and Artorias are protected by dark spells, making them practically invincible, but I have heard that " +
+                                    "Fire Fiend Marilith and certain Phantoms that roam the skies are rumored to carry blades of fierce magic." +
+                                    "\nSuch a blade may just be strong enough to shatter their protection...";
+                        /*
                         Main.npcChatText = "There is one thing you should know about [c/ffbf00:Artorias], and another dark being that now stalks these lands," +
                                     "\nknown as the [c/383838:Witchking]." +
                                     "\nBoth The [c/383838:Witchking] and [c/ffbf00:Artorias] are protected by dark spells, making them practically invincible, but I have heard that" +
                                     "\n[c/cffffa:Fire Fiend Marilith] and certain [c/cffffa:Phantoms] that roam the skies are rumored to carry blades of fierce magic." +
                                     "\nSuch a blade may just be strong enough to shatter their protection...";
-                        chatState = 3;
+                        */
+                        chatState = 4;
                         return;
                     }
 
-
-                    if (chatState == 3)
+                    if (chatState == 4)
                     {
                         Main.npcChatText = "Good luck, Red.";
 
