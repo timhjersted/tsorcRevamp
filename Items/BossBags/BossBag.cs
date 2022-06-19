@@ -709,10 +709,10 @@ namespace tsorcRevamp.Items.BossBags
                 if (Main.rand.Next(7) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeMask); }
                 if (Main.rand.Next(10) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
                 if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
+                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle);
                 if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
                 { //no hooks or saddles in adventure mode
                     if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
-                    if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle); }
                 }
                 StaminaVesselOnFirstBag(NPCID.KingSlime, player);
                 SoulsOnFirstBag(NPCID.KingSlime, player);

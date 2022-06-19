@@ -529,7 +529,58 @@ namespace tsorcRevamp.NPCs
 
         public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
 
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                List<IItemDropRule> ruleList = globalLoot.Get();
+                for (int i = 0; i < ruleList.Count; i++)
+                {
+                    string s = ruleList[i].ToString();
+                    if (s == "Terraria.GameContent.ItemDropRules.MechBossSpawnersDropRule")
+                    {
+                        globalLoot.Remove(ruleList[i]);
+                    }
+                }                
+            }
         }
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                List<int> blockedLoot = new List<int>();
+                blockedLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
+                blockedLoot.Add(ItemID.SlimeHook);
+                blockedLoot.Add(ItemID.Picksaw); //Goodnight sweet prince
+
+                List<IItemDropRule> ruleList = npcLoot.Get();
+
+                for (int i = 0; i < ruleList.Count; i++)
+                {
+                    if (ruleList[i] is CommonDrop rodRule && rodRule.itemId == ItemID.RodofDiscord)
+                    {
+                        //Hacky
+                        rodRule.chanceNumerator = 0;
+                    }
+
+                    /*
+                    if (ruleList[i] is OneFromOptionsDropRule bossRule)
+                    {
+                        for(int j = 0; j < bossRule.dropIds.Length; j++)
+                        {
+                            if (bossRule.dropIds[j] == ItemID.Picksaw)
+                            {
+                                bossRule.RemoveDrop(ItemID.Picksaw); //No equivalent to this exists. How do you remove an item from a drop list?
+                            }
+                            if (bossRule.dropIds[j] == ItemID.SlimeHook)
+                            {
+                                bossRule.RemoveDrop(ItemID.SlimeHook); //No equivalent to this exists. How do you remove an item from a drop list?
+                            }
+                        }
+                        sawRule.chanceNumerator = 0;
+                    }*/
+                }
+            }
+        }
+
         //TODO
         /*
         public override bool PreNPCLoot(NPC npc)
@@ -543,19 +594,7 @@ namespace tsorcRevamp.NPCs
                 NPCLoader.blockLoot.Add(ItemID.MechanicalSkull);
                 NPCLoader.blockLoot.Add(ItemID.MechanicalWorm);
 
-                if (npc.type == NPCID.ChaosElemental)
-                {
-                    NPCLoader.blockLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
-                }
-                if (npc.type == NPCID.KingSlime)
-                {
-                    NPCLoader.blockLoot.Add(ItemID.SlimeHook);
-                    NPCLoader.blockLoot.Add(ItemID.SlimySaddle); //no lol
-                }
-                if (npc.type == NPCID.Golem)
-                {
-                    NPCLoader.blockLoot.Add(ItemID.Picksaw); //Goodnight sweet prince
-                }
+                
             }
 
             if (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
@@ -574,6 +613,7 @@ namespace tsorcRevamp.NPCs
             return base.PreNPCLoot(npc);
         }
         */
+
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
             if (DarkInferno)
