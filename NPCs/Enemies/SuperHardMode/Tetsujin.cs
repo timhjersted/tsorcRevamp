@@ -85,7 +85,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (Main.netMode != 1)
             {
-                if (Main.GameUpdateCount % 240 == 0)
+                if (Main.GameUpdateCount % 240 == 0 && (Main.player[NPC.target].DistanceSQ(NPC.Center) < 887100))
                 {
                     Vector2 projVel = UsefulFunctions.GenerateTargetingVector(NPC.Center, Main.player[NPC.target].Center, 1);
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyRedLaser>(), 20, 0, Main.myPlayer, NPC.target, NPC.whoAmI);
@@ -128,12 +128,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         }
 
 
-
-
                         //LASER
-                        if (Main.rand.Next(55) == 1)//was 45
+                        //Fire 5 times at the start of each second with a 3 frame gap between shots
+                        //Don't fire if no line of sight
+                        if (Main.GameUpdateCount % 60 < 15 && Main.GameUpdateCount % 3 == 0 && (Main.player[NPC.target].DistanceSQ(NPC.Center) < 887100) && Collision.CanHit(NPC, Main.player[NPC.target])) 
                         {
-                            float num48 = 13f;
+                            float num48 = 17f;
                             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
                             float speedX = ((Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)) - vector8.X) + Main.rand.Next(-20, 0x15);
                             float speedY = ((Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)) - vector8.Y) + Main.rand.Next(-20, 0x15);
@@ -147,7 +147,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                                 int num54 = Projectile.NewProjectile(NPC.GetSource_FromThis(), vector8.X, vector8.Y, speedX, speedY, type, blasterDamage, 0f, Main.myPlayer);
                                 Main.projectile[num54].timeLeft = 650;
                                 Main.projectile[num54].aiStyle = 23;
-                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item12, NPC.Center);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item12 with { Volume = 0.8f }, NPC.Center);
                                 //customAi1 = 1f;
                             }
                             NPC.netUpdate = true;

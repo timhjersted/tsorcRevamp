@@ -475,12 +475,13 @@ namespace tsorcRevamp.NPCs.Bosses
             //Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.DarkSoul>(), 5000);
             //Item.NewItem(NPC.GetSource_Loot(), npc.getRect(), ItemID.CloudinaBottle, 1);
             //}
+            if (!Main.expertMode)
+            {
+                if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
+                if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
 
-            if (Main.rand.Next(99) < 40) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.BattlefrontPotion>(), 1);
-            if (Main.rand.Next(99) < 50) Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.AttractionPotion>(), 1);
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 10);
-
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.GreaterHealingPotion, 10);
+            }
         }
     }
 }

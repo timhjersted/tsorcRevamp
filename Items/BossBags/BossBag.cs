@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items.Pets;
@@ -30,6 +32,34 @@ namespace tsorcRevamp.Items.BossBags
 
         public override bool CanRightClick()
         {
+            return true;
+        }
+
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Main.DiscoColor, 0, origin, scale, SpriteEffects.None, 0);
+            }
+
+            return true;
+        }
+
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            //UsefulFunctions.DustRing(Item.Center, 32, DustID.ShadowbeamStaff);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+
+            Lighting.AddLight(Item.Center, Main.DiscoColor.ToVector3());
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(((Main.GameUpdateCount % 300) / 30f) + MathHelper.PiOver2 * i) * 5;
+                spriteBatch.Draw(texture,offsetPositon + new Vector2(Item.position.X - Main.screenPosition.X + Item.width * 0.5f, Item.position.Y - Main.screenPosition.Y + Item.height - texture.Height * 0.5f + 2f),
+                new Rectangle(0, 0, texture.Width, texture.Height), Main.DiscoColor, rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0);
+            }
+
             return true;
         }
 
@@ -273,6 +303,10 @@ namespace tsorcRevamp.Items.BossBags
                     player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.GuardianSoul>(), 1);
                     player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Weapons.Melee.BarrowBlade>()); //Because the Shaman Elder says she drops them
                     VanillaBossBag.AddBossBagSouls(BossBagNPC, player);
+                    if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                    {
+                        player.QuickSpawnItem(player.GetSource_Loot(), ItemID.LargeSapphire);
+                    }
                     Slain[BossBagNPC] = 1;
                 }
             }
@@ -524,6 +558,10 @@ namespace tsorcRevamp.Items.BossBags
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<Items.SoulOfArtorias>(), 6);
             player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<BossItems.DarkMirror>());
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+            {
+                player.QuickSpawnItem(player.GetSource_Loot(), ItemID.LargeAmethyst);
+            }
         }
     }
     public class DarkCloudBag : BossBag
@@ -710,10 +748,8 @@ namespace tsorcRevamp.Items.BossBags
                 if (Main.rand.Next(10) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.KingSlimeTrophy); }
                 if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeGun); }
                 player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimySaddle);
-                if (!ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
-                { //no hooks or saddles in adventure mode
-                    if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
-                }
+                if (Main.rand.Next(2) == 0) { player.QuickSpawnItem(player.GetSource_Loot(), ItemID.SlimeHook); }
+
                 StaminaVesselOnFirstBag(NPCID.KingSlime, player);
                 SoulsOnFirstBag(NPCID.KingSlime, player);
                 return false;

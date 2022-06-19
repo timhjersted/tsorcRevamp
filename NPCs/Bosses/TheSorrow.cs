@@ -304,8 +304,11 @@ namespace tsorcRevamp.NPCs.Bosses
             {
                 Dust.NewDust(NPC.position, (int)(NPC.width * 1.5), (int)(NPC.height * 1.5), 132, Main.rand.Next(-30, 30), Main.rand.Next(-20, 20), 100, Color.Orange, 3f);
             }
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1);
+            if (!Main.expertMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.CrestOfWater>(), 2);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.AdamantiteDrill, 1, false, -1);
+            }
         }
     }
 }

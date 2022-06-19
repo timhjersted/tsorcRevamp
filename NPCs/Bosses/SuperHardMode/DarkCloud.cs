@@ -2180,17 +2180,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             //Clean up projectiles
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>() || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>())
+                if (Main.projectile[i].type == ModContent.ProjectileType<GenericLaser>() 
+                    || Main.projectile[i].type == ModContent.ProjectileType<DarkFlow>() 
+                    || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.EnemyArrowOfDarkCloud>() 
+                    || Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.DarkCloud.DarkFreezeBolt>())
                 {
                     Main.projectile[i].Kill();
                 }
             }
-            Main.GlobalTimerPaused = true;
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
-            
+            if (!Main.expertMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>());
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Humanity>(), 3);
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.ReflectionShift>());
+            }
             if (Main.tile[5810, 1670] != null)
             {
                 if (Main.tile[5810, 1670].HasTile && Main.tile[5810, 1670].IsActuated)

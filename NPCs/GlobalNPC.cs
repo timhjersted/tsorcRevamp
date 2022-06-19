@@ -273,6 +273,19 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
+            if (Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            {
+                if (Main.rand.Next(2) == 0)
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                }
+
+                if (Main.rand.Next(12) == 0)
+                {
+                    Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<Items.StaminaDroplet>(), 1);
+                }
+            }
+
             #region Dark Souls & Consumable Souls Drops
 
             if (Soulstruck)
@@ -543,13 +556,10 @@ namespace tsorcRevamp.NPCs
             }
         }
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
-        {
+        {           
+
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
             {
-                List<int> blockedLoot = new List<int>();
-                blockedLoot.Add(ItemID.RodofDiscord); //we dont want any sequence breaks, do we
-                blockedLoot.Add(ItemID.SlimeHook);
-                blockedLoot.Add(ItemID.Picksaw); //Goodnight sweet prince
 
                 List<IItemDropRule> ruleList = npcLoot.Get();
 
@@ -561,14 +571,17 @@ namespace tsorcRevamp.NPCs
                         rodRule.chanceNumerator = 0;
                     }
 
-                    /*
+
+                    /* 
                     if (ruleList[i] is OneFromOptionsDropRule bossRule)
                     {
                         for(int j = 0; j < bossRule.dropIds.Length; j++)
                         {
                             if (bossRule.dropIds[j] == ItemID.Picksaw)
                             {
-                                bossRule.RemoveDrop(ItemID.Picksaw); //No equivalent to this exists. How do you remove an item from a drop list?
+                                //You have to recreate the rule from scratch. I'm just gonna disable the picksaw in CanUseItem instead.
+                                OneFromOptionsDropRule newRule = new OneFromOptionsDropRule(1, 1, ItemID.Stynger, ItemID.GolemFist, ItemID.GolemMask);
+
                             }
                             if (bossRule.dropIds[j] == ItemID.SlimeHook)
                             {

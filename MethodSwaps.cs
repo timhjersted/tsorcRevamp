@@ -46,6 +46,7 @@ namespace tsorcRevamp
             On.Terraria.Player.QuickBuff += CustomQuickBuff;
             On.Terraria.Player.QuickMana += CustomQuickMana;
             On.Terraria.Player.QuickHeal += CustomQuickHeal;
+            On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
 
             On.Terraria.UI.ChestUI.LootAll += PotionBagLootAllPatch;
 
@@ -65,6 +66,32 @@ namespace tsorcRevamp
             On.Terraria.Wiring.DeActive += Wiring_DeActive;
 
             On.Terraria.WorldGen.StartHardmode += WorldGen_StartHardmode;
+
+            On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
+        }
+
+        private static Item Player_QuickGrapple_GetItemToUse(On.Terraria.Player.orig_QuickGrapple_GetItemToUse orig, Player self)
+        {
+            Item item = null;
+            if (Main.projHook[self.miscEquips[4].shoot] || self.miscEquips[4].type != ItemID.SlimeHook)
+                item = self.miscEquips[4];
+
+            if (item == null)
+            {
+                for (int i = 0; i < 58; i++)
+                {
+                    if (Main.projHook[self.inventory[i].shoot])
+                    {
+                        if (NPC.downedBoss3 || self.inventory[i].type != ItemID.SlimeHook)
+                        {
+                            item = self.inventory[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return item;
         }
 
         private static void WorldGen_StartHardmode(On.Terraria.WorldGen.orig_StartHardmode orig)

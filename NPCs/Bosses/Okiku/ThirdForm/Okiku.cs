@@ -384,11 +384,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         }
         public override void OnKill()
         {
-            if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+            if (!Main.expertMode)
             {
-                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
+                if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 35000);
+                }
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
             }
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.MindflayerIllusionRelic>());
         }
 
     }
