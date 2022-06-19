@@ -757,6 +757,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Accessories.TheRingOfArtorias>());
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.SoulOfArtorias>(), 4);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.BossItems.DarkMirror>());
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeAmethyst);
+                }
             }
         }
         #endregion

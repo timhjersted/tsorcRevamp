@@ -371,6 +371,10 @@ namespace tsorcRevamp.NPCs.Bosses.Fiends
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Potions.HolyWarElixir>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.GuardianSoul>(), 1);
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.Weapons.Magic.Ice3Tome>(), 1);
+                if (ModContent.GetInstance<tsorcRevampConfig>().AdventureModeItems)
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.LargeSapphire);
+                }
                 if (!tsorcRevampWorld.Slain.ContainsKey(NPC.type))
                 {
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 30000);
