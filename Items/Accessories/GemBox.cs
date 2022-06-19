@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,12 +31,13 @@ namespace tsorcRevamp.Items.Accessories
 
     class GemBox_Global : GlobalItem
     {
-
         public override float UseTimeMultiplier(Item item, Player player)
         {
-            if ((player.inventory[player.selectedItem].DamageType == DamageClass.Magic) && (Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().GemBox))
+            Item selected = player.inventory[player.selectedItem];
+            if ((selected.DamageType == DamageClass.Magic) && (player.GetModPlayer<tsorcRevampPlayer>().GemBox))
             {
-                return 2f;
+                float roundup = (float)Math.Ceiling(selected.useTime * 0.5f);
+                return (roundup / (float)selected.useTime);
             }
             else return 1f;
         }
