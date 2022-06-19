@@ -66,6 +66,17 @@ namespace tsorcRevamp.Projectiles
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Main.rand.NextVector2CircularEdge(24, 24), Vector2.Zero, ModContent.ProjectileType<FireballInferno1>(), Projectile.damage / 2, 0, default, 9);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if(Projectile.timeLeft > 115)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         Vector2 dustPos()
         {

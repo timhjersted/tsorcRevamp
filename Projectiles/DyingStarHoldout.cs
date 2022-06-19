@@ -50,25 +50,25 @@ namespace tsorcRevamp.Projectiles
                 if (charge < trueChargeTime)
                 {
                     
-                    float radius = (trueChargeTime - charge) / 2f;
-                    radius = ((radius * radius) / 4) + 64;
+                    float radius = (trueChargeTime - charge) / 3f;
+                    radius = ((radius * radius) / 4) + 64;                 
 
-                    for (int j = 0; j < 20; j++)
+                   
+
+                    for (int j = 0; j < 50f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
                     {
                         Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
                         Vector2 dustPos = player.Center + dir;
                         Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.5f).noGravity = true;
+                        Dust.NewDustPerfect(dustPos, DustID.InfernoFork, Vector2.Zero, 200, default, 0.75f).noGravity = true;
                     }
-                    for (int j = 0; j < 12; j++)
+                    for (int j = 0; j < 5f * (charge / trueChargeTime) * (charge / trueChargeTime); j++)
                     {
                         Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
                         Vector2 dustPos = player.Center + dir;
                         Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                        Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, 200, default, 1f).noGravity = true;
-                    }
-
-                    
+                        Dust.NewDustPerfect(dustPos, DustID.MagicMirror, Vector2.Zero, 200, default, 0.75f).noGravity = true;
+                    }                   
                 }
                 else
                 {
@@ -79,6 +79,16 @@ namespace tsorcRevamp.Projectiles
                     float length = diff.Length();
                     diff.Normalize();
                     Vector2 offset = Vector2.Zero;
+
+                    for(int i = 0; i < 50; i++)
+                    {
+                        Dust.NewDustPerfect(player.Center, DustID.InfernoFork, Main.rand.NextVector2Circular(6, 6), 200, default, 2f).noGravity = true;
+                    }
+
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Dust.NewDustPerfect(collision, DustID.InfernoFork, Main.rand.NextVector2Circular(6, 6), 200, default, 2f).noGravity = true;
+                    }
 
                     for (int i = 0; i < length - 64; i++)
                     {
@@ -125,26 +135,26 @@ namespace tsorcRevamp.Projectiles
             {
                 float radius = 64;
 
-                for (int j = 0; j < 20; j++)
+                for (int j = 0; j < 50f; j++)
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
                     Vector2 dustPos = player.Center + dir;
-                    Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 1.5f).noGravity = true;
+                    Vector2 dustVel = new Vector2(0.4f, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+                    Dust.NewDustPerfect(dustPos, DustID.InfernoFork, dustVel, 200, default, 0.75f).noGravity = true;
                 }
-                for (int j = 0; j < 12; j++)
+                for (int j = 0; j < 5f; j++)
                 {
                     Vector2 dir = Main.rand.NextVector2CircularEdge(radius, radius);
                     Vector2 dustPos = player.Center + dir;
-                    Vector2 dustVel = new Vector2(3, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
-                    Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, 200, default, 1f).noGravity = true;
+                    Vector2 dustVel = new Vector2(0.4f, 0).RotatedBy(dir.ToRotation() + MathHelper.Pi);
+                    Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, 200, default, 0.75f).noGravity = true;
                 }
 
                 Vector2 velocity = Projectile.velocity;
                 velocity.Normalize();
                 velocity *= 30;
                 player.statMana -= (int)(10 * player.manaCost);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, default);
+                Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Projectile.damage / 30, 0, default).rotation = velocity.ToRotation() + MathHelper.PiOver2;
             }
             
 
@@ -191,6 +201,8 @@ namespace tsorcRevamp.Projectiles
             // This ensures that the Prism never times out while in use.
             Projectile.timeLeft = 2;
         }
+
+
 
         public override bool? CanDamage()
         {
@@ -277,6 +289,49 @@ namespace tsorcRevamp.Projectiles
                 Projectile.netUpdate = true;
             }
             Projectile.velocity = aim;
+        }
+
+        Vector2 dustVel(Vector2 source)
+        {
+
+            //Pick an angle in the first quadrant (0 - 90 degrees)
+            float angle = Main.rand.NextFloat(0, MathHelper.PiOver2);
+
+            //Modify the speed of the projectile based on it
+            float speed = Math.Abs((angle / (MathHelper.PiOver4)) - 1f);
+
+            //Since this pattern is symmetrical on both axises, we can just have a 50% chance to flip it on the x-axis
+            if (Main.rand.NextBool())
+            {
+                angle += MathHelper.PiOver2;
+            }
+
+            //And another 50% chance to flip it on the y-axis
+            if (Main.rand.NextBool())
+            {
+                angle += MathHelper.Pi;
+            }
+            if (Main.rand.NextBool(2))
+            {
+
+                //Add some variation
+                if (Main.rand.NextBool())
+                {
+                    speed = Main.rand.NextFloat(0, speed);
+                }
+            }
+
+            //Create the second smaller loop
+            else
+            {
+                angle += MathHelper.PiOver4;
+                speed /= 1.6f;
+            }
+
+            //Smooth out the curves slightly
+            speed = (float)Math.Pow(speed, 0.9f);
+
+            return new Vector2(speed * 5, 0).RotatedBy(angle);
         }
 
         public override bool PreDraw(ref Color lightColor)

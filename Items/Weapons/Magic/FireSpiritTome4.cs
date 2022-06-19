@@ -36,11 +36,13 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.DamageType = DamageClass.Magic;
             Item.shoot = ModContent.ProjectileType<Projectiles.DyingStarHoldout>();
             Item.channel = true;
+            Item.noMelee = true;
             
         }
 
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
         {
+            player.manaRegenDelay = 180;
             mult = 0;
         }
 
@@ -59,7 +61,6 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool? UseItem(Player player)
         {
-            player.manaRegenDelay = 180;
             return base.UseItem(player);
         }
 

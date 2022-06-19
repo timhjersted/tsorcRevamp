@@ -27,7 +27,7 @@ namespace tsorcRevamp.Items.Weapons.Magic
             Item.knockBack = 11;
             Item.autoReuse = true;
             Item.scale = 1.3f;
-            Item.UseSound = SoundID.Item9;
+            Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.Red;
             Item.shootSpeed = 20;
             Item.mana = 5;
@@ -38,8 +38,8 @@ namespace tsorcRevamp.Items.Weapons.Magic
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            SoundEngine.PlaySound(SoundID.Item20);
-            return base.Shoot(player, source, position, velocity, type, damage, knockback);
+            Projectile.NewProjectileDirect(Item.GetSource_FromThis(), player.Center, velocity, ModContent.ProjectileType<Projectiles.Fireball3>(), Item.damage, 0, default).rotation = velocity.ToRotation() + MathHelper.PiOver2;
+            return false;
         }
 
         public override void AddRecipes()

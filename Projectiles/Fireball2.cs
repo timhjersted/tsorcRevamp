@@ -34,7 +34,7 @@ namespace tsorcRevamp.Projectiles
 
             for (int i = 0; i < 3; i++)
             {
-                Dust.NewDustPerfect(Projectile.Center, DustID.InfernoFork, Main.rand.NextVector2Circular(2, 2)).noGravity = true;
+                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(10, 10), DustID.InfernoFork, Main.rand.NextVector2Circular(2, 2)).noGravity = true;
             }
 
             if (Projectile.wet)
