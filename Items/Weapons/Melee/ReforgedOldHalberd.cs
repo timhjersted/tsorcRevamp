@@ -29,6 +29,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 32;
             Item.value = 7000;
+            Item.shootSpeed = 2.7f;
         }
 
         public override bool AltFunctionUse(Player player)
@@ -53,7 +54,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 Item.noUseGraphic = true;
                 Item.useStyle = ItemUseStyleID.Shoot;
                 Item.shoot = ModContent.ProjectileType<Projectiles.OldHalberd>();
-                Item.shootSpeed = 2.7f;
                 Item.damage = 14;
 
             }

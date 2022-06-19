@@ -31,6 +31,7 @@ namespace tsorcRevamp.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 28;
             Item.value = PriceByRarity.LightRed_4;
+            Item.shootSpeed = 2.7f;
         }
         public override bool AltFunctionUse(Player player)
         {
@@ -55,7 +56,6 @@ namespace tsorcRevamp.Items.Weapons.Melee
                 Item.noUseGraphic = true;
                 Item.useStyle = ItemUseStyleID.Shoot;
                 Item.shoot = ModContent.ProjectileType<Projectiles.CobaltHalberd>();
-                Item.shootSpeed = 2.7f;
             }
             return base.CanUseItem(player);
         }
