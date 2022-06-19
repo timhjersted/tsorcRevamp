@@ -357,7 +357,7 @@ namespace tsorcRevamp
                     drawInfo.DrawDataCache.Add(new DrawData(
                             texture, // The texture to render.
                             new Vector2(drawX, drawY), // Position to render at.
-                            null, // Source rectangle.
+                            sourceRectangle, // Source rectangle.
                             newColor, // Color.
                             0f, // Rotation.
                             origin, // Origin. Uses the texture's center.

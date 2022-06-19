@@ -44,7 +44,6 @@ namespace tsorcRevamp
             Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             initialized = false;
-
             tsorcScriptedEvents.InitializeScriptedEvents();
         }
 
@@ -699,6 +698,18 @@ namespace tsorcRevamp
 
         //}
 
+        public override void PreUpdateWorld()
+        {
+            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(true);
+            
+        }
+
+        public override void PostUpdateWorld()
+        {
+            Terraria.GameContent.Creative.CreativePowerManager.Instance.GetPower<Terraria.GameContent.Creative.CreativePowers.StopBiomeSpreadPower>().SetPowerInfo(false);
+            
+        }
+
         bool initialized = false;
         public override void PreUpdatePlayers()
         {
@@ -779,6 +790,31 @@ namespace tsorcRevamp
                             Main.npc[npc].homeless = false;
                             Main.npc[npc].homeTileX = 4176;
                             Main.npc[npc].homeTileY = 690;
+                        }
+                        if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Friendly.TibianMage>()))
+                        {
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, ModContent.NPCType<NPCs.Friendly.TibianMage>());
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 4176;
+                            Main.npc[npc].homeTileY = 690;
+                        }
+
+                        NPC.savedGolfer = true;
+                        NPC.savedStylist = true;
+
+                        if (!NPC.AnyNPCs(NPCID.Golfer))
+                        {
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, NPCID.Golfer);
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 5881;
+                            Main.npc[npc].homeTileY = 866;
+                        }
+                        if (!NPC.AnyNPCs(NPCID.Stylist))
+                        {
+                            int npc = NPC.NewNPC(new EntitySource_Misc("¯\\_(ツ)_/¯"), 4176 * 16, 690 * 16, NPCID.Stylist);
+                            Main.npc[npc].homeless = false;
+                            Main.npc[npc].homeTileX = 5863;
+                            Main.npc[npc].homeTileY = 835;
                         }
                     }
                 }

@@ -3091,72 +3091,76 @@ namespace tsorcRevamp.NPCs
 
             if (npc.type == NPCID.TheDestroyerBody && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if ((destroyerAttackIndex == 3 && destroyerReachedHeight))
+                if (!destroyerJustSpawned)
                 {
-                    Vector2 dustPos = Main.npc[(int)npc.ai[3]].velocity;
-                    dustPos.Normalize();
-                    dustPos *= 48;
-                    dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
-                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
-                    if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
+                    if ((destroyerAttackIndex == 3 && destroyerReachedHeight))
                     {
-                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 35, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
-                    }
-                }
+                        Vector2 dustPos = Main.npc[(int)npc.ai[3]].velocity;
+                        dustPos.Normalize();
+                        dustPos *= 48;
+                        dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
+                        Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
-                if (destroyerChargeTimer < 60 && destroyerChargeTimer > 0 && !destroyerJustSpawned)
-                {
-                    Vector2 dustPos = Main.npc[(int)npc.ai[3]].velocity;
-                    dustPos.Normalize();
-                    dustPos *= 48;
-                    dustPos = dustPos.RotatedBy(MathHelper.ToRadians(6 * destroyerChargeTimer));
-                    Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
-                }
-
-                //Aims in a ring around the player
-                if (destroyerAttackIndex == 0)
-                {
-                    if (destroyerChargeTimer == 0)
-                    {
-                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + (Main.player[npc.target].velocity * 45), 1);
-
-                        int style = -1;
-
-                        //Aims in a ring around the player to constrain their movement.
-                        //Impossible for any player other than the one being targeted to dodge, so it doesn't happen in multiplayer.
-                        if (destroyerAttackIndex == 0)
+                        if (destroyerChargeTimer > -180 && destroyerChargeTimer <= 740 && destroyerChargeTimer % 120 == 0 && laserToggle)
                         {
-                            if (Main.netMode == NetmodeID.SinglePlayer && Main.player[npc.target].active)
-                            {
-                                style = npc.target;
-                            }
-                            else
-                            {
-                                style = -1;
-                            }
-                        }
-
-                        //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
-                        if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2)
-                        {
-                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, style, npc.whoAmI);
+                            Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + Main.rand.NextVector2CircularEdge(220, 220), 1);
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 35, 0, Main.myPlayer, 2000 + npc.target, npc.whoAmI);
                         }
                     }
-                }
 
-
-                if (Main.GameUpdateCount % 60 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
-                {
-                    Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
-                    if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4)
+                    if (destroyerChargeTimer < 60 && destroyerChargeTimer > 0)
                     {
-                        Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
+                        Vector2 dustPos = Main.npc[(int)npc.ai[3]].velocity;
+                        dustPos.Normalize();
+                        dustPos *= 48;
+                        dustPos = dustPos.RotatedBy(MathHelper.ToRadians(6 * destroyerChargeTimer));
+                        Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, Main.npc[(int)npc.ai[3]].velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
                     }
-                }
 
-                laserToggle = !laserToggle;
+                    //Aims in a ring around the player
+                    if (destroyerAttackIndex == 0)
+                    {
+                        if (destroyerChargeTimer == 0)
+                        {
+                            Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center + (Main.player[npc.target].velocity * 45), 1);
+
+                            int style = -1;
+
+                            //Aims in a ring around the player to constrain their movement.
+                            //Impossible for any player other than the one being targeted to dodge, so it doesn't happen in multiplayer.
+                            if (destroyerAttackIndex == 0)
+                            {
+                                if (Main.netMode == NetmodeID.SinglePlayer && Main.player[npc.target].active)
+                                {
+                                    style = npc.target;
+                                }
+                                else
+                                {
+                                    style = -1;
+                                }
+                            }
+
+                            //Cancel the attack if it's too close to a "safe angle", which ensures the player can always avoid the attack
+                            if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 / 2)
+                            {
+                                Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, style, npc.whoAmI);
+                            }
+                        }
+                    }
+
+
+                    if (Main.GameUpdateCount % 60 == 0 && (destroyerAttackIndex == 0 || destroyerAttackIndex == 2))
+                    {
+                        Vector2 projVel = UsefulFunctions.GenerateTargetingVector(npc.Center, Main.player[npc.target].Center, 1);
+                        if (UsefulFunctions.CompareAngles(projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4 && UsefulFunctions.CompareAngles(-projVel, destroyerLaserSafeAngle) > MathHelper.PiOver4)
+                        {
+                            Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, projVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, 1000 + npc.target, npc.whoAmI);
+                        }
+                    }
+
+                    laserToggle = !laserToggle;
+                }                
             }
 
 
@@ -3165,188 +3169,198 @@ namespace tsorcRevamp.NPCs
             {
                 destroyerChargeTimer++;
 
-                //Don't let the custom AI override its "run away" code
-                if (!Main.dayTime && !Main.player[npc.target].dead)
+                if (!destroyerJustSpawned)
                 {
-                    if (destroyerAttackIndex == 3)
+                    //Don't let the custom AI override its "run away" code
+                    if (!Main.dayTime && !Main.player[npc.target].dead)
                     {
-                        destroyerGlowPercent += (1f / 180f);
-                        if (!destroyerReachedHeight)
+                        if (destroyerAttackIndex == 3)
                         {
-                            Vector2 targetPoint = Main.player[npc.target].Center;
-                            targetPoint.Y -= 400;
-
-                            if (Vector2.Distance(npc.Center, targetPoint) < 70)
+                            destroyerGlowPercent += (1f / 180f);
+                            if (!destroyerReachedHeight)
                             {
-                                destroyerReachedHeight = true;
-                                destroyerRotation = MathHelper.Pi;
-                                destroyerChargeTimer = -300;
+                                Vector2 targetPoint = Main.player[npc.target].Center;
+                                targetPoint.Y -= 400;
+
+                                if (Vector2.Distance(npc.Center, targetPoint) < 70)
+                                {
+                                    destroyerReachedHeight = true;
+                                    destroyerRotation = MathHelper.Pi;
+                                    destroyerChargeTimer = -300;
+                                }
+                                else
+                                {
+                                    if (destroyerTargetLerp < 1)
+                                    {
+                                        destroyerTargetLerp += 0.001f;
+                                    }
+                                    npc.velocity = Vector2.Lerp(npc.velocity, UsefulFunctions.GenerateTargetingVector(npc.Center, targetPoint, 15), destroyerTargetLerp);
+                                }
                             }
+                            //Don't do anything until it's set up
                             else
                             {
-                                if (destroyerTargetLerp < 1)
+                                //Spawn dust
+                                Vector2 dustPos = npc.velocity;
+                                dustPos.Normalize();
+                                dustPos *= 48;
+                                dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
+                                Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, npc.velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
+
+                                //Accelerate over time
+                                float factor = (400 + destroyerChargeTimer) / 400f;
+                                if (destroyerChargeTimer > 0)
                                 {
-                                    destroyerTargetLerp += 0.001f;
+                                    factor = 1;
                                 }
-                                npc.velocity = Vector2.Lerp(npc.velocity, UsefulFunctions.GenerateTargetingVector(npc.Center, targetPoint, 15), destroyerTargetLerp);
-                            }
-                        }
-                        //Don't do anything until it's set up
-                        else
-                        {
-                            //Spawn dust
-                            Vector2 dustPos = npc.velocity;
-                            dustPos.Normalize();
-                            dustPos *= 48;
-                            dustPos = dustPos.RotatedBy(MathHelper.PiOver2);
-                            Dust.NewDustPerfect(npc.Center + dustPos, DustID.Torch, npc.velocity.RotatedBy(MathHelper.PiOver2) / 6, Scale: 3).noGravity = true;
 
-                            //Accelerate over time
-                            float factor = (400 + destroyerChargeTimer) / 400f;
-                            if (destroyerChargeTimer > 0)
-                            {
-                                factor = 1;
-                            }
-
-                            //Start slowing down near the end of the attack
-                            if (destroyerChargeTimer > 920)
-                            {
-                                factor = 0.2f + (0.8f * (980 - destroyerChargeTimer) / 60f);
-                            }
-
-                            //Rotate in a circle a decent distance from the player
-                            destroyerRotation += 0.09f * factor;
-                            npc.velocity = new Vector2(60 * factor, 0).RotatedBy(destroyerRotation);
-
-
-
-                            if (destroyerChargeTimer == 980)
-                            {
-                                destroyerRotation = MathHelper.Pi;
-                                destroyerAttackIndex = 0;
-                                destroyerChargeTimer = -240;
-                                destroyerReachedHeight = false;
-                                destroyerTargetLerp = 0;
-
-                                //Clean up
-                                for (int i = 0; i < Main.maxProjectiles; i++)
+                                //Start slowing down near the end of the attack
+                                if (destroyerChargeTimer > 920)
                                 {
-                                    if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>())
+                                    factor = 0.2f + (0.8f * (980 - destroyerChargeTimer) / 60f);
+                                }
+
+                                //Rotate in a circle a decent distance from the player
+                                destroyerRotation += 0.09f * factor;
+                                npc.velocity = new Vector2(60 * factor, 0).RotatedBy(destroyerRotation);
+
+
+
+                                if (destroyerChargeTimer == 980)
+                                {
+                                    destroyerRotation = MathHelper.Pi;
+                                    destroyerAttackIndex = 0;
+                                    destroyerChargeTimer = -240;
+                                    destroyerReachedHeight = false;
+                                    destroyerTargetLerp = 0;
+
+                                    //Clean up
+                                    for (int i = 0; i < Main.maxProjectiles; i++)
                                     {
-                                        Main.projectile[i].Kill();
+                                        if (Main.projectile[i].type == ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>())
+                                        {
+                                            Main.projectile[i].Kill();
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        destroyerGlowPercent = 0.01f;
-
-                        //Circle of lasers
-                        if (destroyerAttackIndex == 2)
+                        else
                         {
-                            if (destroyerChargeTimer % 180 == 90)
-                            {
-                                laserRotation = Main.rand.NextVector2Circular(10, 10).ToRotation();
+                            destroyerGlowPercent = 0.01f;
 
-                                float subRotation = 0;
-                                for (int i = 0; i < 3; i++)
+                            //Circle of lasers
+                            if (destroyerAttackIndex == 2)
+                            {
+                                if (destroyerChargeTimer % 180 == 90)
                                 {
-                                    subRotation += 2 * MathHelper.Pi / 3;
-                                    Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -3, npc.whoAmI);
+                                    laserRotation = Main.rand.NextVector2Circular(10, 10).ToRotation();
+
+                                    float subRotation = 0;
+                                    for (int i = 0; i < 3; i++)
+                                    {
+                                        subRotation += 2 * MathHelper.Pi / 3;
+                                        Projectile.NewProjectile(npc.GetSource_FromThis(), Main.player[npc.target].Center, new Vector2(0, 1).RotatedBy(laserRotation + subRotation), ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -3, npc.whoAmI);
+                                    }
                                 }
                             }
-                        }
 
-                        //Moving square array                        
-                        if (destroyerAttackIndex == 1)
-                        {
-                            if (destroyerChargeTimer % 290 == 1 && destroyerChargeTimer < 580)
+                            //Moving square array                        
+                            if (destroyerAttackIndex == 1)
                             {
-                                horizontalLasers = new List<Projectile>();
-                                verticalLasers = new List<Projectile>();
-                                Vector2 randomVector = Main.rand.NextVector2Circular(10, 10);
-                                if (randomVector.Y > 0)
+                                if (destroyerChargeTimer % 290 == 1 && destroyerChargeTimer < 580)
                                 {
-                                    //Never let the movement direction of the grid be *down*, makes it very hard to dodge
-                                    randomVector.Y *= -1;
-                                }
-                                laserRotation = randomVector.ToRotation();
-
-                                Vector2 startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
-                                Vector2 step = new Vector2(220, 220).RotatedBy(laserRotation);
-                                Vector2 laserVel = new Vector2(-1, 1).RotatedBy(laserRotation); //Aim down left
-                                for (int i = 0; i < 15; i++)
-                                {
-                                    horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
-                                    startPos += step;
-                                }
-
-                                startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
-                                step = new Vector2(-220, 220).RotatedBy(laserRotation);
-                                laserVel = new Vector2(1, 1).RotatedBy(laserRotation); //Aim down right
-                                for (int i = 0; i < 15; i++)
-                                {
-                                    verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
-                                    startPos += step;
-                                }
-
-                                intersections = new List<Vector2>();
-                                foreach (Projectile hLaser in horizontalLasers)
-                                {
-                                    foreach (Projectile vLaser in verticalLasers)
+                                    horizontalLasers = new List<Projectile>();
+                                    verticalLasers = new List<Projectile>();
+                                    Vector2 randomVector = Main.rand.NextVector2Circular(10, 10);
+                                    if (randomVector.Y > 0)
                                     {
-                                        Vector2[] collisions = Collision.CheckLinevLine(hLaser.position, hLaser.position + hLaser.velocity * 3000, vLaser.position, vLaser.position + vLaser.velocity * 3000);
-                                        if (collisions.Length == 1) //2 lines can only ever intersect once, unless they're parallel and on top of each other. There would be bigger problems if that was the case.
+                                        //Never let the movement direction of the grid be *down*, makes it very hard to dodge
+                                        randomVector.Y *= -1;
+                                    }
+                                    laserRotation = randomVector.ToRotation();
+
+                                    Vector2 startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
+                                    Vector2 step = new Vector2(220, 220).RotatedBy(laserRotation);
+                                    Vector2 laserVel = new Vector2(-1, 1).RotatedBy(laserRotation); //Aim down left
+                                    for (int i = 0; i < 15; i++)
+                                    {
+                                        horizontalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
+                                        startPos += step;
+                                    }
+
+                                    startPos = new Vector2(0, -3200).RotatedBy(laserRotation);
+                                    step = new Vector2(-220, 220).RotatedBy(laserRotation);
+                                    laserVel = new Vector2(1, 1).RotatedBy(laserRotation); //Aim down right
+                                    for (int i = 0; i < 15; i++)
+                                    {
+                                        verticalLasers.Add(Projectile.NewProjectileDirect(npc.GetSource_FromThis(), Main.player[npc.target].Center + startPos, laserVel, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 20, 0, Main.myPlayer, -1, npc.whoAmI));
+                                        startPos += step;
+                                    }
+
+                                    intersections = new List<Vector2>();
+                                    foreach (Projectile hLaser in horizontalLasers)
+                                    {
+                                        foreach (Projectile vLaser in verticalLasers)
                                         {
-                                            if (!intersections.Contains(collisions[0]))
+                                            Vector2[] collisions = Collision.CheckLinevLine(hLaser.position, hLaser.position + hLaser.velocity * 3000, vLaser.position, vLaser.position + vLaser.velocity * 3000);
+                                            if (collisions.Length == 1) //2 lines can only ever intersect once, unless they're parallel and on top of each other. There would be bigger problems if that was the case.
                                             {
-                                                intersections.Add(collisions[0]);
+                                                if (!intersections.Contains(collisions[0]))
+                                                {
+                                                    intersections.Add(collisions[0]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (destroyerChargeTimer % 290 < 150 && destroyerChargeTimer < 580)
+                                {
+                                    Vector2 translationOffset = new Vector2(3, 0).RotatedBy(laserRotation) * (destroyerChargeTimer % 290 - 1);
+
+                                    Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
+                                    foreach (Vector2 intersection in intersections)
+                                    {
+                                        if (screenRect.Contains(intersection.ToPoint()) && Vector2.DistanceSquared(intersection + translationOffset, Main.player[npc.target].Center) < 250000)
+                                        {
+                                            for (int i = 0; i < 5; i++)
+                                            {
+                                                Vector2 circularOffset = Main.rand.NextVector2CircularEdge(1, 1);
+                                                circularOffset.Normalize();
+                                                Vector2 velocity = new Vector2(0, 3).RotatedBy(laserRotation);
+                                                circularOffset *= (150 - (destroyerChargeTimer % 290));
+
+
+                                                Dust.NewDustPerfect(intersection + circularOffset + translationOffset, DustID.OrangeTorch, velocity, Scale: 1).noGravity = true;
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            if (destroyerChargeTimer % 290 < 150 && destroyerChargeTimer < 580)
+                            if (destroyerChargeTimer >= 600)
                             {
-                                Vector2 translationOffset = new Vector2(3, 0).RotatedBy(laserRotation) * (destroyerChargeTimer % 290 - 1);
-
-                                Rectangle screenRect = new Rectangle((int)Main.screenPosition.X - 100, (int)Main.screenPosition.Y - 100, Main.screenWidth + 100, Main.screenHeight + 100);
-                                foreach (Vector2 intersection in intersections)
+                                destroyerChargeTimer = 0;
+                                destroyerAttackIndex++;
+                                if (destroyerAttackIndex == 3)
                                 {
-                                    if (screenRect.Contains(intersection.ToPoint()) && Vector2.DistanceSquared(intersection + translationOffset, Main.player[npc.target].Center) < 250000)
-                                    {
-                                        for (int i = 0; i < 5; i++)
-                                        {
-                                            Vector2 circularOffset = Main.rand.NextVector2CircularEdge(1, 1);
-                                            circularOffset.Normalize();
-                                            Vector2 velocity = new Vector2(0, 3).RotatedBy(laserRotation);
-                                            circularOffset *= (150 - (destroyerChargeTimer % 290));
-
-
-                                            Dust.NewDustPerfect(intersection + circularOffset + translationOffset, DustID.OrangeTorch, velocity, Scale: 1).noGravity = true;
-                                        }
-                                    }
+                                    UsefulFunctions.BroadcastText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
                                 }
                             }
-                        }
-
-                        if (destroyerChargeTimer >= 600)
-                        {
-                            destroyerJustSpawned = false;
-                            destroyerChargeTimer = 0;
-                            destroyerAttackIndex++;
-                            if (destroyerAttackIndex == 3)
+                            if (Main.GameUpdateCount % 60 == 0)
                             {
-                                UsefulFunctions.BroadcastText("The Destroyer's hull begins glowing fiercely...", Color.OrangeRed);
+                                destroyerLaserSafeAngle = Main.rand.NextVector2Circular(1, 1);
                             }
                         }
-                        if (Main.GameUpdateCount % 60 == 0)
-                        {
-                            destroyerLaserSafeAngle = Main.rand.NextVector2Circular(1, 1);
-                        }
+                    }
+                }
+                else
+                {
+                    if(destroyerChargeTimer > 300)
+                    {
+                        destroyerChargeTimer = 0;
+                        destroyerJustSpawned = false;
                     }
                 }
             }
