@@ -68,6 +68,38 @@ namespace tsorcRevamp
             On.Terraria.WorldGen.StartHardmode += WorldGen_StartHardmode;
 
             On.Terraria.Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
+
+            On.Terraria.Projectile.FishingCheck += Projectile_FishingCheck;
+        }
+
+        private static void Projectile_FishingCheck(On.Terraria.Projectile.orig_FishingCheck orig, Projectile self)
+        {
+            Terraria.DataStructures.FishingAttempt fisher = default(Terraria.DataStructures.FishingAttempt);
+            fisher.X = (int)(self.Center.X / 16f);
+            fisher.Y = (int)(self.Center.Y / 16f);
+            fisher.bobberType = self.type;
+
+            fisher.playerFishingConditions = Main.player[self.owner].GetFishingConditions();
+            if (fisher.playerFishingConditions.BaitItemType == 2673)
+            {
+                if (Main.player[self.owner].wet)
+                {
+                    return;
+                }
+                Main.player[self.owner].displayedFishingInfo = Terraria.Localization.Language.GetTextValue("GameUI.FishingWarning");
+                if ((fisher.X < 380 || fisher.X > Main.maxTilesX - 380) && !NPC.AnyNPCs(370))
+                {
+                    self.ai[1] = Main.rand.Next(-180, -60) - 100;
+                    self.localAI[1] = 1f;
+                    self.netUpdate = true;
+                }
+
+                return;
+            }
+            else
+            {
+                orig(self);
+            }
         }
 
         private static Item Player_QuickGrapple_GetItemToUse(On.Terraria.Player.orig_QuickGrapple_GetItemToUse orig, Player self)
