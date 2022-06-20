@@ -1181,7 +1181,22 @@ namespace tsorcRevamp
                         musicString = musicString.TrimStart("MUSIC ".ToCharArray());
                     }
                     mapString = mapString.Replace(".", "");
+                    mapString = mapString.Replace(" ", "");
                     musicString = musicString.Replace(".", "");
+                    musicString = musicString.Replace(" ", "");
+
+                    //Append 0's to both strings to make them fixed-length, so that different sized version numbers are all read the same
+                    int initialLength = mapString.Length;
+                    for (int i = 0; i < 10 - initialLength; i++)
+                    {
+                        mapString += "0";
+                    }
+
+                    initialLength = musicString.Length;
+                    for (int i = 0; i < 10 - initialLength; i++)
+                    {
+                        musicString += "0";
+                    }
 
                     //If no stored version file exists, create it with version 000000
                     if (!File.Exists(curVersionPath))
@@ -1432,6 +1447,7 @@ namespace tsorcRevamp
                     }
                 }
             }
+
 
             //If so, do not move it. Instead enable a special flag to prompt a reload once the initial load finishes (can't do it here while we're mid-load, or an error would occur)
             if (musicLoaded)

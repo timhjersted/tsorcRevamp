@@ -1613,7 +1613,7 @@ namespace tsorcRevamp.NPCs
                     //It's important that it only targets players who haven't died, because otherwise one living player could hide far away while the other repeatedly respawned and fought the boss.
                     //With this, it will intentionally seek out those it has not yet killed instead.
                     bool viableTarget = false;
-                    float closestPlayerDistance = 999999;
+                    float closestPlayerDistance = float.MaxValue;
                     //Iterate through all tracked players in the array
                     for (int i = 0; i < targetCount; i++)
                     {
