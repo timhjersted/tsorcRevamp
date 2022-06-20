@@ -128,6 +128,10 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
         {
             potionType = ItemID.GreaterHealingPotion;
         }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernDiscipleDropCondition()));
+        }
 
         public override void OnKill()
         {
@@ -141,6 +145,24 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<DarkSoul>(), 5000); //Then drop the souls
                 }
             }
+        }
+    }
+
+    public class WyvernDiscipleDropCondition : Terraria.GameContent.ItemDropRules.IItemDropRuleCondition
+    {
+        public bool CanDrop(Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<WyvernMage>());
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return false;
+        }
+
+        public string GetConditionDescription()
+        {
+            return "Drops if the mage is dead";
         }
     }
 }

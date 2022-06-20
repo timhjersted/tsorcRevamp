@@ -298,10 +298,9 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        //1.4 Porting TODO later: Make it so this only drops from either the mage or the wyvern itself, whichever dies last
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WyvernMageBag>()));
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.WyvernMageBag>(), 1, 1, 1, new WyvernMageDropCondition()));
         }
         public override void OnKill()
         {
@@ -326,6 +325,24 @@ namespace tsorcRevamp.NPCs.Bosses.WyvernMage
                     Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.DarkSoul>(), 15000); //Then drop the souls
                 }
             }
+        }
+    }
+
+    public class WyvernMageDropCondition : Terraria.GameContent.ItemDropRules.IItemDropRuleCondition
+    {
+        public bool CanDrop(Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<MechaDragonHead>());
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return false;
+        }
+
+        public string GetConditionDescription()
+        {
+            return "Drops if his wyvern is dead";
         }
     }
 }

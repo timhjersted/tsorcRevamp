@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -14,7 +15,7 @@ namespace tsorcRevamp.NPCs.Bosses
         {
 
             NPC.npcSlots = 5;
-            Main.npcFrameCount[NPC.type] = 2;
+            Main.npcFrameCount[NPC.type] = 5;
             NPC.width = 70;
             NPC.height = 70;
             AnimationType = 62;
@@ -396,10 +397,9 @@ namespace tsorcRevamp.NPCs.Bosses
             potionType = ItemID.GreaterHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            if (!NPC.AnyNPCs(ModContent.NPCType<Slogra>())) {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SlograBag>()));
-            }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.SlograBag>(), 1, 1, 1, new GaibonDropCondition()));
         }
 
         #region gore
@@ -444,5 +444,23 @@ namespace tsorcRevamp.NPCs.Bosses
         }
         #endregion
 
+    }
+
+    public class GaibonDropCondition : IItemDropRuleCondition
+    {
+        public bool CanDrop(DropAttemptInfo info)
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<Slogra>());
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return false;
+        }
+
+        public string GetConditionDescription()
+        {
+            return "Drops if Slogra is dead";
+        }
     }
 }

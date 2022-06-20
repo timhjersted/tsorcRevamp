@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Items;
@@ -868,9 +869,7 @@ namespace tsorcRevamp.NPCs.Bosses
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            if (!NPC.AnyNPCs(ModContent.NPCType<Gaibon>())) {
-                npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.SlograBag>()));
-            }
+            npcLoot.Add(new ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.SlograBag>(), 1, 1, 1, new SlograDropCondition()));
         }
         public override void OnKill()
         {
@@ -911,6 +910,24 @@ namespace tsorcRevamp.NPCs.Bosses
                     dustObj.noGravity = true;
                 }
             }
+        }
+    }
+
+    public class SlograDropCondition : IItemDropRuleCondition
+    {
+        public bool CanDrop(DropAttemptInfo info)
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<Gaibon>());
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return false;
+        }
+
+        public string GetConditionDescription()
+        {
+            return "Drops if Gaibon is dead";
         }
     }
 }

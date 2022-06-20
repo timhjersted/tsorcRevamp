@@ -76,8 +76,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             potionType = ItemID.SuperHealingPotion;
         }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WyvernMageBag>()));
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(new Terraria.GameContent.ItemDropRules.ItemDropWithConditionRule(ModContent.ItemType<Items.BossBags.MageShadowBag>(), 1, 1, 1, new GhostDiscipleDropCondition()));
         }
 
         public override void OnKill()
@@ -135,8 +136,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         {
             // GhostDragonHead.GhostEffect(npc, spriteBatch, ref texture, 1.5f);
         }
+    }
+    public class GhostDiscipleDropCondition : Terraria.GameContent.ItemDropRules.IItemDropRuleCondition
+    {
+        public bool CanDrop(Terraria.GameContent.ItemDropRules.DropAttemptInfo info)
+        {
+            return !NPC.AnyNPCs(ModContent.NPCType<WyvernMageShadow>());
+        }
 
+        public bool CanShowItemDropInUI()
+        {
+            return false;
+        }
 
-
+        public string GetConditionDescription()
+        {
+            return "Drops if the mage is dead";
+        }
     }
 }
