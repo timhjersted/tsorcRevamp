@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             bool clearLineofSight = Collision.CanHit(NPC.Center, 1, 1, Main.player[NPC.target].Center, 1, 1);
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 120, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 18, 8, clearLineofSight, true, SoundID.Item20, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, clearLineofSight, true, SoundID.Item100);//2,100 cursed firewall
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 180, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 25, 0, true, true, SoundID.Item100);//2,100 cursed firewall
             if (poisonStrikeTimer >= 60)
             {
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.CursedTorch, NPC.velocity.X, NPC.velocity.Y);

@@ -96,13 +96,14 @@ namespace tsorcRevamp
 
         private static void WorldGen_StartHardmode(On.Terraria.WorldGen.orig_StartHardmode orig)
         {
+            /* Hallow the spawn
             for (int i = 4658; i < 5238; i++)
             {
                 for (int j = 630; j < 945; j++)
                 {
                     WorldGen.Convert(i, j, 2, 1);
                 }
-            }
+            }*/
         }
 
         private static void Wiring_DeActive(On.Terraria.Wiring.orig_DeActive orig, int i, int j)

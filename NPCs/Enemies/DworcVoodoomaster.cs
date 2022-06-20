@@ -99,7 +99,7 @@ namespace tsorcRevamp.NPCs.Enemies
             bool clearLineofSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
 
             tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStrikeTimer, 150, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellGreatPoisonStrikeBall>(), 7, 8, clearLineofSight, true, SoundID.Item20, 0);
-            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, clearLineofSight, true, SoundID.Item100);
+            tsorcRevampAIs.SimpleProjectile(NPC, ref poisonStormTimer, 300, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellPoisonStormBall>(), 9, 0, true, true, SoundID.Item100);
 
             if (poisonStrikeTimer >= 60)//GREEN DUST
             {

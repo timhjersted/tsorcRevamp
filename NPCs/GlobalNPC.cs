@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
@@ -1871,14 +1872,51 @@ namespace tsorcRevamp.NPCs
                 npc.ai[3] = -999;
                 npc.timeLeft = 10;
             }
-            else if (npc.ai[3] >= 0)
+
+            //If bored, target the closest player it has line of sight to. If it doesn't have los to any, just target the closest one.
+            if (npc.ai[3] != 0)
             {
-                npc.TargetClosest(true);
+                float distance = 9999999;
+                int target = -1;
+
+                //Stopwatch s = new Stopwatch();
+                //s.Start();
+                for(int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i] != null && Main.player[i].active)
+                    {
+                        if (Main.player[i].CanHit(npc))
+                        {
+                            float playerDistance = Main.player[i].Distance(npc.Center);
+                            if(playerDistance < distance)
+                            {
+                                distance = playerDistance;
+                                target = i;
+                            }
+                        }
+                    }
+                    if(target != -1)
+                    {
+                        npc.target = target;
+                    }                    
+                    else
+                    {
+                        npc.TargetClosest(true);
+                    }
+                }
+                //s.Stop();
+                //Main.NewText("Boredom: " + s.Elapsed);
             }
-            else
+            if (npc.ai[3] >= 0)
             {
-                //If we are bored, increase the bored timer.
-                npc.ai[3]++;
+                if (Main.player[npc.target].Center.X <= npc.Center.X)
+                {
+                    npc.direction = -1;
+                }
+                else
+                {
+                    npc.direction = 1;
+                }
             }
 
             //If moving more than max speed, then slow down
@@ -2019,31 +2057,52 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
-            if ((Math.Abs(npc.velocity.X) <= topSpeed * 0.9f) || (canTeleport && (!Collision.CanHit(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1) || !Collision.CanHitLine(npc.Center, 1, 1, Main.player[npc.target].Center, 1, 1))))
-            {
-                npc.ai[3]++;
+            //Main.NewText("Boredom: " + npc.ai[3]);
+            bool lineOfSight = Main.player[npc.target].CanHit(npc);
+            bool belowTopSpeed = (Math.Abs(npc.velocity.X) <= topSpeed * 0.9f);
 
-                //Time it takes to get bored scales with how long it takes to accelerate
-                if (npc.ai[3] > 100 + (4 * (topSpeed / acceleration)))
+            if (npc.ai[3] >= 0)
+            {
+                //Increase boredom if it's stuck on a wall it can't pass through, walking back and forth above the player, or can teleport but can't see the player
+                if (belowTopSpeed || (canTeleport && !lineOfSight))
                 {
-                    if (!canTeleport)
+                    npc.ai[3]++;
+
+                    //Time it takes to get bored scales with how long it takes to accelerate
+                    if (npc.ai[3] > 100 + (4 * (topSpeed / acceleration)))
                     {
-                        npc.ai[3] = -180;
-                        npc.direction *= -1;
+                        if (!canTeleport)
+                        {
+                            npc.ai[3] = -180;
+                            npc.direction *= -1;
+                        }
+                        else
+                        {
+                            //Try to teleport somewhere it has line of sight to the player
+                            Teleport(npc, 50, true);
+                            npc.ai[3] = -30;
+                        }
                     }
-                    else
+                }
+                //If it's not stuck not and it's not bored decrease the boredom counter
+                else if (npc.ai[3] > 0)
+                {
+                    npc.ai[3] -= 1;
+                    if (npc.ai[3] < 0)
                     {
-                        //If the npc is an archer, try to teleport somewhere it has line of sight to the player
-                        Teleport(npc, 40, true);
-                        npc.ai[3] = -30;
+                        npc.ai[3] = 0;
                     }
                 }
             }
-            //If it's not stuck not and it's not bored decrease the boredom counter
-            else if (npc.ai[3] > 0)
+            else
             {
-                npc.ai[3] -= 10;
+                npc.ai[3]++;
+            }
+
+            //If it has line of sight and is moving at full speed, and the player is near its level, instantly set boredom to 0
+            if (lineOfSight && !belowTopSpeed && Math.Abs(Main.player[npc.target].Center.Y - npc.Center.Y) < 144)
+            {
+                npc.ai[3] = 0;
             }
         }
 
@@ -2125,9 +2184,9 @@ namespace tsorcRevamp.NPCs
         ///Teleports the NPC to a random position within a specified range around the player. *No* effects or sound! Does not teleport the enemy if no safe location exists. Will not teleport enemies right next to the player.
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="range">The max range from the player it can teleport</param>
+        ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static void TeleportNoEffects(NPC npc, float range = 50, bool requireLineofSight = true)
+        public static void TeleportNoEffects(NPC npc, int range, bool requireLineofSight = true)
         {
             int target_y_blockpos = (int)Main.player[npc.target].position.Y / 16; // corner not center
 
@@ -2140,50 +2199,60 @@ namespace tsorcRevamp.NPCs
             //Try 100 times at most
             for (int i = 0; i < 100; i++)
             {
-                //Pick a random point to target. Make sure it's at least 5 blocks away from the player to avoid cheap hits.
-                Vector2 teleportTarget;
-                do
+                //Pick a random point to target. Make sure it's at least 11 blocks away from the player to avoid cheap hits.
+                Vector2 teleportTarget = Vector2.Zero;
+                teleportTarget.X = Main.rand.Next(11, range);
+                if (Main.rand.NextBool())
                 {
-                    teleportTarget = Main.rand.NextVector2Circular(range, range);
-                } while (teleportTarget.Length() < 10);
+                    teleportTarget.X *= -1;
+                }
 
                 //Add the player's position to it to convert it to an actual tile coordinate
                 teleportTarget += Main.player[npc.target].position / 16;
 
                 //Starting from the point we picked, go down one block at a time until we find hit a solid block
-                for (int y = (int)teleportTarget.Y; y < target_y_blockpos + range; y++)
+                bool odd = false;
+                for (int y = 0; Math.Abs(y) < range / 2;)
                 {
-                    if (UsefulFunctions.IsTileReallySolid((int)teleportTarget.X, y))
+                    if (odd)
+                    {
+                        y *= -1;
+                        y++;
+                        odd = !odd;
+                    }
+                    else
+                    {
+                        y *= -1;
+                        odd = !odd;
+                    }
+                    if (UsefulFunctions.IsTileReallySolid((int)teleportTarget.X, (int)teleportTarget.Y + y))
                     {
                         //Skip to the next tile if any of the following is true:
-                        //If the selected tile has lava above it, and the npc isn't immune
-                        if (Main.tile[(int)teleportTarget.X, y - 1].LiquidType == LiquidID.Lava && !npc.lavaImmune)
-                        {
-                            continue;
-                        }
 
-                        //The selected tile is closer than 8 blocks from the player
-                        else if (Vector2.DistanceSquared(Main.player[npc.target].Center / 16, new Vector2(teleportTarget.X, y)) < 64)
+                        // If there are solid blocks in the way, leaving no room to teleport to
+                        if (Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, (int)teleportTarget.Y + y - 4, (int)teleportTarget.Y + y - 1))
                         {
+                            //Main.NewText("Fail 1");
                             continue;
-                        }
-
-                        //If there are solid blocks in the way, leaving no room to teleport to
-                        else if (Collision.SolidTiles((int)teleportTarget.X - 1, (int)teleportTarget.X + 1, y - 4, y - 1))
-                        {
-                            continue;
-                        }
+                        }          
 
                         //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
-                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
+                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
                         {
+                            //Main.NewText("Fail 3");
                             continue;
                         }
 
+                        //If the selected tile has lava above it, and the npc isn't immune
+                        else if (Main.tile[(int)teleportTarget.X, (int)teleportTarget.Y + y - 1].LiquidType == LiquidID.Lava && !npc.lavaImmune)
+                        {
+                            //Main.NewText("Fail 4");
+                            continue;
+                        }
 
                         //Then teleport and return
                         npc.position.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
-                        npc.position.Y = (y * 16 - npc.height); //Subtract npc.height from y so block is under feet
+                        npc.position.Y = (((int)teleportTarget.Y + y) * 16 - npc.height); //Subtract npc.height from y so block is under feet
                         npc.TargetClosest(true);
                         npc.netUpdate = true;
                         return;
@@ -2199,9 +2268,9 @@ namespace tsorcRevamp.NPCs
         ///Will not teleport enemies right next to the player. Teleports enemies somewhere with line of sight to the player by default.
         ///</summary>
         ///<param name="npc">The npc itself this function will run on</param>
-        ///<param name="range">The max range from the player it can teleport</param>
+        ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
-        public static void Teleport(NPC npc, float range = 50, bool requireLineofSight = true)
+        public static void Teleport(NPC npc, int range, bool requireLineofSight = true)
         {
             Vector2 oldPosition = npc.Center;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, npc.Center);
