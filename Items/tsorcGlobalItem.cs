@@ -67,7 +67,7 @@ namespace tsorcRevamp.Items
         
         public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
-            if(item.wingSlot != 0)
+            if(item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0)
             {
                 if (!NPC.downedMechBoss3)
                 {

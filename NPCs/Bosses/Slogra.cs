@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Bosses
             NPC.lifeMax = 5000;
             NPC.scale = 1.1f;
             NPC.knockBackResist = 0.4f;
-            NPC.value = 35000;
+            NPC.value = 14000;
             NPC.buffImmune[BuffID.Confused] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             despawnHandler = new NPCDespawnHandler("Slogra returns to the depths...", Color.DarkGreen, DustID.Demonite);

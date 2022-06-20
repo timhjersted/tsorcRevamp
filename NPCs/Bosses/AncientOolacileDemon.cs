@@ -454,6 +454,11 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.OolacileDemonBag>()));
+        }
+
         public override void HitEffect(int hitDirection, double damage)
         {
             if (NPC.life <= 0)

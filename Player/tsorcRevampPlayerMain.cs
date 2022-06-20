@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -21,6 +22,7 @@ namespace tsorcRevamp
     {
 
         public static List<int> startingItemsList;
+        public List<int> bagsOpened;
 
         public override void Initialize()
         {
@@ -42,6 +44,8 @@ namespace tsorcRevamp
             chestPiggyOpen = false;
             chestPiggy = -1;
 
+
+            bagsOpened = new List<int>();
         }
 
         public override void clientClone(ModPlayer clientClone)
@@ -101,6 +105,12 @@ namespace tsorcRevamp
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
             tag.Add("MaxAcquiredHP", MaxAcquiredHP);
 
+            if (bagsOpened == null)
+            {
+                bagsOpened = new List<int>();
+            }
+            tag.Add("bagType", bagsOpened);
+
             List<Item> PotionBagList = new List<Item>();
             if (PotionBagItems == null)
             {
@@ -142,6 +152,15 @@ namespace tsorcRevamp
             SoulSlot.Item = soulSlotSouls.Clone();
             MaxAcquiredHP = tag.GetInt("MaxAcquiredHP");
 
+            if (bagsOpened == null)
+            {
+                bagsOpened = new List<int>();
+            }
+
+            if (tag.ContainsKey("bagType"))
+            {
+                bagsOpened = tag.Get<List<int>>("bagType");
+            }
 
             PotionBagItems = ((List<Item>)tag.GetList<Item>("PotionBag")).ToArray();
             if (PotionBagItems.Length < PotionBagUIState.POTION_BAG_SIZE)

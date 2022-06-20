@@ -65,7 +65,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
             if (NPC.velocity.X < 0f) { NPC.spriteDirection = 1; }
             else  //both -1 is correct
             if (NPC.velocity.X > 0f) { NPC.spriteDirection = -1; }
-
         }
 
         public override bool CheckActive()
@@ -78,8 +77,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) {
-            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.GhostWyvernBag>()));
+            npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.BossBag(ModContent.ItemType<Items.BossBags.WyvernMageBag>()));
         }
+
         public override void OnKill()
         {
             Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
