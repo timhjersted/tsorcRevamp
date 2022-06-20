@@ -53,16 +53,20 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void PostAI()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && Main.hardMode)
             {
-                Vector2 shamanWarpPoint = new Vector2(108, 524.4f) * 16;
-                if (tsorcRevampWorld.SuperHardMode)
-                {
-                    if (Vector2.Distance(NPC.Center, shamanWarpPoint) > 200)
-                    {
-                        NPC.Center = shamanWarpPoint;
-                    }
+                NPC.homeTileX = 75;
+                NPC.homeTileY = 522;
+                NPC.homeless = false;
+            }
 
+            for(int i = 0; i < 5; i++)
+            {
+                if(UsefulFunctions.IsTileReallySolid(new Vector2(NPC.Center.X / 16 + 1, NPC.Center.Y / 16 + i))){
+                    return;
+                }
+                if(i == 4 && NPC.velocity.X > 0) //Then they're about to walk off the fucking cliff lol
+                {
                     NPC.velocity.X = 0;
                 }
             }

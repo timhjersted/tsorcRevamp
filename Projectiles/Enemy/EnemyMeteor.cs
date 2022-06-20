@@ -7,7 +7,7 @@ namespace tsorcRevamp.Projectiles.Enemy
     {
         public override void SetDefaults()
         {
-            Projectile.aiStyle = 9;
+            Projectile.aiStyle = 1;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.height = 16;
