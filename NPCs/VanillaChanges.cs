@@ -1123,7 +1123,7 @@ namespace tsorcRevamp.NPCs
                     Vector2 dustVel = Main.rand.NextVector2Square(-0.4f, 0.4f);
                     Dust.NewDustPerfect(dustPos, DustID.MagicMirror, dustVel, Scale: 2);
 
-                    return false; //Frozen skips their AI entirely. One of many reasons it doesn't work on bosses.
+                    return true;
                 }
             }
 

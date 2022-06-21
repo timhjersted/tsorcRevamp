@@ -128,6 +128,7 @@ namespace tsorcRevamp
 
         private static void WorldGen_StartHardmode(On.Terraria.WorldGen.orig_StartHardmode orig)
         {
+            Main.hardMode = true;
             /* Hallow the spawn
             for (int i = 4658; i < 5238; i++)
             {

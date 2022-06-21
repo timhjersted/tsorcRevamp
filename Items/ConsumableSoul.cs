@@ -38,7 +38,7 @@ namespace tsorcRevamp.Items
         public override bool GrabStyle(Player player)
         { //make pulling souls through walls more consistent
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
-            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 0.75f;
+            Vector2 movement = vectorItemToPlayer.SafeNormalize(default) * 10f;
             Item.velocity = Item.velocity + movement;
             return true;
         }
