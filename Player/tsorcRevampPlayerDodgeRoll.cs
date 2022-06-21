@@ -276,7 +276,7 @@ namespace tsorcRevamp
                 }
             }
 
-            Player.eocHit = 1;
+            //Player.eocHit = 1;
 
             isDodging = true;
 
@@ -385,8 +385,7 @@ namespace tsorcRevamp
             if (dodgeTime >= DodgeTimeMax)
             {
                 isDodging = false;
-                Player.eocDash = 0;
-
+                //Player.eocDash = 0;
                 //forceSyncControls = true;
             }
             else
