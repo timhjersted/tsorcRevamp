@@ -73,7 +73,7 @@ namespace tsorcRevamp.Projectiles
                 else
                 {
                     charge = 0;
-                    Vector2 collision = UsefulFunctions.GetFirstCollision(player.Center, Projectile.velocity);
+                    Vector2 collision = UsefulFunctions.GetFirstCollision(player.Center, Projectile.velocity, 5000, true);
 
                     Vector2 diff = collision - player.Center;
                     float length = diff.Length();

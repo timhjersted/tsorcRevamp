@@ -189,7 +189,8 @@ namespace tsorcRevamp
         ///<param name="start">The start of the vector</param>
         ///<param name="direction">The direction it's aiming in</param>
         ///<param name="maxDistance">How far to search for</param>
-        public static Vector2 GetFirstCollision(Vector2 start, Vector2 direction, float maxDistance = 5000f)
+        ///<param name="ignoreFriendly">Ignore town NPCs in collision checks</param>
+        public static Vector2 GetFirstCollision(Vector2 start, Vector2 direction, float maxDistance = 5000f, bool ignoreFriendly = false)
         {
             direction.Normalize();
             Vector2 unitVector = direction;
@@ -214,6 +215,7 @@ namespace tsorcRevamp
                 {
                     continue;
                 }
+                if (ignoreFriendly && Main.npc[i].friendly) { continue; }
                 else
                 {
                     NPC npc = Main.npc[i];
