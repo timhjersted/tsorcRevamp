@@ -134,16 +134,7 @@ namespace tsorcRevamp
             }
 
             //Stamina capping for summoners - First minion costs 18, second one 16, third one 14, etc. Once the cost hits 2, at 9 minions, it keeps costing 2 for subsequent minions
-            int scale = Math.Max(0, 19 - Player.numMinions);
-            if (Player.numMinions > 9)
-            {
-                minionStaminaCap = (int)(staminaResourceMax2 - (72 + 2 * Player.numMinions));
-            }
-            else
-            {
-                minionStaminaCap = (int)(staminaResourceMax2 - (scale * Player.numMinions));
-            }
-            //Main.NewText(minionStaminaCap);
+            minionStaminaCap = (int)(staminaResourceMax2 * 0.8f);
 
 
 
