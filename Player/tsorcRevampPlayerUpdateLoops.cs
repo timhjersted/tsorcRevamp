@@ -1141,7 +1141,7 @@ namespace tsorcRevamp
             {
                 Player.GetDamage(DamageClass.Generic) *= 1.2f;
 
-                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Player.GetModPlayer<tsorcRevampStaminaPlayer>().minionStaminaCap)
                 {
                     Player.lifeRegen /= 2;
                 }
@@ -1175,6 +1175,7 @@ namespace tsorcRevamp
             }
             //except the first slot
             oldPos[0] = Player.position;
+            Main.NewText("" + Player.lifeRegen);
         }
 
         void TryForceFrame(ref Rectangle frame, ref PlayerFrames? newFrame)
